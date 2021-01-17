@@ -57,7 +57,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fess.engine.lib</groupId>
-			<artifactId>geo</artifactId>
+			<artifactId>geometry</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

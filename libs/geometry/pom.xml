@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fess.engine.lib</groupId>
-	<artifactId>geo</artifactId>
+	<artifactId>geometry</artifactId>
 	<parent>
 		<groupId>org.codelibs.fess.engine</groupId>
 		<artifactId>fess-search-engine-parent</artifactId>

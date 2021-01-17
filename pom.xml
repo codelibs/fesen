@@ -44,7 +44,7 @@
 		<module>libs/nio</module>
 		<module>libs/cli</module>
 		<module>libs/dissect</module>
-		<module>libs/geo</module>
+		<module>libs/geometry</module>
 		<module>libs/grok</module>
 		<module>libs/plugin-classloader</module>
 		<module>libs/secure-sm</module>
@@ -71,6 +71,7 @@
 		<module>modules/transport-netty4</module>
 	</modules>
 	<properties>
+		<elasticsearch.version>7.10.2</elasticsearch.version>
 		<lucene.version>8.7.0</lucene.version>
 		<checkstyle.version>8.20</checkstyle.version>
 		<spatial4j.version>0.7</spatial4j.version>
@@ -151,6 +152,10 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.3.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
