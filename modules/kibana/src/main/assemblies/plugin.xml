@@ -18,7 +18,7 @@
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<excludes>
 				<exclude>org.codelibs.fess.engine.lib:core</exclude>
-				<exclude>org.codelibs.fess.engine:fess-search-engine</exclude>
+				<exclude>org.codelibs.fess.engine:engine-server</exclude>
 			</excludes>
 		</dependencySet>
 	</dependencySets>

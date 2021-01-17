@@ -56,7 +56,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fess.engine</groupId>
-			<artifactId>fess-search-engine</artifactId>
+			<artifactId>engine-server</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
