@@ -300,7 +300,6 @@
 					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.locationtech.jts</groupId>
@@ -313,7 +312,6 @@
 					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -338,7 +336,6 @@
 					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>

@@ -755,22 +755,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>dissect</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codelibs.fesen.lib</groupId>
 			<artifactId>geometry</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>grok</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>nio</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -785,12 +770,27 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>ssl-config</artifactId>
+			<artifactId>x-content</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>x-content</artifactId>
+			<groupId>org.codelibs.fesen.tool</groupId>
+			<artifactId>java-version-checker</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codelibs.fesen.tool</groupId>
+			<artifactId>keystore-cli</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codelibs.fesen.tool</groupId>
+			<artifactId>launchers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codelibs.fesen.tool</groupId>
+			<artifactId>plugin-cli</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

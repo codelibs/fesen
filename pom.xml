@@ -69,6 +69,11 @@
 		<module>modules/rank-eval</module>
 		<module>modules/repository-url</module>
 		<module>modules/transport-netty4</module>
+		<module>tools/java-version-checker</module>
+		<module>tools/keystore-cli</module>
+		<module>tools/launchers</module>
+		<module>tools/plugin-cli</module>
+		<module>distribution</module>
 	</modules>
 	<properties>
 		<elasticsearch.version>7.10.2</elasticsearch.version>
