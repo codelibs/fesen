@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.codelibs.fess.engine.module</groupId>
+	<groupId>org.codelibs.fesen.module</groupId>
 	<artifactId>scripting-painless-spi</artifactId>
 	<parent>
-		<groupId>org.codelibs.fess.engine</groupId>
-		<artifactId>fess-search-engine-parent</artifactId>
+		<groupId>org.codelibs.fesen</groupId>
+		<artifactId>fesen-parent</artifactId>
 		<version>0.10.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
@@ -32,7 +32,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.codelibs.fess.engine</groupId>
+			<groupId>org.codelibs.fesen</groupId>
 			<artifactId>engine-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -17,8 +17,8 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<excludes>
-				<exclude>org.codelibs.fess.engine.lib:core</exclude>
-				<exclude>org.codelibs.fess.engine:engine-server</exclude>
+				<exclude>org.codelibs.fesen.lib:core</exclude>
+				<exclude>org.codelibs.fesen:engine-server</exclude>
 			</excludes>
 		</dependencySet>
 	</dependencySets>
