@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="plugin" basedir=".">
+	<property name="project.dir" value="${basedir}/.." />
+	<property name="target.dir" value="${basedir}/target" />
+
+	<!-- Maven Repository -->
+	<property name="maven.snapshot.repo.url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+	<property name="maven.release.repo.url" value="https://oss.sonatype.org/content/repositories/releases" />
+
+	<target name="install.all">
+		<delete dir="${target.dir}" />
+		<mkdir dir="${target.dir}" />
+		<!-- aggs-matrix-stats -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="aggs-matrix-stats" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- analysis-common -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="analysis-common" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- geo -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="geo" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- ingest-common -->
+		<!-- ingest-geoip -->
+		<!-- ingest-user-agent -->
+		<!-- kibana -->
+		<!-- lang-expression -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="lang-expression" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- lang-mustache -->
+		<!-- lang-painless -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="lang-painless" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- mapper-extras -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="mapper-extras" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- parent-join -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="parent-join" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- percolator -->
+		<!-- rank-eval -->
+		<!-- reindex -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="reindex" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- repository-url -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="repository-url" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+		<!-- transport-netty4 -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="transport-netty4" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
+	</target>
+
+	<target name="install.plugin">
+		<unzip dest="${target.dir}/${plugin.type}/${plugin.name}" src="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip">
+			<patternset>
+				<include name="**" />
+			</patternset>
+			<cutdirsmapper dirs="1" />
+		</unzip>
+	</target>
+</project>
