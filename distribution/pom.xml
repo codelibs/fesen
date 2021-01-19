@@ -88,17 +88,22 @@
 						<version>1.9.15</version>
 					</dependency>
 				</dependencies>
-				<configuration>
-					<target>
-						<ant antfile="${basedir}/plugin.xml" target="install.all">
-							<property name="plubin.version"
-								value="${project.version}" />
-						</ant>
-					</target>
-				</configuration>
-				<goals>
-					<goal>run</goal>
-				</goals>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<ant antfile="${basedir}/plugin.xml" target="install.all">
+									<property name="plubin.version"
+										value="${project.version}" />
+								</ant>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
