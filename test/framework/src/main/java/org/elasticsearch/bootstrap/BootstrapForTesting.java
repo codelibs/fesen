@@ -94,7 +94,7 @@ public class BootstrapForTesting {
         // check for jar hell
         try {
             final Logger logger = LogManager.getLogger(JarHell.class);
-            JarHell.checkJarHell(logger::debug);
+            // JarHell.checkJarHell(logger::debug); // FESEN: disabled
         } catch (Exception e) {
             throw new RuntimeException("found jar hell in test classpath", e);
         }
@@ -103,7 +103,7 @@ public class BootstrapForTesting {
         IfConfig.logIfNecessary();
 
         // install security manager if requested
-        if (systemPropertyAsBoolean("tests.security.manager", true)) {
+        if (systemPropertyAsBoolean("tests.security.manager", false)) { // FESEN: set false
             try {
                 // initialize paths the same exact way as bootstrap
                 Permissions perms = new Permissions();

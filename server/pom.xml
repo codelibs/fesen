@@ -11,6 +11,31 @@
 		<version>0.10.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+	<profiles>
+		<profile>
+			<id>build</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<compiler.test.phase>none</compiler.test.phase>
+			</properties>
+		</profile>
+		<profile>
+			<id>buildWithTests</id>
+			<properties>
+				<compiler.test.phase>test-compile</compiler.test.phase>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.codelibs.fesen.test</groupId>
+					<artifactId>framework</artifactId>
+					<version>${project.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -18,7 +43,7 @@
 				<executions>
 					<execution>
 						<id>default-testCompile</id>
-						<phase>none</phase>
+						<phase>${compiler.test.phase}</phase>
 					</execution>
 				</executions>
 			</plugin>

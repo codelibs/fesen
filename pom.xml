@@ -103,6 +103,20 @@
 		<mocksocket.version>1.2</mocksocket.version>
 		<jmh.version>1.19</jmh.version>
 	</properties>
+	<profiles>
+		<profile>
+			<id>build</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>test/framework</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>buildWithTests</id>
+		</profile>
+	</profiles>
 	<build>
 		<pluginManagement>
 			<plugins>
