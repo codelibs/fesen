@@ -496,7 +496,7 @@ public class PluginsServiceTests extends ESTestCase {
 
     // Note: testing dup codebase with core is difficult because it requires a symlink, but we have mock filesystems and security manager
 
-    public void testJarHellDuplicateClassWithCore() throws Exception {
+    /*public void testJarHellDuplicateClassWithCore() throws Exception {
         // need a jar file of core dep, use log4j here
         Path pluginDir = createTempDir();
         Path pluginJar = pluginDir.resolve("plugin.jar");
@@ -509,7 +509,7 @@ public class PluginsServiceTests extends ESTestCase {
         assertEquals("failed to load plugin myplugin due to jar hell", e.getMessage());
         assertThat(e.getCause().getMessage(), containsString("jar hell!"));
         assertThat(e.getCause().getMessage(), containsString("Level"));
-    }
+    }*/ // FESEN ignore jarhell
 
     public void testJarHellDuplicateClassWithDep() throws Exception {
         Path pluginDir = createTempDir();
@@ -530,7 +530,7 @@ public class PluginsServiceTests extends ESTestCase {
         assertThat(e.getCause().getMessage(), containsString("DummyClass1"));
     }
 
-    public void testJarHellDuplicateClassAcrossDeps() throws Exception {
+    /*public void testJarHellDuplicateClassAcrossDeps() throws Exception {
         Path pluginDir = createTempDir();
         Path pluginJar = pluginDir.resolve("plugin.jar");
         makeJar(pluginJar, DummyClass1.class);
@@ -551,9 +551,9 @@ public class PluginsServiceTests extends ESTestCase {
         assertEquals("failed to load plugin myplugin due to jar hell", e.getMessage());
         assertThat(e.getCause().getMessage(), containsString("jar hell!"));
         assertThat(e.getCause().getMessage(), containsString("DummyClass2"));
-    }
+    }*/ // FESEN ignore jarhell
 
-    public void testJarHellTransitiveMap() throws Exception {
+    /*public void testJarHellTransitiveMap() throws Exception {
         Path pluginDir = createTempDir();
         Path pluginJar = pluginDir.resolve("plugin.jar");
         makeJar(pluginJar, DummyClass1.class);
@@ -573,9 +573,9 @@ public class PluginsServiceTests extends ESTestCase {
         Set<URL> deps = transitiveDeps.get("myplugin");
         assertNotNull(deps);
         assertThat(deps, containsInAnyOrder(pluginJar.toUri().toURL(), dep1Jar.toUri().toURL(), dep2Jar.toUri().toURL()));
-    }
+    }*/ // FESEN ignore jarhell
 
-    public void testNonExtensibleDep() throws Exception {
+    /*public void testNonExtensibleDep() throws Exception {
         // This test opens a child classloader, reading a jar under the test temp
         // dir (a dummy plugin). Classloaders are closed by GC, so when test teardown
         // occurs the jar is deleted while the classloader is still open. However, on
@@ -612,7 +612,7 @@ public class PluginsServiceTests extends ESTestCase {
         }
         IllegalStateException e = expectThrows(IllegalStateException.class, () -> newPluginsService(settings));
         assertEquals("Plugin [myplugin] cannot extend non-extensible plugin [nonextensible]", e.getMessage());
-    }
+    }*/ // FESEN ignore jarhell
 
     public void testIncompatibleElasticsearchVersion() throws Exception {
         PluginInfo info = new PluginInfo("my_plugin", "desc", "1.0", Version.V_6_0_0,
@@ -666,7 +666,7 @@ public class PluginsServiceTests extends ESTestCase {
 
     }
 
-    public void testExistingMandatoryInstalledPlugin() throws IOException {
+    /*public void testExistingMandatoryInstalledPlugin() throws IOException {
         // This test opens a child classloader, reading a jar under the test temp
         // dir (a dummy plugin). Classloaders are closed by GC, so when test teardown
         // occurs the jar is deleted while the classloader is still open. However, on
@@ -694,9 +694,9 @@ public class PluginsServiceTests extends ESTestCase {
                         .put("plugin.mandatory", "fake")
                         .build();
         newPluginsService(settings);
-    }
+    }*/ // FESEN ignore jar hell
 
-    public void testPluginFromParentClassLoader() throws IOException {
+    /*public void testPluginFromParentClassLoader() throws IOException {
         final Path pathHome = createTempDir();
         final Path plugins = pathHome.resolve("plugins");
         final Path fake = plugins.resolve("fake");
@@ -718,7 +718,7 @@ public class PluginsServiceTests extends ESTestCase {
         IllegalStateException exception = expectThrows(IllegalStateException.class, () -> newPluginsService(settings));
         assertThat(exception, hasToString(containsString("Plugin [fake] must reference a class loader local Plugin class [" +
             TestPlugin.class.getName() + "] (class loader [" + PluginsServiceTests.class.getClassLoader() + "])")));
-    }
+    }*/ // FESEN ignore jar hell
 
     public void testExtensiblePlugin() {
         TestExtensiblePlugin extensiblePlugin = new TestExtensiblePlugin();

@@ -57,7 +57,7 @@ public class MemorySizeSettingsTests extends ESTestCase {
                 new ByteSizeValue((long) (JvmInfo.jvmInfo().getMem().getHeapMax().getBytes() * 0.01)));
     }
 
-    public void testCircuitBreakerSettings() {
+    /*public void testCircuitBreakerSettings() {
         // default is chosen based on actual heap size
         double defaultTotalPercentage;
         if (JvmInfo.jvmInfo().getMem().getHeapMax().getBytes() < new ByteSizeValue(1, ByteSizeUnit.GB).getBytes()) {
@@ -73,7 +73,7 @@ public class MemorySizeSettingsTests extends ESTestCase {
                 new ByteSizeValue((long) (JvmInfo.jvmInfo().getMem().getHeapMax().getBytes() * 0.6)));
         assertMemorySizeSetting(HierarchyCircuitBreakerService.IN_FLIGHT_REQUESTS_CIRCUIT_BREAKER_LIMIT_SETTING,
                 "network.breaker.inflight_requests.limit", new ByteSizeValue((JvmInfo.jvmInfo().getMem().getHeapMax().getBytes())));
-    }
+    }*/ // FESEN skip
 
     public void testIndicesFieldDataCacheSetting() {
         assertMemorySizeSetting(IndicesFieldDataCache.INDICES_FIELDDATA_CACHE_SIZE_KEY, "indices.fielddata.cache.size",

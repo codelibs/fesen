@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="download" basedir=".">
+	<property name="target.dir" value="${basedir}/src/main/plugin-metadata" />
+	<property name="download.url" value="https://maven.codelibs.org/archive/geolite2" />
+
+	<target name="download.all">
+		<available property="file.exists" file="${target.dir}/GeoLite2-ASN.mmdb" />
+		<antcall target="download.file">
+			<param name="file.name" value="GeoLite2-ASN.mmdb" />
+		</antcall>
+		<available property="file.exists" file="${target.dir}/GeoLite2-City.mmdb" />
+		<antcall target="download.file">
+			<param name="file.name" value="GeoLite2-City.mmdb" />
+		</antcall>
+		<available property="file.exists" file="${target.dir}/GeoLite2-Country.mmdb" />
+		<antcall target="download.file">
+			<param name="file.name" value="GeoLite2-Country.mmdb" />
+		</antcall>
+	</target>
+
+	<target name="download.file" unless="file.exists">
+		<get dest="${target.dir}">
+			<url url="${download.url}/${file.name}" />
+		</get>
+		<copy file="${target.dir}/${file.name}" tofile="${basedir}/src/test/resources/${file.name}" />
+	</target>
+</project>

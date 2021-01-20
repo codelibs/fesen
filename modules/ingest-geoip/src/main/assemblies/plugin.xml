@@ -16,10 +16,21 @@
 			</source>
 			<filtered>false</filtered>
 		</file>
-		<!-- <file> <source>${basedir}/src/main/plugin-metadata/GeoLite2-ASN.mmdb 
-			</source> <filtered>false</filtered> </file> <file> <source>${basedir}/src/main/plugin-metadata/GeoLite2-City.mmdb 
-			</source> <filtered>false</filtered> </file> <file> <source>${basedir}/src/main/plugin-metadata/GeoLite2-Country.mmdb 
-			</source> <filtered>false</filtered> </file> -->
+		<file>
+			<source>${basedir}/src/main/plugin-metadata/GeoLite2-ASN.mmdb
+			</source>
+			<filtered>false</filtered>
+		</file>
+		<file>
+			<source>${basedir}/src/main/plugin-metadata/GeoLite2-City.mmdb
+			</source>
+			<filtered>false</filtered>
+		</file>
+		<file>
+			<source>${basedir}/src/main/plugin-metadata/GeoLite2-Country.mmdb
+			</source>
+			<filtered>false</filtered>
+		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>

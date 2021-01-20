@@ -146,6 +146,7 @@
 					<version>2.22.1</version>
 					<configuration>
 						<useSystemClassLoader>false</useSystemClassLoader>
+						<argLine>-Duser.language=en -Duser.region=US -Djava.locale.providers=SPI,COMPAT</argLine>
 					</configuration>
 				</plugin>
 				<plugin>
