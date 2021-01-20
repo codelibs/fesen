@@ -33,6 +33,12 @@
 					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
+				<dependency>
+					<groupId>org.codelibs.fesen.module</groupId>
+					<artifactId>parent-join</artifactId>
+					<version>${project.version}</version>
+					<scope>test</scope>
+				</dependency>
 			</dependencies>
 		</profile>
 	</profiles>

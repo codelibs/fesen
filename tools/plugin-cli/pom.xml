@@ -52,6 +52,11 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/InstallPluginCommandTests.java</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -106,6 +111,12 @@
 			<groupId>com.google.jimfs</groupId>
 			<artifactId>jimfs</artifactId>
 			<version>1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
