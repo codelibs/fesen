@@ -29,7 +29,7 @@ import org.codelibs.fesen.tools.java_version_checker.SuppressForbidden;
 /**
  * Utility methods for launchers.
  */
-final class Launchers {
+public final class Launchers {
 
     /**
      * Prints a string and terminates the line on standard output.
