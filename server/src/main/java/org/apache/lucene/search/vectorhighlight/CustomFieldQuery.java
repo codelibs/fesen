@@ -30,9 +30,9 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SynonymQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
-import org.elasticsearch.common.lucene.search.MultiPhrasePrefixQuery;
-import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
-import org.elasticsearch.index.search.ESToParentBlockJoinQuery;
+import org.codelibs.fesen.common.lucene.search.MultiPhrasePrefixQuery;
+import org.codelibs.fesen.common.lucene.search.function.FunctionScoreQuery;
+import org.codelibs.fesen.index.search.ESToParentBlockJoinQuery;
 
 import java.io.IOException;
 import java.util.Collection;

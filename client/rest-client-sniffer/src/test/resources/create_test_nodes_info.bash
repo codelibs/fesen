@@ -52,7 +52,7 @@ function do_version() {
         local attr=$([ ${version} == '2.0.0' ] && echo '' || echo '.attr')
         local transport_port=$((http_port+100))
 
-        cat >> ${node}/config/elasticsearch.yml << __ES_YML
+        cat >> ${node}/config/fesen.yml << __ES_YML
 node.name:          ${node}
 node.master:        ${master}
 node.data:          ${data}

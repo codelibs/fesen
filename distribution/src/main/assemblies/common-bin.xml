@@ -60,14 +60,14 @@
 			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 			<includes>
-				<include>elasticsearch</include>
-				<include>elasticsearch-cli</include>
-				<include>elasticsearch-env</include>
-				<include>elasticsearch-env-from-file</include>
-				<include>elasticsearch-keystore</include>
-				<include>elasticsearch-node</include>
-				<include>elasticsearch-plugin</include>
-				<include>elasticsearch-shard</include>
+				<include>fesen</include>
+				<include>fesen-cli</include>
+				<include>fesen-env</include>
+				<include>fesen-env-from-file</include>
+				<include>fesen-keystore</include>
+				<include>fesen-node</include>
+				<include>fesen-plugin</include>
+				<include>fesen-shard</include>
 			</includes>
 		</fileSet>
 		<!-- modules -->
@@ -79,7 +79,7 @@
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources</directory>
 			<includes>
-				<include>elasticsearch.yml</include>
+				<include>fesen.yml</include>
 				<include>jvm.options</include>
 				<include>log4j2.properties</include>
 			</includes>

@@ -19,7 +19,7 @@
 package org.apache.lucene.queries;
 
 import org.apache.lucene.util.TestUtil;
-import org.elasticsearch.index.mapper.RangeType;
+import org.codelibs.fesen.index.mapper.RangeType;
 
 public class IntegerRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryDocValuesRangeQueryTestCase {
 

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ES_MAIN_CLASS=org.codelibs.fesen.index.shard.ShardToolCli \
+  "`dirname "$0"`"/fesen-cli \
+  "$@"

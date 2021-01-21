@@ -20,7 +20,7 @@
 package org.apache.lucene.util;
 
 import org.apache.lucene.search.DocIdSetIterator;
-import org.elasticsearch.test.ESTestCase;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class CombinedBitSetTests extends ESTestCase {
     public void testEmpty() {

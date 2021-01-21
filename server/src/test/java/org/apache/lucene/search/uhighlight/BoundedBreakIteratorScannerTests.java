@@ -19,13 +19,13 @@
 
 package org.apache.lucene.search.uhighlight;
 
-import org.elasticsearch.test.ESTestCase;
-
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;

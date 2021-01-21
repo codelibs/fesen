@@ -19,8 +19,6 @@
 
 package org.apache.lucene.index;
 
-import org.elasticsearch.common.lucene.Lucene;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +26,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.codelibs.fesen.common.lucene.Lucene;
 
 /**
  * A {@link FilterMergePolicy} that interleaves eldest and newest segments picked by {@link MergePolicy#findForcedMerges}

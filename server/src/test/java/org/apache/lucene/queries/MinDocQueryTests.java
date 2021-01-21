@@ -27,7 +27,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryUtils;
 import org.apache.lucene.store.Directory;
-import org.elasticsearch.test.ESTestCase;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 
