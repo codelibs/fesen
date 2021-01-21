@@ -19,12 +19,14 @@
 			</activation>
 			<properties>
 				<compiler.test.phase>none</compiler.test.phase>
+				<assembly.package.phase>none</assembly.package.phase>
 			</properties>
 		</profile>
 		<profile>
 			<id>buildWithTests</id>
 			<properties>
 				<compiler.test.phase>test-compile</compiler.test.phase>
+				<assembly.package.phase>none</assembly.package.phase>
 			</properties>
 			<dependencies>
 				<dependency>
@@ -34,6 +36,13 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
+		</profile>
+		<profile>
+			<id>buildAndPackaging</id>
+			<properties>
+				<compiler.test.phase>none</compiler.test.phase>
+				<assembly.package.phase>package</assembly.package.phase>
+			</properties>
 		</profile>
 	</profiles>
 	<build>
@@ -70,7 +79,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>package</phase>
+						<phase>${assembly.package.phase}</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>

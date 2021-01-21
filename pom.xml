@@ -116,6 +116,9 @@
 		<profile>
 			<id>buildWithTests</id>
 		</profile>
+		<profile>
+			<id>buildAndPackaging</id>
+		</profile>
 	</profiles>
 	<build>
 		<pluginManagement>

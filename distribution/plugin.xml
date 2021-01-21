@@ -80,7 +80,15 @@
 	</target>
 
 	<target name="install.plugin">
-		<unzip dest="${target.dir}/${plugin.type}/${plugin.name}" src="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip">
+		<available property="file.exists" file="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip" />
+		<antcall target="unzip.plugin">
+			<param name="zip.file" value="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip" />
+			<param name="unzip.dir" value="${target.dir}/${plugin.type}/${plugin.name}" />
+		</antcall>
+	</target>
+
+	<target name="unzip.plugin" if="file.exists">
+		<unzip dest="${unzip.dir}" src="${zip.file}">
 			<patternset>
 				<include name="**" />
 			</patternset>
