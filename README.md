@@ -3,11 +3,16 @@ Fesen: Fess Search Engine
 
 # Overview
 
-TBD
+Fesen is a search engine for Fess.
+This product is forked from Elasticsearch 7.10.2 and also optimized for Fess.
 
 ## Usage
 
-TBD
+### Run Fesen
+
+```
+$ ./bin/fesen
+```
 
 ## Development
 
@@ -22,5 +27,11 @@ $ mvn install
 ```
 $ mvn install
 $ mvn package -P buildWithTests
+```
+
+### Build And Package
+
+```
+$mvn package -P buildAndPackaging
 ```
 
