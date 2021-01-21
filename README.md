@@ -1,7 +1,7 @@
 Fesen: Fess Search Engine
 ------------------
 
-# Overview
+## Overview
 
 Fesen is a search engine for Fess.
 This product is forked from Elasticsearch 7.10.2 and also optimized for Fess.
