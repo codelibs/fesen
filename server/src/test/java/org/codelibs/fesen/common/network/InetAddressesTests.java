@@ -143,9 +143,14 @@ public class InetAddressesTests extends ESTestCase {
         }
         assertNotNull(scopeId);
         String ipStr = "0:0:0:0:0:0:0:1%" + scopeId;
-        InetAddress ipv6Addr = InetAddress.getByName(ipStr);
-        assertEquals(ipv6Addr, InetAddresses.forString(ipStr));
-        assertTrue(InetAddresses.isInetAddress(ipStr));
+        try {
+            InetAddress ipv6Addr = InetAddress.getByName(ipStr);
+            assertEquals(ipv6Addr, InetAddresses.forString(ipStr));
+            assertTrue(InetAddresses.isInetAddress(ipStr));
+        } catch(UnknownHostException e) {
+            // FESEN
+            assertEquals("ignore device exception: " + scopeId, "no scope_id found", e.getMessage());
+        }
     }
 
     public void testForStringIPv6WithInvalidScopeIdInput() {
