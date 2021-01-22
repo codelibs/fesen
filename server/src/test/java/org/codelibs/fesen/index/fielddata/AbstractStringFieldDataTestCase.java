@@ -47,7 +47,7 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.FixedBitSet;
 import org.apache.lucene.util.TestUtil;
 import org.apache.lucene.util.UnicodeUtil;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexOrdinalsFieldData;
@@ -390,7 +390,7 @@ public abstract class AbstractStringFieldDataTestCase extends AbstractFieldDataI
             }
         }
         DirectoryReader directoryReader = DirectoryReader.open(writer);
-        directoryReader = ElasticsearchDirectoryReader.wrap(directoryReader, new ShardId(indexService.index(), 0));
+        directoryReader = FesenDirectoryReader.wrap(directoryReader, new ShardId(indexService.index(), 0));
         IndexSearcher searcher = new IndexSearcher(directoryReader);
         IndexFieldData<?> fieldData = getForField("text");
         final Object missingValue;

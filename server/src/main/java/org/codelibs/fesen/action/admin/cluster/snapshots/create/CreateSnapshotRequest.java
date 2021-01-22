@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.create;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -172,7 +172,7 @@ public class CreateSnapshotRequest extends MasterNodeRequest<CreateSnapshotReque
             return size;
         } catch (IOException e) {
             // This should not be possible as we are just rendering the xcontent in memory
-            throw new ElasticsearchException(e);
+            throw new FesenException(e);
         }
     }
 
@@ -377,7 +377,7 @@ public class CreateSnapshotRequest extends MasterNodeRequest<CreateSnapshotReque
             builder.map(source);
             settings(Strings.toString(builder), builder.contentType());
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + source + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + source + "]", e);
         }
         return this;
     }

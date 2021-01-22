@@ -83,7 +83,7 @@ import java.util.Map;
  * @see org.codelibs.fesen.node.Node#client()
  * @see org.codelibs.fesen.client.transport.TransportClient
  */
-public interface Client extends ElasticsearchClient, Releasable {
+public interface Client extends FesenClient, Releasable {
 
     Setting<String> CLIENT_TYPE_SETTING_S = new Setting<>("client.type", "node", (s) -> {
         switch (s) {

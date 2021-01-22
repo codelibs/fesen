@@ -24,7 +24,7 @@ import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.AlreadyClosedException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.index.IndexResponse;
@@ -114,9 +114,9 @@ import java.util.function.Function;
 import static java.util.Collections.singletonList;
 import static org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy.IMMEDIATE;
 import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.DELETED;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchHits;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchHits;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -567,7 +567,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
         }
 
         final ShardScrollRequestTest request = new ShardScrollRequestTest(indexShard.shardId());
-        ElasticsearchException ex = expectThrows(ElasticsearchException.class,
+        FesenException ex = expectThrows(FesenException.class,
             () -> service.createAndPutReaderContext(
                 request, indexService, indexShard, indexShard.acquireSearcherSupplier(), randomBoolean()));
         assertEquals(
@@ -599,7 +599,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
                         try {
                             searchService.createAndPutReaderContext(
                                 new ShardScrollRequestTest(indexShard.shardId()), indexService, indexShard, reader, true);
-                        } catch (ElasticsearchException e) {
+                        } catch (FesenException e) {
                             assertThat(e.getMessage(), equalTo(
                                 "Trying to create too many scroll contexts. Must be less than or equal to: " +
                                     "[" + maxScrollContexts + "]. " +
@@ -806,7 +806,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
         IllegalArgumentException iae = expectThrows(IllegalArgumentException.class, () ->
             client().admin().indices().prepareUpdateSettings("throttled_threadpool_index").setSettings(Settings.builder().put(IndexSettings
                 .INDEX_SEARCH_THROTTLED.getKey(), false)).get());
-        assertEquals("can not update private setting [index.search.throttled]; this setting is managed by Elasticsearch",
+        assertEquals("can not update private setting [index.search.throttled]; this setting is managed by Fesen",
             iae.getMessage());
         assertFalse(service.getIndicesService().indexServiceSafe(index).getIndexSettings().isSearchThrottled());
         SearchRequest searchRequest = new SearchRequest().allowPartialSearchResults(false);

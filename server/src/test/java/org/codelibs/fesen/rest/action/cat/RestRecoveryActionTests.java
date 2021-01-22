@@ -28,7 +28,7 @@ import org.codelibs.fesen.cluster.routing.RecoverySource.SnapshotRecoverySource;
 import org.codelibs.fesen.common.Randomness;
 import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.common.unit.TimeValue;
-import org.codelibs.fesen.common.xcontent.XContentElasticsearchExtension;
+import org.codelibs.fesen.common.xcontent.XContentFesenExtension;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
@@ -162,9 +162,9 @@ public class RestRecoveryActionTests extends ESTestCase {
             final List<Object> expectedValues = Arrays.asList(
                     "index",
                     i,
-                    XContentElasticsearchExtension.DEFAULT_DATE_PRINTER.print(state.getTimer().startTime()),
+                    XContentFesenExtension.DEFAULT_DATE_PRINTER.print(state.getTimer().startTime()),
                     state.getTimer().startTime(),
-                    XContentElasticsearchExtension.DEFAULT_DATE_PRINTER.print(state.getTimer().stopTime()),
+                    XContentFesenExtension.DEFAULT_DATE_PRINTER.print(state.getTimer().stopTime()),
                     state.getTimer().stopTime(),
                     new TimeValue(state.getTimer().time()),
                     state.getRecoverySource().getType().name().toLowerCase(Locale.ROOT),

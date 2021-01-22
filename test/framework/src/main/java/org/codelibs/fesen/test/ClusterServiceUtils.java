@@ -19,7 +19,7 @@
 package org.codelibs.fesen.test;
 
 import org.apache.logging.log4j.core.util.Throwables;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -93,7 +93,7 @@ public class ClusterServiceUtils {
                 Throwables.rethrow(exception.get());
             }
         } catch (InterruptedException e) {
-            throw new ElasticsearchException("unexpected exception", e);
+            throw new FesenException("unexpected exception", e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ClusterServiceUtils {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            throw new ElasticsearchException("unexpected interruption", e);
+            throw new FesenException("unexpected interruption", e);
         }
     }
 

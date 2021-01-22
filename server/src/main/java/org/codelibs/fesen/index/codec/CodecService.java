@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Since Lucene 4.0 low level index segments are read and written through a
  * codec layer that allows to use use-case specific file formats &amp;
- * data-structures per field. Elasticsearch exposes the full
+ * data-structures per field. Fesen exposes the full
  * {@link Codec} capabilities through this {@link CodecService}.
  */
 public class CodecService {

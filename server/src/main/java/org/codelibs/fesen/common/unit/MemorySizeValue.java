@@ -23,7 +23,7 @@ import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
 
 import java.util.Objects;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 
 /** Utility methods to get memory sizes. */
@@ -40,11 +40,11 @@ public enum MemorySizeValue {
             try {
                 final double percent = Double.parseDouble(percentAsString);
                 if (percent < 0 || percent > 100) {
-                    throw new ElasticsearchParseException("percentage should be in [0-100], got [{}]", percentAsString);
+                    throw new FesenParseException("percentage should be in [0-100], got [{}]", percentAsString);
                 }
                 return new ByteSizeValue((long) ((percent / 100) * JvmInfo.jvmInfo().getMem().getHeapMax().getBytes()), ByteSizeUnit.BYTES);
             } catch (NumberFormatException e) {
-                throw new ElasticsearchParseException("failed to parse [{}] as a double", e, percentAsString);
+                throw new FesenParseException("failed to parse [{}] as a double", e, percentAsString);
             }
         } else {
             return parseBytesSizeValue(sValue, settingName);

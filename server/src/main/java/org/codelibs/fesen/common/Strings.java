@@ -20,7 +20,7 @@
 package org.codelibs.fesen.common;
 
 import org.apache.lucene.util.BytesRefBuilder;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -816,7 +816,7 @@ public class Strings {
                 builder.endObject();
                 return toString(builder);
             } catch (IOException e2) {
-                throw new ElasticsearchException("cannot generate error message for deserialization", e);
+                throw new FesenException("cannot generate error message for deserialization", e);
             }
         }
     }

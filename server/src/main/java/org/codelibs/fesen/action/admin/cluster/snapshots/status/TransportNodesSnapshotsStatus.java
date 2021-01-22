@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -112,7 +112,7 @@ public class TransportNodesSnapshotsStatus extends TransportNodesAction<Transpor
             }
             return new NodeSnapshotStatus(clusterService.localNode(), unmodifiableMap(snapshotMapBuilder));
         } catch (Exception e) {
-            throw new ElasticsearchException("failed to load metadata", e);
+            throw new FesenException("failed to load metadata", e);
         }
     }
 

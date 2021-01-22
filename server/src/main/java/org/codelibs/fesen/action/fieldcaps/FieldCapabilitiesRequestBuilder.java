@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.fieldcaps;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 public class FieldCapabilitiesRequestBuilder extends ActionRequestBuilder<FieldCapabilitiesRequest, FieldCapabilitiesResponse> {
-    public FieldCapabilitiesRequestBuilder(ElasticsearchClient client,
+    public FieldCapabilitiesRequestBuilder(FesenClient client,
                                            FieldCapabilitiesAction action,
                                            String... indices) {
         super(client, action, new FieldCapabilitiesRequest().indices(indices));

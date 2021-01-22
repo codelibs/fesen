@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.search;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
@@ -141,7 +141,7 @@ public final class QueryParserHelper {
                 } catch (QueryShardException | UnsupportedOperationException e) {
                     // field type is never searchable with term queries (eg. geo point): ignore
                     continue;
-                } catch (IllegalArgumentException | ElasticsearchParseException e) {
+                } catch (IllegalArgumentException | FesenParseException e) {
                     // other exceptions are parsing errors or not indexed fields: keep
                 }
             }

@@ -26,7 +26,7 @@ import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
 import org.codelibs.fesen.action.support.master.MasterNodeRequest;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.cluster.block.ClusterBlockLevel;
@@ -157,7 +157,7 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
     public static class RequestBuilder extends MasterNodeOperationRequestBuilder<StartPersistentTaskAction.Request,
             PersistentTaskResponse, StartPersistentTaskAction.RequestBuilder> {
 
-        protected RequestBuilder(ElasticsearchClient client, StartPersistentTaskAction action) {
+        protected RequestBuilder(FesenClient client, StartPersistentTaskAction action) {
             super(client, action, new Request());
         }
 

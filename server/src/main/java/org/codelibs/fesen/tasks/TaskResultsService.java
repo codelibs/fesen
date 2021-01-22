@@ -21,7 +21,7 @@ package org.codelibs.fesen.tasks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.action.ActionListener;
@@ -158,7 +158,7 @@ public class TaskResultsService {
             taskResult.toXContent(builder, ToXContent.EMPTY_PARAMS);
             index.setSource(builder);
         } catch (IOException e) {
-            throw new ElasticsearchException("Couldn't convert task result to XContent for [{}]", e, taskResult.getTask());
+            throw new FesenException("Couldn't convert task result to XContent for [{}]", e, taskResult.getTask());
         }
         doStoreResult(STORE_BACKOFF_POLICY.iterator(), index, listener);
     }

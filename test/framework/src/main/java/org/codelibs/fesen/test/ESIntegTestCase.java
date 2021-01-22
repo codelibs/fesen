@@ -27,7 +27,7 @@ import org.apache.http.HttpHost;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.DocWriteResponse;
@@ -69,7 +69,7 @@ import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.RestoreInProgress;
 import org.codelibs.fesen.cluster.SnapshotDeletionsInProgress;
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
-import org.codelibs.fesen.cluster.coordination.ElasticsearchNodeCommand;
+import org.codelibs.fesen.cluster.coordination.FesenNodeCommand;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.cluster.metadata.IndexGraveyard;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -198,9 +198,9 @@ import static org.codelibs.fesen.index.IndexSettings.INDEX_SOFT_DELETES_RETENTIO
 import static org.codelibs.fesen.index.query.QueryBuilders.matchAllQuery;
 import static org.codelibs.fesen.test.XContentTestUtils.convertToMap;
 import static org.codelibs.fesen.test.XContentTestUtils.differenceBetweenMapsIgnoringArrayOrder;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertNoFailures;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertNoTimeout;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertNoFailures;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertNoTimeout;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.emptyIterable;
@@ -212,7 +212,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 /**
  * {@link ESIntegTestCase} is an abstract base class to run integration
- * tests against a JVM private Elasticsearch Cluster. The test class supports 2 different
+ * tests against a JVM private Fesen Cluster. The test class supports 2 different
  * cluster scopes.
  * <ul>
  * <li>{@link Scope#TEST} - uses a new cluster for each individual test method.</li>
@@ -1144,7 +1144,7 @@ public abstract class ESIntegTestCase extends ESTestCase {
                 final BytesReference compareOriginalBytes = BytesReference.bytes(compareBuilder);
 
                 final Metadata loadedMetadata;
-                try (XContentParser parser = createParser(ElasticsearchNodeCommand.namedXContentRegistry,
+                try (XContentParser parser = createParser(FesenNodeCommand.namedXContentRegistry,
                     SmileXContent.smileXContent, originalBytes)) {
                     loadedMetadata = Metadata.fromXContent(parser);
                 }
@@ -1178,7 +1178,7 @@ public abstract class ESIntegTestCase extends ESTestCase {
                 final BytesReference compareOriginalBytes = BytesReference.bytes(compareBuilder);
 
                 final IndexMetadata loadedIndexMetadata;
-                try (XContentParser parser = createParser(ElasticsearchNodeCommand.namedXContentRegistry,
+                try (XContentParser parser = createParser(FesenNodeCommand.namedXContentRegistry,
                     SmileXContent.smileXContent, originalBytes)) {
                     loadedIndexMetadata = IndexMetadata.fromXContent(parser);
                 }
@@ -1927,7 +1927,7 @@ public abstract class ESIntegTestCase extends ESTestCase {
                 nodePrefix = SUITE_CLUSTER_NODE_PREFIX;
                 break;
             default:
-                throw new ElasticsearchException("Scope not supported: " + scope);
+                throw new FesenException("Scope not supported: " + scope);
         }
 
 

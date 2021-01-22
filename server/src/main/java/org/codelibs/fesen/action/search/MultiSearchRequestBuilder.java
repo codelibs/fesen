@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.search;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * A request builder for multiple search requests.
@@ -29,7 +29,7 @@ import org.codelibs.fesen.client.ElasticsearchClient;
 public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchRequest, MultiSearchResponse> {
 
 
-    public MultiSearchRequestBuilder(ElasticsearchClient client, MultiSearchAction action) {
+    public MultiSearchRequestBuilder(FesenClient client, MultiSearchAction action) {
         super(client, action, new MultiSearchRequest());
     }
 

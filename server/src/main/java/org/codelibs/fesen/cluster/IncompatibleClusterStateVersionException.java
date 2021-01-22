@@ -21,13 +21,13 @@ package org.codelibs.fesen.cluster;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * Thrown by {@link Diff#apply} method
  */
-public class IncompatibleClusterStateVersionException extends ElasticsearchException {
+public class IncompatibleClusterStateVersionException extends FesenException {
     public IncompatibleClusterStateVersionException(String msg) {
         super(msg);
     }

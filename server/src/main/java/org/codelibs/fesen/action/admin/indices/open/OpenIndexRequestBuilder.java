@@ -22,18 +22,18 @@ package org.codelibs.fesen.action.admin.indices.open;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for for open index request
  */
 public class OpenIndexRequestBuilder extends AcknowledgedRequestBuilder<OpenIndexRequest, OpenIndexResponse, OpenIndexRequestBuilder> {
 
-    public OpenIndexRequestBuilder(ElasticsearchClient client, OpenIndexAction action) {
+    public OpenIndexRequestBuilder(FesenClient client, OpenIndexAction action) {
         super(client, action, new OpenIndexRequest());
     }
 
-    public OpenIndexRequestBuilder(ElasticsearchClient client, OpenIndexAction action, String... indices) {
+    public OpenIndexRequestBuilder(FesenClient client, OpenIndexAction action, String... indices) {
         super(client, action, new OpenIndexRequest(indices));
     }
 

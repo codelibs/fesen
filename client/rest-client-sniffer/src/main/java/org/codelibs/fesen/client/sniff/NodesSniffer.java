@@ -29,7 +29,7 @@ import org.codelibs.fesen.client.Node;
  */
 public interface NodesSniffer {
     /**
-     * Returns the sniffed Elasticsearch nodes.
+     * Returns the sniffed Fesen nodes.
      */
     List<Node> sniff() throws IOException;
 }

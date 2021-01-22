@@ -21,7 +21,7 @@ package org.codelibs.fesen.indices.recovery;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  *
  *
  */
-public class DelayRecoveryException extends ElasticsearchException {
+public class DelayRecoveryException extends FesenException {
 
     public DelayRecoveryException(String msg) {
         super(msg);

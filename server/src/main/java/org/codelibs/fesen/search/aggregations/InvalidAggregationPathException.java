@@ -21,10 +21,10 @@ package org.codelibs.fesen.search.aggregations;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class InvalidAggregationPathException extends ElasticsearchException {
+public class InvalidAggregationPathException extends FesenException {
 
     public InvalidAggregationPathException(String msg) {
         super(msg);

@@ -19,7 +19,7 @@
 package org.codelibs.fesen.search.suggest;
 
 import org.apache.lucene.util.CharsRefBuilder;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion.Entry;
@@ -57,7 +57,7 @@ public class SuggestPhase {
             }
             context.queryResult().suggest(new Suggest(suggestions));
         } catch (IOException e) {
-            throw new ElasticsearchException("I/O exception during suggest phase", e);
+            throw new FesenException("I/O exception during suggest phase", e);
         }
     }
 

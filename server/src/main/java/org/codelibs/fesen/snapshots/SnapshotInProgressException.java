@@ -21,7 +21,7 @@ package org.codelibs.fesen.snapshots;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.rest.RestStatus;
 
@@ -29,7 +29,7 @@ import org.codelibs.fesen.rest.RestStatus;
  * Thrown on the attempt to execute an action that requires
  * that no snapshot is in progress.
  */
-public class SnapshotInProgressException extends ElasticsearchException {
+public class SnapshotInProgressException extends FesenException {
 
     public SnapshotInProgressException(String msg) {
         super(msg);

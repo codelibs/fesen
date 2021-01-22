@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.builder;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Nullable;
@@ -1688,7 +1688,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         try {
             return XContentHelper.toXContent(this, XContentType.JSON, params, true).utf8ToString();
         } catch (IOException e) {
-            throw new ElasticsearchException(e);
+            throw new FesenException(e);
         }
     }
 

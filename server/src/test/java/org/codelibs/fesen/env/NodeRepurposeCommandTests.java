@@ -20,13 +20,13 @@ package org.codelibs.fesen.env;
 
 import joptsimple.OptionSet;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cli.MockTerminal;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.coordination.ElasticsearchNodeCommand;
+import org.codelibs.fesen.cluster.coordination.FesenNodeCommand;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
@@ -109,7 +109,7 @@ public class NodeRepurposeCommandTests extends ESTestCase {
         if (randomBoolean()) {
             try (NodeEnvironment env = new NodeEnvironment(noDataMasterSettings, environment)) {
                 try (PersistedClusterStateService.Writer writer =
-                         ElasticsearchNodeCommand.createPersistedClusterStateService(Settings.EMPTY, env.nodeDataPaths()).createWriter()) {
+                         FesenNodeCommand.createPersistedClusterStateService(Settings.EMPTY, env.nodeDataPaths()).createWriter()) {
                     writer.writeFullStateAndCommit(1L, ClusterState.EMPTY_STATE);
                 }
             }
@@ -126,7 +126,7 @@ public class NodeRepurposeCommandTests extends ESTestCase {
 
     public void testLocked() throws IOException {
         try (NodeEnvironment env = new NodeEnvironment(dataMasterSettings, TestEnvironment.newEnvironment(dataMasterSettings))) {
-            assertThat(expectThrows(ElasticsearchException.class,
+            assertThat(expectThrows(FesenException.class,
                 () -> verifyNoQuestions(noDataNoMasterSettings, null)).getMessage(),
                 containsString(NodeRepurposeCommand.FAILED_TO_OBTAIN_NODE_LOCK_MSG));
         }
@@ -196,7 +196,7 @@ public class NodeRepurposeCommandTests extends ESTestCase {
         withTerminal(verbose, outputMatcher, terminal -> {
             terminal.addTextInput(randomFrom("yy", "Yy", "n", "yes", "true", "N", "no"));
             verifyUnchangedDataFiles(() -> {
-                ElasticsearchException exception = expectThrows(ElasticsearchException.class,
+                FesenException exception = expectThrows(FesenException.class,
                     () -> executeRepurposeCommand(terminal, settings, 0));
                 assertThat(exception.getMessage(), containsString(NodeRepurposeCommand.ABORTED_BY_USER_MSG));
             });
@@ -237,7 +237,7 @@ public class NodeRepurposeCommandTests extends ESTestCase {
         try (NodeEnvironment env = new NodeEnvironment(settings, environment)) {
             if (writeClusterState) {
                 try (PersistedClusterStateService.Writer writer =
-                         ElasticsearchNodeCommand.createPersistedClusterStateService(Settings.EMPTY, env.nodeDataPaths()).createWriter()) {
+                         FesenNodeCommand.createPersistedClusterStateService(Settings.EMPTY, env.nodeDataPaths()).createWriter()) {
                     writer.writeFullStateAndCommit(1L, ClusterState.builder(ClusterName.DEFAULT)
                         .metadata(Metadata.builder().put(IndexMetadata.builder(INDEX.getName())
                             .settings(Settings.builder().put("index.version.created", Version.CURRENT)

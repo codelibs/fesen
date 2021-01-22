@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support.replication;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ShardOperationFailedException;
@@ -283,7 +283,7 @@ public class ReplicationResponse extends ActionResponse {
                 builder.field(_NODE, nodeId);
                 builder.field(REASON);
                 builder.startObject();
-                ElasticsearchException.generateThrowableXContent(builder, params, cause);
+                FesenException.generateThrowableXContent(builder, params, cause);
                 builder.endObject();
                 builder.field(STATUS, status);
                 builder.field(PRIMARY, primary);
@@ -299,7 +299,7 @@ public class ReplicationResponse extends ActionResponse {
                 int shardId = -1;
                 boolean primary = false;
                 RestStatus status = null;
-                ElasticsearchException reason = null;
+                FesenException reason = null;
 
                 String currentFieldName = null;
                 while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -319,7 +319,7 @@ public class ReplicationResponse extends ActionResponse {
                         }
                     } else if (token == XContentParser.Token.START_OBJECT) {
                         if (REASON.equals(currentFieldName)) {
-                            reason = ElasticsearchException.fromXContent(parser);
+                            reason = FesenException.fromXContent(parser);
                         } else {
                             parser.skipChildren(); // skip potential inner objects for forward compatibility
                         }

@@ -22,7 +22,7 @@ package org.codelibs.fesen.http.netty4;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.ReferenceCounted;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.network.NetworkService;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
@@ -82,7 +82,7 @@ public class Netty4BadRequestTests extends ESTestCase {
             @Override
             public void dispatchBadRequest(RestChannel channel, ThreadContext threadContext, Throwable cause) {
                 try {
-                    final Exception e = cause instanceof Exception ? (Exception) cause : new ElasticsearchException(cause);
+                    final Exception e = cause instanceof Exception ? (Exception) cause : new FesenException(cause);
                     channel.sendResponse(new BytesRestResponse(channel, RestStatus.BAD_REQUEST, e));
                 } catch (final IOException e) {
                     throw new UncheckedIOException(e);

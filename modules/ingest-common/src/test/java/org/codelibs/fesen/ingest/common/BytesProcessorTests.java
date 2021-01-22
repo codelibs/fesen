@@ -23,7 +23,7 @@ import org.hamcrest.CoreMatchers;
 
 import static org.hamcrest.Matchers.equalTo;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.ingest.IngestDocument;
@@ -64,7 +64,7 @@ public class BytesProcessorTests extends AbstractStringProcessorTestCase<Long> {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
         String fieldName = RandomDocumentPicks.addRandomField(random(), ingestDocument, "8912pb");
         Processor processor = newProcessor(fieldName, randomBoolean(), fieldName);
-        ElasticsearchException exception = expectThrows(ElasticsearchException.class, () -> processor.execute(ingestDocument));
+        FesenException exception = expectThrows(FesenException.class, () -> processor.execute(ingestDocument));
         assertThat(exception.getMessage(),
             CoreMatchers.equalTo("failed to parse setting [Ingest Field] with value [8912pb] as a size in bytes"));
         assertThat(exception.getCause().getMessage(),
@@ -75,7 +75,7 @@ public class BytesProcessorTests extends AbstractStringProcessorTestCase<Long> {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
         String fieldName = RandomDocumentPicks.addRandomField(random(), ingestDocument, "junk");
         Processor processor = newProcessor(fieldName, randomBoolean(), fieldName);
-        ElasticsearchException exception = expectThrows(ElasticsearchException.class, () -> processor.execute(ingestDocument));
+        FesenException exception = expectThrows(FesenException.class, () -> processor.execute(ingestDocument));
         assertThat(exception.getMessage(),
             CoreMatchers.equalTo("failed to parse [junk]"));
     }
@@ -84,7 +84,7 @@ public class BytesProcessorTests extends AbstractStringProcessorTestCase<Long> {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
         String fieldName = RandomDocumentPicks.addRandomField(random(), ingestDocument, "1");
         Processor processor = newProcessor(fieldName, randomBoolean(), fieldName);
-        ElasticsearchException exception = expectThrows(ElasticsearchException.class, () -> processor.execute(ingestDocument));
+        FesenException exception = expectThrows(FesenException.class, () -> processor.execute(ingestDocument));
         assertThat(exception.getMessage(),
             CoreMatchers.containsString("unit is missing or unrecognized"));
     }

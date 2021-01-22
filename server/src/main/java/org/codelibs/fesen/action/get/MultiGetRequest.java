@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.get;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -453,10 +453,10 @@ public class MultiGetRequest extends ActionRequest
                             fetchSourceContext = new FetchSourceContext(fetchSourceContext.fetchSource(),
                                 new String[]{parser.text()}, fetchSourceContext.excludes());
                         } else {
-                            throw new ElasticsearchParseException("illegal type for _source: [{}]", token);
+                            throw new FesenParseException("illegal type for _source: [{}]", token);
                         }
                     } else {
-                        throw new ElasticsearchParseException("failed to parse multi get request. unknown field [{}]", currentFieldName);
+                        throw new FesenParseException("failed to parse multi get request. unknown field [{}]", currentFieldName);
                     }
                 } else if (token == Token.START_ARRAY) {
                     if (FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
@@ -488,7 +488,7 @@ public class MultiGetRequest extends ActionRequest
                                 } else if ("excludes".equals(currentFieldName) || "exclude".equals(currentFieldName)) {
                                     currentList = excludes != null ? excludes : (excludes = new ArrayList<>(2));
                                 } else {
-                                    throw new ElasticsearchParseException("source definition may not contain [{}]", parser.text());
+                                    throw new FesenParseException("source definition may not contain [{}]", parser.text());
                                 }
                             } else if (token == Token.START_ARRAY) {
                                 while ((token = parser.nextToken()) != Token.END_ARRAY) {
@@ -497,7 +497,7 @@ public class MultiGetRequest extends ActionRequest
                             } else if (token.isValue()) {
                                 currentList.add(parser.text());
                             } else {
-                                throw new ElasticsearchParseException("unexpected token while parsing source settings");
+                                throw new FesenParseException("unexpected token while parsing source settings");
                             }
                         }
 

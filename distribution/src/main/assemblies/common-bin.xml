@@ -6,8 +6,8 @@
 			<unpack>false</unpack>
 			<excludes>
 				<exclude>org.codelibs.fesen:fesen</exclude>
-				<exclude>org.codelibs.fesen.tool:keystore-cli</exclude>
-				<exclude>org.codelibs.fesen.tool:plugin-cli</exclude>
+				<exclude>org.codelibs.fesen.tool:fesen-keystore-cli</exclude>
+				<exclude>org.codelibs.fesen.tool:fesen-plugin-cli</exclude>
 				<exclude>org.bouncycastle:bcpg-fips</exclude>
 				<exclude>org.bouncycastle:bc-fips</exclude>
 			</excludes>
@@ -18,7 +18,7 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<unpack>false</unpack>
 			<includes>
-				<include>org.codelibs.fesen.tool:keystore-cli</include>
+				<include>org.codelibs.fesen.tool:fesen-keystore-cli</include>
 			</includes>
 		</dependencySet>
 		<dependencySet>
@@ -27,7 +27,7 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<unpack>false</unpack>
 			<includes>
-				<include>org.codelibs.fesen.tool:plugin-cli</include>
+				<include>org.codelibs.fesen.tool:fesen-plugin-cli</include>
 				<include>org.bouncycastle:bcpg-fips</include>
 				<include>org.bouncycastle:bc-fips</include>
 			</includes>

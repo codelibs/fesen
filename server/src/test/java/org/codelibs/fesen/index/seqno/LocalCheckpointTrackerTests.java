@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.seqno;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Randomness;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.index.seqno.LocalCheckpointTracker;
@@ -180,7 +180,7 @@ public class LocalCheckpointTrackerTests extends ESTestCase {
             threads[t] = new Thread(new AbstractRunnable() {
                 @Override
                 public void onFailure(Exception e) {
-                    throw new ElasticsearchException("failure in background thread", e);
+                    throw new FesenException("failure in background thread", e);
                 }
 
                 @Override
@@ -232,7 +232,7 @@ public class LocalCheckpointTrackerTests extends ESTestCase {
             threads[t] = new Thread(new AbstractRunnable() {
                 @Override
                 public void onFailure(Exception e) {
-                    throw new ElasticsearchException("failure in background thread", e);
+                    throw new FesenException("failure in background thread", e);
                 }
 
                 @Override

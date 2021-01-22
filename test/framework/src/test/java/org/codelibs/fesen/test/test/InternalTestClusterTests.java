@@ -55,8 +55,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.codelibs.fesen.discovery.DiscoveryModule.DISCOVERY_SEED_PROVIDERS_SETTING;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertFileExists;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertFileNotExists;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertFileExists;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertFileNotExists;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 

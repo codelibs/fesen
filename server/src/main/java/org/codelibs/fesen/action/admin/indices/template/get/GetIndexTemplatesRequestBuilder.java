@@ -19,18 +19,18 @@
 package org.codelibs.fesen.action.admin.indices.template.get;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetIndexTemplatesRequestBuilder extends MasterNodeReadOperationRequestBuilder<
         GetIndexTemplatesRequest,
         GetIndexTemplatesResponse,
         GetIndexTemplatesRequestBuilder> {
 
-    public GetIndexTemplatesRequestBuilder(ElasticsearchClient client, GetIndexTemplatesAction action) {
+    public GetIndexTemplatesRequestBuilder(FesenClient client, GetIndexTemplatesAction action) {
         super(client, action, new GetIndexTemplatesRequest());
     }
 
-    public GetIndexTemplatesRequestBuilder(ElasticsearchClient client, GetIndexTemplatesAction action, String... names) {
+    public GetIndexTemplatesRequestBuilder(FesenClient client, GetIndexTemplatesAction action, String... names) {
         super(client, action, new GetIndexTemplatesRequest(names));
     }
 }

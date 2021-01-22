@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
 import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class CompletionSuggestionOptionTests extends ESTestCase {
 

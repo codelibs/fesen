@@ -21,12 +21,12 @@ package org.codelibs.fesen.action.admin.cluster.node.stats;
 
 import org.codelibs.fesen.action.admin.indices.stats.CommonStatsFlags;
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class NodesStatsRequestBuilder
         extends NodesOperationRequestBuilder<NodesStatsRequest, NodesStatsResponse, NodesStatsRequestBuilder> {
 
-    public NodesStatsRequestBuilder(ElasticsearchClient client, NodesStatsAction action) {
+    public NodesStatsRequestBuilder(FesenClient client, NodesStatsAction action) {
         super(client, action, new NodesStatsRequest());
     }
 

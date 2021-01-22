@@ -21,11 +21,11 @@ package org.codelibs.fesen.index.engine;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 
-public class EngineException extends ElasticsearchException {
+public class EngineException extends FesenException {
 
     public EngineException(ShardId shardId, String msg, Object... params) {
         this(shardId, msg, null, params);

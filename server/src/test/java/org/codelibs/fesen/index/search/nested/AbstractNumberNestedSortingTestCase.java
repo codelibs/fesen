@@ -36,7 +36,7 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.search.join.QueryBitSetProducer;
 import org.apache.lucene.search.join.ScoreMode;
 import org.apache.lucene.search.join.ToParentBlockJoinQuery;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.index.fielddata.AbstractFieldDataTestCase;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
@@ -217,7 +217,7 @@ public abstract class AbstractNumberNestedSortingTestCase extends AbstractFieldD
 
         MultiValueMode sortMode = MultiValueMode.SUM;
         DirectoryReader directoryReader = DirectoryReader.open(writer);
-        directoryReader = ElasticsearchDirectoryReader.wrap(directoryReader, new ShardId(indexService.index(), 0));
+        directoryReader = FesenDirectoryReader.wrap(directoryReader, new ShardId(indexService.index(), 0));
         IndexSearcher searcher = new IndexSearcher(directoryReader);
         Query parentFilter = new TermQuery(new Term("__type", "parent"));
         Query childFilter = Queries.not(parentFilter);

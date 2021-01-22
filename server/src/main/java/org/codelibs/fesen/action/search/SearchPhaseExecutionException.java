@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SearchPhaseExecutionException extends ElasticsearchException {
+public class SearchPhaseExecutionException extends FesenException {
     private final String phaseName;
     private final ShardSearchFailure[] shardFailures;
 
@@ -103,7 +103,7 @@ public class SearchPhaseExecutionException extends ElasticsearchException {
         Throwable cause = super.getCause();
         if (cause == null) {
             // fall back to guessed root cause
-            for (ElasticsearchException rootCause : guessRootCauses()) {
+            for (FesenException rootCause : guessRootCauses()) {
                 return rootCause;
             }
         }
@@ -154,14 +154,14 @@ public class SearchPhaseExecutionException extends ElasticsearchException {
     }
 
     @Override
-    public ElasticsearchException[] guessRootCauses() {
+    public FesenException[] guessRootCauses() {
         ShardOperationFailedException[] failures = ExceptionsHelper.groupBy(shardFailures);
-        List<ElasticsearchException> rootCauses = new ArrayList<>(failures.length);
+        List<FesenException> rootCauses = new ArrayList<>(failures.length);
         for (ShardOperationFailedException failure : failures) {
-            ElasticsearchException[] guessRootCauses = ElasticsearchException.guessRootCauses(failure.getCause());
+            FesenException[] guessRootCauses = FesenException.guessRootCauses(failure.getCause());
             rootCauses.addAll(Arrays.asList(guessRootCauses));
         }
-        return rootCauses.toArray(new ElasticsearchException[0]);
+        return rootCauses.toArray(new FesenException[0]);
     }
 
     @Override

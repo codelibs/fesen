@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.tasks.TaskId;
 
@@ -28,7 +28,7 @@ import org.codelibs.fesen.tasks.TaskId;
  * Builder for the request to retrieve the list of tasks running on the specified nodes
  */
 public class GetTaskRequestBuilder extends ActionRequestBuilder<GetTaskRequest, GetTaskResponse> {
-    public GetTaskRequestBuilder(ElasticsearchClient client, GetTaskAction action) {
+    public GetTaskRequestBuilder(FesenClient client, GetTaskAction action) {
         super(client, action, new GetTaskRequest());
     }
 

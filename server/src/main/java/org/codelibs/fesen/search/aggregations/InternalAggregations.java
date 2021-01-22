@@ -78,7 +78,7 @@ public final class InternalAggregations extends Aggregations implements Writeabl
      * Constructs a node in the aggregation tree.
      * @param pipelineTreeSource must be null inside the tree or after final reduction. Should reference the
      *                           search request otherwise so we can properly serialize the response to
-     *                           versions of Elasticsearch that require the pipelines to be serialized.
+     *                           versions of Fesen that require the pipelines to be serialized.
      */
     public InternalAggregations(List<InternalAggregation> aggregations, Supplier<PipelineAggregator.PipelineTree> pipelineTreeSource) {
         super(aggregations);
@@ -228,7 +228,7 @@ public final class InternalAggregations extends Aggregations implements Writeabl
      * separately by {@link InternalAggregations#topLevelReduce(List, ReduceContext)}
      * @param ctor used to build the {@link InternalAggregations}. The top level reduce specifies a constructor
      *            that adds pipeline aggregation information that is used to send pipeline aggregations to
-     *            older versions of Elasticsearch that require the pipeline aggregations to be returned
+     *            older versions of Fesen that require the pipeline aggregations to be returned
      *            as part of the aggregation tree
      */
     public static InternalAggregations reduce(List<InternalAggregations> aggregationsList, ReduceContext context,

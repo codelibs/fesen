@@ -28,7 +28,7 @@ import org.codelibs.fesen.script.ScriptContext;
 import org.codelibs.fesen.script.ScriptEngine;
 
 /**
- * An additional extension point for {@link Plugin}s that extends Elasticsearch's scripting functionality.
+ * An additional extension point for {@link Plugin}s that extends Fesen's scripting functionality.
  */
 public interface ScriptPlugin {
 

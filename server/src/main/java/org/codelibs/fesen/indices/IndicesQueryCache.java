@@ -80,9 +80,9 @@ public class IndicesQueryCache implements QueryCache, Closeable {
         logger.debug("using [node] query cache with size [{}] max filter count [{}]",
                 size, count);
         if (INDICES_QUERIES_CACHE_ALL_SEGMENTS_SETTING.get(settings)) {
-            cache = new ElasticsearchLRUQueryCache(count, size.getBytes(), context -> true, 1f);
+            cache = new FesenLRUQueryCache(count, size.getBytes(), context -> true, 1f);
         } else {
-            cache = new ElasticsearchLRUQueryCache(count, size.getBytes());
+            cache = new FesenLRUQueryCache(count, size.getBytes());
         }
         sharedRamBytesUsed = 0;
     }
@@ -248,13 +248,13 @@ public class IndicesQueryCache implements QueryCache, Closeable {
         shardStats.remove(shardId);
     }
 
-    private class ElasticsearchLRUQueryCache extends LRUQueryCache {
+    private class FesenLRUQueryCache extends LRUQueryCache {
 
-        ElasticsearchLRUQueryCache(int maxSize, long maxRamBytesUsed, Predicate<LeafReaderContext> leavesToCache, float skipFactor) {
+        FesenLRUQueryCache(int maxSize, long maxRamBytesUsed, Predicate<LeafReaderContext> leavesToCache, float skipFactor) {
             super(maxSize, maxRamBytesUsed, leavesToCache, skipFactor);
         }
 
-        ElasticsearchLRUQueryCache(int maxSize, long maxRamBytesUsed) {
+        FesenLRUQueryCache(int maxSize, long maxRamBytesUsed) {
             super(maxSize, maxRamBytesUsed);
         }
 

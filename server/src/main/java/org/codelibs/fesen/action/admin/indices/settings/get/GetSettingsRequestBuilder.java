@@ -21,13 +21,13 @@ package org.codelibs.fesen.action.admin.indices.settings.get;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 public class GetSettingsRequestBuilder
         extends MasterNodeReadOperationRequestBuilder<GetSettingsRequest, GetSettingsResponse, GetSettingsRequestBuilder> {
 
-    public GetSettingsRequestBuilder(ElasticsearchClient client, GetSettingsAction action, String... indices) {
+    public GetSettingsRequestBuilder(FesenClient client, GetSettingsAction action, String... indices) {
         super(client, action, new GetSettingsRequest().indices(indices));
     }
 

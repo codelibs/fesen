@@ -21,7 +21,7 @@ package org.codelibs.fesen.indices;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.rest.RestStatus;
@@ -29,7 +29,7 @@ import org.codelibs.fesen.rest.RestStatus;
 /**
  * Exception indicating that one or more requested indices are closed.
  */
-public class IndexClosedException extends ElasticsearchException {
+public class IndexClosedException extends FesenException {
 
     public IndexClosedException(Index index) {
         super("closed");

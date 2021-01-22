@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.indices.rollover;
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.unit.TimeValue;
@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 
 public class RolloverRequestBuilder extends MasterNodeOperationRequestBuilder<RolloverRequest, RolloverResponse,
     RolloverRequestBuilder> {
-    public RolloverRequestBuilder(ElasticsearchClient client, RolloverAction action) {
+    public RolloverRequestBuilder(FesenClient client, RolloverAction action) {
         super(client, action, new RolloverRequest());
     }
 

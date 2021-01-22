@@ -21,10 +21,10 @@ package org.codelibs.fesen.transport;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class TransportException extends ElasticsearchException {
+public class TransportException extends FesenException {
     public TransportException(Throwable cause) {
         super(cause);
     }

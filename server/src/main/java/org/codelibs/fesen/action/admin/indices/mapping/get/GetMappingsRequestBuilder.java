@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
 import org.codelibs.fesen.action.support.master.info.ClusterInfoRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetMappingsRequestBuilder
         extends ClusterInfoRequestBuilder<GetMappingsRequest, GetMappingsResponse, GetMappingsRequestBuilder> {
 
-    public GetMappingsRequestBuilder(ElasticsearchClient client, GetMappingsAction action, String... indices) {
+    public GetMappingsRequestBuilder(FesenClient client, GetMappingsAction action, String... indices) {
         super(client, action, new GetMappingsRequest().indices(indices));
     }
 }

@@ -21,8 +21,8 @@ package org.codelibs.fesen.common.settings;
 
 import org.apache.logging.log4j.Level;
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchGenerationException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenGenerationException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
@@ -624,13 +624,13 @@ public final class Settings implements ToXContentFragment {
             try {
                 while (!parser.isClosed() && (lastToken = parser.nextToken()) == null) ;
             } catch (Exception e) {
-                throw new ElasticsearchParseException(
+                throw new FesenParseException(
                     "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
                         + "column number: [{}]",
                     e, parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
             }
             if (lastToken != null) {
-                throw new ElasticsearchParseException(
+                throw new FesenParseException(
                     "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
                         + "column number: [{}]",
                     parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
@@ -687,7 +687,7 @@ public final class Settings implements ToXContentFragment {
 
     private static void validateValue(String key, Object currentValue, XContentParser parser, boolean allowNullValues) {
         if (currentValue == null && allowNullValues == false) {
-            throw new ElasticsearchParseException(
+            throw new FesenParseException(
                 "null-valued setting found for key [{}] found at line number [{}], column number [{}]",
                 key,
                 parser.getTokenLocation().lineNumber,
@@ -1060,7 +1060,7 @@ public final class Settings implements ToXContentFragment {
                 builder.map(map);
                 return loadFromSource(Strings.toString(builder), builder.contentType());
             } catch (IOException e) {
-                throw new ElasticsearchGenerationException("Failed to generate [" + map + "]", e);
+                throw new FesenGenerationException("Failed to generate [" + map + "]", e);
             }
         }
 
@@ -1107,7 +1107,7 @@ public final class Settings implements ToXContentFragment {
                     }
                 }
                 put(fromXContent(parser, acceptNullValues, true));
-            } catch (ElasticsearchParseException e) {
+            } catch (FesenParseException e) {
                 throw e;
             } catch (Exception e) {
                 throw new SettingsException("Failed to load settings from [" + resourceName + "]", e);

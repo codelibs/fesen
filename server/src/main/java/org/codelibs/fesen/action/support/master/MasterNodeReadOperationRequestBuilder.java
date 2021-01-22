@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.support.master;
 
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Base request builder for master node read operations that can be executed on the local node as well
@@ -30,7 +30,7 @@ public abstract class MasterNodeReadOperationRequestBuilder<Request extends Mast
         RequestBuilder extends MasterNodeReadOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder> {
 
-    protected MasterNodeReadOperationRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected MasterNodeReadOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

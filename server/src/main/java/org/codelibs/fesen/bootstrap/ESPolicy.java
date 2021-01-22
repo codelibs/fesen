@@ -102,7 +102,7 @@ final class ESPolicy extends Policy {
         }
 
         // The FilePermission to check access to the path.data is the hottest permission check in
-        // Elasticsearch, so we check it first.
+        // Fesen, so we check it first.
         if (permission instanceof FilePermission && dataPathPermission.implies(permission)) {
             return true;
         }

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.mapper;
 
 import org.apache.lucene.index.IndexOptions;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
@@ -224,7 +224,7 @@ public class TypeParsers {
         } else if (INDEX_OPTIONS_DOCS.equalsIgnoreCase(value)) {
             return IndexOptions.DOCS;
         } else {
-            throw new ElasticsearchParseException("failed to parse index option [{}]", value);
+            throw new FesenParseException("failed to parse index option [{}]", value);
         }
     }
 

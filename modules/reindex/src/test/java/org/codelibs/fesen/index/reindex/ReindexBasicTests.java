@@ -32,7 +32,7 @@ import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
 import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
 
 import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;

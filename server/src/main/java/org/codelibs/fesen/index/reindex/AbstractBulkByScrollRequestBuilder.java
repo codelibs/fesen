@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
@@ -34,7 +34,7 @@ public abstract class AbstractBulkByScrollRequestBuilder<
         extends ActionRequestBuilder<Request, BulkByScrollResponse> {
     private final SearchRequestBuilder source;
 
-    protected AbstractBulkByScrollRequestBuilder(ElasticsearchClient client,
+    protected AbstractBulkByScrollRequestBuilder(FesenClient client,
                                                  ActionType<BulkByScrollResponse> action, SearchRequestBuilder source, Request request) {
         super(client, action, request);
         this.source = source;

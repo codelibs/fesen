@@ -312,8 +312,8 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
     }
 
     /**
-     * The {@linkplain PipelineAggregator}s sent to older versions of Elasticsearch.
-     * @deprecated only use these for serializing to older Elasticsearch versions
+     * The {@linkplain PipelineAggregator}s sent to older versions of Fesen.
+     * @deprecated only use these for serializing to older Fesen versions
      */
     @Deprecated
     public List<PipelineAggregator> pipelineAggregatorsForBwcSerialization() {

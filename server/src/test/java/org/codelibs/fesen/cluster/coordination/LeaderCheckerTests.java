@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.coordination.CoordinationStateRejectedException;
@@ -136,7 +136,7 @@ public class LeaderCheckerTests extends ESTestCase {
                         if (successResponse) {
                             handleResponse(requestId, Empty.INSTANCE);
                         } else {
-                            handleRemoteError(requestId, new ElasticsearchException("simulated error"));
+                            handleRemoteError(requestId, new FesenException("simulated error"));
                         }
                     }
 

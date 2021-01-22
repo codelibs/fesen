@@ -56,8 +56,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;

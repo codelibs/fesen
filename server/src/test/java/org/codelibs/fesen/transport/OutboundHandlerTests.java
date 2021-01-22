@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -263,7 +263,7 @@ public class OutboundHandlerTests extends ESTestCase {
         String action = "handshake";
         long requestId = randomLongBetween(0, 300);
         threadContext.putHeader("header", "header_value");
-        ElasticsearchException error = new ElasticsearchException("boom");
+        FesenException error = new FesenException("boom");
 
         AtomicLong requestIdRef = new AtomicLong();
         AtomicReference<String> actionRef = new AtomicReference<>();
@@ -303,7 +303,7 @@ public class OutboundHandlerTests extends ESTestCase {
         assertTrue(header.isError());
 
         RemoteTransportException remoteException = tuple.v2().streamInput().readException();
-        assertThat(remoteException.getCause(), instanceOf(ElasticsearchException.class));
+        assertThat(remoteException.getCause(), instanceOf(FesenException.class));
         assertEquals(remoteException.getCause().getMessage(), "boom");
         assertEquals(action, remoteException.action());
         assertEquals(channel.getLocalAddress(), remoteException.address().address());

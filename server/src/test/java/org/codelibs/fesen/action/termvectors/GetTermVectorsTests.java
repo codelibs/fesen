@@ -33,7 +33,7 @@ import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.termvectors.TermVectorsRequestBuilder;
 import org.codelibs.fesen.action.termvectors.TermVectorsResponse;
 import org.codelibs.fesen.common.settings.Settings;
@@ -228,7 +228,7 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
                         break;
                     }
                     default: {
-                        throw new ElasticsearchException("unsupported encoding type");
+                        throw new FesenException("unsupported encoding type");
                     }
                 }
             }
@@ -292,7 +292,7 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
                         break;
                     }
                     default: {
-                        throw new ElasticsearchException("unsupported encoding type");
+                        throw new FesenException("unsupported encoding type");
                     }
                 }
             } else {

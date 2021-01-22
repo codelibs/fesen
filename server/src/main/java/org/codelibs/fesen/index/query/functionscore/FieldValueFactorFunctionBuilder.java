@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -148,7 +148,7 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
         IndexNumericFieldData fieldData = null;
         if (fieldType == null) {
             if(missing == null) {
-                throw new ElasticsearchException("Unable to find a field mapper for field [" + field + "]. No 'missing' value defined.");
+                throw new FesenException("Unable to find a field mapper for field [" + field + "]. No 'missing' value defined.");
             }
         } else {
             fieldData = context.getForField(fieldType);

@@ -17,9 +17,9 @@ FESS_PORT=8080
 # Heap Memory
 FESS_HEAP_SIZE=512m
 
-# Elasticsearch Path
+# Fesen Path
 ES_HOME=/usr/share/elasticsearch/
 
-# Elasticsearch URL
+# Fesen URL
 ES_HTTP_URL=http://localhost:9200
 

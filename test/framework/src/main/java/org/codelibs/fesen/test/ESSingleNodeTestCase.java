@@ -68,7 +68,7 @@ import java.util.concurrent.TimeUnit;
 import static org.codelibs.fesen.cluster.coordination.ClusterBootstrapService.INITIAL_MASTER_NODES_SETTING;
 import static org.codelibs.fesen.discovery.SettingsBasedSeedHostsProvider.DISCOVERY_SEED_HOSTS_SETTING;
 import static org.codelibs.fesen.test.NodeRoles.dataNode;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 

@@ -21,10 +21,10 @@ package org.codelibs.fesen.search.builder;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class SearchSourceBuilderException extends ElasticsearchException {
+public class SearchSourceBuilderException extends FesenException {
 
     public SearchSourceBuilderException(String msg) {
         super(msg);

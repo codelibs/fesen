@@ -21,7 +21,7 @@ package org.codelibs.fesen.indices.recovery;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
@@ -279,7 +279,7 @@ public class RecoveriesCollection {
             if (accessTime == lastSeenAccessTime) {
                 String message = "no activity after [" + checkInterval + "]";
                 failRecovery(recoveryId,
-                        new RecoveryFailedException(status.state(), message, new ElasticsearchTimeoutException(message)),
+                        new RecoveryFailedException(status.state(), message, new FesenTimeoutException(message)),
                         true // to be safe, we don't know what go stuck
                 );
                 return;

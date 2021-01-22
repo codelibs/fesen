@@ -22,11 +22,11 @@ package org.codelibs.fesen.action.search;
 import java.util.List;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class ClearScrollRequestBuilder extends ActionRequestBuilder<ClearScrollRequest, ClearScrollResponse> {
 
-    public ClearScrollRequestBuilder(ElasticsearchClient client, ClearScrollAction action) {
+    public ClearScrollRequestBuilder(FesenClient client, ClearScrollAction action) {
         super(client, action, new ClearScrollRequest());
     }
 

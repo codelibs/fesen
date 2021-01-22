@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.indices.refresh;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * A refresh request making all operations performed since the last refresh available for search. The (near) real-time
@@ -29,7 +29,7 @@ import org.codelibs.fesen.client.ElasticsearchClient;
  */
 public class RefreshRequestBuilder extends BroadcastOperationRequestBuilder<RefreshRequest, RefreshResponse, RefreshRequestBuilder> {
 
-    public RefreshRequestBuilder(ElasticsearchClient client, RefreshAction action) {
+    public RefreshRequestBuilder(FesenClient client, RefreshAction action) {
         super(client, action, new RefreshRequest());
     }
 }

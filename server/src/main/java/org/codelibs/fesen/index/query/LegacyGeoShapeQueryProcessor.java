@@ -26,7 +26,7 @@ import org.apache.lucene.spatial.prefix.PrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.geo.ShapeRelation;
 import org.codelibs.fesen.common.geo.SpatialStrategy;
 import org.codelibs.fesen.common.geo.builders.CircleBuilder;
@@ -73,7 +73,7 @@ public class LegacyGeoShapeQueryProcessor  {
     public Query geoShapeQuery(Geometry shape, String fieldName, SpatialStrategy strategy,
                                ShapeRelation relation, QueryShardContext context) {
         if (context.allowExpensiveQueries() == false) {
-            throw new ElasticsearchException("[geo-shape] queries on [PrefixTree geo shapes] cannot be executed when '"
+            throw new FesenException("[geo-shape] queries on [PrefixTree geo shapes] cannot be executed when '"
                     + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
 

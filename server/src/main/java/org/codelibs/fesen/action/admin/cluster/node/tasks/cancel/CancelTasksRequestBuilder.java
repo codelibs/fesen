@@ -20,14 +20,14 @@
 package org.codelibs.fesen.action.admin.cluster.node.tasks.cancel;
 
 import org.codelibs.fesen.action.support.tasks.TasksRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for the request to cancel tasks running on the specified nodes
  */
 public class CancelTasksRequestBuilder extends TasksRequestBuilder<CancelTasksRequest, CancelTasksResponse, CancelTasksRequestBuilder> {
 
-    public CancelTasksRequestBuilder(ElasticsearchClient client, CancelTasksAction action) {
+    public CancelTasksRequestBuilder(FesenClient client, CancelTasksAction action) {
         super(client, action, new CancelTasksRequest());
     }
 

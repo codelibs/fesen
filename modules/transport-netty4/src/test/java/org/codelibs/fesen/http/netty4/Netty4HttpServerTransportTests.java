@@ -44,7 +44,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.network.NetworkAddress;
 import org.codelibs.fesen.common.network.NetworkService;
@@ -241,7 +241,7 @@ public class Netty4HttpServerTransportTests extends ESTestCase {
             public void dispatchBadRequest(final RestChannel channel, final ThreadContext threadContext, final Throwable cause) {
                 causeReference.set(cause);
                 try {
-                    final ElasticsearchException e = new ElasticsearchException("you sent a bad request and you should feel bad");
+                    final FesenException e = new FesenException("you sent a bad request and you should feel bad");
                     channel.sendResponse(new BytesRestResponse(channel, BAD_REQUEST, e));
                 } catch (final IOException e) {
                     throw new AssertionError(e);

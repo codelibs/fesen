@@ -30,7 +30,7 @@ import com.maxmind.geoip2.record.Country;
 import com.maxmind.geoip2.record.Location;
 import com.maxmind.geoip2.record.Subdivision;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.SpecialPermission;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.network.NetworkAddress;
@@ -174,7 +174,7 @@ public final class GeoIpProcessor extends AbstractProcessor {
                 geoData = Collections.emptyMap();
             }
         } else {
-            throw new ElasticsearchParseException("Unsupported database type [" + lazyLoader.getDatabaseType()
+            throw new FesenParseException("Unsupported database type [" + lazyLoader.getDatabaseType()
                 + "]", new IllegalStateException());
         }
         return geoData;

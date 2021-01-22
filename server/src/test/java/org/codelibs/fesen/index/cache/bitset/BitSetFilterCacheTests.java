@@ -37,7 +37,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.BitSet;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.IndexSettings;
@@ -88,7 +88,7 @@ public class BitSetFilterCacheTests extends ESTestCase {
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(writer);
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId("test", "_na_", 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId("test", "_na_", 0));
 
         BitsetFilterCache cache = new BitsetFilterCache(INDEX_SETTINGS, new BitsetFilterCache.Listener() {
             @Override
@@ -112,7 +112,7 @@ public class BitSetFilterCacheTests extends ESTestCase {
         writer.forceMerge(1);
         reader.close();
         reader = DirectoryReader.open(writer);
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId("test", "_na_", 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId("test", "_na_", 0));
 
         assertThat(matchCount(filter, reader), equalTo(3));
 
@@ -137,7 +137,7 @@ public class BitSetFilterCacheTests extends ESTestCase {
         writer.addDocument(document);
         writer.commit();
         final DirectoryReader writerReader = DirectoryReader.open(writer);
-        final IndexReader reader = ElasticsearchDirectoryReader.wrap(writerReader, new ShardId("test", "_na_", 0));
+        final IndexReader reader = FesenDirectoryReader.wrap(writerReader, new ShardId("test", "_na_", 0));
 
         final AtomicLong stats = new AtomicLong();
         final AtomicInteger onCacheCalls = new AtomicInteger();
@@ -211,7 +211,7 @@ public class BitSetFilterCacheTests extends ESTestCase {
         writer.addDocument(new Document());
         DirectoryReader reader = DirectoryReader.open(writer);
         writer.close();
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId("test2", "_na_", 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId("test2", "_na_", 0));
 
         BitSetProducer producer = cache.getBitSetProducer(new MatchAllDocsQuery());
 

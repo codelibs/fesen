@@ -20,7 +20,7 @@
 package org.codelibs.fesen.rest.action.cat;
 
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -78,7 +78,7 @@ public class RestCountAction extends AbstractCatAction {
                 }
             });
         } catch (IOException e) {
-            throw new ElasticsearchException("Couldn't parse query", e);
+            throw new FesenException("Couldn't parse query", e);
         }
         return channel -> client.search(countRequest, new RestResponseListener<SearchResponse>(channel) {
             @Override

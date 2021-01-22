@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ingest.SimulateProcessorResult;
 import org.codelibs.fesen.common.collect.Tuple;
 
@@ -76,7 +76,7 @@ public final class TrackingResultProcessor implements Processor {
             }
             ingestDocumentCopy.executePipeline(pipelineToCall, (result, e) -> {
                 // special handling for pipeline cycle errors
-                if (e instanceof ElasticsearchException &&
+                if (e instanceof FesenException &&
                     e.getCause() instanceof IllegalStateException &&
                     e.getCause().getMessage().startsWith(PIPELINE_CYCLE_ERROR_MESSAGE)) {
                     if (ignoreFailure) {

@@ -110,7 +110,7 @@ import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Superclass for tests that interact with an external test cluster using Elasticsearch's {@link RestClient}.
+ * Superclass for tests that interact with an external test cluster using Fesen's {@link RestClient}.
  */
 public abstract class ESRestTestCase extends ESTestCase {
     public static final String TRUSTSTORE_PATH = "truststore.path";
@@ -156,11 +156,11 @@ public abstract class ESRestTestCase extends ESTestCase {
 
     private static List<HttpHost> clusterHosts;
     /**
-     * A client for the running Elasticsearch cluster
+     * A client for the running Fesen cluster
      */
     private static RestClient client;
     /**
-     * A client for the running Elasticsearch cluster configured to take test administrative actions like remove all indexes after the test
+     * A client for the running Fesen cluster configured to take test administrative actions like remove all indexes after the test
      * completes
      */
     private static RestClient adminClient;
@@ -1170,7 +1170,7 @@ public abstract class ESRestTestCase extends ESTestCase {
 
     protected static void expectSoftDeletesWarning(Request request, String indexName) {
         final List<String> expectedWarnings = Collections.singletonList(
-            "Creating indices with soft-deletes disabled is deprecated and will be removed in future Elasticsearch versions. " +
+            "Creating indices with soft-deletes disabled is deprecated and will be removed in future Fesen versions. " +
             "Please do not specify value for setting [index.soft_deletes.enabled] of index [" + indexName + "].");
         final Builder requestOptions = RequestOptions.DEFAULT.toBuilder();
         if (nodeVersions.stream().allMatch(version -> version.onOrAfter(Version.V_7_6_0))) {

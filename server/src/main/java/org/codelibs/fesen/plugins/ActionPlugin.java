@@ -49,7 +49,7 @@ import org.codelibs.fesen.rest.RestHandler;
 import org.codelibs.fesen.rest.RestHeaderDefinition;
 
 /**
- * An additional extension point for {@link Plugin}s that extends Elasticsearch's scripting functionality. Implement it like this:
+ * An additional extension point for {@link Plugin}s that extends Fesen's scripting functionality. Implement it like this:
  * <pre>{@code
  *   {@literal @}Override
  *   public List<ActionHandler<?, ?>> getActions() {

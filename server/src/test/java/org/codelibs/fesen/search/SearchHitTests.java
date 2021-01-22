@@ -57,7 +57,7 @@ import java.util.function.Predicate;
 
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
 import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;

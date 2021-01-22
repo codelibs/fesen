@@ -21,12 +21,12 @@ package org.codelibs.fesen.action;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class NoShardAvailableActionException extends ElasticsearchException {
+public class NoShardAvailableActionException extends FesenException {
 
     public NoShardAvailableActionException(ShardId shardId) {
         this(shardId, null);

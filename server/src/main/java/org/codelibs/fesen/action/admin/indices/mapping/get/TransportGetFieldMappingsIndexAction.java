@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetadata;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -212,7 +212,7 @@ public class TransportGetFieldMappingsIndexAction
                         includeDefaults ? includeDefaultsParams : ToXContent.EMPTY_PARAMS, false);
                 fieldMappings.put(field, new FieldMappingMetadata(fieldMapper.name(), bytes));
             } catch (IOException e) {
-                throw new ElasticsearchException("failed to serialize XContent of field [" + field + "]", e);
+                throw new FesenException("failed to serialize XContent of field [" + field + "]", e);
             }
         }
     }

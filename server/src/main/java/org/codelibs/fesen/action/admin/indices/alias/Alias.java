@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.alias;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
@@ -126,7 +126,7 @@ public class Alias implements Writeable, ToXContentFragment {
             this.filter = Strings.toString(builder);
             return this;
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + filter + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + filter + "]", e);
         }
     }
 
@@ -145,7 +145,7 @@ public class Alias implements Writeable, ToXContentFragment {
             this.filter = Strings.toString(builder);
             return this;
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to build json for alias request", e);
+            throw new FesenGenerationException("Failed to build json for alias request", e);
         }
     }
 

@@ -22,7 +22,7 @@ package org.codelibs.fesen.transport.nio;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
@@ -136,7 +136,7 @@ public class MockNioTransport extends TcpTransport {
             super.doStart();
             success = true;
         } catch (IOException e) {
-            throw new ElasticsearchException(e);
+            throw new FesenException(e);
         } finally {
             if (success == false) {
                 doStop();

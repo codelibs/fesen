@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.coordination.ClusterStatePublisher.AckListener;
@@ -83,7 +83,7 @@ public abstract class Publication {
         if (applyCommitRequest.isPresent() == false) {
             logger.debug("cancel: [{}] cancelled before committing (reason: {})", this, reason);
             // fail all current publications
-            final Exception e = new ElasticsearchException("publication cancelled before committing: " + reason);
+            final Exception e = new FesenException("publication cancelled before committing: " + reason);
             publicationTargets.stream().filter(PublicationTarget::isActive).forEach(pt -> pt.setFailed(e));
         }
         onPossibleCompletion();
@@ -291,7 +291,7 @@ public abstract class Publication {
         void onFaultyNode(DiscoveryNode faultyNode) {
             if (isActive() && discoveryNode.equals(faultyNode)) {
                 logger.debug("onFaultyNode: [{}] is faulty, failing target in publication {}", faultyNode, Publication.this);
-                setFailed(new ElasticsearchException("faulty node"));
+                setFailed(new FesenException("faulty node"));
                 onPossibleCommitFailure();
             }
         }

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
@@ -27,7 +27,7 @@ import org.codelibs.fesen.rest.RestStatus;
 
 import java.io.IOException;
 
-public class UnavailableShardsException extends ElasticsearchException {
+public class UnavailableShardsException extends FesenException {
 
     public UnavailableShardsException(@Nullable ShardId shardId, String message, Object... args) {
         super(buildMessage(shardId, message), args);

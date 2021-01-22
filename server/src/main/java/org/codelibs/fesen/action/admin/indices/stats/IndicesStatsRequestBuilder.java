@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.indices.stats;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * A request to get indices level stats. Allow to enable different stats to be returned.
@@ -34,7 +34,7 @@ import org.codelibs.fesen.client.ElasticsearchClient;
 public class IndicesStatsRequestBuilder
         extends BroadcastOperationRequestBuilder<IndicesStatsRequest, IndicesStatsResponse, IndicesStatsRequestBuilder> {
 
-    public IndicesStatsRequestBuilder(ElasticsearchClient client, IndicesStatsAction action) {
+    public IndicesStatsRequestBuilder(FesenClient client, IndicesStatsAction action) {
         super(client, action, new IndicesStatsRequest());
     }
 

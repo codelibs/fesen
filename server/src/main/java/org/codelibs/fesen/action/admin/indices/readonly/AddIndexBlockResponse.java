@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.action.admin.indices.readonly;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.master.ShardsAcknowledgedResponse;
 import org.codelibs.fesen.common.Nullable;
@@ -148,7 +148,7 @@ public class AddIndexBlockResponse extends ShardsAcknowledgedResponse {
                 if (hasFailures()) {
                     if (exception != null) {
                         builder.startObject("exception");
-                        ElasticsearchException.generateFailureXContent(builder, params, exception, true);
+                        FesenException.generateFailureXContent(builder, params, exception, true);
                         builder.endObject();
                     } else {
                         builder.startArray("failed_shards");

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.repositories.verify;
 
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for verify repository request
@@ -31,14 +31,14 @@ public class VerifyRepositoryRequestBuilder
     /**
      * Constructs unregister repository request builder
      */
-    public VerifyRepositoryRequestBuilder(ElasticsearchClient client, VerifyRepositoryAction action) {
+    public VerifyRepositoryRequestBuilder(FesenClient client, VerifyRepositoryAction action) {
         super(client, action, new VerifyRepositoryRequest());
     }
 
     /**
      * Constructs unregister repository request builder with specified repository name
      */
-    public VerifyRepositoryRequestBuilder(ElasticsearchClient client, VerifyRepositoryAction action, String name) {
+    public VerifyRepositoryRequestBuilder(FesenClient client, VerifyRepositoryAction action, String name) {
         super(client, action, new VerifyRepositoryRequest(name));
     }
 

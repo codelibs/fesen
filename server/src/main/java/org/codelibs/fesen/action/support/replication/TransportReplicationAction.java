@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.support.replication;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -536,7 +536,7 @@ public abstract class TransportReplicationAction<
         return () -> {};
     }
 
-    public static class RetryOnReplicaException extends ElasticsearchException {
+    public static class RetryOnReplicaException extends FesenException {
 
         public RetryOnReplicaException(ShardId shardId, String msg) {
             super(msg);

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 
 public class PreBuiltCacheFactory {
@@ -56,9 +56,9 @@ public class PreBuiltCacheFactory {
             case LUCENE:
                 return new PreBuiltCacheStrategyLucene<>();
             case ELASTICSEARCH:
-                return new PreBuiltCacheStrategyElasticsearch<>();
+                return new PreBuiltCacheStrategyFesen<>();
             default:
-                throw new ElasticsearchException("No action configured for caching strategy[" + cachingStrategy + "]");
+                throw new FesenException("No action configured for caching strategy[" + cachingStrategy + "]");
         }
     }
 
@@ -88,7 +88,7 @@ public class PreBuiltCacheFactory {
     /**
      * This cache contains one version for each elasticsearch version object
      */
-    private static class PreBuiltCacheStrategyElasticsearch<T> implements PreBuiltCache<T> {
+    private static class PreBuiltCacheStrategyFesen<T> implements PreBuiltCache<T> {
 
         Map<Version, T> mapModel = new HashMap<>(2);
 

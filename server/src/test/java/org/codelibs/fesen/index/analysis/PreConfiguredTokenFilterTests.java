@@ -69,7 +69,7 @@ public class PreConfiguredTokenFilterTests extends ESTestCase {
         assertSame(tff_v1_1, tff_v2);
     }
 
-    public void testCachingWithElasticsearchVersion() throws IOException {
+    public void testCachingWithFesenVersion() throws IOException {
         PreConfiguredTokenFilter pctf =
             PreConfiguredTokenFilter.elasticsearchVersion("elasticsearch_version", randomBoolean(),
                 (tokenStream, esVersion) -> new TokenFilter(tokenStream) {

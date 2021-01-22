@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.ShardOperationFailedException;
@@ -122,7 +122,7 @@ public class ShardSearchFailure extends ShardOperationFailedException {
             }
             builder.field(REASON_FIELD);
             builder.startObject();
-            ElasticsearchException.generateThrowableXContent(builder, params, cause);
+            FesenException.generateThrowableXContent(builder, params, cause);
             builder.endObject();
         }
         builder.endObject();
@@ -137,7 +137,7 @@ public class ShardSearchFailure extends ShardOperationFailedException {
         String indexName = null;
         String clusterAlias = null;
         String nodeId = null;
-        ElasticsearchException exception = null;
+        FesenException exception = null;
         while((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 currentFieldName = parser.currentName();
@@ -158,7 +158,7 @@ public class ShardSearchFailure extends ShardOperationFailedException {
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if (REASON_FIELD.equals(currentFieldName)) {
-                    exception = ElasticsearchException.fromXContent(parser);
+                    exception = FesenException.fromXContent(parser);
                 } else {
                     parser.skipChildren();
                 }

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -938,7 +938,7 @@ public class BulkByScrollTask extends CancellableTask {
                 status.toXContent(builder, params);
             } else {
                 builder.startObject();
-                ElasticsearchException.generateThrowableXContent(builder, params, exception);
+                FesenException.generateThrowableXContent(builder, params, exception);
                 builder.endObject();
             }
             return builder;
@@ -972,7 +972,7 @@ public class BulkByScrollTask extends CancellableTask {
                             Status.innerFromXContent(parser)
                         );
                     } else if (EXPECTED_EXCEPTION_FIELDS.contains(fieldName)){
-                        return new StatusOrException(ElasticsearchException.innerFromXContent(parser, false));
+                        return new StatusOrException(FesenException.innerFromXContent(parser, false));
                     } else {
                         // Ignore unknown tokens
                         token = parser.nextToken();

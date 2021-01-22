@@ -21,7 +21,7 @@ package org.codelibs.fesen.common;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.ArrayUtil;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.LocalTimeOffset.Gap;
 import org.codelibs.fesen.common.LocalTimeOffset.Overlap;
@@ -257,7 +257,7 @@ public abstract class Rounding implements Writeable {
                 case 6: return HOUR_OF_DAY;
                 case 7: return MINUTES_OF_HOUR;
                 case 8: return SECOND_OF_MINUTE;
-                default: throw new ElasticsearchException("Unknown date time unit id [" + id + "]");
+                default: throw new FesenException("Unknown date time unit id [" + id + "]");
             }
         }
     }
@@ -1301,7 +1301,7 @@ public abstract class Rounding implements Writeable {
             case OffsetRounding.ID:
                 return new OffsetRounding(in);
             default:
-                throw new ElasticsearchException("unknown rounding id [" + id + "]");
+                throw new FesenException("unknown rounding id [" + id + "]");
         }
     }
 

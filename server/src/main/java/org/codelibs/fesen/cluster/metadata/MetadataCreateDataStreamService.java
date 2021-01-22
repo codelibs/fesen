@@ -20,7 +20,7 @@ package org.codelibs.fesen.cluster.metadata;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -152,10 +152,10 @@ public class MetadataCreateDataStreamService {
         try {
             currentState = metadataCreateIndexService.applyCreateIndexRequest(currentState, createIndexRequest, false);
         } catch (ResourceAlreadyExistsException e) {
-            // Rethrow as ElasticsearchStatusException, so that bulk transport action doesn't ignore it during
+            // Rethrow as FesenStatusException, so that bulk transport action doesn't ignore it during
             // auto index/data stream creation.
             // (otherwise bulk execution fails later, because data stream will also not have been created)
-            throw new ElasticsearchStatusException("data stream could not be created because backing index [{}] already exists",
+            throw new FesenStatusException("data stream could not be created because backing index [{}] already exists",
                 RestStatus.BAD_REQUEST, e, firstBackingIndexName);
         }
         IndexMetadata firstBackingIndex = currentState.metadata().index(firstBackingIndexName);

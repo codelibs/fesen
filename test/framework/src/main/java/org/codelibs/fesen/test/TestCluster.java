@@ -33,7 +33,7 @@ import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.indices.IndexTemplateMissingException;
 import org.codelibs.fesen.repositories.RepositoryMissingException;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 
 import java.io.Closeable;
 import java.io.IOException;

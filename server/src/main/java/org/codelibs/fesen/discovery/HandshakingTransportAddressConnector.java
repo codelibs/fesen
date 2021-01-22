@@ -136,7 +136,7 @@ public class HandshakingTransportAddressConnector implements TransportAddressCon
                                 @Override
                                 protected void innerOnFailure(Exception e) {
                                     // we opened a connection and successfully performed a low-level handshake, so we were definitely
-                                    // talking to an Elasticsearch node, but the high-level handshake failed indicating some kind of
+                                    // talking to an Fesen node, but the high-level handshake failed indicating some kind of
                                     // mismatched configurations (e.g. cluster name) that the user should address
                                     logger.warn(new ParameterizedMessage("handshake failed for [{}]", thisConnectionAttempt), e);
                                     IOUtils.closeWhileHandlingException(connection);

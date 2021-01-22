@@ -34,7 +34,7 @@ import org.apache.lucene.search.Weight;
 import org.apache.lucene.search.join.BitSetProducer;
 import org.apache.lucene.search.join.ParentChildrenBlockJoinQuery;
 import org.apache.lucene.search.join.ScoreMode;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.MaxScoreCollector;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
@@ -269,7 +269,7 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
         if (context.allowExpensiveQueries() == false) {
-            throw new ElasticsearchException("[joining] queries cannot be executed when '" +
+            throw new FesenException("[joining] queries cannot be executed when '" +
                     ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
 

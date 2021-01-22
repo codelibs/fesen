@@ -59,8 +59,8 @@ import static org.codelibs.fesen.index.query.QueryBuilders.matchQuery;
 import static org.codelibs.fesen.index.query.QueryBuilders.rangeQuery;
 import static org.codelibs.fesen.index.query.QueryBuilders.scriptQuery;
 import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchHits;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchHits;
 import static org.hamcrest.Matchers.equalTo;
 
 public class PercolatorQuerySearchTests extends ESSingleNodeTestCase {

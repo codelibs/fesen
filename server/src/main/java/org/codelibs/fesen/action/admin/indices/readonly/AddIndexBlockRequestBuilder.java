@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.indices.readonly;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata.APIBlock;
 
 /**
@@ -30,7 +30,7 @@ import org.codelibs.fesen.cluster.metadata.IndexMetadata.APIBlock;
 public class AddIndexBlockRequestBuilder
     extends AcknowledgedRequestBuilder<AddIndexBlockRequest, AddIndexBlockResponse, AddIndexBlockRequestBuilder> {
 
-    public AddIndexBlockRequestBuilder(ElasticsearchClient client, AddIndexBlockAction action, APIBlock block, String... indices) {
+    public AddIndexBlockRequestBuilder(FesenClient client, AddIndexBlockAction action, APIBlock block, String... indices) {
         super(client, action, new AddIndexBlockRequest(block, indices));
     }
 

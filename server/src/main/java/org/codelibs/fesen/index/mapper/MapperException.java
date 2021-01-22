@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.mapper;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class MapperException extends ElasticsearchException {
+public class MapperException extends FesenException {
     public MapperException(StreamInput in) throws IOException {
         super(in);
     }

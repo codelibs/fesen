@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.collect.Tuple;
 
 import java.util.ArrayList;
@@ -167,7 +167,7 @@ public class CompoundProcessor implements Processor {
         });
     }
 
-    void executeOnFailureAsync(int currentOnFailureProcessor, IngestDocument ingestDocument, ElasticsearchException exception,
+    void executeOnFailureAsync(int currentOnFailureProcessor, IngestDocument ingestDocument, FesenException exception,
                                BiConsumer<IngestDocument, Exception> handler) {
         if (currentOnFailureProcessor == 0) {
             putFailureMetadata(ingestDocument, exception);
@@ -195,7 +195,7 @@ public class CompoundProcessor implements Processor {
         });
     }
 
-    private void putFailureMetadata(IngestDocument ingestDocument, ElasticsearchException cause) {
+    private void putFailureMetadata(IngestDocument ingestDocument, FesenException cause) {
         List<String> processorTypeHeader = cause.getHeader("processor_type");
         List<String> processorTagHeader = cause.getHeader("processor_tag");
         List<String> processorOriginHeader = cause.getHeader("pipeline_origin");

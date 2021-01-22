@@ -24,7 +24,7 @@ import java.util.Map;
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 /**
@@ -33,7 +33,7 @@ import org.codelibs.fesen.index.query.QueryBuilder;
 public class IndicesAliasesRequestBuilder
         extends AcknowledgedRequestBuilder<IndicesAliasesRequest, AcknowledgedResponse, IndicesAliasesRequestBuilder> {
 
-    public IndicesAliasesRequestBuilder(ElasticsearchClient client, IndicesAliasesAction action) {
+    public IndicesAliasesRequestBuilder(FesenClient client, IndicesAliasesAction action) {
         super(client, action, new IndicesAliasesRequest());
     }
 

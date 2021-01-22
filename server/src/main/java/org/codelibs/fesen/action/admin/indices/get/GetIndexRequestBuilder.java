@@ -21,11 +21,11 @@ package org.codelibs.fesen.action.admin.indices.get;
 
 import org.codelibs.fesen.action.admin.indices.get.GetIndexRequest.Feature;
 import org.codelibs.fesen.action.support.master.info.ClusterInfoRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetIndexRequestBuilder extends ClusterInfoRequestBuilder<GetIndexRequest, GetIndexResponse, GetIndexRequestBuilder> {
 
-    public GetIndexRequestBuilder(ElasticsearchClient client, GetIndexAction action, String... indices) {
+    public GetIndexRequestBuilder(FesenClient client, GetIndexAction action, String... indices) {
         super(client, action, new GetIndexRequest().indices(indices));
     }
 

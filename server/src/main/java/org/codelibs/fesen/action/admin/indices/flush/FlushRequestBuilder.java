@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.admin.indices.flush;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class FlushRequestBuilder extends BroadcastOperationRequestBuilder<FlushRequest, FlushResponse, FlushRequestBuilder> {
 
-    public FlushRequestBuilder(ElasticsearchClient client, FlushAction action) {
+    public FlushRequestBuilder(FesenClient client, FlushAction action) {
         super(client, action, new FlushRequest());
     }
 

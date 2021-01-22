@@ -59,7 +59,7 @@ public class PreConfiguredCharFilter extends PreConfiguredAnalysisComponent<Char
     }
 
     /**
-     * Create a pre-configured token filter that may vary based on the Elasticsearch version.
+     * Create a pre-configured token filter that may vary based on the Fesen version.
      */
     public static PreConfiguredCharFilter elasticsearchVersion(String name, boolean useFilterForMultitermQueries,
             BiFunction<Reader, org.codelibs.fesen.Version, Reader> create) {

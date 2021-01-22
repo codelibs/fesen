@@ -22,7 +22,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.get.GetRequest;
 import org.codelibs.fesen.action.get.GetResponse;
@@ -111,7 +111,7 @@ public abstract class GeoShapeQueryBuilderTests extends AbstractQueryTestCase<Ge
             builder.endObject();
             json = Strings.toString(builder);
         } catch (IOException ex) {
-            throw new ElasticsearchException("boom", ex);
+            throw new FesenException("boom", ex);
         }
         return new GetResponse(new GetResult(indexedShapeIndex, indexedType, indexedShapeId, 0, 1, 0, true, new BytesArray(json),
             null, null));

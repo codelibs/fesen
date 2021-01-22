@@ -23,7 +23,7 @@ import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.geo.builders.CoordinatesBuilder;
 import org.codelibs.fesen.common.geo.builders.GeometryCollectionBuilder;
 import org.codelibs.fesen.common.geo.builders.LineStringBuilder;
@@ -238,7 +238,7 @@ public class RandomShapeGenerator extends RandomGeoGenerator {
                 }
                 return pgb;
             default:
-                throw new ElasticsearchException("Unable to create shape of type [" + st + "]");
+                throw new FesenException("Unable to create shape of type [" + st + "]");
         }
     }
 

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
@@ -299,7 +299,7 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
                 this.filter = new CompressedXContent(BytesReference.bytes(builder));
                 return this;
             } catch (IOException e) {
-                throw new ElasticsearchGenerationException("Failed to build json for alias request", e);
+                throw new FesenGenerationException("Failed to build json for alias request", e);
             }
         }
 

@@ -242,10 +242,10 @@ public class OsProbe {
     private static final String CONTROL_GROUPS_HIERARCHY_OVERRIDE = System.getProperty("es.cgroups.hierarchy.override");
 
     /**
-     * A map of the control groups to which the Elasticsearch process belongs. Note that this is a map because the control groups can vary
+     * A map of the control groups to which the Fesen process belongs. Note that this is a map because the control groups can vary
      * from subsystem to subsystem. Additionally, this map can not be cached because a running process can be reclassified.
      *
-     * @return a map from subsystems to the control group for the Elasticsearch process.
+     * @return a map from subsystems to the control group for the Fesen process.
      * @throws IOException if an I/O exception occurs reading {@code /proc/self/cgroup}
      */
     private Map<String, String> getControlGroups() throws IOException {
@@ -253,7 +253,7 @@ public class OsProbe {
         final Map<String, String> controllerMap = new HashMap<>();
         for (final String line : lines) {
             /*
-             * The virtual file /proc/self/cgroup lists the control groups that the Elasticsearch process is a member of. Each line contains
+             * The virtual file /proc/self/cgroup lists the control groups that the Fesen process is a member of. Each line contains
              * three colon-separated fields of the form hierarchy-ID:subsystem-list:cgroup-path. For cgroups version 1 hierarchies, the
              * subsystem-list is a comma-separated list of subsystems. The subsystem-list can be empty if the hierarchy represents a cgroups
              * version 2 hierarchy. For cgroups version 1
@@ -281,7 +281,7 @@ public class OsProbe {
     }
 
     /**
-     * The lines from {@code /proc/self/cgroup}. This file represents the control groups to which the Elasticsearch process belongs. Each
+     * The lines from {@code /proc/self/cgroup}. This file represents the control groups to which the Fesen process belongs. Each
      * line in this file represents a control group hierarchy of the form
      * <p>
      * {@code \d+:([^:,]+(?:,[^:,]+)?):(/.*)}
@@ -300,10 +300,10 @@ public class OsProbe {
     }
 
     /**
-     * The total CPU time in nanoseconds consumed by all tasks in the cgroup to which the Elasticsearch process belongs for the {@code
+     * The total CPU time in nanoseconds consumed by all tasks in the cgroup to which the Fesen process belongs for the {@code
      * cpuacct} subsystem.
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code cpuacct} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code cpuacct} subsystem
      * @return the total CPU time in nanoseconds
      * @throws IOException if an I/O exception occurs reading {@code cpuacct.usage} for the control group
      */
@@ -312,10 +312,10 @@ public class OsProbe {
     }
 
     /**
-     * Returns the line from {@code cpuacct.usage} for the control group to which the Elasticsearch process belongs for the {@code cpuacct}
+     * Returns the line from {@code cpuacct.usage} for the control group to which the Fesen process belongs for the {@code cpuacct}
      * subsystem. This line represents the total CPU time in nanoseconds consumed by all tasks in the same control group.
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code cpuacct} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code cpuacct} subsystem
      * @return the line from {@code cpuacct.usage}
      * @throws IOException if an I/O exception occurs reading {@code cpuacct.usage} for the control group
      */
@@ -325,10 +325,10 @@ public class OsProbe {
     }
 
     /**
-     * The total period of time in microseconds for how frequently the Elasticsearch control group's access to CPU resources will be
+     * The total period of time in microseconds for how frequently the Fesen control group's access to CPU resources will be
      * reallocated.
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code cpuacct} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code cpuacct} subsystem
      * @return the CFS quota period in microseconds
      * @throws IOException if an I/O exception occurs reading {@code cpu.cfs_period_us} for the control group
      */
@@ -337,11 +337,11 @@ public class OsProbe {
     }
 
     /**
-     * Returns the line from {@code cpu.cfs_period_us} for the control group to which the Elasticsearch process belongs for the {@code cpu}
+     * Returns the line from {@code cpu.cfs_period_us} for the control group to which the Fesen process belongs for the {@code cpu}
      * subsystem. This line represents the period of time in microseconds for how frequently the control group's access to CPU resources
      * will be reallocated.
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code cpu} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code cpu} subsystem
      * @return the line from {@code cpu.cfs_period_us}
      * @throws IOException if an I/O exception occurs reading {@code cpu.cfs_period_us} for the control group
      */
@@ -351,10 +351,10 @@ public class OsProbe {
     }
 
     /**
-     * The total time in microseconds that all tasks in the Elasticsearch control group can run during one period as specified by {@code
+     * The total time in microseconds that all tasks in the Fesen control group can run during one period as specified by {@code
      * cpu.cfs_period_us}.
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code cpuacct} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code cpuacct} subsystem
      * @return the CFS quota in microseconds
      * @throws IOException if an I/O exception occurs reading {@code cpu.cfs_quota_us} for the control group
      */
@@ -363,11 +363,11 @@ public class OsProbe {
     }
 
     /**
-     * Returns the line from {@code cpu.cfs_quota_us} for the control group to which the Elasticsearch process belongs for the {@code cpu}
+     * Returns the line from {@code cpu.cfs_quota_us} for the control group to which the Fesen process belongs for the {@code cpu}
      * subsystem. This line represents the total time in microseconds that all tasks in the control group can run during one period as
      * specified by {@code cpu.cfs_period_us}.
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code cpu} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code cpu} subsystem
      * @return the line from {@code cpu.cfs_quota_us}
      * @throws IOException if an I/O exception occurs reading {@code cpu.cfs_quota_us} for the control group
      */
@@ -377,9 +377,9 @@ public class OsProbe {
     }
 
     /**
-     * The CPU time statistics for all tasks in the Elasticsearch control group.
+     * The CPU time statistics for all tasks in the Fesen control group.
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code cpuacct} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code cpuacct} subsystem
      * @return the CPU time statistics
      * @throws IOException if an I/O exception occurs reading {@code cpu.stat} for the control group
      */
@@ -409,7 +409,7 @@ public class OsProbe {
     }
 
     /**
-     * Returns the lines from {@code cpu.stat} for the control group to which the Elasticsearch process belongs for the {@code cpu}
+     * Returns the lines from {@code cpu.stat} for the control group to which the Fesen process belongs for the {@code cpu}
      * subsystem. These lines represent the CPU time statistics and have the form
      * <blockquote><pre>
      * nr_periods \d+
@@ -420,7 +420,7 @@ public class OsProbe {
      * nr_throttled} is the number of times tasks in the given control group have been throttled, and {@code throttled_time} is the total
      * time in nanoseconds for which tasks in the given control group have been throttled.
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code cpu} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code cpu} subsystem
      * @return the lines from {@code cpu.stat}
      * @throws IOException if an I/O exception occurs reading {@code cpu.stat} for the control group
      */
@@ -436,10 +436,10 @@ public class OsProbe {
      * If there is no limit then some Linux versions return the maximum value that can be stored in an
      * unsigned 64 bit number, and this will overflow a long, hence the result type is <code>String</code>.
      * (The alternative would have been <code>BigInteger</code> but then it would not be possible to index
-     * the OS stats document into Elasticsearch without losing information, as <code>BigInteger</code> is
-     * not a supported Elasticsearch type.)
+     * the OS stats document into Fesen without losing information, as <code>BigInteger</code> is
+     * not a supported Fesen type.)
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code memory} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code memory} subsystem
      * @return the maximum amount of user memory (including file cache)
      * @throws IOException if an I/O exception occurs reading {@code memory.limit_in_bytes} for the control group
      */
@@ -448,10 +448,10 @@ public class OsProbe {
     }
 
     /**
-     * Returns the line from {@code memory.limit_in_bytes} for the control group to which the Elasticsearch process belongs for the
+     * Returns the line from {@code memory.limit_in_bytes} for the control group to which the Fesen process belongs for the
      * {@code memory} subsystem. This line represents the maximum amount of user memory (including file cache).
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code memory} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code memory} subsystem
      * @return the line from {@code memory.limit_in_bytes}
      * @throws IOException if an I/O exception occurs reading {@code memory.limit_in_bytes} for the control group
      */
@@ -465,10 +465,10 @@ public class OsProbe {
      * If there is no limit then some Linux versions return the maximum value that can be stored in an
      * unsigned 64 bit number, and this will overflow a long, hence the result type is <code>String</code>.
      * (The alternative would have been <code>BigInteger</code> but then it would not be possible to index
-     * the OS stats document into Elasticsearch without losing information, as <code>BigInteger</code> is
-     * not a supported Elasticsearch type.)
+     * the OS stats document into Fesen without losing information, as <code>BigInteger</code> is
+     * not a supported Fesen type.)
      *
-     * @param controlGroup the control group for the Elasticsearch process for the {@code memory} subsystem
+     * @param controlGroup the control group for the Fesen process for the {@code memory} subsystem
      * @return the total current memory usage by processes in the cgroup (in bytes)
      * @throws IOException if an I/O exception occurs reading {@code memory.limit_in_bytes} for the control group
      */
@@ -477,10 +477,10 @@ public class OsProbe {
     }
 
     /**
-     * Returns the line from {@code memory.usage_in_bytes} for the control group to which the Elasticsearch process belongs for the
+     * Returns the line from {@code memory.usage_in_bytes} for the control group to which the Fesen process belongs for the
      * {@code memory} subsystem. This line represents the total current memory usage by processes in the cgroup (in bytes).
      *
-     * @param controlGroup the control group to which the Elasticsearch process belongs for the {@code memory} subsystem
+     * @param controlGroup the control group to which the Fesen process belongs for the {@code memory} subsystem
      * @return the line from {@code memory.usage_in_bytes}
      * @throws IOException if an I/O exception occurs reading {@code memory.usage_in_bytes} for the control group
      */

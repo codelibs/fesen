@@ -292,7 +292,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
     private static void handleInstallXPack(final Build.Flavor flavor) throws UserException {
         switch (flavor) {
             case DEFAULT:
-                throw new UserException(ExitCodes.CONFIG, "this distribution of Elasticsearch contains X-Pack by default");
+                throw new UserException(ExitCodes.CONFIG, "this distribution of Fesen contains X-Pack by default");
             case OSS:
                 throw new UserException(
                     ExitCodes.CONFIG,
@@ -355,7 +355,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         if (isSnapshot && stagingHash == null) {
             throw new UserException(
                 ExitCodes.CONFIG,
-                "attempted to install release build of official plugin on snapshot build of Elasticsearch"
+                "attempted to install release build of official plugin on snapshot build of Fesen"
             );
         }
         if (stagingHash != null) {
@@ -417,7 +417,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         URL url = new URL(urlString);
         assert "https".equals(url.getProtocol()) : "Only http urls can be checked";
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.addRequestProperty("User-Agent", "elasticsearch-plugin-installer");
+        urlConnection.addRequestProperty("User-Agent", "fesen-plugin-installer");
         urlConnection.setRequestMethod("HEAD");
         urlConnection.connect();
         return urlConnection.getResponseCode() == 200;

@@ -21,7 +21,7 @@ package org.codelibs.fesen.transport;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.transport.TransportAddress;
 
@@ -31,7 +31,7 @@ import org.codelibs.fesen.common.transport.TransportAddress;
  *
  *
  */
-public class RemoteTransportException extends ActionTransportException implements ElasticsearchWrapperException {
+public class RemoteTransportException extends ActionTransportException implements FesenWrapperException {
 
     public RemoteTransportException(String msg, Throwable cause) {
         super(msg, null, null, cause);

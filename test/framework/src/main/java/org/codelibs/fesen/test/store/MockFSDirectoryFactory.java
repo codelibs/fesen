@@ -114,7 +114,7 @@ public class MockFSDirectoryFactory implements IndexStorePlugin.DirectoryFactory
         random.nextInt(shardId.getId() + 1); // some randomness per shard
         MockDirectoryWrapper.Throttling throttle = MockDirectoryWrapper.Throttling.NEVER;
         boolean crashIndex = CRASH_INDEX_SETTING.get(indexSettings);
-        final ElasticsearchMockDirectoryWrapper w = new ElasticsearchMockDirectoryWrapper(random, dir, crashIndex);
+        final FesenMockDirectoryWrapper w = new FesenMockDirectoryWrapper(random, dir, crashIndex);
         w.setRandomIOExceptionRate(randomIOExceptionRate);
         w.setRandomIOExceptionRateOnOpen(randomIOExceptionRateOnOpen);
         w.setThrottling(throttle);
@@ -139,11 +139,11 @@ public class MockFSDirectoryFactory implements IndexStorePlugin.DirectoryFactory
         return new FsDirectoryFactory().newDirectory(newIndexSettings, path);
     }
 
-    public static final class ElasticsearchMockDirectoryWrapper extends MockDirectoryWrapper {
+    public static final class FesenMockDirectoryWrapper extends MockDirectoryWrapper {
 
         private final boolean crash;
 
-        public ElasticsearchMockDirectoryWrapper(Random random, Directory delegate, boolean crash) {
+        public FesenMockDirectoryWrapper(Random random, Directory delegate, boolean crash) {
             super(random, delegate);
             this.crash = crash;
         }

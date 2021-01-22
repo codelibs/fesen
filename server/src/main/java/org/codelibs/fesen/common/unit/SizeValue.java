@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.unit;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -167,11 +167,11 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return Strings.format1Decimals(value, suffix);
     }
 
-    public static SizeValue parseSizeValue(String sValue) throws ElasticsearchParseException {
+    public static SizeValue parseSizeValue(String sValue) throws FesenParseException {
         return parseSizeValue(sValue, null);
     }
 
-    public static SizeValue parseSizeValue(String sValue, SizeValue defaultValue) throws ElasticsearchParseException {
+    public static SizeValue parseSizeValue(String sValue, SizeValue defaultValue) throws FesenParseException {
         if (sValue == null) {
             return defaultValue;
         }
@@ -191,7 +191,7 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
                 singles = Long.parseLong(sValue);
             }
         } catch (NumberFormatException e) {
-            throw new ElasticsearchParseException("failed to parse [{}]", e, sValue);
+            throw new FesenParseException("failed to parse [{}]", e, sValue);
         }
         return new SizeValue(singles, SizeUnit.SINGLE);
     }

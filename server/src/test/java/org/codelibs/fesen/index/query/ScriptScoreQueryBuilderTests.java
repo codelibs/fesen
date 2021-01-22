@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.query;
 
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.lucene.search.function.ScriptScoreQuery;
 import org.codelibs.fesen.index.query.MatchNoneQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
@@ -137,7 +137,7 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         ScriptScoreQueryBuilder queryBuilder = doCreateTestQueryBuilder();
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[script score] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

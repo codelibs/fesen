@@ -22,7 +22,7 @@ package org.codelibs.fesen.join.query;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.join.ScoreMode;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.compress.CompressedXContent;
@@ -271,7 +271,7 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
 
         HasParentQueryBuilder queryBuilder = new HasParentQueryBuilder(
                 CHILD_DOC, new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

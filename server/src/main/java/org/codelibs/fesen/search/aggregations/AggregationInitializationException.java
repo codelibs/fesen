@@ -20,13 +20,13 @@ package org.codelibs.fesen.search.aggregations;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * Thrown when failing to execute an aggregation
  */
-public class AggregationInitializationException extends ElasticsearchException {
+public class AggregationInitializationException extends FesenException {
 
     public AggregationInitializationException(String msg) {
         super(msg);

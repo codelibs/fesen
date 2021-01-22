@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
@@ -80,7 +80,7 @@ public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkBySc
             shardId = randomInt();
             nodeId = usually() ? randomAlphaOfLength(5) : null;
         }
-        ElasticsearchException exception = randomFrom(new ResourceNotFoundException("bar"), new ElasticsearchException("foo"),
+        FesenException exception = randomFrom(new ResourceNotFoundException("bar"), new FesenException("foo"),
             new NoNodeAvailableException("baz"));
         return singletonList(new ScrollableHitSource.SearchFailure(exception, index, shardId, nodeId));
     }

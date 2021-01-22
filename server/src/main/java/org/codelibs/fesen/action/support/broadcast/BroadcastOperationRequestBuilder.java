@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.support.broadcast;
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public abstract class BroadcastOperationRequestBuilder<
             Request extends BroadcastRequest<Request>,
@@ -30,7 +30,7 @@ public abstract class BroadcastOperationRequestBuilder<
             RequestBuilder extends BroadcastOperationRequestBuilder<Request, Response, RequestBuilder>
         > extends ActionRequestBuilder<Request, Response> {
 
-    protected BroadcastOperationRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected BroadcastOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

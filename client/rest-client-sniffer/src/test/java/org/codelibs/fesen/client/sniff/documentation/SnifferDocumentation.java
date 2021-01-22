@@ -22,7 +22,7 @@ package org.codelibs.fesen.client.sniff.documentation;
 import org.apache.http.HttpHost;
 import org.codelibs.fesen.client.Node;
 import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.sniff.ElasticsearchNodesSniffer;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
 import org.codelibs.fesen.client.sniff.NodesSniffer;
 import org.codelibs.fesen.client.sniff.SniffOnFailureListener;
 import org.codelibs.fesen.client.sniff.Sniffer;
@@ -94,10 +94,10 @@ public class SnifferDocumentation {
             RestClient restClient = RestClient.builder(
                     new HttpHost("localhost", 9200, "http"))
                     .build();
-            NodesSniffer nodesSniffer = new ElasticsearchNodesSniffer(
+            NodesSniffer nodesSniffer = new FesenNodesSniffer(
                     restClient,
-                    ElasticsearchNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT,
-                    ElasticsearchNodesSniffer.Scheme.HTTPS);
+                    FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT,
+                    FesenNodesSniffer.Scheme.HTTPS);
             Sniffer sniffer = Sniffer.builder(restClient)
                     .setNodesSniffer(nodesSniffer).build();
             //end::sniffer-https
@@ -107,10 +107,10 @@ public class SnifferDocumentation {
             RestClient restClient = RestClient.builder(
                 new HttpHost("localhost", 9200, "http"))
                 .build();
-            NodesSniffer nodesSniffer = new ElasticsearchNodesSniffer(
+            NodesSniffer nodesSniffer = new FesenNodesSniffer(
                 restClient,
                 TimeUnit.SECONDS.toMillis(5),
-                ElasticsearchNodesSniffer.Scheme.HTTP);
+                FesenNodesSniffer.Scheme.HTTP);
             Sniffer sniffer = Sniffer.builder(restClient)
                 .setNodesSniffer(nodesSniffer).build();
             //end::sniff-request-timeout

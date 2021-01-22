@@ -272,7 +272,7 @@ public class ZenDiscoveryUnitTests extends ESTestCase {
             terminate(threadPool);
         }
 
-        assertWarnings("[discovery.zen.minimum_master_nodes] setting was deprecated in Elasticsearch and will be removed in a future " +
+        assertWarnings("[discovery.zen.minimum_master_nodes] setting was deprecated in Fesen and will be removed in a future " +
             "release! See the breaking changes documentation for the next major version.");
     }
 
@@ -325,7 +325,7 @@ public class ZenDiscoveryUnitTests extends ESTestCase {
             terminate(threadPool);
         }
 
-        assertWarnings("[discovery.zen.minimum_master_nodes] setting was deprecated in Elasticsearch and will be removed in a future " +
+        assertWarnings("[discovery.zen.minimum_master_nodes] setting was deprecated in Fesen and will be removed in a future " +
             "release! See the breaking changes documentation for the next major version.");
     }
 

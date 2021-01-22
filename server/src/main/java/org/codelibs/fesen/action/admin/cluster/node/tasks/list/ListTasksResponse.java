@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.list;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.TaskOperationFailure;
 import org.codelibs.fesen.action.support.tasks.BaseTasksResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -60,7 +60,7 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
     private List<TaskGroup> groups;
 
     public ListTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures,
-            List<? extends ElasticsearchException> nodeFailures) {
+            List<? extends FesenException> nodeFailures) {
         super(taskFailures, nodeFailures);
         this.tasks = tasks == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(tasks));
     }
@@ -80,7 +80,7 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
                                                                        TriFunction<
                                                                            List<TaskInfo>,
                                                                            List<TaskOperationFailure>,
-                                                                           List<ElasticsearchException>,
+                                                                           List<FesenException>,
                                                                            T> ctor) {
         ConstructingObjectParser<T, Void> parser = new ConstructingObjectParser<>(name, true,
             constructingObjects -> {
@@ -90,13 +90,13 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
                 @SuppressWarnings("unchecked")
                 List<TaskOperationFailure> tasksFailures = (List<TaskOperationFailure>) constructingObjects[i++];
                 @SuppressWarnings("unchecked")
-                List<ElasticsearchException> nodeFailures = (List<ElasticsearchException>) constructingObjects[i];
+                List<FesenException> nodeFailures = (List<FesenException>) constructingObjects[i];
                 return ctor.apply(tasks,tasksFailures, nodeFailures);
             });
         parser.declareObjectArray(optionalConstructorArg(), TaskInfo.PARSER, new ParseField(TASKS));
         parser.declareObjectArray(optionalConstructorArg(), (p, c) -> TaskOperationFailure.fromXContent(p), new ParseField(TASK_FAILURES));
         parser.declareObjectArray(optionalConstructorArg(),
-            (p, c) -> ElasticsearchException.fromXContent(p), new ParseField(NODE_FAILURES));
+            (p, c) -> FesenException.fromXContent(p), new ParseField(NODE_FAILURES));
         return parser;
     }
 

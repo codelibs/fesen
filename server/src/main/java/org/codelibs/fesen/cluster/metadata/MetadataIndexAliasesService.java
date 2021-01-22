@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesClusterStateUpdateRequest;
 import org.codelibs.fesen.cluster.AckedClusterStateUpdateTask;
@@ -145,7 +145,7 @@ public class MetadataIndexAliasesService {
                                     indexService = indicesService.createIndex(index, emptyList(), false);
                                     indicesToClose.add(index.getIndex());
                                 } catch (IOException e) {
-                                    throw new ElasticsearchException("Failed to create temporary index for parsing the alias", e);
+                                    throw new FesenException("Failed to create temporary index for parsing the alias", e);
                                 }
                                 indexService.mapperService().merge(index, MapperService.MergeReason.MAPPING_RECOVERY);
                             }

@@ -26,7 +26,7 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexableFieldType;
 import org.apache.lucene.index.StoredFieldVisitor;
 import org.apache.lucene.index.Term;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.collect.Tuple;
@@ -228,7 +228,7 @@ public final class ShardGetService extends AbstractIndexShardComponent {
             try {
                 docIdAndVersion.reader.document(docIdAndVersion.docId, fieldVisitor);
             } catch (IOException e) {
-                throw new ElasticsearchException("Failed to get type [" + type + "] and id [" + id + "]", e);
+                throw new FesenException("Failed to get type [" + type + "] and id [" + id + "]", e);
             }
             source = fieldVisitor.source();
 
@@ -240,7 +240,7 @@ public final class ShardGetService extends AbstractIndexShardComponent {
                     try {
                         source = indexShard.mapperService().documentMapper().sourceMapper().applyFilters(source, null);
                     } catch (IOException e) {
-                        throw new ElasticsearchException("Failed to reapply filters for [" + id + "] after reading from translog", e);
+                        throw new FesenException("Failed to reapply filters for [" + id + "] after reading from translog", e);
                     }
                 } else {
                     // Slow path: recreate stored fields from original source
@@ -309,7 +309,7 @@ public final class ShardGetService extends AbstractIndexShardComponent {
                 try {
                     source = BytesReference.bytes(XContentFactory.contentBuilder(sourceContentType).map(sourceAsMap));
                 } catch (IOException e) {
-                    throw new ElasticsearchException("Failed to get id [" + id + "] with includes/excludes set", e);
+                    throw new FesenException("Failed to get id [" + id + "] with includes/excludes set", e);
                 }
             }
         }
@@ -323,7 +323,7 @@ public final class ShardGetService extends AbstractIndexShardComponent {
             try {
                 source = docMapper.sourceMapper().applyFilters(source, null);
             } catch (IOException e) {
-                throw new ElasticsearchException("Failed to reapply filters for [" + id + "] after reading from translog", e);
+                throw new FesenException("Failed to reapply filters for [" + id + "] after reading from translog", e);
             }
         }
 
@@ -337,7 +337,7 @@ public final class ShardGetService extends AbstractIndexShardComponent {
             try {
                 source = BytesReference.bytes(XContentFactory.contentBuilder(sourceContentType).map(sourceAsMap));
             } catch (IOException e) {
-                throw new ElasticsearchException("Failed to get type [" + type + "] and id [" + id + "] with includes/excludes set", e);
+                throw new FesenException("Failed to get type [" + type + "] and id [" + id + "] with includes/excludes set", e);
             }
         }
 

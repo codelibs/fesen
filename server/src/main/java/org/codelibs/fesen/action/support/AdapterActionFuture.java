@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.unit.TimeValue;
@@ -35,7 +35,7 @@ public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements
     public T actionGet() {
         try {
             return FutureUtils.get(this);
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             throw unwrapEsException(e);
         }
     }
@@ -59,7 +59,7 @@ public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements
     public T actionGet(long timeout, TimeUnit unit) {
         try {
             return FutureUtils.get(this, timeout, unit);
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             throw unwrapEsException(e);
         }
     }
@@ -76,7 +76,7 @@ public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements
 
     protected abstract T convert(L listenerResponse);
 
-    private static RuntimeException unwrapEsException(ElasticsearchException esEx) {
+    private static RuntimeException unwrapEsException(FesenException esEx) {
         Throwable root = esEx.unwrapCause();
         if (root instanceof RuntimeException) {
             return (RuntimeException) root;

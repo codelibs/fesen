@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.reload;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
 import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
@@ -68,7 +68,7 @@ public class NodesReloadSecureSettingsResponse extends BaseNodesResponse<NodesRe
             final Exception e = node.reloadException();
             if (e != null) {
                 builder.startObject("reload_exception");
-                ElasticsearchException.generateThrowableXContent(builder, params, e);
+                FesenException.generateThrowableXContent(builder, params, e);
                 builder.endObject();
             }
             builder.endObject();

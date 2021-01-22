@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.indices.segments;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class IndicesSegmentsRequestBuilder
         extends BroadcastOperationRequestBuilder<IndicesSegmentsRequest, IndicesSegmentResponse, IndicesSegmentsRequestBuilder> {
 
-    public IndicesSegmentsRequestBuilder(ElasticsearchClient client, IndicesSegmentsAction action) {
+    public IndicesSegmentsRequestBuilder(FesenClient client, IndicesSegmentsAction action) {
         super(client, action, new IndicesSegmentsRequest());
     }
 

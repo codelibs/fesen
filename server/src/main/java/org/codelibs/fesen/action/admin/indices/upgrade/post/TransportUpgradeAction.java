@@ -90,7 +90,7 @@ public class TransportUpgradeAction extends TransportBroadcastByNodeAction<Upgra
                 // We already have versions for this index - let's see if we need to update them based on the current shard
                 Version version = versionTuple.v1();
                 org.apache.lucene.util.Version luceneVersion = versionTuple.v2();
-                // For the metadata we are interested in the _latest_ Elasticsearch version that was processing the metadata
+                // For the metadata we are interested in the _latest_ Fesen version that was processing the metadata
                 // Since we rewrite the mapping during upgrade the metadata is always rewritten by the latest version
                 if (result.upgradeVersion().after(versionTuple.v1())) {
                     version = result.upgradeVersion();
@@ -124,7 +124,7 @@ public class TransportUpgradeAction extends TransportBroadcastByNodeAction<Upgra
     protected ShardUpgradeResult shardOperation(UpgradeRequest request, ShardRouting shardRouting) throws IOException {
         IndexShard indexShard = indicesService.indexServiceSafe(shardRouting.shardId().getIndex()).getShard(shardRouting.shardId().id());
         org.apache.lucene.util.Version oldestLuceneSegment = indexShard.upgrade(request);
-        // We are using the current version of Elasticsearch as upgrade version since we update mapping to match the current version
+        // We are using the current version of Fesen as upgrade version since we update mapping to match the current version
         return new ShardUpgradeResult(shardRouting.shardId(), indexShard.routingEntry().primary(), Version.CURRENT, oldestLuceneSegment);
     }
 

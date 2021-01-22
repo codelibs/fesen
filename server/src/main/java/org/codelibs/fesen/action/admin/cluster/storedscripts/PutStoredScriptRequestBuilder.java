@@ -21,14 +21,14 @@ package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
 public class PutStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<PutStoredScriptRequest,
     AcknowledgedResponse, PutStoredScriptRequestBuilder> {
 
-    public PutStoredScriptRequestBuilder(ElasticsearchClient client, PutStoredScriptAction action) {
+    public PutStoredScriptRequestBuilder(FesenClient client, PutStoredScriptAction action) {
         super(client, action, new PutStoredScriptRequest());
     }
 

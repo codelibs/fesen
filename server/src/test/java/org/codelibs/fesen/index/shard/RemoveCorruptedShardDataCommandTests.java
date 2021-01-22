@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.shard;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.lucene.store.BaseDirectoryWrapper;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cli.MockTerminal;
 import org.codelibs.fesen.cli.Terminal;
@@ -170,7 +170,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
             final OptionSet options = parser.parse("-d", indexPath.toString());
             command.execute(t, options, environment);
             fail("expected the command to fail not being able to find a corrupt file marker");
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             assertThat(e.getMessage(), startsWith("Shard does not seem to be corrupted at"));
             assertThat(t.getOutput(), containsString("Lucene index is clean at"));
         }
@@ -204,7 +204,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
         try {
             command.execute(t, options, environment);
             fail();
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             if (corruptSegments) {
                 assertThat(e.getMessage(), either(is("Index is unrecoverable")).or(startsWith("unable to list commits")));
             } else {
@@ -269,7 +269,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
         try {
             command.execute(t, options, environment);
             fail();
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             assertThat(e.getMessage(), containsString("aborted by user"));
             assertThat(t.getOutput(), containsString("Continue and remove corrupted data from the shard ?"));
         }
@@ -325,7 +325,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
         try {
             command.execute(t, options, environment);
             fail();
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             assertThat(e.getMessage(), containsString("aborted by user"));
             assertThat(t.getOutput(), containsString("Continue and remove corrupted data from the shard ?"));
         }
@@ -388,7 +388,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
 
         final OptionSet options = parser.parse("-d", translogPath.toString());
         t.setVerbosity(Terminal.Verbosity.VERBOSE);
-        assertThat(expectThrows(ElasticsearchException.class, () -> command.execute(t, options, environment)).getMessage(),
+        assertThat(expectThrows(FesenException.class, () -> command.execute(t, options, environment)).getMessage(),
             allOf(containsString("Shard does not seem to be corrupted"), containsString("--" + TRUNCATE_CLEAN_TRANSLOG_FLAG)));
         assertThat(t.getOutput(), containsString("Lucene index is clean"));
         assertThat(t.getOutput(), containsString("Translog is clean"));
@@ -436,7 +436,7 @@ public class RemoveCorruptedShardDataCommandTests extends IndexShardTestCase {
         try {
             command.execute(t, options, environment);
             fail();
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             assertThat(e.getMessage(), containsString("aborted by user"));
             assertThat(t.getOutput(), containsString("Continue and remove corrupted data from the shard ?"));
             assertThat(t.getOutput(), containsString("Lucene index is marked corrupted, but no corruption detected"));

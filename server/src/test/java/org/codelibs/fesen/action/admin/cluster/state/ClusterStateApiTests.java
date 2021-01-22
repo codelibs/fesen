@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.state;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;

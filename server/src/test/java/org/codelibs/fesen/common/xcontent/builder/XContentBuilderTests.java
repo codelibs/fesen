@@ -27,7 +27,7 @@ import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentElasticsearchExtension;
+import org.codelibs.fesen.common.xcontent.XContentFesenExtension;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentGenerator;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -179,9 +179,9 @@ public class XContentBuilderTests extends ESTestCase {
 
     public void testDateTypesConversion() throws Exception {
         Date date = new Date();
-        String expectedDate = XContentElasticsearchExtension.DEFAULT_DATE_PRINTER.print(date.getTime());
+        String expectedDate = XContentFesenExtension.DEFAULT_DATE_PRINTER.print(date.getTime());
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ROOT);
-        String expectedCalendar = XContentElasticsearchExtension.DEFAULT_DATE_PRINTER.print(calendar.getTimeInMillis());
+        String expectedCalendar = XContentFesenExtension.DEFAULT_DATE_PRINTER.print(calendar.getTimeInMillis());
         XContentBuilder builder = XContentFactory.contentBuilder(XContentType.JSON);
         builder.startObject().timeField("date", date).endObject();
         assertThat(Strings.toString(builder), equalTo("{\"date\":\"" + expectedDate + "\"}"));

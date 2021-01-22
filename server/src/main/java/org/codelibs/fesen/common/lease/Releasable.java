@@ -21,10 +21,10 @@ package org.codelibs.fesen.common.lease;
 
 import java.io.Closeable;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 
 /**
- * Specialization of {@link AutoCloseable} that may only throw an {@link ElasticsearchException}.
+ * Specialization of {@link AutoCloseable} that may only throw an {@link FesenException}.
  */
 public interface Releasable extends Closeable {
 

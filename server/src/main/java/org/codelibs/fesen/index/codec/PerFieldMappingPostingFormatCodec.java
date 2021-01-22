@@ -31,7 +31,7 @@ import org.apache.lucene.codecs.lucene87.Lucene87Codec;
 
 /**
  * {@link PerFieldMappingPostingFormatCodec This postings format} is the default
- * {@link PostingsFormat} for Elasticsearch. It utilizes the
+ * {@link PostingsFormat} for Fesen. It utilizes the
  * {@link MapperService} to lookup a {@link PostingsFormat} per field. This
  * allows users to change the low level postings format for individual fields
  * per index in real time via the mapping API. If no specific postings format is

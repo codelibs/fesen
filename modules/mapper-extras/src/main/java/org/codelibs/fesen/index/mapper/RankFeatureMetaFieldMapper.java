@@ -32,7 +32,7 @@ import java.util.Collections;
 
 /**
  * This meta field only exists because rank feature fields index everything into a
- * common _feature field and Elasticsearch has a custom codec that complains
+ * common _feature field and Fesen has a custom codec that complains
  * when fields exist in the index and not in mappings.
  */
 public class RankFeatureMetaFieldMapper extends MetadataFieldMapper {

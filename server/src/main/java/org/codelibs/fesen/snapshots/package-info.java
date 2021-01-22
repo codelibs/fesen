@@ -18,7 +18,7 @@
  */
 
 /**
- * <p>This package exposes the Elasticsearch Snapshot functionality.</p>
+ * <p>This package exposes the Fesen Snapshot functionality.</p>
  *
  * <h2>Preliminaries</h2>
  *

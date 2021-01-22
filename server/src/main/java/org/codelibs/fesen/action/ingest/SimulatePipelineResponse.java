@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.ingest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -89,7 +89,7 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
                                 );
                                 break;
                             case "error":
-                                result = new SimulateDocumentBaseResult(ElasticsearchException.fromXContent(parser));
+                                result = new SimulateDocumentBaseResult(FesenException.fromXContent(parser));
                                 break;
                             default:
                                 parser.skipChildren();

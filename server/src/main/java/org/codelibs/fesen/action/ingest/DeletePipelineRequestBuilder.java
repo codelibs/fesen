@@ -21,15 +21,15 @@ package org.codelibs.fesen.action.ingest;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class DeletePipelineRequestBuilder extends ActionRequestBuilder<DeletePipelineRequest, AcknowledgedResponse> {
 
-    public DeletePipelineRequestBuilder(ElasticsearchClient client, DeletePipelineAction action) {
+    public DeletePipelineRequestBuilder(FesenClient client, DeletePipelineAction action) {
         super(client, action, new DeletePipelineRequest());
     }
 
-    public DeletePipelineRequestBuilder(ElasticsearchClient client, DeletePipelineAction action, String id) {
+    public DeletePipelineRequestBuilder(FesenClient client, DeletePipelineAction action, String id) {
         super(client, action, new DeletePipelineRequest(id));
     }
 

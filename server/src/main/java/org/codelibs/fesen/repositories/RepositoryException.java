@@ -21,14 +21,14 @@ package org.codelibs.fesen.repositories;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 
 /**
  * Generic repository exception
  */
-public class RepositoryException extends ElasticsearchException {
+public class RepositoryException extends FesenException {
     private final String repository;
 
     public RepositoryException(String repository, String msg) {

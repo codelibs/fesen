@@ -29,7 +29,7 @@ import org.apache.lucene.codecs.DocValuesFormat;
 import org.apache.lucene.codecs.PostingsFormat;
 import org.apache.lucene.util.SPIClassIterator;
 import org.codelibs.fesen.Build;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.cluster.node.info.PluginsAndModules;
 import org.codelibs.fesen.bootstrap.JarHell;
@@ -344,7 +344,7 @@ public class PluginsService implements ReportingService<PluginsAndModules> {
     }
 
     /**
-     * Verify the given plugin is compatible with the current Elasticsearch installation.
+     * Verify the given plugin is compatible with the current Fesen installation.
      */
     static void verifyCompatibility(PluginInfo info) {
         if (info.getElasticsearchVersion().equals(Version.CURRENT) == false) {
@@ -688,7 +688,7 @@ public class PluginsService implements ReportingService<PluginsAndModules> {
         try {
             return Class.forName(className, false, loader).asSubclass(Plugin.class);
         } catch (ClassNotFoundException e) {
-            throw new ElasticsearchException("Could not find plugin class [" + className + "]", e);
+            throw new FesenException("Could not find plugin class [" + className + "]", e);
         }
     }
 

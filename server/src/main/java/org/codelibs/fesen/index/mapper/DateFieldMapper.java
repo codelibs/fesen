@@ -28,7 +28,7 @@ import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexOrDocValuesQuery;
 import org.apache.lucene.search.IndexSortSortedNumericDocValuesRangeQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.geo.ShapeRelation;
@@ -611,7 +611,7 @@ public final class DateFieldMapper extends ParametrizedFieldMapper {
         } else {
             try {
                 timestamp = fieldType().parse(dateAsString);
-            } catch (IllegalArgumentException | ElasticsearchParseException | DateTimeException | ArithmeticException e) {
+            } catch (IllegalArgumentException | FesenParseException | DateTimeException | ArithmeticException e) {
                 if (ignoreMalformed) {
                     context.addIgnoredField(mappedFieldType.name());
                     return;

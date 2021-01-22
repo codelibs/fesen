@@ -21,10 +21,10 @@ package org.codelibs.fesen.common.util.concurrent;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class UncategorizedExecutionException extends ElasticsearchException {
+public class UncategorizedExecutionException extends FesenException {
 
     public UncategorizedExecutionException(String msg, Throwable cause) {
         super(msg, cause);

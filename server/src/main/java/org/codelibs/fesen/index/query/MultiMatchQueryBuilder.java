@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
@@ -172,7 +172,7 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
                 }
             }
             if (type == null) {
-                throw new ElasticsearchParseException("failed to parse [{}] query type [{}]. unknown type.", NAME, value);
+                throw new FesenParseException("failed to parse [{}] query type [{}]. unknown type.", NAME, value);
             }
             return type;
         }

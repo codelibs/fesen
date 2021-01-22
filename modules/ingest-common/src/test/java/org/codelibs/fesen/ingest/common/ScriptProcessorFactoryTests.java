@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.ingest.common.ScriptProcessor;
@@ -134,7 +134,7 @@ public class ScriptProcessorFactoryTests extends ESTestCase {
         Map<String, Object> configMap = new HashMap<>();
         configMap.put(randomType, "my_script");
 
-        ElasticsearchException exception = expectThrows(ElasticsearchException.class,
+        FesenException exception = expectThrows(FesenException.class,
             () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
 
         assertThat(exception.getMessage(), is("compile-time exception"));

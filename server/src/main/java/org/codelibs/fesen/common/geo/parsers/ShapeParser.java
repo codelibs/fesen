@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.common.geo.parsers;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.builders.ShapeBuilder;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
@@ -66,7 +66,7 @@ public interface ShapeParser {
         } else if (parser.currentToken() == XContentParser.Token.VALUE_STRING) {
             return GeoWKTParser.parse(parser, shapeMapper);
         }
-        throw new ElasticsearchParseException("shape must be an object consisting of type and coordinates");
+        throw new FesenParseException("shape must be an object consisting of type and coordinates");
     }
 
     /**

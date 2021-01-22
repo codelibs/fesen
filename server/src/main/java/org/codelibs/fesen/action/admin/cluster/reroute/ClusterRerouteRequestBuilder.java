@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.reroute;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.routing.allocation.command.AllocationCommand;
 
 /**
@@ -28,7 +28,7 @@ import org.codelibs.fesen.cluster.routing.allocation.command.AllocationCommand;
  */
 public class ClusterRerouteRequestBuilder
         extends AcknowledgedRequestBuilder<ClusterRerouteRequest, ClusterRerouteResponse, ClusterRerouteRequestBuilder> {
-    public ClusterRerouteRequestBuilder(ElasticsearchClient client, ClusterRerouteAction action) {
+    public ClusterRerouteRequestBuilder(FesenClient client, ClusterRerouteAction action) {
         super(client, action, new ClusterRerouteRequest());
     }
 

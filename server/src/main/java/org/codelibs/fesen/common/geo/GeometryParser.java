@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.geo;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -87,7 +87,7 @@ public final class GeometryParser {
             // We don't know the format of the original geometry - so going with default
             return new GeoJsonGeometryFormat(geoJsonParser);
         } else {
-            throw new ElasticsearchParseException("shape must be an object consisting of type and coordinates");
+            throw new FesenParseException("shape must be an object consisting of type and coordinates");
         }
     }
 
@@ -102,7 +102,7 @@ public final class GeometryParser {
      * <p>
      * Json structure: valid geojson definition
      */
-    public  Geometry parseGeometry(Object value) throws ElasticsearchParseException {
+    public  Geometry parseGeometry(Object value) throws FesenParseException {
         if (value instanceof List) {
             List<?> values = (List<?>) value;
             if (values.size() == 2 && values.get(0) instanceof Number) {
@@ -129,7 +129,7 @@ public final class GeometryParser {
             }
 
         } catch (IOException | ParseException ex) {
-            throw new ElasticsearchParseException("error parsing geometry ", ex);
+            throw new FesenParseException("error parsing geometry ", ex);
         }
     }
 

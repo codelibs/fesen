@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
@@ -193,7 +193,7 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
         }
 
         if (requiredSize <= 0 || shardSize <= 0) {
-            throw new ElasticsearchException(
+            throw new FesenException(
                     "parameters [required_size] and [shard_size] must be > 0 in " + getType() + " aggregation [" + name + "].");
         }
 

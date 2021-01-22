@@ -31,7 +31,7 @@ import org.codelibs.fesen.client.Response;
 import org.codelibs.fesen.client.RestClient;
 import org.codelibs.fesen.client.RestClientBuilder;
 import org.codelibs.fesen.client.WarningsHandler;
-import org.codelibs.fesen.client.sniff.ElasticsearchNodesSniffer;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.PathUtils;
@@ -61,7 +61,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Runs a suite of yaml tests shared with all the official Elasticsearch
+ * Runs a suite of yaml tests shared with all the official Fesen
  * clients against against an elasticsearch cluster.
  *
  * The suite timeout is extended to account for projects with a large number of tests.
@@ -431,10 +431,10 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
      * {@link RestClientBuilder} for a client with that metadata.
      */
     protected final RestClientBuilder getClientBuilderWithSniffedHosts() throws IOException {
-        ElasticsearchNodesSniffer.Scheme scheme =
-            ElasticsearchNodesSniffer.Scheme.valueOf(getProtocol().toUpperCase(Locale.ROOT));
-        ElasticsearchNodesSniffer sniffer = new ElasticsearchNodesSniffer(
-                adminClient(), ElasticsearchNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT, scheme);
+        FesenNodesSniffer.Scheme scheme =
+            FesenNodesSniffer.Scheme.valueOf(getProtocol().toUpperCase(Locale.ROOT));
+        FesenNodesSniffer sniffer = new FesenNodesSniffer(
+                adminClient(), FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT, scheme);
         RestClientBuilder builder = RestClient.builder(sniffer.sniff().toArray(new Node[0]));
         configureClient(builder, restClientSettings());
         return builder;

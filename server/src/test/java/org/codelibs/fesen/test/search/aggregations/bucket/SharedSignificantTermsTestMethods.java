@@ -39,8 +39,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.codelibs.fesen.search.aggregations.AggregationBuilders.significantTerms;
 import static org.codelibs.fesen.search.aggregations.AggregationBuilders.terms;
 import static org.codelibs.fesen.test.ESIntegTestCase.client;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchResponse;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchResponse;
 
 public class SharedSignificantTermsTestMethods {
     public static final String INDEX_NAME = "testidx";

@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.action.support.master;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
@@ -435,7 +435,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
             assertTrue(listener.isDone());
             listener.get();
         } else {
-            ElasticsearchException t = new ElasticsearchException("test");
+            FesenException t = new FesenException("test");
             t.addHeader("header", "is here");
             transport.handleRemoteError(capturedRequest.requestId, t);
             assertTrue(listener.isDone());
@@ -444,8 +444,8 @@ public class TransportMasterNodeActionTests extends ESTestCase {
                 fail("Expected exception but returned proper result");
             } catch (ExecutionException ex) {
                 final Throwable cause = ex.getCause().getCause();
-                assertThat(cause, instanceOf(ElasticsearchException.class));
-                final ElasticsearchException es = (ElasticsearchException) cause;
+                assertThat(cause, instanceOf(FesenException.class));
+                final FesenException es = (FesenException) cause;
                 assertThat(es.getMessage(), equalTo(t.getMessage()));
                 assertThat(es.getHeader("header"), equalTo(t.getHeader("header")));
             }

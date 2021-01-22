@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.settings.put;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
@@ -34,7 +34,7 @@ import java.util.Map;
 public class UpdateSettingsRequestBuilder
         extends AcknowledgedRequestBuilder<UpdateSettingsRequest, AcknowledgedResponse, UpdateSettingsRequestBuilder> {
 
-    public UpdateSettingsRequestBuilder(ElasticsearchClient client, UpdateSettingsAction action, String... indices) {
+    public UpdateSettingsRequestBuilder(FesenClient client, UpdateSettingsAction action, String... indices) {
         super(client, action, new UpdateSettingsRequest(indices));
     }
 

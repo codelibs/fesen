@@ -21,7 +21,7 @@ package org.codelibs.fesen.env;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cli.MockTerminal;
 import org.codelibs.fesen.cluster.ClusterName;
@@ -82,7 +82,7 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
     public void testFailsOnEmptyPath() {
         final Path emptyPath = createTempDir();
         final MockTerminal mockTerminal = new MockTerminal();
-        final ElasticsearchException elasticsearchException = expectThrows(ElasticsearchException.class, () ->
+        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, new Path[]{emptyPath}, 0, noOptions, environment));
         assertThat(elasticsearchException.getMessage(), equalTo(OverrideNodeVersionCommand.NO_METADATA_MESSAGE));
         expectThrows(IllegalStateException.class, () -> mockTerminal.readText(""));
@@ -92,7 +92,7 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         final Version nodeVersion = Version.fromId(between(Version.CURRENT.minimumIndexCompatibilityVersion().id, Version.CURRENT.id));
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
-        final ElasticsearchException elasticsearchException = expectThrows(ElasticsearchException.class, () ->
+        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
         assertThat(elasticsearchException.getMessage(), allOf(
             containsString("compatible with current version"),
@@ -106,7 +106,7 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
         mockTerminal.addTextInput("n\n");
-        final ElasticsearchException elasticsearchException = expectThrows(ElasticsearchException.class, () ->
+        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
         assertThat(elasticsearchException.getMessage(), equalTo("aborted by user"));
         assertThat(mockTerminal.getOutput(), allOf(
@@ -126,7 +126,7 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
         mockTerminal.addTextInput(randomFrom("yy", "Yy", "n", "yes", "true", "N", "no"));
-        final ElasticsearchException elasticsearchException = expectThrows(ElasticsearchException.class, () ->
+        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
         assertThat(elasticsearchException.getMessage(), equalTo("aborted by user"));
         assertThat(mockTerminal.getOutput(), allOf(

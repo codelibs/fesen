@@ -22,7 +22,7 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<excludes>
-				<exclude>org.codelibs.fesen:engine-server</exclude>
+				<exclude>org.codelibs.fesen:fesen-engine-server</exclude>
 			</excludes>
 		</dependencySet>
 	</dependencySets>

@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.indices.upgrade.get;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class UpgradeStatusRequestBuilder
         extends BroadcastOperationRequestBuilder<UpgradeStatusRequest, UpgradeStatusResponse, UpgradeStatusRequestBuilder> {
 
-    public UpgradeStatusRequestBuilder(ElasticsearchClient client, UpgradeStatusAction action) {
+    public UpgradeStatusRequestBuilder(FesenClient client, UpgradeStatusAction action) {
         super(client, action, new UpgradeStatusRequest());
     }
 }

@@ -31,7 +31,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.join.ScoreMode;
 import org.apache.lucene.search.similarities.PerFieldSimilarityWrapper;
 import org.apache.lucene.search.similarities.Similarity;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.compress.CompressedXContent;
@@ -377,7 +377,7 @@ public class HasChildQueryBuilderTests extends AbstractQueryTestCase<HasChildQue
 
         HasChildQueryBuilder queryBuilder =
                 hasChildQuery(CHILD_DOC, new TermQueryBuilder("custom_string", "value"), ScoreMode.None);
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

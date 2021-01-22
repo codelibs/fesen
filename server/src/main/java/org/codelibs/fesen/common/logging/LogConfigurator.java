@@ -245,7 +245,7 @@ public class LogConfigurator {
                     + "`[%node_name]%marker ` in these locations:\n  {}", deprecatedLocationsString);
         }
 
-        // Redirect stdout/stderr to log4j. While we ensure Elasticsearch code does not write to those streams,
+        // Redirect stdout/stderr to log4j. While we ensure Fesen code does not write to those streams,
         // third party libraries may do that
         System.setOut(new PrintStream(new LoggingOutputStream(LogManager.getLogger("stdout"), Level.INFO),
             false, StandardCharsets.UTF_8.name()));

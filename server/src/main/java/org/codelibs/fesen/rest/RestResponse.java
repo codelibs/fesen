@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.bytes.BytesReference;
 
 public abstract class RestResponse {
@@ -49,7 +49,7 @@ public abstract class RestResponse {
      */
     public abstract RestStatus status();
 
-    public void copyHeaders(ElasticsearchException ex) {
+    public void copyHeaders(FesenException ex) {
         Set<String> headerKeySet = ex.getHeaderKeys();
         if (customHeaders == null) {
             customHeaders = new HashMap<>(headerKeySet.size());

@@ -29,7 +29,7 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -134,7 +134,7 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
         if (context.allowExpensiveQueries() == false) {
-            throw new ElasticsearchException("[script] queries cannot be executed when '" +
+            throw new FesenException("[script] queries cannot be executed when '" +
                     ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         FilterScript.Factory factory = context.compile(script, FilterScript.CONTEXT);

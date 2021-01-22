@@ -28,9 +28,9 @@ import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Rectangle;
 import org.locationtech.spatial4j.shape.impl.PointImpl;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchGeoAssertions.assertMultiLineString;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchGeoAssertions.assertMultiPolygon;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchGeoAssertions.assertPolygon;
+import static org.codelibs.fesen.test.hamcrest.FesenGeoAssertions.assertMultiLineString;
+import static org.codelibs.fesen.test.hamcrest.FesenGeoAssertions.assertMultiPolygon;
+import static org.codelibs.fesen.test.hamcrest.FesenGeoAssertions.assertPolygon;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 

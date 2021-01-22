@@ -240,7 +240,7 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> {
      * Convert the list in a way that optimizes storage in the case that all
      * elements are either integers or {@link String}s/{@link BytesRef}/
      * {@link CharBuffer}s. This is useful to help garbage collections for
-     * use-cases that involve sending very large terms queries to Elasticsearch.
+     * use-cases that involve sending very large terms queries to Fesen.
      * If the list does not only contain integers or {@link String}s, then a
      * list is returned where all {@link String}/{@link CharBuffer}s have been
      * replaced with {@link BytesRef}s.

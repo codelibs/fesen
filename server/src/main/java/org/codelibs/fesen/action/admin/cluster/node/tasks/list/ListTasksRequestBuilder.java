@@ -20,14 +20,14 @@
 package org.codelibs.fesen.action.admin.cluster.node.tasks.list;
 
 import org.codelibs.fesen.action.support.tasks.TasksRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for the request to retrieve the list of tasks running on the specified nodes
  */
 public class ListTasksRequestBuilder extends TasksRequestBuilder<ListTasksRequest, ListTasksResponse, ListTasksRequestBuilder> {
 
-    public ListTasksRequestBuilder(ElasticsearchClient client, ListTasksAction action) {
+    public ListTasksRequestBuilder(FesenClient client, ListTasksAction action) {
         super(client, action, new ListTasksRequest());
     }
 

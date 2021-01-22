@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.get;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 
 /**
@@ -28,7 +28,7 @@ import org.codelibs.fesen.common.Nullable;
  */
 public class MultiGetRequestBuilder extends ActionRequestBuilder<MultiGetRequest, MultiGetResponse> {
 
-    public MultiGetRequestBuilder(ElasticsearchClient client, MultiGetAction action) {
+    public MultiGetRequestBuilder(FesenClient client, MultiGetAction action) {
         super(client, action, new MultiGetRequest());
     }
 

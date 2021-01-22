@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.settings;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
@@ -32,7 +32,7 @@ import java.util.Map;
 public class ClusterUpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<ClusterUpdateSettingsRequest,
         ClusterUpdateSettingsResponse, ClusterUpdateSettingsRequestBuilder> {
 
-    public ClusterUpdateSettingsRequestBuilder(ElasticsearchClient client, ClusterUpdateSettingsAction action) {
+    public ClusterUpdateSettingsRequestBuilder(FesenClient client, ClusterUpdateSettingsAction action) {
         super(client, action, new ClusterUpdateSettingsRequest());
     }
 

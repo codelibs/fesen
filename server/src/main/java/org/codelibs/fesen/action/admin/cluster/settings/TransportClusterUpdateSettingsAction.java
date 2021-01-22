@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.cluster.settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
@@ -165,7 +165,7 @@ public class TransportClusterUpdateSettingsAction extends
                     public void onFailure(String source, Exception e) {
                         //if the reroute fails we only log
                         logger.debug(() -> new ParameterizedMessage("failed to perform [{}]", source), e);
-                        listener.onFailure(new ElasticsearchException("reroute after update settings failed", e));
+                        listener.onFailure(new FesenException("reroute after update settings failed", e));
                     }
 
                     @Override

@@ -19,7 +19,7 @@
 package org.codelibs.fesen.index.mapper;
 
 import org.apache.lucene.document.FieldType;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.CheckedBiFunction;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.ParseField;
@@ -220,7 +220,7 @@ public abstract class AbstractPointGeometryFieldMapper<Parsed, Processed> extend
                     if (token == XContentParser.Token.VALUE_NUMBER) {
                         GeoPoint.assertZValue(ignoreZValue, parser.doubleValue());
                     } else if (token != XContentParser.Token.END_ARRAY) {
-                        throw new ElasticsearchParseException("field type does not accept > 3 dimensions");
+                        throw new FesenParseException("field type does not accept > 3 dimensions");
                     }
 
                     point.resetCoords(x, y);

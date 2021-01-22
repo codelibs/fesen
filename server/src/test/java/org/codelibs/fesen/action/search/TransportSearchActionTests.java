@@ -102,7 +102,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.codelibs.fesen.test.InternalAggregationTestCase.emptyReduceContextBuilder;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.awaitLatch;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.awaitLatch;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;

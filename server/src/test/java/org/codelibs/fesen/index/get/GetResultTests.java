@@ -56,7 +56,7 @@ import static org.codelibs.fesen.index.get.DocumentFieldTests.randomDocumentFiel
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
 import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class GetResultTests extends ESTestCase {
 

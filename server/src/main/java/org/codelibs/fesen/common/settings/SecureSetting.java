@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.util.ArrayUtils;
 /**
  * A secure setting.
  *
- * This class allows access to settings from the Elasticsearch keystore.
+ * This class allows access to settings from the Fesen keystore.
  */
 public abstract class SecureSetting<T> extends Setting<T> {
 
@@ -86,7 +86,7 @@ public abstract class SecureSetting<T> extends Setting<T> {
         if (secureSettings == null || secureSettings.getSettingNames().contains(getKey()) == false) {
             if (super.exists(settings)) {
                 throw new IllegalArgumentException("Setting [" + getKey() + "] is a secure setting" +
-                    " and must be stored inside the Elasticsearch keystore, but was found inside fesen.yml");
+                    " and must be stored inside the Fesen keystore, but was found inside fesen.yml");
             }
             return getFallback(settings);
         }

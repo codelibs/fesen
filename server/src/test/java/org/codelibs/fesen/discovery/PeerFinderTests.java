@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.discovery;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
@@ -135,7 +135,7 @@ public class PeerFinderTests extends ESTestCase {
                                 listener.onResponse(discoveryNode);
                                 return;
                             } else {
-                                listener.onFailure(new ElasticsearchException("non-master node " + discoveryNode));
+                                listener.onFailure(new FesenException("non-master node " + discoveryNode));
                                 return;
                             }
                         }

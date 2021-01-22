@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.lucene.search.function;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -78,7 +78,7 @@ public class FieldValueFactorFunction extends ScoreFunction {
                     if (missing != null) {
                         value = missing;
                     } else {
-                        throw new ElasticsearchException("Missing value for field [" + field + "]");
+                        throw new FesenException("Missing value for field [" + field + "]");
                     }
                 }
                 double val = value * boostFactor;

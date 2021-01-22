@@ -18,7 +18,7 @@
  */
 
 /**
- * Support for extending Elasticsearch by providing java code that is loaded by a child classloader. See
+ * Support for extending Fesen by providing java code that is loaded by a child classloader. See
  * {@link org.codelibs.fesen.plugins.Plugin}.
  */
 package org.codelibs.fesen.plugins;

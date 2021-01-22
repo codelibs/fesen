@@ -26,14 +26,14 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.rest.RestStatus;
 
 import static java.util.Collections.unmodifiableSet;
 
-public class ClusterBlockException extends ElasticsearchException {
+public class ClusterBlockException extends FesenException {
     private final Set<ClusterBlock> blocks;
 
     public ClusterBlockException(Set<ClusterBlock> globalLevelBlocks) {

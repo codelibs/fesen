@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.support.replication;
 
 import org.apache.lucene.store.AlreadyClosedException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.UnavailableShardsException;
@@ -587,7 +587,7 @@ public class TransportReplicationActionTests extends ESTestCase {
             assertThat(capturedRequests[0].action, equalTo("internal:testAction[p]"));
             assertPhase(task, "waiting_on_primary");
             transport.handleRemoteError(capturedRequests[0].requestId, randomRetryPrimaryException(shardId));
-            assertListenerThrows("must throw index not found exception", listener, ElasticsearchException.class);
+            assertListenerThrows("must throw index not found exception", listener, FesenException.class);
             assertPhase(task, "failed");
         } else {
             assertThat(listener.isDone(), equalTo(false));
@@ -746,7 +746,7 @@ public class TransportReplicationActionTests extends ESTestCase {
         final Request request = new Request(NO_SHARD_ID);
         shard.runUnderPrimaryPermit(() ->
             primary.perform(request, ActionTestUtils.assertNoFailureListener(r -> {
-                final ElasticsearchException exception = new ElasticsearchException("testing");
+                final FesenException exception = new FesenException("testing");
                 primary.failShard("test", exception);
 
                 verify(shard).failShard("test", exception);
@@ -797,9 +797,9 @@ public class TransportReplicationActionTests extends ESTestCase {
             assertTrue(listener.isDone());
             assertThat(listener.get(), equalTo(response));
         } else if (randomBoolean()) {
-            transport.handleRemoteError(captures[0].requestId, new ElasticsearchException("simulated"));
+            transport.handleRemoteError(captures[0].requestId, new FesenException("simulated"));
             assertTrue(listener.isDone());
-            assertListenerThrows("listener should reflect remote error", listener, ElasticsearchException.class);
+            assertListenerThrows("listener should reflect remote error", listener, FesenException.class);
         } else {
             transport.handleError(captures[0].requestId, new TransportException("simulated"));
             assertTrue(listener.isDone());
@@ -808,7 +808,7 @@ public class TransportReplicationActionTests extends ESTestCase {
 
         AtomicReference<Object> failure = new AtomicReference<>();
         AtomicBoolean success = new AtomicBoolean();
-        proxy.failShardIfNeeded(replica, primaryTerm, "test", new ElasticsearchException("simulated"),
+        proxy.failShardIfNeeded(replica, primaryTerm, "test", new FesenException("simulated"),
                 ActionListener.wrap(r -> success.set(true), failure::set));
         CapturingTransport.CapturedRequest[] shardFailedRequests = transport.getCapturedRequestsAndClear();
         // A replication action doesn't not fail the request
@@ -892,9 +892,9 @@ public class TransportReplicationActionTests extends ESTestCase {
                                                    ActionListener<PrimaryResult<Request, TestResponse>> listener) {
                 assertIndexShardCounter(1);
                 if (throwExceptionOnRun) {
-                    throw new ElasticsearchException("simulated exception, during shardOperationOnPrimary");
+                    throw new FesenException("simulated exception, during shardOperationOnPrimary");
                 } else if (respondWithError) {
-                    listener.onFailure(new ElasticsearchException("simulated exception, as a response"));
+                    listener.onFailure(new FesenException("simulated exception, as a response"));
                 } else {
                     super.shardOperationOnPrimary(request, primary, listener);
                 }
@@ -913,7 +913,7 @@ public class TransportReplicationActionTests extends ESTestCase {
         } catch (ExecutionException e) {
             if (throwExceptionOnRun || respondWithError) {
                 Throwable cause = e.getCause();
-                assertThat(cause, instanceOf(ElasticsearchException.class));
+                assertThat(cause, instanceOf(FesenException.class));
                 assertThat(cause.getMessage(), containsString("simulated"));
             } else {
                 throw e;
@@ -937,7 +937,7 @@ public class TransportReplicationActionTests extends ESTestCase {
                     assertIndexShardCounter(1);
                     assertPhase(task, "replica");
                     if (throwException) {
-                        throw new ElasticsearchException("simulated");
+                        throw new FesenException("simulated");
                     }
                     return new ReplicaResult();
                 });
@@ -949,7 +949,7 @@ public class TransportReplicationActionTests extends ESTestCase {
                         new Request(shardId), replicaRouting.allocationId().getId(), randomNonNegativeLong(),
                         randomNonNegativeLong(), randomNonNegativeLong()),
                 createTransportChannel(new PlainActionFuture<>()), task);
-        } catch (ElasticsearchException e) {
+        } catch (FesenException e) {
             assertThat(e.getMessage(), containsString("simulated"));
             assertTrue(throwException);
         }

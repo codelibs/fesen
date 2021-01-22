@@ -928,7 +928,7 @@ public class RestoreService implements ClusterStateApplier {
         }
         if (Version.CURRENT.before(snapshotInfo.version())) {
             throw new SnapshotRestoreException(new Snapshot(repository, snapshotInfo.snapshotId()),
-                                               "the snapshot was created with Elasticsearch version [" + snapshotInfo.version() +
+                                               "the snapshot was created with Fesen version [" + snapshotInfo.version() +
                                                    "] which is higher than the version of this node [" + Version.CURRENT + "]");
         }
     }

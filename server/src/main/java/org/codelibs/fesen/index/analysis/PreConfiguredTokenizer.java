@@ -52,7 +52,7 @@ public final class PreConfiguredTokenizer extends PreConfiguredAnalysisComponent
     }
 
     /**
-     * Create a pre-configured tokenizer that may vary based on the Elasticsearch version.
+     * Create a pre-configured tokenizer that may vary based on the Fesen version.
      *
      * @param name the name of the tokenizer in the api
      * @param create builds the tokenizer

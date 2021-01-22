@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * A request to upgrade one or more indices. In order to optimize on all the indices, pass an empty array or
@@ -28,7 +28,7 @@ import org.codelibs.fesen.client.ElasticsearchClient;
  */
 public class UpgradeRequestBuilder extends BroadcastOperationRequestBuilder<UpgradeRequest, UpgradeResponse, UpgradeRequestBuilder> {
 
-    public UpgradeRequestBuilder(ElasticsearchClient client, UpgradeAction action) {
+    public UpgradeRequestBuilder(FesenClient client, UpgradeAction action) {
         super(client, action, new UpgradeRequest());
     }
 

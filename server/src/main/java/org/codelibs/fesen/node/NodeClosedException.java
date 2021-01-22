@@ -21,7 +21,7 @@ package org.codelibs.fesen.node;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  *
  *
  */
-public class NodeClosedException extends ElasticsearchException {
+public class NodeClosedException extends FesenException {
 
     public NodeClosedException(DiscoveryNode node) {
         super("node closed " + node);

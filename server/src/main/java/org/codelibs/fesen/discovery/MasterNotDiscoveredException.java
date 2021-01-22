@@ -21,11 +21,11 @@ package org.codelibs.fesen.discovery;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class MasterNotDiscoveredException extends ElasticsearchException {
+public class MasterNotDiscoveredException extends FesenException {
 
     public MasterNotDiscoveredException() {
         super("");

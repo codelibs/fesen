@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.translog;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class TranslogCorruptedException extends ElasticsearchException {
+public class TranslogCorruptedException extends FesenException {
     public TranslogCorruptedException(String source, String details) {
         super(corruptedMessage(source, details));
     }

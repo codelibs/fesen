@@ -23,7 +23,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.util.LuceneTestCase;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.engine.EngineConfig;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
-import static org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader.getElasticsearchDirectoryReader;
+import static org.codelibs.fesen.common.lucene.index.FesenDirectoryReader.getFesenDirectoryReader;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
@@ -94,7 +94,7 @@ public class ReadOnlyEngineTests extends EngineTestCase {
                 assertSame(external.getIndexReader(), internal.getIndexReader());
                 assertThat(external.getIndexReader(), instanceOf(DirectoryReader.class));
                 DirectoryReader dirReader = external.getDirectoryReader();
-                ElasticsearchDirectoryReader esReader = getElasticsearchDirectoryReader(dirReader);
+                FesenDirectoryReader esReader = getFesenDirectoryReader(dirReader);
                 IndexReader.CacheHelper helper = esReader.getReaderCacheHelper();
                 assertNotNull(helper);
                 assertEquals(helper.getKey(), dirReader.getReaderCacheHelper().getKey());

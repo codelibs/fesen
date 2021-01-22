@@ -44,7 +44,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 /**
- * An additional extension point for {@link Plugin}s that extends Elasticsearch's analysis functionality. To add an additional
+ * An additional extension point for {@link Plugin}s that extends Fesen's analysis functionality. To add an additional
  * {@link TokenFilter} just implement the interface and implement the {@link #getTokenFilters()} method:
  *
  * <pre>{@code

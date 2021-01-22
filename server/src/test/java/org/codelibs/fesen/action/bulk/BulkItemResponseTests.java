@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.DocWriteResponse;
@@ -38,8 +38,8 @@ import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 
-import static org.codelibs.fesen.ElasticsearchExceptionTests.assertDeepEquals;
-import static org.codelibs.fesen.ElasticsearchExceptionTests.randomExceptions;
+import static org.codelibs.fesen.FesenExceptionTests.assertDeepEquals;
+import static org.codelibs.fesen.FesenExceptionTests.randomExceptions;
 import static org.hamcrest.Matchers.containsString;
 
 public class BulkItemResponseTests extends ESTestCase {
@@ -93,7 +93,7 @@ public class BulkItemResponseTests extends ESTestCase {
         String id = randomAlphaOfLength(5);
         DocWriteRequest.OpType opType = randomFrom(DocWriteRequest.OpType.values());
 
-        final Tuple<Throwable, ElasticsearchException> exceptions = randomExceptions();
+        final Tuple<Throwable, FesenException> exceptions = randomExceptions();
 
         Exception bulkItemCause = (Exception) exceptions.v1();
         Failure bulkItemFailure = new Failure(index, type, id, bulkItemCause);
@@ -137,7 +137,7 @@ public class BulkItemResponseTests extends ESTestCase {
             assertEquals(expectedFailure.getMessage(), actualFailure.getMessage());
             assertEquals(expectedFailure.getStatus(), actualFailure.getStatus());
 
-            assertDeepEquals((ElasticsearchException) expectedFailure.getCause(), (ElasticsearchException) actualFailure.getCause());
+            assertDeepEquals((FesenException) expectedFailure.getCause(), (FesenException) actualFailure.getCause());
         } else {
             DocWriteResponse expectedDocResponse = expected.getResponse();
             DocWriteResponse actualDocResponse = expected.getResponse();

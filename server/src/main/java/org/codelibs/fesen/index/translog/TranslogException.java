@@ -21,11 +21,11 @@ package org.codelibs.fesen.index.translog;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 
-public class TranslogException extends ElasticsearchException {
+public class TranslogException extends FesenException {
 
     public TranslogException(ShardId shardId, String msg) {
         this(shardId, msg, null);

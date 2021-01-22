@@ -20,8 +20,8 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchSecurityException;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenSecurityException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
@@ -128,7 +128,7 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
     public void testReindexSendsHeaders() throws Exception {
         ReindexRequestBuilder request = new ReindexRequestBuilder(client(), ReindexAction.INSTANCE).source("source").destination("dest")
                 .setRemoteInfo(newRemoteInfo(null, null, singletonMap(TestFilter.EXAMPLE_HEADER, "doesn't matter")));
-        ElasticsearchStatusException e = expectThrows(ElasticsearchStatusException.class, () -> request.get());
+        FesenStatusException e = expectThrows(FesenStatusException.class, () -> request.get());
         assertEquals(RestStatus.BAD_REQUEST, e.status());
         assertThat(e.getMessage(), containsString("Hurray! Sent the header!"));
     }
@@ -136,7 +136,7 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
     public void testReindexWithoutAuthenticationWhenRequired() throws Exception {
         ReindexRequestBuilder request = new ReindexRequestBuilder(client(), ReindexAction.INSTANCE).source("source").destination("dest")
                 .setRemoteInfo(newRemoteInfo(null, null, emptyMap()));
-        ElasticsearchStatusException e = expectThrows(ElasticsearchStatusException.class, () -> request.get());
+        FesenStatusException e = expectThrows(FesenStatusException.class, () -> request.get());
         assertEquals(RestStatus.UNAUTHORIZED, e.status());
         assertThat(e.getMessage(), containsString("\"reason\":\"Authentication required\""));
         assertThat(e.getMessage(), containsString("\"WWW-Authenticate\":\"Basic realm=auth-realm\""));
@@ -145,7 +145,7 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
     public void testReindexWithBadAuthentication() throws Exception {
         ReindexRequestBuilder request = new ReindexRequestBuilder(client(), ReindexAction.INSTANCE).source("source").destination("dest")
                 .setRemoteInfo(newRemoteInfo("junk", "auth", emptyMap()));
-        ElasticsearchStatusException e = expectThrows(ElasticsearchStatusException.class, () -> request.get());
+        FesenStatusException e = expectThrows(FesenStatusException.class, () -> request.get());
         assertThat(e.getMessage(), containsString("\"reason\":\"Bad Authorization\""));
     }
 
@@ -213,13 +213,13 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
             }
             String auth = context.getHeader(AUTHORIZATION_HEADER);
             if (auth == null) {
-                ElasticsearchSecurityException e = new ElasticsearchSecurityException("Authentication required",
+                FesenSecurityException e = new FesenSecurityException("Authentication required",
                         RestStatus.UNAUTHORIZED);
                 e.addHeader("WWW-Authenticate", "Basic realm=auth-realm");
                 throw e;
             }
             if (false == REQUIRED_AUTH.equals(auth)) {
-                throw new ElasticsearchSecurityException("Bad Authorization", RestStatus.FORBIDDEN);
+                throw new FesenSecurityException("Bad Authorization", RestStatus.FORBIDDEN);
             }
             chain.proceed(task, action, request, listener);
         }

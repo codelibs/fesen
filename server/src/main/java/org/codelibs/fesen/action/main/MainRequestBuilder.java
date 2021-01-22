@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.main;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class MainRequestBuilder extends ActionRequestBuilder<MainRequest, MainResponse> {
 
-    public MainRequestBuilder(ElasticsearchClient client, MainAction action) {
+    public MainRequestBuilder(FesenClient client, MainAction action) {
         super(client, action, new MainRequest());
     }
 }

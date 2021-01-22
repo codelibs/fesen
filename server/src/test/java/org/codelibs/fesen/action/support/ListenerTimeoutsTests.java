@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ListenerTimeouts;
 import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
@@ -63,7 +63,7 @@ public class ListenerTimeoutsTests extends ESTestCase {
         wrapped.onFailure(new IOException("incorrect exception"));
 
         assertFalse(success.get());
-        assertThat(exception.get(), instanceOf(ElasticsearchTimeoutException.class));
+        assertThat(exception.get(), instanceOf(FesenTimeoutException.class));
     }
 
     public void testFinishNormallyBeforeTimeout() {

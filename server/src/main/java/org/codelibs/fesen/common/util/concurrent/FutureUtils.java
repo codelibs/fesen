@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.SuppressForbidden;
 
@@ -75,7 +75,7 @@ public class FutureUtils {
         try {
             return future.get(timeout, unit);
         } catch (TimeoutException e) {
-            throw new ElasticsearchTimeoutException(e);
+            throw new FesenTimeoutException(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Future got interrupted", e);

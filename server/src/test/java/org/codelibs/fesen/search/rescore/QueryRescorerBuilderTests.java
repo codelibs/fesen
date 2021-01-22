@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.rescore;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.ParsingException;
@@ -140,7 +140,7 @@ public class QueryRescorerBuilderTests extends ESTestCase {
      * test that build() outputs a {@link RescoreContext} that has the same properties
      * than the test builder
      */
-    public void testBuildRescoreSearchContext() throws ElasticsearchParseException, IOException {
+    public void testBuildRescoreSearchContext() throws FesenParseException, IOException {
         final long nowInMillis = randomNonNegativeLong();
         Settings indexSettings = Settings.builder()
                 .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();

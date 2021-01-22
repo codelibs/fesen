@@ -750,57 +750,57 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>cli</artifactId>
+			<artifactId>fesen-cli</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>fesen-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>geometry</artifactId>
+			<artifactId>fesen-geometry</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>plugin-classloader</artifactId>
+			<artifactId>fesen-plugin-classloader</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>secure-sm</artifactId>
+			<artifactId>fesen-secure-sm</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>x-content</artifactId>
+			<artifactId>fesen-x-content</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.tool</groupId>
-			<artifactId>java-version-checker</artifactId>
+			<artifactId>fesen-java-version-checker</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.tool</groupId>
-			<artifactId>keystore-cli</artifactId>
+			<artifactId>fesen-keystore-cli</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.tool</groupId>
-			<artifactId>launchers</artifactId>
+			<artifactId>fesen-launchers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.tool</groupId>
-			<artifactId>plugin-cli</artifactId>
+			<artifactId>fesen-plugin-cli</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen</groupId>
-			<artifactId>engine-server</artifactId>
+			<artifactId>fesen-engine-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

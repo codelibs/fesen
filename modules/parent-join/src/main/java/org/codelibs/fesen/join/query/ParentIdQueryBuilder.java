@@ -23,7 +23,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -157,7 +157,7 @@ public final class ParentIdQueryBuilder extends AbstractQueryBuilder<ParentIdQue
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
         if (context.allowExpensiveQueries() == false) {
-            throw new ElasticsearchException("[joining] queries cannot be executed when '" +
+            throw new FesenException("[joining] queries cannot be executed when '" +
                     ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
 

@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.unit;
 
 import static org.hamcrest.Matchers.is;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.unit.RatioValue;
 import org.codelibs.fesen.test.ESTestCase;
 
@@ -59,7 +59,7 @@ public class RatioValueTests extends ESTestCase {
         try {
             RatioValue.parseRatioValue(r);
             fail("Value: [" + r + "] should be an invalid ratio");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             // success
         }
     }

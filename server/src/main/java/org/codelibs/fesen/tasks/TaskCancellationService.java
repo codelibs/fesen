@@ -21,7 +21,7 @@ package org.codelibs.fesen.tasks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchSecurityException;
+import org.codelibs.fesen.FesenSecurityException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -124,7 +124,7 @@ public class TaskCancellationService {
 
                     @Override
                     public void handleException(TransportException exp) {
-                        assert ExceptionsHelper.unwrapCause(exp) instanceof ElasticsearchSecurityException == false;
+                        assert ExceptionsHelper.unwrapCause(exp) instanceof FesenSecurityException == false;
                         logger.warn("Cannot send ban for tasks with the parent [{}] to the node [{}]", taskId, node);
                         groupedListener.onFailure(exp);
                     }
@@ -140,7 +140,7 @@ public class TaskCancellationService {
             transportService.sendRequest(node, BAN_PARENT_ACTION_NAME, request, new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
                 @Override
                 public void handleException(TransportException exp) {
-                    assert ExceptionsHelper.unwrapCause(exp) instanceof ElasticsearchSecurityException == false;
+                    assert ExceptionsHelper.unwrapCause(exp) instanceof FesenSecurityException == false;
                     logger.info("failed to remove the parent ban for task {} on node {}", request.parentTaskId, node);
                 }
             });

@@ -26,8 +26,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionResponse;
@@ -430,10 +430,10 @@ public class TaskManager implements ClusterStateApplier {
             try {
                 Thread.sleep(WAIT_FOR_COMPLETION_POLL.millis());
             } catch (InterruptedException e) {
-                throw new ElasticsearchException("Interrupted waiting for completion of [{}]", e, task);
+                throw new FesenException("Interrupted waiting for completion of [{}]", e, task);
             }
         }
-        throw new ElasticsearchTimeoutException("Timed out waiting for completion of [{}]", task);
+        throw new FesenTimeoutException("Timed out waiting for completion of [{}]", task);
     }
 
     private static class CancellableTaskHolder {

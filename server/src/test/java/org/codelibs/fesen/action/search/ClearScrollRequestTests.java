@@ -33,7 +33,7 @@ import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.startsWith;
 

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
@@ -196,7 +196,7 @@ public class RethrottleTests extends ReindexTestCase {
                 rethrottleResponse.rethrowFailures("Rethrottle");
                 assertThat(rethrottleResponse.getTasks(), hasSize(1));
                 response.set(rethrottleResponse);
-            } catch (ElasticsearchException e) {
+            } catch (FesenException e) {
                 Throwable unwrapped = ExceptionsHelper.unwrap(e, IllegalArgumentException.class);
                 if (unwrapped == null) {
                     throw e;

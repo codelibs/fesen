@@ -24,24 +24,21 @@ import java.io.IOException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
- * The same as {@link java.util.concurrent.TimeoutException} simply a runtime one.
+ * A generic exception indicating failure to generate.
  *
  *
  */
-public class ElasticsearchTimeoutException extends ElasticsearchException {
-    public ElasticsearchTimeoutException(StreamInput in) throws IOException {
+public class FesenGenerationException extends FesenException {
+
+    public FesenGenerationException(String msg) {
+        super(msg);
+    }
+
+    public FesenGenerationException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    public FesenGenerationException(StreamInput in) throws IOException{
         super(in);
-    }
-
-    public ElasticsearchTimeoutException(Throwable cause) {
-        super(cause);
-    }
-
-    public ElasticsearchTimeoutException(String message, Object... args) {
-        super(message, args);
-    }
-
-    public ElasticsearchTimeoutException(String message, Throwable cause, Object... args) {
-        super(message, cause, args);
     }
 }

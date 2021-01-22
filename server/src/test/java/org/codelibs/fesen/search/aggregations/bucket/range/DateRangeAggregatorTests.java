@@ -30,7 +30,7 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.index.mapper.KeywordFieldMapper;
@@ -254,7 +254,7 @@ public class DateRangeAggregatorTests extends AggregatorTestCase {
             MappedFieldType fieldType
                 = new NumberFieldMapper.NumberFieldType(NUMBER_FIELD_NAME, NumberFieldMapper.NumberType.INTEGER);
 
-            expectThrows(ElasticsearchParseException.class,
+            expectThrows(FesenParseException.class,
                 () -> testCase(aggregationBuilder, new MatchAllDocsQuery(), iw -> {
                     iw.addDocument(singleton(new NumericDocValuesField(NUMBER_FIELD_NAME, 7)));
                     iw.addDocument(singleton(new NumericDocValuesField(NUMBER_FIELD_NAME, 1)));

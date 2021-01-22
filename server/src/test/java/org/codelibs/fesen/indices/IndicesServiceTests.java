@@ -83,8 +83,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy.IMMEDIATE;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;

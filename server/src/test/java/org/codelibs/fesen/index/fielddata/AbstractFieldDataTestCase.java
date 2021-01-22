@@ -31,7 +31,7 @@ import org.apache.lucene.index.LogByteSizeMergePolicy;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.ByteBuffersDirectory;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.cache.bitset.BitsetFilterCache;
@@ -148,7 +148,7 @@ public abstract class AbstractFieldDataTestCase extends ESSingleNodeTestCase {
         if (readerContexts != null && topLevelReader != null) {
             topLevelReader.close();
         }
-        topLevelReader = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        topLevelReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         readerContexts = topLevelReader.leaves();
         return readerContexts;
     }

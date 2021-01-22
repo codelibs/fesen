@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.XShapeCollection;
 import org.codelibs.fesen.common.geo.parsers.GeoWKTParser;
@@ -117,7 +117,7 @@ public class GeometryCollectionBuilder extends ShapeBuilder<Shape,
 
     public ShapeBuilder getShapeAt(int i) {
         if (i >= this.shapes.size() || i < 0) {
-            throw new ElasticsearchException("GeometryCollection contains " + this.shapes.size() + " shapes. + " +
+            throw new FesenException("GeometryCollection contains " + this.shapes.size() + " shapes. + " +
                     "No shape found at index " + i);
         }
         return this.shapes.get(i);

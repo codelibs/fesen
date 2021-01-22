@@ -44,7 +44,7 @@ import java.util.Locale;
 /**
  * This class starts elasticsearch.
  */
-class Elasticsearch extends EnvironmentAwareCommand {
+class Fesen extends EnvironmentAwareCommand {
 
     private final OptionSpecBuilder versionOption;
     private final OptionSpecBuilder daemonizeOption;
@@ -52,12 +52,12 @@ class Elasticsearch extends EnvironmentAwareCommand {
     private final OptionSpecBuilder quietOption;
 
     // visible for testing
-    Elasticsearch() {
-        super("Starts Elasticsearch", () -> {}); // we configure logging later so we override the base class from configuring logging
+    Fesen() {
+        super("Starts Fesen", () -> {}); // we configure logging later so we override the base class from configuring logging
         versionOption = parser.acceptsAll(Arrays.asList("V", "version"),
-            "Prints Elasticsearch version information and exits");
+            "Prints Fesen version information and exits");
         daemonizeOption = parser.acceptsAll(Arrays.asList("d", "daemonize"),
-            "Starts Elasticsearch in the background")
+            "Starts Fesen in the background")
             .availableUnless(versionOption);
         pidfileOption = parser.acceptsAll(Arrays.asList("p", "pidfile"),
             "Creates a pid file in the specified path on start")
@@ -89,15 +89,15 @@ class Elasticsearch extends EnvironmentAwareCommand {
 
         });
         LogConfigurator.registerErrorListener();
-        final Elasticsearch elasticsearch = new Elasticsearch();
-        int status = main(args, elasticsearch, Terminal.DEFAULT);
+        final Fesen fesen = new Fesen();
+        int status = main(args, fesen, Terminal.DEFAULT);
         if (status != ExitCodes.OK) {
             final String basePath = System.getProperty("es.logs.base_path");
             // It's possible to fail before logging has been configured, in which case there's no point
             // suggesting that the user look in the log file.
             if (basePath != null) {
                 Terminal.DEFAULT.errorPrintln(
-                    "ERROR: Elasticsearch did not exit normally - check the logs at "
+                    "ERROR: Fesen did not exit normally - check the logs at "
                         + basePath
                         + System.getProperty("file.separator")
                         + System.getProperty("es.logs.cluster_name") + ".log"
@@ -123,8 +123,8 @@ class Elasticsearch extends EnvironmentAwareCommand {
         }
     }
 
-    static int main(final String[] args, final Elasticsearch elasticsearch, final Terminal terminal) throws Exception {
-        return elasticsearch.main(args, terminal);
+    static int main(final String[] args, final Fesen fesen, final Terminal terminal) throws Exception {
+        return fesen.main(args, terminal);
     }
 
     @Override

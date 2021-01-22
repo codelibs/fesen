@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.time;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
@@ -336,7 +336,7 @@ public class JavaDateMathParserTests extends ESTestCase {
     }
 
     void assertParseException(String msg, String date, String exc) {
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> parser.parse(date, () -> 0));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> parser.parse(date, () -> 0));
         assertThat(msg, e.getMessage(), containsString(exc));
     }
 

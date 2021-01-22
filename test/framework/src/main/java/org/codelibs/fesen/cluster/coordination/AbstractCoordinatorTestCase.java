@@ -23,7 +23,7 @@ import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -1367,7 +1367,7 @@ public class AbstractCoordinatorTestCase extends ESTestCase {
                             + oldClusterState.version() + " to stale version " + newClusterState.version();
                         break;
                     case FAIL:
-                        throw new ElasticsearchException("simulated cluster state applier failure");
+                        throw new FesenException("simulated cluster state applier failure");
                 }
             });
         }

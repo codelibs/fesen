@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.cluster.routing;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
@@ -186,7 +186,7 @@ public class BatchedRerouteServiceTests extends ESTestCase {
 
         final BatchedRerouteService batchedRerouteService = new BatchedRerouteService(clusterService, (s, r) -> {
             if (rarely()) {
-                throw new ElasticsearchException("simulated");
+                throw new FesenException("simulated");
             }
             return randomBoolean() ? s : ClusterState.builder(s).build();
         });
@@ -199,12 +199,12 @@ public class BatchedRerouteServiceTests extends ESTestCase {
                     r -> {
                         countDownLatch.countDown();
                         if (rarely()) {
-                            throw new ElasticsearchException("failure during notification");
+                            throw new FesenException("failure during notification");
                         }
                     }, e -> {
                         countDownLatch.countDown();
                         if (randomBoolean()) {
-                            throw new ElasticsearchException("failure during failure notification", e);
+                            throw new FesenException("failure during failure notification", e);
                         }
                     }));
             if (rarely()) {

@@ -20,7 +20,7 @@ package org.codelibs.fesen.search.suggest.phrase;
 
 
 import org.apache.lucene.analysis.Analyzer;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -596,7 +596,7 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
         // now we should have field name, check and copy fields over to the suggestion builder we return
         if (fieldname == null) {
-            throw new ElasticsearchParseException(
+            throw new FesenParseException(
                 "the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new PhraseSuggestionBuilder(fieldname, tmpSuggestion);

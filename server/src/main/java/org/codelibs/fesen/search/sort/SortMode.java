@@ -28,7 +28,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 
 /**
- * Elasticsearch supports sorting by array or multi-valued fields. The SortMode option controls what array value is picked
+ * Fesen supports sorting by array or multi-valued fields. The SortMode option controls what array value is picked
  * for sorting the document it belongs to. The mode option can have the following values:
  * <ul>
  * <li>min - Pick the lowest value.</li>

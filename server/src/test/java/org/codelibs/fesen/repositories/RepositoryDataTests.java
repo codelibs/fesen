@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.repositories;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -239,7 +239,7 @@ public class RepositoryDataTests extends ESTestCase {
         corruptedRepositoryData.snapshotsToXContent(corruptedBuilder, Version.CURRENT);
 
         try (XContentParser xParser = createParser(corruptedBuilder)) {
-            ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () ->
+            FesenParseException e = expectThrows(FesenParseException.class, () ->
                 RepositoryData.snapshotsFromXContent(xParser, corruptedRepositoryData.getGenId(), randomBoolean()));
             assertThat(e.getMessage(), equalTo("Detected a corrupted repository, index " + corruptedIndexId + " references an unknown " +
                 "snapshot uuid [_does_not_exist]"));
@@ -276,7 +276,7 @@ public class RepositoryDataTests extends ESTestCase {
         builder.endObject();
 
         try (XContentParser xParser = createParser(builder)) {
-            ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () ->
+            FesenParseException e = expectThrows(FesenParseException.class, () ->
                 RepositoryData.snapshotsFromXContent(xParser, randomNonNegativeLong(), randomBoolean()));
             assertThat(e.getMessage(), equalTo("Detected a corrupted repository, " +
                 "index [docs/_id] references an unknown snapshot uuid [null]"));

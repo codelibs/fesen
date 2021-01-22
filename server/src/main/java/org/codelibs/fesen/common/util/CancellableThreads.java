@@ -20,7 +20,7 @@ package org.codelibs.fesen.common.util;
 
 import org.apache.lucene.util.SetOnce;
 import org.apache.lucene.util.ThreadInterruptedException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
@@ -174,7 +174,7 @@ public class CancellableThreads {
         void run() throws IOException, InterruptedException;
     }
 
-    public static class ExecutionCancelledException extends ElasticsearchException {
+    public static class ExecutionCancelledException extends FesenException {
 
         public ExecutionCancelledException(String msg) {
             super(msg);

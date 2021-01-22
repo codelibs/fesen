@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.rest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.collect.Tuple;
@@ -64,7 +64,7 @@ public interface RestRequestFilter {
                             XContentBuilder xContentBuilder = XContentBuilder.builder(result.v1().xContent()).map(transformedSource);
                             filteredBytes = BytesReference.bytes(xContentBuilder);
                         } catch (IOException e) {
-                            throw new ElasticsearchException("failed to parse request", e);
+                            throw new FesenException("failed to parse request", e);
                         }
                     }
                     return filteredBytes;

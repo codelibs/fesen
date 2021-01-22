@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.cluster.tasks;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class PendingClusterTasksRequestBuilder extends MasterNodeReadOperationRequestBuilder<PendingClusterTasksRequest,
         PendingClusterTasksResponse, PendingClusterTasksRequestBuilder> {
 
-    public PendingClusterTasksRequestBuilder(ElasticsearchClient client, PendingClusterTasksAction action) {
+    public PendingClusterTasksRequestBuilder(FesenClient client, PendingClusterTasksAction action) {
         super(client, action, new PendingClusterTasksRequest());
     }
 }

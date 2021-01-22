@@ -22,16 +22,16 @@ package org.codelibs.fesen.index.reindex;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.search.SearchAction;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class DeleteByQueryRequestBuilder extends
         AbstractBulkByScrollRequestBuilder<DeleteByQueryRequest, DeleteByQueryRequestBuilder> {
 
-    public DeleteByQueryRequestBuilder(ElasticsearchClient client, ActionType<BulkByScrollResponse> action) {
+    public DeleteByQueryRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action) {
         this(client, action, new SearchRequestBuilder(client, SearchAction.INSTANCE));
     }
 
-    private DeleteByQueryRequestBuilder(ElasticsearchClient client,
+    private DeleteByQueryRequestBuilder(FesenClient client,
                                         ActionType<BulkByScrollResponse> action,
                                         SearchRequestBuilder search) {
         super(client, action, search, new DeleteByQueryRequest(search.request()));

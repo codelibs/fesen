@@ -22,7 +22,7 @@ package org.codelibs.fesen;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.lucene.index.CorruptIndexException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.ShardOperationFailedException;
@@ -160,8 +160,8 @@ public class ExceptionsHelperTests extends ESTestCase {
         int i = 0;
         for (ShardOperationFailedException shardOperationFailedException : groupBy) {
             assertThat(shardOperationFailedException.index(), nullValue());
-            assertThat(shardOperationFailedException.getCause(), instanceOf(ElasticsearchException.class));
-            ElasticsearchException elasticsearchException = (ElasticsearchException) shardOperationFailedException.getCause();
+            assertThat(shardOperationFailedException.getCause(), instanceOf(FesenException.class));
+            FesenException elasticsearchException = (FesenException) shardOperationFailedException.getCause();
             assertThat(elasticsearchException.getMessage(), equalTo(expectedErrors[i]));
             assertThat(elasticsearchException.getIndex().getName(), equalTo(expectedIndices[i++]));
         }

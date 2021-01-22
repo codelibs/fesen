@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.action.ActionListener;
@@ -200,7 +200,7 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
             return;
         }
         if (response.isSourceEmpty()) {
-            listener.onFailure(new ElasticsearchException("Stored task status for [{}] didn't contain any source!", response.getId()));
+            listener.onFailure(new FesenException("Stored task status for [{}] didn't contain any source!", response.getId()));
             return;
         }
         try (XContentParser parser = XContentHelper

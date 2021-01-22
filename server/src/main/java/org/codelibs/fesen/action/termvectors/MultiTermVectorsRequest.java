@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.termvectors;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
@@ -128,16 +128,16 @@ public class MultiTermVectorsRequest extends ActionRequest
                             ids.add(parser.text());
                         }
                     } else {
-                        throw new ElasticsearchParseException("no parameter named [{}] and type ARRAY", currentFieldName);
+                        throw new FesenParseException("no parameter named [{}] and type ARRAY", currentFieldName);
                     }
                 } else if (token == XContentParser.Token.START_OBJECT && currentFieldName != null) {
                     if ("parameters".equals(currentFieldName)) {
                         TermVectorsRequest.parseRequest(template, parser);
                     } else {
-                        throw new ElasticsearchParseException("no parameter named [{}] and type OBJECT", currentFieldName);
+                        throw new FesenParseException("no parameter named [{}] and type OBJECT", currentFieldName);
                     }
                 } else if (currentFieldName != null) {
-                    throw new ElasticsearchParseException("_mtermvectors: Parameter [{}] not supported", currentFieldName);
+                    throw new FesenParseException("_mtermvectors: Parameter [{}] not supported", currentFieldName);
                 }
             }
         }

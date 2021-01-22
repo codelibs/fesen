@@ -26,8 +26,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -138,7 +138,7 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
     protected void cleanup(Runnable onCompletion) {
         /* This is called on the RestClient's thread pool and attempting to close the client on its
          * own threadpool causes it to fail to close. So we always shutdown the RestClient
-         * asynchronously on a thread in Elasticsearch's generic thread pool. */
+         * asynchronously on a thread in Fesen's generic thread pool. */
         threadPool.generic().submit(() -> {
             try {
                 client.close();
@@ -173,10 +173,10 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
                             }
                             if (xContentType == null) {
                                 try {
-                                    throw new ElasticsearchException(
+                                    throw new FesenException(
                                         "Response didn't include Content-Type: " + bodyMessage(response.getEntity()));
                                 } catch (IOException e) {
-                                    ElasticsearchException ee = new ElasticsearchException("Error extracting body from response");
+                                    FesenException ee = new FesenException("Error extracting body from response");
                                     ee.addSuppressed(e);
                                     throw ee;
                                 }
@@ -187,13 +187,13 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
                                 parsedResponse = parser.apply(xContentParser, xContentType);
                             } catch (XContentParseException e) {
                                 /* Because we're streaming the response we can't get a copy of it here. The best we can do is hint that it
-                                 * is totally wrong and we're probably not talking to Elasticsearch. */
-                                throw new ElasticsearchException(
-                                    "Error parsing the response, remote is likely not an Elasticsearch instance", e);
+                                 * is totally wrong and we're probably not talking to Fesen. */
+                                throw new FesenException(
+                                    "Error parsing the response, remote is likely not an Fesen instance", e);
                             }
                         } catch (IOException e) {
-                            throw new ElasticsearchException(
-                                "Error deserializing response, remote is likely not an Elasticsearch instance", e);
+                            throw new FesenException(
+                                "Error deserializing response, remote is likely not an Fesen instance", e);
                         }
                         listener.onResponse(parsedResponse);
                     }
@@ -228,9 +228,9 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
     /**
      * Wrap the ResponseException in an exception that'll preserve its status code if possible so we can send it back to the user. We might
      * not have a constant for the status code so in that case we just use 500 instead. We also extract make sure to include the response
-     * body in the message so the user can figure out *why* the remote Elasticsearch service threw the error back to us.
+     * body in the message so the user can figure out *why* the remote Fesen service threw the error back to us.
      */
-    static ElasticsearchStatusException wrapExceptionToPreserveStatus(int statusCode, @Nullable HttpEntity entity, Exception cause) {
+    static FesenStatusException wrapExceptionToPreserveStatus(int statusCode, @Nullable HttpEntity entity, Exception cause) {
         RestStatus status = RestStatus.fromCode(statusCode);
         String messagePrefix = "";
         if (status == null) {
@@ -238,9 +238,9 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
             status = RestStatus.INTERNAL_SERVER_ERROR;
         }
         try {
-            return new ElasticsearchStatusException(messagePrefix + bodyMessage(entity), status, cause);
+            return new FesenStatusException(messagePrefix + bodyMessage(entity), status, cause);
         } catch (IOException ioe) {
-            ElasticsearchStatusException e = new ElasticsearchStatusException(messagePrefix + "Failed to extract body.", status, cause);
+            FesenStatusException e = new FesenStatusException(messagePrefix + "Failed to extract body.", status, cause);
             e.addSuppressed(ioe);
             return e;
         }

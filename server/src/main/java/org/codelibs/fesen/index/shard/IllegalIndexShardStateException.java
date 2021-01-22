@@ -21,12 +21,12 @@ package org.codelibs.fesen.index.shard;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class IllegalIndexShardStateException extends ElasticsearchException {
+public class IllegalIndexShardStateException extends FesenException {
 
     private final IndexShardState currentState;
 

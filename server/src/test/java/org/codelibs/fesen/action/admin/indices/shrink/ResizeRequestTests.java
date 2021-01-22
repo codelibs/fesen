@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.RandomCreateIndexGenerator;
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenAssertions;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -106,7 +106,7 @@ public class ResizeRequestTests extends ESTestCase {
         assertEquals(resizeRequest.getTargetIndexRequest().settings(), parsedResizeRequest.getTargetIndexRequest().settings());
 
         BytesReference finalBytes = toShuffledXContent(parsedResizeRequest, xContentType, EMPTY_PARAMS, humanReadable);
-        ElasticsearchAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
+        FesenAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
     }
 
     private static ResizeRequest createTestItem() {

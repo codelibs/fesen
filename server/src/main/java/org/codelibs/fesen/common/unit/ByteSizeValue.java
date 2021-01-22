@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.unit;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -188,12 +188,12 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
         return Strings.format1Decimals(value, suffix);
     }
 
-    public static ByteSizeValue parseBytesSizeValue(String sValue, String settingName) throws ElasticsearchParseException {
+    public static ByteSizeValue parseBytesSizeValue(String sValue, String settingName) throws FesenParseException {
         return parseBytesSizeValue(sValue, null, settingName);
     }
 
     public static ByteSizeValue parseBytesSizeValue(String sValue, ByteSizeValue defaultValue, String settingName)
-            throws ElasticsearchParseException {
+            throws FesenParseException {
         settingName = Objects.requireNonNull(settingName);
         if (sValue == null) {
             return defaultValue;
@@ -229,7 +229,7 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
             return new ByteSizeValue(0, ByteSizeUnit.BYTES);
         } else {
             // Missing units:
-            throw new ElasticsearchParseException(
+            throw new FesenParseException(
                     "failed to parse setting [{}] with value [{}] as a size in bytes: unit is missing or unrecognized", settingName,
                     sValue);
         }
@@ -250,11 +250,11 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
                          initialInput, settingName);
                     return new ByteSizeValue((long) (doubleValue * unit.toBytes(1)));
                 } catch (final NumberFormatException ignored) {
-                    throw new ElasticsearchParseException("failed to parse [{}]", e, initialInput);
+                    throw new FesenParseException("failed to parse [{}]", e, initialInput);
                 }
             }
         } catch (IllegalArgumentException e) {
-            throw new ElasticsearchParseException("failed to parse setting [{}] with value [{}] as a size in bytes", e, settingName,
+            throw new FesenParseException("failed to parse setting [{}] with value [{}] as a size in bytes", e, settingName,
                     initialInput);
         }
     }

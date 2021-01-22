@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.CompoundProcessor;
 import org.codelibs.fesen.ingest.IngestDocument;
@@ -95,7 +95,7 @@ public class CompoundProcessorTests extends ESTestCase {
         assertThat(compoundProcessor.getOnFailureProcessors().isEmpty(), is(true));
         Exception[] holder = new Exception[1];
         compoundProcessor.execute(ingestDocument, (result, e) -> holder[0] = e);
-        assertThat(((ElasticsearchException) holder[0]).getRootCause().getMessage(), equalTo("error"));
+        assertThat(((FesenException) holder[0]).getRootCause().getMessage(), equalTo("error"));
         assertThat(processor.getInvokedCounter(), equalTo(1));
         assertStats(compoundProcessor, 1, 1, 0);
 

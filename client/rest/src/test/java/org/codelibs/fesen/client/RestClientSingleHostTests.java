@@ -533,12 +533,12 @@ public class RestClientSingleHostTests extends RestClientTestCase {
     }
 
     /**
-     * Emulates Elasticsearch's HeaderWarningLogger.formatWarning in simple
+     * Emulates Fesen's HeaderWarningLogger.formatWarning in simple
      * cases. We don't have that available because we're testing against 1.7.
      */
     private static String formatWarningWithoutDate(String warningBody) {
         final String hash = new String(new byte[40], StandardCharsets.UTF_8).replace('\0', 'e');
-        return "299 Elasticsearch-1.2.2-SNAPSHOT-" + hash + " \"" + warningBody + "\"";
+        return "299 Fesen-1.2.2-SNAPSHOT-" + hash + " \"" + warningBody + "\"";
     }
 
     private static String formatWarning(String warningBody) {

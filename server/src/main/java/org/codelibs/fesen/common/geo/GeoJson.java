@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.common.geo;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
 import org.codelibs.fesen.common.unit.DistanceUnit;
@@ -375,10 +375,10 @@ public final class GeoJson {
         }
         if (shapeType == ShapeType.GEOMETRYCOLLECTION) {
             if (geometries == null) {
-                throw new ElasticsearchParseException("geometries not included");
+                throw new FesenParseException("geometries not included");
             }
             if (coordinates != null) {
-                throw new ElasticsearchParseException("parameter coordinates is not supported for type " + type);
+                throw new FesenParseException("parameter coordinates is not supported for type " + type);
             }
             verifyNulls(type, null, orientation, radius);
             return new GeometryCollection<>(geometries);
@@ -386,13 +386,13 @@ public final class GeoJson {
 
         // We expect to have coordinates for all the rest
         if (coordinates == null) {
-            throw new ElasticsearchParseException("coordinates not included");
+            throw new FesenParseException("coordinates not included");
         }
 
         switch (shapeType) {
             case CIRCLE:
                 if (radius == null) {
-                    throw new ElasticsearchParseException("radius is not specified");
+                    throw new FesenParseException("radius is not specified");
                 }
                 verifyNulls(type, geometries, orientation, null);
                 Point point = coordinates.asPoint();
@@ -421,7 +421,7 @@ public final class GeoJson {
                 verifyNulls(type, geometries, orientation, radius);
                 return coordinates.asRectangle();
             default:
-                throw new ElasticsearchParseException("unsupported shape type " + type);
+                throw new FesenParseException("unsupported shape type " + type);
         }
     }
 
@@ -430,13 +430,13 @@ public final class GeoJson {
      */
     private static void verifyNulls(String type, List<Geometry> geometries, Boolean orientation, DistanceUnit.Distance radius) {
         if (geometries != null) {
-            throw new ElasticsearchParseException("parameter geometries is not supported for type " + type);
+            throw new FesenParseException("parameter geometries is not supported for type " + type);
         }
         if (orientation != null) {
-            throw new ElasticsearchParseException("parameter orientation is not supported for type " + type);
+            throw new FesenParseException("parameter orientation is not supported for type " + type);
         }
         if (radius != null) {
-            throw new ElasticsearchParseException("parameter radius is not supported for type " + type);
+            throw new FesenParseException("parameter radius is not supported for type " + type);
         }
     }
 
@@ -459,7 +459,7 @@ public final class GeoJson {
         while (token != XContentParser.Token.END_ARRAY) {
             CoordinateNode node = parseCoordinates(parser);
             if (nodes.isEmpty() == false && nodes.get(0).numDimensions() != node.numDimensions()) {
-                throw new ElasticsearchParseException("Exception parsing coordinates: number of dimensions do not match");
+                throw new FesenParseException("Exception parsing coordinates: number of dimensions do not match");
             }
             nodes.add(node);
             token = parser.nextToken();
@@ -474,11 +474,11 @@ public final class GeoJson {
     private static Point parseCoordinate(XContentParser parser) throws IOException {
         // Add support for coerce here
         if (parser.currentToken() != XContentParser.Token.VALUE_NUMBER) {
-            throw new ElasticsearchParseException("geo coordinates must be numbers");
+            throw new FesenParseException("geo coordinates must be numbers");
         }
         double lon = parser.doubleValue();
         if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-            throw new ElasticsearchParseException("geo coordinates must be numbers");
+            throw new FesenParseException("geo coordinates must be numbers");
         }
         double lat = parser.doubleValue();
         XContentParser.Token token = parser.nextToken();
@@ -490,7 +490,7 @@ public final class GeoJson {
         }
         // do not support > 3 dimensions
         if (parser.currentToken() == XContentParser.Token.VALUE_NUMBER) {
-            throw new ElasticsearchParseException("geo coordinates greater than 3 dimensions are not supported");
+            throw new FesenParseException("geo coordinates greater than 3 dimensions are not supported");
         }
         return new Point(lon, lat, alt);
     }
@@ -601,7 +601,7 @@ public final class GeoJson {
 
         protected int numDimensions() {
             if (isEmpty()) {
-                throw new ElasticsearchException("attempting to get number of dimensions on an empty coordinate node");
+                throw new FesenException("attempting to get number of dimensions on an empty coordinate node");
             }
             if (coordinate != null) {
                 return coordinate.hasZ() ? 3 : 2;
@@ -611,14 +611,14 @@ public final class GeoJson {
 
         public Point asPoint() {
             if (children != null) {
-                throw new ElasticsearchException("expected a single points but got a list");
+                throw new FesenException("expected a single points but got a list");
             }
             return coordinate;
         }
 
         public MultiPoint asMultiPoint() {
             if (coordinate != null) {
-                throw new ElasticsearchException("expected a list of points but got a point");
+                throw new FesenException("expected a list of points but got a point");
             }
             List<Point> points = new ArrayList<>();
             for (CoordinateNode node : children) {
@@ -629,11 +629,11 @@ public final class GeoJson {
 
         private double[][] asLineComponents(boolean orientation, boolean coerce, boolean close) {
             if (coordinate != null) {
-                throw new ElasticsearchException("expected a list of points but got a point");
+                throw new FesenException("expected a list of points but got a point");
             }
 
             if (children.size() < 2) {
-                throw new ElasticsearchException("not enough points to build a line");
+                throw new FesenException("not enough points to build a line");
             }
 
             boolean needsClosing;
@@ -685,7 +685,7 @@ public final class GeoJson {
 
         public MultiLine asMultiLineString(boolean coerce) {
             if (coordinate != null) {
-                throw new ElasticsearchException("expected a list of points but got a point");
+                throw new FesenException("expected a list of points but got a point");
             }
             List<Line> lines = new ArrayList<>();
             for (CoordinateNode node : children) {
@@ -697,7 +697,7 @@ public final class GeoJson {
 
         public Polygon asPolygon(boolean orientation, boolean coerce) {
             if (coordinate != null) {
-                throw new ElasticsearchException("expected a list of points but got a point");
+                throw new FesenException("expected a list of points but got a point");
             }
             List<LinearRing> lines = new ArrayList<>();
             for (CoordinateNode node : children) {
@@ -713,7 +713,7 @@ public final class GeoJson {
 
         public MultiPolygon asMultiPolygon(boolean orientation, boolean coerce) {
             if (coordinate != null) {
-                throw new ElasticsearchException("expected a list of points but got a point");
+                throw new FesenException("expected a list of points but got a point");
             }
             List<Polygon> polygons = new ArrayList<>();
             for (CoordinateNode node : children) {
@@ -724,7 +724,7 @@ public final class GeoJson {
 
         public Rectangle asRectangle() {
             if (children.size() != 2) {
-                throw new ElasticsearchParseException(
+                throw new FesenParseException(
                     "invalid number of points [{}] provided for geo_shape [{}] when expecting an array of 2 coordinates",
                     children.size(), ShapeType.ENVELOPE);
             }

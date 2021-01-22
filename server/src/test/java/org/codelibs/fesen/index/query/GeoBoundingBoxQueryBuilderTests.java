@@ -24,7 +24,7 @@ import org.apache.lucene.document.LatLonPoint;
 import org.apache.lucene.search.IndexOrDocValuesQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.geo.GeoUtils;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
@@ -502,7 +502,7 @@ public class GeoBoundingBoxQueryBuilderTests extends AbstractQueryTestCase<GeoBo
                 "  }\n" +
                 "}";
 
-        ElasticsearchParseException e1 = expectThrows(ElasticsearchParseException.class, () -> parseQuery(jsonGeohashAndWkt));
+        FesenParseException e1 = expectThrows(FesenParseException.class, () -> parseQuery(jsonGeohashAndWkt));
         assertThat(e1.getMessage(), containsString("Conflicting definition found using well-known text and explicit corners."));
     }
 

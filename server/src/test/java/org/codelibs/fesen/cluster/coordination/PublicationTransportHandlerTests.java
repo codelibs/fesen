@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -82,7 +82,7 @@ public class PublicationTransportHandlerTests extends ESTestCase {
             }
         };
 
-        ElasticsearchException e = expectThrows(ElasticsearchException.class, () ->
+        FesenException e = expectThrows(FesenException.class, () ->
             handler.newPublicationContext(new ClusterChangedEvent("test", unserializableClusterState, clusterState)));
         assertNotNull(e.getCause());
         assertThat(e.getCause(), instanceOf(IOException.class));

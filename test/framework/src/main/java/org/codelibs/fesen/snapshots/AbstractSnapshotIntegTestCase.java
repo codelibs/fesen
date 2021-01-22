@@ -87,7 +87,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;

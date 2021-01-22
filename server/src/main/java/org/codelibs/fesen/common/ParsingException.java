@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -34,7 +34,7 @@ import java.io.IOException;
  * XContentParser}.
  * Can contain information about location of the error.
  */
-public class ParsingException extends ElasticsearchException {
+public class ParsingException extends FesenException {
 
     protected static final int UNKNOWN_POSITION = -1;
     private final int lineNumber;

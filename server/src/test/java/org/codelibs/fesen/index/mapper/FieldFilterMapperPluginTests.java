@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 
 import static org.codelibs.fesen.cluster.metadata.MetadataTests.assertLeafs;
 import static org.codelibs.fesen.cluster.metadata.MetadataTests.assertMultiField;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 
 public class FieldFilterMapperPluginTests extends ESSingleNodeTestCase {
 

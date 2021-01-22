@@ -22,7 +22,7 @@ package org.codelibs.fesen.cluster.service;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AckedClusterStateUpdateTask;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
@@ -756,7 +756,7 @@ public class MasterServiceTests extends ESTestCase {
                 if (event.source().contains("test6")) {
                     relativeTimeInMillis += MasterService.MASTER_SERVICE_SLOW_TASK_LOGGING_THRESHOLD_SETTING.get(Settings.EMPTY).millis()
                         + randomLongBetween(1, 1000000);
-                    throw new ElasticsearchException("simulated error during slow publication which should trigger logging");
+                    throw new FesenException("simulated error during slow publication which should trigger logging");
                 }
                 clusterStateRef.set(event.state());
                 publishListener.onResponse(null);

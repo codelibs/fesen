@@ -21,11 +21,11 @@ package org.codelibs.fesen.action;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 
-public class TimestampParsingException extends ElasticsearchException {
+public class TimestampParsingException extends FesenException {
 
     private final String timestamp;
 

@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.cluster.health;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.unit.TimeValue;
@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.unit.TimeValue;
 public class ClusterHealthRequestBuilder
         extends MasterNodeReadOperationRequestBuilder<ClusterHealthRequest, ClusterHealthResponse, ClusterHealthRequestBuilder> {
 
-    public ClusterHealthRequestBuilder(ElasticsearchClient client, ClusterHealthAction action) {
+    public ClusterHealthRequestBuilder(FesenClient client, ClusterHealthAction action) {
         super(client, action, new ClusterHealthRequest());
     }
 

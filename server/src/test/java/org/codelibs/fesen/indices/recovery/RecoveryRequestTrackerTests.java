@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.indices.recovery;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
@@ -70,7 +70,7 @@ public class RecoveryRequestTrackerTests extends ESTestCase {
                         // Ensure that we only return 1 future per sequence number
                         assertTrue(added);
                         if (rarely()) {
-                            listener.onFailure(new ElasticsearchException(randomAlphaOfLength(10)));
+                            listener.onFailure(new FesenException(randomAlphaOfLength(10)));
                         } else {
                             listener.onResponse(null);
                         }

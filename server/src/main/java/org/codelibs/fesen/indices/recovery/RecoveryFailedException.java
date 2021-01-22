@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.indices.recovery;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -27,7 +27,7 @@ import org.codelibs.fesen.index.shard.ShardId;
 
 import java.io.IOException;
 
-public class RecoveryFailedException extends ElasticsearchException {
+public class RecoveryFailedException extends FesenException {
 
     public RecoveryFailedException(StartRecoveryRequest request, Throwable cause) {
         this(request, null, cause);

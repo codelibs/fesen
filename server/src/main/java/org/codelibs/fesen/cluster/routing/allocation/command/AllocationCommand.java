@@ -43,7 +43,7 @@ public interface AllocationCommand extends NamedWriteable, ToXContentObject {
     /**
      * Executes the command on a {@link RoutingAllocation} setup
      * @param allocation {@link RoutingAllocation} to modify
-     * @throws org.codelibs.fesen.ElasticsearchException if something happens during reconfiguration
+     * @throws org.codelibs.fesen.FesenException if something happens during reconfiguration
      */
     RerouteExplanation execute(RoutingAllocation allocation, boolean explain);
 

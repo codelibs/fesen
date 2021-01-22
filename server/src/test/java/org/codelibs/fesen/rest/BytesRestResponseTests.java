@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.rest;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.ResourceNotFoundException;
@@ -51,7 +51,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.codelibs.fesen.ElasticsearchExceptionTests.assertDeepEquals;
+import static org.codelibs.fesen.FesenExceptionTests.assertDeepEquals;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
@@ -81,10 +81,10 @@ public class BytesRestResponseTests extends ESTestCase {
         RestRequest request = new FakeRestRequest();
         RestChannel channel = new SimpleExceptionRestChannel(request);
 
-        Exception t = new ElasticsearchException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
+        Exception t = new FesenException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
         BytesRestResponse response = new BytesRestResponse(channel, t);
         String text = response.content().utf8ToString();
-        assertThat(text, containsString("ElasticsearchException[an error occurred reading data]"));
+        assertThat(text, containsString("FesenException[an error occurred reading data]"));
         assertThat(text, not(containsString("FileNotFoundException")));
         assertThat(text, not(containsString("/foo/bar")));
         assertThat(text, not(containsString("error_trace")));
@@ -94,14 +94,14 @@ public class BytesRestResponseTests extends ESTestCase {
         RestRequest request = new FakeRestRequest();
         RestChannel channel = new DetailedExceptionRestChannel(request);
 
-        Exception t = new ElasticsearchException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
+        Exception t = new FesenException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
         BytesRestResponse response = new BytesRestResponse(channel, t);
         String text = response.content().utf8ToString();
         assertThat(text, containsString("{\"type\":\"exception\",\"reason\":\"an error occurred reading data\"}"));
         assertThat(text, containsString("{\"type\":\"file_not_found_exception\",\"reason\":\"/foo/bar\"}"));
     }
 
-    public void testNonElasticsearchExceptionIsNotShownAsSimpleMessage() throws Exception {
+    public void testNonFesenExceptionIsNotShownAsSimpleMessage() throws Exception {
         RestRequest request = new FakeRestRequest();
         RestChannel channel = new SimpleExceptionRestChannel(request);
 
@@ -111,7 +111,7 @@ public class BytesRestResponseTests extends ESTestCase {
         assertThat(text, not(containsString("UnknownException[an error occurred reading data]")));
         assertThat(text, not(containsString("FileNotFoundException[/foo/bar]")));
         assertThat(text, not(containsString("error_trace")));
-        assertThat(text, containsString("\"error\":\"No ElasticsearchException found\""));
+        assertThat(text, containsString("\"error\":\"No FesenException found\""));
     }
 
     public void testErrorTrace() throws Exception {
@@ -131,7 +131,7 @@ public class BytesRestResponseTests extends ESTestCase {
         RestRequest request = new FakeRestRequest();
         RestChannel channel = new DetailedExceptionRestChannel(request);
         {
-            Exception e = new ElasticsearchException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
+            Exception e = new FesenException("an error occurred reading data", new FileNotFoundException("/foo/bar"));
             BytesRestResponse response = new BytesRestResponse(channel, e);
             String text = response.content().utf8ToString();
             assertThat(text, containsString("{\"root_cause\":[{\"type\":\"exception\",\"reason\":\"an error occurred reading data\"}]"));
@@ -191,7 +191,7 @@ public class BytesRestResponseTests extends ESTestCase {
     public void testResponseWhenInternalServerError() throws IOException {
         final RestRequest request = new FakeRestRequest();
         final RestChannel channel = new DetailedExceptionRestChannel(request);
-        final BytesRestResponse response = new BytesRestResponse(channel, new ElasticsearchException("simulated"));
+        final BytesRestResponse response = new BytesRestResponse(channel, new FesenException("simulated"));
         assertNotNull(response.content());
         final String content = response.content().utf8ToString();
         assertThat(content, containsString("\"type\":\"exception\""));
@@ -203,7 +203,7 @@ public class BytesRestResponseTests extends ESTestCase {
         final boolean detailed = randomBoolean();
 
         Exception original;
-        ElasticsearchException cause = null;
+        FesenException cause = null;
         String reason;
         String type = "exception";
         RestStatus status = RestStatus.INTERNAL_SERVER_ERROR;
@@ -211,79 +211,79 @@ public class BytesRestResponseTests extends ESTestCase {
 
         switch (randomIntBetween(0, 5)) {
             case 0:
-                original = new ElasticsearchException("ElasticsearchException without cause");
+                original = new FesenException("FesenException without cause");
                 if (detailed) {
                     addHeadersOrMetadata = randomBoolean();
-                    reason = "ElasticsearchException without cause";
+                    reason = "FesenException without cause";
                 } else {
-                    reason = "ElasticsearchException[ElasticsearchException without cause]";
+                    reason = "FesenException[FesenException without cause]";
                 }
                 break;
             case 1:
-                original = new ElasticsearchException("ElasticsearchException with a cause", new FileNotFoundException("missing"));
+                original = new FesenException("FesenException with a cause", new FileNotFoundException("missing"));
                 if (detailed) {
                     addHeadersOrMetadata = randomBoolean();
                     type = "exception";
-                    reason = "ElasticsearchException with a cause";
-                    cause = new ElasticsearchException("Elasticsearch exception [type=file_not_found_exception, reason=missing]");
+                    reason = "FesenException with a cause";
+                    cause = new FesenException("Fesen exception [type=file_not_found_exception, reason=missing]");
                 } else {
-                    reason = "ElasticsearchException[ElasticsearchException with a cause]";
+                    reason = "FesenException[FesenException with a cause]";
                 }
                 break;
             case 2:
-                original = new ResourceNotFoundException("ElasticsearchException with custom status");
+                original = new ResourceNotFoundException("FesenException with custom status");
                 status = RestStatus.NOT_FOUND;
                 if (detailed) {
                     addHeadersOrMetadata = randomBoolean();
                     type = "resource_not_found_exception";
-                    reason = "ElasticsearchException with custom status";
+                    reason = "FesenException with custom status";
                 } else {
-                    reason = "ResourceNotFoundException[ElasticsearchException with custom status]";
+                    reason = "ResourceNotFoundException[FesenException with custom status]";
                 }
                 break;
             case 3:
                 TransportAddress address = buildNewFakeTransportAddress();
                 original = new RemoteTransportException("remote", address, "action",
-                        new ResourceAlreadyExistsException("ElasticsearchWrapperException with a cause that has a custom status"));
+                        new ResourceAlreadyExistsException("FesenWrapperException with a cause that has a custom status"));
                 status = RestStatus.BAD_REQUEST;
                 if (detailed) {
                     type = "resource_already_exists_exception";
-                    reason = "ElasticsearchWrapperException with a cause that has a custom status";
+                    reason = "FesenWrapperException with a cause that has a custom status";
                 } else {
                     reason = "RemoteTransportException[[remote][" + address.toString() + "][action]]";
                 }
                 break;
             case 4:
-                original = new RemoteTransportException("ElasticsearchWrapperException with a cause that has a special treatment",
+                original = new RemoteTransportException("FesenWrapperException with a cause that has a special treatment",
                         new IllegalArgumentException("wrong"));
                 status = RestStatus.BAD_REQUEST;
                 if (detailed) {
                     type = "illegal_argument_exception";
                     reason = "wrong";
                 } else {
-                    reason = "RemoteTransportException[[ElasticsearchWrapperException with a cause that has a special treatment]]";
+                    reason = "RemoteTransportException[[FesenWrapperException with a cause that has a special treatment]]";
                 }
                 break;
             case 5:
                 status = randomFrom(RestStatus.values());
-                original = new ElasticsearchStatusException("ElasticsearchStatusException with random status", status);
+                original = new FesenStatusException("FesenStatusException with random status", status);
                 if (detailed) {
                     addHeadersOrMetadata = randomBoolean();
                     type = "status_exception";
-                    reason = "ElasticsearchStatusException with random status";
+                    reason = "FesenStatusException with random status";
                 } else {
-                    reason = "ElasticsearchStatusException[ElasticsearchStatusException with random status]";
+                    reason = "FesenStatusException[FesenStatusException with random status]";
                 }
                 break;
             default:
                 throw new UnsupportedOperationException("Failed to generate random exception");
         }
 
-        String message = "Elasticsearch exception [type=" + type + ", reason=" + reason + "]";
-        ElasticsearchStatusException expected = new ElasticsearchStatusException(message, status, cause);
+        String message = "Fesen exception [type=" + type + ", reason=" + reason + "]";
+        FesenStatusException expected = new FesenStatusException(message, status, cause);
 
         if (addHeadersOrMetadata) {
-            ElasticsearchException originalException = ((ElasticsearchException) original);
+            FesenException originalException = ((FesenException) original);
             if (randomBoolean()) {
                 originalException.addHeader("foo", "bar", "baz");
                 expected.addHeader("foo", "bar", "baz");
@@ -312,7 +312,7 @@ public class BytesRestResponseTests extends ESTestCase {
 
         BytesRestResponse response = new BytesRestResponse(channel, original);
 
-        ElasticsearchException parsedError;
+        FesenException parsedError;
         try (XContentParser parser = createParser(xContentType.xContent(), response.content())) {
             parsedError = BytesRestResponse.errorFromXContent(parser);
             assertNull(parser.nextToken());
@@ -337,7 +337,7 @@ public class BytesRestResponseTests extends ESTestCase {
         assertEquals("Failed to parse elasticsearch status exception: no exception was found", e.getMessage());
     }
 
-    public static class WithHeadersException extends ElasticsearchException {
+    public static class WithHeadersException extends FesenException {
 
         WithHeadersException() {
             super("");

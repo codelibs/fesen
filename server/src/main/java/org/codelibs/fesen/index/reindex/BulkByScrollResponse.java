@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.common.Nullable;
@@ -230,8 +230,8 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
        Integer status = null;
        Integer shardId = null;
        String nodeId = null;
-       ElasticsearchException bulkExc = null;
-       ElasticsearchException searchExc = null;
+       FesenException bulkExc = null;
+       FesenException searchExc = null;
        while ((token = parser.nextToken()) != Token.END_OBJECT) {
            ensureExpectedToken(Token.FIELD_NAME, token, parser);
            String name = parser.currentName();
@@ -241,10 +241,10 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
            } else if (token == Token.START_OBJECT) {
                switch (name) {
                    case SearchFailure.REASON_FIELD:
-                       searchExc = ElasticsearchException.fromXContent(parser);
+                       searchExc = FesenException.fromXContent(parser);
                        break;
                    case Failure.CAUSE_FIELD:
-                       bulkExc = ElasticsearchException.fromXContent(parser);
+                       bulkExc = FesenException.fromXContent(parser);
                        break;
                    default:
                        parser.skipChildren();
@@ -291,7 +291,7 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
                return new SearchFailure(searchExc, index, shardId, nodeId, RestStatus.fromCode(status));
            }
        } else {
-           throw new ElasticsearchParseException("failed to parse failures array. At least one of {reason,cause} must be present");
+           throw new FesenParseException("failed to parse failures array. At least one of {reason,cause} must be present");
        }
     }
 

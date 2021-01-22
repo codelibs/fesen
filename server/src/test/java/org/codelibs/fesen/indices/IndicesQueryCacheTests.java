@@ -37,7 +37,7 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.store.Directory;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.cache.query.QueryCacheStats;
@@ -111,7 +111,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r = DirectoryReader.open(w);
         w.close();
         ShardId shard = new ShardId("index", "_na_", 0);
-        r = ElasticsearchDirectoryReader.wrap(r, shard);
+        r = FesenDirectoryReader.wrap(r, shard);
         IndexSearcher s = new IndexSearcher(r);
         s.setQueryCachingPolicy(alwaysCachePolicy());
 
@@ -182,7 +182,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r1 = DirectoryReader.open(w1);
         w1.close();
         ShardId shard1 = new ShardId("index", "_na_", 0);
-        r1 = ElasticsearchDirectoryReader.wrap(r1, shard1);
+        r1 = FesenDirectoryReader.wrap(r1, shard1);
         IndexSearcher s1 = new IndexSearcher(r1);
         s1.setQueryCachingPolicy(alwaysCachePolicy());
 
@@ -192,7 +192,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r2 = DirectoryReader.open(w2);
         w2.close();
         ShardId shard2 = new ShardId("index", "_na_", 1);
-        r2 = ElasticsearchDirectoryReader.wrap(r2, shard2);
+        r2 = FesenDirectoryReader.wrap(r2, shard2);
         IndexSearcher s2 = new IndexSearcher(r2);
         s2.setQueryCachingPolicy(alwaysCachePolicy());
 
@@ -308,7 +308,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r1 = DirectoryReader.open(w1);
         w1.close();
         ShardId shard1 = new ShardId("index", "_na_", 0);
-        r1 = ElasticsearchDirectoryReader.wrap(r1, shard1);
+        r1 = FesenDirectoryReader.wrap(r1, shard1);
         IndexSearcher s1 = new IndexSearcher(r1);
         s1.setQueryCachingPolicy(alwaysCachePolicy());
 
@@ -318,7 +318,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r2 = DirectoryReader.open(w2);
         w2.close();
         ShardId shard2 = new ShardId("index", "_na_", 1);
-        r2 = ElasticsearchDirectoryReader.wrap(r2, shard2);
+        r2 = FesenDirectoryReader.wrap(r2, shard2);
         IndexSearcher s2 = new IndexSearcher(r2);
         s2.setQueryCachingPolicy(alwaysCachePolicy());
 
@@ -398,7 +398,7 @@ public class IndicesQueryCacheTests extends ESTestCase {
         DirectoryReader r = DirectoryReader.open(w);
         w.close();
         ShardId shard = new ShardId("index", "_na_", 0);
-        r = ElasticsearchDirectoryReader.wrap(r, shard);
+        r = FesenDirectoryReader.wrap(r, shard);
         IndexSearcher s = new IndexSearcher(r);
         s.setQueryCachingPolicy(new QueryCachingPolicy() {
             @Override

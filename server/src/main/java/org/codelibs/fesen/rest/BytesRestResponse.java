@@ -23,8 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -35,8 +35,8 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import java.io.IOException;
 
 import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.ElasticsearchException.REST_EXCEPTION_SKIP_STACK_TRACE;
-import static org.codelibs.fesen.ElasticsearchException.REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT;
+import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE;
+import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 
@@ -111,8 +111,8 @@ public class BytesRestResponse extends RestResponse {
             this.content = BytesReference.bytes(builder);
             this.contentType = builder.contentType().mediaType();
         }
-        if (e instanceof ElasticsearchException) {
-            copyHeaders(((ElasticsearchException) e));
+        if (e instanceof FesenException) {
+            copyHeaders(((FesenException) e));
         }
     }
 
@@ -146,7 +146,7 @@ public class BytesRestResponse extends RestResponse {
     private void build(XContentBuilder builder, ToXContent.Params params, RestStatus status,
                        boolean detailedErrorsEnabled, Exception e) throws IOException {
         builder.startObject();
-        ElasticsearchException.generateFailureXContent(builder, params, e, detailedErrorsEnabled);
+        FesenException.generateFailureXContent(builder, params, e, detailedErrorsEnabled);
         builder.field(STATUS, status.getStatus());
         builder.endObject();
     }
@@ -158,11 +158,11 @@ public class BytesRestResponse extends RestResponse {
             .endObject());
     }
 
-    public static ElasticsearchStatusException errorFromXContent(XContentParser parser) throws IOException {
+    public static FesenStatusException errorFromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
 
-        ElasticsearchException exception = null;
+        FesenException exception = null;
         RestStatus status = null;
 
         String currentFieldName = null;
@@ -176,7 +176,7 @@ public class BytesRestResponse extends RestResponse {
                     status = RestStatus.fromCode(parser.intValue());
                 }
             } else {
-                exception = ElasticsearchException.failureFromXContent(parser);
+                exception = FesenException.failureFromXContent(parser);
             }
         }
 
@@ -184,7 +184,7 @@ public class BytesRestResponse extends RestResponse {
             throw new IllegalStateException("Failed to parse elasticsearch status exception: no exception was found");
         }
 
-        ElasticsearchStatusException result = new ElasticsearchStatusException(exception.getMessage(), status, exception.getCause());
+        FesenStatusException result = new FesenStatusException(exception.getMessage(), status, exception.getCause());
         for (String header : exception.getHeaderKeys()) {
             result.addHeader(header, exception.getHeader(header));
         }

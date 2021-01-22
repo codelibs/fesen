@@ -22,10 +22,10 @@ import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.coordination.ElasticsearchNodeCommand;
+import org.codelibs.fesen.cluster.coordination.FesenNodeCommand;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -47,10 +47,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class NodeRepurposeCommand extends ElasticsearchNodeCommand {
+public class NodeRepurposeCommand extends FesenNodeCommand {
 
-    static final String ABORTED_BY_USER_MSG = ElasticsearchNodeCommand.ABORTED_BY_USER_MSG;
-    static final String FAILED_TO_OBTAIN_NODE_LOCK_MSG = ElasticsearchNodeCommand.FAILED_TO_OBTAIN_NODE_LOCK_MSG;
+    static final String ABORTED_BY_USER_MSG = FesenNodeCommand.ABORTED_BY_USER_MSG;
+    static final String FAILED_TO_OBTAIN_NODE_LOCK_MSG = FesenNodeCommand.FAILED_TO_OBTAIN_NODE_LOCK_MSG;
     static final String NO_CLEANUP = "Node has node.data=true -> no clean up necessary";
     static final String NO_DATA_TO_CLEAN_UP_FOUND = "No data to clean-up found";
     static final String NO_SHARD_DATA_TO_CLEAN_UP_FOUND = "No shard data to clean-up found";
@@ -207,7 +207,7 @@ public class NodeRepurposeCommand extends ElasticsearchNodeCommand {
         try {
             IOUtils.rm(path);
         } catch (IOException e) {
-            throw new ElasticsearchException("Unable to clean up path: " + path + ": " + e.getMessage());
+            throw new FesenException("Unable to clean up path: " + path + ": " + e.getMessage());
         }
     }
 

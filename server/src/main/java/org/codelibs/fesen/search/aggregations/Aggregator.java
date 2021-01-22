@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.aggregations;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -213,7 +213,7 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
                     return mode;
                 }
             }
-            throw new ElasticsearchParseException("no [{}] found for value [{}]", KEY.getPreferredName(), value);
+            throw new FesenParseException("no [{}] found for value [{}]", KEY.getPreferredName(), value);
         }
 
         public static SubAggCollectionMode readFromStream(StreamInput in) throws IOException {

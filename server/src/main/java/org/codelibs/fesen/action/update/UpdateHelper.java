@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.update;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.DocWriteResponse;
 import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.action.index.IndexRequest;
@@ -299,7 +299,7 @@ public class UpdateHelper {
                     sourceFilteredAsBytes = BytesReference.bytes(builder);
                 }
             } catch (IOException e) {
-                throw new ElasticsearchException("Error filtering source", e);
+                throw new FesenException("Error filtering source", e);
             }
         }
 

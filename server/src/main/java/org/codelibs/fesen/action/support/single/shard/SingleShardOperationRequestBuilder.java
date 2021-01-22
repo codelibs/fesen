@@ -22,13 +22,13 @@ package org.codelibs.fesen.action.support.single.shard;
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public abstract class SingleShardOperationRequestBuilder<Request extends SingleShardRequest<Request>, Response extends ActionResponse,
         RequestBuilder extends SingleShardOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
-    protected SingleShardOperationRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected SingleShardOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

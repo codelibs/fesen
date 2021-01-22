@@ -21,12 +21,12 @@ package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class DeleteStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<DeleteStoredScriptRequest,
     AcknowledgedResponse, DeleteStoredScriptRequestBuilder> {
 
-    public DeleteStoredScriptRequestBuilder(ElasticsearchClient client, DeleteStoredScriptAction action) {
+    public DeleteStoredScriptRequestBuilder(FesenClient client, DeleteStoredScriptAction action) {
         super(client, action, new DeleteStoredScriptRequest());
     }
 

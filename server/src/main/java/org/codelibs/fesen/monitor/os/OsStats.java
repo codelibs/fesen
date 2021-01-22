@@ -405,8 +405,8 @@ public class OsStats implements Writeable, ToXContentFragment {
          * The maximum amount of user memory (including file cache).
          * This is stored as a <code>String</code> because the value can be too big to fit in a
          * <code>long</code>.  (The alternative would have been <code>BigInteger</code> but then
-         * it would not be possible to index the OS stats document into Elasticsearch without
-         * losing information, as <code>BigInteger</code> is not a supported Elasticsearch type.)
+         * it would not be possible to index the OS stats document into Fesen without
+         * losing information, as <code>BigInteger</code> is not a supported Fesen type.)
          *
          * @return the maximum amount of user memory (including file cache).
          */

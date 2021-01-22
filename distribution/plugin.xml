@@ -80,9 +80,9 @@
 	</target>
 
 	<target name="install.plugin">
-		<available property="file.exists" file="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip" />
+		<available property="file.exists" file="${project.dir}/${plugin.type}/${plugin.name}/target/releases/fesen-${plugin.name}-${plugin.version}.zip" />
 		<antcall target="unzip.plugin">
-			<param name="zip.file" value="${project.dir}/${plugin.type}/${plugin.name}/target/releases/${plugin.name}-${plugin.version}.zip" />
+			<param name="zip.file" value="${project.dir}/${plugin.type}/${plugin.name}/target/releases/fesen-${plugin.name}-${plugin.version}.zip" />
 			<param name="unzip.dir" value="${target.dir}/${plugin.type}/${plugin.name}" />
 		</antcall>
 	</target>

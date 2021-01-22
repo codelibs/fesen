@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.tasks;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -104,7 +104,7 @@ public final class TaskId implements Writeable {
             if (p.currentToken() == XContentParser.Token.VALUE_STRING) {
                 return new TaskId(p.text());
             }
-            throw new ElasticsearchParseException("Expected a string but found [{}] instead", p.currentToken());
+            throw new FesenParseException("Expected a string but found [{}] instead", p.currentToken());
         };
     }
 

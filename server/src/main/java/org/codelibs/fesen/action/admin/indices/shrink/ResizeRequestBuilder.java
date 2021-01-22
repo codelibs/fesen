@@ -22,12 +22,12 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 
 public class ResizeRequestBuilder extends AcknowledgedRequestBuilder<ResizeRequest, ResizeResponse,
     ResizeRequestBuilder> {
-    public ResizeRequestBuilder(ElasticsearchClient client, ActionType<ResizeResponse> action) {
+    public ResizeRequestBuilder(FesenClient client, ActionType<ResizeResponse> action) {
         super(client, action, new ResizeRequest());
     }
 

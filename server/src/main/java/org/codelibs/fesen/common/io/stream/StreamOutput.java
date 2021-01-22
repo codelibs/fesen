@@ -28,7 +28,7 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.BitUtil;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -1082,14 +1082,14 @@ public abstract class StreamOutput extends OutputStream {
                 writeBoolean(((EsRejectedExecutionException) throwable).isExecutorShutdown());
                 writeCause = false;
             } else {
-                final ElasticsearchException ex;
-                if (throwable instanceof ElasticsearchException && ElasticsearchException.isRegistered(throwable.getClass(), version)) {
-                    ex = (ElasticsearchException) throwable;
+                final FesenException ex;
+                if (throwable instanceof FesenException && FesenException.isRegistered(throwable.getClass(), version)) {
+                    ex = (FesenException) throwable;
                 } else {
                     ex = new NotSerializableExceptionWrapper(throwable);
                 }
                 writeVInt(0);
-                writeVInt(ElasticsearchException.getId(ex.getClass()));
+                writeVInt(FesenException.getId(ex.getClass()));
                 ex.writeTo(this);
                 return;
             }
@@ -1099,7 +1099,7 @@ public abstract class StreamOutput extends OutputStream {
             if (writeCause) {
                 writeException(rootException, throwable.getCause(), nestedLevel + 1);
             }
-            ElasticsearchException.writeStackTraces(throwable, this, (o, t) -> o.writeException(rootException, t, nestedLevel + 1));
+            FesenException.writeStackTraces(throwable, this, (o, t) -> o.writeException(rootException, t, nestedLevel + 1));
         }
     }
 

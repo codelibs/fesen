@@ -112,7 +112,7 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
              * io.netty.handler.codec.MessageAggregator#DEFAULT_MAX_COMPOSITEBUFFER_COMPONENTS). To determine a proper default capacity for
              * that buffer, we need to consider that the upper bound for the size of HTTP requests is determined by `maxContentLength`. The
              * number of buffers that are needed depend on how often Netty reads network packets which depends on the network type (MTU).
-             * We assume here that Elasticsearch receives HTTP requests via an Ethernet connection which has a MTU of 1500 bytes.
+             * We assume here that Fesen receives HTTP requests via an Ethernet connection which has a MTU of 1500 bytes.
              *
              * Note that we are *not* pre-allocating any memory based on this setting but rather determine the CompositeByteBuf's capacity.
              * The tradeoff is between less (but larger) buffers that are contained in the CompositeByteBuf and more (but smaller) buffers.

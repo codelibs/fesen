@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.search;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.search.Scroll;
 
@@ -29,11 +29,11 @@ import org.codelibs.fesen.search.Scroll;
  */
 public class SearchScrollRequestBuilder extends ActionRequestBuilder<SearchScrollRequest, SearchResponse> {
 
-    public SearchScrollRequestBuilder(ElasticsearchClient client, SearchScrollAction action) {
+    public SearchScrollRequestBuilder(FesenClient client, SearchScrollAction action) {
         super(client, action, new SearchScrollRequest());
     }
 
-    public SearchScrollRequestBuilder(ElasticsearchClient client, SearchScrollAction action, String scrollId) {
+    public SearchScrollRequestBuilder(FesenClient client, SearchScrollAction action, String scrollId) {
         super(client, action, new SearchScrollRequest(scrollId));
     }
 

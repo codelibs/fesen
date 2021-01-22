@@ -39,11 +39,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertBlocked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertBlocked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 import static org.hamcrest.Matchers.containsString;
 
-public class ElasticsearchAssertionsTests extends ESTestCase {
+public class FesenAssertionsTests extends ESTestCase {
 
     public void testAssertXContentEquivalent() throws IOException {
         try (XContentBuilder original = JsonXContent.contentBuilder()) {

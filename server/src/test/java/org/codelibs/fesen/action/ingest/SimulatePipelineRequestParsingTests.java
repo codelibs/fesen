@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.ingest;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ingest.SimulatePipelineRequest;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.ingest.CompoundProcessor;
@@ -294,7 +294,7 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         docs.add(new HashMap<>());
         requestContent.put(Fields.DOCS, docs);
         requestContent.put(Fields.PIPELINE, pipelineConfig);
-        Exception e3 = expectThrows(ElasticsearchParseException.class,
+        Exception e3 = expectThrows(FesenParseException.class,
             () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
         assertThat(e3.getMessage(), containsString("required property is missing"));
     }

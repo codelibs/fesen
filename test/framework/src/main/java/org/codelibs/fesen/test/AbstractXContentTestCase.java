@@ -32,7 +32,7 @@ import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;

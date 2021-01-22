@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Randomness;
 import org.codelibs.fesen.common.Strings;
@@ -104,7 +104,7 @@ public class BulkByScrollTaskStatusTests extends AbstractXContentTestCase<BulkBy
                         return null;
                     }
                     if (randomBoolean()) {
-                        return new BulkByScrollTask.StatusOrException(new ElasticsearchException(randomAlphaOfLength(5)));
+                        return new BulkByScrollTask.StatusOrException(new FesenException(randomAlphaOfLength(5)));
                     }
                     return new BulkByScrollTask.StatusOrException(randomWorkingStatus(i));
                 })

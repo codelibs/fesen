@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.indices.recovery;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Recovery information request builder.
@@ -30,7 +30,7 @@ public class RecoveryRequestBuilder extends BroadcastOperationRequestBuilder<Rec
     /**
      * Constructs a new recovery information request builder.
      */
-    public RecoveryRequestBuilder(ElasticsearchClient client, RecoveryAction action) {
+    public RecoveryRequestBuilder(FesenClient client, RecoveryAction action) {
         super(client, action, new RecoveryRequest());
     }
 

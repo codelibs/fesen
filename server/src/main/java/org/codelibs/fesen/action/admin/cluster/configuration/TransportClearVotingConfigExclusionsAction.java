@@ -20,8 +20,8 @@ package org.codelibs.fesen.action.admin.cluster.configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
@@ -98,13 +98,13 @@ public class TransportClearVotingConfigExclusionsAction
 
                 @Override
                 public void onClusterServiceClose() {
-                    listener.onFailure(new ElasticsearchException("cluster service closed while waiting for removal of nodes "
+                    listener.onFailure(new FesenException("cluster service closed while waiting for removal of nodes "
                         + initialState.getVotingConfigExclusions()));
                 }
 
                 @Override
                 public void onTimeout(TimeValue timeout) {
-                    listener.onFailure(new ElasticsearchTimeoutException(
+                    listener.onFailure(new FesenTimeoutException(
                         "timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. "
                         + initialState.getVotingConfigExclusions()));
                 }

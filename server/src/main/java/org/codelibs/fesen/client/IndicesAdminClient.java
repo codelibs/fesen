@@ -125,7 +125,7 @@ import org.codelibs.fesen.common.Nullable;
  *
  * @see AdminClient#indices()
  */
-public interface IndicesAdminClient extends ElasticsearchClient {
+public interface IndicesAdminClient extends FesenClient {
 
     /**
      * Indices Exists.

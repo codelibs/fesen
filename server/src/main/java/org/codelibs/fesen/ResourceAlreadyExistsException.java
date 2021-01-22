@@ -25,7 +25,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class ResourceAlreadyExistsException extends ElasticsearchException {
+public class ResourceAlreadyExistsException extends FesenException {
 
     public ResourceAlreadyExistsException(Index index) {
         this("index {} already exists", index.toString());

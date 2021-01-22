@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.coordination;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
@@ -305,7 +305,7 @@ public class PublicationTransportHandler {
                         }
                     }
                 } catch (IOException e) {
-                    throw new ElasticsearchException("failed to serialize cluster state for publishing to node {}", e, node);
+                    throw new FesenException("failed to serialize cluster state for publishing to node {}", e, node);
                 }
             }
         }

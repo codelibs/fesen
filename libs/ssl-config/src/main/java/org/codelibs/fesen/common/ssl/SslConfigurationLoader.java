@@ -195,7 +195,7 @@ public abstract class SslConfigurationLoader {
     /**
      * Resolve all necessary configuration settings, and load a {@link SslConfiguration}.
      *
-     * @param basePath The base path to use for any settings that represent file paths. Typically points to the Elasticsearch
+     * @param basePath The base path to use for any settings that represent file paths. Typically points to the Fesen
      *                 configuration directory.
      * @throws SslConfigException For any problems with the configuration, or with loading the required SSL classes.
      */

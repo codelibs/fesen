@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.cancel;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.TaskOperationFailure;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
 import org.codelibs.fesen.common.Strings;
@@ -45,7 +45,7 @@ public class CancelTasksResponse extends ListTasksResponse {
         super(in);
     }
 
-    public CancelTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures, List<? extends ElasticsearchException>
+    public CancelTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures, List<? extends FesenException>
         nodeFailures) {
         super(tasks, taskFailures, nodeFailures);
     }

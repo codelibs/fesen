@@ -32,11 +32,11 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 /**
- * Information about a build of Elasticsearch.
+ * Information about a build of Fesen.
  */
 public class Build {
     /**
-     * The current build of Elasticsearch. Filled with information scanned at
+     * The current build of Fesen. Filled with information scanned at
      * startup from the jar.
      */
     public static final Build CURRENT;
@@ -133,8 +133,8 @@ public class Build {
         flavor = Flavor.fromDisplayName(System.getProperty("es.distribution.flavor", "unknown"), true);
         type = Type.fromDisplayName(System.getProperty("es.distribution.type", "unknown"), true);
 
-        final String esPrefix = "elasticsearch-" + Version.CURRENT;
-        final URL url = getElasticsearchCodeSourceLocation();
+        final String esPrefix = "fesen-" + Version.CURRENT;
+        final URL url = getFesenCodeSourceLocation();
         final String urlStr = url == null ? "" : url.toString();
         if (urlStr.startsWith("file:/") && (
             urlStr.endsWith(esPrefix + ".jar") ||
@@ -144,13 +144,13 @@ public class Build {
                 Manifest manifest = jar.getManifest();
                 hash = manifest.getMainAttributes().getValue("Change");
                 date = manifest.getMainAttributes().getValue("Build-Date");
-                isSnapshot = "true".equals(manifest.getMainAttributes().getValue("X-Compile-Elasticsearch-Snapshot"));
-                version = manifest.getMainAttributes().getValue("X-Compile-Elasticsearch-Version");
+                isSnapshot = "true".equals(manifest.getMainAttributes().getValue("X-Compile-Fesen-Snapshot"));
+                version = manifest.getMainAttributes().getValue("X-Compile-Fesen-Version");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            // not running from the official elasticsearch jar file (unit tests, IDE, uber client jar, shadiness)
+            // not running from the official fesen jar file (unit tests, IDE, uber client jar, shadiness)
             hash = "unknown";
             date = "unknown";
             version = Version.CURRENT.toString();
@@ -169,15 +169,15 @@ public class Build {
         }
         if (hash == null) {
             throw new IllegalStateException("Error finding the build hash. " +
-                    "Stopping Elasticsearch now so it doesn't run in subtly broken ways. This is likely a build bug.");
+                    "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
         if (date == null) {
             throw new IllegalStateException("Error finding the build date. " +
-                    "Stopping Elasticsearch now so it doesn't run in subtly broken ways. This is likely a build bug.");
+                    "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
         if (version == null) {
             throw new IllegalStateException("Error finding the build version. " +
-                "Stopping Elasticsearch now so it doesn't run in subtly broken ways. This is likely a build bug.");
+                "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
 
         CURRENT = new Build(flavor, type, hash, date, isSnapshot, version);
@@ -186,11 +186,11 @@ public class Build {
     private final boolean isSnapshot;
 
     /**
-     * The location of the code source for Elasticsearch
+     * The location of the code source for Fesen
      *
-     * @return the location of the code source for Elasticsearch which may be null
+     * @return the location of the code source for Fesen which may be null
      */
-    static URL getElasticsearchCodeSourceLocation() {
+    static URL getFesenCodeSourceLocation() {
         final CodeSource codeSource = Build.class.getProtectionDomain().getCodeSource();
         return codeSource == null ? null : codeSource.getLocation();
     }

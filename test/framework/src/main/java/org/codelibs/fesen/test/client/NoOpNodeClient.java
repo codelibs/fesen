@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.test.client;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
@@ -103,7 +103,7 @@ public class NoOpNodeClient extends NodeClient {
         try {
             ThreadPool.terminate(threadPool(), 10, TimeUnit.SECONDS);
         } catch (Exception e) {
-            throw new ElasticsearchException(e.getMessage(), e);
+            throw new FesenException(e.getMessage(), e);
         }
     }
 }

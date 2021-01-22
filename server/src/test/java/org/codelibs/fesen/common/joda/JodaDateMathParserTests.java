@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.joda;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.joda.Joda;
 import org.codelibs.fesen.common.joda.JodaDateMathParser;
 import org.codelibs.fesen.common.time.DateFormatter;
@@ -297,7 +297,7 @@ public class JodaDateMathParserTests extends ESTestCase {
         try {
             parser.parse(date, () -> 0);
             fail("Date: " + date + "\n" + msg);
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage().contains(exc), equalTo(true));
         }
     }
@@ -331,8 +331,8 @@ public class JodaDateMathParserTests extends ESTestCase {
         JodaDateMathParser parser = new JodaDateMathParser(Joda.forPattern("epoch_millis"));
         try {
             parser.parse("1234567890123", () -> 42, false, ZoneId.of("CET"));
-            fail("Expected ElasticsearchParseException");
-        } catch(ElasticsearchParseException e) {
+            fail("Expected FesenParseException");
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), containsString("failed to parse date field"));
             assertThat(e.getMessage(), containsString("with format [epoch_millis]"));
         }

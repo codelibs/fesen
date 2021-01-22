@@ -22,7 +22,7 @@ package org.codelibs.fesen.cluster.coordination;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
@@ -289,7 +289,7 @@ public class LeaderChecker {
                             logger.debug(new ParameterizedMessage(
                                 "leader [{}] has failed {} consecutive checks (limit [{}] is {}); last failure was:",
                                 leader, failureCount, LEADER_CHECK_RETRY_COUNT_SETTING.getKey(), leaderCheckRetryCount), exp);
-                            leaderFailed(new ElasticsearchException(
+                            leaderFailed(new FesenException(
                                 "node [" + leader + "] failed [" + failureCount + "] consecutive checks", exp));
                             return;
                         }

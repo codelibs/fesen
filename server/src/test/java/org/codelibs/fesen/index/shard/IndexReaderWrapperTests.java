@@ -34,7 +34,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.common.CheckedFunction;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.shard.IndexShard;
@@ -57,7 +57,7 @@ public class IndexReaderWrapperTests extends ESTestCase {
         doc.add(new StringField("id", "1", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         doc.add(new TextField("field", "doc", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         writer.addDocument(doc);
-        DirectoryReader open = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        DirectoryReader open = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         IndexSearcher searcher = new IndexSearcher(open);
         assertEquals(1, searcher.search(new TermQuery(new Term("field", "doc")), 1).totalHits.value);
         final AtomicInteger closeCalls = new AtomicInteger(0);
@@ -71,7 +71,7 @@ public class IndexReaderWrapperTests extends ESTestCase {
             IndexSearcher.getDefaultSimilarity(), IndexSearcher.getDefaultQueryCache(), IndexSearcher.getDefaultQueryCachingPolicy(),
             () -> closeCalled.set(true)), wrapper);
         assertEquals(1, wrap.getIndexReader().getRefCount());
-        ElasticsearchDirectoryReader.addReaderCloseListener(wrap.getDirectoryReader(), key -> {
+        FesenDirectoryReader.addReaderCloseListener(wrap.getDirectoryReader(), key -> {
             if (key == open.getReaderCacheHelper().getKey()) {
                 count.incrementAndGet();
             }
@@ -99,7 +99,7 @@ public class IndexReaderWrapperTests extends ESTestCase {
         doc.add(new StringField("id", "1", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         doc.add(new TextField("field", "doc", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         writer.addDocument(doc);
-        DirectoryReader open = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        DirectoryReader open = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         IndexSearcher searcher = new IndexSearcher(open);
         assertEquals(1, searcher.search(new TermQuery(new Term("field", "doc")), 1).totalHits.value);
         searcher.setSimilarity(iwc.getSimilarity());
@@ -111,7 +111,7 @@ public class IndexReaderWrapperTests extends ESTestCase {
         try (Engine.Searcher wrap =  IndexShard.wrapSearcher(new Engine.Searcher("foo", open,
                 IndexSearcher.getDefaultSimilarity(), IndexSearcher.getDefaultQueryCache(), IndexSearcher.getDefaultQueryCachingPolicy(),
                 () -> closeCalled.set(true)), wrapper)) {
-            ElasticsearchDirectoryReader.addReaderCloseListener(wrap.getDirectoryReader(), key -> {
+            FesenDirectoryReader.addReaderCloseListener(wrap.getDirectoryReader(), key -> {
                 cache.remove(key);
             });
             TopDocs search = wrap.search(new TermQuery(new Term("field", "doc")), 1);
@@ -134,7 +134,7 @@ public class IndexReaderWrapperTests extends ESTestCase {
         doc.add(new StringField("id", "1", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         doc.add(new TextField("field", "doc", random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
         writer.addDocument(doc);
-        DirectoryReader open = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        DirectoryReader open = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         IndexSearcher searcher = new IndexSearcher(open);
         assertEquals(1, searcher.search(new TermQuery(new Term("field", "doc")), 1).totalHits.value);
         searcher.setSimilarity(iwc.getSimilarity());

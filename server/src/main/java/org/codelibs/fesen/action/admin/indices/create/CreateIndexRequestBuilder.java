@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.create;
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
@@ -37,11 +37,11 @@ import java.util.Map;
 public class CreateIndexRequestBuilder
     extends AcknowledgedRequestBuilder<CreateIndexRequest, CreateIndexResponse, CreateIndexRequestBuilder> {
 
-    public CreateIndexRequestBuilder(ElasticsearchClient client, CreateIndexAction action) {
+    public CreateIndexRequestBuilder(FesenClient client, CreateIndexAction action) {
         super(client, action, new CreateIndexRequest());
     }
 
-    public CreateIndexRequestBuilder(ElasticsearchClient client, CreateIndexAction action, String index) {
+    public CreateIndexRequestBuilder(FesenClient client, CreateIndexAction action, String index) {
         super(client, action, new CreateIndexRequest(index));
     }
 

@@ -23,7 +23,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.unit.Fuzziness;
 import org.codelibs.fesen.index.query.FuzzyQueryBuilder;
@@ -160,7 +160,7 @@ public class FuzzyQueryBuilderTests extends AbstractQueryTestCase<FuzzyQueryBuil
             "        }\n" +
             "    }\n" +
             "}";
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class,
+        FesenParseException e = expectThrows(FesenParseException.class,
             () -> parseQuery(queryMissingFuzzinessUpLimit).toQuery(createShardContext()));
         String msg = "failed to find low and high distance values";
         assertTrue(e.getMessage() + " didn't contain: " + msg + " but: " + e.getMessage(), e.getMessage().contains(msg));
@@ -191,7 +191,7 @@ public class FuzzyQueryBuilderTests extends AbstractQueryTestCase<FuzzyQueryBuil
             "        }\n" +
             "    }\n" +
             "}";
-        e = expectThrows(ElasticsearchParseException.class,
+        e = expectThrows(FesenParseException.class,
             () -> parseQuery(queryMissingFuzzinessUpLimit2).toQuery(createShardContext()));
         assertTrue(e.getMessage() + " didn't contain: " + msg + " but: " + e.getMessage(), e.getMessage().contains(msg));
 
@@ -205,7 +205,7 @@ public class FuzzyQueryBuilderTests extends AbstractQueryTestCase<FuzzyQueryBuil
             "        }\n" +
             "    }\n" +
             "}";
-        e = expectThrows(ElasticsearchParseException.class,
+        e = expectThrows(FesenParseException.class,
             () -> parseQuery(queryMissingFuzzinessLowLimit).toQuery(createShardContext()));
         msg = "failed to parse [AUTO:,5] as a \"auto:int,int\"";
         assertTrue(e.getMessage() + " didn't contain: " + msg + " but: " + e.getMessage(), e.getMessage().contains(msg));

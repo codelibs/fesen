@@ -20,7 +20,7 @@ package org.codelibs.fesen.search.lookup;
 
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -91,16 +91,16 @@ public class SourceLookup implements Map {
                 this.source = tuple.v2();
             }
         } catch (Exception e) {
-            throw new ElasticsearchParseException("failed to parse / load source", e);
+            throw new FesenParseException("failed to parse / load source", e);
         }
         return this.source;
     }
 
-    private static Tuple<XContentType, Map<String, Object>> sourceAsMapAndType(BytesReference source) throws ElasticsearchParseException {
+    private static Tuple<XContentType, Map<String, Object>> sourceAsMapAndType(BytesReference source) throws FesenParseException {
         return XContentHelper.convertToMap(source, false);
     }
 
-    public static Map<String, Object> sourceAsMap(BytesReference source) throws ElasticsearchParseException {
+    public static Map<String, Object> sourceAsMap(BytesReference source) throws FesenParseException {
         return sourceAsMapAndType(source).v2();
     }
 

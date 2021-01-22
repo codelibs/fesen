@@ -24,7 +24,7 @@ import org.apache.lucene.index.IndexFormatTooNewException;
 import org.apache.lucene.index.IndexFormatTooOldException;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastShardOperationFailedException;
 import org.codelibs.fesen.common.Strings;
@@ -53,16 +53,16 @@ public class DefaultShardOperationFailedExceptionTests extends ESTestCase {
     public void testToString() {
         {
             DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(
-                new ElasticsearchException("foo", new IllegalArgumentException("bar", new RuntimeException("baz"))));
-            assertEquals("[null][-1] failed, reason [ElasticsearchException[foo]; nested: " +
+                new FesenException("foo", new IllegalArgumentException("bar", new RuntimeException("baz"))));
+            assertEquals("[null][-1] failed, reason [FesenException[foo]; nested: " +
                 "IllegalArgumentException[bar]; nested: RuntimeException[baz]; ]", exception.toString());
         }
         {
-            ElasticsearchException elasticsearchException = new ElasticsearchException("foo");
+            FesenException elasticsearchException = new FesenException("foo");
             elasticsearchException.setIndex(new Index("index1", "_na_"));
             elasticsearchException.setShard(new ShardId("index1", "_na_", 1));
             DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(elasticsearchException);
-            assertEquals("[index1][1] failed, reason [ElasticsearchException[foo]]", exception.toString());
+            assertEquals("[index1][1] failed, reason [FesenException[foo]]", exception.toString());
         }
         {
             DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException("index2", 2, new Exception("foo"));
@@ -72,13 +72,13 @@ public class DefaultShardOperationFailedExceptionTests extends ESTestCase {
 
     public void testToXContent() throws IOException {
         {
-            DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(new ElasticsearchException("foo"));
+            DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(new FesenException("foo"));
             assertEquals("{\"shard\":-1,\"index\":null,\"status\":\"INTERNAL_SERVER_ERROR\"," +
                 "\"reason\":{\"type\":\"exception\",\"reason\":\"foo\"}}", Strings.toString(exception));
         }
         {
             DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(
-                new ElasticsearchException("foo", new IllegalArgumentException("bar")));
+                new FesenException("foo", new IllegalArgumentException("bar")));
             assertEquals("{\"shard\":-1,\"index\":null,\"status\":\"INTERNAL_SERVER_ERROR\",\"reason\":{\"type\":\"exception\"," +
                 "\"reason\":\"foo\",\"caused_by\":{\"type\":\"illegal_argument_exception\",\"reason\":\"bar\"}}}",
                 Strings.toString(exception));
@@ -122,7 +122,7 @@ public class DefaultShardOperationFailedExceptionTests extends ESTestCase {
         assertEquals(parsed.shardId(), 1);
         assertEquals(parsed.index(), "test");
         assertEquals(parsed.status(), RestStatus.INTERNAL_SERVER_ERROR);
-        assertEquals(parsed.getCause().getMessage(), "Elasticsearch exception [type=exception, reason=foo]");
+        assertEquals(parsed.getCause().getMessage(), "Fesen exception [type=exception, reason=foo]");
     }
 
     public void testSerialization() throws Exception {
@@ -145,8 +145,8 @@ public class DefaultShardOperationFailedExceptionTests extends ESTestCase {
 
     private static DefaultShardOperationFailedException randomInstance() {
         final Exception cause = randomException();
-        if (cause instanceof ElasticsearchException) {
-            return new DefaultShardOperationFailedException((ElasticsearchException) cause);
+        if (cause instanceof FesenException) {
+            return new DefaultShardOperationFailedException((FesenException) cause);
         } else {
             return new DefaultShardOperationFailedException(randomAlphaOfLengthBetween(1, 5), randomIntBetween(0, 10), cause);
         }

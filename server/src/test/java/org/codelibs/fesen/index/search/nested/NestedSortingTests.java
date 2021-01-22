@@ -45,7 +45,7 @@ import org.apache.lucene.search.join.ToParentBlockJoinQuery;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.TestUtil;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -109,7 +109,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
 
         MultiValueMode sortMode = randomFrom(Arrays.asList(MultiValueMode.MIN, MultiValueMode.MAX));
         DirectoryReader reader = DirectoryReader.open(writer);
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
         IndexSearcher searcher = new IndexSearcher(reader);
         PagedBytesIndexFieldData indexFieldData1 = getForField("f");
         IndexFieldData<?> indexFieldData2 = NoOrdinalsStringFieldDataTests.hideOrdinals(indexFieldData1);
@@ -295,7 +295,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
 
         MultiValueMode sortMode = MultiValueMode.MIN;
         DirectoryReader reader = DirectoryReader.open(writer);
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
         IndexSearcher searcher = new IndexSearcher(reader);
         PagedBytesIndexFieldData indexFieldData = getForField("field2");
         Query parentFilter = new TermQuery(new Term("__type", "parent"));
@@ -611,7 +611,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
             }
         }
         DirectoryReader reader = DirectoryReader.open(writer);
-        reader = ElasticsearchDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
+        reader = FesenDirectoryReader.wrap(reader, new ShardId(indexService.index(), 0));
         IndexSearcher searcher = new IndexSearcher(reader);
         QueryShardContext queryShardContext = indexService.newQueryShardContext(0, searcher, () -> 0L, null);
 

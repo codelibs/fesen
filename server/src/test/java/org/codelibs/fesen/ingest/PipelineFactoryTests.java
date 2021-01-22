@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.CompoundProcessor;
 import org.codelibs.fesen.ingest.ConfigurationUtils;
 import org.codelibs.fesen.ingest.Pipeline;
@@ -73,7 +73,7 @@ public class PipelineFactoryTests extends ESTestCase {
         try {
             Pipeline.create("_id", pipelineConfig, Collections.emptyMap(), scriptService);
             fail("should fail, missing required [processors] field");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[processors] required property is missing"));
         }
     }
@@ -117,7 +117,7 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.ON_FAILURE_KEY, Collections.emptyList());
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
         Exception e = expectThrows(
-            ElasticsearchParseException.class,
+            FesenParseException.class,
             () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
         );
         assertThat(e.getMessage(), equalTo("pipeline [_id] cannot have an empty on_failure option defined"));
@@ -132,7 +132,7 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
         Exception e = expectThrows(
-            ElasticsearchParseException.class,
+            FesenParseException.class,
             () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
         );
         assertThat(e.getMessage(), equalTo("[on_failure] processors list cannot be empty"));
@@ -170,7 +170,7 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
         Exception e = expectThrows(
-            ElasticsearchParseException.class,
+            FesenParseException.class,
             () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
         );
         assertThat(e.getMessage(), equalTo("processor [test] doesn't support one or more provided configuration parameters [unused]"));

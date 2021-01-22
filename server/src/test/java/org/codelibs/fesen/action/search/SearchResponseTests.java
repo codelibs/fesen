@@ -60,7 +60,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class SearchResponseTests extends ESTestCase {
 
@@ -198,11 +198,11 @@ public class SearchResponseTests extends ESTestCase {
                 assertEquals(originalFailure.shard(), parsedFailure.shard());
                 assertEquals(originalFailure.shardId(), parsedFailure.shardId());
                 String originalMsg = originalFailure.getCause().getMessage();
-                assertEquals(parsedFailure.getCause().getMessage(), "Elasticsearch exception [type=parsing_exception, reason=" +
+                assertEquals(parsedFailure.getCause().getMessage(), "Fesen exception [type=parsing_exception, reason=" +
                         originalMsg + "]");
                 String nestedMsg = originalFailure.getCause().getCause().getMessage();
                 assertEquals(parsedFailure.getCause().getCause().getMessage(),
-                        "Elasticsearch exception [type=illegal_argument_exception, reason=" + nestedMsg + "]");
+                        "Fesen exception [type=illegal_argument_exception, reason=" + nestedMsg + "]");
             }
             assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
             assertNull(parser.nextToken());

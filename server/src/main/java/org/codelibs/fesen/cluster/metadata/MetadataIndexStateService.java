@@ -23,7 +23,7 @@ import com.carrotsearch.hppc.cursors.IntObjectCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRunnable;
@@ -882,7 +882,7 @@ public class MetadataIndexStateService {
                 try {
                     indicesService.verifyIndexMetadata(updatedIndexMetadata, updatedIndexMetadata);
                 } catch (Exception e) {
-                    throw new ElasticsearchException("Failed to verify index " + index, e);
+                    throw new FesenException("Failed to verify index " + index, e);
                 }
                 metadata.put(updatedIndexMetadata, true);
             }

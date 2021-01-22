@@ -21,13 +21,13 @@ package org.codelibs.fesen.cluster.routing;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * A base {@link Exception}s for all exceptions thrown by routing related operations.
  */
-public class RoutingException extends ElasticsearchException {
+public class RoutingException extends FesenException {
 
     public RoutingException(String message, Throwable cause) {
         super(message, cause);

@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.MultiSearchResponse;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.search.ShardSearchFailure;
@@ -74,7 +74,7 @@ public class MultiSearchResponseTests extends AbstractXContentTestCase<MultiSear
                         successfulShards, skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters, null);
                 items[i] = new MultiSearchResponse.Item(searchResponse, null);
             } else {
-                items[i] = new MultiSearchResponse.Item(null, new ElasticsearchException("an error"));
+                items[i] = new MultiSearchResponse.Item(null, new FesenException("an error"));
             }
         }
         return new MultiSearchResponse(items, randomNonNegativeLong());

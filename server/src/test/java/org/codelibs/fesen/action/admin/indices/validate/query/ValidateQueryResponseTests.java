@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.validate.query;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.admin.indices.validate.query.QueryExplanation;
 import org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
@@ -65,7 +65,7 @@ public class ValidateQueryResponseTests extends AbstractBroadcastResponseTestCas
         }
         for (int i=0; i<failedShards; i++) {
             QueryExplanation queryExplanation = QueryExplanationTests.createRandomQueryExplanation(false);
-            ElasticsearchException exc = new ElasticsearchException("some_error_" + randomInt());
+            FesenException exc = new FesenException("some_error_" + randomInt());
             shardFailures.add(
                 new DefaultShardOperationFailedException(
                     queryExplanation.getIndex(), queryExplanation.getShard(),

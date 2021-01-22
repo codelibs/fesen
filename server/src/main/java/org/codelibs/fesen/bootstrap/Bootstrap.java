@@ -27,7 +27,7 @@ import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.lucene.util.Constants;
 import org.apache.lucene.util.StringHelper;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.bootstrap.JarHell;
 import org.codelibs.fesen.bootstrap.JavaVersion;
@@ -137,7 +137,7 @@ final class Bootstrap {
                         try {
                             Bootstrap.stop();
                         } catch (IOException e) {
-                            throw new ElasticsearchException("failed to stop node", e);
+                            throw new FesenException("failed to stop node", e);
                         }
                         return true;
                     }
@@ -199,7 +199,7 @@ final class Bootstrap {
                                     "Any outstanding requests or tasks might get killed.");
                         }
                     } catch (IOException ex) {
-                        throw new ElasticsearchException("failed to stop node", ex);
+                        throw new FesenException("failed to stop node", ex);
                     } catch (InterruptedException e) {
                         LogManager.getLogger(Bootstrap.class).warn("Thread got interrupted while waiting for the node to shutdown.");
                         Thread.currentThread().interrupt();
@@ -335,7 +335,7 @@ final class Bootstrap {
     }
 
     /**
-     * This method is invoked by {@link Elasticsearch#main(String[])} to startup elasticsearch.
+     * This method is invoked by {@link Fesen#main(String[])} to startup elasticsearch.
      */
     static void init(
             final boolean foreground,
@@ -360,7 +360,7 @@ final class Bootstrap {
         if (JavaVersion.current().compareTo(JavaVersion.parse("11")) < 0) {
             final String message = String.format(
                             Locale.ROOT,
-                            "future versions of Elasticsearch will require Java 11; " +
+                            "future versions of Fesen will require Java 11; " +
                                     "your Java version from [%s] does not meet this requirement",
                             System.getProperty("java.home"));
             DeprecationLogger.getLogger(Bootstrap.class).deprecate("java_version_11_required", message);
@@ -390,7 +390,7 @@ final class Bootstrap {
             // install the default uncaught exception handler; must be done before security is
             // initialized as we do not want to grant the runtime permission
             // setDefaultUncaughtExceptionHandler
-            Thread.setDefaultUncaughtExceptionHandler(new ElasticsearchUncaughtExceptionHandler());
+            Thread.setDefaultUncaughtExceptionHandler(new FesenUncaughtExceptionHandler());
 
             INSTANCE.setup(true, environment);
 
@@ -404,7 +404,7 @@ final class Bootstrap {
             INSTANCE.start();
 
             // We don't close stderr if `--quiet` is passed, because that
-            // hides fatal startup errors. For example, if Elasticsearch is
+            // hides fatal startup errors. For example, if Fesen is
             // running via systemd, the init script only specifies
             // `--quiet`, not `-d`, so we want users to be able to see
             // startup errors via journalctl.
@@ -465,7 +465,7 @@ final class Bootstrap {
 
     private static void checkLucene() {
         if (Version.CURRENT.luceneVersion.equals(org.apache.lucene.util.Version.LATEST) == false) {
-            throw new AssertionError("Lucene version mismatch this version of Elasticsearch requires lucene version ["
+            throw new AssertionError("Lucene version mismatch this version of Fesen requires lucene version ["
                 + Version.CURRENT.luceneVersion + "]  but the current lucene version is [" + org.apache.lucene.util.Version.LATEST + "]");
         }
     }

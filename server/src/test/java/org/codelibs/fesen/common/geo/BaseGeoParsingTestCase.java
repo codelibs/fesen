@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.geometry.utils.GeographyValidator;
 import org.codelibs.fesen.index.mapper.GeoShapeIndexer;
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchGeoAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenGeoAssertions;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.spatial4j.shape.Shape;
@@ -57,7 +57,7 @@ abstract class BaseGeoParsingTestCase extends ESTestCase {
     protected void assertValidException(XContentBuilder builder, Class<?> expectedException) throws IOException {
         try (XContentParser parser = createParser(builder)) {
             parser.nextToken();
-            ElasticsearchGeoAssertions.assertValidException(parser, expectedException);
+            FesenGeoAssertions.assertValidException(parser, expectedException);
         }
     }
 
@@ -65,12 +65,12 @@ abstract class BaseGeoParsingTestCase extends ESTestCase {
         try (XContentParser parser = createParser(geoJson)) {
             parser.nextToken();
             if (useJTS) {
-                ElasticsearchGeoAssertions.assertEquals(expected, ShapeParser.parse(parser).buildS4J());
+                FesenGeoAssertions.assertEquals(expected, ShapeParser.parse(parser).buildS4J());
             } else {
                 GeometryParser geometryParser = new GeometryParser(true, true, true);
                 org.codelibs.fesen.geometry.Geometry shape = geometryParser.parse(parser);
                 shape = new GeoShapeIndexer(true, "name").prepareForIndexing(shape);
-                ElasticsearchGeoAssertions.assertEquals(expected, shape);
+                FesenGeoAssertions.assertEquals(expected, shape);
             }
         }
     }

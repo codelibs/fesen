@@ -20,7 +20,7 @@ package org.codelibs.fesen.action.admin.indices.exists.types;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Strings;
 
 /**
@@ -33,11 +33,11 @@ public class TypesExistsRequestBuilder
     /**
      * @param indices What indices to check for types
      */
-    public TypesExistsRequestBuilder(ElasticsearchClient client, TypesExistsAction action, String... indices) {
+    public TypesExistsRequestBuilder(FesenClient client, TypesExistsAction action, String... indices) {
         super(client, action, new TypesExistsRequest(indices, Strings.EMPTY_ARRAY));
     }
 
-    TypesExistsRequestBuilder(ElasticsearchClient client, TypesExistsAction action) {
+    TypesExistsRequestBuilder(FesenClient client, TypesExistsAction action) {
         super(client, action, new TypesExistsRequest());
     }
 

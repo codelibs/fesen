@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.script;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
 import org.codelibs.fesen.common.io.stream.OutputStreamStreamOutput;
@@ -175,8 +175,8 @@ public class ScriptTests extends ESTestCase {
             assertEquals("Script value should be a String or a Map", exc.getMessage());
         }
         {
-            ElasticsearchParseException exc = expectThrows(
-                ElasticsearchParseException.class,
+            FesenParseException exc = expectThrows(
+                FesenParseException.class,
                 () -> Script.parse(Collections.emptyMap())
             );
             assertEquals("Expected one of [source] or [id] fields, but found none", exc.getMessage());
@@ -187,8 +187,8 @@ public class ScriptTests extends ESTestCase {
         Map<String, Object> map = new HashMap<>();
         map.put("source", "doc['my_field']");
         map.put("options", 3);
-        ElasticsearchParseException exc = expectThrows(
-            ElasticsearchParseException.class,
+        FesenParseException exc = expectThrows(
+            FesenParseException.class,
             () -> Script.parse(map)
         );
         assertEquals("Value must be of type Map: [options]", exc.getMessage());
@@ -198,8 +198,8 @@ public class ScriptTests extends ESTestCase {
         Map<String, Object> map = new HashMap<>();
         map.put("source", "doc['my_field']");
         map.put("params", 3);
-        ElasticsearchParseException exc = expectThrows(
-            ElasticsearchParseException.class,
+        FesenParseException exc = expectThrows(
+            FesenParseException.class,
             () -> Script.parse(map)
         );
         assertEquals("Value must be of type Map: [params]", exc.getMessage());

@@ -20,7 +20,7 @@ package org.codelibs.fesen.script;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Scorable;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.lucene.ScorerAware;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
@@ -94,7 +94,7 @@ abstract class AbstractSortScript implements ScorerAware {
         try {
             return scorer.score();
         } catch (IOException e) {
-            throw new ElasticsearchException("couldn't lookup score", e);
+            throw new FesenException("couldn't lookup score", e);
         }
     }
 

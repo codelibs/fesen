@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.index;
 import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -37,11 +37,11 @@ import java.util.Map;
 public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest, IndexResponse, IndexRequestBuilder>
         implements WriteRequestBuilder<IndexRequestBuilder> {
 
-    public IndexRequestBuilder(ElasticsearchClient client, IndexAction action) {
+    public IndexRequestBuilder(FesenClient client, IndexAction action) {
         super(client, action, new IndexRequest());
     }
 
-    public IndexRequestBuilder(ElasticsearchClient client, IndexAction action, @Nullable String index) {
+    public IndexRequestBuilder(FesenClient client, IndexAction action, @Nullable String index) {
         super(client, action, new IndexRequest(index));
     }
 

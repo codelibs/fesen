@@ -22,7 +22,7 @@ package org.codelibs.fesen.index.translog;
 import com.carrotsearch.hppc.LongHashSet;
 import com.carrotsearch.hppc.LongSet;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.index.translog.Translog;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -88,7 +88,7 @@ public final class SnapshotMatchers {
                     count++;
                 }
             } catch (IOException ex) {
-                throw new ElasticsearchException("failed to advance snapshot", ex);
+                throw new FesenException("failed to advance snapshot", ex);
             }
             return size == count;
         }
@@ -135,7 +135,7 @@ public final class SnapshotMatchers {
                 }
                 return true;
             } catch (IOException ex) {
-                throw new ElasticsearchException("failed to read snapshot content", ex);
+                throw new FesenException("failed to read snapshot content", ex);
             }
         }
 
@@ -175,7 +175,7 @@ public final class SnapshotMatchers {
                     .collect(Collectors.toList());
                 return notFoundOps.isEmpty() && notExpectedOps.isEmpty();
             } catch (IOException ex) {
-                throw new ElasticsearchException("failed to read snapshot content", ex);
+                throw new FesenException("failed to read snapshot content", ex);
             }
         }
 
@@ -227,7 +227,7 @@ public final class SnapshotMatchers {
                 }
                 return notFoundSeqNo.isEmpty();
             } catch (IOException ex) {
-                throw new ElasticsearchException("failed to read snapshot content", ex);
+                throw new FesenException("failed to read snapshot content", ex);
             }
         }
 

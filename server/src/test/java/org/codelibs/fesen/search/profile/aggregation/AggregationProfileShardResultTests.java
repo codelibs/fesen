@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class AggregationProfileShardResultTests extends ESTestCase {
 

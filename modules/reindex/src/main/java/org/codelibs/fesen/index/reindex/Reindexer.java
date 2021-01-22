@@ -169,8 +169,8 @@ public class Reindexer {
     static class AsyncIndexBySearchAction extends AbstractAsyncBulkByScrollAction<ReindexRequest, TransportReindexAction> {
 
         /**
-         * List of threads created by this process. Usually actions don't create threads in Elasticsearch. Instead they use the builtin
-         * {@link ThreadPool}s. But reindex-from-remote uses Elasticsearch's {@link RestClient} which doesn't use the
+         * List of threads created by this process. Usually actions don't create threads in Fesen. Instead they use the builtin
+         * {@link ThreadPool}s. But reindex-from-remote uses Fesen's {@link RestClient} which doesn't use the
          * {@linkplain ThreadPool}s because it uses httpasyncclient. It'd be a ton of trouble to work around creating those threads. So
          * instead we let it create threads but we watch them carefully and assert that they are dead when the process is over.
          */

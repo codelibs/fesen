@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.TimestampParsingException;
 import org.codelibs.fesen.action.search.SearchPhaseExecutionException;
@@ -115,10 +115,10 @@ public class SearchPhaseExecutionExceptionTests extends ESTestCase {
 
         BytesReference exceptionBytes = toShuffledXContent(actual, xContent.type(), ToXContent.EMPTY_PARAMS, randomBoolean());
 
-        ElasticsearchException parsedException;
+        FesenException parsedException;
         try (XContentParser parser = createParser(xContent, exceptionBytes)) {
             assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
-            parsedException = ElasticsearchException.fromXContent(parser);
+            parsedException = FesenException.fromXContent(parser);
             assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
             assertNull(parser.nextToken());
         }

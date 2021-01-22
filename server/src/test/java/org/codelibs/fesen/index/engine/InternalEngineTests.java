@@ -69,7 +69,7 @@ import org.apache.lucene.store.MockDirectoryWrapper;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.FixedBitSet;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.index.IndexRequest;
@@ -91,7 +91,7 @@ import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.index.SequentialStoredFieldsLeafReader;
 import org.codelibs.fesen.common.lucene.uid.Versions;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver;
@@ -4005,7 +4005,7 @@ public class InternalEngineTests extends EngineTestCase {
                             } catch (InterruptedException e) {
                                 throw new AssertionError(e);
                             }
-                            throw new ElasticsearchException("something completely different");
+                            throw new FesenException("something completely different");
                         }
                     }
                 });
@@ -4744,8 +4744,8 @@ public class InternalEngineTests extends EngineTestCase {
 
 
     public void assertSameReader(Engine.Searcher left, Engine.Searcher right) {
-        List<LeafReaderContext> leftLeaves = ElasticsearchDirectoryReader.unwrap(left.getDirectoryReader()).leaves();
-        List<LeafReaderContext> rightLeaves = ElasticsearchDirectoryReader.unwrap(right.getDirectoryReader()).leaves();
+        List<LeafReaderContext> leftLeaves = FesenDirectoryReader.unwrap(left.getDirectoryReader()).leaves();
+        List<LeafReaderContext> rightLeaves = FesenDirectoryReader.unwrap(right.getDirectoryReader()).leaves();
         assertEquals(rightLeaves.size(), leftLeaves.size());
         for (int i = 0; i < leftLeaves.size(); i++) {
             assertSame(leftLeaves.get(i).reader(), rightLeaves.get(i).reader());
@@ -4753,8 +4753,8 @@ public class InternalEngineTests extends EngineTestCase {
     }
 
     public void assertNotSameReader(Engine.Searcher left, Engine.Searcher right) {
-        List<LeafReaderContext> leftLeaves = ElasticsearchDirectoryReader.unwrap(left.getDirectoryReader()).leaves();
-        List<LeafReaderContext> rightLeaves = ElasticsearchDirectoryReader.unwrap(right.getDirectoryReader()).leaves();
+        List<LeafReaderContext> leftLeaves = FesenDirectoryReader.unwrap(left.getDirectoryReader()).leaves();
+        List<LeafReaderContext> rightLeaves = FesenDirectoryReader.unwrap(right.getDirectoryReader()).leaves();
         if (rightLeaves.size() == leftLeaves.size()) {
             for (int i = 0; i < leftLeaves.size(); i++) {
                 if (leftLeaves.get(i).reader() != rightLeaves.get(i).reader()) {
@@ -6299,7 +6299,7 @@ public class InternalEngineTests extends EngineTestCase {
 
     public void testNotWarmUpSearcherInEngineCtor() throws Exception {
         try (Store store = createStore()) {
-            List<ElasticsearchDirectoryReader> warmedUpReaders = new ArrayList<>();
+            List<FesenDirectoryReader> warmedUpReaders = new ArrayList<>();
             Engine.Warmer warmer = reader -> {
                 assertNotNull(reader);
                 assertThat(reader, not(in(warmedUpReaders)));

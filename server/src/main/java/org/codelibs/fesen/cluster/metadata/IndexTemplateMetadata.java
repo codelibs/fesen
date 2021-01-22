@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.metadata;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
@@ -499,7 +499,7 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
                             builder.putAlias(AliasMetadata.Builder.fromXContent(parser));
                         }
                     } else {
-                        throw new ElasticsearchParseException("unknown key [{}] for index template", currentFieldName);
+                        throw new FesenParseException("unknown key [{}] for index template", currentFieldName);
                     }
                 } else if (token == XContentParser.Token.START_ARRAY) {
                     if ("mappings".equals(currentFieldName)) {

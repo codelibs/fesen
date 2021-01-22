@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -168,7 +168,7 @@ public class TransportActionProxyTests extends ESTestCase {
         serviceB.connectToNode(nodeC);
         serviceC.registerRequestHandler("internal:test", ThreadPool.Names.SAME, SimpleTestRequest::new,
             (request, channel, task) -> {
-                throw new ElasticsearchException("greetings from TS_C");
+                throw new FesenException("greetings from TS_C");
             });
         TransportActionProxy.registerProxyAction(serviceC, "internal:test", SimpleTestResponse::new);
 

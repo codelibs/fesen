@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.query;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -43,7 +43,7 @@ public enum GeoExecType implements Writeable {
             case(0): return MEMORY;
             case(1): return INDEXED;
         }
-        throw new ElasticsearchException("unknown serialized type [" + ord + "]");
+        throw new FesenException("unknown serialized type [" + ord + "]");
     }
 
     @Override

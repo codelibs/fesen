@@ -20,7 +20,7 @@
 package org.codelibs.fesen.percolator;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.action.admin.indices.mapping.put.PutMappingRequest;
 import org.codelibs.fesen.action.get.GetRequest;
@@ -378,7 +378,7 @@ public class PercolateQueryBuilderTests extends AbstractQueryTestCase<PercolateQ
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         PercolateQueryBuilder queryBuilder = doCreateTestQueryBuilder(true);
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[percolate] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.admin.indices.alias.exists;
 
 import org.codelibs.fesen.action.admin.indices.alias.get.BaseAliasesRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class AliasesExistRequestBuilder extends BaseAliasesRequestBuilder<AliasesExistResponse, AliasesExistRequestBuilder> {
 
-    public AliasesExistRequestBuilder(ElasticsearchClient client, AliasesExistAction action, String... aliases) {
+    public AliasesExistRequestBuilder(FesenClient client, AliasesExistAction action, String... aliases) {
         super(client, action, aliases);
     }
 }

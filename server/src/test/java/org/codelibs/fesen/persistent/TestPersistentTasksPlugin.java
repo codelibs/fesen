@@ -34,7 +34,7 @@ import org.codelibs.fesen.action.support.tasks.BaseTasksResponse;
 import org.codelibs.fesen.action.support.tasks.TasksRequestBuilder;
 import org.codelibs.fesen.action.support.tasks.TransportTasksAction;
 import org.codelibs.fesen.client.Client;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -484,7 +484,7 @@ public class TestPersistentTasksPlugin extends Plugin implements ActionPlugin, P
 
     public static class TestTasksRequestBuilder extends TasksRequestBuilder<TestTasksRequest, TestTasksResponse, TestTasksRequestBuilder> {
 
-        protected TestTasksRequestBuilder(ElasticsearchClient client) {
+        protected TestTasksRequestBuilder(FesenClient client) {
             super(client, TestTaskAction.INSTANCE, new TestTasksRequest());
         }
 

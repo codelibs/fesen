@@ -21,11 +21,11 @@ package org.codelibs.fesen.indices;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.Index;
 
-public class AliasFilterParsingException extends ElasticsearchException {
+public class AliasFilterParsingException extends FesenException {
 
     public AliasFilterParsingException(Index index, String name, String desc, Throwable ex) {
         super("[" + name + "], " + desc, ex);

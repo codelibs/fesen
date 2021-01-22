@@ -64,7 +64,7 @@ import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
 import static org.codelibs.fesen.script.MockScriptEngine.mockInlineScript;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;

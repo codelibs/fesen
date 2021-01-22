@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.common.breaker;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * Exception thrown when the circuit breaker trips
  */
-public class CircuitBreakingException extends ElasticsearchException {
+public class CircuitBreakingException extends FesenException {
 
     private final long bytesWanted;
     private final long byteLimit;

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.suggest.completion.context;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.geo.GeoUtils;
@@ -134,7 +134,7 @@ public final class GeoQueryContext implements ToXContentObject {
         } else if (token == XContentParser.Token.VALUE_STRING) {
             builder.setGeoPoint(GeoPoint.fromGeohash(parser.text()));
         } else {
-            throw new ElasticsearchParseException("geo context must be an object or string");
+            throw new FesenParseException("geo context must be an object or string");
         }
         return builder.build();
     }

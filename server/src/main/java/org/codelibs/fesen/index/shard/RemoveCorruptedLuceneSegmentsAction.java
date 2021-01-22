@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.shard;
 import org.apache.lucene.index.CheckIndex;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.common.collect.Tuple;
 
@@ -82,7 +82,7 @@ public class RemoveCorruptedLuceneSegmentsAction {
                     terminal.println("Wrote new segments file \"" + status.segmentsFileName + "\"");
                 }
             } else {
-                throw new ElasticsearchException("Index is unrecoverable - there are missing segments");
+                throw new FesenException("Index is unrecoverable - there are missing segments");
             }
         }
     }

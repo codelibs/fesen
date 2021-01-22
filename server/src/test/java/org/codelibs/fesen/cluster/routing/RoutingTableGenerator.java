@@ -20,7 +20,7 @@ package org.codelibs.fesen.cluster.routing;
 
 import static org.codelibs.fesen.cluster.health.ClusterShardHealth.getInactivePrimaryHealth;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.routing.IndexRoutingTable;
@@ -58,7 +58,7 @@ public class RoutingTableGenerator {
                 return TestShardRouting.newShardRouting(index, shardId, "node_" + Integer.toString(node_id++),
                                                         "node_" + Integer.toString(node_id++), primary, ShardRoutingState.RELOCATING);
             default:
-                throw new ElasticsearchException("Unknown state: " + state.name());
+                throw new FesenException("Unknown state: " + state.name());
         }
 
     }

@@ -26,7 +26,7 @@ import org.codelibs.fesen.geometry.Rectangle;
 
 
 /**
- * Utility class that transforms Elasticsearch geometry objects to the Lucene representation
+ * Utility class that transforms Fesen geometry objects to the Lucene representation
  */
 public class GeoShapeUtils {
 

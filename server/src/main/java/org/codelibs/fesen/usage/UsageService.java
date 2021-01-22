@@ -47,7 +47,7 @@ import org.codelibs.fesen.action.admin.cluster.node.usage.NodeUsage;
 import org.codelibs.fesen.rest.BaseRestHandler;
 
 /**
- * A service to monitor usage of Elasticsearch features.
+ * A service to monitor usage of Fesen features.
  */
 public class UsageService {
 

@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /*
- * Elasticsearch Note: This class has been copied almost identically from joda, where the
+ * Fesen Note: This class has been copied almost identically from joda, where the
  * class is named ISODatetimeFormat
  *
  * However there has been done one huge modification in several methods, which forces the date

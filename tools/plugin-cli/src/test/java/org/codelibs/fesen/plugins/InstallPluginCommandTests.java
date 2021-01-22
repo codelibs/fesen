@@ -817,7 +817,7 @@ public class InstallPluginCommandTests extends ESTestCase {
     }
 
     public void testInstallXPack() throws IOException {
-        runInstallXPackTest(Build.Flavor.DEFAULT, UserException.class, "this distribution of Elasticsearch contains X-Pack by default");
+        runInstallXPackTest(Build.Flavor.DEFAULT, UserException.class, "this distribution of Fesen contains X-Pack by default");
         runInstallXPackTest(
             Build.Flavor.OSS,
             UserException.class,
@@ -1061,7 +1061,7 @@ public class InstallPluginCommandTests extends ESTestCase {
         assertThat(e.exitCode, equalTo(ExitCodes.CONFIG));
         assertThat(
             e,
-            hasToString(containsString("attempted to install release build of official plugin on snapshot build of Elasticsearch"))
+            hasToString(containsString("attempted to install release build of official plugin on snapshot build of Fesen"))
         );
     }
 

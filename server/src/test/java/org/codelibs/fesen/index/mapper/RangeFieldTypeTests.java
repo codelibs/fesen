@@ -30,7 +30,7 @@ import org.apache.lucene.search.IndexOrDocValuesQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.geo.ShapeRelation;
@@ -232,7 +232,7 @@ public class RangeFieldTypeTests extends FieldTypeTestCase {
         final String from = "2016-15-06T15:29:50+08:00";
         final String to = "2016-16-06T15:29:50+08:00";
 
-        ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class,
+        FesenParseException ex = expectThrows(FesenParseException.class,
             () -> strict.rangeQuery(from, to, true, true, relation, null, null, context));
         assertThat(ex.getMessage(),
             containsString("failed to parse date field [2016-15-06T15:29:50+08:00] with format [strict_date_optional_time||epoch_millis]")

@@ -35,7 +35,7 @@ import org.codelibs.fesen.search.SearchHits;
 import org.codelibs.fesen.search.internal.InternalSearchResponse;
 import org.codelibs.fesen.test.AbstractXContentTestCase;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 import java.io.IOException;
 import java.util.Collections;

@@ -102,7 +102,7 @@ ECHO.!KEYSTORE_PASSWORD!| %JAVA% %ES_JAVA_OPTS% -Delasticsearch ^
   -Des.distribution.flavor="%ES_DISTRIBUTION_FLAVOR%" ^
   -Des.distribution.type="%ES_DISTRIBUTION_TYPE%" ^
   -Des.bundled_jdk="%ES_BUNDLED_JDK%" ^
-  -cp "%ES_CLASSPATH%" "org.codelibs.fesen.bootstrap.Elasticsearch" !newparams!
+  -cp "%ES_CLASSPATH%" "org.codelibs.fesen.bootstrap.Fesen" !newparams!
 
 endlocal
 endlocal

@@ -26,7 +26,7 @@ import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.spans.SpanBoostQuery;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.common.ParsingException;
@@ -180,7 +180,7 @@ public abstract class AbstractQueryTestCase<QB extends AbstractQueryBuilder<QB>>
                 if (expectedException) {
                     fail("some parsing exception expected for query: " + testQuery);
                 }
-            } catch (ParsingException | ElasticsearchParseException | XContentParseException e) {
+            } catch (ParsingException | FesenParseException | XContentParseException e) {
                 // different kinds of exception wordings depending on location
                 // of mutation, so no simple asserts possible here
                 if (expectedException == false) {

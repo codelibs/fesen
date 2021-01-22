@@ -20,7 +20,7 @@
 package org.codelibs.fesen.common.geo;
 
 import org.apache.lucene.geo.GeoEncodingUtils;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.geo.GeoUtils;
@@ -49,7 +49,7 @@ public class GeoBoundingBoxTests extends ESTestCase {
             .endObject();
         XContentParser parser = createParser(bboxBuilder);
         parser.nextToken();
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> GeoBoundingBox.parseBoundingBox(parser));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> GeoBoundingBox.parseBoundingBox(parser));
         assertThat(e.getMessage(), equalTo("failed to parse WKT bounding box"));
     }
 
@@ -60,7 +60,7 @@ public class GeoBoundingBoxTests extends ESTestCase {
             .endObject();
         XContentParser parser = createParser(bboxBuilder);
         parser.nextToken();
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> GeoBoundingBox.parseBoundingBox(parser));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> GeoBoundingBox.parseBoundingBox(parser));
         assertThat(e.getMessage(), equalTo("failed to parse WKT bounding box. [POINT] found. expected [ENVELOPE]"));
     }
 

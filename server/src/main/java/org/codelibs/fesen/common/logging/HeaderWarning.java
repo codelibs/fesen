@@ -43,11 +43,11 @@ import org.codelibs.fesen.tasks.Task;
 public class HeaderWarning {
     /**
      * Regular expression to test if a string matches the RFC7234 specification for warning headers. This pattern assumes that the warn code
-     * is always 299. Further, this pattern assumes that the warn agent represents a version of Elasticsearch including the build hash.
+     * is always 299. Further, this pattern assumes that the warn agent represents a version of Fesen including the build hash.
      */
     public static final Pattern WARNING_HEADER_PATTERN = Pattern.compile(
         "299 " + // warn code
-            "Elasticsearch-" + // warn agent
+            "Fesen-" + // warn agent
             "\\d+\\.\\d+\\.\\d+(?:-(?:alpha|beta|rc)\\d+)?(?:-SNAPSHOT)?-" + // warn agent
             "(?:[a-f0-9]{7}(?:[a-f0-9]{33})?|unknown) " + // warn agent
             "\"((?:\t| |!|[\\x23-\\x5B]|[\\x5D-\\x7E]|[\\x80-\\xFF]|\\\\|\\\\\")*)\"( " + // quoted warning value, captured
@@ -66,13 +66,13 @@ public class HeaderWarning {
      * RFC7234 specifies the warning format as warn-code <space> warn-agent <space> "warn-text" [<space> "warn-date"]. Here, warn-code is a
      * three-digit number with various standard warn codes specified. The warn code 299 is apt for our purposes as it represents a
      * miscellaneous persistent warning (can be presented to a human, or logged, and must not be removed by a cache). The warn-agent is an
-     * arbitrary token; here we use the Elasticsearch version and build hash. The warn text must be quoted. The warn-date is an optional
+     * arbitrary token; here we use the Fesen version and build hash. The warn text must be quoted. The warn-date is an optional
      * quoted field that can be in a variety of specified date formats; here we use RFC 1123 format.
      */
     private static final String WARNING_PREFIX =
         String.format(
             Locale.ROOT,
-            "299 Elasticsearch-%s%s-%s",
+            "299 Fesen-%s%s-%s",
             Version.CURRENT.toString(),
             Build.CURRENT.isSnapshot() ? "-SNAPSHOT" : "",
             Build.CURRENT.hash());
@@ -151,7 +151,7 @@ public class HeaderWarning {
 
     /**
      * Extracts the warning value from the value of a warning header that is formatted according to RFC 7234. That is, given a string
-     * {@code 299 Elasticsearch-6.0.0 "warning value"}, the return value of this method would be {@code warning value}.
+     * {@code 299 Fesen-6.0.0 "warning value"}, the return value of this method would be {@code warning value}.
      *
      * @param s the value of a warning header formatted according to RFC 7234.
      * @return the extracted warning value
@@ -161,7 +161,7 @@ public class HeaderWarning {
          * We know the exact format of the warning header, so to extract the warning value we can skip forward from the front to the first
          * quote and we know the last quote is at the end of the string
          *
-         *   299 Elasticsearch-6.0.0 "warning value"
+         *   299 Fesen-6.0.0 "warning value"
          *                           ^             ^
          *                           firstQuote    lastQuote
          *

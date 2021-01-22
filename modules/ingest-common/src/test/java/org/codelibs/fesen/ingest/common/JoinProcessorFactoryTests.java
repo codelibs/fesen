@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.common.JoinProcessor;
 import org.codelibs.fesen.test.ESTestCase;
 
@@ -50,7 +50,7 @@ public class JoinProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }
@@ -62,7 +62,7 @@ public class JoinProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[separator] required property is missing"));
         }
     }

@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.cluster.repositories.put;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
@@ -36,14 +36,14 @@ public class PutRepositoryRequestBuilder
     /**
      * Constructs register repository request
      */
-    public PutRepositoryRequestBuilder(ElasticsearchClient client, PutRepositoryAction action) {
+    public PutRepositoryRequestBuilder(FesenClient client, PutRepositoryAction action) {
         super(client, action, new PutRepositoryRequest());
     }
 
     /**
      * Constructs register repository request for the repository with a given name
      */
-    public PutRepositoryRequestBuilder(ElasticsearchClient client, PutRepositoryAction action, String name) {
+    public PutRepositoryRequestBuilder(FesenClient client, PutRepositoryAction action, String name) {
         super(client, action, new PutRepositoryRequest(name));
     }
 

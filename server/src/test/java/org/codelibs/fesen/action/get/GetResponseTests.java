@@ -43,7 +43,7 @@ import static org.codelibs.fesen.index.get.GetResultTests.randomGetResult;
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
 import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
 import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class GetResponseTests extends ESTestCase {
 

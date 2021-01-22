@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
 import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
 import org.codelibs.fesen.test.ESTestCase;
@@ -97,7 +97,7 @@ public abstract class AbstractStringProcessorFactoryTestCase extends ESTestCase 
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }

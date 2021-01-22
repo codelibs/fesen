@@ -20,7 +20,7 @@
 package org.codelibs.fesen.indices.store;
 
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionType;
@@ -116,7 +116,7 @@ public class TransportNodesListShardStoreMetadata extends TransportNodesAction<T
         try {
             return new NodeStoreFilesMetadata(clusterService.localNode(), listStoreMetadata(request));
         } catch (IOException e) {
-            throw new ElasticsearchException("Failed to list store metadata for shard [" + request.shardId + "]", e);
+            throw new FesenException("Failed to list store metadata for shard [" + request.shardId + "]", e);
         }
     }
 
@@ -157,7 +157,7 @@ public class TransportNodesListShardStoreMetadata extends TransportNodesAction<T
                         customDataPath = new IndexSettings(metadata, settings).customDataPath();
                     } else {
                         logger.trace("{} node doesn't have meta data for the requests index", shardId);
-                        throw new ElasticsearchException("node doesn't have meta data for index " + shardId.getIndex());
+                        throw new FesenException("node doesn't have meta data for index " + shardId.getIndex());
                     }
                 }
             }

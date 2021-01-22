@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.TestTemplateService;
 import org.codelibs.fesen.ingest.common.DateIndexNameProcessor;
 import org.codelibs.fesen.test.ESTestCase;
@@ -90,12 +90,12 @@ public class DateIndexNameFactoryTests extends ESTestCase {
         DateIndexNameProcessor.Factory factory = new DateIndexNameProcessor.Factory(TestTemplateService.instance());
         Map<String, Object> config = new HashMap<>();
         config.put("date_rounding", "y");
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, null, null, config));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(), Matchers.equalTo("[field] required property is missing"));
 
         config.clear();
         config.put("field", "_field");
-        e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, null, null, config));
+        e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(), Matchers.equalTo("[date_rounding] required property is missing"));
     }
 }

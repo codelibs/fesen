@@ -22,14 +22,14 @@ package org.codelibs.fesen.indices.recovery;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.index.shard.ShardId;
 
-public class RecoverFilesRecoveryException extends ElasticsearchException implements ElasticsearchWrapperException {
+public class RecoverFilesRecoveryException extends FesenException implements FesenWrapperException {
 
     private final int numberOfFiles;
 

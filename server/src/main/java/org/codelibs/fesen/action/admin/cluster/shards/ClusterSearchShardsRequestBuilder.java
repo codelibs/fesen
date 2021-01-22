@@ -21,12 +21,12 @@ package org.codelibs.fesen.action.admin.cluster.shards;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class ClusterSearchShardsRequestBuilder extends MasterNodeReadOperationRequestBuilder<ClusterSearchShardsRequest,
         ClusterSearchShardsResponse, ClusterSearchShardsRequestBuilder> {
 
-    public ClusterSearchShardsRequestBuilder(ElasticsearchClient client, ClusterSearchShardsAction action) {
+    public ClusterSearchShardsRequestBuilder(FesenClient client, ClusterSearchShardsAction action) {
         super(client, action, new ClusterSearchShardsRequest());
     }
 

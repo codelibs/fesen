@@ -20,8 +20,8 @@ package org.codelibs.fesen.action.admin.cluster.configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
@@ -140,13 +140,13 @@ public class TransportAddVotingConfigExclusionsAction extends TransportMasterNod
 
                     @Override
                     public void onClusterServiceClose() {
-                        listener.onFailure(new ElasticsearchException("cluster service closed while waiting for voting config exclusions " +
+                        listener.onFailure(new FesenException("cluster service closed while waiting for voting config exclusions " +
                             resolvedExclusions + " to take effect"));
                     }
 
                     @Override
                     public void onTimeout(TimeValue timeout) {
-                        listener.onFailure(new ElasticsearchTimeoutException("timed out waiting for voting config exclusions "
+                        listener.onFailure(new FesenTimeoutException("timed out waiting for voting config exclusions "
                             + resolvedExclusions + " to take effect"));
                     }
                 };

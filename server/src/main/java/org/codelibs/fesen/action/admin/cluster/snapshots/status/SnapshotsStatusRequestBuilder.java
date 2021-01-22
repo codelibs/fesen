@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 /**
@@ -32,14 +32,14 @@ public class SnapshotsStatusRequestBuilder extends MasterNodeOperationRequestBui
     /**
      * Constructs the new snapshot status request
      */
-    public SnapshotsStatusRequestBuilder(ElasticsearchClient client, SnapshotsStatusAction action) {
+    public SnapshotsStatusRequestBuilder(FesenClient client, SnapshotsStatusAction action) {
         super(client, action, new SnapshotsStatusRequest());
     }
 
     /**
      * Constructs the new snapshot status request with specified repository
      */
-    public SnapshotsStatusRequestBuilder(ElasticsearchClient client, SnapshotsStatusAction action, String repository) {
+    public SnapshotsStatusRequestBuilder(FesenClient client, SnapshotsStatusAction action, String repository) {
         super(client, action, new SnapshotsStatusRequest(repository));
     }
 

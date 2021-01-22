@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.node.reload;
 
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.SecureString;
 
 /**
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.settings.SecureString;
 public class NodesReloadSecureSettingsRequestBuilder extends NodesOperationRequestBuilder<NodesReloadSecureSettingsRequest,
         NodesReloadSecureSettingsResponse, NodesReloadSecureSettingsRequestBuilder> {
 
-    public NodesReloadSecureSettingsRequestBuilder(ElasticsearchClient client, NodesReloadSecureSettingsAction action) {
+    public NodesReloadSecureSettingsRequestBuilder(FesenClient client, NodesReloadSecureSettingsAction action) {
         super(client, action, new NodesReloadSecureSettingsRequest());
     }
 

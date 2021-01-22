@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.aggregations.pipeline;
 
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -75,7 +75,7 @@ public class HoltWintersModel extends MovAvgModel {
                 for (SeasonalityType policy : values()) {
                     validNames.add(policy.getName());
                 }
-                throw new ElasticsearchParseException("failed to parse seasonality type [{}]. accepted values are [{}]", text, validNames);
+                throw new FesenParseException("failed to parse seasonality type [{}]. accepted values are [{}]", text, validNames);
             }
             return result;
         }

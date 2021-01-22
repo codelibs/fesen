@@ -22,7 +22,7 @@ package org.codelibs.fesen.rest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
@@ -205,11 +205,11 @@ public class RestController implements HttpServerTransport.Dispatcher {
         try {
             final Exception e;
             if (cause == null) {
-                e = new ElasticsearchException("unknown cause");
+                e = new FesenException("unknown cause");
             } else if (cause instanceof Exception) {
                 e = (Exception) cause;
             } else {
-                e = new ElasticsearchException(cause);
+                e = new FesenException(cause);
             }
             channel.sendResponse(new BytesRestResponse(channel, BAD_REQUEST, e));
         } catch (final IOException e) {

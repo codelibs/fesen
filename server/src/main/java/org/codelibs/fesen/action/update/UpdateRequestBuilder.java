@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.action.support.single.instance.InstanceShardOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
@@ -36,11 +36,11 @@ import java.util.Map;
 public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<UpdateRequest, UpdateResponse, UpdateRequestBuilder>
         implements WriteRequestBuilder<UpdateRequestBuilder> {
 
-    public UpdateRequestBuilder(ElasticsearchClient client, UpdateAction action) {
+    public UpdateRequestBuilder(FesenClient client, UpdateAction action) {
         super(client, action, new UpdateRequest());
     }
 
-    public UpdateRequestBuilder(ElasticsearchClient client, UpdateAction action, String index, String type, String id) {
+    public UpdateRequestBuilder(FesenClient client, UpdateAction action, String index, String type, String id) {
         super(client, action, new UpdateRequest(index, type, id));
     }
 

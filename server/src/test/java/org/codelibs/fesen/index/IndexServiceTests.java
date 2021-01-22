@@ -54,7 +54,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.codelibs.fesen.index.shard.IndexShardTestCase.getEngine;
 import static org.codelibs.fesen.test.InternalSettingsPlugin.TRANSLOG_RETENTION_CHECK_INTERVAL_SETTING;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /** Unit test(s) for IndexService */

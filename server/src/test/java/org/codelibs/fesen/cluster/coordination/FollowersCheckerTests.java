@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.coordination.FollowersChecker;
@@ -181,7 +181,7 @@ public class FollowersCheckerTests extends ESTestCase {
     public void testFailsNodeThatRejectsCheck() {
         final Settings settings = randomSettings();
         testBehaviourOfFailingNode(settings, () -> {
-                throw new ElasticsearchException("simulated exception");
+                throw new FesenException("simulated exception");
             },
             "followers check retry count exceeded",
             (FOLLOWER_CHECK_RETRY_COUNT_SETTING.get(settings) - 1) * FOLLOWER_CHECK_INTERVAL_SETTING.get(settings).millis(),
@@ -205,7 +205,7 @@ public class FollowersCheckerTests extends ESTestCase {
                         recoveries++;
                         return Empty.INSTANCE;
                     }
-                    throw new ElasticsearchException("simulated exception");
+                    throw new FesenException("simulated exception");
                 }
             },
             "followers check retry count exceeded",
@@ -565,7 +565,7 @@ public class FollowersCheckerTests extends ESTestCase {
             final long term = randomNonNegativeLong();
             followersChecker.updateFastResponseState(term, randomFrom(Mode.LEADER, Mode.CANDIDATE));
             final String exceptionMessage = "test simulated exception " + randomNonNegativeLong();
-            coordinatorException.set(new ElasticsearchException(exceptionMessage));
+            coordinatorException.set(new FesenException(exceptionMessage));
 
             final AtomicReference<TransportException> receivedException = new AtomicReference<>();
             transportService.sendRequest(follower, FOLLOWER_CHECK_ACTION_NAME, new FollowerCheckRequest(term, leader),

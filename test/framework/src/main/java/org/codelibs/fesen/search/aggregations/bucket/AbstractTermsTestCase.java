@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.aggregations.bucket;
 
 import static org.codelibs.fesen.search.aggregations.AggregationBuilders.terms;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchResponse;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchResponse;
 
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.search.aggregations.Aggregator.SubAggCollectionMode;

@@ -47,7 +47,7 @@ import static java.util.Collections.emptySet;
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_REPLICAS;
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_SHARDS;
 import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.DELETED;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 
 public class IndicesLifecycleListenerSingleNodeTests extends ESSingleNodeTestCase {
 

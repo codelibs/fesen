@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.indices.exists.indices;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class IndicesExistsRequestBuilder
         extends MasterNodeReadOperationRequestBuilder<IndicesExistsRequest, IndicesExistsResponse, IndicesExistsRequestBuilder> {
 
-    public IndicesExistsRequestBuilder(ElasticsearchClient client, IndicesExistsAction action, String... indices) {
+    public IndicesExistsRequestBuilder(FesenClient client, IndicesExistsAction action, String... indices) {
         super(client, action, new IndicesExistsRequest(indices));
     }
 

@@ -25,7 +25,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.GeoDistance;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.unit.DistanceUnit;
@@ -572,13 +572,13 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         {
             GeoDistanceSortBuilder sortBuilder = new GeoDistanceSortBuilder("fieldName", -180.0, 0.0);
             sortBuilder.validation(GeoValidationMethod.STRICT);
-            ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class, () -> sortBuilder.build(shardContextMock));
+            FesenParseException ex = expectThrows(FesenParseException.class, () -> sortBuilder.build(shardContextMock));
             assertEquals("illegal latitude value [-180.0] for [GeoDistanceSort] for field [fieldName].", ex.getMessage());
         }
         {
             GeoDistanceSortBuilder sortBuilder = new GeoDistanceSortBuilder("fieldName", 0.0, -360.0);
             sortBuilder.validation(GeoValidationMethod.STRICT);
-            ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class, () -> sortBuilder.build(shardContextMock));
+            FesenParseException ex = expectThrows(FesenParseException.class, () -> sortBuilder.build(shardContextMock));
             assertEquals("illegal longitude value [-360.0] for [GeoDistanceSort] for field [fieldName].", ex.getMessage());
         }
     }

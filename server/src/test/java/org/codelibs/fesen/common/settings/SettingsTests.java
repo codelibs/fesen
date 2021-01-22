@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.settings;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -497,7 +497,7 @@ public class SettingsTests extends ESTestCase {
         Setting<SecureString> setting = SecureSetting.secureString("something.secure", null);
         Settings settings = Settings.builder().put("something.secure", "notreallysecure").build();
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> setting.get(settings));
-        assertTrue(e.getMessage().contains("must be stored inside the Elasticsearch keystore"));
+        assertTrue(e.getMessage().contains("must be stored inside the Fesen keystore"));
     }
 
     public void testSecureSettingIllegalName() {
@@ -617,7 +617,7 @@ public class SettingsTests extends ESTestCase {
 
     public void testIndentation() throws Exception {
         String yaml = "/org/codelibs/fesen/common/settings/loader/indentation-settings.yml";
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> {
+        FesenParseException e = expectThrows(FesenParseException.class, () -> {
             Settings.builder().loadFromStream(yaml, getClass().getResourceAsStream(yaml), false);
         });
         assertTrue(e.getMessage(), e.getMessage().contains("malformed"));
@@ -625,7 +625,7 @@ public class SettingsTests extends ESTestCase {
 
     public void testIndentationWithExplicitDocumentStart() throws Exception {
         String yaml = "/org/codelibs/fesen/common/settings/loader/indentation-with-explicit-document-start-settings.yml";
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> {
+        FesenParseException e = expectThrows(FesenParseException.class, () -> {
             Settings.builder().loadFromStream(yaml, getClass().getResourceAsStream(yaml), false);
         });
         assertTrue(e.getMessage(), e.getMessage().contains("malformed"));
@@ -635,7 +635,7 @@ public class SettingsTests extends ESTestCase {
     public void testMissingValue() throws Exception {
         Path tmp = createTempFile("test", ".yaml");
         Files.write(tmp, Collections.singletonList("foo: # missing value\n"), StandardCharsets.UTF_8);
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> {
+        FesenParseException e = expectThrows(FesenParseException.class, () -> {
             Settings.builder().loadFromPath(tmp);
         });
         assertTrue(

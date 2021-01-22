@@ -173,7 +173,7 @@ public class TimeValueTests extends ESTestCase {
     public void testFailOnUnknownUnits() {
         try {
             TimeValue.parseTimeValue("23tw", null, "test");
-            fail("Expected ElasticsearchParseException");
+            fail("Expected FesenParseException");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("failed to parse"));
         }
@@ -182,7 +182,7 @@ public class TimeValueTests extends ESTestCase {
     public void testFailOnMissingUnits() {
         try {
             TimeValue.parseTimeValue("42", null, "test");
-            fail("Expected ElasticsearchParseException");
+            fail("Expected FesenParseException");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("failed to parse"));
         }
@@ -191,7 +191,7 @@ public class TimeValueTests extends ESTestCase {
     public void testNoDotsAllowed() {
         try {
             TimeValue.parseTimeValue("42ms.", null, "test");
-            fail("Expected ElasticsearchParseException");
+            fail("Expected FesenParseException");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("failed to parse"));
         }

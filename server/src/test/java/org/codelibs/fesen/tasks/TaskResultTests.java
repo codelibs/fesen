@@ -138,7 +138,7 @@ public class TaskResultTests extends ESTestCase {
         return new ToXContent() {
             @Override
             public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-                // Responses in Elasticsearch never output a leading startObject. There isn't really a good reason, they just don't.
+                // Responses in Fesen never output a leading startObject. There isn't really a good reason, they just don't.
                 for (Map.Entry<String, String> entry : result.entrySet()) {
                     builder.field(entry.getKey(), entry.getValue());
                 }

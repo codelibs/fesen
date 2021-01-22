@@ -19,7 +19,7 @@
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.cluster.configuration.AddVotingConfigExclusionsAction;
 import org.codelibs.fesen.action.admin.cluster.configuration.AddVotingConfigExclusionsRequest;
@@ -510,7 +510,7 @@ public class TransportAddVotingConfigExclusionsActionTests extends ESTestCase {
 
         assertTrue(countDownLatch.await(30, TimeUnit.SECONDS));
         final Throwable rootCause = exceptionHolder.get().getRootCause();
-        assertThat(rootCause,instanceOf(ElasticsearchTimeoutException.class));
+        assertThat(rootCause,instanceOf(FesenTimeoutException.class));
         assertThat(rootCause.getMessage(), startsWith("timed out waiting for voting config exclusions [{other1}"));
         assertWarnings(AddVotingConfigExclusionsRequest.DEPRECATION_MESSAGE);
 

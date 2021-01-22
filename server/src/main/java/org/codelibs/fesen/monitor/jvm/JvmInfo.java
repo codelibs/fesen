@@ -173,7 +173,7 @@ public class JvmInfo implements ReportingService.Info {
     private static boolean usingBundledJdk() {
         /*
          * We are using the bundled JDK if java.home is the jdk sub-directory of our working directory. This is because we always set
-         * the working directory of Elasticsearch to home, and the bundled JDK is in the jdk sub-directory there.
+         * the working directory of Fesen to home, and the bundled JDK is in the jdk sub-directory there.
          */
         final String javaHome = System.getProperty("java.home");
         final String userDir = System.getProperty("user.dir");

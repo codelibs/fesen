@@ -163,7 +163,7 @@ public final class AnalysisModule {
     static Map<String, PreConfiguredCharFilter> setupPreConfiguredCharFilters(List<AnalysisPlugin> plugins) {
         NamedRegistry<PreConfiguredCharFilter> preConfiguredCharFilters = new NamedRegistry<>("pre-configured char_filter");
 
-        // No char filter are available in lucene-core so none are built in to Elasticsearch core
+        // No char filter are available in lucene-core so none are built in to Fesen core
 
         for (AnalysisPlugin plugin: plugins) {
             for (PreConfiguredCharFilter filter : plugin.getPreConfiguredCharFilters()) {

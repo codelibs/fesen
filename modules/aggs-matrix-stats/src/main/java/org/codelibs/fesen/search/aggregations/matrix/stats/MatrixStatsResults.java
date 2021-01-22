@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -59,7 +59,7 @@ class MatrixStatsResults implements Writeable {
             results = new RunningStats(in);
             correlation = (Map<String, HashMap<String, Double>>) in.readGenericValue();
         } catch (IOException e) {
-            throw new ElasticsearchException("Error trying to create multifield_stats results from stream input", e);
+            throw new FesenException("Error trying to create multifield_stats results from stream input", e);
         }
     }
 

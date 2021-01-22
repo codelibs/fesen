@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.indices.mapping.put;
 
 import com.carrotsearch.hppc.ObjectHashSet;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -305,7 +305,7 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
             builder.map(mappingSource);
             return source(BytesReference.bytes(builder), builder.contentType());
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + mappingSource + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + mappingSource + "]", e);
         }
     }
 

@@ -24,7 +24,7 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.analysis.hunspell.Dictionary;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.FileSystemUtils;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
@@ -167,7 +167,7 @@ public class HunspellService {
         }
         Path dicDir = hunspellDir.resolve(locale);
         if (FileSystemUtils.isAccessibleDirectory(dicDir, logger) == false) {
-            throw new ElasticsearchException(String.format(Locale.ROOT, "Could not find hunspell dictionary [%s]", locale));
+            throw new FesenException(String.format(Locale.ROOT, "Could not find hunspell dictionary [%s]", locale));
         }
 
         // merging node settings with hunspell dictionary specific settings
@@ -178,10 +178,10 @@ public class HunspellService {
 
         Path[] affixFiles = FileSystemUtils.files(dicDir, "*.aff");
         if (affixFiles.length == 0) {
-            throw new ElasticsearchException(String.format(Locale.ROOT, "Missing affix file for hunspell dictionary [%s]", locale));
+            throw new FesenException(String.format(Locale.ROOT, "Missing affix file for hunspell dictionary [%s]", locale));
         }
         if (affixFiles.length != 1) {
-            throw new ElasticsearchException(String.format(Locale.ROOT, "Too many affix files exist for hunspell dictionary [%s]", locale));
+            throw new FesenException(String.format(Locale.ROOT, "Too many affix files exist for hunspell dictionary [%s]", locale));
         }
         InputStream affixStream = null;
 

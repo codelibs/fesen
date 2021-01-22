@@ -17,8 +17,8 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<excludes>
-				<exclude>org.codelibs.fesen:engine-server</exclude>
-				<exclude>org.codelibs.fesen.module:scripting-painless-spi</exclude>
+				<exclude>org.codelibs.fesen:fesen-engine-server</exclude>
+				<exclude>org.codelibs.fesen.module:fesen-scripting-painless-spi</exclude>
 			</excludes>
 		</dependencySet>
 	</dependencySets>

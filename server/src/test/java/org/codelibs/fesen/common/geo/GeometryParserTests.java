@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.geo;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.geo.GeometryFormat;
 import org.codelibs.fesen.common.geo.GeometryParser;
@@ -176,7 +176,7 @@ public class GeometryParserTests extends ESTestCase {
             parser.nextToken(); // Start object
             parser.nextToken(); // Field Name
             parser.nextToken(); // Field Value
-            ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class,
+            FesenParseException ex = expectThrows(FesenParseException.class,
                 () -> new GeometryParser(true, randomBoolean(), randomBoolean()).parse(parser));
             assertEquals("shape must be an object consisting of type and coordinates", ex.getMessage());
         }
@@ -226,7 +226,7 @@ public class GeometryParserTests extends ESTestCase {
                 Arrays.asList(expectedPoint, expectedPoint, expectedPoint, expectedPoint, expectedLine, expectedPolygon)
             )
         );
-        expectThrows(ElasticsearchParseException.class, () -> testBasics(parser, "not a geometry", null));
+        expectThrows(FesenParseException.class, () -> testBasics(parser, "not a geometry", null));
     }
 
     private void testBasics(GeometryParser parser, Object value, Geometry expected) {

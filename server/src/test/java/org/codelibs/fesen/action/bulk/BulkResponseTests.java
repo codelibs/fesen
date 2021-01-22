@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.DocWriteResponse;
@@ -37,11 +37,11 @@ import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 
-import static org.codelibs.fesen.ElasticsearchExceptionTests.randomExceptions;
+import static org.codelibs.fesen.FesenExceptionTests.randomExceptions;
 import static org.codelibs.fesen.action.bulk.BulkItemResponseTests.assertBulkItemResponse;
 import static org.codelibs.fesen.action.bulk.BulkResponse.NO_INGEST_TOOK;
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class BulkResponseTests extends ESTestCase {
 
@@ -78,7 +78,7 @@ public class BulkResponseTests extends ESTestCase {
                 String type = randomAlphaOfLength(5);
                 String id = randomAlphaOfLength(5);
 
-                Tuple<Throwable, ElasticsearchException> failures = randomExceptions();
+                Tuple<Throwable, FesenException> failures = randomExceptions();
 
                 Exception bulkItemCause = (Exception) failures.v1();
                 bulkItems[i] = new BulkItemResponse(i, opType,

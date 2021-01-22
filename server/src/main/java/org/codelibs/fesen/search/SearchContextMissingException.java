@@ -21,13 +21,13 @@ package org.codelibs.fesen.search;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
 
-public class SearchContextMissingException extends ElasticsearchException {
+public class SearchContextMissingException extends FesenException {
 
     private final ShardSearchContextId contextId;
 

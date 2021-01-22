@@ -64,7 +64,7 @@ public class PluginInfo implements Writeable, ToXContentObject {
      * @param name                  the name of the plugin
      * @param description           a description of the plugin
      * @param version               an opaque version identifier for the plugin
-     * @param elasticsearchVersion  the version of Elasticsearch the plugin was built for
+     * @param elasticsearchVersion  the version of Fesen the plugin was built for
      * @param javaVersion           the version of Java the plugin was built with
      * @param classname             the entry point to the plugin
      * @param extendedPlugins       other plugins this plugin extends through SPI

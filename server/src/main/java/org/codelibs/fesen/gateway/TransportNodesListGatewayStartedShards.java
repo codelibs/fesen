@@ -20,7 +20,7 @@
 package org.codelibs.fesen.gateway;
 
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionType;
@@ -131,7 +131,7 @@ public class TransportNodesListGatewayStartedShards extends
                             customDataPath = new IndexSettings(metadata, settings).customDataPath();
                         } else {
                             logger.trace("{} node doesn't have meta data for the requests index", shardId);
-                            throw new ElasticsearchException("node doesn't have meta data for index " + shardId.getIndex());
+                            throw new FesenException("node doesn't have meta data for index " + shardId.getIndex());
                         }
                     }
                     // we don't have an open shard on the store, validate the files on disk are openable
@@ -165,7 +165,7 @@ public class TransportNodesListGatewayStartedShards extends
             logger.trace("{} no local shard info found", shardId);
             return new NodeGatewayStartedShards(clusterService.localNode(), null, false);
         } catch (Exception e) {
-            throw new ElasticsearchException("failed to load started shards", e);
+            throw new FesenException("failed to load started shards", e);
         }
     }
 

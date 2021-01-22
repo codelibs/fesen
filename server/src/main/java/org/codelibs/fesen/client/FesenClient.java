@@ -27,7 +27,7 @@ import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-public interface ElasticsearchClient {
+public interface FesenClient {
 
     /**
      * Executes a generic action, denoted by an {@link ActionType}.

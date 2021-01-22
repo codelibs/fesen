@@ -21,12 +21,12 @@ package org.codelibs.fesen.indices;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class InvalidIndexNameException extends ElasticsearchException {
+public class InvalidIndexNameException extends FesenException {
 
     public InvalidIndexNameException(String name, String desc) {
         super("Invalid index name [" + name + "], " + desc);

@@ -38,7 +38,7 @@ import org.codelibs.fesen.indices.flush.SyncedFlushService;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 
 import java.util.List;
 import java.util.Map;

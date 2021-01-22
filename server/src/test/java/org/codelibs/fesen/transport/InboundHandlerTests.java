@@ -22,7 +22,7 @@ package org.codelibs.fesen.transport;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -175,7 +175,7 @@ public class InboundHandlerTests extends ESTestCase {
         byte responseStatus = TransportStatus.setResponse((byte) 0);
         if (isError) {
             responseStatus = TransportStatus.setError(responseStatus);
-            transportChannel.sendResponse(new ElasticsearchException("boom"));
+            transportChannel.sendResponse(new FesenException("boom"));
         } else {
             transportChannel.sendResponse(new TestResponse(responseValue));
         }
@@ -189,7 +189,7 @@ public class InboundHandlerTests extends ESTestCase {
 
         if (isError) {
             assertThat(exceptionCaptor.get(), instanceOf(RemoteTransportException.class));
-            assertThat(exceptionCaptor.get().getCause(), instanceOf(ElasticsearchException.class));
+            assertThat(exceptionCaptor.get().getCause(), instanceOf(FesenException.class));
             assertEquals("boom", exceptionCaptor.get().getCause().getMessage());
         } else {
             assertEquals(responseValue, responseCaptor.get().value);
@@ -304,7 +304,7 @@ public class InboundHandlerTests extends ESTestCase {
                 final StreamInput streamInput = new InputStreamStreamInput(new InputStream() {
                     @Override
                     public int read() {
-                        throw new ElasticsearchException("unreadable handshake");
+                        throw new FesenException("unreadable handshake");
                     }
                 });
                 streamInput.setVersion(remoteVersion);

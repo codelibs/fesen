@@ -19,29 +19,11 @@
 
 package org.codelibs.fesen;
 
-import java.io.IOException;
-
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.rest.RestStatus;
-
 /**
- * Unchecked exception that is translated into a {@code 400 BAD REQUEST} error when it bubbles out over HTTP.
+ * An exception that is meant to be "unwrapped" when sent back to the user
+ * as an error because its is {@link #getCause() cause}, if non-null is
+ * <strong>always</strong> more useful to the user than the exception itself.
  */
-public class ElasticsearchParseException extends ElasticsearchException {
-
-    public ElasticsearchParseException(String msg, Object... args) {
-        super(msg, args);
-    }
-
-    public ElasticsearchParseException(String msg, Throwable cause, Object... args) {
-        super(msg, cause, args);
-    }
-
-    public ElasticsearchParseException(StreamInput in) throws IOException {
-        super(in);
-    }
-    @Override
-    public RestStatus status() {
-        return RestStatus.BAD_REQUEST;
-    }
+public interface FesenWrapperException {
+    Throwable getCause();
 }

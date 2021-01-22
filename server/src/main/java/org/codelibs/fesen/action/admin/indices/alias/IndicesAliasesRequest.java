@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.alias;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.AliasesRequest;
@@ -430,7 +430,7 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
                 this.filter = Strings.toString(builder);
                 return this;
             } catch (IOException e) {
-                throw new ElasticsearchGenerationException("Failed to generate [" + filter + "]", e);
+                throw new FesenGenerationException("Failed to generate [" + filter + "]", e);
             }
         }
 
@@ -446,7 +446,7 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
                 this.filter = Strings.toString(builder);
                 return this;
             } catch (IOException e) {
-                throw new ElasticsearchGenerationException("Failed to build json for alias request", e);
+                throw new FesenGenerationException("Failed to build json for alias request", e);
             }
         }
 

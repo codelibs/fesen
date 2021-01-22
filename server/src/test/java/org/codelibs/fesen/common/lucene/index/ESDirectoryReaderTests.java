@@ -28,7 +28,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.NoMergePolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.test.ESTestCase;
@@ -55,7 +55,7 @@ public class ESDirectoryReaderTests extends ESTestCase {
 
         // open reader
         ShardId shardId = new ShardId("fake", "_na_", 1);
-        DirectoryReader ir = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(iw), shardId);
+        DirectoryReader ir = FesenDirectoryReader.wrap(DirectoryReader.open(iw), shardId);
         assertEquals(2, ir.numDocs());
         assertEquals(1, ir.leaves().size());
 

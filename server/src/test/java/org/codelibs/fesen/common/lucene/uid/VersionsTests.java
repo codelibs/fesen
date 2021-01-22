@@ -28,7 +28,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver;
 import org.codelibs.fesen.index.mapper.IdFieldMapper;
 import org.codelibs.fesen.index.mapper.SeqNoFieldMapper;
@@ -65,7 +65,7 @@ public class VersionsTests extends ESTestCase {
     public void testVersions() throws Exception {
         Directory dir = newDirectory();
         IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(Lucene.STANDARD_ANALYZER));
-        DirectoryReader directoryReader = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        DirectoryReader directoryReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         assertThat(loadDocIdAndVersion(directoryReader, new Term(IdFieldMapper.NAME, "1"), randomBoolean()), nullValue());
 
         Document doc = new Document();
@@ -129,7 +129,7 @@ public class VersionsTests extends ESTestCase {
         docs.add(doc);
 
         writer.updateDocuments(new Term(IdFieldMapper.NAME, "1"), docs);
-        DirectoryReader directoryReader = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
+        DirectoryReader directoryReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "_na_", 1));
         assertThat(loadDocIdAndVersion(directoryReader, new Term(IdFieldMapper.NAME, "1"), randomBoolean()).version, equalTo(5L));
 
         version.setLongValue(6L);
@@ -190,7 +190,7 @@ public class VersionsTests extends ESTestCase {
         assertEquals(87, loadDocIdAndVersion(reader, new Term(IdFieldMapper.NAME, "6"), randomBoolean()).version);
         assertEquals(size+1, VersionsAndSeqNoResolver.lookupStates.size());
         // now wrap the reader
-        DirectoryReader wrapped = ElasticsearchDirectoryReader.wrap(reader, new ShardId("bogus", "_na_", 5));
+        DirectoryReader wrapped = FesenDirectoryReader.wrap(reader, new ShardId("bogus", "_na_", 5));
         assertEquals(87, loadDocIdAndVersion(wrapped, new Term(IdFieldMapper.NAME, "6"), randomBoolean()).version);
         // same size map: core cache key is shared
         assertEquals(size+1, VersionsAndSeqNoResolver.lookupStates.size());

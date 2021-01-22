@@ -33,7 +33,7 @@ import java.util.Set;
 import org.codelibs.fesen.common.collect.Tuple;
 
 /**
- * Specification of an Elasticsearch endpoint used by the YAML specs to generate REST requests.
+ * Specification of an Fesen endpoint used by the YAML specs to generate REST requests.
  */
 public class ClientYamlSuiteRestApi {
 

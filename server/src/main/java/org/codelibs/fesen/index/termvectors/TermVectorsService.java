@@ -28,7 +28,7 @@ import org.apache.lucene.index.MultiTerms;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.memory.MemoryIndex;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.termvectors.TermVectorsFilter;
 import org.codelibs.fesen.action.termvectors.TermVectorsRequest;
 import org.codelibs.fesen.action.termvectors.TermVectorsResponse;
@@ -133,7 +133,7 @@ public class TermVectorsService  {
                     try {
                         termVectorsFilter.selectBestTerms();
                     } catch (IOException e) {
-                        throw new ElasticsearchException("failed to select best terms", e);
+                        throw new FesenException("failed to select best terms", e);
                     }
                 }
                 // write term vectors
@@ -142,7 +142,7 @@ public class TermVectorsService  {
             }
             termVectorsResponse.setTookInMillis(TimeUnit.NANOSECONDS.toMillis(nanoTimeSupplier.getAsLong() - startTime));
         } catch (Exception ex) {
-            throw new ElasticsearchException("failed to execute term vector request", ex);
+            throw new FesenException("failed to execute term vector request", ex);
         }
         return termVectorsResponse;
     }

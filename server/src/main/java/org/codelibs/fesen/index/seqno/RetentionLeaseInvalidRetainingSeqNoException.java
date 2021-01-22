@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.seqno;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class RetentionLeaseInvalidRetainingSeqNoException extends ElasticsearchException {
+public class RetentionLeaseInvalidRetainingSeqNoException extends FesenException {
 
     RetentionLeaseInvalidRetainingSeqNoException(String retentionLeaseId, String source, long retainingSequenceNumber,
                                                  RetentionLease existingRetentionLease) {

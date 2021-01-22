@@ -25,7 +25,7 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
 import org.apache.lucene.util.CollectionUtil;
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -456,7 +456,7 @@ public abstract class AbstractSimpleTransportTestCase extends ESTestCase {
                 if (randomBoolean()) {
                     channel.sendResponse(TransportResponse.Empty.INSTANCE);
                 } else {
-                    channel.sendResponse(new ElasticsearchException("simulated"));
+                    channel.sendResponse(new FesenException("simulated"));
                 }
             } catch (IOException e) {
                 logger.error("Unexpected failure", e);
@@ -520,7 +520,7 @@ public abstract class AbstractSimpleTransportTestCase extends ESTestCase {
         try {
             serviceA.submitRequest(nodeB, ACTION, TransportRequest.Empty.INSTANCE, EmptyTransportResponseHandler.INSTANCE_SAME).get();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ElasticsearchException.class));
+            assertThat(e.getCause(), instanceOf(FesenException.class));
             assertThat(ExceptionsHelper.unwrapCause(e.getCause()).getMessage(), equalTo("simulated"));
         }
 
@@ -539,7 +539,7 @@ public abstract class AbstractSimpleTransportTestCase extends ESTestCase {
         try {
             serviceB.submitRequest(nodeA, ACTION, TransportRequest.Empty.INSTANCE, EmptyTransportResponseHandler.INSTANCE_SAME).get();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ElasticsearchException.class));
+            assertThat(e.getCause(), instanceOf(FesenException.class));
             assertThat(ExceptionsHelper.unwrapCause(e.getCause()).getMessage(), equalTo("simulated"));
         }
 
@@ -559,7 +559,7 @@ public abstract class AbstractSimpleTransportTestCase extends ESTestCase {
         try {
             serviceA.submitRequest(nodeA, ACTION, TransportRequest.Empty.INSTANCE, EmptyTransportResponseHandler.INSTANCE_SAME).get();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ElasticsearchException.class));
+            assertThat(e.getCause(), instanceOf(FesenException.class));
             assertThat(ExceptionsHelper.unwrapCause(e.getCause()).getMessage(), equalTo("simulated"));
         }
 

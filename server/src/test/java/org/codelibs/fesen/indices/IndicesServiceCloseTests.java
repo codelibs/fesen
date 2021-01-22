@@ -46,7 +46,7 @@ import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.InternalSettingsPlugin;
 import org.codelibs.fesen.test.InternalTestCluster;
 import org.codelibs.fesen.test.MockHttpTransport;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenAssertions;
 import org.codelibs.fesen.transport.nio.MockNioTransportPlugin;
 
 import java.nio.file.Path;
@@ -59,7 +59,7 @@ import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_O
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_SHARDS;
 import static org.codelibs.fesen.discovery.SettingsBasedSeedHostsProvider.DISCOVERY_SEED_HOSTS_SETTING;
 import static org.codelibs.fesen.test.NodeRoles.dataNode;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 
 public class IndicesServiceCloseTests extends ESTestCase {
 
@@ -152,7 +152,7 @@ public class IndicesServiceCloseTests extends ESTestCase {
         assertAcked(node.client().admin().indices().prepareCreate("test")
                 .setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1).put(SETTING_NUMBER_OF_REPLICAS, 0)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.emptyMap()).get();
-        ElasticsearchAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
+        FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
         assertEquals(2, indicesService.indicesRefCount.refCount());
 
@@ -178,7 +178,7 @@ public class IndicesServiceCloseTests extends ESTestCase {
                         .put(SETTING_NUMBER_OF_REPLICAS, 0)
                         .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
-        ElasticsearchAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
+        FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
         assertEquals(2, indicesService.indicesRefCount.refCount());
 
@@ -213,7 +213,7 @@ public class IndicesServiceCloseTests extends ESTestCase {
                         .put(SETTING_NUMBER_OF_REPLICAS, 0)
                         .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
-        ElasticsearchAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
+        FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
         assertEquals(2, indicesService.indicesRefCount.refCount());
 
@@ -247,7 +247,7 @@ public class IndicesServiceCloseTests extends ESTestCase {
                         .put(SETTING_NUMBER_OF_REPLICAS, 0)
                         .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
-        ElasticsearchAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
+        FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
         assertEquals(2, indicesService.indicesRefCount.refCount());
 

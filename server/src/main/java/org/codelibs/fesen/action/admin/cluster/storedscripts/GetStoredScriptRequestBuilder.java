@@ -20,13 +20,13 @@
 package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetStoredScriptRequestBuilder extends MasterNodeReadOperationRequestBuilder<GetStoredScriptRequest,
         GetStoredScriptResponse, GetStoredScriptRequestBuilder> {
 
 
-    public GetStoredScriptRequestBuilder(ElasticsearchClient client, GetStoredScriptAction action) {
+    public GetStoredScriptRequestBuilder(FesenClient client, GetStoredScriptAction action) {
         super(client, action, new GetStoredScriptRequest());
     }
 

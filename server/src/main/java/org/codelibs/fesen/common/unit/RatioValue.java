@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.unit;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 
 /**
  * Utility class to represent ratio and percentage values between 0 and 100
@@ -55,21 +55,21 @@ public class RatioValue {
             try {
                 final double percent = Double.parseDouble(percentAsString);
                 if (percent < 0 || percent > 100) {
-                    throw new ElasticsearchParseException("Percentage should be in [0-100], got [{}]", percentAsString);
+                    throw new FesenParseException("Percentage should be in [0-100], got [{}]", percentAsString);
                 }
                 return new RatioValue(Math.abs(percent));
             } catch (NumberFormatException e) {
-                throw new ElasticsearchParseException("Failed to parse [{}] as a double", e, percentAsString);
+                throw new FesenParseException("Failed to parse [{}] as a double", e, percentAsString);
             }
         } else {
             try {
                 double ratio = Double.parseDouble(sValue);
                 if (ratio < 0 || ratio > 1.0) {
-                    throw new ElasticsearchParseException("Ratio should be in [0-1.0], got [{}]", ratio);
+                    throw new FesenParseException("Ratio should be in [0-1.0], got [{}]", ratio);
                 }
                 return new RatioValue(100.0 * Math.abs(ratio));
             } catch (NumberFormatException e) {
-                throw new ElasticsearchParseException("Invalid ratio or percentage [{}]", sValue);
+                throw new FesenParseException("Invalid ratio or percentage [{}]", sValue);
             }
 
         }

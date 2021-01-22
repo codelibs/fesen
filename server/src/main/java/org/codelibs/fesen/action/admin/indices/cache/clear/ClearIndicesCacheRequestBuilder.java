@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.admin.indices.cache.clear;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class ClearIndicesCacheRequestBuilder
         extends BroadcastOperationRequestBuilder<ClearIndicesCacheRequest, ClearIndicesCacheResponse, ClearIndicesCacheRequestBuilder> {
 
-    public ClearIndicesCacheRequestBuilder(ElasticsearchClient client, ClearIndicesCacheAction action) {
+    public ClearIndicesCacheRequestBuilder(FesenClient client, ClearIndicesCacheAction action) {
         super(client, action, new ClearIndicesCacheRequest());
     }
 

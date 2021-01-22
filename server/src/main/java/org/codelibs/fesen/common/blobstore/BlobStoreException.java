@@ -21,10 +21,10 @@ package org.codelibs.fesen.common.blobstore;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class BlobStoreException extends ElasticsearchException {
+public class BlobStoreException extends FesenException {
 
     public BlobStoreException(String msg) {
         super(msg);

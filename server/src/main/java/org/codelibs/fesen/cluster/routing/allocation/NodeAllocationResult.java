@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.common.Nullable;
@@ -282,7 +282,7 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
                 }
                 if (storeException != null) {
                     builder.startObject("store_exception");
-                    ElasticsearchException.generateThrowableXContent(builder, params, storeException);
+                    FesenException.generateThrowableXContent(builder, params, storeException);
                     builder.endObject();
                 }
             }

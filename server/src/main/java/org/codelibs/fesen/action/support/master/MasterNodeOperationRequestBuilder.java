@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.support.master;
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 
 /**
@@ -32,7 +32,7 @@ public abstract class MasterNodeOperationRequestBuilder<Request extends MasterNo
         RequestBuilder extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
-    protected MasterNodeOperationRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected MasterNodeOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

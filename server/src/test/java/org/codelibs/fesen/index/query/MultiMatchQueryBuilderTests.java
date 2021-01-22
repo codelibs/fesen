@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.codelibs.fesen.index.query.QueryBuilders.multiMatchQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertBooleanSubQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertDisjunctionSubQuery;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertBooleanSubQuery;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertDisjunctionSubQuery;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;

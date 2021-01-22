@@ -38,7 +38,7 @@ import org.codelibs.fesen.common.cache.Cache;
 import org.codelibs.fesen.common.cache.CacheBuilder;
 import org.codelibs.fesen.common.cache.RemovalListener;
 import org.codelibs.fesen.common.cache.RemovalNotification;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Setting.Property;
@@ -224,7 +224,7 @@ public final class BitsetFilterCache extends AbstractIndexComponent
         }
 
         @Override
-        public IndexWarmer.TerminationHandle warmReader(final IndexShard indexShard, final ElasticsearchDirectoryReader reader) {
+        public IndexWarmer.TerminationHandle warmReader(final IndexShard indexShard, final FesenDirectoryReader reader) {
             if (indexSettings.getIndex().equals(indexShard.indexSettings().getIndex()) == false) {
                 // this is from a different index
                 return TerminationHandle.NO_WAIT;

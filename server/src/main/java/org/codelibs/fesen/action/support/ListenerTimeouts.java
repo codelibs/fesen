@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.threadpool.Scheduler;
@@ -33,7 +33,7 @@ public class ListenerTimeouts {
     /**
      * Wraps a listener with a listener that can timeout. After the timeout period the
      * {@link ActionListener#onFailure(Exception)} will be called with a
-     * {@link ElasticsearchTimeoutException} if the listener has not already been completed.
+     * {@link FesenTimeoutException} if the listener has not already been completed.
      *
      * @param threadPool used to schedule the timeout
      * @param listener to that can timeout
@@ -46,7 +46,7 @@ public class ListenerTimeouts {
                                                                       TimeValue timeout, String executor, String listenerName) {
         return wrapWithTimeout(threadPool, timeout, executor, listener, (ignore) -> {
             String timeoutMessage = "[" + listenerName + "]" + " timed out after [" + timeout + "]";
-            listener.onFailure(new ElasticsearchTimeoutException(timeoutMessage));
+            listener.onFailure(new FesenTimeoutException(timeoutMessage));
         });
     }
 

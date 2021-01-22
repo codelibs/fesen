@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -932,7 +932,7 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
                     e = new ReduceSearchPhaseException("test", "test failure", e, new ShardSearchFailure[0]);
                     continue;
                 case 2:
-                    e = new ElasticsearchException(e);
+                    e = new FesenException(e);
                     continue;
                 }
             }

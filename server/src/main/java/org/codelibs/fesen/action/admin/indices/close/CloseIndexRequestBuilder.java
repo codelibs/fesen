@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.close;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for close index request
@@ -30,11 +30,11 @@ import org.codelibs.fesen.client.ElasticsearchClient;
 public class CloseIndexRequestBuilder
     extends AcknowledgedRequestBuilder<CloseIndexRequest, CloseIndexResponse, CloseIndexRequestBuilder> {
 
-    public CloseIndexRequestBuilder(ElasticsearchClient client, CloseIndexAction action) {
+    public CloseIndexRequestBuilder(FesenClient client, CloseIndexAction action) {
         super(client, action, new CloseIndexRequest());
     }
 
-    public CloseIndexRequestBuilder(ElasticsearchClient client, CloseIndexAction action, String... indices) {
+    public CloseIndexRequestBuilder(FesenClient client, CloseIndexAction action, String... indices) {
         super(client, action, new CloseIndexRequest(indices));
     }
 

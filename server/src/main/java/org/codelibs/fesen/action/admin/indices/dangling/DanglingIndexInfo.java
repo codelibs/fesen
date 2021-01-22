@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 
 /**
- * Contains information about a dangling index, i.e. an index that Elasticsearch has found
+ * Contains information about a dangling index, i.e. an index that Fesen has found
  * on-disk but is not present in the cluster state.
  */
 public class DanglingIndexInfo implements Writeable {

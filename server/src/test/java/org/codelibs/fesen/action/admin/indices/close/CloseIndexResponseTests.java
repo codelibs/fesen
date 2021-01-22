@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.close;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.NoShardAvailableActionException;
 import org.codelibs.fesen.action.admin.indices.close.CloseIndexResponse;
@@ -248,7 +248,7 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
         return new CloseIndexResponse(acknowledged, shardsAcknowledged, indexResults);
     }
 
-    private static ElasticsearchException randomException(final Index index, final int id) {
+    private static FesenException randomException(final Index index, final int id) {
         return randomFrom(
             new IndexNotFoundException(index),
             new ActionNotFoundTransportException("test"),

@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 
 /**
@@ -112,7 +112,7 @@ public final class PidFile {
                 try {
                     Files.deleteIfExists(path);
                 } catch (IOException e) {
-                    throw new ElasticsearchException("Failed to delete pid file " + path, e);
+                    throw new FesenException("Failed to delete pid file " + path, e);
                 }
             }
         });

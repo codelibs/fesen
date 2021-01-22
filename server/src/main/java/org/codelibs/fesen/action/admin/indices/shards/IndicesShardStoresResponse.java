@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.shards;
 import com.carrotsearch.hppc.cursors.IntObjectCursor;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
@@ -188,7 +188,7 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
             builder.field(Fields.ALLOCATED, allocationStatus.value());
             if (storeException != null) {
                 builder.startObject(Fields.STORE_EXCEPTION);
-                ElasticsearchException.generateThrowableXContent(builder, params, storeException);
+                FesenException.generateThrowableXContent(builder, params, storeException);
                 builder.endObject();
             }
             return builder;

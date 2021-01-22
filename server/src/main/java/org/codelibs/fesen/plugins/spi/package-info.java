@@ -19,7 +19,7 @@
 
 /**
  * This package contains interfaces for services provided by
- * Elasticsearch plugins to external applications like the
+ * Fesen plugins to external applications like the
  * Java High Level Rest Client.
  */
 package org.codelibs.fesen.plugins.spi;

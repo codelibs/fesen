@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_REPLICAS;
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_SHARDS;
 import static org.codelibs.fesen.test.NodeRoles.dataNode;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

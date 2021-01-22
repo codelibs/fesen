@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.dangling.delete;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.admin.indices.dangling.DanglingIndexInfo;
@@ -205,7 +205,7 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
                             .stream()
                             .map(FailedNodeException::nodeId)
                             .collect(Collectors.joining(","));
-                        ElasticsearchException e = new ElasticsearchException("Failed to query nodes [" + nodeIds + "]");
+                        FesenException e = new FesenException("Failed to query nodes [" + nodeIds + "]");
 
                         for (FailedNodeException failure : response.failures()) {
                             logger.error("Failed to query node [" + failure.nodeId() + "]", failure);

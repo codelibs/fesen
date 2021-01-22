@@ -24,8 +24,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.util.concurrent.BaseFuture;
 
@@ -46,8 +46,8 @@ public class PlainTransportFuture<V extends TransportResponse> extends BaseFutur
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Future got interrupted", e);
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof ElasticsearchException) {
-                throw (ElasticsearchException) e.getCause();
+            if (e.getCause() instanceof FesenException) {
+                throw (FesenException) e.getCause();
             } else {
                 throw new TransportException("Failed execution", e);
             }
@@ -59,12 +59,12 @@ public class PlainTransportFuture<V extends TransportResponse> extends BaseFutur
         try {
             return get(timeout, unit);
         } catch (TimeoutException e) {
-            throw new ElasticsearchTimeoutException(e);
+            throw new FesenTimeoutException(e);
         } catch (InterruptedException e) {
             throw new IllegalStateException("Future got interrupted", e);
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof ElasticsearchException) {
-                throw (ElasticsearchException) e.getCause();
+            if (e.getCause() instanceof FesenException) {
+                throw (FesenException) e.getCause();
             } else {
                 throw new TransportException("Failed execution", e);
             }

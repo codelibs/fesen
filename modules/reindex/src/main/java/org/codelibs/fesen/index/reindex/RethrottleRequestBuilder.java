@@ -22,13 +22,13 @@ package org.codelibs.fesen.index.reindex;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
 import org.codelibs.fesen.action.support.tasks.TasksRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Java API support for changing the throttle on reindex tasks while they are running.
  */
 public class RethrottleRequestBuilder extends TasksRequestBuilder<RethrottleRequest, ListTasksResponse, RethrottleRequestBuilder> {
-    public RethrottleRequestBuilder(ElasticsearchClient client,
+    public RethrottleRequestBuilder(FesenClient client,
             ActionType<ListTasksResponse> action) {
         super(client, action, new RethrottleRequest());
     }

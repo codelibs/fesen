@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.suggest.completion;
 
 import org.apache.lucene.index.IndexableField;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -230,7 +230,7 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
         mapping.endObject();
         mapping.endObject();
 
-        ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class,
+        FesenParseException ex = expectThrows(FesenParseException.class,
             () ->  createIndex("test", Settings.EMPTY, "type1", mapping));
 
         assertThat(ex.getMessage(), equalTo("field [pin] referenced in context [st] must be mapped to geo_point, found [" + type + "]"));
@@ -260,7 +260,7 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
         mapping.endObject();
         mapping.endObject();
 
-        ElasticsearchParseException ex = expectThrows(ElasticsearchParseException.class,
+        FesenParseException ex = expectThrows(FesenParseException.class,
             () ->  createIndex("test", Settings.EMPTY, "type1", mapping));
 
         assertThat(ex.getMessage(), equalTo("field [pin] referenced in context [st] is not defined in the mapping"));

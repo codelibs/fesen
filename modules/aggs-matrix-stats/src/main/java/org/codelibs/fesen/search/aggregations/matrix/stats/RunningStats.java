@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -316,7 +316,7 @@ public class RunningStats implements Writeable, Cloneable {
         try {
             return (RunningStats) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new ElasticsearchException("Error trying to create a copy of RunningStats");
+            throw new FesenException("Error trying to create a copy of RunningStats");
         }
     }
 

@@ -21,27 +21,27 @@ package org.codelibs.fesen;
 import java.io.IOException;
 
 /**
- * This exception is thrown when Elasticsearch detects
+ * This exception is thrown when Fesen detects
  * an inconsistency in one of it's persistent files.
  */
-public class ElasticsearchCorruptionException extends IOException {
+public class FesenCorruptionException extends IOException {
 
     /**
-     * Creates a new {@link ElasticsearchCorruptionException}
+     * Creates a new {@link FesenCorruptionException}
      * @param message the exception message.
      */
-    public ElasticsearchCorruptionException(String message) {
+    public FesenCorruptionException(String message) {
         super(message);
     }
 
     /**
-     * Creates a new {@link ElasticsearchCorruptionException} with the given exceptions stacktrace.
+     * Creates a new {@link FesenCorruptionException} with the given exceptions stacktrace.
      * This constructor copies the stacktrace as well as the message from the given
      * {@code Throwable} into this exception.
      *
      * @param ex the exception cause
      */
-    public ElasticsearchCorruptionException(Throwable ex) {
+    public FesenCorruptionException(Throwable ex) {
         super(ex);
     }
 }

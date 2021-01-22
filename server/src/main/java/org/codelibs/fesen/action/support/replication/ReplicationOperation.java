@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.UnavailableShardsException;
@@ -512,7 +512,7 @@ public class ReplicationOperation<
 
     }
 
-    public static class RetryOnPrimaryException extends ElasticsearchException {
+    public static class RetryOnPrimaryException extends FesenException {
         RetryOnPrimaryException(ShardId shardId, String msg) {
             this(shardId, msg, null);
         }

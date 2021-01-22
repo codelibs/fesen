@@ -20,13 +20,13 @@
 package org.codelibs.fesen.action.admin.cluster.node.hotthreads;
 
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 
 public class NodesHotThreadsRequestBuilder
         extends NodesOperationRequestBuilder<NodesHotThreadsRequest, NodesHotThreadsResponse, NodesHotThreadsRequestBuilder> {
 
-    public NodesHotThreadsRequestBuilder(ElasticsearchClient client, NodesHotThreadsAction action) {
+    public NodesHotThreadsRequestBuilder(FesenClient client, NodesHotThreadsAction action) {
         super(client, action, new NodesHotThreadsRequest());
     }
 

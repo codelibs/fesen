@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.allocation;
 
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * Builder for requests to explain the allocation of a shard in the cluster
@@ -30,7 +30,7 @@ public class ClusterAllocationExplainRequestBuilder
                                                           ClusterAllocationExplainResponse,
                                                           ClusterAllocationExplainRequestBuilder> {
 
-    public ClusterAllocationExplainRequestBuilder(ElasticsearchClient client, ClusterAllocationExplainAction action) {
+    public ClusterAllocationExplainRequestBuilder(FesenClient client, ClusterAllocationExplainAction action) {
         super(client, action, new ClusterAllocationExplainRequest());
     }
 

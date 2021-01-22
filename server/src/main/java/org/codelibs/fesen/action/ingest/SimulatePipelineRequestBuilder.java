@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.ingest;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
@@ -29,14 +29,14 @@ public class SimulatePipelineRequestBuilder extends ActionRequestBuilder<Simulat
     /**
      * Create a new builder for {@link SimulatePipelineRequest}s
      */
-    public SimulatePipelineRequestBuilder(ElasticsearchClient client, SimulatePipelineAction action) {
+    public SimulatePipelineRequestBuilder(FesenClient client, SimulatePipelineAction action) {
         super(client, action, new SimulatePipelineRequest());
     }
 
     /**
      * Create a new builder for {@link SimulatePipelineRequest}s
      */
-    public SimulatePipelineRequestBuilder(ElasticsearchClient client, SimulatePipelineAction action, BytesReference source,
+    public SimulatePipelineRequestBuilder(FesenClient client, SimulatePipelineAction action, BytesReference source,
                                           XContentType xContentType) {
         super(client, action, new SimulatePipelineRequest(source, xContentType));
     }

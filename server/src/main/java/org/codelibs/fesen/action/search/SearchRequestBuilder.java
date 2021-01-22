@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.search;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.index.query.QueryBuilder;
@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, SearchResponse> {
 
-    public SearchRequestBuilder(ElasticsearchClient client, SearchAction action) {
+    public SearchRequestBuilder(FesenClient client, SearchAction action) {
         super(client, action, new SearchRequest());
     }
 
@@ -555,7 +555,7 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * If specified, Elasticsearch will execute this search request using reader contexts from that point in time.
+     * If specified, Fesen will execute this search request using reader contexts from that point in time.
      */
     public SearchRequestBuilder setPointInTime(PointInTimeBuilder pointInTimeBuilder) {
         sourceBuilder().pointInTimeBuilder(pointInTimeBuilder);

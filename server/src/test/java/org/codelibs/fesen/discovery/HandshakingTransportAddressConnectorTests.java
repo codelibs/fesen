@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterName;
@@ -152,7 +152,7 @@ public class HandshakingTransportAddressConnectorTests extends ESTestCase {
         remoteClusterName = "local-cluster";
         discoveryAddress = buildNewFakeTransportAddress();
 
-        fullConnectionFailure = new ConnectTransportException(remoteNode, "simulated", new ElasticsearchException("root cause"));
+        fullConnectionFailure = new ConnectTransportException(remoteNode, "simulated", new FesenException("root cause"));
 
         FailureListener failureListener = new FailureListener();
 

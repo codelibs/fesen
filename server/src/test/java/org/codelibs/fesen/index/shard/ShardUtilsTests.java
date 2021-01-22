@@ -26,7 +26,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.store.BaseDirectoryWrapper;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.shard.ShardUtils;
@@ -42,7 +42,7 @@ public class ShardUtilsTests extends ESTestCase {
         writer.commit();
         ShardId id = new ShardId("foo", "_na_", random().nextInt());
         try (DirectoryReader reader = DirectoryReader.open(writer)) {
-            ElasticsearchDirectoryReader wrap = ElasticsearchDirectoryReader.wrap(reader, id);
+            FesenDirectoryReader wrap = FesenDirectoryReader.wrap(reader, id);
             assertEquals(id, ShardUtils.extractShardId(wrap));
         }
         final int numDocs = 1 + random().nextInt(5);
@@ -56,7 +56,7 @@ public class ShardUtilsTests extends ESTestCase {
         }
 
         try (DirectoryReader reader = DirectoryReader.open(writer)) {
-            ElasticsearchDirectoryReader wrap = ElasticsearchDirectoryReader.wrap(reader, id);
+            FesenDirectoryReader wrap = FesenDirectoryReader.wrap(reader, id);
             assertEquals(id, ShardUtils.extractShardId(wrap));
             CompositeReaderContext context = wrap.getContext();
             for (LeafReaderContext leaf : context.leaves()) {

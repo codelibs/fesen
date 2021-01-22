@@ -21,7 +21,7 @@ package org.codelibs.fesen.gateway;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.FailedNodeException;
@@ -217,7 +217,7 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
                         // if the request got rejected or timed out, we need to try it again next time...
                         if (unwrappedCause instanceof EsRejectedExecutionException ||
                             unwrappedCause instanceof ReceiveTimeoutTransportException ||
-                            unwrappedCause instanceof ElasticsearchTimeoutException) {
+                            unwrappedCause instanceof FesenTimeoutException) {
                             nodeEntry.restartFetching();
                         } else {
                             logger.warn(() -> new ParameterizedMessage("{}: failed to list shard for {} on node [{}]",

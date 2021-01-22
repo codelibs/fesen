@@ -37,7 +37,7 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<excludes>
-				<exclude>org.codelibs.fesen.module:ingest-common</exclude>
+				<exclude>org.codelibs.fesen.module:fesen-ingest-common</exclude>
 				<exclude>org.apache.httpcomponents:httpclient</exclude>
 				<exclude>com.fasterxml.jackson.core:jackson-core</exclude>
 			</excludes>

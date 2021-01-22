@@ -54,7 +54,7 @@ import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.uid.Versions;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver.DocIdAndVersion;
@@ -636,8 +636,8 @@ public abstract class Engine implements Closeable {
         }
         Releasable releasable = store::decRef;
         try {
-            ReferenceManager<ElasticsearchDirectoryReader> referenceManager = getReferenceManager(scope);
-            ElasticsearchDirectoryReader acquire = referenceManager.acquire();
+            ReferenceManager<FesenDirectoryReader> referenceManager = getReferenceManager(scope);
+            FesenDirectoryReader acquire = referenceManager.acquire();
             SearcherSupplier reader = new SearcherSupplier(wrapper) {
                 @Override
                 public Searcher acquireSearcherInternal(String source) {
@@ -695,7 +695,7 @@ public abstract class Engine implements Closeable {
         }
     }
 
-    protected abstract ReferenceManager<ElasticsearchDirectoryReader> getReferenceManager(SearcherScope scope);
+    protected abstract ReferenceManager<FesenDirectoryReader> getReferenceManager(SearcherScope scope);
 
     boolean assertSearcherIsWarmedUp(String source, SearcherScope scope) {
         return true;
@@ -1860,7 +1860,7 @@ public abstract class Engine implements Closeable {
         /**
          * Called once a new top-level reader is opened.
          */
-        void warm(ElasticsearchDirectoryReader reader);
+        void warm(FesenDirectoryReader reader);
     }
 
     /**

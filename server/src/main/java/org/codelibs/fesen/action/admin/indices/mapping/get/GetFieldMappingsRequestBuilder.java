@@ -21,14 +21,14 @@ package org.codelibs.fesen.action.admin.indices.mapping.get;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 /** A helper class to build {@link GetFieldMappingsRequest} objects */
 public class GetFieldMappingsRequestBuilder
         extends ActionRequestBuilder<GetFieldMappingsRequest, GetFieldMappingsResponse> {
 
-    public GetFieldMappingsRequestBuilder(ElasticsearchClient client, GetFieldMappingsAction action, String... indices) {
+    public GetFieldMappingsRequestBuilder(FesenClient client, GetFieldMappingsAction action, String... indices) {
         super(client, action, new GetFieldMappingsRequest().indices(indices));
     }
 

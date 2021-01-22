@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LogEvent;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -1351,7 +1351,7 @@ public class CoordinatorTests extends AbstractCoordinatorTestCase {
 
         @Override
         public void writeTo(StreamOutput out) throws IOException {
-            throw new ElasticsearchException(EXCEPTION_MESSAGE);
+            throw new FesenException(EXCEPTION_MESSAGE);
         }
 
         @Override
@@ -1374,7 +1374,7 @@ public class CoordinatorTests extends AbstractCoordinatorTestCase {
             leader1.submitUpdateTask("broken-task",
                 cs -> ClusterState.builder(cs).putCustom("broken", new BrokenCustom()).build(),
                 (source, e) -> {
-                    assertThat(e.getCause(), instanceOf(ElasticsearchException.class));
+                    assertThat(e.getCause(), instanceOf(FesenException.class));
                     assertThat(e.getCause().getMessage(), equalTo(BrokenCustom.EXCEPTION_MESSAGE));
                     failed.set(true);
                 });

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.indices.forcemerge;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 /**
  * A request to force merge one or more indices. In order to force merge all
@@ -32,7 +32,7 @@ import org.codelibs.fesen.client.ElasticsearchClient;
 public class ForceMergeRequestBuilder
         extends BroadcastOperationRequestBuilder<ForceMergeRequest, ForceMergeResponse, ForceMergeRequestBuilder> {
 
-    public ForceMergeRequestBuilder(ElasticsearchClient client, ForceMergeAction action) {
+    public ForceMergeRequestBuilder(FesenClient client, ForceMergeAction action) {
         super(client, action, new ForceMergeRequest());
     }
 

@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.test.ESTestCase;
 
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 import java.io.IOException;
 

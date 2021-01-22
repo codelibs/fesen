@@ -59,7 +59,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Provides the infrastructure for Lucene expressions as a scripting language for Elasticsearch.
+ * Provides the infrastructure for Lucene expressions as a scripting language for Fesen.
  *
  * Only contexts returning numeric types or {@link Object} are supported.
  */

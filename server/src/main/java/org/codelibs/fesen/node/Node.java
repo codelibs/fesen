@@ -25,8 +25,8 @@ import org.apache.lucene.util.Constants;
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.Assertions;
 import org.codelibs.fesen.Build;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionModule;
 import org.codelibs.fesen.action.ActionType;
@@ -331,7 +331,7 @@ public class Node implements Closeable {
             logger.info("JVM arguments {}", Arrays.toString(jvmInfo.getInputArguments()));
             if (Build.CURRENT.isProductionRelease() == false) {
                 logger.warn(
-                    "version [{}] is a pre-release version of Elasticsearch and is not suitable for production",
+                    "version [{}] is a pre-release version of Fesen and is not suitable for production",
                     Build.CURRENT.getQualifiedVersion());
             }
 
@@ -725,7 +725,7 @@ public class Node implements Closeable {
 
             success = true;
         } catch (IOException ex) {
-            throw new ElasticsearchException("failed to bind service", ex);
+            throw new FesenException("failed to bind service", ex);
         } finally {
             if (!success) {
                 IOUtils.closeWhileHandlingException(resourcesToClose);
@@ -882,7 +882,7 @@ public class Node implements Closeable {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    throw new ElasticsearchTimeoutException("Interrupted while waiting for initial discovery state");
+                    throw new FesenTimeoutException("Interrupted while waiting for initial discovery state");
                 }
             }
         }

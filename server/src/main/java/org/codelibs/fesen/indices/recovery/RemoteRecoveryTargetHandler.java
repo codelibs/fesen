@@ -22,7 +22,7 @@ package org.codelibs.fesen.indices.recovery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.store.RateLimiter;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -209,7 +209,7 @@ public class RemoteRecoveryTargetHandler implements RecoveryTargetHandler {
                     throttleTimeInNanos = rl.pause(bytes);
                     onSourceThrottle.accept(throttleTimeInNanos);
                 } catch (IOException e) {
-                    throw new ElasticsearchException("failed to pause recovery", e);
+                    throw new FesenException("failed to pause recovery", e);
                 }
             } else {
                 throttleTimeInNanos = 0;

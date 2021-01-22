@@ -27,7 +27,7 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 
 /**
- * Real work actually done here by Sebastian on the Elasticsearch mailing list
+ * Real work actually done here by Sebastian on the Fesen mailing list
  * http://elasticsearch-users.115913.n3.nabble.com/Using-the-Snowball-stemmers-tp2126106p2127111.html
  */
 public class SnowballTokenFilterFactory extends AbstractTokenFilterFactory {

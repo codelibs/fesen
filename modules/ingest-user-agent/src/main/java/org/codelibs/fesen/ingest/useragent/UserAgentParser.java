@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.useragent;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
@@ -50,7 +50,7 @@ final class UserAgentParser {
         try {
             init(regexStream);
         } catch (IOException e) {
-            throw new ElasticsearchParseException("error parsing regular expression file", e);
+            throw new FesenParseException("error parsing regular expression file", e);
         }
     }
 
@@ -95,7 +95,7 @@ final class UserAgentParser {
         }
 
         if (uaPatterns.isEmpty() && osPatterns.isEmpty() && devicePatterns.isEmpty()) {
-            throw new ElasticsearchParseException("not a valid regular expression file");
+            throw new FesenParseException("not a valid regular expression file");
         }
     }
 
@@ -113,19 +113,19 @@ final class UserAgentParser {
 
         XContentParser.Token token = yamlParser.nextToken();
         if (token != XContentParser.Token.START_ARRAY) {
-            throw new ElasticsearchParseException("malformed regular expression file, should continue with 'array' after 'object'");
+            throw new FesenParseException("malformed regular expression file, should continue with 'array' after 'object'");
         }
 
         token = yamlParser.nextToken();
         if (token != XContentParser.Token.START_OBJECT) {
-            throw new ElasticsearchParseException("malformed regular expression file, expecting 'object'");
+            throw new FesenParseException("malformed regular expression file, expecting 'object'");
         }
 
         while (token == XContentParser.Token.START_OBJECT) {
             token = yamlParser.nextToken();
 
             if (token != XContentParser.Token.FIELD_NAME) {
-                throw new ElasticsearchParseException("malformed regular expression file, should continue with 'field_name' after 'array'");
+                throw new FesenParseException("malformed regular expression file, should continue with 'field_name' after 'array'");
             }
 
             Map<String, String> regexMap = new HashMap<>();

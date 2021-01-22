@@ -33,7 +33,7 @@ import org.codelibs.fesen.index.reindex.UpdateByQueryRequestBuilder;
 import org.codelibs.fesen.search.sort.SortOrder;
 
 import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 import static org.hamcrest.Matchers.hasSize;
 
 public class UpdateByQueryBasicTests extends ReindexTestCase {

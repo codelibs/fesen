@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.shard;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class IndexShardRecoveryException extends ElasticsearchException {
+public class IndexShardRecoveryException extends FesenException {
     public IndexShardRecoveryException(ShardId shardId, String msg, Throwable cause) {
         super(msg, cause);
         setShard(shardId);

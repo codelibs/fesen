@@ -22,12 +22,12 @@ package org.codelibs.fesen.indices;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class TypeMissingException extends ElasticsearchException {
+public class TypeMissingException extends FesenException {
 
     public TypeMissingException(Index index, String... types) {
         super("type" + Arrays.toString(types) + " missing");

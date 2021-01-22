@@ -20,7 +20,7 @@ package org.codelibs.fesen.action.support.tasks;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.tasks.TaskId;
 
@@ -33,7 +33,7 @@ public class TasksRequestBuilder<
             RequestBuilder extends TasksRequestBuilder<Request, Response, RequestBuilder>
         > extends ActionRequestBuilder<Request, Response> {
 
-    protected TasksRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected TasksRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

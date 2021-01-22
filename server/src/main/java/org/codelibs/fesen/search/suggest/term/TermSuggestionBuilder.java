@@ -25,7 +25,7 @@ import org.apache.lucene.search.spell.LevenshteinDistance;
 import org.apache.lucene.search.spell.LuceneLevenshteinDistance;
 import org.apache.lucene.search.spell.NGramDistance;
 import org.apache.lucene.search.spell.StringDistance;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -435,7 +435,7 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
         // now we should have field name, check and copy fields over to the suggestion builder we return
         if (fieldname == null) {
-            throw new ElasticsearchParseException(
+            throw new FesenParseException(
                 "the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new TermSuggestionBuilder(fieldname, tmpSuggestion);

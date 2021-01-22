@@ -38,7 +38,7 @@ import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.util.SetOnce;
 import org.apache.lucene.util.ThreadInterruptedException;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -64,7 +64,7 @@ import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.metrics.CounterMetric;
 import org.codelibs.fesen.common.metrics.MeanMetric;
 import org.codelibs.fesen.common.settings.Settings;
@@ -1042,7 +1042,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
             return store.stats(bytesStillToRecover == -1 ? StoreStats.UNKNOWN_RESERVED_BYTES : bytesStillToRecover);
         } catch (IOException e) {
             failShard("Failing shard because of exception during storeStats", e);
-            throw new ElasticsearchException("io exception while building 'store stats'", e);
+            throw new FesenException("io exception while building 'store stats'", e);
         }
     }
 
@@ -1273,8 +1273,8 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     }
 
     private Engine.Searcher wrapSearcher(Engine.Searcher searcher) {
-        assert ElasticsearchDirectoryReader.unwrap(searcher.getDirectoryReader())
-            != null : "DirectoryReader must be an instance or ElasticsearchDirectoryReader";
+        assert FesenDirectoryReader.unwrap(searcher.getDirectoryReader())
+            != null : "DirectoryReader must be an instance or FesenDirectoryReader";
         boolean success = false;
         try {
             final Engine.Searcher newSearcher = readerWrapper == null ? searcher : wrapSearcher(searcher, readerWrapper);
@@ -1282,7 +1282,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
             success = true;
             return newSearcher;
         } catch (IOException ex) {
-            throw new ElasticsearchException("failed to wrap searcher", ex);
+            throw new FesenException("failed to wrap searcher", ex);
         } finally {
             if (success == false) {
                 Releasables.close(success, searcher);
@@ -1293,22 +1293,22 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     static Engine.Searcher wrapSearcher(Engine.Searcher engineSearcher,
                                         CheckedFunction<DirectoryReader, DirectoryReader, IOException> readerWrapper) throws IOException {
         assert readerWrapper != null;
-        final ElasticsearchDirectoryReader elasticsearchDirectoryReader =
-            ElasticsearchDirectoryReader.getElasticsearchDirectoryReader(engineSearcher.getDirectoryReader());
-        if (elasticsearchDirectoryReader == null) {
+        final FesenDirectoryReader fesenDirectoryReader =
+            FesenDirectoryReader.getFesenDirectoryReader(engineSearcher.getDirectoryReader());
+        if (fesenDirectoryReader == null) {
             throw new IllegalStateException("Can't wrap non elasticsearch directory reader");
         }
         NonClosingReaderWrapper nonClosingReaderWrapper = new NonClosingReaderWrapper(engineSearcher.getDirectoryReader());
         DirectoryReader reader = readerWrapper.apply(nonClosingReaderWrapper);
         if (reader != nonClosingReaderWrapper) {
-            if (reader.getReaderCacheHelper() != elasticsearchDirectoryReader.getReaderCacheHelper()) {
+            if (reader.getReaderCacheHelper() != fesenDirectoryReader.getReaderCacheHelper()) {
                 throw new IllegalStateException("wrapped directory reader doesn't delegate IndexReader#getCoreCacheKey," +
                     " wrappers must override this method and delegate to the original readers core cache key. Wrapped readers can't be " +
                     "used as cache keys since their are used only per request which would lead to subtle bugs");
             }
-            if (ElasticsearchDirectoryReader.getElasticsearchDirectoryReader(reader) != elasticsearchDirectoryReader) {
+            if (FesenDirectoryReader.getFesenDirectoryReader(reader) != fesenDirectoryReader) {
                 // prevent that somebody wraps with a non-filter reader
-                throw new IllegalStateException("wrapped directory reader hides actual ElasticsearchDirectoryReader but shouldn't");
+                throw new IllegalStateException("wrapped directory reader hides actual FesenDirectoryReader but shouldn't");
             }
         }
 

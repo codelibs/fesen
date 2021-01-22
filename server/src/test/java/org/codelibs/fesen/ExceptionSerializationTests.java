@@ -23,9 +23,9 @@ import org.apache.lucene.index.IndexFormatTooNewException;
 import org.apache.lucene.index.IndexFormatTooOldException;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchSecurityException;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenSecurityException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.OriginalIndices;
@@ -139,7 +139,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         final Set<Class<?>> hasDedicatedWrite = new HashSet<>();
         final Set<Class<?>> registered = new HashSet<>();
         final String path = "/org/codelibs/fesen";
-        final Path startPath = PathUtils.get(ElasticsearchException.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+        final Path startPath = PathUtils.get(FesenException.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                 .resolve("org").resolve("codelibs").resolve("fesen");
         final Set<? extends Class<?>> ignore = Sets.newHashSet(
                 CancellableThreadsTests.CustomException.class,
@@ -178,10 +178,10 @@ public class ExceptionSerializationTests extends ESTestCase {
                 if (isEsException(clazz) == false) {
                     return;
                 }
-                if (ElasticsearchException.isRegistered(clazz.asSubclass(Throwable.class), Version.CURRENT) == false
-                        && ElasticsearchException.class.equals(clazz.getEnclosingClass()) == false) {
+                if (FesenException.isRegistered(clazz.asSubclass(Throwable.class), Version.CURRENT) == false
+                        && FesenException.class.equals(clazz.getEnclosingClass()) == false) {
                     notRegistered.add(clazz);
-                } else if (ElasticsearchException.isRegistered(clazz.asSubclass(Throwable.class), Version.CURRENT)) {
+                } else if (FesenException.isRegistered(clazz.asSubclass(Throwable.class), Version.CURRENT)) {
                     registered.add(clazz);
                     try {
                         if (clazz.getMethod("writeTo", StreamOutput.class) != null) {
@@ -194,7 +194,7 @@ public class ExceptionSerializationTests extends ESTestCase {
             }
 
             private boolean isEsException(Class<?> clazz) {
-                return ElasticsearchException.class.isAssignableFrom(clazz);
+                return FesenException.class.isAssignableFrom(clazz);
             }
 
             private Class<?> loadClass(String filename) throws ClassNotFoundException {
@@ -223,13 +223,13 @@ public class ExceptionSerializationTests extends ESTestCase {
         Files.walkFileTree(testStartPath, visitor);
         assertTrue(notRegistered.remove(TestException.class));
         assertTrue(notRegistered.remove(UnknownHeaderException.class));
-        assertTrue("Classes subclassing ElasticsearchException must be registered \n" + notRegistered.toString(),
+        assertTrue("Classes subclassing FesenException must be registered \n" + notRegistered.toString(),
                 notRegistered.isEmpty());
-        assertTrue(registered.removeAll(ElasticsearchException.getRegisteredKeys())); // check
+        assertTrue(registered.removeAll(FesenException.getRegisteredKeys())); // check
         assertEquals(registered.toString(), 0, registered.size());
     }
 
-    public static final class TestException extends ElasticsearchException {
+    public static final class TestException extends FesenException {
         public TestException(StreamInput in) throws IOException {
             super(in);
         }
@@ -546,7 +546,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         final Exception ex = new UnknownException("eggplant", parsingException);
         Exception exception = serialize(ex);
         assertEquals("unknown_exception: eggplant", exception.getMessage());
-        assertTrue(exception instanceof ElasticsearchException);
+        assertTrue(exception instanceof FesenException);
         ParsingException e = (ParsingException)exception.getCause();
         assertEquals(parsingException.getIndex(), e.getIndex());
         assertEquals(parsingException.getMessage(), e.getMessage());
@@ -563,7 +563,7 @@ public class ExceptionSerializationTests extends ESTestCase {
                 new IllegalArgumentException("alalaal"),
                 new NullPointerException("boom"),
                 new EOFException("dadada"),
-                new ElasticsearchSecurityException("nono!"),
+                new FesenSecurityException("nono!"),
                 new NumberFormatException("not a number"),
                 new CorruptIndexException("baaaam booom", "this is my resource"),
                 new IndexFormatTooNewException("tooo new", 1, 2, 3),
@@ -577,8 +577,8 @@ public class ExceptionSerializationTests extends ESTestCase {
                 new LockObtainFailedException("can't lock directory", new NullPointerException()),
                 unknownException};
         for (final Exception cause : causes) {
-            ElasticsearchException ex = new ElasticsearchException("topLevel", cause);
-            ElasticsearchException deserialized = serialize(ex);
+            FesenException ex = new FesenException("topLevel", cause);
+            FesenException deserialized = serialize(ex);
             assertEquals(deserialized.getMessage(), ex.getMessage());
             assertTrue("Expected: " + deserialized.getCause().getMessage() + " to contain: " +
                             ex.getCause().getClass().getName() + " but it didn't",
@@ -595,7 +595,7 @@ public class ExceptionSerializationTests extends ESTestCase {
 
     public void testWithRestHeadersException() throws IOException {
         {
-            ElasticsearchException ex = new ElasticsearchException("msg");
+            FesenException ex = new FesenException("msg");
             ex.addHeader("foo", "foo", "bar");
             ex.addMetadata("es.foo_metadata", "value1", "value2");
             ex = serialize(ex);
@@ -614,7 +614,7 @@ public class ExceptionSerializationTests extends ESTestCase {
             uhe.addHeader("foo", "foo", "bar");
             uhe.addMetadata("es.foo_metadata", "value1", "value2");
 
-            ElasticsearchException serialize = serialize((ElasticsearchException) uhe);
+            FesenException serialize = serialize((FesenException) uhe);
             assertTrue(serialize instanceof NotSerializableExceptionWrapper);
             NotSerializableExceptionWrapper e = (NotSerializableExceptionWrapper) serialize;
             assertEquals("unknown_header_exception: msg", e.getMessage());
@@ -636,7 +636,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         assertEquals(msg, ex.getMessage());
     }
 
-    public static class UnknownHeaderException extends ElasticsearchException {
+    public static class UnknownHeaderException extends FesenException {
         private final RestStatus status;
 
         UnknownHeaderException(String msg, RestStatus status) {
@@ -650,9 +650,9 @@ public class ExceptionSerializationTests extends ESTestCase {
         }
     }
 
-    public void testElasticsearchSecurityException() throws IOException {
-        ElasticsearchSecurityException ex = new ElasticsearchSecurityException("user [{}] is not allowed", RestStatus.UNAUTHORIZED, "foo");
-        ElasticsearchSecurityException e = serialize(ex);
+    public void testFesenSecurityException() throws IOException {
+        FesenSecurityException ex = new FesenSecurityException("user [{}] is not allowed", RestStatus.UNAUTHORIZED, "foo");
+        FesenSecurityException e = serialize(ex);
         assertEquals(ex.status(), e.status());
         assertEquals(RestStatus.UNAUTHORIZED, e.status());
     }
@@ -664,25 +664,25 @@ public class ExceptionSerializationTests extends ESTestCase {
     }
 
     public void testThatIdsArePositive() {
-        for (final int id : ElasticsearchException.ids()) {
+        for (final int id : FesenException.ids()) {
             assertThat("negative id", id, greaterThanOrEqualTo(0));
         }
     }
 
     public void testThatIdsAreUnique() {
         final Set<Integer> ids = new HashSet<>();
-        for (final int id: ElasticsearchException.ids()) {
+        for (final int id: FesenException.ids()) {
             assertTrue("duplicate id", ids.add(id));
         }
     }
 
     public void testIds() {
-        Map<Integer, Class<? extends ElasticsearchException>> ids = new HashMap<>();
+        Map<Integer, Class<? extends FesenException>> ids = new HashMap<>();
         ids.put(0, org.codelibs.fesen.index.snapshots.IndexShardSnapshotFailedException.class);
         ids.put(1, org.codelibs.fesen.search.dfs.DfsPhaseExecutionException.class);
         ids.put(2, org.codelibs.fesen.common.util.CancellableThreads.ExecutionCancelledException.class);
         ids.put(3, org.codelibs.fesen.discovery.MasterNotDiscoveredException.class);
-        ids.put(4, org.codelibs.fesen.ElasticsearchSecurityException.class);
+        ids.put(4, org.codelibs.fesen.FesenSecurityException.class);
         ids.put(5, org.codelibs.fesen.index.snapshots.IndexShardRestoreException.class);
         ids.put(6, org.codelibs.fesen.indices.IndexClosedException.class);
         ids.put(7, org.codelibs.fesen.http.BindHttpException.class);
@@ -699,7 +699,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(18, org.codelibs.fesen.action.support.broadcast.BroadcastShardOperationFailedException.class);
         ids.put(19, org.codelibs.fesen.ResourceNotFoundException.class);
         ids.put(20, org.codelibs.fesen.transport.ActionTransportException.class);
-        ids.put(21, org.codelibs.fesen.ElasticsearchGenerationException.class);
+        ids.put(21, org.codelibs.fesen.FesenGenerationException.class);
         ids.put(22, null); // was CreateFailedEngineException
         ids.put(23, org.codelibs.fesen.index.shard.IndexShardStartedException.class);
         ids.put(24, org.codelibs.fesen.search.SearchContextMissingException.class);
@@ -713,7 +713,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(32, org.codelibs.fesen.indices.InvalidIndexNameException.class);
         ids.put(33, org.codelibs.fesen.indices.IndexPrimaryShardNotAllocatedException.class);
         ids.put(34, org.codelibs.fesen.transport.TransportException.class);
-        ids.put(35, org.codelibs.fesen.ElasticsearchParseException.class);
+        ids.put(35, org.codelibs.fesen.FesenParseException.class);
         ids.put(36, org.codelibs.fesen.search.SearchException.class);
         ids.put(37, org.codelibs.fesen.index.mapper.MapperException.class);
         ids.put(38, org.codelibs.fesen.indices.InvalidTypeNameException.class);
@@ -737,7 +737,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(56, org.codelibs.fesen.common.settings.SettingsException.class);
         ids.put(57, org.codelibs.fesen.indices.IndexTemplateMissingException.class);
         ids.put(58, org.codelibs.fesen.transport.SendRequestTransportException.class);
-        ids.put(59, null); // was EsRejectedExecutionException, which is no longer an instance of ElasticsearchException
+        ids.put(59, null); // was EsRejectedExecutionException, which is no longer an instance of FesenException
         ids.put(60, null); // EarlyTerminationException was removed in 6.0
         ids.put(61, null); // RoutingValidationException was removed in 5.0
         ids.put(62, org.codelibs.fesen.common.io.stream.NotSerializableExceptionWrapper.class);
@@ -746,7 +746,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(65, org.codelibs.fesen.gateway.GatewayException.class);
         ids.put(66, org.codelibs.fesen.index.shard.IndexShardNotRecoveringException.class);
         ids.put(67, org.codelibs.fesen.http.HttpException.class);
-        ids.put(68, org.codelibs.fesen.ElasticsearchException.class);
+        ids.put(68, org.codelibs.fesen.FesenException.class);
         ids.put(69, org.codelibs.fesen.snapshots.SnapshotMissingException.class);
         ids.put(70, org.codelibs.fesen.action.PrimaryMissingActionException.class);
         ids.put(71, org.codelibs.fesen.action.FailedNodeException.class);
@@ -793,7 +793,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(115, org.codelibs.fesen.index.translog.TranslogException.class);
         ids.put(116, org.codelibs.fesen.cluster.metadata.ProcessClusterEventTimeoutException.class);
         ids.put(117, ReplicationOperation.RetryOnPrimaryException.class);
-        ids.put(118, org.codelibs.fesen.ElasticsearchTimeoutException.class);
+        ids.put(118, org.codelibs.fesen.FesenTimeoutException.class);
         ids.put(119, org.codelibs.fesen.search.query.QueryPhaseExecutionException.class);
         ids.put(120, org.codelibs.fesen.repositories.RepositoryVerificationException.class);
         ids.put(121, org.codelibs.fesen.search.aggregations.InvalidAggregationPathException.class);
@@ -820,7 +820,7 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(142, ShardStateAction.NoLongerPrimaryShardException.class);
         ids.put(143, org.codelibs.fesen.script.ScriptException.class);
         ids.put(144, org.codelibs.fesen.cluster.NotMasterException.class);
-        ids.put(145, org.codelibs.fesen.ElasticsearchStatusException.class);
+        ids.put(145, org.codelibs.fesen.FesenStatusException.class);
         ids.put(146, org.codelibs.fesen.tasks.TaskCancelledException.class);
         ids.put(147, org.codelibs.fesen.env.ShardLockObtainFailedException.class);
         ids.put(148, null);
@@ -837,21 +837,21 @@ public class ExceptionSerializationTests extends ESTestCase {
         ids.put(159, NodeHealthCheckFailureException.class);
         ids.put(160, NoSeedNodeLeftException.class);
 
-        Map<Class<? extends ElasticsearchException>, Integer> reverse = new HashMap<>();
-        for (Map.Entry<Integer, Class<? extends ElasticsearchException>> entry : ids.entrySet()) {
+        Map<Class<? extends FesenException>, Integer> reverse = new HashMap<>();
+        for (Map.Entry<Integer, Class<? extends FesenException>> entry : ids.entrySet()) {
             if (entry.getValue() != null) {
                 reverse.put(entry.getValue(), entry.getKey());
             }
         }
 
-        for (final Tuple<Integer, Class<? extends ElasticsearchException>> tuple : ElasticsearchException.classes()) {
+        for (final Tuple<Integer, Class<? extends FesenException>> tuple : FesenException.classes()) {
             assertNotNull(tuple.v1());
             assertEquals((int) reverse.get(tuple.v2()), (int)tuple.v1());
         }
 
-        for (Map.Entry<Integer, Class<? extends ElasticsearchException>> entry : ids.entrySet()) {
+        for (Map.Entry<Integer, Class<? extends FesenException>> entry : ids.entrySet()) {
             if (entry.getValue() != null) {
-                assertEquals((int) entry.getKey(), ElasticsearchException.getId(entry.getValue()));
+                assertEquals((int) entry.getKey(), FesenException.getId(entry.getValue()));
             }
         }
     }
@@ -888,9 +888,9 @@ public class ExceptionSerializationTests extends ESTestCase {
         }
     }
 
-    public void testElasticsearchRemoteException() throws IOException {
-        ElasticsearchStatusException ex = new ElasticsearchStatusException("something", RestStatus.TOO_MANY_REQUESTS);
-        ElasticsearchStatusException e = serialize(ex);
+    public void testFesenRemoteException() throws IOException {
+        FesenStatusException ex = new FesenStatusException("something", RestStatus.TOO_MANY_REQUESTS);
+        FesenStatusException e = serialize(ex);
         assertEquals(ex.status(), e.status());
         assertEquals(RestStatus.TOO_MANY_REQUESTS, e.status());
     }

@@ -58,9 +58,9 @@ import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpec
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureFieldName;
 
 /**
- * A base class for all elasticsearch exceptions.
+ * A base class for all fesen exceptions.
  */
-public class ElasticsearchException extends RuntimeException implements ToXContentFragment, Writeable {
+public class FesenException extends RuntimeException implements ToXContentFragment, Writeable {
 
     private static final Version UNKNOWN_VERSION_ADDED = Version.fromId(0);
 
@@ -93,20 +93,20 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     private static final String ERROR = "error";
     private static final String ROOT_CAUSE = "root_cause";
 
-    private static final Map<Integer, CheckedFunction<StreamInput, ? extends ElasticsearchException, IOException>> ID_TO_SUPPLIER;
-    private static final Map<Class<? extends ElasticsearchException>, ElasticsearchExceptionHandle> CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE;
+    private static final Map<Integer, CheckedFunction<StreamInput, ? extends FesenException, IOException>> ID_TO_SUPPLIER;
+    private static final Map<Class<? extends FesenException>, FesenExceptionHandle> CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE;
     private final Map<String, List<String>> metadata = new HashMap<>();
     private final Map<String, List<String>> headers = new HashMap<>();
 
     /**
-     * Construct a <code>ElasticsearchException</code> with the specified cause exception.
+     * Construct a <code>FesenException</code> with the specified cause exception.
      */
-    public ElasticsearchException(Throwable cause) {
+    public FesenException(Throwable cause) {
         super(cause);
     }
 
     /**
-     * Construct a <code>ElasticsearchException</code> with the specified detail message.
+     * Construct a <code>FesenException</code> with the specified detail message.
      *
      * The message can be parameterized using <code>{}</code> as placeholders for the given
      * arguments
@@ -114,12 +114,12 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
      * @param msg  the detail message
      * @param args the arguments for the message
      */
-    public ElasticsearchException(String msg, Object... args) {
+    public FesenException(String msg, Object... args) {
         super(LoggerMessageFormat.format(msg, args));
     }
 
     /**
-     * Construct a <code>ElasticsearchException</code> with the specified detail message
+     * Construct a <code>FesenException</code> with the specified detail message
      * and nested exception.
      *
      * The message can be parameterized using <code>{}</code> as placeholders for the given
@@ -129,11 +129,11 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
      * @param cause the nested exception
      * @param args  the arguments for the message
      */
-    public ElasticsearchException(String msg, Throwable cause, Object... args) {
+    public FesenException(String msg, Throwable cause, Object... args) {
         super(LoggerMessageFormat.format(msg, args), cause);
     }
 
-    public ElasticsearchException(StreamInput in) throws IOException {
+    public FesenException(StreamInput in) throws IOException {
         super(in.readOptionalString(), in.readException());
         readStackTrace(this, in);
         headers.putAll(in.readMapOfLists(StreamInput::readString, StreamInput::readString));
@@ -232,7 +232,7 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
 
     /**
      * Unwraps the actual cause from the exception for cases when the exception is a
-     * {@link ElasticsearchWrapperException}.
+     * {@link FesenWrapperException}.
      *
      * @see ExceptionsHelper#unwrapCause(Throwable)
      */
@@ -248,8 +248,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
         if (getCause() != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(toString()).append("; ");
-            if (getCause() instanceof ElasticsearchException) {
-                sb.append(((ElasticsearchException) getCause()).getDetailedMessage());
+            if (getCause() instanceof FesenException) {
+                sb.append(((FesenException) getCause()).getDetailedMessage());
             } else {
                 sb.append(getCause());
             }
@@ -281,37 +281,37 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
         out.writeMapOfLists(metadata, StreamOutput::writeString, StreamOutput::writeString);
     }
 
-    public static ElasticsearchException readException(StreamInput input, int id) throws IOException {
-        CheckedFunction<StreamInput, ? extends ElasticsearchException, IOException> elasticsearchException = ID_TO_SUPPLIER.get(id);
-        if (elasticsearchException == null) {
+    public static FesenException readException(StreamInput input, int id) throws IOException {
+        CheckedFunction<StreamInput, ? extends FesenException, IOException> fesenException = ID_TO_SUPPLIER.get(id);
+        if (fesenException == null) {
             if (id == 127 && input.getVersion().before(Version.V_7_5_0)) {
                 // was SearchContextException
                 return new SearchException(input);
             }
             throw new IllegalStateException("unknown exception for id: " + id);
         }
-        return elasticsearchException.apply(input);
+        return fesenException.apply(input);
     }
 
     /**
      * Returns <code>true</code> iff the given class is a registered for an exception to be read.
      */
     public static boolean isRegistered(Class<? extends Throwable> exception, Version version) {
-        ElasticsearchExceptionHandle elasticsearchExceptionHandle = CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE.get(exception);
-        if (elasticsearchExceptionHandle != null) {
-            return version.onOrAfter(elasticsearchExceptionHandle.versionAdded);
+        FesenExceptionHandle fesenExceptionHandle = CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE.get(exception);
+        if (fesenExceptionHandle != null) {
+            return version.onOrAfter(fesenExceptionHandle.versionAdded);
         }
         return false;
     }
 
-    static Set<Class<? extends ElasticsearchException>> getRegisteredKeys() { // for testing
+    static Set<Class<? extends FesenException>> getRegisteredKeys() { // for testing
         return CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE.keySet();
     }
 
     /**
      * Returns the serialization id the given exception.
      */
-    public static int getId(Class<? extends ElasticsearchException> exception) {
+    public static int getId(Class<? extends FesenException> exception) {
         return CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE.get(exception).id;
     }
 
@@ -336,8 +336,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
             headerToXContent(builder, entry.getKey().substring("es.".length()), entry.getValue());
         }
 
-        if (throwable instanceof ElasticsearchException) {
-            ElasticsearchException exception = (ElasticsearchException) throwable;
+        if (throwable instanceof FesenException) {
+            FesenException exception = (FesenException) throwable;
             exception.metadataToXContent(builder, params);
         }
 
@@ -395,28 +395,28 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     }
 
     /**
-     * Generate a {@link ElasticsearchException} from a {@link XContentParser}. This does not
+     * Generate a {@link FesenException} from a {@link XContentParser}. This does not
      * return the original exception type (ie NodeClosedException for example) but just wraps
      * the type, the reason and the cause of the exception. It also recursively parses the
-     * tree structure of the cause, returning it as a tree structure of {@link ElasticsearchException}
+     * tree structure of the cause, returning it as a tree structure of {@link FesenException}
      * instances.
      */
-    public static ElasticsearchException fromXContent(XContentParser parser) throws IOException {
+    public static FesenException fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
         return innerFromXContent(parser, false);
     }
 
-    public static ElasticsearchException innerFromXContent(XContentParser parser, boolean parseRootCauses) throws IOException {
+    public static FesenException innerFromXContent(XContentParser parser, boolean parseRootCauses) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
 
         String type = null, reason = null, stack = null;
-        ElasticsearchException cause = null;
+        FesenException cause = null;
         Map<String, List<String>> metadata = new HashMap<>();
         Map<String, List<String>> headers = new HashMap<>();
-        List<ElasticsearchException> rootCauses = new ArrayList<>();
-        List<ElasticsearchException> suppressed = new ArrayList<>();
+        List<FesenException> rootCauses = new ArrayList<>();
+        List<FesenException> suppressed = new ArrayList<>();
 
         for (; token == XContentParser.Token.FIELD_NAME; token = parser.nextToken()) {
             String currentFieldName = parser.currentName();
@@ -493,7 +493,7 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
             }
         }
 
-        ElasticsearchException e = new ElasticsearchException(buildMessage(type, reason, stack), cause);
+        FesenException e = new FesenException(buildMessage(type, reason, stack), cause);
         for (Map.Entry<String, List<String>> entry : metadata.entrySet()) {
             //subclasses can print out additional metadata through the metadataToXContent method. Simple key-value pairs will be
             //parsed back and become part of this metadata set, while objects and arrays are not supported when parsing back.
@@ -509,17 +509,17 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
 
         // Adds root causes as suppressed exception. This way they are not lost
         // after parsing and can be retrieved using getSuppressed() method.
-        for (ElasticsearchException rootCause : rootCauses) {
+        for (FesenException rootCause : rootCauses) {
             e.addSuppressed(rootCause);
         }
-        for (ElasticsearchException s : suppressed) {
+        for (FesenException s : suppressed) {
             e.addSuppressed(s);
         }
         return e;
     }
 
     /**
-     * Static toXContent helper method that renders {@link org.codelibs.fesen.ElasticsearchException} or {@link Throwable} instances
+     * Static toXContent helper method that renders {@link org.codelibs.fesen.FesenException} or {@link Throwable} instances
      * as XContent, delegating the rendering to {@link #toXContent(XContentBuilder, Params)}
      * or {@link #innerToXContent(XContentBuilder, Params, Throwable, String, String, Map, Map, Throwable)}.
      *
@@ -529,8 +529,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     public static void generateThrowableXContent(XContentBuilder builder, Params params, Throwable t) throws IOException {
         t = ExceptionsHelper.unwrapCause(t);
 
-        if (t instanceof ElasticsearchException) {
-            ((ElasticsearchException) t).toXContent(builder, params);
+        if (t instanceof FesenException) {
+            ((FesenException) t).toXContent(builder, params);
         } else {
             innerToXContent(builder, params, t, getExceptionName(t), t.getMessage(), emptyMap(), emptyMap(), t.getCause());
         }
@@ -555,10 +555,10 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
 
         // Render the exception with a simple message
         if (detailed == false) {
-            String message = "No ElasticsearchException found";
+            String message = "No FesenException found";
             Throwable t = e;
             for (int counter = 0; counter < 10 && t != null; counter++) {
-                if (t instanceof ElasticsearchException) {
+                if (t instanceof FesenException) {
                     message = t.getClass().getSimpleName() + "[" + t.getMessage() + "]";
                     break;
                 }
@@ -569,11 +569,11 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
         }
 
         // Render the exception with all details
-        final ElasticsearchException[] rootCauses = ElasticsearchException.guessRootCauses(e);
+        final FesenException[] rootCauses = FesenException.guessRootCauses(e);
         builder.startObject(ERROR);
         {
             builder.startArray(ROOT_CAUSE);
-            for (ElasticsearchException rootCause : rootCauses) {
+            for (FesenException rootCause : rootCauses) {
                 builder.startObject();
                 rootCause.toXContent(builder, new DelegatingMapParams(singletonMap(REST_EXCEPTION_SKIP_CAUSE, "true"), params));
                 builder.endObject();
@@ -587,13 +587,13 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     /**
      * Parses the output of {@link #generateFailureXContent(XContentBuilder, Params, Exception, boolean)}
      */
-    public static ElasticsearchException failureFromXContent(XContentParser parser) throws IOException {
+    public static FesenException failureFromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureFieldName(parser, token, ERROR);
 
         token = parser.nextToken();
         if (token.isValue()) {
-            return new ElasticsearchException(buildMessage("exception", parser.text(), null));
+            return new FesenException(buildMessage("exception", parser.text(), null));
         }
 
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
@@ -606,42 +606,42 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     /**
      * Returns the root cause of this exception or multiple if different shards caused different exceptions
      */
-    public ElasticsearchException[] guessRootCauses() {
+    public FesenException[] guessRootCauses() {
         final Throwable cause = getCause();
-        if (cause != null && cause instanceof ElasticsearchException) {
-            return ((ElasticsearchException) cause).guessRootCauses();
+        if (cause != null && cause instanceof FesenException) {
+            return ((FesenException) cause).guessRootCauses();
         }
-        return new ElasticsearchException[]{this};
+        return new FesenException[]{this};
     }
 
     /**
      * Returns the root cause of this exception or multiple if different shards caused different exceptions.
-     * If the given exception is not an instance of {@link org.codelibs.fesen.ElasticsearchException} an empty array
+     * If the given exception is not an instance of {@link org.codelibs.fesen.FesenException} an empty array
      * is returned.
      */
-    public static ElasticsearchException[] guessRootCauses(Throwable t) {
+    public static FesenException[] guessRootCauses(Throwable t) {
         Throwable ex = ExceptionsHelper.unwrapCause(t);
-        if (ex instanceof ElasticsearchException) {
-            // ElasticsearchException knows how to guess its own root cause
-            return ((ElasticsearchException) ex).guessRootCauses();
+        if (ex instanceof FesenException) {
+            // FesenException knows how to guess its own root cause
+            return ((FesenException) ex).guessRootCauses();
         }
         if (ex instanceof XContentParseException) {
             /*
              * We'd like to unwrap parsing exceptions to the inner-most
              * parsing exception because that is generally the most interesting
              * exception to return to the user. If that exception is caused by
-             * an ElasticsearchException we'd like to keep unwrapping because
+             * an FesenException we'd like to keep unwrapping because
              * ElasticserachExceptions tend to contain useful information for
              * the user.
              */
             Throwable cause = ex.getCause();
             if (cause != null) {
-                if (cause instanceof XContentParseException || cause instanceof ElasticsearchException) {
+                if (cause instanceof XContentParseException || cause instanceof FesenException) {
                     return guessRootCauses(ex.getCause());
                 }
             }
         }
-        return new ElasticsearchException[]{new ElasticsearchException(ex.getMessage(), ex) {
+        return new FesenException[]{new FesenException(ex.getMessage(), ex) {
             @Override
             protected String getExceptionName() {
                 return getExceptionName(getCause());
@@ -654,19 +654,19 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     }
 
     /**
-     * Returns a underscore case name for the given exception. This method strips {@code Elasticsearch} prefixes from exception names.
+     * Returns a underscore case name for the given exception. This method strips {@code Fesen} prefixes from exception names.
      */
     public static String getExceptionName(Throwable ex) {
         String simpleName = ex.getClass().getSimpleName();
-        if (simpleName.startsWith("Elasticsearch")) {
-            simpleName = simpleName.substring("Elasticsearch".length());
+        if (simpleName.startsWith("Fesen")) {
+            simpleName = simpleName.substring("Fesen".length());
         }
         // TODO: do we really need to make the exception name in underscore casing?
         return toUnderscoreCase(simpleName);
     }
 
     static String buildMessage(String type, String reason, String stack) {
-        StringBuilder message = new StringBuilder("Elasticsearch exception [");
+        StringBuilder message = new StringBuilder("Fesen exception [");
         message.append(TYPE).append('=').append(type).append(", ");
         message.append(REASON).append('=').append(reason);
         if (stack != null) {
@@ -725,13 +725,13 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
     }
 
     /**
-     * This is the list of Exceptions Elasticsearch can throw over the wire or save into a corruption marker. Each value in the enum is a
+     * This is the list of Exceptions Fesen can throw over the wire or save into a corruption marker. Each value in the enum is a
      * single exception tying the Class to an id for use of the encode side and the id back to a constructor for use on the decode side. As
      * such its ok if the exceptions to change names so long as their constructor can still read the exception. Each exception is listed
      * in id order below. If you want to remove an exception leave a tombstone comment and mark the id as null in
      * ExceptionSerializationTests.testIds.ids.
      */
-    private enum ElasticsearchExceptionHandle {
+    private enum FesenExceptionHandle {
         INDEX_SHARD_SNAPSHOT_FAILED_EXCEPTION(org.codelibs.fesen.index.snapshots.IndexShardSnapshotFailedException.class,
                 org.codelibs.fesen.index.snapshots.IndexShardSnapshotFailedException::new, 0, UNKNOWN_VERSION_ADDED),
         DFS_PHASE_EXECUTION_EXCEPTION(org.codelibs.fesen.search.dfs.DfsPhaseExecutionException.class,
@@ -740,8 +740,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
                 org.codelibs.fesen.common.util.CancellableThreads.ExecutionCancelledException::new, 2, UNKNOWN_VERSION_ADDED),
         MASTER_NOT_DISCOVERED_EXCEPTION(org.codelibs.fesen.discovery.MasterNotDiscoveredException.class,
                 org.codelibs.fesen.discovery.MasterNotDiscoveredException::new, 3, UNKNOWN_VERSION_ADDED),
-        ELASTICSEARCH_SECURITY_EXCEPTION(org.codelibs.fesen.ElasticsearchSecurityException.class,
-                org.codelibs.fesen.ElasticsearchSecurityException::new, 4, UNKNOWN_VERSION_ADDED),
+        ELASTICSEARCH_SECURITY_EXCEPTION(org.codelibs.fesen.FesenSecurityException.class,
+                org.codelibs.fesen.FesenSecurityException::new, 4, UNKNOWN_VERSION_ADDED),
         INDEX_SHARD_RESTORE_EXCEPTION(org.codelibs.fesen.index.snapshots.IndexShardRestoreException.class,
                 org.codelibs.fesen.index.snapshots.IndexShardRestoreException::new, 5, UNKNOWN_VERSION_ADDED),
         INDEX_CLOSED_EXCEPTION(org.codelibs.fesen.indices.IndexClosedException.class,
@@ -774,8 +774,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
                 org.codelibs.fesen.ResourceNotFoundException::new, 19, UNKNOWN_VERSION_ADDED),
         ACTION_TRANSPORT_EXCEPTION(org.codelibs.fesen.transport.ActionTransportException.class,
                 org.codelibs.fesen.transport.ActionTransportException::new, 20, UNKNOWN_VERSION_ADDED),
-        ELASTICSEARCH_GENERATION_EXCEPTION(org.codelibs.fesen.ElasticsearchGenerationException.class,
-                org.codelibs.fesen.ElasticsearchGenerationException::new, 21, UNKNOWN_VERSION_ADDED),
+        ELASTICSEARCH_GENERATION_EXCEPTION(org.codelibs.fesen.FesenGenerationException.class,
+                org.codelibs.fesen.FesenGenerationException::new, 21, UNKNOWN_VERSION_ADDED),
         //      22 was CreateFailedEngineException
         INDEX_SHARD_STARTED_EXCEPTION(org.codelibs.fesen.index.shard.IndexShardStartedException.class,
                 org.codelibs.fesen.index.shard.IndexShardStartedException::new, 23, UNKNOWN_VERSION_ADDED),
@@ -799,8 +799,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
                 org.codelibs.fesen.indices.IndexPrimaryShardNotAllocatedException::new, 33, UNKNOWN_VERSION_ADDED),
         TRANSPORT_EXCEPTION(org.codelibs.fesen.transport.TransportException.class,
                 org.codelibs.fesen.transport.TransportException::new, 34, UNKNOWN_VERSION_ADDED),
-        ELASTICSEARCH_PARSE_EXCEPTION(org.codelibs.fesen.ElasticsearchParseException.class,
-                org.codelibs.fesen.ElasticsearchParseException::new, 35, UNKNOWN_VERSION_ADDED),
+        ELASTICSEARCH_PARSE_EXCEPTION(org.codelibs.fesen.FesenParseException.class,
+                org.codelibs.fesen.FesenParseException::new, 35, UNKNOWN_VERSION_ADDED),
         SEARCH_EXCEPTION(org.codelibs.fesen.search.SearchException.class,
                 org.codelibs.fesen.search.SearchException::new, 36, UNKNOWN_VERSION_ADDED),
         MAPPER_EXCEPTION(org.codelibs.fesen.index.mapper.MapperException.class,
@@ -857,8 +857,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
         INDEX_SHARD_NOT_RECOVERING_EXCEPTION(org.codelibs.fesen.index.shard.IndexShardNotRecoveringException.class,
                 org.codelibs.fesen.index.shard.IndexShardNotRecoveringException::new, 66, UNKNOWN_VERSION_ADDED),
         HTTP_EXCEPTION(org.codelibs.fesen.http.HttpException.class, org.codelibs.fesen.http.HttpException::new, 67, UNKNOWN_VERSION_ADDED),
-        ELASTICSEARCH_EXCEPTION(org.codelibs.fesen.ElasticsearchException.class,
-                org.codelibs.fesen.ElasticsearchException::new, 68, UNKNOWN_VERSION_ADDED),
+        ELASTICSEARCH_EXCEPTION(org.codelibs.fesen.FesenException.class,
+                org.codelibs.fesen.FesenException::new, 68, UNKNOWN_VERSION_ADDED),
         SNAPSHOT_MISSING_EXCEPTION(org.codelibs.fesen.snapshots.SnapshotMissingException.class,
                 org.codelibs.fesen.snapshots.SnapshotMissingException::new, 69, UNKNOWN_VERSION_ADDED),
         PRIMARY_MISSING_ACTION_EXCEPTION(org.codelibs.fesen.action.PrimaryMissingActionException.class,
@@ -946,8 +946,8 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
                 org.codelibs.fesen.cluster.metadata.ProcessClusterEventTimeoutException::new, 116, UNKNOWN_VERSION_ADDED),
         RETRY_ON_PRIMARY_EXCEPTION(ReplicationOperation.RetryOnPrimaryException.class,
                 ReplicationOperation.RetryOnPrimaryException::new, 117, UNKNOWN_VERSION_ADDED),
-        ELASTICSEARCH_TIMEOUT_EXCEPTION(org.codelibs.fesen.ElasticsearchTimeoutException.class,
-                org.codelibs.fesen.ElasticsearchTimeoutException::new, 118, UNKNOWN_VERSION_ADDED),
+        ELASTICSEARCH_TIMEOUT_EXCEPTION(org.codelibs.fesen.FesenTimeoutException.class,
+                org.codelibs.fesen.FesenTimeoutException::new, 118, UNKNOWN_VERSION_ADDED),
         QUERY_PHASE_EXECUTION_EXCEPTION(org.codelibs.fesen.search.query.QueryPhaseExecutionException.class,
                 org.codelibs.fesen.search.query.QueryPhaseExecutionException::new, 119, UNKNOWN_VERSION_ADDED),
         REPOSITORY_VERIFICATION_EXCEPTION(org.codelibs.fesen.repositories.RepositoryVerificationException.class,
@@ -993,7 +993,7 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
             UNKNOWN_VERSION_ADDED),
         NOT_MASTER_EXCEPTION(org.codelibs.fesen.cluster.NotMasterException.class, org.codelibs.fesen.cluster.NotMasterException::new, 144,
             UNKNOWN_VERSION_ADDED),
-        STATUS_EXCEPTION(org.codelibs.fesen.ElasticsearchStatusException.class, org.codelibs.fesen.ElasticsearchStatusException::new, 145,
+        STATUS_EXCEPTION(org.codelibs.fesen.FesenStatusException.class, org.codelibs.fesen.FesenStatusException::new, 145,
             UNKNOWN_VERSION_ADDED),
         TASK_CANCELLED_EXCEPTION(org.codelibs.fesen.tasks.TaskCancelledException.class,
             org.codelibs.fesen.tasks.TaskCancelledException::new, 146, UNKNOWN_VERSION_ADDED),
@@ -1049,12 +1049,12 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
                 160,
                 Version.V_7_10_0);
 
-        final Class<? extends ElasticsearchException> exceptionClass;
-        final CheckedFunction<StreamInput, ? extends ElasticsearchException, IOException> constructor;
+        final Class<? extends FesenException> exceptionClass;
+        final CheckedFunction<StreamInput, ? extends FesenException, IOException> constructor;
         final int id;
         final Version versionAdded;
 
-        <E extends ElasticsearchException> ElasticsearchExceptionHandle(Class<E> exceptionClass,
+        <E extends FesenException> FesenExceptionHandle(Class<E> exceptionClass,
                                                                         CheckedFunction<StreamInput, E, IOException> constructor, int id,
                                                                         Version versionAdded) {
             // We need the exceptionClass because you can't dig it out of the constructor reliably.
@@ -1072,7 +1072,7 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
      * @return an array of all registered handle IDs
      */
     static int[] ids() {
-        return Arrays.stream(ElasticsearchExceptionHandle.values()).mapToInt(h -> h.id).toArray();
+        return Arrays.stream(FesenExceptionHandle.values()).mapToInt(h -> h.id).toArray();
     }
 
     /**
@@ -1081,19 +1081,19 @@ public class ElasticsearchException extends RuntimeException implements ToXConte
      *
      * @return an array of all registered pairs of handle IDs and exception classes
      */
-    static Tuple<Integer, Class<? extends ElasticsearchException>>[] classes() {
+    static Tuple<Integer, Class<? extends FesenException>>[] classes() {
         @SuppressWarnings("unchecked")
-        final Tuple<Integer, Class<? extends ElasticsearchException>>[] ts =
-                Arrays.stream(ElasticsearchExceptionHandle.values())
+        final Tuple<Integer, Class<? extends FesenException>>[] ts =
+                Arrays.stream(FesenExceptionHandle.values())
                         .map(h -> Tuple.tuple(h.id, h.exceptionClass)).toArray(Tuple[]::new);
         return ts;
     }
 
     static {
         ID_TO_SUPPLIER = unmodifiableMap(Arrays
-                .stream(ElasticsearchExceptionHandle.values()).collect(Collectors.toMap(e -> e.id, e -> e.constructor)));
+                .stream(FesenExceptionHandle.values()).collect(Collectors.toMap(e -> e.id, e -> e.constructor)));
         CLASS_TO_ELASTICSEARCH_EXCEPTION_HANDLE = unmodifiableMap(Arrays
-                .stream(ElasticsearchExceptionHandle.values()).collect(Collectors.toMap(e -> e.exceptionClass, e -> e)));
+                .stream(FesenExceptionHandle.values()).collect(Collectors.toMap(e -> e.exceptionClass, e -> e)));
     }
 
     public Index getIndex() {

@@ -22,7 +22,7 @@ package org.codelibs.fesen.ingest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.action.ActionListener;
@@ -708,7 +708,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
 
         try {
             innerUpdatePipelines(newIngestMetadata);
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             logger.warn("failed to update ingest pipelines", e);
         }
     }
@@ -718,7 +718,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
 
         // Lazy initialize these variables in order to favour the most like scenario that there are no pipeline changes:
         Map<String, PipelineHolder> newPipelines = null;
-        List<ElasticsearchParseException> exceptions = null;
+        List<FesenParseException> exceptions = null;
         // Iterate over pipeline configurations in ingest metadata and constructs a new pipeline if there is no pipeline
         // or the pipeline configuration has been modified
         for (PipelineConfiguration newConfiguration : newIngestMetadata.getPipelines().values()) {
@@ -765,7 +765,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
                         }
                     }
                 }
-            } catch (ElasticsearchParseException e) {
+            } catch (FesenParseException e) {
                 Pipeline pipeline = substitutePipeline(newConfiguration.getId(), e);
                 newPipelines.put(newConfiguration.getId(), new PipelineHolder(newConfiguration, pipeline));
                 if (exceptions == null) {
@@ -773,7 +773,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
                 }
                 exceptions.add(e);
             } catch (Exception e) {
-                ElasticsearchParseException parseException = new ElasticsearchParseException(
+                FesenParseException parseException = new FesenParseException(
                     "Error updating pipeline with id [" + newConfiguration.getId() + "]", e);
                 Pipeline pipeline = substitutePipeline(newConfiguration.getId(), parseException);
                 newPipelines.put(newConfiguration.getId(), new PipelineHolder(newConfiguration, pipeline));
@@ -841,7 +841,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         return processors;
     }
 
-    private static Pipeline substitutePipeline(String id, ElasticsearchParseException e) {
+    private static Pipeline substitutePipeline(String id, FesenParseException e) {
         String tag = e.getHeaderKeys().contains("processor_tag") ? e.getHeader("processor_tag").get(0) : null;
         String type = e.getHeaderKeys().contains("processor_type") ? e.getHeader("processor_type").get(0) : "unknown";
         String errorMessage = "pipeline with id [" + id + "] could not be loaded, caused by [" + e.getDetailedMessage() + "]";

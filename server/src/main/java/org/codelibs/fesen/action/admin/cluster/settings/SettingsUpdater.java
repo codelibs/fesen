@@ -60,10 +60,10 @@ final class SettingsUpdater {
         boolean changed = false;
 
         /*
-         * Our cluster state could have unknown or invalid settings that are known and valid in a previous version of Elasticsearch. We can
-         * end up in this situation during a rolling upgrade where the previous version will infect the current version of Elasticsearch
+         * Our cluster state could have unknown or invalid settings that are known and valid in a previous version of Fesen. We can
+         * end up in this situation during a rolling upgrade where the previous version will infect the current version of Fesen
          * with settings that the current version either no longer knows about or now considers to have invalid values. When the current
-         * version of Elasticsearch becomes infected with a cluster state containing such settings, we need to skip validating such settings
+         * version of Fesen becomes infected with a cluster state containing such settings, we need to skip validating such settings
          * and instead archive them. Consequently, for the current transient and persistent settings in the cluster state we do the
          * following:
          *  - split existing settings instance into two with the known and valid settings in one, and the unknown or invalid in another

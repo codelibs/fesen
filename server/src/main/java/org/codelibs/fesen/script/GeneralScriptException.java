@@ -21,7 +21,7 @@ package org.codelibs.fesen.script;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -35,7 +35,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  *             from various abstractions)
  */
 @Deprecated
-public class GeneralScriptException extends ElasticsearchException {
+public class GeneralScriptException extends FesenException {
 
     public GeneralScriptException(String msg) {
         super(msg);

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.tasks;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.TaskOperationFailure;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
@@ -116,17 +116,17 @@ public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksRe
         assertOnTaskFailures(newInstance.getTaskFailures(), expectedInstance.getTaskFailures());
     }
 
-    protected static void assertOnNodeFailures(List<ElasticsearchException> nodeFailures,
-                                               List<ElasticsearchException> expectedFailures) {
+    protected static void assertOnNodeFailures(List<FesenException> nodeFailures,
+                                               List<FesenException> expectedFailures) {
         assertThat(nodeFailures.size(), equalTo(expectedFailures.size()));
         for (int i = 0; i < nodeFailures.size(); i++) {
-            ElasticsearchException newException = nodeFailures.get(i);
-            ElasticsearchException expectedException = expectedFailures.get(i);
+            FesenException newException = nodeFailures.get(i);
+            FesenException expectedException = expectedFailures.get(i);
             assertThat(newException.getMetadata("es.node_id").get(0), equalTo(((FailedNodeException)expectedException).nodeId()));
-            assertThat(newException.getMessage(), equalTo("Elasticsearch exception [type=failed_node_exception, reason=error message]"));
-            assertThat(newException.getCause(), instanceOf(ElasticsearchException.class));
-            ElasticsearchException cause = (ElasticsearchException) newException.getCause();
-            assertThat(cause.getMessage(), equalTo("Elasticsearch exception [type=connect_exception, reason=null]"));
+            assertThat(newException.getMessage(), equalTo("Fesen exception [type=failed_node_exception, reason=error message]"));
+            assertThat(newException.getCause(), instanceOf(FesenException.class));
+            FesenException cause = (FesenException) newException.getCause();
+            assertThat(cause.getMessage(), equalTo("Fesen exception [type=connect_exception, reason=null]"));
         }
     }
 
@@ -139,9 +139,9 @@ public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksRe
             assertThat(newFailure.getNodeId(), equalTo(expectedFailure.getNodeId()));
             assertThat(newFailure.getTaskId(), equalTo(expectedFailure.getTaskId()));
             assertThat(newFailure.getStatus(), equalTo(expectedFailure.getStatus()));
-            assertThat(newFailure.getCause(), instanceOf(ElasticsearchException.class));
-            ElasticsearchException cause = (ElasticsearchException) newFailure.getCause();
-            assertThat(cause.getMessage(), equalTo("Elasticsearch exception [type=illegal_state_exception, reason=null]"));
+            assertThat(newFailure.getCause(), instanceOf(FesenException.class));
+            FesenException cause = (FesenException) newFailure.getCause();
+            assertThat(cause.getMessage(), equalTo("Fesen exception [type=illegal_state_exception, reason=null]"));
         }
     }
 

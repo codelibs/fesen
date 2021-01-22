@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.snapshots;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,7 +29,7 @@ import java.io.IOException;
 /**
  * Generic snapshot exception
  */
-public class SnapshotException extends ElasticsearchException {
+public class SnapshotException extends FesenException {
 
     @Nullable
     private final String repositoryName;

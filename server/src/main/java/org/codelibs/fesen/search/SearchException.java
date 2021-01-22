@@ -21,12 +21,12 @@ package org.codelibs.fesen.search;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 
-public class SearchException extends ElasticsearchException implements ElasticsearchWrapperException {
+public class SearchException extends FesenException implements FesenWrapperException {
 
     private final SearchShardTarget shardTarget;
 

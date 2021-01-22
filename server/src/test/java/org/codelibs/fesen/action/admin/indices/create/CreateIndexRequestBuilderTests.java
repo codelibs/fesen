@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexAction;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.codelibs.fesen.common.settings.Settings;
@@ -63,7 +63,7 @@ public class CreateIndexRequestBuilderTests extends ESTestCase {
     public void testSetSource() throws IOException {
         CreateIndexRequestBuilder builder = new CreateIndexRequestBuilder(this.testClient, CreateIndexAction.INSTANCE);
         
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, 
+        FesenParseException e = expectThrows(FesenParseException.class, 
                 () -> {builder.setSource("{\""+KEY+"\" : \""+VALUE+"\"}", XContentType.JSON);});
         assertEquals(String.format(Locale.ROOT, "unknown key [%s] for create index", KEY), e.getMessage());
         

@@ -21,11 +21,11 @@ package org.codelibs.fesen.action.admin.indices.flush;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class SyncedFlushRequestBuilder extends ActionRequestBuilder<SyncedFlushRequest, SyncedFlushResponse> {
 
-    public SyncedFlushRequestBuilder(ElasticsearchClient client, SyncedFlushAction action) {
+    public SyncedFlushRequestBuilder(FesenClient client, SyncedFlushAction action) {
         super(client, action, new SyncedFlushRequest());
     }
 

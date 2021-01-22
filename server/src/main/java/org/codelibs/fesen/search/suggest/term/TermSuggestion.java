@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.search.suggest.term;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -124,7 +124,7 @@ public class TermSuggestion extends Suggestion<TermSuggestion.Entry> {
         case FREQUENCY:
             return FREQUENCY;
         default:
-            throw new ElasticsearchException("Could not resolve comparator for sort key: [" + sort + "]");
+            throw new FesenException("Could not resolve comparator for sort key: [" + sort + "]");
         }
     }
 

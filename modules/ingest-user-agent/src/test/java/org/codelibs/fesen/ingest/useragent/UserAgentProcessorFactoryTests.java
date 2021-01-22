@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.useragent;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.ingest.useragent.IngestUserAgentPlugin;
 import org.codelibs.fesen.ingest.useragent.UserAgentCache;
@@ -157,7 +157,7 @@ public class UserAgentProcessorFactoryTests extends ESTestCase {
         config.put("field", "_field");
         config.put("regex_file", "does-not-exist.yml");
 
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, null, null, config));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(), equalTo("[regex_file] regex file [does-not-exist.yml] doesn't exist (has to exist at node startup)"));
     }
 
@@ -202,7 +202,7 @@ public class UserAgentProcessorFactoryTests extends ESTestCase {
         config.put("field", "_field");
         config.put("properties", Collections.singletonList("invalid"));
 
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, null, null, config));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(), equalTo("[properties] illegal property value [invalid]. valid values are [NAME, MAJOR, MINOR, "
                 + "PATCH, OS, OS_NAME, OS_MAJOR, OS_MINOR, DEVICE, BUILD, ORIGINAL, VERSION]"));
     }
@@ -214,7 +214,7 @@ public class UserAgentProcessorFactoryTests extends ESTestCase {
         config.put("field", "_field");
         config.put("properties", "invalid");
 
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, null, null, config));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(), equalTo("[properties] property isn't a list, but of type [java.lang.String]"));
     }
 }

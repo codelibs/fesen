@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.discovery.zen;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -132,7 +132,7 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
         PendingClusterStatesQueue queue = createQueueWithStates(states);
         List<ClusterStateContext> committedContexts = randomCommitStates(queue);
         ClusterState toFail = randomFrom(committedContexts).state;
-        queue.markAsFailed(toFail, new ElasticsearchException("boo!"));
+        queue.markAsFailed(toFail, new FesenException("boo!"));
         final Map<String, ClusterStateContext> committedContextsById = new HashMap<>();
         for (ClusterStateContext context : committedContexts) {
             committedContextsById.put(context.stateUUID(), context);
@@ -169,7 +169,7 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
         List<ClusterState> states = randomStates(scaledRandomIntBetween(10, 50), "master1", "master2", "master3", "master4");
         PendingClusterStatesQueue queue = createQueueWithStates(states);
         List<ClusterStateContext> committedContexts = randomCommitStates(queue);
-        queue.failAllStatesAndClear(new ElasticsearchException("boo!"));
+        queue.failAllStatesAndClear(new FesenException("boo!"));
         assertThat(queue.pendingStates, empty());
         assertThat(queue.getNextClusterStateToProcess(), nullValue());
         for (ClusterStateContext context : committedContexts) {

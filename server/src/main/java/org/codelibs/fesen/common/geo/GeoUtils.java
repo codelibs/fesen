@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.geo;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
 import org.apache.lucene.spatial.prefix.tree.QuadPrefixTree;
 import org.apache.lucene.util.SloppyMath;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.unit.DistanceUnit;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -354,12 +354,12 @@ public class GeoUtils {
      * @param parser {@link XContentParser} to parse the value from
      * @return new {@link GeoPoint} parsed from the parse
      */
-    public static GeoPoint parseGeoPoint(XContentParser parser) throws IOException, ElasticsearchParseException {
+    public static GeoPoint parseGeoPoint(XContentParser parser) throws IOException, FesenParseException {
         return parseGeoPoint(parser, new GeoPoint());
     }
 
 
-    public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point) throws IOException, ElasticsearchParseException {
+    public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point) throws IOException, FesenParseException {
         return parseGeoPoint(parser, point, false);
     }
 
@@ -372,7 +372,7 @@ public class GeoUtils {
      * <p>
      * Array: two or more elements, the first element is longitude, the second is latitude, the rest is ignored if ignoreZValue is true
      */
-    public static GeoPoint parseGeoPoint(Object value, final boolean ignoreZValue) throws ElasticsearchParseException {
+    public static GeoPoint parseGeoPoint(Object value, final boolean ignoreZValue) throws FesenParseException {
         return parseGeoPoint(value, new GeoPoint(), ignoreZValue);
     }
 
@@ -385,7 +385,7 @@ public class GeoUtils {
      * <p>
      * Array: two or more elements, the first element is longitude, the second is latitude, the rest is ignored if ignoreZValue is true
      */
-    public static GeoPoint parseGeoPoint(Object value, GeoPoint point, final boolean ignoreZValue) throws ElasticsearchParseException {
+    public static GeoPoint parseGeoPoint(Object value, GeoPoint point, final boolean ignoreZValue) throws FesenParseException {
         try (XContentParser parser = new MapXContentParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE,
             Collections.singletonMap("null_value", value), null)) {
             parser.nextToken(); // start object
@@ -393,7 +393,7 @@ public class GeoUtils {
             parser.nextToken(); // field value
             return parseGeoPoint(parser, point, ignoreZValue);
         } catch (IOException ex) {
-            throw new ElasticsearchParseException("error parsing geopoint", ex);
+            throw new FesenParseException("error parsing geopoint", ex);
         }
     }
 
@@ -412,7 +412,7 @@ public class GeoUtils {
      * the left bottom corner of the geohash cell is used as the geopoint coordinates.GeoBoundingBoxQueryBuilder.java
      */
     public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point, final boolean ignoreZValue)
-            throws IOException, ElasticsearchParseException {
+            throws IOException, FesenParseException {
         return parseGeoPoint(parser, point, ignoreZValue, EffectivePoint.BOTTOM_LEFT);
     }
 
@@ -431,7 +431,7 @@ public class GeoUtils {
      * @return new {@link GeoPoint} parsed from the parse
      */
     public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point, final boolean ignoreZValue, EffectivePoint effectivePoint)
-            throws IOException, ElasticsearchParseException {
+            throws IOException, FesenParseException {
         double lat = Double.NaN;
         double lon = Double.NaN;
         String geohash = null;
@@ -454,7 +454,7 @@ public class GeoUtils {
                                     }
                                     break;
                                 default:
-                                    throw new ElasticsearchParseException("latitude must be a number");
+                                    throw new FesenParseException("latitude must be a number");
                             }
                         } else if (LONGITUDE.equals(field)) {
                             subParser.nextToken();
@@ -468,35 +468,35 @@ public class GeoUtils {
                                     }
                                     break;
                                 default:
-                                    throw new ElasticsearchParseException("longitude must be a number");
+                                    throw new FesenParseException("longitude must be a number");
                             }
                         } else if (GEOHASH.equals(field)) {
                             if (subParser.nextToken() == Token.VALUE_STRING) {
                                 geohash = subParser.text();
                             } else {
-                                throw new ElasticsearchParseException("geohash must be a string");
+                                throw new FesenParseException("geohash must be a string");
                             }
                         } else {
-                            throw new ElasticsearchParseException("field must be either [{}], [{}] or [{}]", LATITUDE, LONGITUDE, GEOHASH);
+                            throw new FesenParseException("field must be either [{}], [{}] or [{}]", LATITUDE, LONGITUDE, GEOHASH);
                         }
                     } else {
-                        throw new ElasticsearchParseException("token [{}] not allowed", subParser.currentToken());
+                        throw new FesenParseException("token [{}] not allowed", subParser.currentToken());
                     }
                 }
             }
             if (geohash != null) {
                 if(!Double.isNaN(lat) || !Double.isNaN(lon)) {
-                    throw new ElasticsearchParseException("field must be either lat/lon or geohash");
+                    throw new FesenParseException("field must be either lat/lon or geohash");
                 } else {
                     return point.parseGeoHash(geohash, effectivePoint);
                 }
             } else if (numberFormatException != null) {
-                throw new ElasticsearchParseException("[{}] and [{}] must be valid double values", numberFormatException, LATITUDE,
+                throw new FesenParseException("[{}] and [{}] must be valid double values", numberFormatException, LATITUDE,
                     LONGITUDE);
             } else if (Double.isNaN(lat)) {
-                throw new ElasticsearchParseException("field [{}] missing", LATITUDE);
+                throw new FesenParseException("field [{}] missing", LATITUDE);
             } else if (Double.isNaN(lon)) {
-                throw new ElasticsearchParseException("field [{}] missing", LONGITUDE);
+                throw new FesenParseException("field [{}] missing", LONGITUDE);
             } else {
                 return point.reset(lat, lon);
             }
@@ -514,10 +514,10 @@ public class GeoUtils {
                         } else if (element == 3) {
                             GeoPoint.assertZValue(ignoreZValue, subParser.doubleValue());
                         } else {
-                            throw new ElasticsearchParseException("[geo_point] field type does not accept > 3 dimensions");
+                            throw new FesenParseException("[geo_point] field type does not accept > 3 dimensions");
                         }
                     } else {
-                        throw new ElasticsearchParseException("numeric value expected");
+                        throw new FesenParseException("numeric value expected");
                     }
                 }
             }
@@ -526,7 +526,7 @@ public class GeoUtils {
             String val = parser.text();
             return point.resetFromString(val, ignoreZValue, effectivePoint);
         } else {
-            throw new ElasticsearchParseException("geo_point expected");
+            throw new FesenParseException("geo_point expected");
         }
     }
 
@@ -555,7 +555,7 @@ public class GeoUtils {
      * @param parser {@link XContentParser} to parse the value from
      * @return int representing precision
      */
-    public static int parsePrecision(XContentParser parser) throws IOException, ElasticsearchParseException {
+    public static int parsePrecision(XContentParser parser) throws IOException, FesenParseException {
         XContentParser.Token token = parser.currentToken();
         if (token.equals(XContentParser.Token.VALUE_NUMBER)) {
             return XContentMapValues.nodeIntegerValue(parser.intValue());

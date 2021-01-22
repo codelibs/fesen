@@ -18,6 +18,6 @@
  */
 
 /**
- * Exposes Elasticsearch functionality over RESTful HTTP.
+ * Exposes Fesen functionality over RESTful HTTP.
  */
 package org.codelibs.fesen.rest;

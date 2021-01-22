@@ -21,11 +21,11 @@ package org.codelibs.fesen.indices;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class IndexCreationException extends ElasticsearchException implements ElasticsearchWrapperException {
+public class IndexCreationException extends FesenException implements FesenWrapperException {
 
     public IndexCreationException(String index, Throwable cause) {
         super("failed to create index [{}]", cause, index);

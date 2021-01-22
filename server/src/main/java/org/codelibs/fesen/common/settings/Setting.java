@@ -20,8 +20,8 @@
 package org.codelibs.fesen.common.settings;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Nullable;
@@ -465,7 +465,7 @@ public class Setting<T> implements ToXContentObject {
                 validator.validate(parsed, map, exists(settings));
             }
             return parsed;
-        } catch (ElasticsearchParseException ex) {
+        } catch (FesenParseException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         } catch (NumberFormatException ex) {
             String err = "Failed to parse value" + (isFiltered() ? "" : " [" + value + "]") + " for setting [" + getKey() + "]";
@@ -518,7 +518,7 @@ public class Setting<T> implements ToXContentObject {
         SecureSettings secureSettings = settings.getSecureSettings();
         if (secureSettings != null && secureSettings.getSettingNames().contains(getKey())) {
             throw new IllegalArgumentException("Setting [" + getKey() + "] is a non-secure setting" +
-                " and must be stored inside fesen.yml, but was found inside the Elasticsearch keystore");
+                " and must be stored inside fesen.yml, but was found inside the Fesen keystore");
         }
         return settings.get(getKey(), defaultValue.apply(settings));
     }
@@ -530,7 +530,7 @@ public class Setting<T> implements ToXContentObject {
             // It would be convenient to show its replacement key, but replacement is often not so simple
             final String key = getKey();
             Settings.DeprecationLoggerHolder.deprecationLogger
-                .deprecate(key, "[{}] setting was deprecated in Elasticsearch and will be removed in a future release! "
+                .deprecate(key, "[{}] setting was deprecated in Fesen and will be removed in a future release! "
                     + "See the breaking changes documentation for the next major version.", key);
         }
     }
@@ -1518,7 +1518,7 @@ public class Setting<T> implements ToXContentObject {
             builder.endArray();
             return Strings.toString(builder);
         } catch (IOException ex) {
-            throw new ElasticsearchException(ex);
+            throw new FesenException(ex);
         }
     }
 

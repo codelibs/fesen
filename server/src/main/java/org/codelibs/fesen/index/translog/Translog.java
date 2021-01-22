@@ -75,7 +75,7 @@ import java.util.stream.Stream;
 
 /**
  * A Translog is a per index shard component that records all non-committed index operations in a durable manner.
- * In Elasticsearch there is one Translog instance per {@link org.codelibs.fesen.index.engine.InternalEngine}.
+ * In Fesen there is one Translog instance per {@link org.codelibs.fesen.index.engine.InternalEngine}.
  * Additionally, since Elasticsearch 2.0 the engine also records a {@link #TRANSLOG_UUID_KEY} with each commit to ensure a strong
  * association between the lucene index an the transaction log file. This UUID is used to prevent accidental recovery from a transaction
  * log that belongs to a

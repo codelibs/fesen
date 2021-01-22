@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.common.rounding;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.joda.Joda;
 import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeZone;
@@ -66,7 +66,7 @@ public enum DateTimeUnit {
             case 6: return HOUR_OF_DAY;
             case 7: return MINUTES_OF_HOUR;
             case 8: return SECOND_OF_MINUTE;
-            default: throw new ElasticsearchException("Unknown date time unit id [" + id + "]");
+            default: throw new FesenException("Unknown date time unit id [" + id + "]");
         }
     }
 }

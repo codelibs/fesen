@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import org.codelibs.fesen.bootstrap.Elasticsearch;
+import org.codelibs.fesen.bootstrap.Fesen;
 import org.codelibs.fesen.cli.MockTerminal;
 import org.codelibs.fesen.cli.UserException;
 import org.codelibs.fesen.common.settings.Settings;
@@ -33,7 +33,7 @@ import java.util.function.BiConsumer;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-abstract class ESElasticsearchCliTestCase extends ESTestCase {
+abstract class ESFesenCliTestCase extends ESTestCase {
 
     interface InitConsumer {
         void accept(boolean foreground, Path pidFile, boolean quiet, Environment initialEnv);
@@ -49,7 +49,7 @@ abstract class ESElasticsearchCliTestCase extends ESTestCase {
         final Path home = createTempDir();
         try {
             final AtomicBoolean init = new AtomicBoolean();
-            final int status = Elasticsearch.main(args, new Elasticsearch() {
+            final int status = Fesen.main(args, new Fesen() {
                 @Override
                 protected Environment createEnv(final Map<String, String> settings) throws UserException {
                     Settings.Builder builder = Settings.builder().put("path.home", home);

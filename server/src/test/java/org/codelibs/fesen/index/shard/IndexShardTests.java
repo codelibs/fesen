@@ -32,7 +32,7 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Constants;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.indices.flush.FlushRequest;
@@ -1579,7 +1579,7 @@ public class IndexShardTests extends IndexShardTestCase {
             } else {
                 exceptionToThrow.set(() -> new IOException("Test IOException"));
             }
-            ElasticsearchException e = expectThrows(ElasticsearchException.class, shard::storeStats);
+            FesenException e = expectThrows(FesenException.class, shard::storeStats);
             assertTrue(failureCallbackTriggered.get());
 
             if (corruptIndexException && !throwWhenMarkingStoreCorrupted.get()) {

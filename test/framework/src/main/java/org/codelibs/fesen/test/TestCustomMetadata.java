@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.test;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.cluster.AbstractNamedDiffable;
 import org.codelibs.fesen.cluster.NamedDiff;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -82,18 +82,18 @@ public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.
                 String currentFieldName = parser.currentName();
                 if ("data".equals(currentFieldName)) {
                     if (parser.nextToken() != XContentParser.Token.VALUE_STRING) {
-                        throw new ElasticsearchParseException("failed to parse snapshottable metadata, invalid data type");
+                        throw new FesenParseException("failed to parse snapshottable metadata, invalid data type");
                     }
                     data = parser.text();
                 } else {
-                    throw new ElasticsearchParseException("failed to parse snapshottable metadata, unknown field [{}]", currentFieldName);
+                    throw new FesenParseException("failed to parse snapshottable metadata, unknown field [{}]", currentFieldName);
                 }
             } else {
-                throw new ElasticsearchParseException("failed to parse snapshottable metadata");
+                throw new FesenParseException("failed to parse snapshottable metadata");
             }
         }
         if (data == null) {
-            throw new ElasticsearchParseException("failed to parse snapshottable metadata, data not found");
+            throw new FesenParseException("failed to parse snapshottable metadata, data not found");
         }
         return (T) supplier.apply(data);
     }

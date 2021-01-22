@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.suggest.completion.context;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.ToXContent;
@@ -95,7 +95,7 @@ public abstract class ContextMapping<T extends ToXContent> implements ToXContent
      * Parses a set of index-time contexts.
      */
     public abstract Set<String> parseContext(ParseContext parseContext, XContentParser parser)
-            throws IOException, ElasticsearchParseException;
+            throws IOException, FesenParseException;
 
     /**
      * Retrieves a set of context from a <code>document</code> at index-time.
@@ -110,7 +110,7 @@ public abstract class ContextMapping<T extends ToXContent> implements ToXContent
     /**
      * Parses query contexts for this mapper
      */
-    public final List<InternalQueryContext> parseQueryContext(XContentParser parser) throws IOException, ElasticsearchParseException {
+    public final List<InternalQueryContext> parseQueryContext(XContentParser parser) throws IOException, FesenParseException {
         List<T> queryContexts = new ArrayList<>();
         Token token = parser.nextToken();
         if (token == Token.START_ARRAY) {

@@ -21,15 +21,15 @@ package org.codelibs.fesen.ingest;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * A dedicated wrapper for exceptions encountered executing an ingest processor. The wrapper is needed as we currently only unwrap causes
- * for instances of {@link ElasticsearchWrapperException}.
+ * for instances of {@link FesenWrapperException}.
  */
-public class IngestProcessorException extends ElasticsearchException implements ElasticsearchWrapperException {
+public class IngestProcessorException extends FesenException implements FesenWrapperException {
 
     IngestProcessorException(final Exception cause) {
         super(cause);

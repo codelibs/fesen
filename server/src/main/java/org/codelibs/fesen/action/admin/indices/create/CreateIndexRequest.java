@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenGenerationException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -285,7 +285,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
             mappings.put(type, Strings.toString(builder));
             return this;
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + source + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + source + "]", e);
         }
     }
 
@@ -307,7 +307,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
             builder.map(source);
             return aliases(BytesReference.bytes(builder));
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + source + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + source + "]", e);
         }
     }
 
@@ -339,7 +339,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
             }
             return this;
         } catch(IOException e) {
-            throw new ElasticsearchParseException("Failed to parse aliases", e);
+            throw new FesenParseException("Failed to parse aliases", e);
         }
     }
 
@@ -397,7 +397,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
             String name = entry.getKey();
             if (SETTINGS.match(name, deprecationHandler)) {
                 if (entry.getValue() instanceof Map == false) {
-                    throw new ElasticsearchParseException("key [settings] must be an object");
+                    throw new FesenParseException("key [settings] must be an object");
                 }
                 settings((Map<String, Object>) entry.getValue());
             } else if (MAPPINGS.match(name, deprecationHandler)) {
@@ -408,7 +408,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
             } else if (ALIASES.match(name, deprecationHandler)) {
                 aliases((Map<String, Object>) entry.getValue());
             } else {
-                throw new ElasticsearchParseException("unknown key [{}] for create index", name);
+                throw new FesenParseException("unknown key [{}] for create index", name);
             }
         }
         return this;

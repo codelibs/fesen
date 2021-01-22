@@ -22,16 +22,16 @@ package org.codelibs.fesen.index.reindex;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.search.SearchAction;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class UpdateByQueryRequestBuilder extends
         AbstractBulkIndexByScrollRequestBuilder<UpdateByQueryRequest, UpdateByQueryRequestBuilder> {
 
-    public UpdateByQueryRequestBuilder(ElasticsearchClient client, ActionType<BulkByScrollResponse> action) {
+    public UpdateByQueryRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action) {
         this(client, action, new SearchRequestBuilder(client, SearchAction.INSTANCE));
     }
 
-    private UpdateByQueryRequestBuilder(ElasticsearchClient client,
+    private UpdateByQueryRequestBuilder(FesenClient client,
             ActionType<BulkByScrollResponse> action,
             SearchRequestBuilder search) {
         super(client, action, search, new UpdateByQueryRequest(search.request()));

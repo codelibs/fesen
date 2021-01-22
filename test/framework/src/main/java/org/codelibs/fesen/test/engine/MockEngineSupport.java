@@ -25,7 +25,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
@@ -159,7 +159,7 @@ public final class MockEngineSupport {
                 return (DirectoryReader) nonRandom.newInstance(reader);
             }
         } catch (Exception e) {
-            throw new ElasticsearchException("Can not wrap reader", e);
+            throw new FesenException("Can not wrap reader", e);
         }
         return reader;
     }

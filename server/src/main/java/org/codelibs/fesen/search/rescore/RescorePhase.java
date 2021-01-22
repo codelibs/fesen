@@ -21,7 +21,7 @@ package org.codelibs.fesen.search.rescore;
 
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.lucene.search.TopDocsAndMaxScore;
 import org.codelibs.fesen.search.internal.SearchContext;
 
@@ -47,7 +47,7 @@ public class RescorePhase {
             context.queryResult().topDocs(new TopDocsAndMaxScore(topDocs, topDocs.scoreDocs[0].score),
                     context.queryResult().sortValueFormats());
         } catch (IOException e) {
-            throw new ElasticsearchException("Rescore Phase Failed", e);
+            throw new FesenException("Rescore Phase Failed", e);
         }
     }
 

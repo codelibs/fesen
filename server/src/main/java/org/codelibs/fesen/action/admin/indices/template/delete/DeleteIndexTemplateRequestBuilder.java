@@ -20,16 +20,16 @@ package org.codelibs.fesen.action.admin.indices.template.delete;
 
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class DeleteIndexTemplateRequestBuilder
         extends MasterNodeOperationRequestBuilder<DeleteIndexTemplateRequest, AcknowledgedResponse, DeleteIndexTemplateRequestBuilder> {
 
-    public DeleteIndexTemplateRequestBuilder(ElasticsearchClient client, DeleteIndexTemplateAction action) {
+    public DeleteIndexTemplateRequestBuilder(FesenClient client, DeleteIndexTemplateAction action) {
         super(client, action, new DeleteIndexTemplateRequest());
     }
 
-    public DeleteIndexTemplateRequestBuilder(ElasticsearchClient client, DeleteIndexTemplateAction action, String name) {
+    public DeleteIndexTemplateRequestBuilder(FesenClient client, DeleteIndexTemplateAction action, String name) {
         super(client, action, new DeleteIndexTemplateRequest(name));
     }
 

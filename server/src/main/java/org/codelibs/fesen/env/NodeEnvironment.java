@@ -31,7 +31,7 @@ import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.NativeFSLockFactory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -476,7 +476,7 @@ public final class NodeEnvironment  implements Closeable {
     /**
      * Acquires, then releases, all {@code write.lock} files in the given
      * shard paths. The "write.lock" file is assumed to be under the shard
-     * path's "index" directory as used by Elasticsearch.
+     * path's "index" directory as used by Fesen.
      *
      * @throws LockObtainFailedException if any of the locks could not be acquired
      */
@@ -512,7 +512,7 @@ public final class NodeEnvironment  implements Closeable {
      *
      * @param lock the shards lock
      * @throws IOException if an IOException occurs
-     * @throws ElasticsearchException if the write.lock is not acquirable
+     * @throws FesenException if the write.lock is not acquirable
      */
     public void deleteShardDirectoryUnderLock(ShardLock lock, IndexSettings indexSettings) throws IOException {
         final ShardId shardId = lock.getShardId();

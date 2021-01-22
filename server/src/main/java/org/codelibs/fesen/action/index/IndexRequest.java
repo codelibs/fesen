@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.index;
 
 import org.apache.lucene.util.RamUsageEstimator;
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
@@ -433,7 +433,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      *
      * @param source The map to index
      */
-    public IndexRequest source(Map<String, ?> source) throws ElasticsearchGenerationException {
+    public IndexRequest source(Map<String, ?> source) throws FesenGenerationException {
         return source(source, Requests.INDEX_CONTENT_TYPE);
     }
 
@@ -442,13 +442,13 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      *
      * @param source The map to index
      */
-    public IndexRequest source(Map<String, ?> source, XContentType contentType) throws ElasticsearchGenerationException {
+    public IndexRequest source(Map<String, ?> source, XContentType contentType) throws FesenGenerationException {
         try {
             XContentBuilder builder = XContentFactory.contentBuilder(contentType);
             builder.map(source);
             return source(builder);
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate [" + source + "]", e);
+            throw new FesenGenerationException("Failed to generate [" + source + "]", e);
         }
     }
 
@@ -506,7 +506,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
             builder.endObject();
             return source(builder);
         } catch (IOException e) {
-            throw new ElasticsearchGenerationException("Failed to generate", e);
+            throw new FesenGenerationException("Failed to generate", e);
         }
     }
 

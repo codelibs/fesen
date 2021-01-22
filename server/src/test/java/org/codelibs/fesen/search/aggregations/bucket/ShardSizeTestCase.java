@@ -29,8 +29,8 @@ import java.util.List;
 
 import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
 import static org.codelibs.fesen.index.query.QueryBuilders.matchAllQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchResponse;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchResponse;
 import static org.hamcrest.Matchers.is;
 
 public abstract class ShardSizeTestCase extends ESIntegTestCase {

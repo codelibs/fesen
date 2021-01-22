@@ -20,16 +20,16 @@
 package org.codelibs.fesen.action.ingest;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetPipelineRequestBuilder
         extends MasterNodeReadOperationRequestBuilder<GetPipelineRequest, GetPipelineResponse, GetPipelineRequestBuilder> {
 
-    public GetPipelineRequestBuilder(ElasticsearchClient client, GetPipelineAction action) {
+    public GetPipelineRequestBuilder(FesenClient client, GetPipelineAction action) {
         super(client, action, new GetPipelineRequest());
     }
 
-    public GetPipelineRequestBuilder(ElasticsearchClient client, GetPipelineAction action, String[] ids) {
+    public GetPipelineRequestBuilder(FesenClient client, GetPipelineAction action, String[] ids) {
         super(client, action, new GetPipelineRequest(ids));
     }
 

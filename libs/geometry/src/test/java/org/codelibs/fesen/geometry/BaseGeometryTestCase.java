@@ -33,7 +33,7 @@ import org.codelibs.fesen.geometry.Polygon;
 import org.codelibs.fesen.geometry.Rectangle;
 import org.codelibs.fesen.geometry.utils.GeographyValidator;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.test.AbstractWireTestCase;
 
@@ -61,7 +61,7 @@ abstract class BaseGeometryTestCase<T extends Geometry> extends AbstractWireTest
         try {
             return (T) wkt.fromWKT(text);
         } catch (ParseException e) {
-            throw new ElasticsearchException(e);
+            throw new FesenException(e);
         }
     }
 

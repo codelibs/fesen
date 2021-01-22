@@ -254,7 +254,7 @@ public class AnalysisModuleTests extends ESTestCase {
     }
 
     /**
-     * Tests that plugins can register pre-configured char filters that vary in behavior based on Elasticsearch version, Lucene version,
+     * Tests that plugins can register pre-configured char filters that vary in behavior based on Fesen version, Lucene version,
      * and that do not vary based on version at all.
      */
     public void testPluginPreConfiguredCharFilters() throws IOException {
@@ -306,7 +306,7 @@ public class AnalysisModuleTests extends ESTestCase {
     }
 
     /**
-     * Tests that plugins can register pre-configured token filters that vary in behavior based on Elasticsearch version, Lucene version,
+     * Tests that plugins can register pre-configured token filters that vary in behavior based on Fesen version, Lucene version,
      * and that do not vary based on version at all.
      */
     public void testPluginPreConfiguredTokenFilters() throws IOException {
@@ -351,7 +351,7 @@ public class AnalysisModuleTests extends ESTestCase {
     }
 
     /**
-     * Tests that plugins can register pre-configured token filters that vary in behavior based on Elasticsearch version, Lucene version,
+     * Tests that plugins can register pre-configured token filters that vary in behavior based on Fesen version, Lucene version,
      * and that do not vary based on version at all.
      */
     public void testPluginPreConfiguredTokenizers() throws IOException {

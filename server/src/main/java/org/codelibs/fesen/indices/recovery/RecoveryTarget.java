@@ -24,7 +24,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexFormatTooNewException;
 import org.apache.lucene.index.IndexFormatTooOldException;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -278,7 +278,7 @@ public class RecoveryTarget extends AbstractRefCounted implements RecoveryTarget
 
     private void ensureRefCount() {
         if (refCount() <= 0) {
-            throw new ElasticsearchException("RecoveryStatus is used but it's refcount is 0. Probably a mismatch between incRef/decRef " +
+            throw new FesenException("RecoveryStatus is used but it's refcount is 0. Probably a mismatch between incRef/decRef " +
                     "calls");
         }
     }

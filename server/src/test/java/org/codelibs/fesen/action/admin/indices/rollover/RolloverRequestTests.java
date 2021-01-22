@@ -46,7 +46,7 @@ import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.XContentTestUtils;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenAssertions;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -192,7 +192,7 @@ public class RolloverRequestTests extends ESTestCase {
         assertEquals(rolloverRequest.getConditions(), parsedRolloverRequest.getConditions());
 
         BytesReference finalBytes = toShuffledXContent(parsedRolloverRequest, xContentType, EMPTY_PARAMS, humanReadable);
-        ElasticsearchAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
+        FesenAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
     }
 
     public void testUnknownFields() throws IOException {

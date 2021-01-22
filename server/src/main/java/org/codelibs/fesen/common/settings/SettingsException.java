@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.settings;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  *
  *
  */
-public class SettingsException extends ElasticsearchException {
+public class SettingsException extends FesenException {
 
     public SettingsException(String message) {
         super(message);

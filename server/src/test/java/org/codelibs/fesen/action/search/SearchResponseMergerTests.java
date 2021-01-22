@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.search;
 
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.search.SearchResponseMerger;
@@ -172,7 +172,7 @@ public class SearchResponseMergerTests extends ESTestCase {
             for (int j = 0; j < numFailures; j++) {
                 String index = "index-" + i;
                 ShardId shardId = new ShardId(index, index + "-uuid", j);
-                ElasticsearchException elasticsearchException = new ElasticsearchException(new IllegalArgumentException());
+                FesenException elasticsearchException = new FesenException(new IllegalArgumentException());
                 elasticsearchException.setShard(shardId);
                 ShardSearchFailure failure = new ShardSearchFailure(elasticsearchException);
                 shardSearchFailures[j] = failure;
@@ -208,7 +208,7 @@ public class SearchResponseMergerTests extends ESTestCase {
             int numFailures = randomIntBetween(1, 50);
             ShardSearchFailure[] shardSearchFailures = new ShardSearchFailure[numFailures];
             for (int j = 0; j < numFailures; j++) {
-                ShardSearchFailure shardSearchFailure = new ShardSearchFailure(new ElasticsearchException(new IllegalArgumentException()));
+                ShardSearchFailure shardSearchFailure = new ShardSearchFailure(new FesenException(new IllegalArgumentException()));
                 shardSearchFailures[j] = shardSearchFailure;
                 expectedFailures.add(shardSearchFailure);
             }

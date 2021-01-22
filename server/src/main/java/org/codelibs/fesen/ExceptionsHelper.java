@@ -56,20 +56,20 @@ public final class ExceptionsHelper {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         }
-        return new ElasticsearchException(e);
+        return new FesenException(e);
     }
 
-    public static ElasticsearchException convertToElastic(Exception e) {
-        if (e instanceof ElasticsearchException) {
-            return (ElasticsearchException) e;
+    public static FesenException convertToElastic(Exception e) {
+        if (e instanceof FesenException) {
+            return (FesenException) e;
         }
-        return new ElasticsearchException(e);
+        return new FesenException(e);
     }
 
     public static RestStatus status(Throwable t) {
         if (t != null) {
-            if (t instanceof ElasticsearchException) {
-                return ((ElasticsearchException) t).status();
+            if (t instanceof FesenException) {
+                return ((FesenException) t).status();
             } else if (t instanceof IllegalArgumentException) {
                 return RestStatus.BAD_REQUEST;
             } else if (t instanceof JsonParseException) {
@@ -84,7 +84,7 @@ public final class ExceptionsHelper {
     public static Throwable unwrapCause(Throwable t) {
         int counter = 0;
         Throwable result = t;
-        while (result instanceof ElasticsearchWrapperException) {
+        while (result instanceof FesenWrapperException) {
             if (result.getCause() == null) {
                 return result;
             }
@@ -166,7 +166,7 @@ public final class ExceptionsHelper {
             main = useOrSuppress(main, ex);
         }
         if (main != null) {
-            throw new ElasticsearchException(main);
+            throw new FesenException(main);
         }
     }
 
@@ -331,8 +331,8 @@ public final class ExceptionsHelper {
             //which does not include the cluster alias.
             String indexName = failure.index();
             if (indexName == null) {
-                if (cause instanceof ElasticsearchException) {
-                    final Index index = ((ElasticsearchException) cause).getIndex();
+                if (cause instanceof FesenException) {
+                    final Index index = ((FesenException) cause).getIndex();
                     if (index != null) {
                         indexName = index.getName();
                     }

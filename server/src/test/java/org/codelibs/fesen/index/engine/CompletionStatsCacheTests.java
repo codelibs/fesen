@@ -29,7 +29,7 @@ import org.apache.lucene.search.QueryCachingPolicy;
 import org.apache.lucene.search.suggest.document.Completion84PostingsFormat;
 import org.apache.lucene.search.suggest.document.SuggestField;
 import org.apache.lucene.store.Directory;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.engine.CompletionStatsCache;
 import org.codelibs.fesen.index.engine.Engine;
@@ -49,11 +49,11 @@ public class CompletionStatsCacheTests extends ESTestCase {
     public void testExceptionsAreNotCached() {
         final AtomicInteger openCount = new AtomicInteger();
         final CompletionStatsCache completionStatsCache = new CompletionStatsCache(() -> {
-            throw new ElasticsearchException("simulated " + openCount.incrementAndGet());
+            throw new FesenException("simulated " + openCount.incrementAndGet());
         });
 
-        assertThat(expectThrows(ElasticsearchException.class, completionStatsCache::get).getMessage(), equalTo("simulated 1"));
-        assertThat(expectThrows(ElasticsearchException.class, completionStatsCache::get).getMessage(), equalTo("simulated 2"));
+        assertThat(expectThrows(FesenException.class, completionStatsCache::get).getMessage(), equalTo("simulated 1"));
+        assertThat(expectThrows(FesenException.class, completionStatsCache::get).getMessage(), equalTo("simulated 2"));
     }
 
     public void testCompletionStatsCache() throws IOException, InterruptedException {

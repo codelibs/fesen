@@ -242,7 +242,7 @@ public class Version implements Comparable<Version>, ToXContentFragment {
     }
 
     /**
-     * Return the {@link Version} of Elasticsearch that has been used to create an index given its settings.
+     * Return the {@link Version} of Fesen that has been used to create an index given its settings.
      *
      * @throws IllegalStateException if the given index settings doesn't contain a value for the key
      *         {@value IndexMetadata#SETTING_VERSION_CREATED}

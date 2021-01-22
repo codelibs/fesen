@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.script.mustache;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.search.ShardSearchFailure;
 import org.codelibs.fesen.common.Strings;
@@ -88,7 +88,7 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
                 searchTemplateResponse.setResponse(searchResponse);
                 items[i] = new MultiSearchTemplateResponse.Item(searchTemplateResponse, null);
             } else {
-                items[i] = new MultiSearchTemplateResponse.Item(null, new ElasticsearchException("an error"));
+                items[i] = new MultiSearchTemplateResponse.Item(null, new FesenException("an error"));
             }
         }
         return new MultiSearchTemplateResponse(items, overallTookInMillis);

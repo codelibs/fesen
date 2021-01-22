@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.indices.shards;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 
 /**
@@ -33,7 +33,7 @@ public class IndicesShardStoreRequestBuilder extends MasterNodeReadOperationRequ
         IndicesShardStoresResponse,
         IndicesShardStoreRequestBuilder> {
 
-    public IndicesShardStoreRequestBuilder(ElasticsearchClient client, ActionType<IndicesShardStoresResponse> action, String... indices) {
+    public IndicesShardStoreRequestBuilder(FesenClient client, ActionType<IndicesShardStoresResponse> action, String... indices) {
         super(client, action, new IndicesShardStoresRequest(indices));
     }
 

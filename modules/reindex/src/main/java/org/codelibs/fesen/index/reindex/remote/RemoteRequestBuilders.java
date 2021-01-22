@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.reindex.remote;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.client.Request;
@@ -47,9 +47,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * Builds requests for remote version of Elasticsearch. Note that unlike most of the
- * rest of Elasticsearch this file needs to be compatible with very old versions of
- * Elasticsearch. Thus it often uses identifiers for versions like {@code 2000099}
+ * Builds requests for remote version of Fesen. Note that unlike most of the
+ * rest of Fesen this file needs to be compatible with very old versions of
+ * Fesen. Thus it often uses identifiers for versions like {@code 2000099}
  * for {@code 2.0.0-alpha1}. Do not drop support for features from this file just
  * because the version constants have been removed.
  */
@@ -151,7 +151,7 @@ final class RemoteRequestBuilders {
                 entity.copyCurrentStructure(queryParser);
                 XContentParser.Token shouldBeEof = queryParser.nextToken();
                 if (shouldBeEof != null) {
-                    throw new ElasticsearchException(
+                    throw new FesenException(
                             "query was more than a single object. This first token after the object is [" + shouldBeEof + "]");
                 }
             }
@@ -168,7 +168,7 @@ final class RemoteRequestBuilders {
             entity.endObject();
             request.setJsonEntity(Strings.toString(entity));
         } catch (IOException e) {
-            throw new ElasticsearchException("unexpected error building entity", e);
+            throw new FesenException("unexpected error building entity", e);
         }
         return request;
     }
@@ -245,7 +245,7 @@ final class RemoteRequestBuilders {
                 .endObject();
             request.setJsonEntity(Strings.toString(entity));
         } catch (IOException e) {
-            throw new ElasticsearchException("failed to build scroll entity", e);
+            throw new FesenException("failed to build scroll entity", e);
         }
         return request;
     }
@@ -264,7 +264,7 @@ final class RemoteRequestBuilders {
                 .endObject();
             request.setJsonEntity(Strings.toString(entity));
         } catch (IOException e) {
-            throw new ElasticsearchException("failed to build clear scroll entity", e);
+            throw new FesenException("failed to build clear scroll entity", e);
         }
         return request;
     }

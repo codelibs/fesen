@@ -28,7 +28,7 @@ import org.apache.lucene.search.LeafFieldComparator;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.comparators.DoubleComparator;
 import org.apache.lucene.util.BitSet;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
@@ -621,13 +621,13 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
         if (GeoValidationMethod.isIgnoreMalformed(validation) == false) {
             for (GeoPoint point : localPoints) {
                 if (GeoUtils.isValidLatitude(point.lat()) == false) {
-                    throw new ElasticsearchParseException(
+                    throw new FesenParseException(
                             "illegal latitude value [{}] for [GeoDistanceSort] for field [{}].",
                             point.lat(),
                             fieldName);
                 }
                 if (GeoUtils.isValidLongitude(point.lon()) == false) {
-                    throw new ElasticsearchParseException(
+                    throw new FesenParseException(
                             "illegal longitude value [{}] for [GeoDistanceSort] for field [{}].",
                             point.lon(),
                             fieldName);
@@ -753,7 +753,7 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
                 double lon = parser.doubleValue();
                 parser.nextToken();
                 if (!parser.currentToken().equals(XContentParser.Token.VALUE_NUMBER)) {
-                    throw new ElasticsearchParseException(
+                    throw new FesenParseException(
                             "geo point parsing: expected second number but got [{}] instead",
                             parser.currentToken());
                 }

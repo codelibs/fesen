@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -250,7 +250,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
             @Override
             public <Request extends ActionRequest, Response extends ActionResponse> void execute(Task task, String action, Request request,
                     ActionListener<Response> listener, ActionFilterChain<Request, Response> actionFilterChain) {
-                listener.onFailure(new ElasticsearchTimeoutException(""));
+                listener.onFailure(new FesenTimeoutException(""));
             }
         }
     }

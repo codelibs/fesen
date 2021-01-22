@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -242,7 +242,7 @@ public class MetadataCreateIndexService {
             byteCount = index.getBytes("UTF-8").length;
         } catch (UnsupportedEncodingException e) {
             // UTF-8 should always be supported, but rethrow this if it is not for some reason
-            throw new ElasticsearchException("Unable to determine length of index name", e);
+            throw new FesenException("Unable to determine length of index name", e);
         }
         if (byteCount > MAX_INDEX_NAME_BYTES) {
             throw exceptionCtor.apply(index, "index name is too long, (" + byteCount + " > " + MAX_INDEX_NAME_BYTES + ")");
@@ -765,7 +765,7 @@ public class MetadataCreateIndexService {
         shardLimitValidator.validateShardLimit(indexSettings, currentState);
         if (indexSettings.getAsBoolean(IndexSettings.INDEX_SOFT_DELETES_SETTING.getKey(), true) == false) {
             DEPRECATION_LOGGER.deprecate("soft_deletes_disabled",
-                "Creating indices with soft-deletes disabled is deprecated and will be removed in future Elasticsearch versions. " +
+                "Creating indices with soft-deletes disabled is deprecated and will be removed in future Fesen versions. " +
                     "Please do not specify value for setting [index.soft_deletes.enabled] of index [" + request.index() + "].");
         }
         validateTranslogRetentionSettings(indexSettings);

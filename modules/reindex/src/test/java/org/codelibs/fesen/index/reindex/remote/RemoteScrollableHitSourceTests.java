@@ -37,7 +37,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
-import org.codelibs.fesen.ElasticsearchStatusException;
+import org.codelibs.fesen.FesenStatusException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -382,7 +382,7 @@ public class RemoteScrollableHitSourceTests extends ESTestCase {
 
         // Successfully get the status without a body
         RestStatus status = randomFrom(RestStatus.values());
-        ElasticsearchStatusException wrapped = RemoteScrollableHitSource.wrapExceptionToPreserveStatus(status.getStatus(), null, cause);
+        FesenStatusException wrapped = RemoteScrollableHitSource.wrapExceptionToPreserveStatus(status.getStatus(), null, cause);
         assertEquals(status, wrapped.status());
         assertEquals(cause, wrapped.getCause());
         assertEquals("No error body.", wrapped.getMessage());
@@ -463,14 +463,14 @@ public class RemoteScrollableHitSourceTests extends ESTestCase {
 
     public void testInvalidJsonThinksRemoteIsNotES() throws IOException {
         Exception e = expectThrows(RuntimeException.class, () -> sourceWithMockedRemoteCall("some_text.txt").start());
-        assertEquals("Error parsing the response, remote is likely not an Elasticsearch instance",
+        assertEquals("Error parsing the response, remote is likely not an Fesen instance",
                 e.getCause().getCause().getCause().getMessage());
     }
 
     public void testUnexpectedJsonThinksRemoteIsNotES() throws IOException {
         // Use the response from a main action instead of a proper start response to generate a parse error
         Exception e = expectThrows(RuntimeException.class, () -> sourceWithMockedRemoteCall("main/2_3_3.json").start());
-        assertEquals("Error parsing the response, remote is likely not an Elasticsearch instance",
+        assertEquals("Error parsing the response, remote is likely not an Fesen instance",
                 e.getCause().getCause().getCause().getMessage());
     }
 

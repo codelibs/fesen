@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.threadpool;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.BaseFuture;
@@ -110,13 +110,13 @@ public class ScheduleWithFixedDelayTests extends ESTestCase {
         final CountDownLatch latch = new CountDownLatch(scaledRandomIntBetween(2, 16));
         final Runnable countingRunnable = () -> {
             if (rarely()) {
-                throw new ElasticsearchException("sometimes we throw before counting down");
+                throw new FesenException("sometimes we throw before counting down");
             }
 
             latch.countDown();
 
             if (randomBoolean()) {
-                throw new ElasticsearchException("this shouldn't cause the test to fail!");
+                throw new FesenException("this shouldn't cause the test to fail!");
             }
         };
 

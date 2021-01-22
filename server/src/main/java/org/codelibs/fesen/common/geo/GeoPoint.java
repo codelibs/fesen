@@ -25,7 +25,7 @@ import org.apache.lucene.geo.GeoEncodingUtils;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.util.BitUtil;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.GeoUtils.EffectivePoint;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -103,7 +103,7 @@ public class GeoPoint implements ToXContentFragment {
     public GeoPoint resetFromCoordinates(String value, final boolean ignoreZValue) {
         String[] vals = value.split(",");
         if (vals.length > 3) {
-            throw new ElasticsearchParseException("failed to parse [{}], expected 2 or 3 coordinates "
+            throw new FesenParseException("failed to parse [{}], expected 2 or 3 coordinates "
                 + "but found: [{}]", vals.length);
         }
         final double lat;
@@ -111,12 +111,12 @@ public class GeoPoint implements ToXContentFragment {
         try {
             lat = Double.parseDouble(vals[0].trim());
          } catch (NumberFormatException ex) {
-            throw new ElasticsearchParseException("latitude must be a number");
+            throw new FesenParseException("latitude must be a number");
         }
         try {
             lon = Double.parseDouble(vals[1].trim());
         } catch (NumberFormatException ex) {
-            throw new ElasticsearchParseException("longitude must be a number");
+            throw new FesenParseException("longitude must be a number");
         }
         if (vals.length > 2) {
             GeoPoint.assertZValue(ignoreZValue, Double.parseDouble(vals[2].trim()));
@@ -130,10 +130,10 @@ public class GeoPoint implements ToXContentFragment {
             geometry = new WellKnownText(false, new GeographyValidator(ignoreZValue))
                 .fromWKT(value);
         } catch (Exception e) {
-            throw new ElasticsearchParseException("Invalid WKT format", e);
+            throw new FesenParseException("Invalid WKT format", e);
         }
         if (geometry.type() != ShapeType.POINT) {
-            throw new ElasticsearchParseException("[geo_point] supports only POINT among WKT primitives, " +
+            throw new FesenParseException("[geo_point] supports only POINT among WKT primitives, " +
                 "but found " + geometry.type());
         }
         Point point = (Point) geometry;
@@ -187,7 +187,7 @@ public class GeoPoint implements ToXContentFragment {
         try {
             hash = Geohash.mortonEncode(geohash);
         } catch (IllegalArgumentException ex) {
-            throw new ElasticsearchParseException(ex.getMessage(), ex);
+            throw new FesenParseException(ex.getMessage(), ex);
         }
         return this.reset(Geohash.decodeLatitude(hash), Geohash.decodeLongitude(hash));
     }
@@ -265,7 +265,7 @@ public class GeoPoint implements ToXContentFragment {
 
     public static double assertZValue(final boolean ignoreZValue, double zValue) {
         if (ignoreZValue == false) {
-            throw new ElasticsearchParseException("Exception parsing coordinates: found Z value [{}] but [{}] "
+            throw new FesenParseException("Exception parsing coordinates: found Z value [{}] but [{}] "
                 + "parameter is [{}]", zValue, IGNORE_Z_VALUE, ignoreZValue);
         }
         return zValue;

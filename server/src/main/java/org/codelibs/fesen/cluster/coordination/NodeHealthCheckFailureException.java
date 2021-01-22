@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.coordination;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  * and this nodes needs to be removed from the cluster
  */
 
-public class NodeHealthCheckFailureException extends ElasticsearchException {
+public class NodeHealthCheckFailureException extends FesenException {
 
     public NodeHealthCheckFailureException(String msg, Object... args) {
         super(msg, args);

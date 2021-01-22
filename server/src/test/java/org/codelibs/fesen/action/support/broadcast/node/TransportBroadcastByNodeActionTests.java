@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support.broadcast.node;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -152,7 +152,7 @@ public class TransportBroadcastByNodeActionTests extends ESTestCase {
                 shards.put(shardRouting, Boolean.TRUE);
                 return EmptyResult.INSTANCE;
             } else {
-                ElasticsearchException e = new ElasticsearchException("operation failed");
+                FesenException e = new FesenException("operation failed");
                 shards.put(shardRouting, e);
                 throw e;
             }
@@ -390,7 +390,7 @@ public class TransportBroadcastByNodeActionTests extends ESTestCase {
         int successfulShards = 0;
         int failedShards = 0;
         for (Object result : action.getResults().values()) {
-            if (!(result instanceof ElasticsearchException)) {
+            if (!(result instanceof FesenException)) {
                 successfulShards++;
             } else {
                 failedShards++;

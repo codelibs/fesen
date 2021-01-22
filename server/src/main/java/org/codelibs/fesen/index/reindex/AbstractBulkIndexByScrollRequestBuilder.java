@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.script.Script;
 
 public abstract class AbstractBulkIndexByScrollRequestBuilder<
@@ -29,7 +29,7 @@ public abstract class AbstractBulkIndexByScrollRequestBuilder<
                 Self extends AbstractBulkIndexByScrollRequestBuilder<Request, Self>>
         extends AbstractBulkByScrollRequestBuilder<Request, Self> {
 
-    protected AbstractBulkIndexByScrollRequestBuilder(ElasticsearchClient client, ActionType<BulkByScrollResponse> action,
+    protected AbstractBulkIndexByScrollRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action,
                                                       SearchRequestBuilder search, Request request) {
         super(client, action, search, request);
     }

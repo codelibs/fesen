@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.query;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
@@ -140,7 +140,7 @@ public class ScriptQueryBuilderTests extends AbstractQueryTestCase<ScriptQueryBu
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         ScriptQueryBuilder queryBuilder = doCreateTestQueryBuilder();
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[script] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

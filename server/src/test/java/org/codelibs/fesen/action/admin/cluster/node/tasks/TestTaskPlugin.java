@@ -35,7 +35,7 @@ import org.codelibs.fesen.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.action.support.tasks.BaseTasksRequest;
 import org.codelibs.fesen.action.support.tasks.BaseTasksResponse;
 import org.codelibs.fesen.action.support.tasks.TransportTasksAction;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.service.ClusterService;
@@ -433,7 +433,7 @@ public class TestTaskPlugin extends Plugin implements ActionPlugin, NetworkPlugi
 
     public static class UnblockTestTasksRequestBuilder extends ActionRequestBuilder<UnblockTestTasksRequest, UnblockTestTasksResponse> {
 
-        protected UnblockTestTasksRequestBuilder(ElasticsearchClient client,
+        protected UnblockTestTasksRequestBuilder(FesenClient client,
                                                  ActionType<UnblockTestTasksResponse> action) {
             super(client, action, new UnblockTestTasksRequest());
         }

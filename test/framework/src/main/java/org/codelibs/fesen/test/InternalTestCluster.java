@@ -29,7 +29,7 @@ import com.carrotsearch.randomizedtesting.generators.RandomStrings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.store.AlreadyClosedException;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.admin.cluster.configuration.AddVotingConfigExclusionsAction;
 import org.codelibs.fesen.action.admin.cluster.configuration.AddVotingConfigExclusionsRequest;
 import org.codelibs.fesen.action.admin.cluster.configuration.ClearVotingConfigExclusionsAction;
@@ -171,7 +171,7 @@ import static org.codelibs.fesen.test.NodeRoles.masterOnlyNode;
 import static org.codelibs.fesen.test.NodeRoles.noRoles;
 import static org.codelibs.fesen.test.NodeRoles.onlyRole;
 import static org.codelibs.fesen.test.NodeRoles.removeRoles;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -190,7 +190,7 @@ import static org.junit.Assert.fail;
  * <p>
  * The Cluster is bound to a test lifecycle where tests must call {@link #beforeTest(java.util.Random, double)} and
  * {@link #afterTest()} to initialize and reset the cluster in order to be more reproducible. The term "more" relates
- * to the async nature of Elasticsearch in combination with randomized testing. Once Threads and asynchronous calls
+ * to the async nature of Fesen in combination with randomized testing. Once Threads and asynchronous calls
  * are involved reproducibility is very limited. This class should only be used through {@link ESIntegTestCase}.
  * </p>
  */
@@ -1321,7 +1321,7 @@ public final class InternalTestCluster extends TestCluster {
         // The assumption here is that after a test there are no ongoing write operations.
         // test that have ongoing write operations after the test (for example because ttl is used
         // and not all docs have been purged after the test) and inherit from
-        // ElasticsearchIntegrationTest must override beforeIndexDeletion() to avoid failures.
+        // FesenIntegrationTest must override beforeIndexDeletion() to avoid failures.
         assertNoPendingIndexOperations();
         //check that shards that have same sync id also contain same number of documents
         assertSameSyncIdSameDocs();
@@ -2253,7 +2253,7 @@ public final class InternalTestCluster extends TestCluster {
                     Settings.builder().put(DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING.getKey(), minMasterNodes)
                 ));
             } catch (Exception e) {
-                throw new ElasticsearchException("failed to update minimum master node to [{}] (current masters [{}])", e,
+                throw new FesenException("failed to update minimum master node to [{}] (current masters [{}])", e,
                     minMasterNodes, getMasterNodesCount());
             }
         }

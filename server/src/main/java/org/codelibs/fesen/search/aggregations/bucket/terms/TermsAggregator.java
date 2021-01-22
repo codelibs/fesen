@@ -20,7 +20,7 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -97,11 +97,11 @@ public abstract class TermsAggregator extends DeferableBucketAggregator {
             }
 
             if (requiredSize <= 0 || shardSize <= 0) {
-                throw new ElasticsearchException("parameters [required_size] and [shard_size] must be >0 in terms aggregation.");
+                throw new FesenException("parameters [required_size] and [shard_size] must be >0 in terms aggregation.");
             }
 
             if (minDocCount < 0 || shardMinDocCount < 0) {
-                throw new ElasticsearchException("parameter [min_doc_count] and [shardMinDocCount] must be >=0 in terms aggregation.");
+                throw new FesenException("parameter [min_doc_count] and [shardMinDocCount] must be >=0 in terms aggregation.");
             }
         }
 

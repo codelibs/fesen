@@ -28,8 +28,8 @@ import java.io.IOError;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-class ElasticsearchUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-    private static final Logger logger = LogManager.getLogger(ElasticsearchUncaughtExceptionHandler.class);
+class FesenUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+    private static final Logger logger = LogManager.getLogger(FesenUncaughtExceptionHandler.class);
 
     @Override
     public void uncaughtException(Thread thread, Throwable t) {

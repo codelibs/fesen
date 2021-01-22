@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.rest.RestStatus;
 
 import java.io.IOException;
 
-public class ProcessClusterEventTimeoutException extends ElasticsearchException {
+public class ProcessClusterEventTimeoutException extends FesenException {
 
     public ProcessClusterEventTimeoutException(TimeValue timeValue, String source) {
         super("failed to process cluster event (" + source + ") within " + timeValue);

@@ -1104,7 +1104,7 @@ public class ScopedSettingsTests extends ESTestCase {
                     final Settings settings = Settings.builder().put("index.private", "private").build();
                     indexScopedSettings.validate(settings, false, /* validateInternalOrPrivateIndex */ true);
                 });
-        final String message = "can not update private setting [index.private]; this setting is managed by Elasticsearch";
+        final String message = "can not update private setting [index.private]; this setting is managed by Fesen";
         assertThat(e, hasToString(containsString(message)));
     }
 

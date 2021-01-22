@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.termvectors;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -127,7 +127,7 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
                 builder.field(Fields._INDEX, failure.getIndex());
                 builder.field(Fields._TYPE, failure.getType());
                 builder.field(Fields._ID, failure.getId());
-                ElasticsearchException.generateFailureXContent(builder, params, failure.getCause(), true);
+                FesenException.generateFailureXContent(builder, params, failure.getCause(), true);
                 builder.endObject();
             } else {
                 TermVectorsResponse getResponse = response.getResponse();

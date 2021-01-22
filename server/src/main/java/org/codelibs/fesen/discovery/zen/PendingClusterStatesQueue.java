@@ -20,7 +20,7 @@
 package org.codelibs.fesen.discovery.zen;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.coordination.CoordinationMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -75,7 +75,7 @@ public class PendingClusterStatesQueue {
             ClusterStateContext context = pendingStates.remove(0);
             logger.warn("dropping pending state [{}]. more than [{}] pending states.", context, maxQueueSize);
             if (context.committed()) {
-                context.listener.onNewClusterStateFailed(new ElasticsearchException("too many pending states ([{}] pending)",
+                context.listener.onNewClusterStateFailed(new FesenException("too many pending states ([{}] pending)",
                     maxQueueSize));
             }
         }

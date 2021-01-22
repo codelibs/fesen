@@ -18,6 +18,6 @@
  */
 
 /**
- * Actions that Elasticsearch can take either on the data stored on disk or on other nodes.
+ * Actions that Fesen can take either on the data stored on disk or on other nodes.
  */
 package org.codelibs.fesen.action;

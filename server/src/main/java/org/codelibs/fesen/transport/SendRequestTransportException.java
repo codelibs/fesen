@@ -21,11 +21,11 @@ package org.codelibs.fesen.transport;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class SendRequestTransportException extends ActionTransportException implements ElasticsearchWrapperException {
+public class SendRequestTransportException extends ActionTransportException implements FesenWrapperException {
 
     public SendRequestTransportException(DiscoveryNode node, String action, Throwable cause) {
         super(node == null ? null : node.getName(), node == null ? null : node.getAddress(), action, cause);

@@ -21,14 +21,14 @@ package org.codelibs.fesen.env;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 
 /**
  * Exception used when the in-memory lock for a shard cannot be obtained
  */
-public class ShardLockObtainFailedException extends ElasticsearchException {
+public class ShardLockObtainFailedException extends FesenException {
 
     public ShardLockObtainFailedException(ShardId shardId, String message) {
         super(buildMessage(shardId, message));

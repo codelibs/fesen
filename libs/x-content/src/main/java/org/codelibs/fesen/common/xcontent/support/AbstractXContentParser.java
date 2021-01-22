@@ -41,7 +41,7 @@ public abstract class AbstractXContentParser implements XContentParser {
 
     // Currently this is not a setting that can be changed and is a policy
     // that relates to how parsing of things like "boost" are done across
-    // the whole of Elasticsearch (eg if String "1.0" is a valid float).
+    // the whole of Fesen (eg if String "1.0" is a valid float).
     // The idea behind keeping it as a constant is that we can track
     // references to this policy decision throughout the codebase and find
     // and change any code that needs to apply an alternative policy.

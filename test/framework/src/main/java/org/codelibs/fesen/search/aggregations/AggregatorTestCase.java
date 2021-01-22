@@ -54,7 +54,7 @@ import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.network.NetworkAddress;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.BigArrays;
@@ -565,7 +565,7 @@ public abstract class AggregatorTestCase extends ESTestCase {
     }
 
     protected static DirectoryReader wrapInMockESDirectoryReader(DirectoryReader directoryReader) throws IOException {
-        return ElasticsearchDirectoryReader.wrap(directoryReader, new ShardId(new Index("_index", "_na_"), 0));
+        return FesenDirectoryReader.wrap(directoryReader, new ShardId(new Index("_index", "_na_"), 0));
     }
 
     /**

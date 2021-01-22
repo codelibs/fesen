@@ -21,13 +21,13 @@ package org.codelibs.fesen.transport;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * Thrown after failed to connect to all seed nodes of the remote cluster.
  */
-public class NoSeedNodeLeftException extends ElasticsearchException {
+public class NoSeedNodeLeftException extends FesenException {
 
     public NoSeedNodeLeftException(String clusterName) {
         super("no seed node left for cluster: [" + clusterName + "]");

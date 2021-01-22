@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -395,7 +395,7 @@ public class IndicesOptions implements ToXContentFragment {
         Token token = parser.currentToken() == Token.START_OBJECT ? parser.currentToken() : parser.nextToken();
         String currentFieldName = null;
         if (token != Token.START_OBJECT) {
-            throw new ElasticsearchParseException("expected START_OBJECT as the token but was " + token);
+            throw new FesenParseException("expected START_OBJECT as the token but was " + token);
         }
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -408,15 +408,15 @@ public class IndicesOptions implements ToXContentFragment {
                             if (token.isValue()) {
                                 WildcardStates.updateSetForValue(wildcardStates, parser.text());
                             } else {
-                                throw new ElasticsearchParseException("expected values within array for " +
+                                throw new FesenParseException("expected values within array for " +
                                     EXPAND_WILDCARDS_FIELD.getPreferredName());
                             }
                         }
                     } else {
-                        throw new ElasticsearchParseException("already parsed expand_wildcards");
+                        throw new FesenParseException("already parsed expand_wildcards");
                     }
                 } else {
-                    throw new ElasticsearchParseException(EXPAND_WILDCARDS_FIELD.getPreferredName() +
+                    throw new FesenParseException(EXPAND_WILDCARDS_FIELD.getPreferredName() +
                         " is the only field that is an array in IndicesOptions");
                 }
             } else if (token.isValue()) {
@@ -425,7 +425,7 @@ public class IndicesOptions implements ToXContentFragment {
                         wildcardStates = EnumSet.noneOf(WildcardStates.class);
                         WildcardStates.updateSetForValue(wildcardStates, parser.text());
                     } else {
-                        throw new ElasticsearchParseException("already parsed expand_wildcards");
+                        throw new FesenParseException("already parsed expand_wildcards");
                     }
                 } else if (IGNORE_UNAVAILABLE_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     ignoreUnavailable = parser.booleanValue();
@@ -434,24 +434,24 @@ public class IndicesOptions implements ToXContentFragment {
                 } else if (IGNORE_THROTTLED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     ignoreThrottled = parser.booleanValue();
                 } else {
-                    throw new ElasticsearchParseException("could not read indices options. unexpected index option [" +
+                    throw new FesenParseException("could not read indices options. unexpected index option [" +
                         currentFieldName + "]");
                 }
             } else {
-                throw new ElasticsearchParseException("could not read indices options. unexpected object field [" +
+                throw new FesenParseException("could not read indices options. unexpected object field [" +
                     currentFieldName + "]");
             }
         }
 
         if (wildcardStates == null) {
-            throw new ElasticsearchParseException("indices options xcontent did not contain " + EXPAND_WILDCARDS_FIELD.getPreferredName());
+            throw new FesenParseException("indices options xcontent did not contain " + EXPAND_WILDCARDS_FIELD.getPreferredName());
         }
         if (ignoreUnavailable == null) {
-            throw new ElasticsearchParseException("indices options xcontent did not contain " +
+            throw new FesenParseException("indices options xcontent did not contain " +
                 IGNORE_UNAVAILABLE_FIELD.getPreferredName());
         }
         if (allowNoIndices == null) {
-            throw new ElasticsearchParseException("indices options xcontent did not contain " +
+            throw new FesenParseException("indices options xcontent did not contain " +
                 ALLOW_NO_INDICES_FIELD.getPreferredName());
         }
 

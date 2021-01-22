@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.rollover;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.indices.stats.IndicesStatsAction;
 import org.codelibs.fesen.action.admin.indices.stats.IndicesStatsRequest;
@@ -139,7 +139,7 @@ public class TransportRolloverAction extends TransportMasterNodeAction<RolloverR
                                     rolloverRequest.getRolloverTarget(), rolloverRequest.getNewIndexName(),
                                     rolloverRequest.getCreateIndexRequest(), metConditions, false, false);
                                 if (rolloverResult.sourceIndexName.equals(sourceIndexName) == false) {
-                                    throw new ElasticsearchException("Concurrent modification of alias [{}] during rollover",
+                                    throw new FesenException("Concurrent modification of alias [{}] during rollover",
                                         rolloverRequest.getRolloverTarget());
                                 }
                                 return rolloverResult.clusterState;

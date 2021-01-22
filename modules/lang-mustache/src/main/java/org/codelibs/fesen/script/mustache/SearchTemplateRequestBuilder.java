@@ -23,17 +23,17 @@ import java.util.Map;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.script.ScriptType;
 
 public class SearchTemplateRequestBuilder
         extends ActionRequestBuilder<SearchTemplateRequest, SearchTemplateResponse> {
 
-    SearchTemplateRequestBuilder(ElasticsearchClient client, SearchTemplateAction action) {
+    SearchTemplateRequestBuilder(FesenClient client, SearchTemplateAction action) {
         super(client, action, new SearchTemplateRequest());
     }
 
-    public SearchTemplateRequestBuilder(ElasticsearchClient client) {
+    public SearchTemplateRequestBuilder(FesenClient client) {
         this(client, SearchTemplateAction.INSTANCE);
     }
 

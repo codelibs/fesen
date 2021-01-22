@@ -34,7 +34,7 @@ import org.codelibs.fesen.common.cache.CacheBuilder;
 import org.codelibs.fesen.common.cache.RemovalListener;
 import org.codelibs.fesen.common.cache.RemovalNotification;
 import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
@@ -169,7 +169,7 @@ public class IndicesFieldDataCache implements RemovalListener<IndicesFieldDataCa
             final Key key = new Key(this, cacheHelper.getKey(), shardId);
             //noinspection unchecked
             final Accountable accountable = cache.computeIfAbsent(key, k -> {
-                ElasticsearchDirectoryReader.addReaderCloseListener(indexReader, IndexFieldCache.this);
+                FesenDirectoryReader.addReaderCloseListener(indexReader, IndexFieldCache.this);
                 Collections.addAll(k.listeners, this.listeners);
                 final Accountable ifd = (Accountable) indexFieldData.loadGlobalDirect(indexReader);
                 for (Listener listener : k.listeners) {

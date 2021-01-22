@@ -21,7 +21,7 @@ package org.codelibs.fesen.search.suggest.completion;
 
 import org.apache.lucene.util.automaton.Operations;
 import org.apache.lucene.util.automaton.RegExp;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -58,7 +58,7 @@ public class RegexOptions implements ToXContentFragment, Writeable {
             } else if (parser.currentToken() == XContentParser.Token.VALUE_NUMBER) {
                 builder.setFlagsValue(parser.intValue());
             } else {
-                throw new ElasticsearchParseException(REGEX_OPTIONS.getPreferredName()
+                throw new FesenParseException(REGEX_OPTIONS.getPreferredName()
                     + " " + FLAGS_VALUE.getPreferredName() + " supports string or number");
             }
         }, FLAGS_VALUE, ObjectParser.ValueType.VALUE);

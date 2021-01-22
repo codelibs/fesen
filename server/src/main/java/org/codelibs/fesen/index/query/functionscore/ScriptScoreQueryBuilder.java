@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.query.functionscore;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -174,7 +174,7 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
         if (context.allowExpensiveQueries() == false) {
-            throw new ElasticsearchException("[script score] queries cannot be executed when '"
+            throw new FesenException("[script score] queries cannot be executed when '"
                     + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         ScoreScript.Factory factory = context.compile(script, ScoreScript.CONTEXT);

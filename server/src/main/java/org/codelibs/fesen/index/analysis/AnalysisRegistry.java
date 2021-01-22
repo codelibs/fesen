@@ -22,7 +22,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.KeywordTokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
@@ -184,7 +184,7 @@ public final class AnalysisRegistry implements Closeable {
                         try {
                             return provider.get(environment, key).get();
                         } catch (IOException ex) {
-                            throw new ElasticsearchException("failed to load analyzer for name " + key, ex);
+                            throw new FesenException("failed to load analyzer for name " + key, ex);
                         }}
             );
         } else if ("standard_html_strip".equals(analyzer)) {
@@ -578,7 +578,7 @@ public final class AnalysisRegistry implements Closeable {
                                         Map<String, TokenizerFactory> tokenizers) {
         /*
          * Lucene defaults positionIncrementGap to 0 in all analyzers but
-         * Elasticsearch defaults them to 0 only before version 2.0
+         * Fesen defaults them to 0 only before version 2.0
          * and 100 afterwards so we override the positionIncrementGap if it
          * doesn't match here.
          */

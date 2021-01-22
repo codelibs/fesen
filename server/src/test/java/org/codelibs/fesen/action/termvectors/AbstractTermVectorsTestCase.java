@@ -63,7 +63,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
 import static org.hamcrest.Matchers.equalTo;
 
 public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {

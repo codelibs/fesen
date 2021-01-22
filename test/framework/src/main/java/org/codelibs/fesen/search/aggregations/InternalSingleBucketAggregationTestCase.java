@@ -43,7 +43,7 @@ import java.util.function.Supplier;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public abstract class InternalSingleBucketAggregationTestCase<T extends InternalSingleBucketAggregation>
         extends InternalAggregationTestCase<T> {

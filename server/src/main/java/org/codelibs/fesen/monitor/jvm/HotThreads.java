@@ -20,7 +20,7 @@
 package org.codelibs.fesen.monitor.jvm;
 
 import org.apache.lucene.util.CollectionUtil;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.unit.TimeValue;
 
@@ -132,7 +132,7 @@ public class HotThreads {
     private String innerDetect() throws Exception {
         ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
         if (threadBean.isThreadCpuTimeSupported() == false) {
-            throw new ElasticsearchException("thread CPU time is not supported on this JDK");
+            throw new FesenException("thread CPU time is not supported on this JDK");
         }
 
         StringBuilder sb = new StringBuilder();

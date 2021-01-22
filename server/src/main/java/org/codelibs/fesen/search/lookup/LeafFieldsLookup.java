@@ -19,7 +19,7 @@
 package org.codelibs.fesen.search.lookup;
 
 import org.apache.lucene.index.LeafReader;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.index.fieldvisitor.SingleFieldsVisitor;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
@@ -156,7 +156,7 @@ public class LeafFieldsLookup implements Map {
                 try {
                     reader.document(docId, visitor);
                 } catch (IOException e) {
-                    throw new ElasticsearchParseException("failed to load field [{}]", e, name);
+                    throw new FesenParseException("failed to load field [{}]", e, name);
                 }
             }
             data.fields(singletonMap(data.fieldType().name(), values));

@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.common.unit;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -135,11 +135,11 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
                 int highLimit = Integer.parseInt(fuzzinessLimit[1]);
                 return new Fuzziness("AUTO", lowerLimit, highLimit);
             } catch (NumberFormatException e) {
-                throw new ElasticsearchParseException("failed to parse [{}] as a \"auto:int,int\"", e,
+                throw new FesenParseException("failed to parse [{}] as a \"auto:int,int\"", e,
                     string);
             }
         } else {
-            throw new ElasticsearchParseException("failed to find low and high distance values");
+            throw new FesenParseException("failed to find low and high distance values");
         }
     }
 

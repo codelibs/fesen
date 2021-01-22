@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.codelibs.fesen.index.reindex.ReindexTestCase.matcher;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 
 public class ReindexSingleNodeTests extends ESSingleNodeTestCase {
     @Override

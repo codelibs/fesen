@@ -66,7 +66,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 /**
  * Integration test for bulk retry behavior. Useful because retrying relies on the way that the
- * rest of Elasticsearch throws exceptions and unit tests won't verify that.
+ * rest of Fesen throws exceptions and unit tests won't verify that.
  */
 public class RetryTests extends ESIntegTestCase {
 

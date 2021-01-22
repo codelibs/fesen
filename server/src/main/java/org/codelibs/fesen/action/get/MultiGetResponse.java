@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.get;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -111,7 +111,7 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
             builder.field(INDEX.getPreferredName(), index);
             builder.field(TYPE.getPreferredName(), type);
             builder.field(ID.getPreferredName(), id);
-            ElasticsearchException.generateFailureXContent(builder, params, exception, true);
+            FesenException.generateFailureXContent(builder, params, exception, true);
             builder.endObject();
             return builder;
         }
@@ -190,7 +190,7 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         String index = null;
         String type = null;
         String id = null;
-        ElasticsearchException exception = null;
+        FesenException exception = null;
         GetResult getResult = null;
         for (Token token = parser.nextToken(); token != Token.END_OBJECT; token = parser.nextToken()) {
             switch (token) {
@@ -214,7 +214,7 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
                     break;
                 case START_OBJECT:
                     if (ERROR.match(currentFieldName, parser.getDeprecationHandler())) {
-                        exception = ElasticsearchException.fromXContent(parser);
+                        exception = FesenException.fromXContent(parser);
                     }
                     break;
                 default:

@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.mapper;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexableField;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.Tuple;
@@ -685,7 +685,7 @@ final class DocumentParser {
                 for (DateFormatter dateTimeFormatter : context.root().dynamicDateTimeFormatters()) {
                     try {
                         dateTimeFormatter.parse(text);
-                    } catch (ElasticsearchParseException | DateTimeParseException | IllegalArgumentException e) {
+                    } catch (FesenParseException | DateTimeParseException | IllegalArgumentException e) {
                         // failure to parse this, continue
                         continue;
                     }

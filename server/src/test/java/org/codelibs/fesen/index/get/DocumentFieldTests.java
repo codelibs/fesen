@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
 import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class DocumentFieldTests extends ESTestCase {
 

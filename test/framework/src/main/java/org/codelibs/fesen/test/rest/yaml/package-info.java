@@ -18,7 +18,7 @@
  */
 
 /**
- * Infrastructure to run suites of tests written in YAML against a running Elasticsearch cluster using Elasticsearch's low level REST
- * client. The YAML tests are run by all official clients and serve as tests for both Elasticsearch and the clients.
+ * Infrastructure to run suites of tests written in YAML against a running Fesen cluster using Fesen's low level REST
+ * client. The YAML tests are run by all official clients and serve as tests for both Fesen and the clients.
  */
 package org.codelibs.fesen.test.rest.yaml;

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.get;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -145,7 +145,7 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
     /**
      * The source of the document (As a map).
      */
-    public Map<String, Object> getSourceAsMap() throws ElasticsearchParseException {
+    public Map<String, Object> getSourceAsMap() throws FesenParseException {
         return getResult.sourceAsMap();
     }
 

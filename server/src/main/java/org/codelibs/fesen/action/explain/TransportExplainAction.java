@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.explain;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Explanation;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.RoutingMissingException;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -146,7 +146,7 @@ public class TransportExplainAction extends TransportSingleShardAction<ExplainRe
                 return new ExplainResponse(shardId.getIndexName(), request.type(), request.id(), true, explanation);
             }
         } catch (IOException e) {
-            throw new ElasticsearchException("Could not explain", e);
+            throw new FesenException("Could not explain", e);
         } finally {
             Releasables.close(result, context);
         }

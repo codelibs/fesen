@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.painless;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.painless.PainlessExplainError;
@@ -80,7 +80,7 @@ public class DebugTests extends ScriptTestCase {
         try (BytesStreamOutput out = new BytesStreamOutput()) {
             out.writeException(e);
             try (StreamInput in = out.bytes().streamInput()) {
-                ElasticsearchException read = (ScriptException) in.readException();
+                FesenException read = (ScriptException) in.readException();
                 assertEquals(singletonList("jumped over the moon"), read.getMetadata("es.to_string"));
                 assertEquals(singletonList("java.lang.String"), read.getMetadata("es.java_class"));
                 assertEquals(singletonList("java.lang.String"), read.getMetadata("es.painless_class"));

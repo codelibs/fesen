@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  * currently acting as a master or when a cluster state update task is to be executed
  * on a node that is no longer master.
  */
-public class NotMasterException extends ElasticsearchException {
+public class NotMasterException extends FesenException {
 
     public NotMasterException(String msg) {
         super(msg);

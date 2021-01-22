@@ -31,7 +31,7 @@ import org.apache.lucene.search.PointRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.geo.ShapeRelation;
@@ -296,7 +296,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "        }\n" +
                 "    }\n" +
                 "}";
-        expectThrows(ElasticsearchParseException.class, () -> parseQuery(invalidQuery).toQuery(createShardContext()));
+        expectThrows(FesenParseException.class, () -> parseQuery(invalidQuery).toQuery(createShardContext()));
     }
 
     public void testDateRangeBoundaries() throws IOException {

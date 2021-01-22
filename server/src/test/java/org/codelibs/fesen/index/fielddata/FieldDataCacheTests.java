@@ -30,7 +30,7 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NoMergePolicy;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.LeafFieldData;
@@ -66,7 +66,7 @@ public class FieldDataCacheTests extends ESTestCase {
         }
         iw.close();
         DirectoryReader ir =
-            ElasticsearchDirectoryReader.wrap(DirectoryReader.open(dir), new ShardId("_index", "_na_", 0));
+            FesenDirectoryReader.wrap(DirectoryReader.open(dir), new ShardId("_index", "_na_", 0));
 
         DummyAccountingFieldDataCache fieldDataCache = new DummyAccountingFieldDataCache();
         // Testing SortedSetOrdinalsIndexFieldData:

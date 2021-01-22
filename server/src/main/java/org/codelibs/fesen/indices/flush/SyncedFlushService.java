@@ -21,7 +21,7 @@ package org.codelibs.fesen.indices.flush;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.StepListener;
@@ -553,7 +553,7 @@ public class SyncedFlushService implements IndexEventListener {
             case PENDING_OPERATIONS:
                 return new ShardSyncedFlushResponse("pending operations");
             default:
-                throw new ElasticsearchException("unknown synced flush result [" + result + "]");
+                throw new FesenException("unknown synced flush result [" + result + "]");
         }
     }
 

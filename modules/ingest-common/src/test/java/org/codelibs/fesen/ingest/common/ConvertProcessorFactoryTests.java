@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.common.ConvertProcessor;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
@@ -57,7 +57,7 @@ public class ConvertProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), Matchers.equalTo("[type] type [" + type + "] not supported, cannot convert field."));
             assertThat(e.getMetadata("es.processor_type").get(0), equalTo(ConvertProcessor.TYPE));
             assertThat(e.getMetadata("es.property_name").get(0), equalTo("type"));
@@ -73,7 +73,7 @@ public class ConvertProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), Matchers.equalTo("[field] required property is missing"));
         }
     }
@@ -85,7 +85,7 @@ public class ConvertProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (ElasticsearchParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), Matchers.equalTo("[type] required property is missing"));
         }
     }

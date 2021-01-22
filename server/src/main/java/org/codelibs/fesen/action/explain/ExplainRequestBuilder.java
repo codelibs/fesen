@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.explain;
 
 import org.codelibs.fesen.action.support.single.shard.SingleShardOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.index.query.QueryBuilder;
@@ -31,11 +31,11 @@ import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
  */
 public class ExplainRequestBuilder extends SingleShardOperationRequestBuilder<ExplainRequest, ExplainResponse, ExplainRequestBuilder> {
 
-    ExplainRequestBuilder(ElasticsearchClient client, ExplainAction action) {
+    ExplainRequestBuilder(FesenClient client, ExplainAction action) {
         super(client, action, new ExplainRequest());
     }
 
-    public ExplainRequestBuilder(ElasticsearchClient client, ExplainAction action, String index, String type, String id) {
+    public ExplainRequestBuilder(FesenClient client, ExplainAction action, String index, String type, String id) {
         super(client, action, new ExplainRequest().index(index).type(type).id(id));
     }
 

@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.cluster.snapshots.create;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
@@ -36,14 +36,14 @@ public class CreateSnapshotRequestBuilder extends MasterNodeOperationRequestBuil
     /**
      * Constructs a new create snapshot request builder
      */
-    public CreateSnapshotRequestBuilder(ElasticsearchClient client, CreateSnapshotAction action) {
+    public CreateSnapshotRequestBuilder(FesenClient client, CreateSnapshotAction action) {
         super(client, action, new CreateSnapshotRequest());
     }
 
     /**
      * Constructs a new create snapshot request builder with specified repository and snapshot names
      */
-    public CreateSnapshotRequestBuilder(ElasticsearchClient client, CreateSnapshotAction action, String repository, String snapshot) {
+    public CreateSnapshotRequestBuilder(FesenClient client, CreateSnapshotAction action, String repository, String snapshot) {
         super(client, action, new CreateSnapshotRequest(repository, snapshot));
     }
 

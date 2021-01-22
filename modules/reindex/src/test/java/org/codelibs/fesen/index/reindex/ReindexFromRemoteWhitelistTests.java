@@ -116,7 +116,7 @@ public class ReindexFromRemoteWhitelistTests extends ESTestCase {
     private void assertMatchesTooMuch(List<String> whitelist) {
         Exception e = expectThrows(IllegalArgumentException.class, () -> buildRemoteWhitelist(whitelist));
         assertEquals("Refusing to start because whitelist " + whitelist + " accepts all addresses. "
-                + "This would allow users to reindex-from-remote any URL they like effectively having Elasticsearch make HTTP GETs "
+                + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs "
                 + "for them.", e.getMessage());
     }
 

@@ -95,10 +95,10 @@ public class ShardSearchFailureTests extends ESTestCase {
          * message appears somewhere in the rendered xContent
          */
         String originalMsg = response.getCause().getMessage();
-        assertEquals(parsed.getCause().getMessage(), "Elasticsearch exception [type=parsing_exception, reason=" + originalMsg + "]");
+        assertEquals(parsed.getCause().getMessage(), "Fesen exception [type=parsing_exception, reason=" + originalMsg + "]");
         String nestedMsg = response.getCause().getCause().getMessage();
         assertEquals(parsed.getCause().getCause().getMessage(),
-                "Elasticsearch exception [type=illegal_argument_exception, reason=" + nestedMsg + "]");
+                "Fesen exception [type=illegal_argument_exception, reason=" + nestedMsg + "]");
     }
 
     public void testToXContent() throws IOException {

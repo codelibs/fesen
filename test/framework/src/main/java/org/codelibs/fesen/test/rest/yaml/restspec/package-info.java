@@ -18,6 +18,6 @@
  */
 
 /**
- * Specification of REST endpoints used to convert YAML {@code do} sections into actual calls to Elasticsearch.
+ * Specification of REST endpoints used to convert YAML {@code do} sections into actual calls to Fesen.
  */
 package org.codelibs.fesen.test.rest.yaml.restspec;

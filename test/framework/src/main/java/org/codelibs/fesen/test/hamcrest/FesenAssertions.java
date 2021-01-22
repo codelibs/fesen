@@ -22,7 +22,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionRequestBuilder;
@@ -97,7 +97,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class ElasticsearchAssertions {
+public class FesenAssertions {
 
     public static void assertAcked(AcknowledgedRequestBuilder<?, ?, ?> builder) {
         assertAcked(builder.get());
@@ -486,23 +486,23 @@ public class ElasticsearchAssertions {
      * matchers
      */
     public static Matcher<SearchHit> hasId(final String id) {
-        return new ElasticsearchMatchers.SearchHitHasIdMatcher(id);
+        return new FesenMatchers.SearchHitHasIdMatcher(id);
     }
 
     public static Matcher<SearchHit> hasType(final String type) {
-        return new ElasticsearchMatchers.SearchHitHasTypeMatcher(type);
+        return new FesenMatchers.SearchHitHasTypeMatcher(type);
     }
 
     public static Matcher<SearchHit> hasIndex(final String index) {
-        return new ElasticsearchMatchers.SearchHitHasIndexMatcher(index);
+        return new FesenMatchers.SearchHitHasIndexMatcher(index);
     }
 
     public static Matcher<SearchHit> hasScore(final float score) {
-        return new ElasticsearchMatchers.SearchHitHasScoreMatcher(score);
+        return new FesenMatchers.SearchHitHasScoreMatcher(score);
     }
 
     public static <T, V> CombinableMatcher<T> hasProperty(Function<? super T, ? extends V> property, Matcher<V> valueMatcher) {
-        return ElasticsearchMatchers.HasPropertyLambdaMatcher.hasProperty(property, valueMatcher);
+        return FesenMatchers.HasPropertyLambdaMatcher.hasProperty(property, valueMatcher);
     }
 
     public static Function<SearchHit, Object> fieldFromSource(String fieldName) {
@@ -589,9 +589,9 @@ public class ElasticsearchAssertions {
             extraInfo += " with status [" + status + "]";
         }
 
-        Throwable expected = expectThrowsAnyOf(Arrays.asList(exceptionClass, ElasticsearchException.class), future::actionGet);
-        if (expected instanceof ElasticsearchException) {
-            assertThat(extraInfo, ((ElasticsearchException) expected).unwrapCause(), instanceOf(exceptionClass));
+        Throwable expected = expectThrowsAnyOf(Arrays.asList(exceptionClass, FesenException.class), future::actionGet);
+        if (expected instanceof FesenException) {
+            assertThat(extraInfo, ((FesenException) expected).unwrapCause(), instanceOf(exceptionClass));
         } else {
             assertThat(extraInfo, expected, instanceOf(exceptionClass));
         }

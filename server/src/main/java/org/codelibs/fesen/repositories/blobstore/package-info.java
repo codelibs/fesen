@@ -18,7 +18,7 @@
  */
 
 /**
- * <p>This package exposes the blobstore repository used by Elasticsearch Snapshots.</p>
+ * <p>This package exposes the blobstore repository used by Fesen Snapshots.</p>
  *
  * <h2>Preliminaries</h2>
  *

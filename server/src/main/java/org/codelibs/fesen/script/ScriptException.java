@@ -1,6 +1,6 @@
 package org.codelibs.fesen.script;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -48,7 +48,7 @@ import java.util.Objects;
  * </ul>
  */
 @SuppressWarnings("serial")
-public class ScriptException extends ElasticsearchException {
+public class ScriptException extends FesenException {
     private final List<String> scriptStack;
     private final String script;
     private final String lang;

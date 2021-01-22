@@ -21,8 +21,8 @@ package org.codelibs.fesen.action.support.broadcast;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchWrapperException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenWrapperException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 
@@ -31,7 +31,7 @@ import org.codelibs.fesen.index.shard.ShardId;
  *
  *
  */
-public class BroadcastShardOperationFailedException extends ElasticsearchException implements ElasticsearchWrapperException {
+public class BroadcastShardOperationFailedException extends FesenException implements FesenWrapperException {
 
     public BroadcastShardOperationFailedException(ShardId shardId, String msg) {
         this(shardId, msg, null);

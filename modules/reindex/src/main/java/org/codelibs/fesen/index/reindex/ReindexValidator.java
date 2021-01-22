@@ -96,7 +96,7 @@ class ReindexValidator {
         automaton = MinimizationOperations.minimize(automaton, Operations.DEFAULT_MAX_DETERMINIZED_STATES);
         if (Operations.isTotal(automaton)) {
             throw new IllegalArgumentException("Refusing to start because whitelist " + whitelist + " accepts all addresses. "
-                + "This would allow users to reindex-from-remote any URL they like effectively having Elasticsearch make HTTP GETs "
+                + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs "
                 + "for them.");
         }
         return new CharacterRunAutomaton(automaton);

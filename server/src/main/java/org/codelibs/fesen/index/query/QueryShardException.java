@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.query;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.index.Index;
@@ -30,7 +30,7 @@ import org.codelibs.fesen.rest.RestStatus;
 /**
  * Exception that is thrown when creating lucene queries on the shard
  */
-public class QueryShardException extends ElasticsearchException {
+public class QueryShardException extends FesenException {
 
     public QueryShardException(QueryShardContext context, String msg, Object... args) {
         this(context, msg, null, args);

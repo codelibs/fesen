@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.AdapterActionFuture;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.UncategorizedExecutionException;
@@ -100,7 +100,7 @@ public class AdapterActionFutureTests extends ESTestCase {
         checkUnwrap(new RemoteTransportException("test", new Exception()),
             UncategorizedExecutionException.class, RemoteTransportException.class);
         checkUnwrap(new Exception(), UncategorizedExecutionException.class, Exception.class);
-        checkUnwrap(new ElasticsearchException("test", new Exception()), ElasticsearchException.class, ElasticsearchException.class);
+        checkUnwrap(new FesenException("test", new Exception()), FesenException.class, FesenException.class);
     }
 
     private void checkUnwrap(Exception exception, Class<? extends Exception> actionGetException,

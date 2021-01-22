@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.indices.template.put;
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -33,11 +33,11 @@ import java.util.Map;
 public class PutIndexTemplateRequestBuilder
     extends MasterNodeOperationRequestBuilder<PutIndexTemplateRequest, AcknowledgedResponse, PutIndexTemplateRequestBuilder> {
 
-    public PutIndexTemplateRequestBuilder(ElasticsearchClient client, PutIndexTemplateAction action) {
+    public PutIndexTemplateRequestBuilder(FesenClient client, PutIndexTemplateAction action) {
         super(client, action, new PutIndexTemplateRequest());
     }
 
-    public PutIndexTemplateRequestBuilder(ElasticsearchClient client, PutIndexTemplateAction action, String name) {
+    public PutIndexTemplateRequestBuilder(FesenClient client, PutIndexTemplateAction action, String name) {
         super(client, action, new PutIndexTemplateRequest(name));
     }
 

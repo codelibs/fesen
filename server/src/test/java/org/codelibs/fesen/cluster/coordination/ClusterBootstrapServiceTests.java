@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.coordination.ClusterBootstrapService;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -382,7 +382,7 @@ public class ClusterBootstrapServiceTests extends ESTestCase {
             transportService, () -> Stream.of(otherNode1, otherNode2).collect(Collectors.toList()), () -> false, vc -> {
             bootstrappingAttempts.incrementAndGet();
             if (bootstrappingAttempts.get() < 5L) {
-                throw new ElasticsearchException("test");
+                throw new FesenException("test");
             }
         });
 

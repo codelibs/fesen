@@ -21,11 +21,11 @@ package org.codelibs.fesen.index.rankeval;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class RankEvalRequestBuilder extends ActionRequestBuilder<RankEvalRequest, RankEvalResponse> {
 
-    public RankEvalRequestBuilder(ElasticsearchClient client, ActionType<RankEvalResponse> action,
+    public RankEvalRequestBuilder(FesenClient client, ActionType<RankEvalResponse> action,
             RankEvalRequest request) {
         super(client, action, request);
     }

@@ -53,7 +53,7 @@ import static org.hamcrest.Matchers.not;
 
 /**
  * Tests for {@link RemoteRequestBuilders} which builds requests for remote version of
- * Elasticsearch. Note that unlike most of the rest of Elasticsearch this file needs to
+ * Fesen. Note that unlike most of the rest of Fesen this file needs to
  * be compatible with very old versions of Elasticsearch. Thus is often uses identifiers
  * for versions like {@code 2000099} for {@code 2.0.0-alpha1}. Do not drop support for
  * features from this file just because the version constants have been removed.

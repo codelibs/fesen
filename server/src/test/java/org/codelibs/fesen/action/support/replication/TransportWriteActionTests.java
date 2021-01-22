@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support.replication;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.ActionTestUtils;
@@ -319,9 +319,9 @@ public class TransportWriteActionTests extends ESTestCase {
             assertTrue(listener.isDone());
             assertThat(listener.get(), equalTo(response));
         } else if (randomBoolean()) {
-            transport.handleRemoteError(captures[0].requestId, new ElasticsearchException("simulated"));
+            transport.handleRemoteError(captures[0].requestId, new FesenException("simulated"));
             assertTrue(listener.isDone());
-            assertListenerThrows("listener should reflect remote error", listener, ElasticsearchException.class);
+            assertListenerThrows("listener should reflect remote error", listener, FesenException.class);
         } else {
             transport.handleError(captures[0].requestId, new TransportException("simulated"));
             assertTrue(listener.isDone());
@@ -330,7 +330,7 @@ public class TransportWriteActionTests extends ESTestCase {
 
         AtomicReference<Object> failure = new AtomicReference<>();
         AtomicBoolean success = new AtomicBoolean();
-        proxy.failShardIfNeeded(replica, primaryTerm, "test", new ElasticsearchException("simulated"),
+        proxy.failShardIfNeeded(replica, primaryTerm, "test", new FesenException("simulated"),
             ActionListener.wrap(r -> success.set(true), failure::set));
         CapturingTransport.CapturedRequest[] shardFailedRequests = transport.getCapturedRequestsAndClear();
         // A write replication action proxy should fail the shard

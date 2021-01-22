@@ -59,7 +59,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * An extension point allowing to plug in custom functionality. This class has a number of extension points that are available to all
- * plugins, in addition you can implement any of the following interfaces to further customize Elasticsearch:
+ * plugins, in addition you can implement any of the following interfaces to further customize Fesen:
  * <ul>
  * <li>{@link ActionPlugin}
  * <li>{@link AnalysisPlugin}

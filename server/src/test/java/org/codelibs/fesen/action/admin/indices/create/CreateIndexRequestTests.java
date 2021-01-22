@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequest;
 import org.codelibs.fesen.common.Strings;
@@ -37,7 +37,7 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.RandomCreateIndexGenerator;
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenAssertions;
 
 import java.io.IOException;
 import java.util.Map;
@@ -83,7 +83,7 @@ public class CreateIndexRequestTests extends ESTestCase {
                 + "}";
 
         CreateIndexRequest request = new CreateIndexRequest();
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class,
+        FesenParseException e = expectThrows(FesenParseException.class,
                 () -> {request.source(createIndex, XContentType.JSON);});
         assertEquals("unknown key [FOO_SHOULD_BE_ILLEGAL_HERE] for create index", e.getMessage());
     }
@@ -195,7 +195,7 @@ public class CreateIndexRequestTests extends ESTestCase {
         assertEquals(createIndexRequest.settings(), parsedCreateIndexRequest.settings());
 
         BytesReference finalBytes = toShuffledXContent(parsedCreateIndexRequest, xContentType, EMPTY_PARAMS, humanReadable);
-        ElasticsearchAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
+        FesenAssertions.assertToXContentEquivalent(originalBytes, finalBytes, xContentType);
     }
 
     public void testSettingsType() throws IOException {
@@ -203,7 +203,7 @@ public class CreateIndexRequestTests extends ESTestCase {
         builder.startObject().startArray("settings").endArray().endObject();
 
         CreateIndexRequest parsedCreateIndexRequest = new CreateIndexRequest();
-        ElasticsearchParseException e = expectThrows(ElasticsearchParseException.class, () -> parsedCreateIndexRequest.source(builder));
+        FesenParseException e = expectThrows(FesenParseException.class, () -> parsedCreateIndexRequest.source(builder));
         assertThat(e.getMessage(), equalTo("key [settings] must be an object"));
     }
 

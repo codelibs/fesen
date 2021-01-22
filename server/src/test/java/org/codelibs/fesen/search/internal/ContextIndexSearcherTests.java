@@ -60,7 +60,7 @@ import org.apache.lucene.util.CombinedBitSet;
 import org.apache.lucene.util.FixedBitSet;
 import org.apache.lucene.util.SparseFixedBitSet;
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.index.SequentialStoredFieldsLeafReader;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.internal.io.IOUtils;
@@ -229,7 +229,7 @@ public class ContextIndexSearcherTests extends ESTestCase {
 
             }
         };
-        DirectoryReader reader = ElasticsearchDirectoryReader.wrap(DirectoryReader.open(w),
+        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(w),
             new ShardId(settings.getIndex(), 0));
         BitsetFilterCache cache = new BitsetFilterCache(settings, listener);
         Query roleQuery = new TermQuery(new Term("allowed", "yes"));

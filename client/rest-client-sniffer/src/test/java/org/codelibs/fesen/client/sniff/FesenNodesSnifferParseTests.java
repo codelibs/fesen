@@ -27,8 +27,8 @@ import org.apache.http.entity.InputStreamEntity;
 import org.codelibs.fesen.client.Node;
 import org.codelibs.fesen.client.RestClientTestCase;
 import org.codelibs.fesen.client.Node.Roles;
-import org.codelibs.fesen.client.sniff.ElasticsearchNodesSniffer;
-import org.codelibs.fesen.client.sniff.ElasticsearchNodesSniffer.Scheme;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer.Scheme;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,9 +47,9 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Test parsing the response from the {@code /_nodes/http} API from fixed
- * versions of Elasticsearch.
+ * versions of Fesen.
  */
-public class ElasticsearchNodesSnifferParseTests extends RestClientTestCase {
+public class FesenNodesSnifferParseTests extends RestClientTestCase {
 
     private void checkFile(String file, Node... expected) throws IOException {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
@@ -58,7 +58,7 @@ public class ElasticsearchNodesSnifferParseTests extends RestClientTestCase {
         }
         try {
             HttpEntity entity = new InputStreamEntity(in, ContentType.APPLICATION_JSON);
-            List<Node> nodes = ElasticsearchNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
+            List<Node> nodes = FesenNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
             /*
              * Use these assertions because the error messages are nicer
              * than hasItems and we know the results are in order because
@@ -125,7 +125,7 @@ public class ElasticsearchNodesSnifferParseTests extends RestClientTestCase {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("es6_nodes_publication_address_format.json");
 
         HttpEntity entity = new InputStreamEntity(in, ContentType.APPLICATION_JSON);
-        List<Node> nodes = ElasticsearchNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
+        List<Node> nodes = FesenNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
 
         assertEquals("127.0.0.1", nodes.get(0).getHost().getHostName());
         assertEquals(9200, nodes.get(0).getHost().getPort());
@@ -136,7 +136,7 @@ public class ElasticsearchNodesSnifferParseTests extends RestClientTestCase {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("es7_nodes_publication_address_format.json");
 
         HttpEntity entity = new InputStreamEntity(in, ContentType.APPLICATION_JSON);
-        List<Node> nodes = ElasticsearchNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
+        List<Node> nodes = FesenNodesSniffer.readHosts(entity, Scheme.HTTP, new JsonFactory());
 
         assertEquals("elastic.test", nodes.get(0).getHost().getHostName());
         assertEquals(9200, nodes.get(0).getHost().getPort());

@@ -28,7 +28,7 @@ import org.apache.lucene.index.RandomIndexWriter;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.common.lucene.ShardCoreKeyMap;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.test.ESTestCase;
 
@@ -63,7 +63,7 @@ public class ShardCoreKeyMapTests extends ESTestCase {
         try (Directory dir = newDirectory();
                 RandomIndexWriter writer = new RandomIndexWriter(random(), dir)) {
             writer.addDocument(new Document());
-            try (DirectoryReader dirReader = ElasticsearchDirectoryReader.wrap(writer.getReader(), new ShardId("index1", "_na_", 1))) {
+            try (DirectoryReader dirReader = FesenDirectoryReader.wrap(writer.getReader(), new ShardId("index1", "_na_", 1))) {
                 reader = dirReader.leaves().get(0).reader();
             }
         }
@@ -94,9 +94,9 @@ public class ShardCoreKeyMapTests extends ESTestCase {
         ShardId shardId2 = new ShardId("index1", "_na_", 3);
         ShardId shardId3 = new ShardId("index2", "_na_", 2);
 
-        ElasticsearchDirectoryReader reader1 = ElasticsearchDirectoryReader.wrap(w1.getReader(), shardId1);
-        ElasticsearchDirectoryReader reader2 = ElasticsearchDirectoryReader.wrap(w2.getReader(), shardId2);
-        ElasticsearchDirectoryReader reader3 = ElasticsearchDirectoryReader.wrap(w3.getReader(), shardId3);
+        FesenDirectoryReader reader1 = FesenDirectoryReader.wrap(w1.getReader(), shardId1);
+        FesenDirectoryReader reader2 = FesenDirectoryReader.wrap(w2.getReader(), shardId2);
+        FesenDirectoryReader reader3 = FesenDirectoryReader.wrap(w3.getReader(), shardId3);
 
         ShardCoreKeyMap map = new ShardCoreKeyMap();
         for (DirectoryReader reader : Arrays.asList(reader1, reader2, reader3)) {
@@ -117,14 +117,14 @@ public class ShardCoreKeyMapTests extends ESTestCase {
         }
 
         w1.addDocument(new Document());
-        ElasticsearchDirectoryReader newReader1 = ElasticsearchDirectoryReader.wrap(w1.getReader(), shardId1);
+        FesenDirectoryReader newReader1 = FesenDirectoryReader.wrap(w1.getReader(), shardId1);
         reader1.close();
         reader1 = newReader1;
 
         // same for reader2, but with a force merge to trigger evictions
         w2.addDocument(new Document());
         w2.forceMerge(1);
-        ElasticsearchDirectoryReader newReader2 = ElasticsearchDirectoryReader.wrap(w2.getReader(), shardId2);
+        FesenDirectoryReader newReader2 = FesenDirectoryReader.wrap(w2.getReader(), shardId2);
         reader2.close();
         reader2 = newReader2;
 

@@ -127,7 +127,7 @@ import org.codelibs.fesen.tasks.TaskId;
  *
  * @see AdminClient#cluster()
  */
-public interface ClusterAdminClient extends ElasticsearchClient {
+public interface ClusterAdminClient extends FesenClient {
 
     /**
      * The health of the cluster.

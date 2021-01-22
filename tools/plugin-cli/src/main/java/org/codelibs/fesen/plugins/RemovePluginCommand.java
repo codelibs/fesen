@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A command for the plugin CLI to remove a plugin from Elasticsearch.
+ * A command for the plugin CLI to remove a plugin from Fesen.
  */
 class RemovePluginCommand extends EnvironmentAwareCommand {
 
@@ -57,7 +57,7 @@ class RemovePluginCommand extends EnvironmentAwareCommand {
     private final OptionSpec<String> arguments;
 
     RemovePluginCommand() {
-        super("removes a plugin from Elasticsearch");
+        super("removes a plugin from Fesen");
         this.purgeOption = parser.acceptsAll(Arrays.asList("p", "purge"), "Purge plugin configuration files");
         this.arguments = parser.nonOptions("plugin name");
     }

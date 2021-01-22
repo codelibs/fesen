@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -77,7 +77,7 @@ public class RetryFailedAllocationTests extends ESAllocationTestCase {
         for (int i = 0; i < retries; i++) {
             List<FailedShard> failedShards = Collections.singletonList(
                 new FailedShard(getReplica(), "failing-shard::attempt-" + i,
-                    new ElasticsearchException("simulated"), randomBoolean()));
+                    new FesenException("simulated"), randomBoolean()));
             clusterState = strategy.applyFailedShards(clusterState, failedShards);
             clusterState = strategy.reroute(clusterState, "allocation retry attempt-" + i);
         }

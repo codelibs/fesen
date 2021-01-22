@@ -69,8 +69,8 @@ public final class SnifferBuilder {
     }
 
     /**
-     * Sets the {@link NodesSniffer} to be used to read hosts. A default instance of {@link ElasticsearchNodesSniffer}
-     * is created when not provided. This method can be used to change the configuration of the {@link ElasticsearchNodesSniffer},
+     * Sets the {@link NodesSniffer} to be used to read hosts. A default instance of {@link FesenNodesSniffer}
+     * is created when not provided. This method can be used to change the configuration of the {@link FesenNodesSniffer},
      * or to provide a different implementation (e.g. in case hosts need to taken from a different source).
      */
     public SnifferBuilder setNodesSniffer(NodesSniffer nodesSniffer) {
@@ -84,7 +84,7 @@ public final class SnifferBuilder {
      */
     public Sniffer build() {
         if (nodesSniffer == null) {
-            this.nodesSniffer = new ElasticsearchNodesSniffer(restClient);
+            this.nodesSniffer = new FesenNodesSniffer(restClient);
         }
         return new Sniffer(restClient, nodesSniffer, sniffIntervalMillis, sniffAfterFailureDelayMillis);
     }

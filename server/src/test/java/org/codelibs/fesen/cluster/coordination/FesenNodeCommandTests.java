@@ -20,7 +20,7 @@
 package org.codelibs.fesen.cluster.coordination;
 
 import org.codelibs.fesen.cluster.ClusterModule;
-import org.codelibs.fesen.cluster.coordination.ElasticsearchNodeCommand;
+import org.codelibs.fesen.cluster.coordination.FesenNodeCommand;
 import org.codelibs.fesen.cluster.metadata.DataStream;
 import org.codelibs.fesen.cluster.metadata.IndexGraveyard;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -48,7 +48,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 
-public class ElasticsearchNodeCommandTests extends ESTestCase {
+public class FesenNodeCommandTests extends ESTestCase {
 
     public void testLoadStateWithoutMissingCustoms() throws IOException {
         runLoadStateTest(false, false);
@@ -74,7 +74,7 @@ public class ElasticsearchNodeCommandTests extends ESTestCase {
         builder.endObject();
 
         Metadata loadedMetadata;
-        try (XContentParser parser = createParser(hasMissingCustoms ? ElasticsearchNodeCommand.namedXContentRegistry : xContentRegistry(),
+        try (XContentParser parser = createParser(hasMissingCustoms ? FesenNodeCommand.namedXContentRegistry : xContentRegistry(),
             JsonXContent.jsonXContent, BytesReference.bytes(builder))) {
             loadedMetadata = Metadata.fromXContent(parser);
         }
@@ -85,7 +85,7 @@ public class ElasticsearchNodeCommandTests extends ESTestCase {
         // make sure the index tombstones are the same too
         if (hasMissingCustoms) {
             assertNotNull(loadedMetadata.custom(IndexGraveyard.TYPE));
-            assertThat(loadedMetadata.custom(IndexGraveyard.TYPE), instanceOf(ElasticsearchNodeCommand.UnknownMetadataCustom.class));
+            assertThat(loadedMetadata.custom(IndexGraveyard.TYPE), instanceOf(FesenNodeCommand.UnknownMetadataCustom.class));
 
             if (preserveUnknownCustoms) {
                 // check that we reserialize unknown metadata correctly again

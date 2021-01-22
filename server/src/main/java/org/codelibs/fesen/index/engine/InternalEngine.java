@@ -61,7 +61,7 @@ import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lucene.LoggerInfoStream;
 import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.uid.Versions;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver;
 import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver.DocIdAndSeqNo;
@@ -87,7 +87,7 @@ import org.codelibs.fesen.index.merge.OnGoingMerge;
 import org.codelibs.fesen.index.seqno.LocalCheckpointTracker;
 import org.codelibs.fesen.index.seqno.SeqNoStats;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
-import org.codelibs.fesen.index.shard.ElasticsearchMergePolicy;
+import org.codelibs.fesen.index.shard.FesenMergePolicy;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.translog.Translog;
@@ -130,12 +130,12 @@ public class InternalEngine extends Engine {
     private volatile long lastDeleteVersionPruneTimeMSec;
 
     private final Translog translog;
-    private final ElasticsearchConcurrentMergeScheduler mergeScheduler;
+    private final FesenConcurrentMergeScheduler mergeScheduler;
 
     private final IndexWriter indexWriter;
 
     private final ExternalReaderManager externalReaderManager;
-    private final ElasticsearchReaderManager internalReaderManager;
+    private final FesenReaderManager internalReaderManager;
 
     private final Lock flushLock = new ReentrantLock();
     private final ReentrantLock optimizeLock = new ReentrantLock();
@@ -220,7 +220,7 @@ public class InternalEngine extends Engine {
         IndexWriter writer = null;
         Translog translog = null;
         ExternalReaderManager externalReaderManager = null;
-        ElasticsearchReaderManager internalReaderManager = null;
+        FesenReaderManager internalReaderManager = null;
         EngineMergeScheduler scheduler = null;
         boolean success = false;
         try {
@@ -346,25 +346,25 @@ public class InternalEngine extends Engine {
      * and old segments can be released in the same way previous version did this (as a side-effect of _refresh)
      */
     @SuppressForbidden(reason = "reference counting is required here")
-    private static final class ExternalReaderManager extends ReferenceManager<ElasticsearchDirectoryReader> {
-        private final BiConsumer<ElasticsearchDirectoryReader, ElasticsearchDirectoryReader> refreshListener;
-        private final ElasticsearchReaderManager internalReaderManager;
+    private static final class ExternalReaderManager extends ReferenceManager<FesenDirectoryReader> {
+        private final BiConsumer<FesenDirectoryReader, FesenDirectoryReader> refreshListener;
+        private final FesenReaderManager internalReaderManager;
         private boolean isWarmedUp; //guarded by refreshLock
 
-        ExternalReaderManager(ElasticsearchReaderManager internalReaderManager,
-                              BiConsumer<ElasticsearchDirectoryReader, ElasticsearchDirectoryReader> refreshListener) throws IOException {
+        ExternalReaderManager(FesenReaderManager internalReaderManager,
+                              BiConsumer<FesenDirectoryReader, FesenDirectoryReader> refreshListener) throws IOException {
             this.refreshListener = refreshListener;
             this.internalReaderManager = internalReaderManager;
             this.current = internalReaderManager.acquire(); // steal the reference without warming up
         }
 
         @Override
-        protected ElasticsearchDirectoryReader refreshIfNeeded(ElasticsearchDirectoryReader referenceToRefresh) throws IOException {
+        protected FesenDirectoryReader refreshIfNeeded(FesenDirectoryReader referenceToRefresh) throws IOException {
             // we simply run a blocking refresh on the internal reference manager and then steal it's reader
             // it's a save operation since we acquire the reader which incs it's reference but then down the road
             // steal it by calling incRef on the "stolen" reader
             internalReaderManager.maybeRefreshBlocking();
-            final ElasticsearchDirectoryReader newReader = internalReaderManager.acquire();
+            final FesenDirectoryReader newReader = internalReaderManager.acquire();
             if (isWarmedUp == false || newReader != referenceToRefresh) {
                 boolean success = false;
                 try {
@@ -387,17 +387,17 @@ public class InternalEngine extends Engine {
         }
 
         @Override
-        protected boolean tryIncRef(ElasticsearchDirectoryReader reference) {
+        protected boolean tryIncRef(FesenDirectoryReader reference) {
             return reference.tryIncRef();
         }
 
         @Override
-        protected int getRefCount(ElasticsearchDirectoryReader reference) {
+        protected int getRefCount(FesenDirectoryReader reference) {
             return reference.getRefCount();
         }
 
         @Override
-        protected void decRef(ElasticsearchDirectoryReader reference) throws IOException {
+        protected void decRef(FesenDirectoryReader reference) throws IOException {
             reference.decRef();
         }
     }
@@ -635,12 +635,12 @@ public class InternalEngine extends Engine {
 
     private ExternalReaderManager createReaderManager(RefreshWarmerListener externalRefreshListener) throws EngineException {
         boolean success = false;
-        ElasticsearchReaderManager internalReaderManager = null;
+        FesenReaderManager internalReaderManager = null;
         try {
             try {
-                final ElasticsearchDirectoryReader directoryReader =
-                    ElasticsearchDirectoryReader.wrap(DirectoryReader.open(indexWriter), shardId);
-                internalReaderManager = new ElasticsearchReaderManager(directoryReader,
+                final FesenDirectoryReader directoryReader =
+                    FesenDirectoryReader.wrap(DirectoryReader.open(indexWriter), shardId);
+                internalReaderManager = new FesenReaderManager(directoryReader,
                     new RamAccountingRefreshListener(engineConfig.getCircuitBreakerService()));
                 lastCommittedSegmentInfos = store.readLastCommittedSegmentsInfo();
                 ExternalReaderManager externalReaderManager = new ExternalReaderManager(internalReaderManager, externalRefreshListener);
@@ -1674,7 +1674,7 @@ public class InternalEngine extends Engine {
                 try {
                     // even though we maintain 2 managers we really do the heavy-lifting only once.
                     // the second refresh will only do the extra work we have to do for warming caches etc.
-                    ReferenceManager<ElasticsearchDirectoryReader> referenceManager = getReferenceManager(scope);
+                    ReferenceManager<FesenDirectoryReader> referenceManager = getReferenceManager(scope);
                     // it is intentional that we never refresh both internal / external together
                     if (block) {
                         referenceManager.maybeRefreshBlocking();
@@ -2028,9 +2028,9 @@ public class InternalEngine extends Engine {
          * thread for optimize, and the 'optimizeLock' guarding this code, and (3) ConcurrentMergeScheduler
          * syncs calls to findForcedMerges.
          */
-        assert indexWriter.getConfig().getMergePolicy() instanceof ElasticsearchMergePolicy : "MergePolicy is " +
+        assert indexWriter.getConfig().getMergePolicy() instanceof FesenMergePolicy : "MergePolicy is " +
             indexWriter.getConfig().getMergePolicy().getClass().getName();
-        ElasticsearchMergePolicy mp = (ElasticsearchMergePolicy) indexWriter.getConfig().getMergePolicy();
+        FesenMergePolicy mp = (FesenMergePolicy) indexWriter.getConfig().getMergePolicy();
         optimizeLock.lock();
         try {
             ensureOpen();
@@ -2259,7 +2259,7 @@ public class InternalEngine extends Engine {
     }
 
     @Override
-    protected final ReferenceManager<ElasticsearchDirectoryReader> getReferenceManager(SearcherScope scope) {
+    protected final ReferenceManager<FesenDirectoryReader> getReferenceManager(SearcherScope scope) {
         switch (scope) {
             case INTERNAL:
                 return internalReaderManager;
@@ -2319,7 +2319,7 @@ public class InternalEngine extends Engine {
             // to enable it.
             mergePolicy = new ShuffleForcedMergePolicy(mergePolicy);
         }
-        iwc.setMergePolicy(new ElasticsearchMergePolicy(mergePolicy));
+        iwc.setMergePolicy(new FesenMergePolicy(mergePolicy));
         iwc.setSimilarity(engineConfig.getSimilarity());
         iwc.setRAMBufferSizeMB(engineConfig.getIndexingBufferSize().getMbFrac());
         iwc.setCodec(engineConfig.getCodec());
@@ -2331,7 +2331,7 @@ public class InternalEngine extends Engine {
     }
 
     /** A listener that warms the segments if needed when acquiring a new reader */
-    static final class RefreshWarmerListener implements BiConsumer<ElasticsearchDirectoryReader, ElasticsearchDirectoryReader> {
+    static final class RefreshWarmerListener implements BiConsumer<FesenDirectoryReader, FesenDirectoryReader> {
         private final Engine.Warmer warmer;
         private final Logger logger;
         private final AtomicBoolean isEngineClosed;
@@ -2343,7 +2343,7 @@ public class InternalEngine extends Engine {
         }
 
         @Override
-        public void accept(ElasticsearchDirectoryReader reader, ElasticsearchDirectoryReader previousReader) {
+        public void accept(FesenDirectoryReader reader, FesenDirectoryReader previousReader) {
             if (warmer != null) {
                 try {
                     warmer.warm(reader);
@@ -2396,7 +2396,7 @@ public class InternalEngine extends Engine {
         return indexWriter.getConfig();
     }
 
-    private final class EngineMergeScheduler extends ElasticsearchConcurrentMergeScheduler {
+    private final class EngineMergeScheduler extends FesenConcurrentMergeScheduler {
         private final AtomicInteger numMergesInFlight = new AtomicInteger(0);
         private final AtomicBoolean isThrottling = new AtomicBoolean();
 

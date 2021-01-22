@@ -21,7 +21,7 @@ package org.codelibs.fesen.transport;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -357,18 +357,18 @@ public class TcpTransportTests extends ESTestCase {
 
     @TestLogging(reason = "testing logging", value = "org.codelibs.fesen.transport.TcpTransport:DEBUG")
     public void testExceptionHandling() throws IllegalAccessException {
-        testExceptionHandling(false, new ElasticsearchException("simulated"), true,
+        testExceptionHandling(false, new FesenException("simulated"), true,
             new MockLogAppender.UnseenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport", Level.ERROR, "*"),
             new MockLogAppender.UnseenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport", Level.WARN, "*"),
             new MockLogAppender.UnseenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport", Level.INFO, "*"),
             new MockLogAppender.UnseenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport", Level.DEBUG, "*"));
-        testExceptionHandling(new ElasticsearchException("simulated"),
+        testExceptionHandling(new FesenException("simulated"),
             new MockLogAppender.SeenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport",
                 Level.WARN, "exception caught on transport layer [*], closing connection"));
         testExceptionHandling(new ClosedChannelException(),
             new MockLogAppender.SeenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport",
                 Level.DEBUG, "close connection exception caught on transport layer [*], disconnecting from relevant node"));
-        testExceptionHandling(new ElasticsearchException("Connection reset"),
+        testExceptionHandling(new FesenException("Connection reset"),
             new MockLogAppender.SeenEventExpectation("message", "org.codelibs.fesen.transport.TcpTransport",
                 Level.DEBUG, "close connection exception caught on transport layer [*], disconnecting from relevant node"));
         testExceptionHandling(new BindException(),

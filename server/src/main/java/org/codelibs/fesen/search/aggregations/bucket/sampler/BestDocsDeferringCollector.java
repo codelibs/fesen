@@ -28,7 +28,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopDocsCollector;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.util.RamUsageEstimator;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.util.BigArrays;
@@ -160,7 +160,7 @@ public class BestDocsDeferringCollector extends DeferringBucketCollector impleme
                     perSegDocs.replayRelatedMatches(allDocs);
                 }
             } catch (IOException e) {
-                throw new ElasticsearchException("IOException collecting best scoring results", e);
+                throw new FesenException("IOException collecting best scoring results", e);
             }
         } finally {
             // done with allDocs now, reclaim some memory
@@ -186,7 +186,7 @@ public class BestDocsDeferringCollector extends DeferringBucketCollector impleme
                 currentLeafCollector = tdc.getLeafCollector(readerContext);
                 setScorer(scorer);
             } catch (IOException e) {
-                throw new ElasticsearchException("IO error creating collector", e);
+                throw new FesenException("IO error creating collector", e);
             }
         }
 
@@ -319,7 +319,7 @@ public class BestDocsDeferringCollector extends DeferringBucketCollector impleme
     }
 
     @Override
-    public void close() throws ElasticsearchException {
+    public void close() throws FesenException {
         Releasables.close(perBucketSamples);
     }
 

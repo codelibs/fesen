@@ -31,7 +31,7 @@ import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
 
 import static org.codelibs.fesen.index.query.QueryBuilders.matchQuery;
 import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
 import static org.hamcrest.Matchers.equalTo;
 
 public class DeleteByQueryConcurrentTests extends ReindexTestCase {

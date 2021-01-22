@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.blobstore.BlobContainer;
 import org.codelibs.fesen.common.blobstore.BlobPath;
 import org.codelibs.fesen.common.blobstore.BlobStore;
@@ -63,7 +63,7 @@ public class FsBlobStore implements BlobStore {
         try {
             return new FsBlobContainer(this, path, buildAndCreate(path));
         } catch (IOException ex) {
-            throw new ElasticsearchException("failed to create blob container", ex);
+            throw new FesenException("failed to create blob container", ex);
         }
     }
 

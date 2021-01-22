@@ -21,12 +21,12 @@ package org.codelibs.fesen.action.admin.cluster.node.usage;
 
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class NodesUsageRequestBuilder
         extends NodesOperationRequestBuilder<NodesUsageRequest, NodesUsageResponse, NodesUsageRequestBuilder> {
 
-    public NodesUsageRequestBuilder(ElasticsearchClient client, ActionType<NodesUsageResponse> action) {
+    public NodesUsageRequestBuilder(FesenClient client, ActionType<NodesUsageResponse> action) {
         super(client, action, new NodesUsageRequest());
     }
 

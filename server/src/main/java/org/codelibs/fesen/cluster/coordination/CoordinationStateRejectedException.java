@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.coordination;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
@@ -31,7 +31,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  * asynchronous, distributed nature of the system. They will, for example, naturally happen during
  * leader election, if multiple nodes are trying to become leader at the same time.
  */
-public class CoordinationStateRejectedException extends ElasticsearchException {
+public class CoordinationStateRejectedException extends FesenException {
     public CoordinationStateRejectedException(String msg, Object... args) {
         super(msg, args);
     }

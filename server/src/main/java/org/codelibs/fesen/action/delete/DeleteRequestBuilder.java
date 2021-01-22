@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.delete;
 
 import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.index.VersionType;
 
@@ -31,11 +31,11 @@ import org.codelibs.fesen.index.VersionType;
 public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteRequest, DeleteResponse, DeleteRequestBuilder>
         implements WriteRequestBuilder<DeleteRequestBuilder> {
 
-    public DeleteRequestBuilder(ElasticsearchClient client, DeleteAction action) {
+    public DeleteRequestBuilder(FesenClient client, DeleteAction action) {
         super(client, action, new DeleteRequest());
     }
 
-    public DeleteRequestBuilder(ElasticsearchClient client, DeleteAction action, @Nullable String index) {
+    public DeleteRequestBuilder(FesenClient client, DeleteAction action, @Nullable String index) {
         super(client, action, new DeleteRequest(index));
     }
 

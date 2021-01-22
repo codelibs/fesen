@@ -366,7 +366,7 @@ public class IndexSettingsTests extends ESTestCase {
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.get(Settings.EMPTY).intValue(),
                 settings.getMaxAdjacencyMatrixFilters());
-        assertWarnings("[index.max_adjacency_matrix_filters] setting was deprecated in Elasticsearch and will be removed in a "
+        assertWarnings("[index.max_adjacency_matrix_filters] setting was deprecated in Fesen and will be removed in a "
                 + "future release! See the breaking changes documentation for the next major version.");
     }
 

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.termvectors;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.VersionType;
 
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsRequest, TermVectorsResponse> {
 
-    public TermVectorsRequestBuilder(ElasticsearchClient client, TermVectorsAction action) {
+    public TermVectorsRequestBuilder(FesenClient client, TermVectorsAction action) {
         super(client, action, new TermVectorsRequest());
     }
 
@@ -44,7 +44,7 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
      * from the provided index. Use {@code index}, {@code type} and
      * {@code id} to specify the document to load.
      */
-    public TermVectorsRequestBuilder(ElasticsearchClient client, TermVectorsAction action, String index, String type, String id) {
+    public TermVectorsRequestBuilder(FesenClient client, TermVectorsAction action, String index, String type, String id) {
         super(client, action, new TermVectorsRequest(index, type, id));
     }
 

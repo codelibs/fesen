@@ -20,12 +20,12 @@
 package org.codelibs.fesen.action.termvectors;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 
 public class MultiTermVectorsRequestBuilder extends ActionRequestBuilder<MultiTermVectorsRequest, MultiTermVectorsResponse> {
 
-    public MultiTermVectorsRequestBuilder(ElasticsearchClient client, MultiTermVectorsAction action) {
+    public MultiTermVectorsRequestBuilder(FesenClient client, MultiTermVectorsAction action) {
         super(client, action, new MultiTermVectorsRequest());
     }
 

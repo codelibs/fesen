@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
@@ -237,7 +237,7 @@ public abstract class ScrollableHitSource {
          */
         String getId();
         /**
-         * The version of the match or {@code -1} if the version wasn't requested. The {@code -1} keeps it inline with Elasticsearch's
+         * The version of the match or {@code -1} if the version wasn't requested. The {@code -1} keeps it inline with Fesen's
          * internal APIs.
          */
         long getVersion();
@@ -449,7 +449,7 @@ public abstract class ScrollableHitSource {
             builder.field(REASON_FIELD);
             {
                 builder.startObject();
-                ElasticsearchException.generateThrowableXContent(builder, params, reason);
+                FesenException.generateThrowableXContent(builder, params, reason);
                 builder.endObject();
             }
             builder.endObject();

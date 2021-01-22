@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.admin.cluster.repositories.get;
 
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 /**
@@ -32,14 +32,14 @@ public class GetRepositoriesRequestBuilder
     /**
      * Creates new get repository request builder
      */
-    public GetRepositoriesRequestBuilder(ElasticsearchClient client, GetRepositoriesAction action) {
+    public GetRepositoriesRequestBuilder(FesenClient client, GetRepositoriesAction action) {
         super(client, action, new GetRepositoriesRequest());
     }
 
     /**
      * Creates new get repository request builder
      */
-    public GetRepositoriesRequestBuilder(ElasticsearchClient client, GetRepositoriesAction action, String... repositories) {
+    public GetRepositoriesRequestBuilder(FesenClient client, GetRepositoriesAction action, String... repositories) {
         super(client, action, new GetRepositoriesRequest(repositories));
     }
 

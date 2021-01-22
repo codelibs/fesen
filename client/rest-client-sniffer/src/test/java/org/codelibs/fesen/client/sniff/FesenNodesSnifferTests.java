@@ -35,7 +35,7 @@ import org.codelibs.fesen.client.Response;
 import org.codelibs.fesen.client.ResponseException;
 import org.codelibs.fesen.client.RestClient;
 import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.sniff.ElasticsearchNodesSniffer;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
 import org.elasticsearch.mocksocket.MockHttpServer;
 import org.junit.After;
 import org.junit.Before;
@@ -62,17 +62,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class ElasticsearchNodesSnifferTests extends RestClientTestCase {
+public class FesenNodesSnifferTests extends RestClientTestCase {
 
     private int sniffRequestTimeout;
-    private ElasticsearchNodesSniffer.Scheme scheme;
+    private FesenNodesSniffer.Scheme scheme;
     private SniffResponse sniffResponse;
     private HttpServer httpServer;
 
     @Before
     public void startHttpServer() throws IOException {
         this.sniffRequestTimeout = RandomNumbers.randomIntBetween(getRandom(), 1000, 10000);
-        this.scheme = RandomPicks.randomFrom(getRandom(), ElasticsearchNodesSniffer.Scheme.values());
+        this.scheme = RandomPicks.randomFrom(getRandom(), FesenNodesSniffer.Scheme.values());
         if (rarely()) {
             this.sniffResponse = SniffResponse.buildFailure();
         } else {
@@ -89,7 +89,7 @@ public class ElasticsearchNodesSnifferTests extends RestClientTestCase {
 
     public void testConstructorValidation() throws IOException {
         try {
-            new ElasticsearchNodesSniffer(null, 1, ElasticsearchNodesSniffer.Scheme.HTTP);
+            new FesenNodesSniffer(null, 1, FesenNodesSniffer.Scheme.HTTP);
             fail("should have failed");
         } catch(NullPointerException e) {
             assertEquals("restClient cannot be null", e.getMessage());
@@ -97,14 +97,14 @@ public class ElasticsearchNodesSnifferTests extends RestClientTestCase {
         HttpHost httpHost = new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort());
         try (RestClient restClient = RestClient.builder(httpHost).build()) {
             try {
-                new ElasticsearchNodesSniffer(restClient, 1, null);
+                new FesenNodesSniffer(restClient, 1, null);
                 fail("should have failed");
             } catch (NullPointerException e) {
                 assertEquals(e.getMessage(), "scheme cannot be null");
             }
             try {
-                new ElasticsearchNodesSniffer(restClient, RandomNumbers.randomIntBetween(getRandom(), Integer.MIN_VALUE, 0),
-                        ElasticsearchNodesSniffer.Scheme.HTTP);
+                new FesenNodesSniffer(restClient, RandomNumbers.randomIntBetween(getRandom(), Integer.MIN_VALUE, 0),
+                        FesenNodesSniffer.Scheme.HTTP);
                 fail("should have failed");
             } catch (IllegalArgumentException e) {
                 assertEquals(e.getMessage(), "sniffRequestTimeoutMillis must be greater than 0");
@@ -115,7 +115,7 @@ public class ElasticsearchNodesSnifferTests extends RestClientTestCase {
     public void testSniffNodes() throws IOException {
         HttpHost httpHost = new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort());
         try (RestClient restClient = RestClient.builder(httpHost).build()) {
-            ElasticsearchNodesSniffer sniffer = new ElasticsearchNodesSniffer(restClient, sniffRequestTimeout, scheme);
+            FesenNodesSniffer sniffer = new FesenNodesSniffer(restClient, sniffRequestTimeout, scheme);
             try {
                 List<Node> sniffedNodes = sniffer.sniff();
                 if (sniffResponse.isFailure) {
@@ -172,7 +172,7 @@ public class ElasticsearchNodesSnifferTests extends RestClientTestCase {
         }
     }
 
-    private static SniffResponse buildSniffResponse(ElasticsearchNodesSniffer.Scheme scheme) throws IOException {
+    private static SniffResponse buildSniffResponse(FesenNodesSniffer.Scheme scheme) throws IOException {
         int numNodes = RandomNumbers.randomIntBetween(getRandom(), 1, 5);
         List<Node> nodes = new ArrayList<>(numNodes);
         JsonFactory jsonFactory = new JsonFactory();

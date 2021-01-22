@@ -22,7 +22,7 @@ package org.codelibs.fesen.discovery.zen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
@@ -372,7 +372,7 @@ public class MasterFaultDetection extends FaultDetection {
                     @Override
                     public void onFailure(String source, @Nullable Exception e) {
                         if (e == null) {
-                            e = new ElasticsearchException("unknown error while processing ping");
+                            e = new FesenException("unknown error while processing ping");
                         }
                         try {
                             channel.sendResponse(e);

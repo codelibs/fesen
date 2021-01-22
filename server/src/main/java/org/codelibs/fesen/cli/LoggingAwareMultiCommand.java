@@ -23,13 +23,13 @@ import org.codelibs.fesen.cli.MultiCommand;
 
 /**
  * A multi-command that is aware of logging. This class should be preferred over the base {@link MultiCommand} class for any CLI tools that
- * depend on core Elasticsearch as they could directly or indirectly touch classes that touch logging and as such logging needs to be
+ * depend on core Fesen as they could directly or indirectly touch classes that touch logging and as such logging needs to be
  * configured.
  */
 public abstract class LoggingAwareMultiCommand extends MultiCommand {
 
     /**
-     * Construct the command with the specified command description. This command will have logging configured without reading Elasticsearch
+     * Construct the command with the specified command description. This command will have logging configured without reading Fesen
      * configuration files.
      *
      * @param description the command description

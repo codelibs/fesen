@@ -29,7 +29,7 @@ import org.codelibs.fesen.gateway.PersistedClusterStateService;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class DetachClusterCommand extends ElasticsearchNodeCommand {
+public class DetachClusterCommand extends FesenNodeCommand {
 
     static final String NODE_DETACHED_MSG = "Node was successfully detached from the cluster";
     static final String CONFIRMATION_MSG =

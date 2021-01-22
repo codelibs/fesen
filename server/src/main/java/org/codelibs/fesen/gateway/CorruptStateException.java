@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.gateway;
 
-import org.codelibs.fesen.ElasticsearchCorruptionException;
+import org.codelibs.fesen.FesenCorruptionException;
 
 /**
- * This exception is thrown when Elasticsearch detects
+ * This exception is thrown when Fesen detects
  * an inconsistency in one of it's persistent states.
  */
-public class CorruptStateException extends ElasticsearchCorruptionException {
+public class CorruptStateException extends FesenCorruptionException {
 
     /**
      * Creates a new {@link CorruptStateException}

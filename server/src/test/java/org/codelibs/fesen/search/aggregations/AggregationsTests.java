@@ -88,7 +88,7 @@ import org.codelibs.fesen.search.aggregations.pipeline.InternalSimpleValueTests;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.InternalAggregationTestCase;
 import org.codelibs.fesen.test.InternalMultiBucketAggregationTestCase;
-import org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions;
+import org.codelibs.fesen.test.hamcrest.FesenAssertions;
 import org.junit.After;
 import org.junit.Before;
 
@@ -261,7 +261,7 @@ public class AggregationsTests extends ESTestCase {
             assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
             Aggregations parsedAggregations = Aggregations.fromXContent(parser);
             BytesReference parsedBytes = XContentHelper.toXContent(parsedAggregations, xContentType, randomBoolean());
-            ElasticsearchAssertions.assertToXContentEquivalent(originalBytes, parsedBytes, xContentType);
+            FesenAssertions.assertToXContentEquivalent(originalBytes, parsedBytes, xContentType);
         }
     }
 

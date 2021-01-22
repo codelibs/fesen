@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.search.MultiSearchResponse;
@@ -159,7 +159,7 @@ public class MultiSearchTemplateResponse extends ActionResponse implements Itera
         for (Item item : items) {
             if (item.isFailure()) {
                 builder.startObject();
-                ElasticsearchException.generateFailureXContent(builder, params, item.getFailure(), true);
+                FesenException.generateFailureXContent(builder, params, item.getFailure(), true);
                 builder.endObject();
             } else {
                 item.getResponse().toXContent(builder, params);

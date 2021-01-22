@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen.module</groupId>
-	<artifactId>geo</artifactId>
+	<artifactId>fesen-geo</artifactId>
 	<parent>
 		<groupId>org.codelibs.fesen</groupId>
 		<artifactId>fesen-parent</artifactId>
@@ -31,7 +31,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.codelibs.fesen.test</groupId>
-					<artifactId>framework</artifactId>
+					<artifactId>fesen-framework</artifactId>
 					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
@@ -80,12 +80,16 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.codelibs.fesen</groupId>
-			<artifactId>engine-server</artifactId>
+			<artifactId>fesen-engine-server</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -44,7 +44,7 @@ public class BulkByScrollTaskStatusOrExceptionTests extends AbstractXContentTest
 
     static StatusOrException createTestInstanceWithExceptions() {
         if (randomBoolean()) {
-            return new StatusOrException(new ElasticsearchException("test_exception"));
+            return new StatusOrException(new FesenException("test_exception"));
         } else {
             return new StatusOrException(BulkByScrollTaskStatusTests.randomStatus());
         }

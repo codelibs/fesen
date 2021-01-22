@@ -43,7 +43,7 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentElasticsearchExtension;
+import org.codelibs.fesen.common.xcontent.XContentFesenExtension;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentGenerator;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
@@ -459,7 +459,7 @@ public abstract class BaseXContentTestCase extends ESTestCase {
         long date = Math.abs(randomLong() % (2 * (long) 10e11)); // 1970-01-01T00:00:00Z - 2033-05-18T05:33:20.000+02:00
         final DateTime t5 = new DateTime(date, randomDateTimeZone());
 
-        expected = "{'t5':'" + XContentElasticsearchExtension.DEFAULT_DATE_PRINTER.print(t5) + "'}";
+        expected = "{'t5':'" + XContentFesenExtension.DEFAULT_DATE_PRINTER.print(t5) + "'}";
         assertResult(expected, () -> builder().startObject().timeField("t5", t5).endObject());
         assertResult(expected, () -> builder().startObject().field("t5").timeValue(t5).endObject());
 
@@ -678,7 +678,7 @@ public abstract class BaseXContentTestCase extends ESTestCase {
         final String paths = Constants.WINDOWS ? "{'objects':['a\\\\b\\\\c','d\\\\e']}" : "{'objects':['a/b/c','d/e']}";
         objects.put(paths, new Object[]{PathUtils.get("a", "b", "c"), PathUtils.get("d", "e")});
 
-        final DateTimeFormatter formatter = XContentElasticsearchExtension.DEFAULT_DATE_PRINTER;
+        final DateTimeFormatter formatter = XContentFesenExtension.DEFAULT_DATE_PRINTER;
         final Date d1 = new DateTime(2016, 1, 1, 0, 0, DateTimeZone.UTC).toDate();
         final Date d2 = new DateTime(2015, 1, 1, 0, 0, DateTimeZone.UTC).toDate();
         objects.put("{'objects':['" + formatter.print(d1.getTime()) + "','" + formatter.print(d2.getTime()) + "']}", new Object[]{d1, d2});
@@ -726,7 +726,7 @@ public abstract class BaseXContentTestCase extends ESTestCase {
         final String path = Constants.WINDOWS ? "{'object':'a\\\\b\\\\c'}" : "{'object':'a/b/c'}";
         object.put(path, PathUtils.get("a", "b", "c"));
 
-        final DateTimeFormatter formatter = XContentElasticsearchExtension.DEFAULT_DATE_PRINTER;
+        final DateTimeFormatter formatter = XContentFesenExtension.DEFAULT_DATE_PRINTER;
         final Date d1 = new DateTime(2016, 1, 1, 0, 0, DateTimeZone.UTC).toDate();
         object.put("{'object':'" + formatter.print(d1.getTime()) + "'}", d1);
 

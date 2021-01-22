@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 
 /**
  * A list backed by an {@link AtomicReferenceArray} with potential null values, easily allowing
@@ -103,7 +103,7 @@ public class AtomicArray<E> {
      */
     public E[] toArray(E[] a) {
         if (a.length != array.length()) {
-            throw new ElasticsearchGenerationException("AtomicArrays can only be copied to arrays of the same size");
+            throw new FesenGenerationException("AtomicArrays can only be copied to arrays of the same size");
         }
         for (int i = 0; i < array.length(); i++) {
             a[i] = array.get(i);

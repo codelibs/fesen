@@ -19,7 +19,7 @@
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchTimeoutException;
+import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.cluster.configuration.ClearVotingConfigExclusionsAction;
 import org.codelibs.fesen.action.admin.cluster.configuration.ClearVotingConfigExclusionsRequest;
@@ -153,7 +153,7 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
         assertThat(clusterService.getClusterApplierService().state().getVotingConfigExclusions(),
                 containsInAnyOrder(otherNode1Exclusion, otherNode2Exclusion));
         final Throwable rootCause = responseHolder.get().getRootCause();
-        assertThat(rootCause, instanceOf(ElasticsearchTimeoutException.class));
+        assertThat(rootCause, instanceOf(FesenTimeoutException.class));
         assertThat(rootCause.getMessage(),
             startsWith("timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. ["));
     }

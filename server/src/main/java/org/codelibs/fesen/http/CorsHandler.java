@@ -69,8 +69,8 @@ import org.codelibs.fesen.rest.RestUtils;
  * files: io.netty.handler.codec.http.cors.CorsHandler, io.netty.handler.codec.http.cors.CorsConfig, and
  * io.netty.handler.codec.http.cors.CorsConfigBuilder.
  *
- * It modifies the original netty code to operate on Elasticsearch http request/response abstractions.
- * Additionally, it removes CORS features that are not used by Elasticsearch.
+ * It modifies the original netty code to operate on Fesen http request/response abstractions.
+ * Additionally, it removes CORS features that are not used by Fesen.
  */
 public class CorsHandler {
 

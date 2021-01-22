@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.common.rounding;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -417,7 +417,7 @@ public abstract class Rounding implements Writeable {
                     rounding = new TimeIntervalRounding(in);
                     break;
                 default:
-                    throw new ElasticsearchException("unknown rounding id [" + id + "]");
+                    throw new FesenException("unknown rounding id [" + id + "]");
             }
             return rounding;
         }

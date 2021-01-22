@@ -22,7 +22,7 @@ package org.codelibs.fesen.cluster.action.shard;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -164,7 +164,7 @@ public class ShardStateAction {
                                 " to [{}] for shard entry [{}]", actionName, masterNode, request), exp);
                             listener.onFailure(exp instanceof RemoteTransportException ?
                                 (Exception) (exp.getCause() instanceof Exception ? exp.getCause() :
-                                    new ElasticsearchException(exp.getCause())) : exp);
+                                    new FesenException(exp.getCause())) : exp);
                         }
                     }
                 });
@@ -708,7 +708,7 @@ public class ShardStateAction {
         }
     }
 
-    public static class NoLongerPrimaryShardException extends ElasticsearchException {
+    public static class NoLongerPrimaryShardException extends FesenException {
 
         public NoLongerPrimaryShardException(ShardId shardId, String msg) {
             super(msg);

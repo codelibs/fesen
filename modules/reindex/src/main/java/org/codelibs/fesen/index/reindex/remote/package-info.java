@@ -18,6 +18,6 @@
  */
 
 /**
- * Support for reindexing from a remote Elasticsearch cluster.
+ * Support for reindexing from a remote Fesen cluster.
  */
 package org.codelibs.fesen.index.reindex.remote;

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.get;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -200,7 +200,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
             this.source = CompressorFactory.uncompressIfNeeded(this.source);
             return this.source;
         } catch (IOException e) {
-            throw new ElasticsearchParseException("failed to decompress source", e);
+            throw new FesenParseException("failed to decompress source", e);
         }
     }
 
@@ -229,14 +229,14 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         try {
             return XContentHelper.convertToJson(source, false);
         } catch (IOException e) {
-            throw new ElasticsearchParseException("failed to convert source to a json string");
+            throw new FesenParseException("failed to convert source to a json string");
         }
     }
 
     /**
      * The source of the document (As a map).
      */
-    public Map<String, Object> sourceAsMap() throws ElasticsearchParseException {
+    public Map<String, Object> sourceAsMap() throws FesenParseException {
         if (source == null) {
             return null;
         }

@@ -47,8 +47,8 @@ import java.util.Collections;
 
 import static org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy.IMMEDIATE;
 import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertHitCount;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertSearchResponse;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertSearchResponse;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;

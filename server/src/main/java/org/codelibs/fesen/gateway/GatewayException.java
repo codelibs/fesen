@@ -21,10 +21,10 @@ package org.codelibs.fesen.gateway;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class GatewayException extends ElasticsearchException {
+public class GatewayException extends FesenException {
 
     public GatewayException(StreamInput in) throws IOException {
         super(in);

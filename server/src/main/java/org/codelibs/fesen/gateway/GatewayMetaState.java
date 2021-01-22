@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
@@ -184,7 +184,7 @@ public class GatewayMetaState implements Closeable {
 
                 this.persistedState.set(persistedState);
             } catch (IOException e) {
-                throw new ElasticsearchException("failed to load metadata", e);
+                throw new FesenException("failed to load metadata", e);
             }
         } else {
             final long currentTerm = 0L;
@@ -195,7 +195,7 @@ public class GatewayMetaState implements Closeable {
                 try (PersistedClusterStateService.Writer persistenceWriter = persistedClusterStateService.createWriter()) {
                     persistenceWriter.writeFullStateAndCommit(currentTerm, clusterState);
                 } catch (IOException e) {
-                    throw new ElasticsearchException("failed to load metadata", e);
+                    throw new FesenException("failed to load metadata", e);
                 }
                 try {
                     // delete legacy cluster state files
@@ -486,7 +486,7 @@ public class GatewayMetaState implements Closeable {
 
             // In the common case it's actually sufficient to commit() the existing state and not do any indexing. For instance,
             // this is true if there's only one data path on this master node, and the commit we just loaded was already written out
-            // by this version of Elasticsearch. TODO TBD should we avoid indexing when possible?
+            // by this version of Fesen. TODO TBD should we avoid indexing when possible?
             final PersistedClusterStateService.Writer writer = persistedClusterStateService.createWriter();
             try {
                 writer.writeFullStateAndCommit(currentTerm, lastAcceptedState);

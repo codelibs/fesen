@@ -21,14 +21,14 @@ package org.codelibs.fesen.index.snapshots;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.index.shard.ShardId;
 
 /**
  * Generic shard restore exception
  */
-public class IndexShardRestoreException extends ElasticsearchException {
+public class IndexShardRestoreException extends FesenException {
     public IndexShardRestoreException(ShardId shardId, String msg) {
         this(shardId, msg, null);
     }

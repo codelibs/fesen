@@ -21,13 +21,13 @@ package org.codelibs.fesen.action.admin.cluster.state;
 
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 
 public class ClusterStateRequestBuilder extends MasterNodeReadOperationRequestBuilder<ClusterStateRequest,
         ClusterStateResponse, ClusterStateRequestBuilder> {
 
-    public ClusterStateRequestBuilder(ElasticsearchClient client, ClusterStateAction action) {
+    public ClusterStateRequestBuilder(FesenClient client, ClusterStateAction action) {
         super(client, action, new ClusterStateRequest());
     }
 

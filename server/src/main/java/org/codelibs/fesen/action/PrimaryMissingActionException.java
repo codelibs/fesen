@@ -21,10 +21,10 @@ package org.codelibs.fesen.action;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class PrimaryMissingActionException extends ElasticsearchException {
+public class PrimaryMissingActionException extends FesenException {
 
     public PrimaryMissingActionException(String message) {
         super(message);

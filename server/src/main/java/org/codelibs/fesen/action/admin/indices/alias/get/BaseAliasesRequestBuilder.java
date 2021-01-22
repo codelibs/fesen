@@ -23,14 +23,14 @@ import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 public abstract class BaseAliasesRequestBuilder<Response extends ActionResponse,
                                                 Builder extends BaseAliasesRequestBuilder<Response, Builder>>
     extends MasterNodeReadOperationRequestBuilder<GetAliasesRequest, Response, Builder> {
 
-    public BaseAliasesRequestBuilder(ElasticsearchClient client, ActionType<Response> action, String... aliases) {
+    public BaseAliasesRequestBuilder(FesenClient client, ActionType<Response> action, String... aliases) {
         super(client, action, new GetAliasesRequest(aliases));
     }
 

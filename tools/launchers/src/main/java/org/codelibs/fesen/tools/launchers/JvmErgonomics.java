@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import org.codelibs.fesen.tools.java_version_checker.JavaVersion;
 
 /**
- * Tunes Elasticsearch JVM settings based on inspection of provided JVM options.
+ * Tunes Fesen JVM settings based on inspection of provided JVM options.
  */
 final class JvmErgonomics {
 
@@ -49,7 +49,7 @@ final class JvmErgonomics {
     }
 
     /**
-     * Chooses additional JVM options for Elasticsearch.
+     * Chooses additional JVM options for Fesen.
      *
      * @param userDefinedJvmOptions A list of JVM options that have been defined by the user.
      * @return A list of additional JVM options to set.
@@ -61,7 +61,7 @@ final class JvmErgonomics {
         final long maxDirectMemorySize = extractMaxDirectMemorySize(finalJvmOptions);
 
         if (System.getProperty("os.name").startsWith("Windows") && JavaVersion.majorVersion(JavaVersion.CURRENT) == 8) {
-            Launchers.errPrintln("Warning: with JDK 8 on Windows, Elasticsearch may be unable to derive correct");
+            Launchers.errPrintln("Warning: with JDK 8 on Windows, Fesen may be unable to derive correct");
             Launchers.errPrintln("  ergonomic settings due to a JDK issue (JDK-8074459). Please use a newer");
             Launchers.errPrintln("  version of Java.");
         }
@@ -94,7 +94,7 @@ final class JvmErgonomics {
 
     private static List<String> flagsFinal(final List<String> userDefinedJvmOptions) throws InterruptedException, IOException {
         /*
-         * To deduce the final set of JVM options that Elasticsearch is going to start with, we start a separate Java process with the JVM
+         * To deduce the final set of JVM options that Fesen is going to start with, we start a separate Java process with the JVM
          * options that we would pass on the command line. For this Java process we will add two additional flags, -XX:+PrintFlagsFinal and
          * -version. This causes the Java process that we start to parse the JVM options into their final values, display them on standard
          * output, print the version to standard error, and then exit. The JVM itself never bootstraps, and therefore this process is

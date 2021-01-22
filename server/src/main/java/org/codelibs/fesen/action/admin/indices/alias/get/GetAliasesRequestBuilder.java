@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.action.admin.indices.alias.get;
 
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class GetAliasesRequestBuilder extends BaseAliasesRequestBuilder<GetAliasesResponse, GetAliasesRequestBuilder> {
 
-    public GetAliasesRequestBuilder(ElasticsearchClient client, GetAliasesAction action, String... aliases) {
+    public GetAliasesRequestBuilder(FesenClient client, GetAliasesAction action, String... aliases) {
         super(client, action, aliases);
     }
 }

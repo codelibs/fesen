@@ -21,16 +21,16 @@ package org.codelibs.fesen.action.admin.indices.analyze;
 import java.util.Map;
 
 import org.codelibs.fesen.action.support.single.shard.SingleShardOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class AnalyzeRequestBuilder
     extends SingleShardOperationRequestBuilder<AnalyzeAction.Request, AnalyzeAction.Response, AnalyzeRequestBuilder> {
 
-    public AnalyzeRequestBuilder(ElasticsearchClient client, AnalyzeAction action) {
+    public AnalyzeRequestBuilder(FesenClient client, AnalyzeAction action) {
         super(client, action, new AnalyzeAction.Request());
     }
 
-    public AnalyzeRequestBuilder(ElasticsearchClient client, AnalyzeAction action, String index, String... text) {
+    public AnalyzeRequestBuilder(FesenClient client, AnalyzeAction action, String index, String... text) {
         super(client, action, new AnalyzeAction.Request(index).text(text));
     }
 

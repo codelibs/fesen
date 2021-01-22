@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.dissect.DissectException;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
 import org.codelibs.fesen.ingest.common.DissectProcessor;
@@ -61,7 +61,7 @@ public class DissectProcessorFactoryTests extends ESTestCase {
         DissectProcessor.Factory factory = new DissectProcessor.Factory();
         Map<String, Object> config = new HashMap<>();
         config.put("pattern", "%{a},%{b},%{c}");
-        Exception e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, "_tag", null, config));
+        Exception e = expectThrows(FesenParseException.class, () -> factory.create(null, "_tag", null, config));
         assertThat(e.getMessage(), Matchers.equalTo("[field] required property is missing"));
     }
 
@@ -69,7 +69,7 @@ public class DissectProcessorFactoryTests extends ESTestCase {
         DissectProcessor.Factory factory = new DissectProcessor.Factory();
         Map<String, Object> config = new HashMap<>();
         config.put("field", randomAlphaOfLength(10));
-        Exception e = expectThrows(ElasticsearchParseException.class, () -> factory.create(null, "_tag", null, config));
+        Exception e = expectThrows(FesenParseException.class, () -> factory.create(null, "_tag", null, config));
         assertThat(e.getMessage(), Matchers.equalTo("[pattern] required property is missing"));
     }
 

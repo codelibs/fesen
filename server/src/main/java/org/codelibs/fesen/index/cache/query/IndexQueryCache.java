@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.cache.query;
 
 import org.apache.lucene.search.QueryCachingPolicy;
 import org.apache.lucene.search.Weight;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.index.AbstractIndexComponent;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.indices.IndicesQueryCache;
@@ -40,7 +40,7 @@ public class IndexQueryCache extends AbstractIndexComponent implements QueryCach
     }
 
     @Override
-    public void close() throws ElasticsearchException {
+    public void close() throws FesenException {
         clear("close");
     }
 

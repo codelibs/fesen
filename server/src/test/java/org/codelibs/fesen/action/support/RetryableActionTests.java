@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.action.support.RetryableAction;
@@ -224,11 +224,11 @@ public class RetryableActionTests extends ESTestCase {
         assertTrue(taskQueue.hasDeferredTasks());
         taskQueue.advanceTime();
 
-        retryableAction.cancel(new ElasticsearchException("Cancelled"));
+        retryableAction.cancel(new FesenException("Cancelled"));
         taskQueue.runAllRunnableTasks();
 
         // A second run will not occur because it is cancelled
         assertEquals(1, executedCount.get());
-        expectThrows(ElasticsearchException.class, future::actionGet);
+        expectThrows(FesenException.class, future::actionGet);
     }
 }

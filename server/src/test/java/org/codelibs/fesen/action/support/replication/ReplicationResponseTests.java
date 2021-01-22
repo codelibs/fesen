@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support.replication;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.replication.ReplicationResponse;
 import org.codelibs.fesen.action.support.replication.ReplicationResponse.ShardInfo;
 import org.codelibs.fesen.common.Strings;
@@ -38,9 +38,9 @@ import org.codelibs.fesen.test.RandomObjects;
 import java.io.IOException;
 import java.util.Locale;
 
-import static org.codelibs.fesen.ElasticsearchExceptionTests.assertDeepEquals;
+import static org.codelibs.fesen.FesenExceptionTests.assertDeepEquals;
 import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.hamcrest.ElasticsearchAssertions.assertToXContentEquivalent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class ReplicationResponseTests extends ESTestCase {
 
@@ -124,8 +124,8 @@ public class ReplicationResponseTests extends ESTestCase {
                 assertEquals(expectedFailure.nodeId(), actualFailure.nodeId());
                 assertEquals(expectedFailure.primary(), actualFailure.primary());
 
-                ElasticsearchException expectedCause = (ElasticsearchException) expectedFailure.getCause();
-                ElasticsearchException actualCause = (ElasticsearchException) actualFailure.getCause();
+                FesenException expectedCause = (FesenException) expectedFailure.getCause();
+                FesenException actualCause = (FesenException) actualFailure.getCause();
                 assertDeepEquals(expectedCause, actualCause);
             }
         }

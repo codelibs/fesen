@@ -18,7 +18,7 @@
  */
 
 /**
- * Infrastructure for testing REST. See {@link ESRestTestCase} for running tests against an Elasticsearch cluster using the REST tests and
+ * Infrastructure for testing REST. See {@link ESRestTestCase} for running tests against an Fesen cluster using the REST tests and
  * the rest of the package for mocking utilities.
  */
 package org.codelibs.fesen.test.rest;

@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchException;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.TestTemplateService;
 import org.codelibs.fesen.ingest.common.FailProcessor;
 import org.codelibs.fesen.test.ESTestCase;
@@ -55,7 +55,7 @@ public class FailProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[message] required property is missing"));
         }
     }
@@ -65,7 +65,7 @@ public class FailProcessorFactoryTests extends ESTestCase {
         Map<String, Object> config = new HashMap<>();
         config.put("message", "{{error}}");
         String processorTag = randomAlphaOfLength(10);
-        ElasticsearchException exception = expectThrows(ElasticsearchException.class, () -> factory.create(null, processorTag,
+        FesenException exception = expectThrows(FesenException.class, () -> factory.create(null, processorTag,
             null, config));
         assertThat(exception.getMessage(), equalTo("java.lang.RuntimeException: could not compile script"));
         assertThat(exception.getMetadata("es.processor_tag").get(0), equalTo(processorTag));

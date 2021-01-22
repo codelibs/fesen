@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search;
 
 import org.apache.lucene.search.Explanation;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.Nullable;
@@ -388,7 +388,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             this.source = CompressorFactory.uncompressIfNeeded(this.source);
             return this.source;
         } catch (IOException e) {
-            throw new ElasticsearchParseException("failed to decompress source", e);
+            throw new FesenParseException("failed to decompress source", e);
         }
     }
 
@@ -419,7 +419,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         try {
             return XContentHelper.convertToJson(getSourceRef(), false);
         } catch (IOException e) {
-            throw new ElasticsearchParseException("failed to convert source to a json string");
+            throw new FesenParseException("failed to convert source to a json string");
         }
     }
 

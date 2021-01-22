@@ -28,7 +28,7 @@ import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.BitUtil;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.CharsRef;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.CharArrays;
 import org.codelibs.fesen.common.Nullable;
@@ -45,7 +45,7 @@ import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
 import org.joda.time.DateTimeZone;
 
-import static org.codelibs.fesen.ElasticsearchException.readStackTrace;
+import static org.codelibs.fesen.FesenException.readStackTrace;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -1019,7 +1019,7 @@ public abstract class StreamInput extends InputStream {
             switch (key) {
                 case 0:
                     final int ord = readVInt();
-                    return (T) ElasticsearchException.readException(this, ord);
+                    return (T) FesenException.readException(this, ord);
                 case 1:
                     String msg1 = readOptionalString();
                     String resource1 = readOptionalString();

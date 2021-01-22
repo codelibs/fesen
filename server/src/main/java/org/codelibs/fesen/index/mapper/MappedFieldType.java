@@ -38,7 +38,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.spans.SpanMultiTermQueryWrapper;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.geo.ShapeRelation;
 import org.codelibs.fesen.common.time.DateMathParser;
@@ -192,7 +192,7 @@ public abstract class MappedFieldType {
      *  boosted by {@link #boost()}.
      *  @throws IllegalArgumentException if {@code value} cannot be converted to the expected data type or if the field is not searchable
      *      due to the way it is configured (eg. not indexed)
-     *  @throws ElasticsearchParseException if {@code value} cannot be converted to the expected data type
+     *  @throws FesenParseException if {@code value} cannot be converted to the expected data type
      *  @throws UnsupportedOperationException if the field is not searchable regardless of options
      *  @throws QueryShardException if the field is not searchable regardless of options
      */

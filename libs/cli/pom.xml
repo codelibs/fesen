@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen.lib</groupId>
-	<artifactId>cli</artifactId>
+	<artifactId>fesen-cli</artifactId>
 	<parent>
 		<groupId>org.codelibs.fesen</groupId>
 		<artifactId>fesen-parent</artifactId>
@@ -28,6 +28,10 @@
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -45,7 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>fesen-core</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

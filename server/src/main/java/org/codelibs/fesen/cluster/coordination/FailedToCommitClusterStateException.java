@@ -20,14 +20,14 @@ package org.codelibs.fesen.cluster.coordination;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.coordination.ClusterStatePublisher;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**
  * Thrown when failing to publish a cluster state. See {@link ClusterStatePublisher} for more details.
  */
-public class FailedToCommitClusterStateException extends ElasticsearchException {
+public class FailedToCommitClusterStateException extends FesenException {
 
     public FailedToCommitClusterStateException(StreamInput in) throws IOException {
         super(in);

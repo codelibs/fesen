@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.admin.cluster.remote;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public final class RemoteInfoRequestBuilder extends ActionRequestBuilder<RemoteInfoRequest, RemoteInfoResponse> {
 
-    public RemoteInfoRequestBuilder(ElasticsearchClient client, RemoteInfoAction action) {
+    public RemoteInfoRequestBuilder(FesenClient client, RemoteInfoAction action) {
         super(client, action, new RemoteInfoRequest());
     }
 }

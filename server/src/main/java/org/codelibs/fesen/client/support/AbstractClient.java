@@ -348,7 +348,7 @@ import org.codelibs.fesen.action.update.UpdateResponse;
 import org.codelibs.fesen.client.AdminClient;
 import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.client.ClusterAdminClient;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.client.FilterClient;
 import org.codelibs.fesen.client.IndicesAdminClient;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata.APIBlock;
@@ -665,7 +665,7 @@ public abstract class AbstractClient implements Client {
         private final ClusterAdmin clusterAdmin;
         private final IndicesAdmin indicesAdmin;
 
-        Admin(ElasticsearchClient client) {
+        Admin(FesenClient client) {
             this.clusterAdmin = new ClusterAdmin(client);
             this.indicesAdmin = new IndicesAdmin(client);
         }
@@ -683,9 +683,9 @@ public abstract class AbstractClient implements Client {
 
     static class ClusterAdmin implements ClusterAdminClient {
 
-        private final ElasticsearchClient client;
+        private final FesenClient client;
 
-        ClusterAdmin(ElasticsearchClient client) {
+        ClusterAdmin(FesenClient client) {
             this.client = client;
         }
 
@@ -1274,9 +1274,9 @@ public abstract class AbstractClient implements Client {
 
     static class IndicesAdmin implements IndicesAdminClient {
 
-        private final ElasticsearchClient client;
+        private final FesenClient client;
 
-        IndicesAdmin(ElasticsearchClient client) {
+        IndicesAdmin(FesenClient client) {
             this.client = client;
         }
 

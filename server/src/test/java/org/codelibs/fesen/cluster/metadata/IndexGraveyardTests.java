@@ -27,7 +27,7 @@ import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentElasticsearchExtension;
+import org.codelibs.fesen.common.xcontent.XContentFesenExtension;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.Index;
@@ -74,7 +74,7 @@ public class IndexGraveyardTests extends ESTestCase {
         if (graveyard.getTombstones().size() > 0) {
             // check that date properly printed
             assertThat(Strings.toString(graveyard, false, true),
-                containsString(XContentElasticsearchExtension.DEFAULT_DATE_PRINTER
+                containsString(XContentFesenExtension.DEFAULT_DATE_PRINTER
                         .print(graveyard.getTombstones().get(0).getDeleteDateInMillis())));
         }
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));

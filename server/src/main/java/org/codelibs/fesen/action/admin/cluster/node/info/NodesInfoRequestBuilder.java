@@ -20,11 +20,11 @@
 package org.codelibs.fesen.action.admin.cluster.node.info;
 
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class NodesInfoRequestBuilder extends NodesOperationRequestBuilder<NodesInfoRequest, NodesInfoResponse, NodesInfoRequestBuilder> {
 
-    public NodesInfoRequestBuilder(ElasticsearchClient client, NodesInfoAction action) {
+    public NodesInfoRequestBuilder(FesenClient client, NodesInfoAction action) {
         super(client, action, new NodesInfoRequest());
     }
 

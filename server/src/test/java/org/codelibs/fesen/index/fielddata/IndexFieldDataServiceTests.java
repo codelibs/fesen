@@ -31,7 +31,7 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
@@ -219,7 +219,7 @@ public class IndexFieldDataServiceTests extends ESSingleNodeTestCase {
         writer.addDocument(doc);
         DirectoryReader open = DirectoryReader.open(writer);
         final boolean wrap = randomBoolean();
-        final IndexReader reader = wrap ? ElasticsearchDirectoryReader.wrap(open, new ShardId("test", "_na_", 1)) : open;
+        final IndexReader reader = wrap ? FesenDirectoryReader.wrap(open, new ShardId("test", "_na_", 1)) : open;
         final AtomicInteger onCacheCalled = new AtomicInteger();
         final AtomicInteger onRemovalCalled = new AtomicInteger();
         ifdService.setListener(new IndexFieldDataCache.Listener() {

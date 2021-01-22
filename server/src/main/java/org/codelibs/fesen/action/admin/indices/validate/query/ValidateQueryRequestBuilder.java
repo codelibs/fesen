@@ -20,13 +20,13 @@
 package org.codelibs.fesen.action.admin.indices.validate.query;
 
 import org.codelibs.fesen.action.support.broadcast.BroadcastOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 public class ValidateQueryRequestBuilder
     extends BroadcastOperationRequestBuilder<ValidateQueryRequest, ValidateQueryResponse, ValidateQueryRequestBuilder> {
 
-    public ValidateQueryRequestBuilder(ElasticsearchClient client, ValidateQueryAction action) {
+    public ValidateQueryRequestBuilder(FesenClient client, ValidateQueryAction action) {
         super(client, action, new ValidateQueryRequest());
     }
 

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.suggest;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
@@ -278,7 +278,7 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
             }
         }
         if (suggestionBuilder == null) {
-            throw new ElasticsearchParseException("missing suggestion object");
+            throw new FesenParseException("missing suggestion object");
         }
         if (suggestText != null) {
             suggestionBuilder.text(suggestText);

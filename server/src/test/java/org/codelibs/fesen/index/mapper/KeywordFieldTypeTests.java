@@ -36,7 +36,7 @@ import org.apache.lucene.search.TermInSetQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.lucene.BytesRefs;
@@ -139,7 +139,7 @@ public class KeywordFieldTypeTests extends FieldTypeTestCase {
         assertEquals(new TermRangeQuery("field", BytesRefs.toBytesRef("foo"), BytesRefs.toBytesRef("bar"), true, false),
                 ft.rangeQuery("foo", "bar", true, false, null, null, null, MOCK_QSC));
 
-        ElasticsearchException ee = expectThrows(ElasticsearchException.class,
+        FesenException ee = expectThrows(FesenException.class,
                 () -> ft.rangeQuery("foo", "bar", true, false, null, null, null, MOCK_QSC_DISALLOW_EXPENSIVE));
         assertEquals("[range] queries on [text] or [keyword] fields cannot be executed when " +
                 "'search.allow_expensive_queries' is set to false.", ee.getMessage());
@@ -155,7 +155,7 @@ public class KeywordFieldTypeTests extends FieldTypeTestCase {
                 () -> unsearchable.regexpQuery("foo.*", 0, 0, 10, null, MOCK_QSC));
         assertEquals("Cannot search on field [field] since it is not indexed.", e.getMessage());
 
-        ElasticsearchException ee = expectThrows(ElasticsearchException.class,
+        FesenException ee = expectThrows(FesenException.class,
                 () -> ft.regexpQuery("foo.*", randomInt(10), 0, randomInt(10) + 1, null, MOCK_QSC_DISALLOW_EXPENSIVE));
         assertEquals("[regexp] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 ee.getMessage());
@@ -171,7 +171,7 @@ public class KeywordFieldTypeTests extends FieldTypeTestCase {
                 () -> unsearchable.fuzzyQuery("foo", Fuzziness.fromEdits(2), 1, 50, true, MOCK_QSC));
         assertEquals("Cannot search on field [field] since it is not indexed.", e.getMessage());
 
-        ElasticsearchException ee = expectThrows(ElasticsearchException.class,
+        FesenException ee = expectThrows(FesenException.class,
                 () -> ft.fuzzyQuery("foo", Fuzziness.AUTO, randomInt(10) + 1, randomInt(10) + 1,
                         randomBoolean(), MOCK_QSC_DISALLOW_EXPENSIVE));
         assertEquals("[fuzzy] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",

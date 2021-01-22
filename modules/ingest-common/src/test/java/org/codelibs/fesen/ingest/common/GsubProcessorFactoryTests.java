@@ -22,7 +22,7 @@ package org.codelibs.fesen.ingest.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
 import org.codelibs.fesen.ingest.common.GsubProcessor;
 
@@ -58,7 +58,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[pattern] required property is missing"));
         }
     }
@@ -71,7 +71,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[replacement] required property is missing"));
         }
     }
@@ -85,7 +85,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), containsString("[pattern] Invalid regex pattern. Unclosed character class"));
         }
     }

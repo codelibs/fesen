@@ -21,14 +21,14 @@ package org.codelibs.fesen.client.transport;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.rest.RestStatus;
 
 /**
  * An exception indicating no node is available to perform the operation.
  */
-public class NoNodeAvailableException extends ElasticsearchException {
+public class NoNodeAvailableException extends FesenException {
 
     public NoNodeAvailableException(String message) {
         super(message);

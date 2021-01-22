@@ -20,12 +20,12 @@ package org.codelibs.fesen.indices;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.rest.RestStatus;
 
-public class InvalidIndexTemplateException extends ElasticsearchException {
+public class InvalidIndexTemplateException extends FesenException {
 
     private final String name;
 

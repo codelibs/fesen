@@ -21,10 +21,10 @@ package org.codelibs.fesen.http;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-public class HttpException extends ElasticsearchException {
+public class HttpException extends FesenException {
 
     public HttpException(String message) {
         super(message);

@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.recovery;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.index.replication.ESIndexLevelReplicationTestCase;
@@ -135,8 +135,8 @@ public class RecoveriesCollectionTests extends ESIndexLevelReplicationTestCase {
             assertEquals(referencesToStore, resetRecovery.store().refCount());
             assertEquals(currentAsTarget, shard.recoveryStats().currentAsTarget());
             assertEquals(recoveryTarget.refCount(), 0);
-            expectThrows(ElasticsearchException.class, () -> recoveryTarget.store());
-            expectThrows(ElasticsearchException.class, () -> recoveryTarget.indexShard());
+            expectThrows(FesenException.class, () -> recoveryTarget.store());
+            expectThrows(FesenException.class, () -> recoveryTarget.indexShard());
             String resetTempFileName = resetRecovery.getTempNameForFile("foobar");
             assertNotEquals(tempFileName, resetTempFileName);
             assertEquals(currentAsTarget, shard.recoveryStats().currentAsTarget());

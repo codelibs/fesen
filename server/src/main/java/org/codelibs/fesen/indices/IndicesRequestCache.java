@@ -34,7 +34,7 @@ import org.codelibs.fesen.common.cache.CacheBuilder;
 import org.codelibs.fesen.common.cache.CacheLoader;
 import org.codelibs.fesen.common.cache.RemovalListener;
 import org.codelibs.fesen.common.cache.RemovalNotification;
-import org.codelibs.fesen.common.lucene.index.ElasticsearchDirectoryReader;
+import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
@@ -125,7 +125,7 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
             if (!registeredClosedListeners.containsKey(cleanupKey)) {
                 Boolean previous = registeredClosedListeners.putIfAbsent(cleanupKey, Boolean.TRUE);
                 if (previous == null) {
-                    ElasticsearchDirectoryReader.addReaderCloseListener(reader, cleanupKey);
+                    FesenDirectoryReader.addReaderCloseListener(reader, cleanupKey);
                 }
             }
         } else {

@@ -19,7 +19,7 @@
 package org.codelibs.fesen.action.support.master;
 
 import org.codelibs.fesen.action.ActionType;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.unit.TimeValue;
 
 /**
@@ -29,7 +29,7 @@ public abstract class AcknowledgedRequestBuilder<Request extends AcknowledgedReq
         RequestBuilder extends AcknowledgedRequestBuilder<Request, Response, RequestBuilder>>
         extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder> {
 
-    protected AcknowledgedRequestBuilder(ElasticsearchClient client, ActionType<Response> action, Request request) {
+    protected AcknowledgedRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 

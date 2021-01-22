@@ -25,7 +25,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.compress.CompressedXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -153,7 +153,7 @@ public class ParentIdQueryBuilderTests extends AbstractQueryTestCase<ParentIdQue
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         ParentIdQueryBuilder queryBuilder = doCreateTestQueryBuilder();
-        ElasticsearchException e = expectThrows(ElasticsearchException.class,
+        FesenException e = expectThrows(FesenException.class,
                 () -> queryBuilder.toQuery(queryShardContext));
         assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
                 e.getMessage());

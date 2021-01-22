@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.fetch.subphase;
 
 import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -100,7 +100,7 @@ public final class FetchSourcePhase implements FetchSubPhase {
             }
             hitContext.hit().sourceRef(BytesReference.bytes(builder));
         } catch (IOException e) {
-            throw new ElasticsearchException("Error filtering source", e);
+            throw new FesenException("Error filtering source", e);
         }
     }
 

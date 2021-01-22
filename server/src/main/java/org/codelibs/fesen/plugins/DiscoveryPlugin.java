@@ -33,7 +33,7 @@ import org.codelibs.fesen.discovery.SeedHostsProvider;
 import org.codelibs.fesen.transport.TransportService;
 
 /**
- * An additional extension point for {@link Plugin}s that extends Elasticsearch's discovery functionality. To add an additional
+ * An additional extension point for {@link Plugin}s that extends Fesen's discovery functionality. To add an additional
  * {@link NetworkService.CustomNameResolver} just implement the interface and implement the {@link #getCustomNameResolver(Settings)} method:
  *
  * <pre>{@code

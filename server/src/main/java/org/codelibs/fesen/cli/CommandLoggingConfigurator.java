@@ -24,13 +24,13 @@ import org.codelibs.fesen.common.logging.LogConfigurator;
 import org.codelibs.fesen.common.settings.Settings;
 
 /**
- * Holder class for method to configure logging without Elasticsearch configuration files for use in CLI tools that will not read such
+ * Holder class for method to configure logging without Fesen configuration files for use in CLI tools that will not read such
  * files.
  */
 public final class CommandLoggingConfigurator {
 
     /**
-     * Configures logging without Elasticsearch configuration files based on the system property "es.logger.level" only. As such, any
+     * Configures logging without Fesen configuration files based on the system property "es.logger.level" only. As such, any
      * logging will be written to the console.
      */
     public static void configureLoggingWithoutConfig() {

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.ingest.TestTemplateService;
 import org.codelibs.fesen.ingest.common.RenameProcessor;
 import org.codelibs.fesen.test.ESTestCase;
@@ -71,7 +71,7 @@ public class RenameProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }
@@ -82,7 +82,7 @@ public class RenameProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(ElasticsearchParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[target_field] required property is missing"));
         }
     }

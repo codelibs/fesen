@@ -20,7 +20,7 @@
 package org.codelibs.fesen.action.get;
 
 import org.codelibs.fesen.action.support.single.shard.SingleShardOperationRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.index.VersionType;
@@ -31,11 +31,11 @@ import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
  */
 public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetRequest, GetResponse, GetRequestBuilder> {
 
-    public GetRequestBuilder(ElasticsearchClient client, GetAction action) {
+    public GetRequestBuilder(FesenClient client, GetAction action) {
         super(client, action, new GetRequest());
     }
 
-    public GetRequestBuilder(ElasticsearchClient client, GetAction action, @Nullable String index) {
+    public GetRequestBuilder(FesenClient client, GetAction action, @Nullable String index) {
         super(client, action, new GetRequest(index));
     }
 

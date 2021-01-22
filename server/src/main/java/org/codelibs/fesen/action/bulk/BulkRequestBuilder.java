@@ -29,7 +29,7 @@ import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.action.update.UpdateRequest;
 import org.codelibs.fesen.action.update.UpdateRequestBuilder;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
@@ -43,18 +43,18 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
         implements WriteRequestBuilder<BulkRequestBuilder> {
 
     /**
-     * @deprecated use {@link #BulkRequestBuilder(ElasticsearchClient, BulkAction, String)} instead
+     * @deprecated use {@link #BulkRequestBuilder(FesenClient, BulkAction, String)} instead
      */
     @Deprecated
-    public BulkRequestBuilder(ElasticsearchClient client, BulkAction action, @Nullable String globalIndex, @Nullable String globalType) {
+    public BulkRequestBuilder(FesenClient client, BulkAction action, @Nullable String globalIndex, @Nullable String globalType) {
         super(client, action, new BulkRequest(globalIndex, globalType));
     }
 
-    public BulkRequestBuilder(ElasticsearchClient client, BulkAction action, @Nullable String globalIndex) {
+    public BulkRequestBuilder(FesenClient client, BulkAction action, @Nullable String globalIndex) {
         super(client, action, new BulkRequest(globalIndex));
     }
 
-    public BulkRequestBuilder(ElasticsearchClient client, BulkAction action) {
+    public BulkRequestBuilder(FesenClient client, BulkAction action) {
         super(client, action, new BulkRequest());
     }
 

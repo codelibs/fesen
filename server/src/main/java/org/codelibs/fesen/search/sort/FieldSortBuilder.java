@@ -25,7 +25,7 @@ import org.apache.lucene.index.MultiTerms;
 import org.apache.lucene.index.PointValues;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.search.SortField;
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -189,7 +189,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
 
     /**
      * Set the type to use in case the current field is not mapped in an index.
-     * Specifying a type tells Elasticsearch what type the sort values should
+     * Specifying a type tells Fesen what type the sort values should
      * have, which is important for cross-index search, if there are sort fields
      * that exist on some indices only. If the unmapped type is {@code null}
      * then query execution will fail if one or more indices don't have a
@@ -314,7 +314,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
     /**
      * Forces the numeric type to use for the field. The query will fail if this option
      * is set on a field that is not mapped as a numeric in some indices.
-     * Specifying a numeric type tells Elasticsearch what type the sort values should
+     * Specifying a numeric type tells Fesen what type the sort values should
      * have, which is important for cross-index search, if a field does not have
      * the same type on all indices.
      * Allowed values are <code>long</code>, <code>double</code>, <code>date</code> and <code>date_nanos</code>.
@@ -464,7 +464,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
             MappedFieldType.Relation relation = fieldType.isFieldWithinQuery(context.getIndexReader(), minValue, maxValue,
                 true, true, null, dateMathParser, context);
             return relation == MappedFieldType.Relation.DISJOINT;
-        } catch (ElasticsearchParseException exc) {
+        } catch (FesenParseException exc) {
             // can happen if the sort field is mapped differently in another search index
             return false;
         }

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.test;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
 import org.codelibs.fesen.common.Strings;
@@ -50,7 +50,7 @@ public abstract class AbstractBroadcastResponseTestCase<T extends BroadcastRespo
         if (failedShards > 0) {
             failures = new ArrayList<>();
             for (int i = 0; i < failedShards; i++) {
-                ElasticsearchException exception = new ElasticsearchException("exception message " + i);
+                FesenException exception = new FesenException("exception message " + i);
                 String index = randomAlphaOfLengthBetween(3, 10);
                 exception.setIndex(new Index(index, "_na_"));
                 exception.setShard(new ShardId(index, "_na_", i));
@@ -96,13 +96,13 @@ public abstract class AbstractBroadcastResponseTestCase<T extends BroadcastRespo
     public void testFailuresDeduplication() throws IOException {
         List<DefaultShardOperationFailedException> failures = new ArrayList<>();
         Index index = new Index("test", "_na_");
-        ElasticsearchException exception1 = new ElasticsearchException("foo", new IllegalArgumentException("bar"));
+        FesenException exception1 = new FesenException("foo", new IllegalArgumentException("bar"));
         exception1.setIndex(index);
         exception1.setShard(new ShardId(index, 0));
-        ElasticsearchException exception2 = new ElasticsearchException("foo", new IllegalArgumentException("bar"));
+        FesenException exception2 = new FesenException("foo", new IllegalArgumentException("bar"));
         exception2.setIndex(index);
         exception2.setShard(new ShardId(index, 1));
-        ElasticsearchException exception3 = new ElasticsearchException("fizz", new IllegalStateException("buzz"));
+        FesenException exception3 = new FesenException("fizz", new IllegalStateException("buzz"));
         exception3.setIndex(index);
         exception3.setShard(new ShardId(index, 2));
         failures.add(new DefaultShardOperationFailedException(exception1));

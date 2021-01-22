@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen.module</groupId>
-	<artifactId>kibana</artifactId>
+	<artifactId>fesen-kibana</artifactId>
 	<parent>
 		<groupId>org.codelibs.fesen</groupId>
 		<artifactId>fesen-parent</artifactId>
@@ -31,7 +31,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.codelibs.fesen.test</groupId>
-					<artifactId>framework</artifactId>
+					<artifactId>fesen-framework</artifactId>
 					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
@@ -86,6 +86,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -101,12 +105,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.client</groupId>
-			<artifactId>rest-client</artifactId>
+			<artifactId>fesen-rest-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.lib</groupId>
-			<artifactId>ssl-config</artifactId>
+			<artifactId>fesen-ssl-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -131,7 +135,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.module</groupId>
-			<artifactId>reindex</artifactId>
+			<artifactId>fesen-reindex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

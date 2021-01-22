@@ -22,12 +22,12 @@ package org.codelibs.fesen.action.admin.indices.delete;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 
 public class DeleteIndexRequestBuilder
         extends AcknowledgedRequestBuilder<DeleteIndexRequest, AcknowledgedResponse, DeleteIndexRequestBuilder> {
 
-    public DeleteIndexRequestBuilder(ElasticsearchClient client, DeleteIndexAction action, String... indices) {
+    public DeleteIndexRequestBuilder(FesenClient client, DeleteIndexAction action, String... indices) {
         super(client, action, new DeleteIndexRequest(indices));
     }
 

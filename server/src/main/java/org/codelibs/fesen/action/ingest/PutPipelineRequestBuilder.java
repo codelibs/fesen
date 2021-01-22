@@ -21,17 +21,17 @@ package org.codelibs.fesen.action.ingest;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.client.ElasticsearchClient;
+import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
 public class PutPipelineRequestBuilder extends ActionRequestBuilder<PutPipelineRequest, AcknowledgedResponse> {
 
-    public PutPipelineRequestBuilder(ElasticsearchClient client, PutPipelineAction action) {
+    public PutPipelineRequestBuilder(FesenClient client, PutPipelineAction action) {
         super(client, action, new PutPipelineRequest());
     }
 
-    public PutPipelineRequestBuilder(ElasticsearchClient client, PutPipelineAction action, String id, BytesReference source,
+    public PutPipelineRequestBuilder(FesenClient client, PutPipelineAction action, String id, BytesReference source,
                                      XContentType xContentType) {
         super(client, action, new PutPipelineRequest(id, source, xContentType));
     }

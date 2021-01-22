@@ -112,7 +112,7 @@ public class FsProbe {
 
             return new FsInfo.IoStats(devicesStats.toArray(new FsInfo.DeviceStats[devicesStats.size()]));
         } catch (Exception e) {
-            // do not fail Elasticsearch if something unexpected
+            // do not fail Fesen if something unexpected
             // happens here
             logger.debug(() -> new ParameterizedMessage(
                     "unexpected exception processing /proc/diskstats for devices {}", devicesNumbers), e);

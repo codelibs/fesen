@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchException;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.CompoundProcessor;
 import org.codelibs.fesen.ingest.IngestDocument;
@@ -122,9 +122,9 @@ public class PipelineProcessorTests extends ESTestCase {
         when(ingestService.getPipeline(outerPipelineId)).thenReturn(outer);
         when(ingestService.getPipeline(innerPipelineId)).thenReturn(inner);
         outerConfig.put("name", innerPipelineId);
-        ElasticsearchException[] e = new ElasticsearchException[1];
+        FesenException[] e = new FesenException[1];
         factory.create(Collections.emptyMap(), null, null, outerConfig)
-            .execute(testIngestDocument, (result, e1) -> e[0] = (ElasticsearchException) e1);
+            .execute(testIngestDocument, (result, e1) -> e[0] = (FesenException) e1);
         assertEquals(
             "Cycle detected for pipeline: inner", e[0].getRootCause().getMessage()
         );

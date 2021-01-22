@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.ElasticsearchParseException;
+import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.script.ScriptService;
 
@@ -76,11 +76,11 @@ public final class Pipeline {
         List<Processor> onFailureProcessors =
             ConfigurationUtils.readProcessorConfigs(onFailureProcessorConfigs, scriptService, processorFactories);
         if (config.isEmpty() == false) {
-            throw new ElasticsearchParseException("pipeline [" + id +
+            throw new FesenParseException("pipeline [" + id +
                     "] doesn't support one or more provided configuration parameters " + Arrays.toString(config.keySet().toArray()));
         }
         if (onFailureProcessorConfigs != null && onFailureProcessors.isEmpty()) {
-            throw new ElasticsearchParseException("pipeline [" + id + "] cannot have an empty on_failure option defined");
+            throw new FesenParseException("pipeline [" + id + "] cannot have an empty on_failure option defined");
         }
         CompoundProcessor compoundProcessor = new CompoundProcessor(false, Collections.unmodifiableList(processors),
                 Collections.unmodifiableList(onFailureProcessors));

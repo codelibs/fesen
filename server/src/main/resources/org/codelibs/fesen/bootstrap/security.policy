@@ -24,13 +24,13 @@
 //// SecurityManager impl:
 //// Must have all permissions to properly perform access checks
 
-grant codeBase "${codebase.secure-sm}" {
+grant codeBase "${codebase.fesen-secure-sm}" {
   permission java.security.AllPermission;
 };
 
-//// Elasticsearch core:
+//// Fesen core:
 //// These are only allowed inside the server jar, not in plugins
-grant codeBase "${codebase.engine-server}" {
+grant codeBase "${codebase.fesen-engine-server}" {
   // needed for loading plugins which may expect the context class loader to be set
   permission java.lang.RuntimePermission "setContextClassLoader";
 };
@@ -54,7 +54,7 @@ grant codeBase "${codebase.lucene-misc}" {
   permission java.nio.file.LinkPermission "hard";
 };
 
-grant codeBase "${codebase.plugin-classloader}" {
+grant codeBase "${codebase.fesen-plugin-classloader}" {
   // needed to create the classloader which allows plugins to extend other plugins
   permission java.lang.RuntimePermission "createClassLoader";
 };

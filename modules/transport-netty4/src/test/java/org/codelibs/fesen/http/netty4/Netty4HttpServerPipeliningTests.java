@@ -61,7 +61,7 @@ import java.util.concurrent.Executors;
 import static org.hamcrest.Matchers.contains;
 
 /**
- * This test just tests, if he pipelining works in general with out any connection the Elasticsearch handler
+ * This test just tests, if he pipelining works in general with out any connection the Fesen handler
  */
 public class Netty4HttpServerPipeliningTests extends ESTestCase {
     private NetworkService networkService;

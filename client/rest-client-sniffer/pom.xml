@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen.client</groupId>
-	<artifactId>rest-client-sniffer</artifactId>
+	<artifactId>fesen-rest-client-sniffer</artifactId>
 	<parent>
 		<groupId>org.codelibs.fesen</groupId>
 		<artifactId>fesen-parent</artifactId>
@@ -28,12 +28,16 @@
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.codelibs.fesen.client</groupId>
-			<artifactId>rest-client</artifactId>
+			<artifactId>fesen-rest-client</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -99,7 +103,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs.fesen.client</groupId>
-			<artifactId>test</artifactId>
+			<artifactId>fesen-test</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -18,6 +18,6 @@
  */
 
 /**
- * Classes for streaming objects from one Elasticsearch node to another over its binary internode protocol.
+ * Classes for streaming objects from one Fesen node to another over its binary internode protocol.
  */
 package org.codelibs.fesen.common.io.stream;

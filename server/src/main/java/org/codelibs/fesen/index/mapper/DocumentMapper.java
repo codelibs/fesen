@@ -26,7 +26,7 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.ElasticsearchGenerationException;
+import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.compress.CompressedXContent;
@@ -142,7 +142,7 @@ public class DocumentMapper implements ToXContentFragment {
         try {
             mappingSource = new CompressedXContent(this, XContentType.JSON, ToXContent.EMPTY_PARAMS);
         } catch (Exception e) {
-            throw new ElasticsearchGenerationException("failed to serialize source for type [" + type + "]", e);
+            throw new FesenGenerationException("failed to serialize source for type [" + type + "]", e);
         }
 
         final Collection<String> deleteTombstoneMetadataFields = Arrays.asList(VersionFieldMapper.NAME, IdFieldMapper.NAME,
