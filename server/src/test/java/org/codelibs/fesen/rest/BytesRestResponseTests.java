@@ -334,7 +334,7 @@ public class BytesRestResponseTests extends ESTestCase {
                 }
             }
         });
-        assertEquals("Failed to parse elasticsearch status exception: no exception was found", e.getMessage());
+        assertEquals("Failed to parse fesen status exception: no exception was found", e.getMessage());
     }
 
     public static class WithHeadersException extends FesenException {

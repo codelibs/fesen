@@ -164,7 +164,7 @@ public class SslConfigurationKeys {
     }
 
     /**
-     * The list of keys that are used to load a secure setting (such as a password) that would typically be stored in the elasticsearch
+     * The list of keys that are used to load a secure setting (such as a password) that would typically be stored in the fesen
      * keystore.
      */
     public static List<String> getSecureStringKeys() {

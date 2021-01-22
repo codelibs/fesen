@@ -93,7 +93,7 @@ final class Bootstrap {
                     // bail out
                 }
             }
-        }, "elasticsearch[keepAlive/" + Version.CURRENT + "]");
+        }, "fesen[keepAlive/" + Version.CURRENT + "]");
         keepAliveThread.setDaemon(false);
         // keep this thread alive (non daemon thread) until we shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -110,7 +110,7 @@ final class Bootstrap {
 
         // check if the user is running as root, and bail
         if (Natives.definitelyRunningAsRoot()) {
-            throw new RuntimeException("can not run elasticsearch as root");
+            throw new RuntimeException("can not run fesen as root");
         }
 
         // enable system call filter
@@ -311,7 +311,7 @@ final class Bootstrap {
             builder.setSecureSettings(secureSettings);
         }
         return InternalSettingsPreparer.prepareEnvironment(builder.build(), Collections.emptyMap(), configPath,
-                // HOSTNAME is set by elasticsearch-env and elasticsearch-env.bat so it is always available
+                // HOSTNAME is set by fesen-env and fesen-env.bat so it is always available
                 () -> System.getenv("HOSTNAME"));
     }
 
@@ -335,7 +335,7 @@ final class Bootstrap {
     }
 
     /**
-     * This method is invoked by {@link Fesen#main(String[])} to startup elasticsearch.
+     * This method is invoked by {@link Fesen#main(String[])} to startup fesen.
      */
     static void init(
             final boolean foreground,

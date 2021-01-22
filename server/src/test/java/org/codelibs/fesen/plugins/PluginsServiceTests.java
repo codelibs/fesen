@@ -218,7 +218,7 @@ public class PluginsServiceTests extends ESTestCase {
         final IllegalStateException e = expectThrows(IllegalStateException.class, () -> newPluginsService(settings));
         final String expected = String.format(
                 Locale.ROOT,
-                "found file [%s] from a failed attempt to remove the plugin [fake]; execute [elasticsearch-plugin remove fake]",
+                "found file [%s] from a failed attempt to remove the plugin [fake]; execute [fesen-plugin remove fake]",
                 removing);
         assertThat(e, hasToString(containsString(expected)));
     }

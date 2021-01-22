@@ -50,7 +50,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * Class responsible for sniffing the http hosts from elasticsearch through the nodes info api and returning them back.
+ * Class responsible for sniffing the http hosts from fesen through the nodes info api and returning them back.
  * Compatible with elasticsearch 2.x+.
  */
 public final class FesenNodesSniffer implements NodesSniffer {
@@ -68,7 +68,7 @@ public final class FesenNodesSniffer implements NodesSniffer {
      * Creates a new instance of the Fesen sniffer. It will use the provided {@link RestClient} to fetch the hosts,
      * through the nodes info api, the default sniff request timeout value {@link #DEFAULT_SNIFF_REQUEST_TIMEOUT} and http
      * as the scheme for all the hosts.
-     * @param restClient client used to fetch the hosts from elasticsearch through nodes info api. Usually the same instance
+     * @param restClient client used to fetch the hosts from fesen through nodes info api. Usually the same instance
      *                   that is also provided to {@link Sniffer#builder(RestClient)}, so that the hosts are set to the same
      *                   client that was used to fetch them.
      */
@@ -79,13 +79,13 @@ public final class FesenNodesSniffer implements NodesSniffer {
     /**
      * Creates a new instance of the Fesen sniffer. It will use the provided {@link RestClient} to fetch the hosts
      * through the nodes info api, the provided sniff request timeout value and scheme.
-     * @param restClient client used to fetch the hosts from elasticsearch through nodes info api. Usually the same instance
+     * @param restClient client used to fetch the hosts from fesen through nodes info api. Usually the same instance
      *                   that is also provided to {@link Sniffer#builder(RestClient)}, so that the hosts are set to the same
      *                   client that was used to sniff them.
      * @param sniffRequestTimeoutMillis the sniff request timeout (in milliseconds) to be passed in as a query string parameter
-     *                                  to elasticsearch. Allows to halt the request without any failure, as only the nodes
+     *                                  to fesen. Allows to halt the request without any failure, as only the nodes
      *                                  that have responded within this timeout will be returned.
-     * @param scheme the scheme to associate sniffed nodes with (as it is not returned by elasticsearch)
+     * @param scheme the scheme to associate sniffed nodes with (as it is not returned by fesen)
      */
     public FesenNodesSniffer(RestClient restClient, long sniffRequestTimeoutMillis, Scheme scheme) {
         this.restClient = Objects.requireNonNull(restClient, "restClient cannot be null");
@@ -98,7 +98,7 @@ public final class FesenNodesSniffer implements NodesSniffer {
     }
 
     /**
-     * Calls the elasticsearch nodes info api, parses the response and returns all the found http hosts
+     * Calls the fesen nodes info api, parses the response and returns all the found http hosts
      */
     @Override
     public List<Node> sniff() throws IOException {

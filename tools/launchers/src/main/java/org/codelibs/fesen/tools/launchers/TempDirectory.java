@@ -48,10 +48,10 @@ final class TempDirectory {
          */
         final Path path;
         if (System.getProperty("os.name").startsWith("Windows")) {
-            path = Paths.get(System.getProperty("java.io.tmpdir"), "elasticsearch");
+            path = Paths.get(System.getProperty("java.io.tmpdir"), "fesen");
             Files.createDirectories(path);
         } else {
-            path = Launchers.createTempDirectory("elasticsearch-");
+            path = Launchers.createTempDirectory("fesen-");
         }
         Launchers.outPrintln(path.toString());
     }

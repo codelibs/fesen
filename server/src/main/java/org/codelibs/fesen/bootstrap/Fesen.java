@@ -42,7 +42,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * This class starts elasticsearch.
+ * This class starts fesen.
  */
 class Fesen extends EnvironmentAwareCommand {
 
@@ -71,7 +71,7 @@ class Fesen extends EnvironmentAwareCommand {
     }
 
     /**
-     * Main entry point for starting elasticsearch
+     * Main entry point for starting fesen
      */
     public static void main(final String[] args) throws Exception {
         overrideDnsCachePolicyProperties();
@@ -183,7 +183,7 @@ class Fesen extends EnvironmentAwareCommand {
      * http://commons.apache.org/proper/commons-daemon/procrun.html
      *
      * NOTE: If this method is renamed and/or moved, make sure to
-     * update elasticsearch-service.bat!
+     * update fesen-service.bat!
      */
     static void close(String[] args) throws IOException {
         Bootstrap.stop();

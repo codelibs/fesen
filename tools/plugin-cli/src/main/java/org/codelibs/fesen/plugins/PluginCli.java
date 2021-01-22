@@ -29,14 +29,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * A cli tool for adding, removing and listing plugins for elasticsearch.
+ * A cli tool for adding, removing and listing plugins for fesen.
  */
 public class PluginCli extends LoggingAwareMultiCommand {
 
     private final Collection<Command> commands;
 
     private PluginCli() {
-        super("A tool for managing installed elasticsearch plugins");
+        super("A tool for managing installed fesen plugins");
         subcommands.put("list", new ListPluginsCommand());
         subcommands.put("install", new InstallPluginCommand());
         subcommands.put("remove", new RemovePluginCommand());

@@ -22,7 +22,7 @@ package org.codelibs.fesen.geometry;
 import java.util.Locale;
 
 /**
- * Shape types supported by elasticsearch
+ * Shape types supported by fesen
  */
 public enum ShapeType {
     POINT,

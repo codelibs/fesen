@@ -146,14 +146,14 @@ public class BootstrapForTesting {
 
                 // read test-framework permissions
                 Map<String, URL> codebases = Security.getCodebaseJarMap(JarHell.parseClassPath());
-                // when testing server, the main elasticsearch code is not yet in a jar, so we need to manually add it
-                addClassCodebase(codebases,"elasticsearch", "org.codelibs.fesen.plugins.PluginsService");
+                // when testing server, the main fesen code is not yet in a jar, so we need to manually add it
+                addClassCodebase(codebases,"fesen-engine-server", "org.codelibs.fesen.plugins.PluginsService");
                 if (System.getProperty("tests.gradle") == null) {
                     // intellij and eclipse don't package our internal libs, so we need to set the codebases for them manually
                     addClassCodebase(codebases,"plugin-classloader", "org.codelibs.fesen.plugins.ExtendedPluginsClassLoader");
-                    addClassCodebase(codebases,"elasticsearch-nio", "org.codelibs.fesen.nio.ChannelFactory");
-                    addClassCodebase(codebases, "elasticsearch-secure-sm", "org.codelibs.fesen.secure_sm.SecureSM");
-                    addClassCodebase(codebases, "elasticsearch-rest-client", "org.codelibs.fesen.client.RestClient");
+                    addClassCodebase(codebases,"fesen-nio", "org.codelibs.fesen.nio.ChannelFactory");
+                    addClassCodebase(codebases, "fesen-secure-sm", "org.codelibs.fesen.secure_sm.SecureSM");
+                    addClassCodebase(codebases, "fesen-rest-client", "org.codelibs.fesen.client.RestClient");
                 }
                 final Policy testFramework = Security.readPolicy(Bootstrap.class.getResource("test-framework.policy"), codebases);
                 final Policy esPolicy = new ESPolicy(codebases, perms, getPluginPermissions(), true, new Permissions());

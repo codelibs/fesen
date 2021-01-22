@@ -37,7 +37,7 @@ public final class SnifferBuilder {
     private NodesSniffer nodesSniffer;
 
     /**
-     * Creates a new builder instance by providing the {@link RestClient} that will be used to communicate with elasticsearch
+     * Creates a new builder instance by providing the {@link RestClient} that will be used to communicate with fesen
      */
     SnifferBuilder(RestClient restClient) {
         Objects.requireNonNull(restClient, "restClient cannot be null");

@@ -181,7 +181,7 @@ public class BytesRestResponse extends RestResponse {
         }
 
         if (exception == null) {
-            throw new IllegalStateException("Failed to parse elasticsearch status exception: no exception was found");
+            throw new IllegalStateException("Failed to parse fesen status exception: no exception was found");
         }
 
         FesenStatusException result = new FesenStatusException(exception.getMessage(), status, exception.getCause());

@@ -456,7 +456,7 @@ public class DynamicMappingTests extends MapperServiceTestCase {
 
     public void testDynamicTemplateOrder() throws IOException {
         // https://github.com/elastic/elasticsearch/issues/18625
-        // elasticsearch used to apply templates that do not have a match_mapping_type first
+        // fesen used to apply templates that do not have a match_mapping_type first
         MapperService mapperService = createMapperService(topMapping(b -> {
             b.startArray("dynamic_templates");
             {

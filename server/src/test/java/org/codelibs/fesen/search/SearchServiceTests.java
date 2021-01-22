@@ -185,18 +185,18 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
                 @Override
                 public void onFetchPhase(SearchContext context, long tookInNanos) {
                     if ("throttled_threadpool_index".equals(context.indexShard().shardId().getIndex().getName())) {
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search_throttled]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search_throttled]"));
                     } else {
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search]"));
                     }
                 }
 
                 @Override
                 public void onQueryPhase(SearchContext context, long tookInNanos) {
                     if ("throttled_threadpool_index".equals(context.indexShard().shardId().getIndex().getName())) {
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search_throttled]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search_throttled]"));
                     } else {
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search]"));
                     }
                 }
             });
@@ -611,7 +611,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
                     throw new AssertionError(e);
                 }
             });
-            threads[i].setName("elasticsearch[node_s_0][search]");
+            threads[i].setName("fesen[node_s_0][search]");
             threads[i].start();
         }
         for (Thread thread : threads) {
@@ -931,7 +931,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
                 public void onResponse(SearchPhaseResult result) {
                     try {
                         assertNotSame(Thread.currentThread(), currentThread);
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search]"));
                         assertThat(result, instanceOf(QuerySearchResult.class));
                         assertFalse(result.queryResult().isNull());
                         assertNotNull(result.queryResult().topDocs());
@@ -961,7 +961,7 @@ public class SearchServiceTests extends ESSingleNodeTestCase {
                 public void onResponse(SearchPhaseResult result) {
                     try {
                         assertNotSame(Thread.currentThread(), currentThread);
-                        assertThat(Thread.currentThread().getName(), startsWith("elasticsearch[node_s_0][search]"));
+                        assertThat(Thread.currentThread().getName(), startsWith("fesen[node_s_0][search]"));
                         assertThat(result, instanceOf(QuerySearchResult.class));
                         assertFalse(result.queryResult().isNull());
                         assertNotNull(result.queryResult().topDocs());

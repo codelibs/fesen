@@ -33,7 +33,7 @@ public class PreBuiltCacheFactory {
      *
      * ONE               Exactly one version is stored. Useful for analyzers which do not store version information
      * LUCENE            Exactly one version for each lucene version is stored. Useful to prevent different analyzers with the same version
-     * ELASTICSEARCH     Exactly one version per elasticsearch version is stored. Useful if you change an analyzer between elasticsearch
+     * ELASTICSEARCH     Exactly one version per fesen version is stored. Useful if you change an analyzer between fesen
      *                   releases, when the lucene version does not change
      */
     public enum CachingStrategy { ONE, LUCENE, ELASTICSEARCH }
@@ -86,7 +86,7 @@ public class PreBuiltCacheFactory {
     }
 
     /**
-     * This cache contains one version for each elasticsearch version object
+     * This cache contains one version for each fesen version object
      */
     private static class PreBuiltCacheStrategyFesen<T> implements PreBuiltCache<T> {
 

@@ -29,9 +29,29 @@
 			<param name="plugin.version" value="${project.version}" />
 		</antcall>
 		<!-- ingest-common -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="ingest-common" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- ingest-geoip -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="ingest-geoip" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- ingest-user-agent -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="ingest-user-agent" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- kibana -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="kibana" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- lang-expression -->
 		<antcall target="install.plugin">
 			<param name="plugin.type" value="modules" />
@@ -39,6 +59,11 @@
 			<param name="plugin.version" value="${project.version}" />
 		</antcall>
 		<!-- lang-mustache -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="mustache" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- lang-painless -->
 		<antcall target="install.plugin">
 			<param name="plugin.type" value="modules" />
@@ -58,7 +83,17 @@
 			<param name="plugin.version" value="${project.version}" />
 		</antcall>
 		<!-- percolator -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="percolator" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- rank-eval -->
+		<antcall target="install.plugin">
+			<param name="plugin.type" value="modules" />
+			<param name="plugin.name" value="rank-eval" />
+			<param name="plugin.version" value="${project.version}" />
+		</antcall>
 		<!-- reindex -->
 		<antcall target="install.plugin">
 			<param name="plugin.type" value="modules" />

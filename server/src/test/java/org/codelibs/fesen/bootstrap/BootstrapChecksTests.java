@@ -290,7 +290,7 @@ public class BootstrapChecksTests extends AbstractBootstrapCheckTestCase {
                                 Collections.singletonList(check)));
                 assertThat(
                         e.getMessage(),
-                        containsString("memory locking requested for elasticsearch process but memory is not locked"));
+                        containsString("memory locking requested for fesen process but memory is not locked"));
             } else {
                 // nothing should happen
                 BootstrapChecks.check(bootstrapContext, true, Collections.singletonList(check));

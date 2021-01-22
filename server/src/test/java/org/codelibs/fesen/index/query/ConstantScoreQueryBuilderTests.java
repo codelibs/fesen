@@ -95,7 +95,7 @@ public class ConstantScoreQueryBuilderTests extends AbstractQueryTestCase<Consta
                 "  \"constant_score\" : {\n" +
                 "    \"filter\" : {\n" +
                 "      \"terms\" : {\n" +
-                "        \"user\" : [ \"kimchy\", \"elasticsearch\" ],\n" +
+                "        \"user\" : [ \"kimchy\", \"fesen\" ],\n" +
                 "        \"boost\" : 42.0\n" +
                 "      }\n" +
                 "    },\n" +

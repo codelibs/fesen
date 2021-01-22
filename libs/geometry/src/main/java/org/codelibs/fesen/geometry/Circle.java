@@ -22,7 +22,7 @@ package org.codelibs.fesen.geometry;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
 
 /**
- * Circle geometry (not part of WKT standard, but used in elasticsearch) defined by lat/lon coordinates of the center in degrees
+ * Circle geometry (not part of WKT standard, but used in fesen) defined by lat/lon coordinates of the center in degrees
  * and optional altitude in meters.
  */
 public class Circle implements Geometry {

@@ -76,7 +76,7 @@
 		<module>distribution</module>
 	</modules>
 	<properties>
-		<elasticsearch.version>7.10.2</elasticsearch.version>
+		<elasticsearch.version>7.10.3</elasticsearch.version>
 		<lucene.version>8.7.0</lucene.version>
 		<checkstyle.version>8.20</checkstyle.version>
 		<spatial4j.version>0.7</spatial4j.version>

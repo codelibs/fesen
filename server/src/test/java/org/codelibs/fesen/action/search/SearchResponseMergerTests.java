@@ -172,9 +172,9 @@ public class SearchResponseMergerTests extends ESTestCase {
             for (int j = 0; j < numFailures; j++) {
                 String index = "index-" + i;
                 ShardId shardId = new ShardId(index, index + "-uuid", j);
-                FesenException elasticsearchException = new FesenException(new IllegalArgumentException());
-                elasticsearchException.setShard(shardId);
-                ShardSearchFailure failure = new ShardSearchFailure(elasticsearchException);
+                FesenException fesenException = new FesenException(new IllegalArgumentException());
+                fesenException.setShard(shardId);
+                ShardSearchFailure failure = new ShardSearchFailure(fesenException);
                 shardSearchFailures[j] = failure;
                 priorityQueue.add(Tuple.tuple(shardId, failure));
             }

@@ -62,7 +62,7 @@ import java.util.Set;
 
 /**
  * Runs a suite of yaml tests shared with all the official Fesen
- * clients against against an elasticsearch cluster.
+ * clients against against an fesen cluster.
  *
  * The suite timeout is extended to account for projects with a large number of tests.
  */

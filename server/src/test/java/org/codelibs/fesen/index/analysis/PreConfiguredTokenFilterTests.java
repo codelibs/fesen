@@ -71,7 +71,7 @@ public class PreConfiguredTokenFilterTests extends ESTestCase {
 
     public void testCachingWithFesenVersion() throws IOException {
         PreConfiguredTokenFilter pctf =
-            PreConfiguredTokenFilter.elasticsearchVersion("elasticsearch_version", randomBoolean(),
+            PreConfiguredTokenFilter.fesenVersion("elasticsearch_version", randomBoolean(),
                 (tokenStream, esVersion) -> new TokenFilter(tokenStream) {
                     @Override
                     public boolean incrementToken() {

@@ -270,7 +270,7 @@ public class AnalysisModuleTests extends ESTestCase {
                                 tokenStream -> new AppendCharFilter(tokenStream, "no_version")),
                         PreConfiguredCharFilter.luceneVersion("lucene_version", luceneVersionSupportsMultiTerm,
                                 (tokenStream, luceneVersion) -> new AppendCharFilter(tokenStream, luceneVersion.toString())),
-                        PreConfiguredCharFilter.elasticsearchVersion("elasticsearch_version", elasticsearchVersionSupportsMultiTerm,
+                        PreConfiguredCharFilter.fesenVersion("elasticsearch_version", elasticsearchVersionSupportsMultiTerm,
                                 (tokenStream, esVersion) -> new AppendCharFilter(tokenStream, esVersion.toString()))
                         );
             }
@@ -322,7 +322,7 @@ public class AnalysisModuleTests extends ESTestCase {
                                 tokenStream -> new AppendTokenFilter(tokenStream, "no_version")),
                         PreConfiguredTokenFilter.luceneVersion("lucene_version", luceneVersionSupportsMultiTerm,
                                 (tokenStream, luceneVersion) -> new AppendTokenFilter(tokenStream, luceneVersion.toString())),
-                        PreConfiguredTokenFilter.elasticsearchVersion("elasticsearch_version", elasticsearchVersionSupportsMultiTerm,
+                        PreConfiguredTokenFilter.fesenVersion("elasticsearch_version", elasticsearchVersionSupportsMultiTerm,
                                 (tokenStream, esVersion) -> new AppendTokenFilter(tokenStream, esVersion.toString()))
                         );
             }
@@ -393,7 +393,7 @@ public class AnalysisModuleTests extends ESTestCase {
                         PreConfiguredTokenizer.singleton("no_version", () -> new FixedTokenizer("no_version")),
                         PreConfiguredTokenizer.luceneVersion("lucene_version",
                             luceneVersion -> new FixedTokenizer(luceneVersion.toString())),
-                        PreConfiguredTokenizer.elasticsearchVersion("elasticsearch_version",
+                        PreConfiguredTokenizer.fesenVersion("elasticsearch_version",
                             esVersion -> new FixedTokenizer(esVersion.toString()))
                     );
                 }

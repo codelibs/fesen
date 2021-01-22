@@ -82,9 +82,9 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
     public void testFailsOnEmptyPath() {
         final Path emptyPath = createTempDir();
         final MockTerminal mockTerminal = new MockTerminal();
-        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
+        final FesenException fesenException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, new Path[]{emptyPath}, 0, noOptions, environment));
-        assertThat(elasticsearchException.getMessage(), equalTo(OverrideNodeVersionCommand.NO_METADATA_MESSAGE));
+        assertThat(fesenException.getMessage(), equalTo(OverrideNodeVersionCommand.NO_METADATA_MESSAGE));
         expectThrows(IllegalStateException.class, () -> mockTerminal.readText(""));
     }
 
@@ -92,9 +92,9 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         final Version nodeVersion = Version.fromId(between(Version.CURRENT.minimumIndexCompatibilityVersion().id, Version.CURRENT.id));
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
-        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
+        final FesenException fesenException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
-        assertThat(elasticsearchException.getMessage(), allOf(
+        assertThat(fesenException.getMessage(), allOf(
             containsString("compatible with current version"),
             containsString(Version.CURRENT.toString()),
             containsString(nodeVersion.toString())));
@@ -106,9 +106,9 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
         mockTerminal.addTextInput("n\n");
-        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
+        final FesenException fesenException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
-        assertThat(elasticsearchException.getMessage(), equalTo("aborted by user"));
+        assertThat(fesenException.getMessage(), equalTo("aborted by user"));
         assertThat(mockTerminal.getOutput(), allOf(
             containsString("too old"),
             containsString("data loss"),
@@ -126,9 +126,9 @@ public class OverrideNodeVersionCommandTests extends ESTestCase {
         PersistedClusterStateService.overrideVersion(nodeVersion, nodePaths);
         final MockTerminal mockTerminal = new MockTerminal();
         mockTerminal.addTextInput(randomFrom("yy", "Yy", "n", "yes", "true", "N", "no"));
-        final FesenException elasticsearchException = expectThrows(FesenException.class, () ->
+        final FesenException fesenException = expectThrows(FesenException.class, () ->
             new OverrideNodeVersionCommand().processNodePaths(mockTerminal, nodePaths, 0, noOptions, environment));
-        assertThat(elasticsearchException.getMessage(), equalTo("aborted by user"));
+        assertThat(fesenException.getMessage(), equalTo("aborted by user"));
         assertThat(mockTerminal.getOutput(), allOf(
             containsString("data loss"),
             containsString("You should not use this tool"),

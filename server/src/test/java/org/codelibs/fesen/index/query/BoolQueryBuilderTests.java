@@ -269,7 +269,7 @@ public class BoolQueryBuilderTests extends AbstractQueryTestCase<BoolQueryBuilde
                 "  }, {" +
                 "    \"term\" : {" +
                 "      \"tag\" : {" +
-                "        \"value\" : \"elasticsearch\"," +
+                "        \"value\" : \"fesen\"," +
                 "        \"boost\" : 1.0" +
                 "      }" +
                 "    }" +

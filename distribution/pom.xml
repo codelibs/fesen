@@ -28,7 +28,6 @@
 		<packaging.fesen.systemd.dir>/usr/lib/systemd/system</packaging.fesen.systemd.dir>
 		<packaging.fesen.systemd.sysctl.dir>/usr/lib/sysctl.d</packaging.fesen.systemd.sysctl.dir>
 		<packaging.fesen.tmpfilesd.dir>/usr/lib/tmpfiles.d</packaging.fesen.tmpfilesd.dir>
-
 	</properties>
 	<build>
 		<finalName>fesen</finalName>
@@ -37,20 +36,12 @@
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-
-		<!-- This file contains all the common properties used to build the different 
-			packages (tar.gz, deb, rpm) using Maven resources plugin -->
 		<filters>
 			<filter>src/packaging/common/packaging.properties</filter>
 		</filters>
-
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<release>11</release>
-					<encoding>UTF-8</encoding>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
@@ -70,10 +61,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.2</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -147,9 +134,14 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>bin/fesen</include>
-										<include>bin/fesen.in.sh</include>
-										<include>bin/generate-thumbnail</include>
-										<include>bin/plugin.xml</include>
+										<include>bin/fesen-cli</include>
+										<include>bin/fesen-env</include>
+										<include>bin/fesen-env-from-file</include>
+										<include>bin/fesen-keystore</include>
+										<include>bin/fesen-node</include>
+										<include>bin/fesen-plugin</include>
+										<include>bin/fesen-shard</include>
+										<include>bin/fesen.bat</include>
 									</includes>
 								</resource>
 							</resources>
@@ -193,9 +185,14 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>bin/fesen</include>
-										<include>bin/fesen.in.sh</include>
-										<include>bin/generate-thumbnail</include>
-										<include>bin/plugin.xml</include>
+										<include>bin/fesen-cli</include>
+										<include>bin/fesen-env</include>
+										<include>bin/fesen-env-from-file</include>
+										<include>bin/fesen-keystore</include>
+										<include>bin/fesen-node</include>
+										<include>bin/fesen-plugin</include>
+										<include>bin/fesen-shard</include>
+										<include>bin/fesen.bat</include>
 									</includes>
 								</resource>
 							</resources>
@@ -203,7 +200,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- zip, tarball -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -212,7 +208,6 @@
 					<outputDirectory>${project.build.directory}/releases/</outputDirectory>
 					<tarLongFileMode>gnu</tarLongFileMode>
 					<descriptors>
-						<!-- descriptor>${basedir}/src/main/assemblies/targz-bin.xml</descriptor -->
 						<descriptor>${basedir}/src/main/assemblies/zip-bin.xml</descriptor>
 					</descriptors>
 				</configuration>
@@ -225,7 +220,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- deb -->
 			<plugin>
 				<groupId>org.vafer</groupId>
 				<artifactId>jdeb</artifactId>
@@ -233,10 +227,7 @@
 				<configuration>
 					<deb>${project.build.directory}/releases/${project.artifactId}-${project.version}.deb</deb>
 					<controlDir>${project.build.directory}/generated-packaging/deb/scripts</controlDir>
-					<!-- <signPackage>${deb.sign}</signPackage> <keyring>${gpg.keyring}</keyring> 
-						key>${gpg.key}</key> <passphrase>${gpg.passphrase}</passphrase> <signMethod>${deb.sign.method}</signMethod> -->
 					<dataSet>
-						<!-- Add app directory -->
 						<data>
 							<type>directory</type>
 							<src>${project.build.directory}/fesen</src>
@@ -249,7 +240,6 @@
 								<group>${packaging.fesen.group}</group>
 							</mapper>
 						</data>
-						<!-- Add libs -->
 						<data>
 							<type>directory</type>
 							<src>${project.build.directory}/tomcat-lib</src>

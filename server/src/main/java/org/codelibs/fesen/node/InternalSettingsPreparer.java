@@ -44,7 +44,7 @@ public class InternalSettingsPreparer {
 
     /**
      * Prepares settings for the transport client by gathering all
-     * elasticsearch system properties and setting defaults.
+     * fesen system properties and setting defaults.
      */
     public static Settings prepareSettings(Settings input) {
         Settings.Builder output = Settings.builder();
@@ -54,7 +54,7 @@ public class InternalSettingsPreparer {
     }
 
     /**
-     * Prepares the settings by gathering all elasticsearch system properties, optionally loading the configuration settings.
+     * Prepares the settings by gathering all fesen system properties, optionally loading the configuration settings.
      *
      * @param input      the custom settings to use; these are not overwritten by settings in the configuration file
      * @param properties map of properties key/value pairs (usually from the command-line)

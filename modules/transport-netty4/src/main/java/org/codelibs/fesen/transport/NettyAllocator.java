@@ -106,7 +106,7 @@ public class NettyAllocator {
                 int chunkSizeInBytes = pageSize << maxOrder;
                 ByteSizeValue chunkSize = new ByteSizeValue(chunkSizeInBytes);
                 SUGGESTED_MAX_ALLOCATION_SIZE = chunkSizeInBytes;
-                DESCRIPTION = "[name=elasticsearch_configured, chunk_size=" + chunkSize
+                DESCRIPTION = "[name=fesen_configured, chunk_size=" + chunkSize
                     + ", suggested_max_allocation_size=" + new ByteSizeValue(SUGGESTED_MAX_ALLOCATION_SIZE)
                     + ", factors={es.unsafe.use_netty_default_chunk_and_page_size=" + useDefaultChunkAndPageSize()
                     + ", g1gc_enabled=" + g1gcEnabled

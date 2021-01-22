@@ -22,7 +22,7 @@ import org.codelibs.fesen.cli.LoggingAwareMultiCommand;
 import org.codelibs.fesen.cli.Terminal;
 
 /**
- * Class encapsulating and dispatching commands from the {@code elasticsearch-shard} command line tool
+ * Class encapsulating and dispatching commands from the {@code fesen-shard} command line tool
  */
 public class ShardToolCli extends LoggingAwareMultiCommand {
 

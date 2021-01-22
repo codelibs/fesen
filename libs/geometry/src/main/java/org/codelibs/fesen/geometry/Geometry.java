@@ -20,7 +20,7 @@
 package org.codelibs.fesen.geometry;
 
 /**
- * Base class for all Geometry objects supported by elasticsearch
+ * Base class for all Geometry objects supported by fesen
  */
 public interface Geometry {
 

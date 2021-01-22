@@ -167,7 +167,7 @@ public class RestClientBuilderTests extends RestClientTestCase {
 
     public void testBuildCloudId() throws IOException {
         String host = "us-east-1.aws.found.io";
-        String esId = "elasticsearch";
+        String esId = "fesen";
         String kibanaId = "kibana";
         String toEncode = host + "$" + esId + "$" + kibanaId;
         String encodedId = Base64.getEncoder().encodeToString(toEncode.getBytes(UTF8));
@@ -199,7 +199,7 @@ public class RestClientBuilderTests extends RestClientTestCase {
 
     public void testBuildCloudIdWithPort() throws IOException {
         String host = "us-east-1.aws.found.io";
-        String esId = "elasticsearch";
+        String esId = "fesen";
         String kibanaId = "kibana";
         String port = "9443";
         String toEncode = host + ":" + port + "$" + esId + "$" + kibanaId;

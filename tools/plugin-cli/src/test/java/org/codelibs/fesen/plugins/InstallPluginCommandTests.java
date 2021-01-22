@@ -207,7 +207,7 @@ public class InstallPluginCommandTests extends ESTestCase {
     static Tuple<Path, Environment> createEnv(FileSystem fs, Function<String, Path> temp) throws IOException {
         Path home = temp.apply("install-plugin-command-tests");
         Files.createDirectories(home.resolve("bin"));
-        Files.createFile(home.resolve("bin").resolve("elasticsearch"));
+        Files.createFile(home.resolve("bin").resolve("fesen"));
         Files.createDirectories(home.resolve("config"));
         Files.createFile(home.resolve("config").resolve("fesen.yml"));
         Path plugins = Files.createDirectories(home.resolve("plugins"));
@@ -463,7 +463,7 @@ public class InstallPluginCommandTests extends ESTestCase {
         final IllegalStateException e = expectThrows(IllegalStateException.class, () -> installPlugin(pluginZip, env.v1()));
         final String expected = String.format(
             Locale.ROOT,
-            "found file [%s] from a failed attempt to remove the plugin [failed]; execute [elasticsearch-plugin remove failed]",
+            "found file [%s] from a failed attempt to remove the plugin [failed]; execute [fesen-plugin remove failed]",
             removing
         );
         assertThat(e, hasToString(containsString(expected)));

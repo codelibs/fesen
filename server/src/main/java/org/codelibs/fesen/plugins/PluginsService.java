@@ -367,7 +367,7 @@ public class PluginsService implements ReportingService<PluginsAndModules> {
                 final String name = fileName.substring(1 + fileName.indexOf("-"));
                 final String message = String.format(
                         Locale.ROOT,
-                        "found file [%s] from a failed attempt to remove the plugin [%s]; execute [elasticsearch-plugin remove %2$s]",
+                        "found file [%s] from a failed attempt to remove the plugin [%s]; execute [fesen-plugin remove %2$s]",
                         removing,
                         name);
                 throw new IllegalStateException(message);

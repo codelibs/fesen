@@ -96,11 +96,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * A command for the plugin cli to install a plugin into elasticsearch.
+ * A command for the plugin cli to install a plugin into fesen.
  *
  * The install command takes a plugin id, which may be any of the following:
  * <ul>
- * <li>An official elasticsearch plugin name</li>
+ * <li>An official fesen plugin name</li>
  * <li>Maven coordinates to a plugin zip</li>
  * <li>A URL to a plugin zip</li>
  * </ul>
@@ -111,18 +111,18 @@ import java.util.zip.ZipInputStream;
  * The installation process first extracts the plugin files into a temporary
  * directory in order to verify the plugin satisfies the following requirements:
  * <ul>
- * <li>Jar hell does not exist, either between the plugin's own jars, or with elasticsearch</li>
- * <li>The plugin is not a module already provided with elasticsearch</li>
+ * <li>Jar hell does not exist, either between the plugin's own jars, or with fesen</li>
+ * <li>The plugin is not a module already provided with fesen</li>
  * <li>If the plugin contains extra security permissions, the policy file is validated</li>
  * </ul>
  * <p>
  * A plugin may also contain an optional {@code bin} directory which contains scripts. The
- * scripts will be installed into a subdirectory of the elasticsearch bin directory, using
+ * scripts will be installed into a subdirectory of the fesen bin directory, using
  * the name of the plugin, and the scripts will be marked executable.
  * <p>
  * A plugin may also contain an optional {@code config} directory which contains configuration
  * files specific to the plugin. The config files be installed into a subdirectory of the
- * elasticsearch config directory, using the name of the plugin. If any files to be installed
+ * fesen config directory, using the name of the plugin. If any files to be installed
  * already exist, they will be skipped.
  */
 class InstallPluginCommand extends EnvironmentAwareCommand {
@@ -342,7 +342,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         return Build.CURRENT.isSnapshot();
     }
 
-    /** Returns the url for an official elasticsearch plugin. */
+    /** Returns the url for an official fesen plugin. */
     private String getElasticUrl(
         final Terminal terminal,
         final String stagingHash,
@@ -392,7 +392,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         );
     }
 
-    /** Returns the url for an elasticsearch plugin in maven. */
+    /** Returns the url for an fesen plugin in maven. */
     private String getMavenUrl(Terminal terminal, String[] coordinates, String platform) throws IOException {
         final String groupId = coordinates[0].replace(".", "/");
         final String artifactId = coordinates[1];
@@ -445,7 +445,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         URL url = new URL(urlString);
         Path zip = Files.createTempFile(tmpDir, null, ".zip");
         URLConnection urlConnection = url.openConnection();
-        urlConnection.addRequestProperty("User-Agent", "elasticsearch-plugin-installer");
+        urlConnection.addRequestProperty("User-Agent", "fesen-plugin-installer");
         try (
             InputStream in = isBatch
                 ? urlConnection.getInputStream()

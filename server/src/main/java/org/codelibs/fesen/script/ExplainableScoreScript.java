@@ -44,7 +44,7 @@ import java.io.IOException;
 
 /**
  * To be implemented by {@link ScoreScript} which can provided an {@link Explanation} of the score
- * This is currently not used inside elasticsearch but it is used, see for example here:
+ * This is currently not used inside fesen but it is used, see for example here:
  * https://github.com/elastic/elasticsearch/issues/8561
  */
 public interface ExplainableScoreScript {

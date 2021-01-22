@@ -1384,7 +1384,7 @@ public final class PainlessLookupBuilder {
             int bridgeClassFrames = ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS;
             int bridgeClassAccess = Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER | Opcodes.ACC_FINAL;
             String bridgeClassName =
-                    "org/elasticsearch/painless/Bridge$" + javaMethod.getDeclaringClass().getSimpleName() + "$" + javaMethod.getName();
+                    "org/codelibs/fesen/painless/Bridge$" + javaMethod.getDeclaringClass().getSimpleName() + "$" + javaMethod.getName();
             ClassWriter bridgeClassWriter = new ClassWriter(bridgeClassFrames);
             bridgeClassWriter.visit(
                     WriterConstants.CLASS_VERSION, bridgeClassAccess, bridgeClassName, null, OBJECT_TYPE.getInternalName(), null);

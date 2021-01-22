@@ -92,7 +92,7 @@ public final class IngestDocument {
     }
 
     /**
-     * Constructor needed for testing that allows to create a new {@link IngestDocument} given the provided elasticsearch metadata,
+     * Constructor needed for testing that allows to create a new {@link IngestDocument} given the provided fesen metadata,
      * source and ingest metadata. This is needed because the ingest metadata will be initialized with the current timestamp at
      * init time, which makes equality comparisons impossible in tests.
      */

@@ -1296,7 +1296,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
         final FesenDirectoryReader fesenDirectoryReader =
             FesenDirectoryReader.getFesenDirectoryReader(engineSearcher.getDirectoryReader());
         if (fesenDirectoryReader == null) {
-            throw new IllegalStateException("Can't wrap non elasticsearch directory reader");
+            throw new IllegalStateException("Can't wrap non fesen directory reader");
         }
         NonClosingReaderWrapper nonClosingReaderWrapper = new NonClosingReaderWrapper(engineSearcher.getDirectoryReader());
         DirectoryReader reader = readerWrapper.apply(nonClosingReaderWrapper);

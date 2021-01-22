@@ -44,7 +44,7 @@ import java.util.Map;
 
 /**
  * Execution context passed across the REST tests.
- * Holds the REST client used to communicate with elasticsearch.
+ * Holds the REST client used to communicate with fesen.
  * Caches the last obtained test response and allows to stash part of it within variables
  * that can be used as input values in following requests.
  */

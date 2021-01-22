@@ -180,7 +180,7 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
         JsonGenerator generator = jsonFactory.createGenerator(writer);
         generator.writeStartObject();
         if (getRandom().nextBoolean()) {
-            generator.writeStringField("cluster_name", "elasticsearch");
+            generator.writeStringField("cluster_name", "fesen");
         }
         if (getRandom().nextBoolean()) {
             generator.writeObjectFieldStart("bogus_object");

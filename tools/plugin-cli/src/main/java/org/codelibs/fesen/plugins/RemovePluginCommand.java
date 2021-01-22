@@ -117,7 +117,7 @@ class RemovePluginCommand extends EnvironmentAwareCommand {
             || (!Files.exists(pluginDir) && Files.exists(pluginConfigDir) && !purge)) {
             final String message = String.format(
                 Locale.ROOT,
-                "plugin [%s] not found; run 'elasticsearch-plugin list' to get list of installed plugins",
+                "plugin [%s] not found; run 'fesen-plugin list' to get list of installed plugins",
                 pluginName
             );
             throw new UserException(ExitCodes.CONFIG, message);

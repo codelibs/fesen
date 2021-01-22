@@ -161,9 +161,9 @@ public class ExceptionsHelperTests extends ESTestCase {
         for (ShardOperationFailedException shardOperationFailedException : groupBy) {
             assertThat(shardOperationFailedException.index(), nullValue());
             assertThat(shardOperationFailedException.getCause(), instanceOf(FesenException.class));
-            FesenException elasticsearchException = (FesenException) shardOperationFailedException.getCause();
-            assertThat(elasticsearchException.getMessage(), equalTo(expectedErrors[i]));
-            assertThat(elasticsearchException.getIndex().getName(), equalTo(expectedIndices[i++]));
+            FesenException fesenException = (FesenException) shardOperationFailedException.getCause();
+            assertThat(fesenException.getMessage(), equalTo(expectedErrors[i]));
+            assertThat(fesenException.getIndex().getName(), equalTo(expectedIndices[i++]));
         }
     }
 

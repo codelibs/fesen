@@ -67,7 +67,7 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
     /**
      * Create a pre-configured token filter that may vary based on the Fesen version.
      */
-    public static PreConfiguredTokenFilter elasticsearchVersion(String name, boolean useFilterForMultitermQueries,
+    public static PreConfiguredTokenFilter fesenVersion(String name, boolean useFilterForMultitermQueries,
             BiFunction<TokenStream, org.codelibs.fesen.Version, TokenStream> create) {
         return new PreConfiguredTokenFilter(name, useFilterForMultitermQueries, true, CachingStrategy.ELASTICSEARCH, create);
     }
@@ -75,7 +75,7 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
     /**
      * Create a pre-configured token filter that may vary based on the Fesen version.
      */
-    public static PreConfiguredTokenFilter elasticsearchVersion(String name, boolean useFilterForMultitermQueries,
+    public static PreConfiguredTokenFilter fesenVersion(String name, boolean useFilterForMultitermQueries,
                                                                 boolean useFilterForParsingSynonyms,
                                                                 BiFunction<TokenStream, Version, TokenStream> create) {
         return new PreConfiguredTokenFilter(name, useFilterForMultitermQueries, useFilterForParsingSynonyms,

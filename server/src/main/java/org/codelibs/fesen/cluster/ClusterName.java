@@ -31,7 +31,7 @@ import org.codelibs.fesen.common.settings.Settings;
 
 public class ClusterName implements Writeable {
 
-    public static final Setting<ClusterName> CLUSTER_NAME_SETTING = new Setting<>("cluster.name", "elasticsearch", (s) -> {
+    public static final Setting<ClusterName> CLUSTER_NAME_SETTING = new Setting<>("cluster.name", "fesen", (s) -> {
         if (s.isEmpty()) {
             throw new IllegalArgumentException("[cluster.name] must not be empty");
         }

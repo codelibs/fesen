@@ -1068,7 +1068,7 @@ public final class NodeEnvironment  implements Closeable {
             } catch (AtomicMoveNotSupportedException ex) {
                 throw new IllegalStateException("atomic_move is not supported by the filesystem on path ["
                         + nodePath.path
-                        + "] atomic_move is required for elasticsearch to work correctly.", ex);
+                        + "] atomic_move is required for fesen to work correctly.", ex);
             } finally {
                 try {
                     Files.deleteIfExists(src);
@@ -1084,7 +1084,7 @@ public final class NodeEnvironment  implements Closeable {
         if (shardDataPaths.isEmpty() == false) {
             final String message = String.format(
                 Locale.ROOT,
-                "node does not have the %s role but has shard data: %s. Use 'elasticsearch-node repurpose' tool to clean up",
+                "node does not have the %s role but has shard data: %s. Use 'fesen-node repurpose' tool to clean up",
                 DiscoveryNodeRole.DATA_ROLE.roleName(),
                 shardDataPaths
             );
@@ -1097,7 +1097,7 @@ public final class NodeEnvironment  implements Closeable {
         if (indexMetadataPaths.isEmpty() == false) {
             final String message = String.format(
                 Locale.ROOT,
-                "node does not have the %s and %s roles but has index metadata: %s. Use 'elasticsearch-node repurpose' tool to clean up",
+                "node does not have the %s and %s roles but has index metadata: %s. Use 'fesen-node repurpose' tool to clean up",
                 DiscoveryNodeRole.DATA_ROLE.roleName(),
                 DiscoveryNodeRole.MASTER_ROLE.roleName(),
                 indexMetadataPaths

@@ -52,9 +52,9 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
     public void testSubstitution() {
         final List<String> jvmOptions = JvmOptionsParser.substitutePlaceholders(
             Collections.singletonList("-Djava.io.tmpdir=${ES_TMPDIR}"),
-            Collections.singletonMap("ES_TMPDIR", "/tmp/elasticsearch")
+            Collections.singletonMap("ES_TMPDIR", "/tmp/fesen")
         );
-        assertThat(jvmOptions, contains("-Djava.io.tmpdir=/tmp/elasticsearch"));
+        assertThat(jvmOptions, contains("-Djava.io.tmpdir=/tmp/fesen"));
     }
 
     public void testUnversionedOptions() throws IOException {

@@ -240,7 +240,7 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     public static String scoreModeAsString(ScoreMode scoreMode) {
         if (scoreMode == ScoreMode.Total) {
-            // Lucene uses 'total' but 'sum' is more consistent with other elasticsearch APIs
+            // Lucene uses 'total' but 'sum' is more consistent with other fesen APIs
             return "sum";
         } else {
             return scoreMode.name().toLowerCase(Locale.ROOT);

@@ -109,7 +109,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * A Store provides plain access to files written by an elasticsearch index shard. Each shard
+ * A Store provides plain access to files written by an fesen index shard. Each shard
  * has a dedicated store that is uses to access Lucene's Directory which represents the lowest level
  * of file abstraction in Lucene used to read and write Lucene indices.
  * This class also provides access to metadata information like checksums for committed files. A committed

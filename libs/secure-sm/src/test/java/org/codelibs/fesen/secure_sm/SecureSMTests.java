@@ -64,8 +64,8 @@ public class SecureSMTests extends TestCase {
         assertTrue(SecureSM.classCanExit("com.carrotsearch.ant.tasks.junit4.slave.JvmExit", SecureSM.TEST_RUNNER_PACKAGES));
         assertTrue(SecureSM.classCanExit("org.eclipse.jdt.internal.junit.runner.RemoteTestRunner", SecureSM.TEST_RUNNER_PACKAGES));
         assertTrue(SecureSM.classCanExit("com.intellij.rt.execution.junit.JUnitStarter", SecureSM.TEST_RUNNER_PACKAGES));
-        assertTrue(SecureSM.classCanExit("org.elasticsearch.Foo", new String[]{"org.elasticsearch.Foo"}));
-        assertFalse(SecureSM.classCanExit("org.elasticsearch.Foo", new String[]{"org.elasticsearch.Bar"}));
+        assertTrue(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[]{"org.codelibs.fesen.Foo"}));
+        assertFalse(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[]{"org.codelibs.fesen.Bar"}));
     }
 
     public void testCreateThread() throws Exception {

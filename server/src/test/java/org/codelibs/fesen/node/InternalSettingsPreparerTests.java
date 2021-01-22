@@ -83,7 +83,7 @@ public class InternalSettingsPreparerTests extends ESTestCase {
 
     public void testDefaultClusterName() {
         Settings settings = InternalSettingsPreparer.prepareSettings(Settings.EMPTY);
-        assertEquals("elasticsearch", settings.get("cluster.name"));
+        assertEquals("fesen", settings.get("cluster.name"));
         settings = InternalSettingsPreparer.prepareSettings(Settings.builder().put("cluster.name", "foobar").build());
         assertEquals("foobar", settings.get("cluster.name"));
     }

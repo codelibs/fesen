@@ -639,7 +639,7 @@ public final class AnalysisRegistry implements Closeable {
     }
 
     // Some analysis components emit deprecation warnings or throw exceptions when used
-    // with the wrong version of elasticsearch.  These exceptions and warnings are
+    // with the wrong version of fesen.  These exceptions and warnings are
     // normally thrown when tokenstreams are constructed, which unless we build a
     // tokenstream up-front does not happen until a document is indexed.  In order to
     // surface these warnings or exceptions as early as possible, we build an empty

@@ -446,10 +446,10 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
     }
 
     /**
-     * Returns the version of elasticsearch that the snapshot was created with.  Will only
+     * Returns the version of fesen that the snapshot was created with.  Will only
      * return {@code null} if {@link #state()} returns {@code null} or {@link SnapshotState#INCOMPATIBLE}.
      *
-     * @return version of elasticsearch that the snapshot was created with
+     * @return version of fesen that the snapshot was created with
      */
     @Nullable
     public Version version() {

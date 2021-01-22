@@ -36,12 +36,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A command for the plugin cli to list plugins installed in elasticsearch.
+ * A command for the plugin cli to list plugins installed in fesen.
  */
 class ListPluginsCommand extends EnvironmentAwareCommand {
 
     ListPluginsCommand() {
-        super("Lists installed elasticsearch plugins");
+        super("Lists installed fesen plugins");
     }
 
     @Override

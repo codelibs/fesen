@@ -742,14 +742,14 @@ public class FesenExceptionTests extends ESTestCase {
         FesenException suppressed;
 
         switch (randomIntBetween(0, 6)) {
-            case 0: // Simple elasticsearch exception without cause
+            case 0: // Simple fesen exception without cause
                 failure = new NoNodeAvailableException("A");
 
                 expected = new FesenException("Fesen exception [type=no_node_available_exception, reason=A]");
                 expected.addSuppressed(new FesenException("Fesen exception [type=no_node_available_exception, reason=A]"));
                 break;
 
-            case 1: // Simple elasticsearch exception with headers (other metadata of type number are not parsed)
+            case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
                 failure = new ParsingException(3, 2, "B", null);
                 ((FesenException) failure).addHeader("header_name", "0", "1");
                 expected = new FesenException("Fesen exception [type=parsing_exception, reason=B]");
@@ -930,7 +930,7 @@ public class FesenExceptionTests extends ESTestCase {
                 expected = new FesenException("Fesen exception [type=cluster_block_exception, " +
                         "reason=blocked by: [SERVICE_UNAVAILABLE/2/no master];]");
                 break;
-            case 1: // Simple elasticsearch exception with headers (other metadata of type number are not parsed)
+            case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
                 actual = new ParsingException(3, 2, "Unknown identifier", null);
                 expected = new FesenException("Fesen exception [type=parsing_exception, reason=Unknown identifier]");
                 break;

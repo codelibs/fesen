@@ -41,7 +41,7 @@ public class PreConfiguredCharFilter extends PreConfiguredAnalysisComponent<Char
     }
 
     /**
-     * Create a pre-configured char filter that may not vary at all, provide access to the elasticsearch version
+     * Create a pre-configured char filter that may not vary at all, provide access to the fesen version
      */
     public static PreConfiguredCharFilter singletonWithVersion(String name, boolean useFilterForMultitermQueries,
             BiFunction<Reader, org.codelibs.fesen.Version, Reader> create) {
@@ -61,7 +61,7 @@ public class PreConfiguredCharFilter extends PreConfiguredAnalysisComponent<Char
     /**
      * Create a pre-configured token filter that may vary based on the Fesen version.
      */
-    public static PreConfiguredCharFilter elasticsearchVersion(String name, boolean useFilterForMultitermQueries,
+    public static PreConfiguredCharFilter fesenVersion(String name, boolean useFilterForMultitermQueries,
             BiFunction<Reader, org.codelibs.fesen.Version, Reader> create) {
         return new PreConfiguredCharFilter(name, CachingStrategy.ELASTICSEARCH, useFilterForMultitermQueries, create);
     }

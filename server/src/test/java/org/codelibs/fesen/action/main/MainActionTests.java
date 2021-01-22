@@ -49,7 +49,7 @@ public class MainActionTests extends ESTestCase {
 
     public void testMainActionClusterAvailable() {
         final ClusterService clusterService = mock(ClusterService.class);
-        final ClusterName clusterName = new ClusterName("elasticsearch");
+        final ClusterName clusterName = new ClusterName("fesen");
         final Settings settings = Settings.builder().put("node.name", "my-node").build();
         ClusterBlocks blocks;
         if (randomBoolean()) {

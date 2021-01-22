@@ -67,7 +67,7 @@ public final class FesenDirectoryReader extends FilterDirectoryReader {
      * expose the given shard Id.
      *
      * @param reader the reader to wrap
-     * @param shardId the shard ID to expose via the elasticsearch internal reader wrappers.
+     * @param shardId the shard ID to expose via the fesen internal reader wrappers.
      */
     public static FesenDirectoryReader wrap(DirectoryReader reader, ShardId shardId) throws IOException {
         return new FesenDirectoryReader(reader, new SubReaderWrapper(shardId), shardId);

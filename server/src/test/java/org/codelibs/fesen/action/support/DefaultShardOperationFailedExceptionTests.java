@@ -58,10 +58,10 @@ public class DefaultShardOperationFailedExceptionTests extends ESTestCase {
                 "IllegalArgumentException[bar]; nested: RuntimeException[baz]; ]", exception.toString());
         }
         {
-            FesenException elasticsearchException = new FesenException("foo");
-            elasticsearchException.setIndex(new Index("index1", "_na_"));
-            elasticsearchException.setShard(new ShardId("index1", "_na_", 1));
-            DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(elasticsearchException);
+            FesenException fesenException = new FesenException("foo");
+            fesenException.setIndex(new Index("index1", "_na_"));
+            fesenException.setShard(new ShardId("index1", "_na_", 1));
+            DefaultShardOperationFailedException exception = new DefaultShardOperationFailedException(fesenException);
             assertEquals("[index1][1] failed, reason [FesenException[foo]]", exception.toString());
         }
         {

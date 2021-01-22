@@ -88,7 +88,7 @@ public class DiversifiedNumericSamplerAggregator extends SamplerAggregator {
         }
 
         // This class extends the DiversifiedTopDocsCollector and provides
-        // a lookup from elasticsearch's ValuesSource
+        // a lookup from fesen's ValuesSource
         class ValuesDiversifiedTopDocsCollector extends DiversifiedTopDocsCollector {
 
             private SortedNumericDocValues values;

@@ -151,7 +151,8 @@ public class Version implements Comparable<Version>, ToXContentFragment {
     public static final Version V_7_10_0 = new Version(7100099, org.apache.lucene.util.Version.LUCENE_8_7_0);
     public static final Version V_7_10_1 = new Version(7100199, org.apache.lucene.util.Version.LUCENE_8_7_0);
     public static final Version V_7_10_2 = new Version(7100299, org.apache.lucene.util.Version.LUCENE_8_7_0);
-    public static final Version CURRENT = V_7_10_2;
+    public static final Version V_0_10_0 = new Version(7100399, org.apache.lucene.util.Version.LUCENE_8_7_0);
+    public static final Version CURRENT = V_0_10_0;
 
     private static final ImmutableOpenIntMap<Version> idToVersion;
     private static final ImmutableOpenMap<String, Version> stringToVersion;
@@ -179,7 +180,13 @@ public class Version implements Comparable<Version>, ToXContentFragment {
                             final int major = Integer.valueOf(fields[1]) * 1000000;
                             final int minor = Integer.valueOf(fields[2]) * 10000;
                             final int revision = Integer.valueOf(fields[3]) * 100;
-                            final int expectedId = major + minor + revision + 99;
+                            final int adjustment; // FESEN
+                            if (fields[1].equals("0")) {
+                                adjustment = 7000300;
+                            } else {
+                                adjustment = 0;
+                            }
+                            final int expectedId = major + minor + revision + 99 + adjustment;
                             assert version.id == expectedId :
                                 "expected version [" + fieldName + "] to have id [" + expectedId + "] but was [" + version.id + "]";
                         }

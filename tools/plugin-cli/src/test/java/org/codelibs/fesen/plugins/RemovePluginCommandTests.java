@@ -236,7 +236,7 @@ public class RemovePluginCommandTests extends ESTestCase {
     public void testRemoveUninstalledPluginErrors() throws Exception {
         UserException e = expectThrows(UserException.class, () -> removePlugin("fake", home, randomBoolean()));
         assertEquals(ExitCodes.CONFIG, e.exitCode);
-        assertEquals("plugin [fake] not found; run 'elasticsearch-plugin list' to get list of installed plugins", e.getMessage());
+        assertEquals("plugin [fake] not found; run 'fesen-plugin list' to get list of installed plugins", e.getMessage());
 
         MockTerminal terminal = new MockTerminal();
 
@@ -251,7 +251,7 @@ public class RemovePluginCommandTests extends ESTestCase {
         ) {
             assertEquals("-> removing [fake]...", reader.readLine());
             assertEquals(
-                "ERROR: plugin [fake] not found; run 'elasticsearch-plugin list' to get list of installed plugins",
+                "ERROR: plugin [fake] not found; run 'fesen-plugin list' to get list of installed plugins",
                 errorReader.readLine()
             );
             assertNull(reader.readLine());

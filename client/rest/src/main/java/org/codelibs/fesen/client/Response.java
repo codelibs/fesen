@@ -33,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Holds an elasticsearch response. It wraps the {@link HttpResponse} returned and associates it with
+ * Holds an fesen response. It wraps the {@link HttpResponse} returned and associates it with
  * its corresponding {@link RequestLine} and {@link HttpHost}.
  */
 public class Response {
@@ -145,7 +145,7 @@ public class Response {
     }
 
     /**
-     * Refer to org.elasticsearch.common.logging.DeprecationLogger
+     * Refer to org.codelibs.fesen.common.logging.DeprecationLogger
      */
     private static String extractWarningValueFromWarningHeader(final String s) {
         String warningHeader = s;
