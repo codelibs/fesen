@@ -223,6 +223,12 @@ public class ExceptionSerializationTests extends ESTestCase {
         Files.walkFileTree(testStartPath, visitor);
         assertTrue(notRegistered.remove(TestException.class));
         assertTrue(notRegistered.remove(UnknownHeaderException.class));
+        assertTrue(notRegistered.remove(ElasticsearchStatusException.class)); // FESEN
+        assertTrue(notRegistered.remove(ElasticsearchTimeoutException.class)); // FESEN
+        assertTrue(notRegistered.remove(ElasticsearchSecurityException.class)); // FESEN
+        assertTrue(notRegistered.remove(ElasticsearchGenerationException.class)); // FESEN
+        assertTrue(notRegistered.remove(ElasticsearchParseException.class)); // FESEN
+        assertTrue(notRegistered.remove(ElasticsearchException.class)); // FESEN
         assertTrue("Classes subclassing FesenException must be registered \n" + notRegistered.toString(),
                 notRegistered.isEmpty());
         assertTrue(registered.removeAll(FesenException.getRegisteredKeys())); // check
