@@ -303,7 +303,7 @@ public class InstallPluginCommandTests extends ESTestCase {
 
     void installPlugins(final List<String> pluginUrls, final Path home, final InstallPluginCommand command) throws Exception {
         final Environment env = TestEnvironment.newEnvironment(Settings.builder().put("path.home", home).build());
-        command.execute(terminal, pluginUrls, false, env);
+        command.execute(terminal, pluginUrls, false, false, env);
     }
 
     void assertPlugin(String name, Path original, Environment env) throws IOException {
@@ -838,7 +838,7 @@ public class InstallPluginCommandTests extends ESTestCase {
         final Environment environment = createEnv(fs, temp).v2();
         final T exception = expectThrows(
             clazz,
-            () -> flavorCommand.execute(terminal, Collections.singletonList("x-pack"), false, environment)
+            () -> flavorCommand.execute(terminal, Collections.singletonList("x-pack"), false, false, environment)
         );
         assertThat(exception, hasToString(containsString(expectedMessage)));
     }
@@ -907,7 +907,7 @@ public class InstallPluginCommandTests extends ESTestCase {
             writePluginSecurityPolicy(pluginDir, "setFactory");
         }
         String pluginZip = createPlugin("fake", pluginDir).toUri().toURL().toString();
-        skipJarHellCommand.execute(terminal, Collections.singletonList(pluginZip), isBatch, env.v2());
+        skipJarHellCommand.execute(terminal, Collections.singletonList(pluginZip), isBatch, false, env.v2());
     }
 
     void assertInstallPluginFromUrl(
