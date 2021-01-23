@@ -72,6 +72,7 @@
 		<module>tools/java-version-checker</module>
 		<module>tools/keystore-cli</module>
 		<module>tools/launchers</module>
+		<module>tools/jar-relocator</module>
 		<module>tools/plugin-cli</module>
 		<module>distribution</module>
 	</modules>

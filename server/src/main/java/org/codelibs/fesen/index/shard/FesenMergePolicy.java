@@ -44,7 +44,7 @@ import java.util.Map;
  * For now, this {@link MergePolicy} takes care of moving versions that used to
  * be stored as payloads to numeric doc values.
  */
-public final class FesenMergePolicy extends FilterMergePolicy {
+public class FesenMergePolicy extends FilterMergePolicy {
 
     private static final Logger logger = LogManager.getLogger(FesenMergePolicy.class);
 

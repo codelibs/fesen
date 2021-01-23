@@ -31,12 +31,12 @@ import java.io.IOException;
  * A {@link org.apache.lucene.index.FilterDirectoryReader} that exposes
  * Fesen internal per shard / index information like the shard ID.
  */
-public final class FesenDirectoryReader extends FilterDirectoryReader {
+public class FesenDirectoryReader extends FilterDirectoryReader {
 
     private final ShardId shardId;
     private final FilterDirectoryReader.SubReaderWrapper wrapper;
 
-    private FesenDirectoryReader(DirectoryReader in, FilterDirectoryReader.SubReaderWrapper wrapper,
+    FesenDirectoryReader(DirectoryReader in, FilterDirectoryReader.SubReaderWrapper wrapper,
             ShardId shardId) throws IOException {
         super(in, wrapper);
         this.wrapper = wrapper;

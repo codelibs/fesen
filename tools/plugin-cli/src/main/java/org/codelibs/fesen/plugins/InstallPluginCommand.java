@@ -47,10 +47,8 @@ import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.hash.MessageDigests;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.plugins.Platforms;
-import org.codelibs.fesen.plugins.PluginInfo;
-import org.codelibs.fesen.plugins.PluginSecurity;
-import org.codelibs.fesen.plugins.PluginsService;
+import org.codelibs.fesen.tools.jar.relocator.JarRelocator;
+import org.codelibs.fesen.tools.jar.relocator.Relocation;
 
 import static org.codelibs.fesen.cli.Terminal.Verbosity.VERBOSE;
 
@@ -174,6 +172,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
     }
 
     private final OptionSpec<Void> batchOption;
+    private final OptionSpec<Void> esPluginOption;
     private final OptionSpec<String> arguments;
 
     static final Set<PosixFilePermission> BIN_DIR_PERMS;
@@ -206,9 +205,13 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
     InstallPluginCommand() {
         super("Install a plugin");
         this.batchOption = parser.acceptsAll(
-            Arrays.asList("b", "batch"),
-            "Enable batch mode explicitly, automatic confirmation of security permission"
-        );
+                Arrays.asList("b", "batch"),
+                "Enable batch mode explicitly, automatic confirmation of security permission"
+            );
+        this.esPluginOption = parser.acceptsAll(
+                Arrays.asList("e", "elasticsearch"),
+                "Convert Elasticsearch plugin to Fesen one."
+            );
         this.arguments = parser.nonOptions("plugin id");
     }
 
@@ -225,11 +228,12 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
     protected void execute(Terminal terminal, OptionSet options, Environment env) throws Exception {
         List<String> pluginId = arguments.values(options);
         final boolean isBatch = options.has(batchOption);
-        execute(terminal, pluginId, isBatch, env);
+        final boolean isEsPlugin = options.has(esPluginOption);
+        execute(terminal, pluginId, isBatch, isEsPlugin, env);
     }
 
     // pkg private for testing
-    void execute(Terminal terminal, List<String> pluginIds, boolean isBatch, Environment env) throws Exception {
+    void execute(Terminal terminal, List<String> pluginIds, boolean isBatch, boolean isEsPlugin, Environment env) throws Exception {
         if (pluginIds.isEmpty()) {
             throw new UserException(ExitCodes.USAGE, "at least one plugin id is required");
         }
@@ -253,7 +257,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
                 deleteOnFailures.put(pluginId, deleteOnFailure);
 
                 final Path pluginZip = download(terminal, pluginId, env.tmpFile(), isBatch);
-                final Path extractedZip = unzip(pluginZip, env.pluginsFile());
+                final Path extractedZip = unzip(terminal, pluginZip, env.pluginsFile(), isEsPlugin);
                 deleteOnFailure.add(extractedZip);
                 final PluginInfo pluginInfo = installPlugin(terminal, isBatch, extractedZip, env, deleteOnFailure);
                 terminal.println("-> Installed " + pluginInfo.getName());
@@ -707,7 +711,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         return checksumUrl;
     }
 
-    private Path unzip(Path zip, Path pluginsDir) throws IOException, UserException {
+    private Path unzip(Terminal terminal, Path zip, Path pluginsDir, boolean isEsPlugin) throws IOException, UserException {
         // unzip plugin to a staging temp dir
 
         final Path target = stagingDirectory(pluginsDir);
@@ -744,10 +748,30 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
                     Files.createDirectories(targetFile.getParent());
                 }
                 if (entry.isDirectory() == false) {
-                    try (OutputStream out = Files.newOutputStream(targetFile)) {
-                        int len;
-                        while ((len = zipInput.read(buffer)) >= 0) {
-                            out.write(buffer, 0, len);
+                    if (entry.getName().endsWith(".jar") && isEsPlugin) {
+                        Path tempFile = Files.createTempFile("temp", ".jar");
+                        try (OutputStream out = Files.newOutputStream(tempFile)) {
+                            int len;
+                            while ((len = zipInput.read(buffer)) >= 0) {
+                                out.write(buffer, 0, len);
+                            }
+                        }
+                        List<Relocation> rules = new ArrayList<>();
+                        rules.add(new Relocation("org.elasticsearch", "org.codelibs.fesen"));
+                        JarRelocator relocator = new JarRelocator(tempFile.toFile(), targetFile.toFile(), rules);
+                        try {
+                            relocator.run();
+                        } catch (IOException e) {
+                            throw new UserException(PLUGIN_MALFORMED, "'" + entry.getName() + "' cannot be converted.", e);
+                        }
+                        Files.delete(tempFile);
+                        terminal.println("-> Relocated " + entry.getName());
+                    } else {
+                        try (OutputStream out = Files.newOutputStream(targetFile)) {
+                            int len;
+                            while ((len = zipInput.read(buffer)) >= 0) {
+                                out.write(buffer, 0, len);
+                            }
                         }
                     }
                 }

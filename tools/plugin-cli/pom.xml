@@ -84,6 +84,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.codelibs.fesen.tool</groupId>
+			<artifactId>fesen-jar-relocator</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpg-fips</artifactId>
 			<version>1.0.4</version>

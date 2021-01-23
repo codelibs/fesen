@@ -27,7 +27,7 @@ import org.codelibs.fesen.index.shard.ShardId;
  * A {@link org.apache.lucene.index.FilterLeafReader} that exposes
  * Fesen internal per shard / index information like the shard ID.
  */
-public final class FesenLeafReader extends SequentialStoredFieldsLeafReader {
+public class FesenLeafReader extends SequentialStoredFieldsLeafReader {
 
     private final ShardId shardId;
 

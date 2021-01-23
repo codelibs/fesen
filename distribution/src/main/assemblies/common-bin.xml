@@ -7,9 +7,14 @@
 			<excludes>
 				<exclude>org.codelibs.fesen:fesen</exclude>
 				<exclude>org.codelibs.fesen.tool:fesen-keystore-cli</exclude>
+				<exclude>org.codelibs.fesen.tool:fesen-jar-relocator</exclude>
 				<exclude>org.codelibs.fesen.tool:fesen-plugin-cli</exclude>
 				<exclude>org.bouncycastle:bcpg-fips</exclude>
 				<exclude>org.bouncycastle:bc-fips</exclude>
+				<exclude>org.ow2.asm:asm</exclude>
+				<exclude>org.ow2.asm:asm-analysis</exclude>
+				<exclude>org.ow2.asm:asm-commons</exclude>
+				<exclude>org.ow2.asm:asm-tree</exclude>
 			</excludes>
 		</dependencySet>
 		<dependencySet>
@@ -27,9 +32,14 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<unpack>false</unpack>
 			<includes>
+				<include>org.codelibs.fesen.tool:fesen-jar-relocator</include>
 				<include>org.codelibs.fesen.tool:fesen-plugin-cli</include>
 				<include>org.bouncycastle:bcpg-fips</include>
 				<include>org.bouncycastle:bc-fips</include>
+				<include>org.ow2.asm:asm</include>
+				<include>org.ow2.asm:asm-analysis</include>
+				<include>org.ow2.asm:asm-commons</include>
+				<include>org.ow2.asm:asm-tree</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>
