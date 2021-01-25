@@ -11,6 +11,8 @@ This product is forked from Elasticsearch 7.10.2 and also optimized for Fess.
 ### Run Fesen
 
 ```
+$ unzip fesen-0.10.0-SNAPSHOT.zip
+$ cd fesen-0.10.0-SNAPSHOT
 $ ./bin/fesen
 ```
 
