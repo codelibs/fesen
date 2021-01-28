@@ -257,7 +257,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
                 deleteOnFailures.put(pluginId, deleteOnFailure);
 
                 final Path pluginZip = download(terminal, pluginId, env.tmpFile(), isBatch);
-                final Path extractedZip = unzip(terminal, pluginZip, env.pluginsFile(), isEsPlugin);
+                final Path extractedZip = unzip(pluginZip, env.pluginsFile(), isEsPlugin);
                 deleteOnFailure.add(extractedZip);
                 final PluginInfo pluginInfo = installPlugin(terminal, isBatch, extractedZip, env, deleteOnFailure);
                 terminal.println("-> Installed " + pluginInfo.getName());
@@ -711,7 +711,7 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
         return checksumUrl;
     }
 
-    private Path unzip(Terminal terminal, Path zip, Path pluginsDir, boolean isEsPlugin) throws IOException, UserException {
+    private Path unzip(Path zip, Path pluginsDir, boolean isEsPlugin) throws IOException, UserException {
         // unzip plugin to a staging temp dir
 
         final Path target = stagingDirectory(pluginsDir);
@@ -765,7 +765,6 @@ class InstallPluginCommand extends EnvironmentAwareCommand {
                             throw new UserException(PLUGIN_MALFORMED, "'" + entry.getName() + "' cannot be converted.", e);
                         }
                         Files.delete(tempFile);
-                        terminal.println("-> Relocated " + entry.getName());
                     } else {
                         try (OutputStream out = Files.newOutputStream(targetFile)) {
                             int len;
