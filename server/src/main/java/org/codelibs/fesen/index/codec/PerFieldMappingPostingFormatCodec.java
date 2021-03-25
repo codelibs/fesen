@@ -22,7 +22,6 @@ package org.codelibs.fesen.index.codec;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.lucene87.Lucene87StoredFieldsFormat;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.index.mapper.CompletionFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
@@ -46,7 +45,7 @@ public class PerFieldMappingPostingFormatCodec extends Lucene87Codec {
             "PerFieldMappingPostingFormatCodec must subclass the latest " + "lucene codec: " + Lucene.LATEST_CODEC;
     }
 
-    public PerFieldMappingPostingFormatCodec(Lucene87StoredFieldsFormat.Mode compressionMode, MapperService mapperService, Logger logger) {
+    public PerFieldMappingPostingFormatCodec(Mode compressionMode, MapperService mapperService, Logger logger) {
         super(compressionMode);
         this.mapperService = mapperService;
         this.logger = logger;

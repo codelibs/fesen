@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.common.geo;
 
+import org.apache.lucene.geo.GeoEncodingUtils;
 import org.codelibs.fesen.geometry.Circle;
 import org.codelibs.fesen.geometry.Line;
 import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.Polygon;
 import org.codelibs.fesen.geometry.Rectangle;
-
 
 /**
  * Utility class that transforms Fesen geometry objects to the Lucene representation
@@ -49,7 +49,9 @@ public class GeoShapeUtils {
     }
 
     public static org.apache.lucene.geo.Point toLucenePoint(Point point) {
-        return new org.apache.lucene.geo.Point(point.getLat(), point.getLon());
+        final double lat = GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(point.getLat()));
+        final double lon = GeoEncodingUtils.decodeLongitude(GeoEncodingUtils.encodeLongitude(point.getLon()));
+        return new org.apache.lucene.geo.Point(lat, lon);
     }
 
     public static org.apache.lucene.geo.Line toLuceneLine(Line line) {

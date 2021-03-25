@@ -207,6 +207,8 @@ public abstract class AnalysisFactoryTestCase extends ESTestCase {
         // TODO: these charfilters are not yet exposed: useful?
         // handling of zwnj for persian
         .put("persian",        Void.class)
+        // LUCENE-9413
+        .put("cjkwidth",       Void.class)
         .immutableMap();
 
     /**
