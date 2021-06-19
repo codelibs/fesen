@@ -1,4 +1,5 @@
 Fesen: Fess Search Engine
+[![Java CI with Maven](https://github.com/codelibs/fesen/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fesen/actions/workflows/maven.yml)
 ------------------
 
 ## Overview
