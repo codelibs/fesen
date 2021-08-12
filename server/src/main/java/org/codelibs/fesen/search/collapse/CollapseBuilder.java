@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.collapse;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -29,17 +35,9 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.mapper.KeywordFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.index.query.InnerHitBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * A builder that enables field collapsing on search request.
@@ -203,8 +201,7 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         if (fieldType == null) {
             throw new IllegalArgumentException("no mapping found for `" + field + "` in order to collapse on");
         }
-        if (fieldType instanceof KeywordFieldMapper.KeywordFieldType == false &&
-            fieldType instanceof NumberFieldMapper.NumberFieldType == false) {
+        if (fieldType.collapseType() == MappedFieldType.CollapseType.NONE) {
             throw new IllegalArgumentException("unknown type for collapse field `" + field +
                 "`, only keywords and numbers are accepted");
         }
