@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Field;
@@ -35,15 +44,6 @@ import org.codelibs.fesen.index.fielddata.plain.SortedSetOrdinalsIndexFieldData;
 import org.codelibs.fesen.index.similarity.SimilarityProvider;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A field mapper for keywords. This mapper accepts strings and indexes them as-is.
@@ -293,6 +293,11 @@ public final class KeywordFieldMapper extends ParametrizedFieldMapper {
                 value = ((BytesRef) value).utf8ToString();
             }
             return getTextSearchInfo().getSearchAnalyzer().normalize(name(), value.toString());
+        }
+
+        @Override
+        public CollapseType collapseType() {
+            return CollapseType.KEYWORD;
         }
     }
 

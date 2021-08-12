@@ -19,8 +19,18 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.exc.InputCoercionException;
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.apache.lucene.document.DoublePoint;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FloatPoint;
@@ -41,8 +51,8 @@ import org.codelibs.fesen.common.Numbers;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
@@ -52,17 +62,8 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.exc.InputCoercionException;
 
 /** A {@link FieldMapper} for numeric types: byte, short, int, long, float and double. */
 public class NumberFieldMapper extends ParametrizedFieldMapper {
@@ -1006,6 +1007,11 @@ public class NumberFieldMapper extends ParametrizedFieldMapper {
 
         public Number parsePoint(byte[] value) {
             return type.parsePoint(value);
+        }
+
+        @Override
+        public CollapseType collapseType() {
+            return CollapseType.NUMERIC;
         }
     }
 

@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.PrefixCodedTerms;
@@ -52,14 +60,6 @@ import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.fetch.subphase.FetchFieldsPhase;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.io.IOException;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * This defines the core properties and functions to operate on a field.
@@ -414,5 +414,13 @@ public abstract class MappedFieldType {
      */
     public TextSearchInfo getTextSearchInfo() {
         return textSearchInfo;
+    }
+
+    public CollapseType collapseType() {
+        return CollapseType.NONE;
+    }
+
+    public enum CollapseType {
+        NONE, KEYWORD, NUMERIC;
     }
 }

@@ -18,14 +18,12 @@
  */
 package org.codelibs.fesen.search.collapse;
 
+import java.util.List;
+
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.grouping.CollapsingTopDocsCollector;
-import org.codelibs.fesen.index.mapper.KeywordFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.index.query.InnerHitBuilder;
-
-import java.util.List;
 
 /**
  * Context used for field collapsing
@@ -61,13 +59,13 @@ public class CollapseContext {
     }
 
     public CollapsingTopDocsCollector<?> createTopDocs(Sort sort, int topN) {
-        if (fieldType instanceof KeywordFieldMapper.KeywordFieldType) {
+        switch (fieldType.collapseType()) {
+        case KEYWORD:
             return CollapsingTopDocsCollector.createKeyword(fieldName, fieldType, sort, topN);
-        } else if (fieldType instanceof NumberFieldMapper.NumberFieldType) {
+        case NUMERIC:
             return CollapsingTopDocsCollector.createNumeric(fieldName, fieldType, sort, topN);
-        } else {
-            throw new IllegalStateException("unknown type for collapse field " + fieldName +
-                ", only keywords and numbers are accepted");
+        default:
+            throw new IllegalStateException("unknown type for collapse field " + fieldName + ", only keywords and numbers are accepted");
         }
     }
 }
