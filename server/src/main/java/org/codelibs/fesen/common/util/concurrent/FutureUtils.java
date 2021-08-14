@@ -20,8 +20,8 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.FesenTimeoutException;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;

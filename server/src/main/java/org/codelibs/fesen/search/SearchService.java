@@ -47,11 +47,11 @@ import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentMapLong;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
@@ -121,9 +121,9 @@ import org.codelibs.fesen.threadpool.Scheduler.Cancellable;
 import org.codelibs.fesen.threadpool.ThreadPool.Names;
 import org.codelibs.fesen.transport.TransportRequest;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueHours;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMinutes;
+import static org.codelibs.fesen.core.TimeValue.timeValueHours;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
 
 import java.io.IOException;
 import java.util.Collections;

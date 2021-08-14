@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsRe
 import org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestRequest;

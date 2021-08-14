@@ -26,12 +26,12 @@ import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParserHelper;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.TimeValue;
 
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;

@@ -19,7 +19,7 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.ArrayList;
 import java.util.List;

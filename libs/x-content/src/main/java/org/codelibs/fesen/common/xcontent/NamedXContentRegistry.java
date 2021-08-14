@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.core.CheckedFunction;
 
 import java.io.IOException;
 import java.util.ArrayList;

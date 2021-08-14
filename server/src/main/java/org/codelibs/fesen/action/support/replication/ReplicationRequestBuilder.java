@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public abstract class ReplicationRequestBuilder<Request extends ReplicationRequest<Request>, Response extends ActionResponse,
         RequestBuilder extends ReplicationRequestBuilder<Request, Response, RequestBuilder>>

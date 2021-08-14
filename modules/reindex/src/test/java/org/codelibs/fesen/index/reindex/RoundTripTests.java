@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.uid.Versions;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
 import org.codelibs.fesen.index.reindex.AbstractBulkIndexByScrollRequest;
 import org.codelibs.fesen.index.reindex.DeleteByQueryRequest;
@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 /**
  * Round trip tests for all {@link Writeable} things declared in this plugin.

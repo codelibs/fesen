@@ -21,8 +21,8 @@ package org.codelibs.fesen.common.util;
 import org.apache.lucene.util.SetOnce;
 import org.apache.lucene.util.ThreadInterruptedException;
 import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.HashSet;

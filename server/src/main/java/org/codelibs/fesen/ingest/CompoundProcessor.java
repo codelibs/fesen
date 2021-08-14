@@ -20,7 +20,7 @@
 package org.codelibs.fesen.ingest;
 
 import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;

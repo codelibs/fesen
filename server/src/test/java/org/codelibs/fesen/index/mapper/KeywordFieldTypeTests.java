@@ -221,14 +221,14 @@ public class KeywordFieldTypeTests extends FieldTypeTestCase {
 
     private static IndexAnalyzers createIndexAnalyzers() {
         return new IndexAnalyzers(
-            org.codelibs.fesen.common.collect.Map.of("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
-            org.codelibs.fesen.common.collect.Map.ofEntries(
-                org.codelibs.fesen.common.collect.Map.entry("lowercase",
+            org.codelibs.fesen.core.Map.of("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
+            org.codelibs.fesen.core.Map.ofEntries(
+                org.codelibs.fesen.core.Map.entry("lowercase",
                     new NamedAnalyzer("lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer())),
-                org.codelibs.fesen.common.collect.Map.entry("other_lowercase",
+                org.codelibs.fesen.core.Map.entry("other_lowercase",
                     new NamedAnalyzer("other_lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer()))
             ),
-            org.codelibs.fesen.common.collect.Map.of(
+            org.codelibs.fesen.core.Map.of(
                 "lowercase",
                 new NamedAnalyzer(
                     "lowercase",

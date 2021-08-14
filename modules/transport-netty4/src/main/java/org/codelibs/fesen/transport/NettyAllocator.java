@@ -29,8 +29,8 @@ import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 
 import java.util.concurrent.atomic.AtomicBoolean;

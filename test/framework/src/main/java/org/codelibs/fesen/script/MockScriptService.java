@@ -62,11 +62,11 @@ public class MockScriptService extends ScriptService {
 
             @Override
             public Set<ScriptContext<?>> getSupportedContexts() {
-                return org.codelibs.fesen.common.collect.Set.of(context);
+                return org.codelibs.fesen.core.Set.of(context);
             }
         };
-        return new MockScriptService(Settings.EMPTY, org.codelibs.fesen.common.collect.Map.of("lang", engine),
-            org.codelibs.fesen.common.collect.Map.of(context.name, context)) {
+        return new MockScriptService(Settings.EMPTY, org.codelibs.fesen.core.Map.of("lang", engine),
+            org.codelibs.fesen.core.Map.of(context.name, context)) {
             @Override
             protected StoredScriptSource getScriptFromClusterState(String id) {
                 return storedLookup.get(id);

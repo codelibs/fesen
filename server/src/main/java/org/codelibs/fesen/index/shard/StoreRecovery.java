@@ -41,7 +41,7 @@ import org.codelibs.fesen.cluster.routing.RecoverySource.SnapshotRecoverySource;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.engine.EngineException;
@@ -54,7 +54,7 @@ import org.codelibs.fesen.indices.recovery.RecoveryState;
 import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.repositories.Repository;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 import java.io.IOException;
 import java.util.Arrays;

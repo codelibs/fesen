@@ -19,7 +19,7 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.ArrayList;

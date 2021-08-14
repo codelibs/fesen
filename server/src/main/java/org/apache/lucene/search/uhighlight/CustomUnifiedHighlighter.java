@@ -32,8 +32,8 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.CheckedSupplier;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lucene.search.MultiPhrasePrefixQuery;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexSettings;
 
 import java.io.IOException;

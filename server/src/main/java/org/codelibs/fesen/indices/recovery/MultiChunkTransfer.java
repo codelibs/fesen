@@ -23,9 +23,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.Assertions;
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.util.concurrent.AsyncIOProcessor;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.seqno.LocalCheckpointTracker;
 

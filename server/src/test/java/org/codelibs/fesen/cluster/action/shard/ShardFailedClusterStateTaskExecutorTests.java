@@ -44,9 +44,9 @@ import org.codelibs.fesen.cluster.routing.allocation.StaleShard;
 import org.codelibs.fesen.cluster.routing.allocation.decider.ClusterRebalanceAllocationDecider;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 

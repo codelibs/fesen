@@ -22,7 +22,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReader;
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.index.shard.ShardId;
 
 import java.io.IOException;

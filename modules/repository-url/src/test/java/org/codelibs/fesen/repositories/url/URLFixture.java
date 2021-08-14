@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.repositories.url;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.test.fixture.AbstractHttpFixture;
 

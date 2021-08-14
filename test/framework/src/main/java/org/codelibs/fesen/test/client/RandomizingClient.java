@@ -26,7 +26,7 @@ import org.codelibs.fesen.action.search.SearchType;
 import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.client.FilterClient;
 import org.codelibs.fesen.cluster.routing.Preference;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -22,7 +22,7 @@ package org.codelibs.fesen.action;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * An extension to {@link Future} allowing for simplified "get" operations.

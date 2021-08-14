@@ -28,7 +28,6 @@ import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.RealtimeRequest;
 import org.codelibs.fesen.action.ValidateActions;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -40,6 +39,7 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 

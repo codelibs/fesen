@@ -29,9 +29,9 @@ import org.apache.lucene.search.suggest.document.CompletionTerms;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.common.FieldMemoryStats;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.util.CollectionUtils;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.suggest.completion.CompletionStats;
 
 import java.util.function.Supplier;

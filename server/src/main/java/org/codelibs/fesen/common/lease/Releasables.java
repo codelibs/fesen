@@ -24,7 +24,7 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 /** Utility methods to work with {@link Releasable}s. */

@@ -21,7 +21,7 @@ package org.codelibs.fesen.script;
 
 import java.util.Map;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * A script used by {@link org.codelibs.fesen.ingest.ConditionalProcessor}.

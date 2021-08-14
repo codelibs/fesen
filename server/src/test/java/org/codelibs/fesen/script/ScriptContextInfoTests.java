@@ -20,13 +20,13 @@
 package org.codelibs.fesen.script;
 
 import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.script.ScriptContextInfo;
 import org.codelibs.fesen.script.ScriptContextInfo.ScriptMethodInfo;
 import org.codelibs.fesen.script.ScriptContextInfo.ScriptMethodInfo.ParameterInfo;

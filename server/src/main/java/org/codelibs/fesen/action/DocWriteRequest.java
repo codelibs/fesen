@@ -23,10 +23,10 @@ import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.update.UpdateRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.lucene.uid.Versions;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.index.shard.ShardId;
 

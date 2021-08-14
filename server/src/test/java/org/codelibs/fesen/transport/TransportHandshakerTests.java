@@ -23,7 +23,7 @@ import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;

@@ -30,12 +30,12 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.lucene.uid.Versions;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.query.QueryBuilder;
@@ -53,7 +53,7 @@ import java.util.Map;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 import static org.codelibs.fesen.index.VersionType.INTERNAL;
 
 /**

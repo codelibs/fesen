@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import static org.codelibs.fesen.gateway.GatewayService.STATE_NOT_RECOVERED_BLOCK;
 

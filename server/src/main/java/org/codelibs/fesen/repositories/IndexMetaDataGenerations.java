@@ -20,7 +20,7 @@
 package org.codelibs.fesen.repositories;
 
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.snapshots.SnapshotId;
 
 import java.util.Collection;

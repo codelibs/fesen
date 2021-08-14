@@ -36,14 +36,14 @@ import org.codelibs.fesen.cluster.ClusterStateObserver;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.CheckedFunction;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.CancellableThreads;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.engine.RecoveryEngineException;
 import org.codelibs.fesen.index.mapper.MapperException;
@@ -72,7 +72,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
 
 /**

@@ -30,7 +30,7 @@ import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.routing.TestShardRouting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.engine.Engine;

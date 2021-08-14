@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.test;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matcher;
 

@@ -19,8 +19,8 @@
 package org.codelibs.fesen.discovery;
 
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.Collections;
 import java.util.Set;

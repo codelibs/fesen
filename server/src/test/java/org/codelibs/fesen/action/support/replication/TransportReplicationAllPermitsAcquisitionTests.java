@@ -47,7 +47,7 @@ import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.engine.InternalEngineFactory;
 import org.codelibs.fesen.index.shard.IndexShard;

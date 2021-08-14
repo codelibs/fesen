@@ -26,7 +26,6 @@ import org.codelibs.fesen.cluster.routing.allocation.command.AllocateStalePrimar
 import org.codelibs.fesen.cluster.routing.allocation.command.AllocationCommand;
 import org.codelibs.fesen.cluster.routing.allocation.command.CancelAllocationCommand;
 import org.codelibs.fesen.cluster.routing.allocation.command.MoveAllocationCommand;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -38,6 +37,7 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.index.shard.PrimaryReplicaSyncer.ResyncTask;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;

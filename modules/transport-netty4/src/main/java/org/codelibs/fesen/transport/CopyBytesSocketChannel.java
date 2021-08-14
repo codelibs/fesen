@@ -39,8 +39,8 @@ import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.RecvByteBufAllocator;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

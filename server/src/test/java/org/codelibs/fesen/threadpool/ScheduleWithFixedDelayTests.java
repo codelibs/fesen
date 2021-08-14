@@ -21,9 +21,9 @@ package org.codelibs.fesen.threadpool;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.BaseFuture;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.ThreadPool;

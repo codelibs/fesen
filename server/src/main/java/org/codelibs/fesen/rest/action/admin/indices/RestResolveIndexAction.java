@@ -39,7 +39,7 @@ public class RestResolveIndexAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return org.codelibs.fesen.common.collect.List.of(
+        return org.codelibs.fesen.core.List.of(
             new Route(RestRequest.Method.GET, "/_resolve/index/{name}")
         );
     }

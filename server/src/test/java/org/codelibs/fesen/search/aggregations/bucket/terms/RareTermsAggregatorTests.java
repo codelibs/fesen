@@ -386,22 +386,22 @@ public class RareTermsAggregatorTests extends AggregatorTestCase {
             InternalRareTerms<?, ?> evenRare = even.getAggregations().get("rare");
             assertEquals(
                 evenRare.getBuckets().stream().map(InternalRareTerms.Bucket::getKeyAsString).collect(toList()),
-                org.codelibs.fesen.common.collect.List.of("2")
+                org.codelibs.fesen.core.List.of("2")
             );
             assertEquals(
                 evenRare.getBuckets().stream().map(InternalRareTerms.Bucket::getDocCount).collect(toList()),
-                org.codelibs.fesen.common.collect.List.of(2L)
+                org.codelibs.fesen.core.List.of(2L)
             );
 
             StringTerms.Bucket odd = terms.getBucketByKey("odd");
             InternalRareTerms<?, ?> oddRare = odd.getAggregations().get("rare");
             assertEquals(
                 oddRare.getBuckets().stream().map(InternalRareTerms.Bucket::getKeyAsString).collect(toList()),
-                org.codelibs.fesen.common.collect.List.of("1")
+                org.codelibs.fesen.core.List.of("1")
             );
             assertEquals(
                 oddRare.getBuckets().stream().map(InternalRareTerms.Bucket::getDocCount).collect(toList()),
-                org.codelibs.fesen.common.collect.List.of(1L)
+                org.codelibs.fesen.core.List.of(1L)
             );
         }
     }

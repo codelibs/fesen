@@ -118,7 +118,7 @@ import org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryReque
 import org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata.APIBlock;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Administrative actions/operations against indices.

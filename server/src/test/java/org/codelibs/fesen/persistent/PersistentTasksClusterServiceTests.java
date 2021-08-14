@@ -37,7 +37,7 @@ import org.codelibs.fesen.cluster.routing.RoutingTable;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.persistent.AllocatedPersistentTask;
 import org.codelibs.fesen.persistent.PersistentTaskParams;
 import org.codelibs.fesen.persistent.PersistentTaskState;

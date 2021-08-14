@@ -141,7 +141,7 @@ class FieldTypeLookup implements Iterable<MappedFieldType> {
 
         return fieldToCopiedFields.containsKey(resolvedField)
             ? fieldToCopiedFields.get(resolvedField)
-            : org.codelibs.fesen.common.collect.Set.of(resolvedField);
+            : org.codelibs.fesen.core.Set.of(resolvedField);
     }
 
     @Override

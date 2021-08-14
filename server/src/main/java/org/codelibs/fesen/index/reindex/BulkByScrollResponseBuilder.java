@@ -20,8 +20,8 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask.StatusBuilder;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
 

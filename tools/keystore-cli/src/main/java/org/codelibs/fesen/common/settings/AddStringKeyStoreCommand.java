@@ -25,9 +25,9 @@ import joptsimple.OptionSpec;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
 import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.env.Environment;
 
 import java.io.BufferedReader;

@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.theInstance;

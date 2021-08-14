@@ -24,9 +24,9 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.io.IOException;
 import java.util.Objects;

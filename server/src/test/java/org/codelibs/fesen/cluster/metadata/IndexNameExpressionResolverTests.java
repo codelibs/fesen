@@ -1733,7 +1733,7 @@ public class IndexNameExpressionResolverTests extends ESTestCase {
         Metadata.Builder mdBuilder = Metadata.builder()
             .put(backingIndex, false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(backingIndex.getIndex()), 1));
+                org.codelibs.fesen.core.List.of(backingIndex.getIndex()), 1));
         ClusterState state = ClusterState.builder(new ClusterName("_name")).metadata(mdBuilder).build();
 
         {
@@ -1923,7 +1923,7 @@ public class IndexNameExpressionResolverTests extends ESTestCase {
             .put(index1, false)
             .put(index2, false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(index1.getIndex(), index2.getIndex()), 2));
+                org.codelibs.fesen.core.List.of(index1.getIndex(), index2.getIndex()), 2));
         ClusterState state = ClusterState.builder(new ClusterName("_name")).metadata(mdBuilder).build();
 
         {
@@ -1998,9 +1998,9 @@ public class IndexNameExpressionResolverTests extends ESTestCase {
             .put(index3, false)
             .put(index4, false)
             .put(new DataStream(dataStream1, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(index1.getIndex(), index2.getIndex())))
+                org.codelibs.fesen.core.List.of(index1.getIndex(), index2.getIndex())))
             .put(new DataStream(dataStream2, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(index3.getIndex(), index4.getIndex())));
+                org.codelibs.fesen.core.List.of(index3.getIndex(), index4.getIndex())));
 
         ClusterState state = ClusterState.builder(new ClusterName("_name")).metadata(mdBuilder).build();
         {
@@ -2052,9 +2052,9 @@ public class IndexNameExpressionResolverTests extends ESTestCase {
             .put(index3, false)
             .put(index4, false)
             .put(new DataStream(dataStream1, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(index1.getIndex(), index2.getIndex())))
+                org.codelibs.fesen.core.List.of(index1.getIndex(), index2.getIndex())))
             .put(new DataStream(dataStream2, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(index3.getIndex(), index4.getIndex())));
+                org.codelibs.fesen.core.List.of(index3.getIndex(), index4.getIndex())));
 
         ClusterState state = ClusterState.builder(new ClusterName("_name")).metadata(mdBuilder).build();
         IndicesOptions indicesOptions = IndicesOptions.STRICT_EXPAND_OPEN;

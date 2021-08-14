@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.ssl;
 
 import javax.net.ssl.SSLSession;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;

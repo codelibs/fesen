@@ -21,9 +21,9 @@ package org.codelibs.fesen.index.shard;
 
 import org.apache.lucene.mockfile.FilterFileSystemProvider;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.common.io.PathUtils;
-import org.codelibs.fesen.common.io.PathUtilsForTesting;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.PathUtilsForTesting;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.env.TestEnvironment;

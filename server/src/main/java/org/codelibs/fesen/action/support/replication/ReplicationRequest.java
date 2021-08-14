@@ -26,10 +26,10 @@ import org.codelibs.fesen.action.admin.indices.refresh.TransportShardRefreshActi
 import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.IndicesOptions;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;

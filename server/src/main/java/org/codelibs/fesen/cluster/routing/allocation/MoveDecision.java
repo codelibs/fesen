@@ -22,10 +22,10 @@ package org.codelibs.fesen.cluster.routing.allocation;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision.Type;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.List;

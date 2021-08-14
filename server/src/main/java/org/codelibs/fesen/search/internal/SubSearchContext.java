@@ -19,7 +19,7 @@
 package org.codelibs.fesen.search.internal;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.query.ParsedQuery;
 import org.codelibs.fesen.search.aggregations.SearchContextAggregations;
 import org.codelibs.fesen.search.collapse.CollapseContext;

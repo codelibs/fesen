@@ -22,7 +22,7 @@ package org.codelibs.fesen.common;
 import org.codelibs.fesen.common.Rounding;
 import org.codelibs.fesen.common.Rounding.DateTimeUnit;
 import org.codelibs.fesen.common.io.stream.Writeable.Reader;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
 
 public class RoundingWireTests extends AbstractWireSerializingTestCase<Rounding> {

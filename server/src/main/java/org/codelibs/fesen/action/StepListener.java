@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.action;
 
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.FutureUtils;
 import org.codelibs.fesen.common.util.concurrent.ListenableFuture;
+import org.codelibs.fesen.core.CheckedConsumer;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

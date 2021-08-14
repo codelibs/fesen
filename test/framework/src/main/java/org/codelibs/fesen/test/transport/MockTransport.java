@@ -21,15 +21,15 @@ package org.codelibs.fesen.test.transport;
 
 import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Randomness;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.NamedWriteableAwareStreamInput;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.BoundTransportAddress;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.CloseableConnection;
 import org.codelibs.fesen.transport.ClusterConnectionManager;

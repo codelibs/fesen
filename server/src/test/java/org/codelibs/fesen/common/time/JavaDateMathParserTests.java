@@ -20,11 +20,11 @@
 package org.codelibs.fesen.common.time;
 
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.common.time.JavaDateFormatter;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.time.Instant;

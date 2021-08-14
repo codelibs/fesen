@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.bulk.BulkItemResponse;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 public class BulkIndexByScrollResponseTests extends ESTestCase {
     public void testMergeConstructor() {

@@ -21,7 +21,7 @@ package org.codelibs.fesen.search.internal;
 
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
+import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.shard.IndexShard;
@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Holds a reference to a point in time {@link Engine.Searcher} that will be used to construct {@link SearchContext}.
- * This class also implements {@link org.codelibs.fesen.common.util.concurrent.RefCounted} since in some situations like
+ * This class also implements {@link org.codelibs.fesen.core.RefCounted} since in some situations like
  * in {@link org.codelibs.fesen.search.SearchService} a SearchContext can be closed concurrently due to independent events
  * ie. when an index gets removed. To prevent accessing closed IndexReader / IndexSearcher instances the SearchContext
  * can be guarded by a reference count and fail if it's been closed by an external event.

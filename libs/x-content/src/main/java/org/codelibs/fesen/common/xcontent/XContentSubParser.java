@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.CheckedFunction;
+import org.codelibs.fesen.core.CheckedFunction;
 
 /**
  * Wrapper for a XContentParser that makes a single object/array look like a complete document.

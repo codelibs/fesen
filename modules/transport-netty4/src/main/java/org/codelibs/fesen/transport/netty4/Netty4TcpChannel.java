@@ -25,9 +25,9 @@ import io.netty.channel.ChannelPromise;
 
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.transport.TcpChannel;
 import org.codelibs.fesen.transport.TransportException;
 

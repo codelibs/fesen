@@ -27,7 +27,7 @@ import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.geo.GeoUtils;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.common.unit.DistanceUnit;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 

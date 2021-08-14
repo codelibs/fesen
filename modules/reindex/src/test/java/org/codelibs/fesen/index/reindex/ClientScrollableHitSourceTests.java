@@ -35,8 +35,8 @@ import org.codelibs.fesen.client.support.AbstractClient;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.text.Text;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.ClientScrollableHitSource;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource;
 import org.codelibs.fesen.search.SearchHit;
@@ -60,7 +60,7 @@ import java.util.stream.IntStream;
 
 import static java.util.Collections.emptyMap;
 import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 import static org.hamcrest.Matchers.instanceOf;
 
 public class ClientScrollableHitSourceTests extends ESTestCase {

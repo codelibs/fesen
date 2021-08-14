@@ -37,11 +37,11 @@ import org.codelibs.fesen.cluster.coordination.CoordinationMetadata.VotingConfig
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.discovery.Discovery;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.TransportException;

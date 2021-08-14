@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.http;
 
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.network.NetworkService;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.transport.PortsRange;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.Collections;
 import java.util.List;

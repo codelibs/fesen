@@ -29,8 +29,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.network.InetAddresses;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.RangeFieldMapper;
 import org.codelibs.fesen.index.mapper.RangeType;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
@@ -467,14 +467,14 @@ public class RangeHistogramAggregatorTests extends AggregatorTestCase {
         CheckedConsumer<RandomIndexWriter, IOException> buildIndex = iw -> {
             List<List<IndexableField>> docs = new ArrayList<>();
             for (int n = 0; n < 10000; n++) {
-                BytesRef outerRange = RangeType.LONG.encodeRanges(org.codelibs.fesen.common.collect.Set.of(
+                BytesRef outerRange = RangeType.LONG.encodeRanges(org.codelibs.fesen.core.Set.of(
                     new RangeFieldMapper.Range(RangeType.LONG, n % 100, n % 100 + 10, true, true)
                 ));
-                BytesRef innerRange = RangeType.LONG.encodeRanges(org.codelibs.fesen.common.collect.Set.of(
+                BytesRef innerRange = RangeType.LONG.encodeRanges(org.codelibs.fesen.core.Set.of(
                     new RangeFieldMapper.Range(RangeType.LONG, n / 100, n / 100 + 10, true, true)
                 ));
 
-                docs.add(org.codelibs.fesen.common.collect.List.of(
+                docs.add(org.codelibs.fesen.core.List.of(
                     new BinaryDocValuesField("outer", outerRange),
                     new BinaryDocValuesField("inner", innerRange),
                     new SortedNumericDocValuesField("n", n)

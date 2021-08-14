@@ -21,7 +21,6 @@ package org.codelibs.fesen.index.query;
 
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.geo.ShapeRelation;
@@ -33,6 +32,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.geometry.Geometry;
 import org.codelibs.fesen.index.mapper.GeoShapeQueryable;
 import org.codelibs.fesen.index.mapper.MappedFieldType;

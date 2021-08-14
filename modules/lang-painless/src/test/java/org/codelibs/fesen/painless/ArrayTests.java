@@ -20,7 +20,7 @@
 package org.codelibs.fesen.painless;
 
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.bootstrap.JavaVersion;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.painless.Def;
 import org.hamcrest.Matcher;
 

@@ -26,7 +26,7 @@ import org.apache.lucene.expressions.js.VariableContext;
 import org.apache.lucene.search.DoubleValuesSource;
 import org.apache.lucene.search.SortField;
 import org.codelibs.fesen.SpecialPermission;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;

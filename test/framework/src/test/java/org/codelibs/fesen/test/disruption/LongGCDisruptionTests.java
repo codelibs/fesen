@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.disruption.LongGCDisruption;
 

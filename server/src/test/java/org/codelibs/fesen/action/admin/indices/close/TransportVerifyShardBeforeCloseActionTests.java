@@ -41,7 +41,7 @@ import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.shard.ReplicationGroup;

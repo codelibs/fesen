@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.tasks.TaskId;
 
 /**

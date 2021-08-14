@@ -20,9 +20,9 @@
 package org.codelibs.fesen.index.query.support;
 
 import org.apache.lucene.search.MultiTermQuery;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
+import org.codelibs.fesen.core.Nullable;
 
 public final class QueryParsers {
 

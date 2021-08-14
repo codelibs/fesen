@@ -22,7 +22,7 @@ package org.codelibs.fesen.plugins;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.shard.ShardPath;
 import org.codelibs.fesen.indices.recovery.RecoveryState;

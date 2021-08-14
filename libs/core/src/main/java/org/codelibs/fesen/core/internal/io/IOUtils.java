@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Utilities for common I/O methods. Borrowed heavily from Lucene (org.apache.lucene.util.IOUtils).

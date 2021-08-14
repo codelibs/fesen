@@ -21,12 +21,12 @@ package org.codelibs.fesen.action.admin.cluster.allocation;
 
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.MasterNodeRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 
 import static org.codelibs.fesen.action.ValidateActions.addValidationError;
 

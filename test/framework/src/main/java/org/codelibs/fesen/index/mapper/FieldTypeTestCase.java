@@ -55,7 +55,7 @@ public abstract class FieldTypeTestCase extends ESTestCase {
     public static List<?> fetchSourceValue(MappedFieldType fieldType, Object sourceValue, String format) throws IOException {
         String field = fieldType.name();
         MapperService mapperService = mock(MapperService.class);
-        when(mapperService.sourcePath(field)).thenReturn(org.codelibs.fesen.common.collect.Set.of(field));
+        when(mapperService.sourcePath(field)).thenReturn(org.codelibs.fesen.core.Set.of(field));
 
         ValueFetcher fetcher = fieldType.valueFetcher(mapperService, null, format);
         SourceLookup lookup = new SourceLookup();

@@ -25,12 +25,12 @@ import com.maxmind.db.Reader;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.AbstractResponse;
 
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.cache.Cache;
 import org.codelibs.fesen.common.cache.CacheBuilder;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.ingest.Processor;
 import org.codelibs.fesen.plugins.IngestPlugin;

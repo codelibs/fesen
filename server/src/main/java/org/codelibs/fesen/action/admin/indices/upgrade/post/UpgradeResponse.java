@@ -22,10 +22,10 @@ package org.codelibs.fesen.action.admin.indices.upgrade.post;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.List;

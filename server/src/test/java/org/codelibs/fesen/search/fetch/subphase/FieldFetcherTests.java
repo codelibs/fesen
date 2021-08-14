@@ -50,7 +50,7 @@ public class FieldFetcherTests extends ESSingleNodeTestCase {
             .endObject()
         .endObject();
 
-        List<FieldAndFormat> fieldAndFormats = org.codelibs.fesen.common.collect.List.of(
+        List<FieldAndFormat> fieldAndFormats = org.codelibs.fesen.core.List.of(
             new FieldAndFormat("field", null),
             new FieldAndFormat("object.field", null));
         Map<String, DocumentField> fields = fetchFields(mapperService, source, fieldAndFormats);
@@ -82,7 +82,7 @@ public class FieldFetcherTests extends ESSingleNodeTestCase {
         DocumentField rangeField = fields.get("float_range");
         assertNotNull(rangeField);
         assertThat(rangeField.getValues().size(), equalTo(1));
-        assertThat(rangeField.getValue(), equalTo(org.codelibs.fesen.common.collect.Map.of("gte", 0.0f, "lte", 2.718f)));
+        assertThat(rangeField.getValue(), equalTo(org.codelibs.fesen.core.Map.of("gte", 0.0f, "lte", 2.718f)));
     }
 
     public void testNonExistentField() throws IOException {
@@ -213,7 +213,7 @@ public class FieldFetcherTests extends ESSingleNodeTestCase {
             .field("date_field", "1990-12-29T00:00:00.000Z")
         .endObject();
 
-        Map<String, DocumentField> fields = fetchFields(mapperService, source, org.codelibs.fesen.common.collect.List.of(
+        Map<String, DocumentField> fields = fetchFields(mapperService, source, org.codelibs.fesen.core.List.of(
             new FieldAndFormat("field", null),
             new FieldAndFormat("date_field", "yyyy/MM/dd")));
         assertThat(fields.size(), equalTo(2));
@@ -393,7 +393,7 @@ public class FieldFetcherTests extends ESSingleNodeTestCase {
     private Map<String, DocumentField> fetchFields(MapperService mapperService, XContentBuilder source, String fieldPattern)
         throws IOException {
 
-        List<FieldAndFormat> fields = org.codelibs.fesen.common.collect.List.of(new FieldAndFormat(fieldPattern, null));
+        List<FieldAndFormat> fields = org.codelibs.fesen.core.List.of(new FieldAndFormat(fieldPattern, null));
         return fetchFields(mapperService, source, fields);
     }
 
@@ -404,7 +404,7 @@ public class FieldFetcherTests extends ESSingleNodeTestCase {
         sourceLookup.setSource(BytesReference.bytes(source));
 
         FieldFetcher fieldFetcher = FieldFetcher.create(mapperService, null, fields);
-        return fieldFetcher.fetch(sourceLookup, org.codelibs.fesen.common.collect.Set.of());
+        return fieldFetcher.fetch(sourceLookup, org.codelibs.fesen.core.Set.of());
     }
 
     public MapperService createMapperService() throws IOException {

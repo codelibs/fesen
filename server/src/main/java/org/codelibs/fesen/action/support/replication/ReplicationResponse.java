@@ -24,13 +24,13 @@ import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
 

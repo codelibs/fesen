@@ -25,9 +25,9 @@ import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.action.support.single.instance.InstanceShardOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.script.Script;
 

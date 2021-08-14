@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.metadata;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.RestStatus;
 
 import java.io.IOException;

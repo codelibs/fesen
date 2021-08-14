@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
 
 import java.io.IOException;

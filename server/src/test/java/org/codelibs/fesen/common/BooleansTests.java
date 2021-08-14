@@ -21,7 +21,7 @@ package org.codelibs.fesen.common;
 
 import java.util.Locale;
 
-import org.codelibs.fesen.common.Booleans;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.Matchers.is;

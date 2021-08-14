@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 import static org.codelibs.fesen.index.query.QueryBuilders.matchAllQuery;
 
 /**

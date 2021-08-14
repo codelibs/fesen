@@ -20,9 +20,9 @@
 package org.codelibs.fesen.common.time;
 
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.util.LazyInitializable;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.time.DayOfWeek;
 import java.time.Instant;

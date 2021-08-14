@@ -25,8 +25,8 @@ import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.action.support.RetryableAction;
 import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
 

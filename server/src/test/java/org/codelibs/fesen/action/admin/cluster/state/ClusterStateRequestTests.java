@@ -26,7 +26,7 @@ import org.codelibs.fesen.action.admin.cluster.state.ClusterStateRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.VersionUtils;
 

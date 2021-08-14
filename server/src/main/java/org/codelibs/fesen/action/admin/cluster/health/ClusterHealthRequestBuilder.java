@@ -25,7 +25,7 @@ import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBu
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public class ClusterHealthRequestBuilder
         extends MasterNodeReadOperationRequestBuilder<ClusterHealthRequest, ClusterHealthResponse, ClusterHealthRequestBuilder> {

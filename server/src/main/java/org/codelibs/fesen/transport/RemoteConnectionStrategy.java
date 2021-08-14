@@ -30,9 +30,9 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 import java.io.Closeable;

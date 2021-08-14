@@ -21,7 +21,6 @@ package org.codelibs.fesen.test;
 
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.CheckedBiFunction;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.ToXContent;
@@ -31,6 +30,7 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.CheckedFunction;
 
 import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 

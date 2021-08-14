@@ -23,8 +23,8 @@ import org.codelibs.fesen.cluster.routing.RoutingChangesObserver;
 import org.codelibs.fesen.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.gateway.GatewayAllocator;
 
 import java.util.List;

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 
 import java.util.Comparator;

@@ -30,8 +30,8 @@ import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.routing.RerouteService;
 import org.codelibs.fesen.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.collect.List;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.List;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.VersionUtils;
 

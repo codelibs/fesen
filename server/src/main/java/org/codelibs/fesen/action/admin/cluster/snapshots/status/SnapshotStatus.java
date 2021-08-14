@@ -22,7 +22,6 @@ package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
 import org.codelibs.fesen.cluster.SnapshotsInProgress.State;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,6 +32,7 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.snapshots.Snapshot;
 import org.codelibs.fesen.snapshots.SnapshotId;
 

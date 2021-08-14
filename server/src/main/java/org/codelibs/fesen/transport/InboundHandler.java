@@ -29,9 +29,9 @@ import org.codelibs.fesen.common.io.stream.NamedWriteableAwareStreamInput;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 import java.io.IOException;

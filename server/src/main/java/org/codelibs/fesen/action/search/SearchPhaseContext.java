@@ -20,9 +20,9 @@ package org.codelibs.fesen.action.search;
 
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.OriginalIndices;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.util.concurrent.AtomicArray;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.SearchPhaseResult;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.search.internal.InternalSearchResponse;

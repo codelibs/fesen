@@ -21,8 +21,8 @@ package org.codelibs.fesen.script;
 
 import java.lang.reflect.Method;
 
-import org.codelibs.fesen.common.collect.Tuple;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * The information necessary to compile and run a script.

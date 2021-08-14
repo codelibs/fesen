@@ -39,7 +39,7 @@ import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool.Names;
 import org.codelibs.fesen.transport.TransportService;

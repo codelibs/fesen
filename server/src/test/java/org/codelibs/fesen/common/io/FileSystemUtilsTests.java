@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.io;
 import org.apache.lucene.util.Constants;
 import org.apache.lucene.util.LuceneTestCase.SuppressFileSystems;
 import org.codelibs.fesen.common.io.FileSystemUtils;
-import org.codelibs.fesen.common.io.PathUtils;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
 

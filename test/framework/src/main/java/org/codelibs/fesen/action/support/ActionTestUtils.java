@@ -26,7 +26,7 @@ import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.action.support.TransportAction;
-import org.codelibs.fesen.common.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.tasks.Task;
 
 public class ActionTestUtils {

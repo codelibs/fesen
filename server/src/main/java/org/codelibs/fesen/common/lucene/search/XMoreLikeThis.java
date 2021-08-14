@@ -57,7 +57,7 @@ import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.CharsRefBuilder;
 import org.apache.lucene.util.PriorityQueue;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.io.Reader;

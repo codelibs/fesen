@@ -22,7 +22,7 @@ package org.codelibs.fesen.transport.netty4;
 import io.netty.channel.Channel;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.transport.TcpServerChannel;
 
 import java.net.InetSocketAddress;

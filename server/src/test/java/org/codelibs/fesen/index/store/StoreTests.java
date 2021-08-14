@@ -58,7 +58,7 @@ import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
 import org.codelibs.fesen.common.io.stream.OutputStreamStreamOutput;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.env.ShardLock;
 import org.codelibs.fesen.index.Index;

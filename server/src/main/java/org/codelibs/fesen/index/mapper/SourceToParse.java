@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.mapper;
 
 import java.util.Objects;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 
 public class SourceToParse {
 

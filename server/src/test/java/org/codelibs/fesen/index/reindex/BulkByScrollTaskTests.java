@@ -20,10 +20,10 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask;
 import org.codelibs.fesen.test.ESTestCase;
 
@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static java.lang.Math.min;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueNanos;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 import static org.hamcrest.Matchers.containsString;
 
 public class BulkByScrollTaskTests extends ESTestCase {

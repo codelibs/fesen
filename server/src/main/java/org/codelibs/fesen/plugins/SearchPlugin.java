@@ -20,7 +20,6 @@
 package org.codelibs.fesen.plugins;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.common.xcontent.ContextParser;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryParser;
 import org.codelibs.fesen.index.query.functionscore.ScoreFunctionBuilder;

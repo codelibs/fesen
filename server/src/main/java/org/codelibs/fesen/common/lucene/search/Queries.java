@@ -32,7 +32,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.SeqNoFieldMapper;
 import org.codelibs.fesen.index.mapper.TypeFieldMapper;
 

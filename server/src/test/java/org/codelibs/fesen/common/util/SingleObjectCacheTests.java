@@ -23,8 +23,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.SingleObjectCache;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class SingleObjectCacheTests extends ESTestCase {

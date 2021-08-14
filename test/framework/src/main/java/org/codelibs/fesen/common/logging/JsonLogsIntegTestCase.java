@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.logging;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.test.rest.ESRestTestCase;
 
 import java.io.BufferedReader;

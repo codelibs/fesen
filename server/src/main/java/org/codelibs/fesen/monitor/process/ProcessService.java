@@ -24,8 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.SingleObjectCache;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
 
 public final class ProcessService implements ReportingService<ProcessInfo> {

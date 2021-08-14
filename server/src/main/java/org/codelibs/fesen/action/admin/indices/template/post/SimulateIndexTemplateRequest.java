@@ -22,10 +22,10 @@ package org.codelibs.fesen.action.admin.indices.template.post;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.admin.indices.template.put.PutComposableIndexTemplateAction;
 import org.codelibs.fesen.action.support.master.MasterNodeReadRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Objects;

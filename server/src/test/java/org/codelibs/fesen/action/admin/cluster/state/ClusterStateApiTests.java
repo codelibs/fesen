@@ -29,7 +29,7 @@ import org.codelibs.fesen.action.admin.cluster.settings.ClusterUpdateSettingsReq
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateRequest;
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateResponse;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
 
 public class ClusterStateApiTests extends ESSingleNodeTestCase {

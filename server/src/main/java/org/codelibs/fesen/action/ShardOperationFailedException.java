@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.action;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
 
 import java.util.Objects;

@@ -20,12 +20,12 @@ package org.codelibs.fesen.index.shard;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.util.concurrent.EsThreadPoolExecutor;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.CheckedRunnable;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.shard.IndexShardClosedException;
 import org.codelibs.fesen.index.shard.IndexShardOperationPermits;

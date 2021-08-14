@@ -19,9 +19,9 @@
 package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -144,7 +144,7 @@ public class InternalFiltersTests extends InternalMultiBucketAggregationTestCase
             }
         };
         PipelineTree tree = new PipelineTree(
-            org.codelibs.fesen.common.collect.Map.of(inner.getName(), new PipelineTree(emptyMap(), singletonList(mockPipeline))),
+            org.codelibs.fesen.core.Map.of(inner.getName(), new PipelineTree(emptyMap(), singletonList(mockPipeline))),
             emptyList());
         InternalFilters reduced = (InternalFilters) test.reducePipelines(test, emptyReduceContextBuilder().forFinalReduction(), tree);
         for (InternalFilters.InternalBucket bucket : reduced.getBuckets()) {

@@ -27,8 +27,8 @@ import org.codelibs.fesen.cli.Command;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.node.InternalSettingsPreparer;
 

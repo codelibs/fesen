@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 /**

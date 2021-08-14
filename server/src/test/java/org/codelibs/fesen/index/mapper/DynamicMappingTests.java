@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.FieldMapper;

@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.Map;

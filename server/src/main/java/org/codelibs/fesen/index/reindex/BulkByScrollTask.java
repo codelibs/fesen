@@ -20,14 +20,11 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
@@ -35,6 +32,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.tasks.CancellableTask;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
@@ -53,9 +53,9 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
 import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueNanos;
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 
 /**
  * Task storing information about a currently running BulkByScroll request.

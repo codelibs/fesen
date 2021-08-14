@@ -24,11 +24,11 @@ import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.InstantiatingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.TimeValue;
 
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
@@ -70,8 +70,8 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         this.type = type;
         this.description = description;
         this.breakdown = Objects.requireNonNull(breakdown, "required breakdown argument missing");
-        this.debug = debug == null ? org.codelibs.fesen.common.collect.Map.of() : debug;
-        this.children = children == null ? org.codelibs.fesen.common.collect.List.of() : children;
+        this.debug = debug == null ? org.codelibs.fesen.core.Map.of() : debug;
+        this.children = children == null ? org.codelibs.fesen.core.List.of() : children;
         this.nodeTime = nodeTime;
     }
 
@@ -86,7 +86,7 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         if (in.getVersion().onOrAfter(Version.V_7_9_0)) {
             debug = in.readMap(StreamInput::readString, StreamInput::readGenericValue);
         } else {
-            debug = org.codelibs.fesen.common.collect.Map.of();
+            debug = org.codelibs.fesen.core.Map.of();
         }
         children = in.readList(ProfileResult::new);
     }

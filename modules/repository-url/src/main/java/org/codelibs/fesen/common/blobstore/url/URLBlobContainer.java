@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.blobstore.url;
 
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.blobstore.BlobContainer;
 import org.codelibs.fesen.common.blobstore.BlobMetadata;
 import org.codelibs.fesen.common.blobstore.BlobPath;
 import org.codelibs.fesen.common.blobstore.DeleteResult;
 import org.codelibs.fesen.common.blobstore.support.AbstractBlobContainer;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;

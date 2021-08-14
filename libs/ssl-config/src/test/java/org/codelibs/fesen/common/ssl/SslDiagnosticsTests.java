@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ssl.PemUtils;
 import org.codelibs.fesen.common.ssl.SslDiagnostics;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;

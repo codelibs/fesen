@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Rounding;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;

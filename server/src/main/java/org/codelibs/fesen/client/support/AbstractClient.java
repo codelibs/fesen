@@ -352,11 +352,11 @@ import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.client.FilterClient;
 import org.codelibs.fesen.client.IndicesAdminClient;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata.APIBlock;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

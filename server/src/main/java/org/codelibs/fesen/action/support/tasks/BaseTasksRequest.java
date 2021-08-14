@@ -25,8 +25,8 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.regex.Regex;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.CollectionUtils;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 

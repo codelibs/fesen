@@ -21,14 +21,14 @@ package org.codelibs.fesen.action.support;
 
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.indices.SystemIndices;

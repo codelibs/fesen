@@ -21,7 +21,7 @@ package org.codelibs.fesen.repositories;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

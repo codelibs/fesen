@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common.xcontent.support;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.util.set.Sets;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;

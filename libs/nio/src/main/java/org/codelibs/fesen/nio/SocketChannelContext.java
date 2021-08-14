@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.core.internal.net.NetUtils;
 import org.codelibs.fesen.nio.utils.ByteBufferUtils;
 import org.codelibs.fesen.nio.utils.ExceptionsHelper;

@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.codelibs.fesen.common.collect.Set;
+import org.codelibs.fesen.core.Set;
 import org.codelibs.fesen.index.mapper.ContentPath;
 import org.codelibs.fesen.index.mapper.FieldAliasMapper;
 import org.codelibs.fesen.index.mapper.FieldTypeLookup;

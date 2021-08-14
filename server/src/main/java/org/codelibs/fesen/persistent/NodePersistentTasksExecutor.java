@@ -18,8 +18,8 @@
  */
 package org.codelibs.fesen.persistent;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 /**

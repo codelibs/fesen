@@ -27,8 +27,8 @@ import org.codelibs.fesen.common.cache.Cache;
 import org.codelibs.fesen.common.cache.CacheBuilder;
 import org.codelibs.fesen.common.cache.RemovalListener;
 import org.codelibs.fesen.common.cache.RemovalNotification;
-import org.codelibs.fesen.common.collect.Tuple;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.Map;
 import java.util.Objects;

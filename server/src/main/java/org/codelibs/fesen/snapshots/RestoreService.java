@@ -67,7 +67,7 @@ import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.shard.IndexShard;

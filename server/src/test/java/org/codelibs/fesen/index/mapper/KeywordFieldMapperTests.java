@@ -128,7 +128,7 @@ public class KeywordFieldMapperTests extends MapperTestCase {
     protected IndexAnalyzers createIndexAnalyzers(IndexSettings indexSettings) {
         return new IndexAnalyzers(
             singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
-            org.codelibs.fesen.common.collect.Map.of(
+            org.codelibs.fesen.core.Map.of(
                 "lowercase", new NamedAnalyzer("lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer()),
                 "other_lowercase", new NamedAnalyzer("other_lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer())
             ),

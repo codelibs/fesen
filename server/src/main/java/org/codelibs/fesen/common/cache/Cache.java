@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.common.cache;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.util.concurrent.ReleasableLock;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.Arrays;
 import java.util.HashMap;

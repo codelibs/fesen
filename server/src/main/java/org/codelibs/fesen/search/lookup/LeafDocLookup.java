@@ -20,8 +20,8 @@ package org.codelibs.fesen.search.lookup;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.mapper.MappedFieldType;

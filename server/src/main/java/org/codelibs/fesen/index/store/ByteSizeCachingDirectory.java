@@ -24,8 +24,8 @@ import org.apache.lucene.store.FilterDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.IndexOutput;
 import org.codelibs.fesen.common.lucene.store.FilterIndexOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.SingleObjectCache;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

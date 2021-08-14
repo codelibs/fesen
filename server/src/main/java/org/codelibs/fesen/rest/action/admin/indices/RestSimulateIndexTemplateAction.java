@@ -37,7 +37,7 @@ public class RestSimulateIndexTemplateAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return org.codelibs.fesen.common.collect.List.of(
+        return org.codelibs.fesen.core.List.of(
             new Route(POST, "/_index_template/_simulate_index/{name}"));
     }
 

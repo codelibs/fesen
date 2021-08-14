@@ -29,7 +29,7 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes.Builder;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;

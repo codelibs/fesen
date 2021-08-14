@@ -24,8 +24,8 @@ import java.security.GeneralSecurityException;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.util.ArrayUtils;
+import org.codelibs.fesen.core.Booleans;
 
 /**
  * A secure setting.

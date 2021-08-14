@@ -26,8 +26,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.ReferenceManager;
 
 import org.apache.lucene.search.SearcherManager;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /**
  * Utility class to safely share {@link FesenDirectoryReader} instances across

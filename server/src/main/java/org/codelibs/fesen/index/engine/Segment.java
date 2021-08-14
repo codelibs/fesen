@@ -28,12 +28,12 @@ import org.apache.lucene.search.SortedNumericSelector;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.Accountables;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;

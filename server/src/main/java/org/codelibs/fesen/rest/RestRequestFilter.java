@@ -22,11 +22,11 @@ package org.codelibs.fesen.rest;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.Map;

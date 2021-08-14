@@ -38,7 +38,7 @@ import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.gateway.GatewayService;
 import org.codelibs.fesen.snapshots.EmptySnapshotsInfoService;
 import org.codelibs.fesen.test.ESTestCase;

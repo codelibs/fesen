@@ -20,11 +20,11 @@
 package org.codelibs.fesen.cluster.service;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.ArrayList;
 import java.util.Collections;

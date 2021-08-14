@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.http;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestStatus;
 

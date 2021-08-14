@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common;
 
-import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.common.LocalTimeOffset;
 import org.codelibs.fesen.common.LocalTimeOffset.Gap;
 import org.codelibs.fesen.common.LocalTimeOffset.Overlap;
 import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.time.Instant;

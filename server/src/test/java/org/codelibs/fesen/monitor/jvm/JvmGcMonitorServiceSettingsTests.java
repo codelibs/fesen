@@ -20,7 +20,7 @@
 package org.codelibs.fesen.monitor.jvm;
 
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.monitor.jvm.JvmGcMonitorService;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;

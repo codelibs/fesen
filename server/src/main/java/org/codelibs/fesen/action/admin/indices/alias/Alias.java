@@ -21,7 +21,6 @@ package org.codelibs.fesen.action.admin.indices.alias;
 
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -34,6 +33,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 import java.io.IOException;

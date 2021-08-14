@@ -22,12 +22,12 @@ package org.codelibs.fesen.index.mapper;
 import org.apache.lucene.document.InetAddressPoint;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexableField;
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.MapperParsingException;
 import org.codelibs.fesen.index.mapper.MapperService;
@@ -61,7 +61,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
 
     @Override
     protected Set<String> types() {
-        return org.codelibs.fesen.common.collect.Set.of(
+        return org.codelibs.fesen.core.Set.of(
             "date_range",
             "ip_range",
             "float_range",
@@ -73,7 +73,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
 
     @Override
     protected Set<String> wholeTypes() {
-        return org.codelibs.fesen.common.collect.Set.of("integer_range", "long_range");
+        return org.codelibs.fesen.core.Set.of("integer_range", "long_range");
     }
 
     @Override

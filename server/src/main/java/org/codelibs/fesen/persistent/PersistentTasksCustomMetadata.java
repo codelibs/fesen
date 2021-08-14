@@ -25,7 +25,6 @@ import org.codelibs.fesen.cluster.AbstractNamedDiffable;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.NamedDiff;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -38,6 +37,7 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;

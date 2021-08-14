@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.xcontent.support;
 
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.CheckedFunction;
 
 import java.io.IOException;
 import java.math.BigDecimal;

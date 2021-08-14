@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.util;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * A very simple single object cache that allows non-blocking refresh calls

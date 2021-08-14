@@ -20,7 +20,7 @@ package org.codelibs.fesen.script;
 
 import org.codelibs.fesen.common.breaker.CircuitBreakingException;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.script.ScriptCache;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.test.ESTestCase;

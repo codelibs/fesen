@@ -31,13 +31,13 @@ import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.RandomCreateIndexGenerator;
 import org.codelibs.fesen.test.ESTestCase;
@@ -47,8 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.codelibs.fesen.common.collect.Tuple.tuple;
 import static org.codelibs.fesen.common.xcontent.ToXContent.EMPTY_PARAMS;
+import static org.codelibs.fesen.core.Tuple.tuple;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 
@@ -160,16 +160,16 @@ public class PutMappingRequestTests extends ESTestCase {
 
     public void testResolveIndicesWithWriteIndexOnlyAndDataStreamsAndWriteAliases() {
         String[] dataStreamNames = {"foo", "bar", "baz"};
-        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.common.collect.List.of(
+        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.core.List.of(
             tuple(dataStreamNames[0], randomIntBetween(1, 3)),
             tuple(dataStreamNames[1], randomIntBetween(1, 3)),
             tuple(dataStreamNames[2], randomIntBetween(1, 3)));
 
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dsMetadata,
-            org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
-        cs = addAliases(cs, org.codelibs.fesen.common.collect.List.of(
-            tuple("alias1", org.codelibs.fesen.common.collect.List.of(tuple("index1", false), tuple("index2", true))),
-            tuple("alias2", org.codelibs.fesen.common.collect.List.of(tuple("index2", false), tuple("index3", true)))
+            org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
+        cs = addAliases(cs, org.codelibs.fesen.core.List.of(
+            tuple("alias1", org.codelibs.fesen.core.List.of(tuple("index1", false), tuple("index2", true))),
+            tuple("alias2", org.codelibs.fesen.core.List.of(tuple("index2", false), tuple("index3", true)))
         ));
         PutMappingRequest request = new PutMappingRequest().indices("foo", "alias1", "alias2").writeIndexOnly(true);
         Index[] indices = TransportPutMappingAction.resolveIndices(cs, request,
@@ -182,16 +182,16 @@ public class PutMappingRequestTests extends ESTestCase {
 
     public void testResolveIndicesWithoutWriteIndexOnlyAndDataStreamsAndWriteAliases() {
         String[] dataStreamNames = {"foo", "bar", "baz"};
-        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.common.collect.List.of(
+        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.core.List.of(
             tuple(dataStreamNames[0], randomIntBetween(1, 3)),
             tuple(dataStreamNames[1], randomIntBetween(1, 3)),
             tuple(dataStreamNames[2], randomIntBetween(1, 3)));
 
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dsMetadata,
-            org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
-        cs = addAliases(cs, org.codelibs.fesen.common.collect.List.of(
-            tuple("alias1", org.codelibs.fesen.common.collect.List.of(tuple("index1", false), tuple("index2", true))),
-            tuple("alias2", org.codelibs.fesen.common.collect.List.of(tuple("index2", false), tuple("index3", true)))
+            org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
+        cs = addAliases(cs, org.codelibs.fesen.core.List.of(
+            tuple("alias1", org.codelibs.fesen.core.List.of(tuple("index1", false), tuple("index2", true))),
+            tuple("alias2", org.codelibs.fesen.core.List.of(tuple("index2", false), tuple("index3", true)))
         ));
         PutMappingRequest request = new PutMappingRequest().indices("foo", "alias1", "alias2");
         Index[] indices = TransportPutMappingAction.resolveIndices(cs, request,
@@ -199,23 +199,23 @@ public class PutMappingRequestTests extends ESTestCase {
         List<String> indexNames = Arrays.stream(indices).map(Index::getName).collect(Collectors.toList());
         IndexAbstraction expectedDs = cs.metadata().getIndicesLookup().get("foo");
         List<String> expectedIndices = expectedDs.getIndices().stream().map(im -> im.getIndex().getName()).collect(Collectors.toList());
-        expectedIndices.addAll(org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
+        expectedIndices.addAll(org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
         // should resolve the data stream and each alias to _all_ their respective indices
         assertThat(indexNames, containsInAnyOrder(expectedIndices.toArray()));
     }
 
     public void testResolveIndicesWithWriteIndexOnlyAndDataStreamAndIndex() {
         String[] dataStreamNames = {"foo", "bar", "baz"};
-        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.common.collect.List.of(
+        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.core.List.of(
             tuple(dataStreamNames[0], randomIntBetween(1, 3)),
             tuple(dataStreamNames[1], randomIntBetween(1, 3)),
             tuple(dataStreamNames[2], randomIntBetween(1, 3)));
 
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dsMetadata,
-            org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
-        cs = addAliases(cs, org.codelibs.fesen.common.collect.List.of(
-            tuple("alias1", org.codelibs.fesen.common.collect.List.of(tuple("index1", false), tuple("index2", true))),
-            tuple("alias2", org.codelibs.fesen.common.collect.List.of(tuple("index2", false), tuple("index3", true)))
+            org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
+        cs = addAliases(cs, org.codelibs.fesen.core.List.of(
+            tuple("alias1", org.codelibs.fesen.core.List.of(tuple("index1", false), tuple("index2", true))),
+            tuple("alias2", org.codelibs.fesen.core.List.of(tuple("index2", false), tuple("index3", true)))
         ));
         PutMappingRequest request = new PutMappingRequest().indices("foo", "index3").writeIndexOnly(true);
         Index[] indices = TransportPutMappingAction.resolveIndices(cs, request,
@@ -223,23 +223,23 @@ public class PutMappingRequestTests extends ESTestCase {
         List<String> indexNames = Arrays.stream(indices).map(Index::getName).collect(Collectors.toList());
         IndexAbstraction expectedDs = cs.metadata().getIndicesLookup().get("foo");
         List<String> expectedIndices = expectedDs.getIndices().stream().map(im -> im.getIndex().getName()).collect(Collectors.toList());
-        expectedIndices.addAll(org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
+        expectedIndices.addAll(org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
         // should resolve the data stream and each alias to _all_ their respective indices
         assertThat(indexNames, containsInAnyOrder(expectedDs.getWriteIndex().getIndex().getName(), "index3"));
     }
 
     public void testResolveIndicesWithWriteIndexOnlyAndNoSingleWriteIndex() {
         String[] dataStreamNames = {"foo", "bar", "baz"};
-        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.common.collect.List.of(
+        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.core.List.of(
             tuple(dataStreamNames[0], randomIntBetween(1, 3)),
             tuple(dataStreamNames[1], randomIntBetween(1, 3)),
             tuple(dataStreamNames[2], randomIntBetween(1, 3)));
 
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dsMetadata,
-            org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
-        final ClusterState cs2 = addAliases(cs, org.codelibs.fesen.common.collect.List.of(
-            tuple("alias1", org.codelibs.fesen.common.collect.List.of(tuple("index1", false), tuple("index2", true))),
-            tuple("alias2", org.codelibs.fesen.common.collect.List.of(tuple("index2", false), tuple("index3", true)))
+            org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
+        final ClusterState cs2 = addAliases(cs, org.codelibs.fesen.core.List.of(
+            tuple("alias1", org.codelibs.fesen.core.List.of(tuple("index1", false), tuple("index2", true))),
+            tuple("alias2", org.codelibs.fesen.core.List.of(tuple("index2", false), tuple("index3", true)))
         ));
         PutMappingRequest request = new PutMappingRequest().indices("*").writeIndexOnly(true);
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
@@ -250,16 +250,16 @@ public class PutMappingRequestTests extends ESTestCase {
 
     public void testResolveIndicesWithWriteIndexOnlyAndAliasWithoutWriteIndex() {
         String[] dataStreamNames = {"foo", "bar", "baz"};
-        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.common.collect.List.of(
+        List<Tuple<String, Integer>> dsMetadata = org.codelibs.fesen.core.List.of(
             tuple(dataStreamNames[0], randomIntBetween(1, 3)),
             tuple(dataStreamNames[1], randomIntBetween(1, 3)),
             tuple(dataStreamNames[2], randomIntBetween(1, 3)));
 
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dsMetadata,
-            org.codelibs.fesen.common.collect.List.of("index1", "index2", "index3"));
-        final ClusterState cs2 = addAliases(cs, org.codelibs.fesen.common.collect.List.of(
-            tuple("alias1", org.codelibs.fesen.common.collect.List.of(tuple("index1", false), tuple("index2", false))),
-            tuple("alias2", org.codelibs.fesen.common.collect.List.of(tuple("index2", false), tuple("index3", false)))
+            org.codelibs.fesen.core.List.of("index1", "index2", "index3"));
+        final ClusterState cs2 = addAliases(cs, org.codelibs.fesen.core.List.of(
+            tuple("alias1", org.codelibs.fesen.core.List.of(tuple("index1", false), tuple("index2", false))),
+            tuple("alias2", org.codelibs.fesen.core.List.of(tuple("index2", false), tuple("index3", false)))
         ));
         PutMappingRequest request = new PutMappingRequest().indices("alias2").writeIndexOnly(true);
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,

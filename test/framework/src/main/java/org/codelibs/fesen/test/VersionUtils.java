@@ -20,8 +20,8 @@
 package org.codelibs.fesen.test;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.Collections;

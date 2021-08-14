@@ -23,7 +23,6 @@ import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.compress.Compressor;
 import org.codelibs.fesen.common.compress.CompressorFactory;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
@@ -36,6 +35,7 @@ import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

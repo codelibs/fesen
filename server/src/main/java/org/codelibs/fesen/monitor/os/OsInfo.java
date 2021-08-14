@@ -22,8 +22,8 @@ package org.codelibs.fesen.monitor.os;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
 
 import java.io.IOException;

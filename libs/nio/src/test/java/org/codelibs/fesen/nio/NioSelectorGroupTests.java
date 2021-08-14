@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.CheckedRunnable;
 import org.codelibs.fesen.nio.ChannelFactory;
 import org.codelibs.fesen.nio.EventHandler;
 import org.codelibs.fesen.nio.NioSelectorGroup;

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen;
 
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.io.FileSystemUtils;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Booleans;
 
 import java.io.IOException;
 import java.net.URL;

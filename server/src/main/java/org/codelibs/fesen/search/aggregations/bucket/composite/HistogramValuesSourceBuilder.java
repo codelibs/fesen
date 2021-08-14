@@ -77,7 +77,7 @@ public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<H
     public static void register(ValuesSourceRegistry.Builder builder) {
         builder.register(
             REGISTRY_KEY,
-            org.codelibs.fesen.common.collect.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC),
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC),
             (valuesSourceConfig, interval, name, hasScript, format, missingBucket, order) -> {
                 ValuesSource.Numeric numeric = (ValuesSource.Numeric) valuesSourceConfig.getValuesSource();
                 final HistogramValuesSource vs = new HistogramValuesSource(numeric, interval);

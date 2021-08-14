@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class BackoffPolicyTests extends ESTestCase {

@@ -24,9 +24,9 @@ import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Booleans;
 
 import static org.codelibs.fesen.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
 

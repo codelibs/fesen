@@ -21,7 +21,7 @@ package org.codelibs.fesen.index.engine;
 
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.translog.Translog;
 
 import java.util.Collection;

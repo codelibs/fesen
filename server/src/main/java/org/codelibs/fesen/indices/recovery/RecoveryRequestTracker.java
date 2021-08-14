@@ -20,9 +20,9 @@
 package org.codelibs.fesen.indices.recovery;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.ListenableFuture;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.seqno.LocalCheckpointTracker;
 
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.NO_OPS_PERFORMED;

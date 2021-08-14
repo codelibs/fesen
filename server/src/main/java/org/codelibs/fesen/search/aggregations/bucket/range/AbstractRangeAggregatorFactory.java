@@ -49,7 +49,7 @@ public class AbstractRangeAggregatorFactory<R extends Range> extends ValuesSourc
     ) {
         builder.register(
             registryKey,
-            org.codelibs.fesen.common.collect.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
             RangeAggregator::new,
                 true);
     }

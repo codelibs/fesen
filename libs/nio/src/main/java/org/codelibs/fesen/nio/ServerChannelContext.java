@@ -33,7 +33,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 
 public class ServerChannelContext extends ChannelContext<ServerSocketChannel> {
 

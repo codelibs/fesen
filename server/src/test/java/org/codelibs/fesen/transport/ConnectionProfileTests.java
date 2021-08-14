@@ -20,7 +20,7 @@ package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.ConnectionProfile;
 import org.codelibs.fesen.transport.TransportRequestOptions;

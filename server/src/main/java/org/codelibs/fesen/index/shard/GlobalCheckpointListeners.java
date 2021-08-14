@@ -22,9 +22,9 @@ package org.codelibs.fesen.index.shard;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.common.collect.Tuple;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.FutureUtils;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.NO_OPS_PERFORMED;
 import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;

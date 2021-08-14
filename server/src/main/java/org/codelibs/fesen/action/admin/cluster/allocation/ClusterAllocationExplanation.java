@@ -26,12 +26,12 @@ import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.cluster.routing.allocation.AllocationDecision;
 import org.codelibs.fesen.cluster.routing.allocation.ShardAllocationDecision;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 
 import static org.codelibs.fesen.cluster.routing.allocation.AbstractAllocationDecision.discoveryNodeToXContent;

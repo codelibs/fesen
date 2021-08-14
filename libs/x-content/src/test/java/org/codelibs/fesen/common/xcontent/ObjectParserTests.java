@@ -18,7 +18,6 @@
  */
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.ContextParser;
@@ -32,6 +31,7 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.ByteArrayOutputStream;

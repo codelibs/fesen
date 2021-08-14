@@ -20,13 +20,13 @@
 package org.codelibs.fesen.threadpool;
 
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.common.util.concurrent.EsAbortPolicy;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.concurrent.Delayed;
 import java.util.concurrent.Future;

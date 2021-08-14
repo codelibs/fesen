@@ -28,8 +28,8 @@ import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
 import org.codelibs.fesen.cluster.NotMasterException;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Priority;
+import org.codelibs.fesen.core.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

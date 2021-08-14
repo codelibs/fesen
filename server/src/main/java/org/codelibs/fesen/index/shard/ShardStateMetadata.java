@@ -21,10 +21,10 @@ package org.codelibs.fesen.index.shard;
 
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.routing.AllocationId;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.gateway.CorruptStateException;
 import org.codelibs.fesen.gateway.MetadataStateFormat;
 

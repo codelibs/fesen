@@ -32,7 +32,7 @@ import org.codelibs.fesen.cluster.routing.allocation.decider.AwarenessAllocation
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;

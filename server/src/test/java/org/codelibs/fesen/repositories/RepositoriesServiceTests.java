@@ -94,7 +94,7 @@ public class RepositoriesServiceTests extends ESTestCase {
         final ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.getClusterApplierService()).thenReturn(clusterApplierService);
         Map<String, Repository.Factory> typesRegistry =
-            org.codelibs.fesen.common.collect.Map.of(TestRepository.TYPE, TestRepository::new,
+            org.codelibs.fesen.core.Map.of(TestRepository.TYPE, TestRepository::new,
                 MeteredRepositoryTypeA.TYPE, metadata -> new MeteredRepositoryTypeA(metadata, clusterService),
                 MeteredRepositoryTypeB.TYPE, metadata -> new MeteredRepositoryTypeB(metadata, clusterService));
         repositoriesService = new RepositoriesService(Settings.EMPTY, mock(ClusterService.class),
@@ -341,7 +341,7 @@ public class RepositoriesServiceTests extends ESTestCase {
 
     private static class MeteredRepositoryTypeA extends MeteredBlobStoreRepository {
         private static final String TYPE = "type-a";
-        private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.common.collect.Map.of("GET", 10L));
+        private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.core.Map.of("GET", 10L));
 
         private MeteredRepositoryTypeA(RepositoryMetadata metadata, ClusterService clusterService) {
             super(metadata,
@@ -349,7 +349,7 @@ public class RepositoriesServiceTests extends ESTestCase {
                 mock(NamedXContentRegistry.class),
                 clusterService,
                 mock(RecoverySettings.class),
-                org.codelibs.fesen.common.collect.Map.of("bucket", "bucket-a"));
+                org.codelibs.fesen.core.Map.of("bucket", "bucket-a"));
         }
 
         @Override
@@ -370,7 +370,7 @@ public class RepositoriesServiceTests extends ESTestCase {
 
     private static class MeteredRepositoryTypeB extends MeteredBlobStoreRepository {
         private static final String TYPE = "type-b";
-        private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.common.collect.Map.of("LIST", 20L));
+        private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.core.Map.of("LIST", 20L));
 
         private MeteredRepositoryTypeB(RepositoryMetadata metadata, ClusterService clusterService) {
             super(metadata,
@@ -378,7 +378,7 @@ public class RepositoriesServiceTests extends ESTestCase {
                 mock(NamedXContentRegistry.class),
                 clusterService,
                 mock(RecoverySettings.class),
-                org.codelibs.fesen.common.collect.Map.of("bucket", "bucket-b"));
+                org.codelibs.fesen.core.Map.of("bucket", "bucket-b"));
         }
 
         @Override

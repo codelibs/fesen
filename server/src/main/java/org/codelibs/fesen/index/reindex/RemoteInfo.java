@@ -20,12 +20,10 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.ToXContent;
@@ -34,6 +32,8 @@ import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import java.util.Objects;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 import static org.codelibs.fesen.index.query.QueryBuilders.matchAllQuery;
 
 public class RemoteInfo implements Writeable, ToXContentObject {

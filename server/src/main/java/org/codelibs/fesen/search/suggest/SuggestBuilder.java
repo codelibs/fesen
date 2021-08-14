@@ -18,7 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.lucene.BytesRefs;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
 

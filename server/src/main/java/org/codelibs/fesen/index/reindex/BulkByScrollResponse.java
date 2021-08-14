@@ -23,16 +23,16 @@ import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask.Status;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
 import org.codelibs.fesen.rest.RestStatus;
@@ -44,8 +44,8 @@ import java.util.List;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueNanos;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 
 /**
  * Response used for actions that index many documents using a scroll request.

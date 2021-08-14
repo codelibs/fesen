@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.plugins.SearchPlugin.SearchExtSpec;
 

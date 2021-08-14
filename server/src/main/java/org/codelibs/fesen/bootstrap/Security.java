@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import org.codelibs.fesen.bootstrap.JarHell;
 import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.common.SuppressForbidden;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.http.HttpTransportSettings;
+import org.codelibs.fesen.jdk.JarHell;
 import org.codelibs.fesen.plugins.PluginInfo;
 import org.codelibs.fesen.plugins.PluginsService;
 import org.codelibs.fesen.secure_sm.SecureSM;

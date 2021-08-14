@@ -152,14 +152,14 @@ public class DateHistogramAggregatorTests extends DateHistogramAggregatorTestCas
             StringTerms.Bucket a = terms.getBucketByKey("a");
             InternalDateHistogram adh = a.getAggregations().get("dh");
             assertThat(adh.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(toList()),
-                equalTo(org.codelibs.fesen.common.collect.List.of("2020-01-01T00:00Z", "2021-01-01T00:00Z")
+                equalTo(org.codelibs.fesen.core.List.of("2020-01-01T00:00Z", "2021-01-01T00:00Z")
             ));
 
             StringTerms.Bucket b = terms.getBucketByKey("b");
             InternalDateHistogram bdh = b.getAggregations().get("dh");
             assertThat(
                 bdh.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(toList()),
-                equalTo(org.codelibs.fesen.common.collect.List.of("2020-01-01T00:00Z"))
+                equalTo(org.codelibs.fesen.core.List.of("2020-01-01T00:00Z"))
             );
         });
         builder = new TermsAggregationBuilder("k2").field("k2").subAggregation(builder);
@@ -170,7 +170,7 @@ public class DateHistogramAggregatorTests extends DateHistogramAggregatorTestCas
             InternalDateHistogram ak1adh = ak1a.getAggregations().get("dh");
             assertThat(
                 ak1adh.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(toList()),
-                equalTo(org.codelibs.fesen.common.collect.List.of("2020-01-01T00:00Z", "2021-01-01T00:00Z"))
+                equalTo(org.codelibs.fesen.core.List.of("2020-01-01T00:00Z", "2021-01-01T00:00Z"))
             );
 
             StringTerms.Bucket b = terms.getBucketByKey("b");
@@ -179,13 +179,13 @@ public class DateHistogramAggregatorTests extends DateHistogramAggregatorTestCas
             InternalDateHistogram bk1adh = bk1a.getAggregations().get("dh");
             assertThat(
                 bk1adh.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(toList()),
-                equalTo(org.codelibs.fesen.common.collect.List.of("2021-01-01T00:00Z"))
+                equalTo(org.codelibs.fesen.core.List.of("2021-01-01T00:00Z"))
             );
             StringTerms.Bucket bk1b = bk1.getBucketByKey("b");
             InternalDateHistogram bk1bdh = bk1b.getAggregations().get("dh");
             assertThat(
                 bk1bdh.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(toList()),
-                equalTo(org.codelibs.fesen.common.collect.List.of("2020-01-01T00:00Z"))
+                equalTo(org.codelibs.fesen.core.List.of("2020-01-01T00:00Z"))
             );
         });
     }

@@ -21,9 +21,9 @@ package org.codelibs.fesen.common.xcontent;
 
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.HashMap;
 import java.util.Map;

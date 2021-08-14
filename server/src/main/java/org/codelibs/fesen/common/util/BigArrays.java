@@ -22,12 +22,12 @@ package org.codelibs.fesen.common.util;
 import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.RamUsageEstimator;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.breaker.CircuitBreakingException;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.recycler.Recycler;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 
 import java.util.Arrays;

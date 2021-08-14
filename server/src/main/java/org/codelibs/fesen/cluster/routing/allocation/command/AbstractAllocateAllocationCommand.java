@@ -28,7 +28,6 @@ import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.cluster.routing.allocation.RerouteExplanation;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -36,6 +35,7 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Objects;

@@ -21,9 +21,9 @@ package org.codelibs.fesen.action.support.master;
 import org.codelibs.fesen.cluster.ack.AckedRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 
 import java.io.IOException;
 

@@ -22,13 +22,13 @@ import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.CheckedBiConsumer;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.lucene.index.SequentialStoredFieldsLeafReader;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.fieldvisitor.FieldsVisitor;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 

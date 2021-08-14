@@ -21,7 +21,6 @@ package org.codelibs.fesen;
 
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.collect.ImmutableOpenIntMap;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 
 import java.io.IOException;

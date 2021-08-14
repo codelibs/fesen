@@ -26,9 +26,9 @@ import org.codelibs.fesen.cluster.metadata.IndexGraveyard;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Manifest;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.index.Index;
 

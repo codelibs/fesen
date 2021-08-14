@@ -21,11 +21,8 @@ package org.codelibs.fesen.common.io.stream;
 
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.CheckedBiConsumer;
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.FilterStreamInput;
 import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
@@ -33,6 +30,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.ByteArrayInputStream;

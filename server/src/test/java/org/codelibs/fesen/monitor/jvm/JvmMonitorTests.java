@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.monitor.jvm.JvmGcMonitorService;
 import org.codelibs.fesen.monitor.jvm.JvmStats;
 import org.codelibs.fesen.test.ESTestCase;

@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask;
 import org.codelibs.fesen.index.reindex.WorkerBulkByScrollTaskState;
 import org.codelibs.fesen.tasks.TaskId;
@@ -38,7 +38,7 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.empty;

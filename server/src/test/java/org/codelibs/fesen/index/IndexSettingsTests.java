@@ -28,7 +28,7 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.translog.Translog;
 import org.codelibs.fesen.test.ESTestCase;

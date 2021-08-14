@@ -27,7 +27,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -35,10 +34,11 @@ import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lucene.uid.Versions;
 import org.codelibs.fesen.common.metrics.MeanMetric;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexSettings;
@@ -81,7 +81,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 import static org.hamcrest.Matchers.arrayContaining;
 
 /**

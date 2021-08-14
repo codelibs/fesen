@@ -18,9 +18,9 @@
  */
 package org.codelibs.fesen.cluster;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Cluster state update task configuration for timeout and priority

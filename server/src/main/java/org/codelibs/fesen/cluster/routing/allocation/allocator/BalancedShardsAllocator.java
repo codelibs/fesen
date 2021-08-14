@@ -41,12 +41,12 @@ import org.codelibs.fesen.cluster.routing.allocation.decider.AllocationDeciders;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.cluster.routing.allocation.decider.DiskThresholdDecider;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision.Type;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.gateway.PriorityComparator;
 
 import static org.codelibs.fesen.cluster.routing.ShardRoutingState.RELOCATING;

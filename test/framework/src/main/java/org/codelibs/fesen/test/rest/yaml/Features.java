@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import org.codelibs.fesen.bootstrap.JavaVersion;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.rest.ESRestTestCase;
 
 import java.util.Arrays;

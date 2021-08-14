@@ -21,12 +21,12 @@ package org.codelibs.fesen.common.io.stream;
 
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.ByteArray;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 

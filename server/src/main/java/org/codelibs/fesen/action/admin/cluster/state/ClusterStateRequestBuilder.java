@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.admin.cluster.state;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public class ClusterStateRequestBuilder extends MasterNodeReadOperationRequestBuilder<ClusterStateRequest,
         ClusterStateResponse, ClusterStateRequestBuilder> {

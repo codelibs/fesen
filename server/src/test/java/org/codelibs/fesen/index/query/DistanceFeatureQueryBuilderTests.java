@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.geo.GeoUtils;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.unit.DistanceUnit;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.DateFieldMapper.DateFieldType;

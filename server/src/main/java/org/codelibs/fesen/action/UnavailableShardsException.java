@@ -20,8 +20,8 @@
 package org.codelibs.fesen.action;
 
 import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
 

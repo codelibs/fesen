@@ -27,7 +27,7 @@ import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.search.Scroll;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.tasks.Task;
@@ -38,8 +38,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMinutes;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
 
 public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScrollRequest<Self>> extends ActionRequest {
 

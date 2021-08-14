@@ -20,11 +20,11 @@
 package org.codelibs.fesen.test.store;
 
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexModule;
 import org.codelibs.fesen.index.shard.IndexEventListener;
 import org.codelibs.fesen.index.shard.IndexShard;

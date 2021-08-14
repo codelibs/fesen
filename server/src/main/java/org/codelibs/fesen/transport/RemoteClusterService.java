@@ -35,9 +35,9 @@ import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.SettingUpgrader;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.CountDown;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

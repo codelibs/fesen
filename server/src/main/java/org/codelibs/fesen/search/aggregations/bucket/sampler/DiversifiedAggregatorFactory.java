@@ -41,7 +41,7 @@ public class DiversifiedAggregatorFactory extends ValuesSourceAggregatorFactory 
     public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
         builder.register(
             DiversifiedAggregationBuilder.REGISTRY_KEY,
-            org.codelibs.fesen.common.collect.List.of(
+            org.codelibs.fesen.core.List.of(
                 CoreValuesSourceType.NUMERIC,
                 CoreValuesSourceType.DATE,
                 CoreValuesSourceType.BOOLEAN),

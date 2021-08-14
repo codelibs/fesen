@@ -22,7 +22,7 @@ package org.codelibs.fesen.monitor.jvm;
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;

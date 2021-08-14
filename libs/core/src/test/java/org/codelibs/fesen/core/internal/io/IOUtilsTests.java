@@ -20,8 +20,8 @@ package org.codelibs.fesen.core.internal.io;
 import org.apache.lucene.mockfile.FilterFileSystemProvider;
 import org.apache.lucene.mockfile.FilterPath;
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.io.PathUtils;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.test.ESTestCase;
 

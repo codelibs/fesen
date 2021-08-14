@@ -24,7 +24,6 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.geo.GeoPoint;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFesenExtension;
@@ -33,6 +32,7 @@ import org.codelibs.fesen.common.xcontent.XContentGenerator;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.ByteArrayOutputStream;

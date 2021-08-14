@@ -39,8 +39,8 @@ import org.codelibs.fesen.cluster.routing.allocation.decider.AllocationDecider;
 import org.codelibs.fesen.cluster.routing.allocation.decider.AllocationDeciders;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision.Type;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.snapshots.SnapshotShardSizeInfo;
 
 import java.util.Arrays;

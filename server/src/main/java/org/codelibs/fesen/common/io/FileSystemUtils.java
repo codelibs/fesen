@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.io;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.Constants;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.IOException;

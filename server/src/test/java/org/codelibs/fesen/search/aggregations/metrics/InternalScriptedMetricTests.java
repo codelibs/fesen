@@ -258,7 +258,7 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
         // A single element list looks like a fully reduced agg
         InternalScriptedMetric original = new InternalScriptedMetric(
             "test",
-            org.codelibs.fesen.common.collect.List.of("foo"),
+            org.codelibs.fesen.core.List.of("foo"),
             new Script("test"),
             null
         );
@@ -274,7 +274,7 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
         // A multi-element list looks like a non-reduced agg
         InternalScriptedMetric unreduced = new InternalScriptedMetric(
             "test",
-            org.codelibs.fesen.common.collect.List.of("foo", "bar"),
+            org.codelibs.fesen.core.List.of("foo", "bar"),
             new Script("test"),
             null
         );

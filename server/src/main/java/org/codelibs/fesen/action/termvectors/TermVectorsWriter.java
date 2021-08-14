@@ -26,9 +26,9 @@ import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.action.termvectors.TermVectorsRequest.Flag;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;

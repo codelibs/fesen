@@ -42,7 +42,7 @@ import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.OutputStreamStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.discovery.AckClusterStatePublishResponseHandler;
 import org.codelibs.fesen.discovery.BlockingClusterStatePublishResponseHandler;

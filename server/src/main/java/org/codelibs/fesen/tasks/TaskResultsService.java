@@ -39,12 +39,12 @@ import org.codelibs.fesen.cluster.metadata.MappingMetadata;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.Streams;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
@@ -56,7 +56,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction.TASKS_ORIGIN;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 /**
  * Service that can store task results.

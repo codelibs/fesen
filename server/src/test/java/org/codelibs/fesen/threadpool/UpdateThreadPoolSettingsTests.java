@@ -20,9 +20,9 @@
 package org.codelibs.fesen.threadpool;
 
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.EsThreadPoolExecutor;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.FixedExecutorBuilder;
 import org.codelibs.fesen.threadpool.ScalingExecutorBuilder;
 import org.codelibs.fesen.threadpool.ThreadPool;

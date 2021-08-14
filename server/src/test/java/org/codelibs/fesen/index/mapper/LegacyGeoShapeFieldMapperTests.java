@@ -26,13 +26,13 @@ import org.apache.lucene.spatial.prefix.tree.QuadPrefixTree;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.List;
 import org.codelibs.fesen.common.geo.GeoUtils;
 import org.codelibs.fesen.common.geo.ShapeRelation;
 import org.codelibs.fesen.common.geo.SpatialStrategy;
 import org.codelibs.fesen.common.geo.builders.ShapeBuilder;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.List;
 import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.LegacyGeoShapeFieldMapper;
@@ -72,7 +72,7 @@ public class LegacyGeoShapeFieldMapperTests extends FieldMapperTestCase2<LegacyG
 
     @Override
     protected Set<String> unsupportedProperties() {
-        return org.codelibs.fesen.common.collect.Set.of("analyzer", "similarity", "doc_values", "store");
+        return org.codelibs.fesen.core.Set.of("analyzer", "similarity", "doc_values", "store");
     }
 
     @Override

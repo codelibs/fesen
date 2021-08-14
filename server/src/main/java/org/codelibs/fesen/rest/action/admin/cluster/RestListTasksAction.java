@@ -25,8 +25,8 @@ import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestChannel;

@@ -20,8 +20,8 @@
 package org.codelibs.fesen.env;
 
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.common.SuppressForbidden;
-import org.codelibs.fesen.common.io.PathUtils;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.io.IOException;
 import java.nio.file.FileStore;

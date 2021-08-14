@@ -22,10 +22,10 @@ package org.codelibs.fesen.cluster.metadata;
 import org.codelibs.fesen.cluster.metadata.Manifest;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.test.ESTestCase;
 

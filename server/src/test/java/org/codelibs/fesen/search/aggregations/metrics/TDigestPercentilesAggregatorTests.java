@@ -30,7 +30,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
-import org.codelibs.fesen.common.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;

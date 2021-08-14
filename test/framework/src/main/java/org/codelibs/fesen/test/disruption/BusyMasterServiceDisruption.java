@@ -22,7 +22,7 @@ import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
 
 import java.util.Random;

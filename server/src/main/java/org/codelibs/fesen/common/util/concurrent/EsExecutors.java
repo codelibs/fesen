@@ -20,12 +20,12 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 
 import java.util.List;

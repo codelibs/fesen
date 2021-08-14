@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cli;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * An exception representing a user fixable problem in {@link Command} usage.

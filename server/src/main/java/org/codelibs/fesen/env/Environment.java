@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.env;
 
-import org.codelibs.fesen.common.SuppressForbidden;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -28,10 +28,10 @@ import org.codelibs.fesen.cluster.service.MasterService;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

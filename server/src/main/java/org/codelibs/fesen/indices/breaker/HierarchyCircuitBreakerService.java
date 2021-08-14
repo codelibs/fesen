@@ -22,7 +22,6 @@ package org.codelibs.fesen.indices.breaker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.breaker.ChildMemoryCircuitBreaker;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.breaker.CircuitBreakingException;
@@ -33,8 +32,9 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ReleasableLock;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.monitor.jvm.GcNames;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 

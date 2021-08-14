@@ -26,9 +26,9 @@ import org.codelibs.fesen.common.collect.MapBuilder;
 import org.codelibs.fesen.common.component.LifecycleComponent;
 import org.codelibs.fesen.common.transport.BoundTransportAddress;
 import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentMapLong;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.io.Closeable;
 import java.io.IOException;

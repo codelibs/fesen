@@ -23,7 +23,7 @@ import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.rounding.DateTimeUnit;
 import org.codelibs.fesen.common.rounding.Rounding;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.VersionUtils;
 import org.joda.time.DateTimeZone;

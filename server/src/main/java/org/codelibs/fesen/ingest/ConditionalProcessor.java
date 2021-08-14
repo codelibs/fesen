@@ -47,7 +47,7 @@ import org.codelibs.fesen.script.ScriptType;
 public class ConditionalProcessor extends AbstractProcessor implements WrappingProcessor {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> FUNCTIONS = org.codelibs.fesen.common.collect.Map.of(
+    private static final Map<String, Function<Object, Object>> FUNCTIONS = org.codelibs.fesen.core.Map.of(
             "_type", value -> {
                 deprecationLogger.deprecate("conditional-processor__type",
                         "[types removal] Looking up doc types [_type] in scripts is deprecated.");

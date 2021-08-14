@@ -22,7 +22,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 public interface ClusterStateTaskExecutor<T> {
     /**

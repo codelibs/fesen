@@ -20,7 +20,7 @@
 package org.codelibs.fesen.monitor.jvm;
 
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.bootstrap.JavaVersion;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 import org.codelibs.fesen.test.ESTestCase;
 

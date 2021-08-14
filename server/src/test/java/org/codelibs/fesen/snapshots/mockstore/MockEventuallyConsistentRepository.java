@@ -21,7 +21,6 @@ package org.codelibs.fesen.snapshots.mockstore;
 
 import org.codelibs.fesen.cluster.metadata.RepositoryMetadata;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.blobstore.BlobContainer;
 import org.codelibs.fesen.common.blobstore.BlobMetadata;
 import org.codelibs.fesen.common.blobstore.BlobPath;
@@ -31,6 +30,7 @@ import org.codelibs.fesen.common.blobstore.support.PlainBlobMetadata;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.io.Streams;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.repositories.blobstore.BlobStoreRepository;
 import org.codelibs.fesen.snapshots.SnapshotInfo;

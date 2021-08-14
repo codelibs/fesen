@@ -21,7 +21,7 @@ package org.codelibs.fesen.bootstrap;
 
 import java.util.List;
 
-import org.codelibs.fesen.bootstrap.JavaVersion;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.CoreMatchers.equalTo;

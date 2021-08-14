@@ -42,11 +42,8 @@ import org.codelibs.fesen.client.RestClient;
 import org.codelibs.fesen.client.RestClientBuilder;
 import org.codelibs.fesen.client.WarningsHandler;
 import org.codelibs.fesen.client.RequestOptions.Builder;
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.util.set.Sets;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
@@ -57,6 +54,9 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.CheckedRunnable;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.seqno.ReplicationTracker;
@@ -712,7 +712,7 @@ public abstract class ESRestTestCase extends ESTestCase {
             // We hit a version of ES that doesn't serialize DeleteDataStreamAction.Request#wildcardExpressionsOriginallySpecified field or
             // that doesn't support data streams so it's safe to ignore
             int statusCode = e.getResponse().getStatusLine().getStatusCode();
-            if (org.codelibs.fesen.common.collect.Set.of(404, 405, 500).contains(statusCode) == false) {
+            if (org.codelibs.fesen.core.Set.of(404, 405, 500).contains(statusCode) == false) {
                 throw e;
             }
         }

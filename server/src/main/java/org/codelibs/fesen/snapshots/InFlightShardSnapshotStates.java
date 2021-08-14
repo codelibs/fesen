@@ -22,7 +22,7 @@ package org.codelibs.fesen.snapshots;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.repositories.RepositoryShardId;

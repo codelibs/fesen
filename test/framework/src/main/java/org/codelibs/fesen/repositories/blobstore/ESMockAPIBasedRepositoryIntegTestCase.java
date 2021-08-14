@@ -30,10 +30,10 @@ import org.apache.lucene.util.LuceneTestCase;
 import org.codelibs.fesen.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.elasticsearch.mocksocket.MockHttpServer;
 import org.codelibs.fesen.repositories.RepositoriesService;
 import org.codelibs.fesen.repositories.Repository;
@@ -346,7 +346,7 @@ public abstract class ESMockAPIBasedRepositoryIntegTestCase extends ESBlobStoreR
         }
 
         synchronized Map<String, Long> getOperationsCount() {
-            return org.codelibs.fesen.common.collect.Map.copyOf(operationCount);
+            return org.codelibs.fesen.core.Map.copyOf(operationCount);
         }
 
         protected synchronized void trackRequest(final String requestType) {

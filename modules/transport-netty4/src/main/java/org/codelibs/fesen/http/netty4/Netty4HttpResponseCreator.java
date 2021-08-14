@@ -29,7 +29,7 @@ import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 
-import org.codelibs.fesen.common.Booleans;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.transport.NettyAllocator;
 
 import java.util.List;

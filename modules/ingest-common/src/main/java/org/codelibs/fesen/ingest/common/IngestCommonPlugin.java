@@ -28,7 +28,7 @@ import org.codelibs.fesen.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.SettingsFilter;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.grok.Grok;
 import org.codelibs.fesen.grok.MatcherWatchdog;
 import org.codelibs.fesen.ingest.DropProcessor;

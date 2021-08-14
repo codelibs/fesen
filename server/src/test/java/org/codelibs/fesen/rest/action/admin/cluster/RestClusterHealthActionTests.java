@@ -23,7 +23,7 @@ import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.admin.cluster.RestClusterHealthAction;
 import org.codelibs.fesen.test.ESTestCase;

@@ -32,9 +32,9 @@ import com.google.common.jimfs.Jimfs;
 
 import org.apache.lucene.util.LuceneTestCase;
 import org.codelibs.fesen.cli.CommandTestCase;
-import org.codelibs.fesen.common.io.PathUtilsForTesting;
 import org.codelibs.fesen.common.settings.KeyStoreWrapper;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.PathUtilsForTesting;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.TestEnvironment;

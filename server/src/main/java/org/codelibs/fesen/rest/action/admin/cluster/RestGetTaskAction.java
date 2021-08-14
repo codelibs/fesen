@@ -21,7 +21,7 @@ package org.codelibs.fesen.rest.action.admin.cluster;
 
 import org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskRequest;
 import org.codelibs.fesen.client.node.NodeClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;

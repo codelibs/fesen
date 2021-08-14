@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.ssl;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;

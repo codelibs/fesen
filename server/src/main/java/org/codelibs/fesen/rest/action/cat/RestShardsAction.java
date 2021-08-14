@@ -30,7 +30,7 @@ import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.Table;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.cache.query.QueryCacheStats;
 import org.codelibs.fesen.index.engine.CommitStats;
 import org.codelibs.fesen.index.engine.Engine;

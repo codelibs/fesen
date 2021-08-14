@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.search;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.codelibs.fesen.common.CheckedRunnable;
+import org.codelibs.fesen.core.CheckedRunnable;
 
 /**
  * Base class for all individual search phases like collecting distributed frequencies, fetching documents, querying shards.

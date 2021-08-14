@@ -103,7 +103,7 @@ public class TokenCountFieldMapper extends ParametrizedFieldMapper {
         @Override
         public ValueFetcher valueFetcher(MapperService mapperService, SearchLookup searchLookup, String format) {
             if (hasDocValues() == false) {
-                return lookup -> org.codelibs.fesen.common.collect.List.of();
+                return lookup -> org.codelibs.fesen.core.List.of();
             }
             return new DocValueFetcher(docValueFormat(format, null), searchLookup.doc().getForField(this));
         }

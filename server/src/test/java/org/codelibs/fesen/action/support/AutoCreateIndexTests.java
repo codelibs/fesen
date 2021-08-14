@@ -26,10 +26,10 @@ import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.indices.SystemIndexDescriptor;
 import org.codelibs.fesen.indices.SystemIndices;
@@ -198,7 +198,7 @@ public class AutoCreateIndexTests extends ESTestCase {
                 ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
         AutoCreateIndex autoCreateIndex = new AutoCreateIndex(settings, clusterSettings,
             new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)),
-            new SystemIndices(org.codelibs.fesen.common.collect.Map.of()));
+            new SystemIndices(org.codelibs.fesen.core.Map.of()));
         assertThat(autoCreateIndex.getAutoCreate().isAutoCreateIndex(), equalTo(value));
 
         Settings newSettings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), !value).build();
@@ -222,8 +222,8 @@ public class AutoCreateIndexTests extends ESTestCase {
     }
 
     private AutoCreateIndex newAutoCreateIndex(Settings settings) {
-        SystemIndices systemIndices = new SystemIndices(org.codelibs.fesen.common.collect.Map.of("plugin",
-            org.codelibs.fesen.common.collect.List.of(new SystemIndexDescriptor(TEST_SYSTEM_INDEX_NAME, ""))));
+        SystemIndices systemIndices = new SystemIndices(org.codelibs.fesen.core.Map.of("plugin",
+            org.codelibs.fesen.core.List.of(new SystemIndexDescriptor(TEST_SYSTEM_INDEX_NAME, ""))));
         return new AutoCreateIndex(settings, new ClusterSettings(settings,
             ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)), systemIndices);
     }

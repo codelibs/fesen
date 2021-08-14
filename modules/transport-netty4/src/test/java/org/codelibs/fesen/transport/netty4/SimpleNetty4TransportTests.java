@@ -21,7 +21,6 @@ package org.codelibs.fesen.transport.netty4;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.network.NetworkService;
@@ -32,6 +31,7 @@ import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.core.internal.net.NetUtils;
 import org.codelibs.fesen.indices.breaker.NoneCircuitBreakerService;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.transport.MockTransportService;
 import org.codelibs.fesen.test.transport.StubbableTransport;
 import org.codelibs.fesen.transport.AbstractSimpleTransportTestCase;

@@ -20,8 +20,8 @@
 package org.codelibs.fesen.common;
 
 
-import org.codelibs.fesen.common.CharArrays;
 import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.core.CharArrays;
 
 import java.util.Arrays;
 import java.util.Base64;

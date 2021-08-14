@@ -112,9 +112,9 @@ public class ToAndFromJsonMetadataTests extends ESTestCase {
                 .put(idx1, false)
                 .put(idx2, false)
                 .put(new DataStream("data-stream1", createTimestampField("@timestamp"),
-                    org.codelibs.fesen.common.collect.List.of(idx1.getIndex())))
+                    org.codelibs.fesen.core.List.of(idx1.getIndex())))
                 .put(new DataStream("data-stream2", createTimestampField("@timestamp"),
-                    org.codelibs.fesen.common.collect.List.of(idx2.getIndex())))
+                    org.codelibs.fesen.core.List.of(idx2.getIndex())))
                 .build();
 
         XContentBuilder builder = JsonXContent.contentBuilder();

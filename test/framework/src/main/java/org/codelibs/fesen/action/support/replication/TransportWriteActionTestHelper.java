@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.support.replication;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.support.WriteRequest;
 import org.codelibs.fesen.action.support.replication.TransportWriteAction;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.translog.Translog;
 

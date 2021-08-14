@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.nio.BytesChannelContext;
 import org.codelibs.fesen.nio.BytesWriteHandler;
 import org.codelibs.fesen.nio.Config;

@@ -62,7 +62,7 @@ public class ParametrizedMapperTests extends MapperServiceTestCase {
     public static class TestPlugin extends Plugin implements MapperPlugin {
         @Override
         public Map<String, Mapper.TypeParser> getMappers() {
-            return org.codelibs.fesen.common.collect.Map.of("test_mapper", new TypeParser());
+            return org.codelibs.fesen.core.Map.of("test_mapper", new TypeParser());
         }
     }
 
@@ -209,7 +209,7 @@ public class ParametrizedMapperTests extends MapperServiceTestCase {
     private static TestMapper fromMapping(String mapping, Version version) {
         MapperService mapperService = mock(MapperService.class);
         IndexAnalyzers indexAnalyzers = new IndexAnalyzers(
-            org.codelibs.fesen.common.collect.Map.of(
+            org.codelibs.fesen.core.Map.of(
                 "_standard", Lucene.STANDARD_ANALYZER,
                 "_keyword", Lucene.KEYWORD_ANALYZER,
                 "default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),

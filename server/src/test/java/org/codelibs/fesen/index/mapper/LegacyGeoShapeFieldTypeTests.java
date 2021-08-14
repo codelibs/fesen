@@ -54,9 +54,9 @@ public class LegacyGeoShapeFieldTypeTests extends FieldTypeTestCase {
 
         MappedFieldType mapper = new LegacyGeoShapeFieldMapper.Builder("field").build(context).fieldType();
 
-        Map<String, Object> jsonLineString = org.codelibs.fesen.common.collect.Map.of("type", "LineString", "coordinates",
+        Map<String, Object> jsonLineString = org.codelibs.fesen.core.Map.of("type", "LineString", "coordinates",
             Arrays.asList(Arrays.asList(42.0, 27.1), Arrays.asList(30.0, 50.0)));
-        Map<String, Object> jsonPoint = org.codelibs.fesen.common.collect.Map.of(
+        Map<String, Object> jsonPoint = org.codelibs.fesen.core.Map.of(
             "type", "Point",
             "coordinates", Arrays.asList(14.0, 15.0));
         String wktLineString = "LINESTRING (42.0 27.1, 30.0 50.0)";

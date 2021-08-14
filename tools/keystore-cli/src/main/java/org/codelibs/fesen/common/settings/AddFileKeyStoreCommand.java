@@ -25,10 +25,10 @@ import joptsimple.OptionSpec;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.SuppressForbidden;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
 import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.env.Environment;
 
 import java.nio.file.Files;

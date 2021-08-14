@@ -21,11 +21,11 @@ package org.codelibs.fesen.index.shard;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.ReferenceManager;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.metrics.MeanMetric;
 import org.codelibs.fesen.common.util.concurrent.RunOnce;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.translog.Translog;
 
 import java.io.Closeable;

@@ -23,7 +23,7 @@ import org.codelibs.fesen.cluster.coordination.ElectionSchedulerFactory;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Settings.Builder;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.concurrent.atomic.AtomicBoolean;

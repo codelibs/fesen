@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
 
 public interface ServiceDisruptionScheme {

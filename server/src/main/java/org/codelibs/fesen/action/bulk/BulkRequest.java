@@ -31,14 +31,14 @@ import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.WriteRequest;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.action.update.UpdateRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 

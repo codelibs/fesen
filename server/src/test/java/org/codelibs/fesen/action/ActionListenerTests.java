@@ -20,7 +20,7 @@ package org.codelibs.fesen.action;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.common.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;

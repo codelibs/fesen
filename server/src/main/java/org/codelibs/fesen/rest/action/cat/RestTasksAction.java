@@ -28,7 +28,7 @@ import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;

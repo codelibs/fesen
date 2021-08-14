@@ -32,9 +32,9 @@ import org.codelibs.fesen.cluster.action.index.MappingUpdatedAction.AdjustableSe
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.collect.Map;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Map;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.mapper.ContentPath;
 import org.codelibs.fesen.index.mapper.Mapper;

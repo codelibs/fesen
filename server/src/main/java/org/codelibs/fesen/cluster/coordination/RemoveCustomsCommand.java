@@ -27,8 +27,8 @@ import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.gateway.PersistedClusterStateService;
 

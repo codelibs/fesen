@@ -24,13 +24,13 @@ import org.apache.lucene.index.IndexableField;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.mapper.DynamicTemplate.XContentFieldType;
 

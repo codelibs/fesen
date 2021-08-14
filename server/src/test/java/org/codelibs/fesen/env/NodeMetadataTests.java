@@ -19,7 +19,7 @@
 package org.codelibs.fesen.env;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeMetadata;
 import org.codelibs.fesen.gateway.MetadataStateFormat;
 import org.codelibs.fesen.test.ESTestCase;

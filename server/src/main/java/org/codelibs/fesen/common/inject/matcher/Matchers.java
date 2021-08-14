@@ -23,7 +23,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /**
  * Matcher implementations. Supports matching classes and methods.

@@ -23,10 +23,10 @@ import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.support.WriteRequestBuilder;
 import org.codelibs.fesen.action.support.replication.ReplicationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 
 import java.util.Map;

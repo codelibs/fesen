@@ -21,9 +21,9 @@ package org.codelibs.fesen.cluster;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ack.AckedRequest;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * An extension interface to {@link ClusterStateUpdateTask} that allows to be notified when

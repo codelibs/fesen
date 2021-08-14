@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.action;
 
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedRunnable;
 
 /**
  * Base class for {@link Runnable}s that need to call {@link ActionListener#onFailure(Exception)} in case an uncaught

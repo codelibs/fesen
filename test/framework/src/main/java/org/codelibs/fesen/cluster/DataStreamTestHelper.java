@@ -26,8 +26,8 @@ import org.codelibs.fesen.cluster.metadata.DataStream;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.test.ESTestCase;
 

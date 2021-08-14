@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;

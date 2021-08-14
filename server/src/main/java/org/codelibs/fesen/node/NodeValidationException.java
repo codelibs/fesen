@@ -26,7 +26,7 @@ import org.codelibs.fesen.common.transport.BoundTransportAddress;
 /**
  * An exception thrown during node validation. Node validation runs immediately before a node
  * begins accepting network requests in
- * {@link Node#validateNodeBeforeAcceptingRequests(org.codelibs.fesen.bootstrap.BootstrapContext, BoundTransportAddress, List)}.
+ * {@link Node#validateNodeBeforeAcceptingRequests(org.codelibs.fesen.jdk.BootstrapContext, BoundTransportAddress, List)}.
  * This exception is a checked exception that is declared as thrown from this method for the purpose of bubbling up to the user.
  */
 public class NodeValidationException extends Exception {

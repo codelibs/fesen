@@ -29,9 +29,9 @@ import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.gateway.PersistedClusterStateService;
 

@@ -20,9 +20,9 @@
 package org.codelibs.fesen.snapshots;
 
 import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 

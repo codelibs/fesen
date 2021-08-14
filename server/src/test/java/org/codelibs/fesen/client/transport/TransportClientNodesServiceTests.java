@@ -39,7 +39,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.test.ESTestCase;

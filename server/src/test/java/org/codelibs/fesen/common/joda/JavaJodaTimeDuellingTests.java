@@ -20,13 +20,13 @@
 package org.codelibs.fesen.common.joda;
 
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.common.joda.Joda;
 import org.codelibs.fesen.common.joda.JodaDateFormatter;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.common.time.FormatNames;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.ESTestCase;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

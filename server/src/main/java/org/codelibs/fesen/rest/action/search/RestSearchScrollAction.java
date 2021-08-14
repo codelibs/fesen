@@ -33,7 +33,7 @@ import org.codelibs.fesen.search.Scroll;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 

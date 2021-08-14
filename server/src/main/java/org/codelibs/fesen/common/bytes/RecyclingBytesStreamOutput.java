@@ -21,11 +21,11 @@ package org.codelibs.fesen.common.bytes;
 
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.BytesStream;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.ByteArray;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.IOException;

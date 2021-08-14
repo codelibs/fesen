@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
 
 import java.io.IOException;

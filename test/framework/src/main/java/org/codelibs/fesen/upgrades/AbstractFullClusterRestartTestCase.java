@@ -21,10 +21,10 @@ package org.codelibs.fesen.upgrades;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.client.Request;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.test.rest.ESRestTestCase;
 import org.junit.Before;
 

@@ -21,8 +21,8 @@ package org.codelibs.fesen.action.support;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.AdapterActionFuture;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.UncategorizedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.RemoteTransportException;
 

@@ -25,9 +25,9 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.NettyRuntime;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.core.Booleans;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

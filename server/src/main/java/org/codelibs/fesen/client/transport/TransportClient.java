@@ -41,10 +41,10 @@ import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.SettingsModule;
 import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.indices.SystemIndices;
@@ -78,7 +78,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 
 /**
  * The transport client allows to create a client that is not part of the cluster, but simply connects to one

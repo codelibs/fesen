@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.common.util.concurrent;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.AsyncIOProcessor;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
 

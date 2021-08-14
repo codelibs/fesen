@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.painless;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.painless.lookup.PainlessLookup;
 import org.codelibs.fesen.painless.symbol.FunctionTable;
 

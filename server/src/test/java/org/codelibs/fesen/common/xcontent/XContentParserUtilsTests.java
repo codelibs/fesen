@@ -21,7 +21,6 @@ package org.codelibs.fesen.common.xcontent;
 
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.common.CheckedBiConsumer;
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -35,6 +34,7 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;

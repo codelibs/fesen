@@ -34,10 +34,10 @@ import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.client.ParentTaskAssigningClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.document.DocumentField;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.threadpool.ThreadPool;
@@ -48,8 +48,8 @@ import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueNanos;
 import static org.codelibs.fesen.common.util.CollectionUtils.isEmpty;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 
 /**
  * A scrollable source of hits from a {@linkplain Client} instance.

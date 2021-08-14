@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptedMetricAggContexts;
@@ -83,7 +83,7 @@ class ScriptedMetricAggregatorFactory extends AggregatorFactory {
                                         Aggregator parent,
                                         CardinalityUpperBound cardinality,
                                         Map<String, Object> metadata) throws IOException {
-        Map<String, Object> aggParams = this.aggParams == null ? org.codelibs.fesen.common.collect.Map.of() : this.aggParams;
+        Map<String, Object> aggParams = this.aggParams == null ? org.codelibs.fesen.core.Map.of() : this.aggParams;
 
         Script reduceScript = deepCopyScript(this.reduceScript, searchContext, aggParams);
 

@@ -21,11 +21,11 @@ package org.codelibs.fesen.common.blobstore.url;
 
 import com.sun.net.httpserver.HttpServer;
 
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.blobstore.BlobContainer;
 import org.codelibs.fesen.common.blobstore.BlobPath;
 import org.codelibs.fesen.common.blobstore.url.URLBlobStore;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.elasticsearch.mocksocket.MockHttpServer;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.AfterClass;

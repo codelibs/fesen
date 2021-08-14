@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
 import org.codelibs.fesen.common.Rounding;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
@@ -31,9 +31,9 @@ import org.codelibs.fesen.search.aggregations.bucket.histogram.LongBounds;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.codelibs.fesen.test.InternalMultiBucketAggregationTestCase;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueHours;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMinutes;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueHours;
+import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

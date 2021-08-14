@@ -28,7 +28,7 @@ import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.coordination.ClusterStatePublisher.AckListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.transport.TransportException;
 import org.codelibs.fesen.transport.TransportResponse;
 

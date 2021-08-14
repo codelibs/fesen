@@ -20,9 +20,9 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.tasks.TaskId;
 

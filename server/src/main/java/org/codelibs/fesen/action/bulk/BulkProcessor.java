@@ -24,14 +24,14 @@ import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.client.Client;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

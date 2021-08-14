@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.lookup.SourceLookup;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public abstract class ArraySourceValueFetcher implements ValueFetcher {
         for (String path : sourcePaths) {
             Object sourceValue = lookup.extractValue(path, nullValue);
             if (sourceValue == null) {
-                return org.codelibs.fesen.common.collect.List.of();
+                return org.codelibs.fesen.core.List.of();
             }
             values.addAll((List<?>) parseSourceValue(sourceValue));
         }

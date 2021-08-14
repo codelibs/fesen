@@ -40,7 +40,7 @@ import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.discovery.MasterNotDiscoveredException;
 import org.codelibs.fesen.node.NodeClosedException;
 import org.codelibs.fesen.tasks.Task;

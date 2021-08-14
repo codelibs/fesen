@@ -19,8 +19,8 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.common.Randomness;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractAsyncTask;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;

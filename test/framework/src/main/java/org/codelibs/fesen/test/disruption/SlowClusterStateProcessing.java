@@ -21,7 +21,7 @@ package org.codelibs.fesen.test.disruption;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
 
 import java.util.Random;

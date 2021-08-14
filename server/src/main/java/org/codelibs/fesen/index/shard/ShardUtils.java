@@ -21,9 +21,9 @@ package org.codelibs.fesen.index.shard;
 
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.LeafReader;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.index.FesenLeafReader;
+import org.codelibs.fesen.core.Nullable;
 
 public final class ShardUtils {
 

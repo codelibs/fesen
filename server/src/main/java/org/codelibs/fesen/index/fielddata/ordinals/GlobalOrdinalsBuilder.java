@@ -27,7 +27,7 @@ import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.packed.PackedInts;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.fielddata.IndexOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;

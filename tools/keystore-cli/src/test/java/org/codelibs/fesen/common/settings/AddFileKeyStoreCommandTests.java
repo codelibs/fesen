@@ -22,9 +22,9 @@ package org.codelibs.fesen.common.settings;
 import org.codelibs.fesen.cli.Command;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.AddFileKeyStoreCommand;
 import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.Environment;
 
 import java.io.IOException;

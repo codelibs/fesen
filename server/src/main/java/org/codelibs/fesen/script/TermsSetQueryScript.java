@@ -37,7 +37,7 @@ public abstract class TermsSetQueryScript {
     public static final ScriptContext<Factory> CONTEXT = new ScriptContext<>("terms_set", Factory.class);
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.common.collect.Map.of(
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
             "doc", value -> {
                 deprecationLogger.deprecate("terms-set-query-script_doc",
                         "Accessing variable [doc] via [params.doc] from within an terms-set-query-script "

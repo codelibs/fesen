@@ -24,8 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateObserver;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * The {@link NodeAndClusterIdStateListener} listens to cluster state changes and ONLY when receives the first update

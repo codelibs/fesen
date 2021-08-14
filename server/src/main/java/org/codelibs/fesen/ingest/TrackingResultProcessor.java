@@ -21,7 +21,7 @@ package org.codelibs.fesen.ingest;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ingest.SimulateProcessorResult;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import static org.codelibs.fesen.ingest.IngestDocument.PIPELINE_CYCLE_ERROR_MESSAGE;
 

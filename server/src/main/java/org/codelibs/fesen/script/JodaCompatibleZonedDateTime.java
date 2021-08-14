@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.script;
 
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.SuppressLoggerChecks;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
 import org.codelibs.fesen.common.time.DateUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.joda.time.DateTime;
 
 import java.security.AccessController;

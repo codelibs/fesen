@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.CheckedFunction;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ContextParser;
@@ -33,6 +31,8 @@ import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.ObjectParserTests.NamedObject;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matcher;
 

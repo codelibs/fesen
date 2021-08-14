@@ -23,7 +23,7 @@ import org.codelibs.fesen.action.support.master.MasterNodeRequest;
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.ShardId;
 
 import java.io.IOException;

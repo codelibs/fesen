@@ -27,7 +27,7 @@ import org.codelibs.fesen.action.admin.indices.rollover.MaxDocsCondition;
 import org.codelibs.fesen.action.admin.indices.rollover.MaxSizeCondition;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.EqualsHashCodeTestUtils;
 

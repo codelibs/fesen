@@ -20,9 +20,9 @@
 package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.Arrays;

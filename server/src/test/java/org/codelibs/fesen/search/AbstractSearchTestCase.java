@@ -20,7 +20,6 @@
 package org.codelibs.fesen.search;
 
 import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.SearchPlugin;

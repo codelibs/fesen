@@ -36,7 +36,7 @@ import java.util.function.Function;
 abstract class AbstractSortScript implements ScorerAware {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.common.collect.Map.of(
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
             "doc", value -> {
                 deprecationLogger.deprecate("sort-script_doc",
                         "Accessing variable [doc] via [params.doc] from within an sort-script "

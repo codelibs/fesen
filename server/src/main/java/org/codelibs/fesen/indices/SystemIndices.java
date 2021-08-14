@@ -24,9 +24,9 @@ import org.apache.lucene.util.automaton.Automaton;
 import org.apache.lucene.util.automaton.CharacterRunAutomaton;
 import org.apache.lucene.util.automaton.MinimizationOperations;
 import org.apache.lucene.util.automaton.Operations;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.tasks.TaskResultsService;
 

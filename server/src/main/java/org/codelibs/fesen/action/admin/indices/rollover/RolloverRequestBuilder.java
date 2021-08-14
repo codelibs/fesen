@@ -24,8 +24,8 @@ import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilde
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.TimeValue;
 
 
 public class RolloverRequestBuilder extends MasterNodeOperationRequestBuilder<RolloverRequest, RolloverResponse,

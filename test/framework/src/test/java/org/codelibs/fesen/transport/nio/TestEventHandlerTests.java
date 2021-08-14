@@ -21,9 +21,9 @@ package org.codelibs.fesen.transport.nio;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.CheckedRunnable;
 import org.codelibs.fesen.nio.ServerChannelContext;
 import org.codelibs.fesen.nio.SocketChannelContext;
 import org.codelibs.fesen.test.ESTestCase;

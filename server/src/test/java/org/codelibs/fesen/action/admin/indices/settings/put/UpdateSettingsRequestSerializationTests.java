@@ -24,8 +24,8 @@ import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Settings.Builder;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.CollectionUtils;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
 import org.codelibs.fesen.test.ESTestCase;
 

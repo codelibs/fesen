@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 public class InetAddresses {
     private static int IPV4_PART_COUNT = 4;

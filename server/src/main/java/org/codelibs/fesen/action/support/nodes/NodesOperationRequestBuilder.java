@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.support.nodes;
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public abstract class NodesOperationRequestBuilder<Request extends BaseNodesRequest<Request>, Response extends BaseNodesResponse,
         RequestBuilder extends NodesOperationRequestBuilder<Request, Response, RequestBuilder>>

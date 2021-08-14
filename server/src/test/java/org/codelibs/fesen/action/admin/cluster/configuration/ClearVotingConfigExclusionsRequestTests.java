@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.cluster.configuration;
 import java.io.IOException;
 
 import org.codelibs.fesen.action.admin.cluster.configuration.ClearVotingConfigExclusionsRequest;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.Matchers.equalTo;

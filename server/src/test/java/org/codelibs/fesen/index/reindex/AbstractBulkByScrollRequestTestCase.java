@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;

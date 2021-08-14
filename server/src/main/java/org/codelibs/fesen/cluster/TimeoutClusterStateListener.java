@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * An exception to cluster state listener that allows for timeouts and for post added notifications.

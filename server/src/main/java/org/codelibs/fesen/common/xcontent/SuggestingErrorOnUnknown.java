@@ -21,8 +21,8 @@ package org.codelibs.fesen.common.xcontent;
 
 import org.apache.lucene.search.spell.LevenshteinDistance;
 import org.apache.lucene.util.CollectionUtil;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.ErrorOnUnknown;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;

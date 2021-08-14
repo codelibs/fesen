@@ -20,7 +20,7 @@
 package org.codelibs.fesen.common;
 
 import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.text.NumberFormat;
 import java.util.LinkedList;

@@ -21,12 +21,12 @@ package org.codelibs.fesen.cluster.routing;
 
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Randomness;
 import org.codelibs.fesen.common.collect.MapBuilder;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.node.ResponseCollectorService;

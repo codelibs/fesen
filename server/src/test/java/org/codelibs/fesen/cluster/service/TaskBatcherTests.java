@@ -25,9 +25,9 @@ import org.codelibs.fesen.cluster.ClusterStateTaskConfig;
 import org.codelibs.fesen.cluster.metadata.ProcessClusterEventTimeoutException;
 import org.codelibs.fesen.cluster.service.TaskBatcher;
 import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.collect.Tuple;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.junit.Before;
 
 import java.util.ArrayList;

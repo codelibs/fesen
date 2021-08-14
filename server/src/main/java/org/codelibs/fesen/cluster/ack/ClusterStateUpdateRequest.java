@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.ack;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Base class to be used when needing to update the cluster state

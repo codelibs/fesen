@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.CopyBytesServerSocketChannel;
 import org.codelibs.fesen.transport.CopyBytesSocketChannel;

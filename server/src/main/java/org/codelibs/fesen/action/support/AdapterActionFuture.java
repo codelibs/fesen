@@ -22,10 +22,10 @@ package org.codelibs.fesen.action.support;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.BaseFuture;
 import org.codelibs.fesen.common.util.concurrent.FutureUtils;
 import org.codelibs.fesen.common.util.concurrent.UncategorizedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.concurrent.TimeUnit;
 

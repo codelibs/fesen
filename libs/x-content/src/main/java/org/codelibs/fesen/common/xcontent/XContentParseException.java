@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.xcontent;
 
 import java.util.Optional;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Thrown when one of the XContent parsers cannot parse something.

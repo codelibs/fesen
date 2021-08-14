@@ -20,7 +20,6 @@
 package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.EsAbortPolicy;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.util.concurrent.ResizableBlockingQueue;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.util.concurrent.TimedRunnable;
 import org.codelibs.fesen.common.util.concurrent.WrappedRunnable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.concurrent.TimeUnit;

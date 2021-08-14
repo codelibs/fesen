@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.nio.BytesChannelContext;
 import org.codelibs.fesen.nio.Config;
 import org.codelibs.fesen.nio.FlushOperation;

@@ -25,7 +25,7 @@ import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 public abstract class AbstractBulkByScrollRequestBuilder<

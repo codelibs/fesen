@@ -23,7 +23,7 @@ import java.util.Optional;
 import org.codelibs.fesen.cluster.coordination.LinearizabilityChecker.History;
 import org.codelibs.fesen.cluster.coordination.LinearizabilityChecker.KeyedSpec;
 import org.codelibs.fesen.cluster.coordination.LinearizabilityChecker.SequentialSpec;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.Matchers.equalTo;

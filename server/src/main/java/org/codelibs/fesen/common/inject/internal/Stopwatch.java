@@ -18,7 +18,7 @@ package org.codelibs.fesen.common.inject.internal;
 
 import java.util.logging.Logger;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Enables simple performance monitoring.

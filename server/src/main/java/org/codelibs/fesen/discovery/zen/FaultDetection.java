@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.discovery.zen;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueSeconds;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
 
 import java.io.Closeable;
 
@@ -30,8 +30,8 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.Transport;
 import org.codelibs.fesen.transport.TransportConnectionListener;

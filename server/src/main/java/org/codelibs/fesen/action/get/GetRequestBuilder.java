@@ -21,8 +21,8 @@ package org.codelibs.fesen.action.get;
 
 import org.codelibs.fesen.action.support.single.shard.SingleShardOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 

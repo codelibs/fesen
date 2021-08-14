@@ -24,11 +24,8 @@ import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.time.DateFormatter;
@@ -37,6 +34,9 @@ import org.codelibs.fesen.common.time.DateUtils;
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.indices.IndexClosedException;
@@ -72,7 +72,7 @@ public class IndexNameExpressionResolver {
     private final DateMathExpressionResolver dateMathExpressionResolver = new DateMathExpressionResolver();
     private final WildcardExpressionResolver wildcardExpressionResolver = new WildcardExpressionResolver();
     private final List<ExpressionResolver> expressionResolvers =
-        org.codelibs.fesen.common.collect.List.of(dateMathExpressionResolver, wildcardExpressionResolver);
+        org.codelibs.fesen.core.List.of(dateMathExpressionResolver, wildcardExpressionResolver);
 
     private final ThreadContext threadContext;
 
@@ -144,7 +144,7 @@ public class IndexNameExpressionResolver {
         }
 
         List<String> dataStreams = wildcardExpressionResolver.resolve(context, Arrays.asList(indexExpressions));
-        return ((dataStreams == null) ? org.codelibs.fesen.common.collect.List.<String>of() : dataStreams).stream()
+        return ((dataStreams == null) ? org.codelibs.fesen.core.List.<String>of() : dataStreams).stream()
             .map(x -> state.metadata().getIndicesLookup().get(x))
             .filter(Objects::nonNull)
             .filter(ia -> ia.getType() == IndexAbstraction.Type.DATA_STREAM)

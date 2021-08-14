@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.rest;
 
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.path.PathTrie;
+import org.codelibs.fesen.core.Booleans;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

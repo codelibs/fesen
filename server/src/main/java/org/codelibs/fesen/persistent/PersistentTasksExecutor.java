@@ -21,7 +21,7 @@ package org.codelibs.fesen.persistent;
 
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.persistent.PersistentTasksCustomMetadata.Assignment;
 import org.codelibs.fesen.persistent.PersistentTasksCustomMetadata.PersistentTask;
 import org.codelibs.fesen.tasks.TaskId;

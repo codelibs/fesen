@@ -27,7 +27,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.codelibs.fesen.common.CharArrays;
+import org.codelibs.fesen.core.CharArrays;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -22,7 +22,7 @@ package org.codelibs.fesen.nio;
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
+import org.codelibs.fesen.core.AbstractRefCounted;
 
 public class Page implements Closeable {
 

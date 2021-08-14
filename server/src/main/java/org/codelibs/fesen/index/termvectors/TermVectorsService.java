@@ -32,7 +32,6 @@ import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.termvectors.TermVectorsFilter;
 import org.codelibs.fesen.action.termvectors.TermVectorsRequest;
 import org.codelibs.fesen.action.termvectors.TermVectorsResponse;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.document.DocumentField;
@@ -40,6 +39,7 @@ import org.codelibs.fesen.common.lucene.uid.VersionsAndSeqNoResolver.DocIdAndVer
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.get.GetResult;
 import org.codelibs.fesen.index.mapper.DocumentMapperForType;

@@ -24,7 +24,6 @@ import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -33,7 +32,6 @@ import org.codelibs.fesen.common.logging.LogConfigurator;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.unit.MemorySizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -43,6 +41,8 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 /**
  * An immutable settings implementation.

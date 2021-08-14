@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public class TransportRequestOptions {
 

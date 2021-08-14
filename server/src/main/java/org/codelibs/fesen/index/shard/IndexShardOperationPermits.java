@@ -24,12 +24,12 @@ import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRunnable;
 import org.codelibs.fesen.action.support.ContextPreservingActionListener;
-import org.codelibs.fesen.common.CheckedRunnable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.common.util.concurrent.RunOnce;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext.StoredContext;
+import org.codelibs.fesen.core.CheckedRunnable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

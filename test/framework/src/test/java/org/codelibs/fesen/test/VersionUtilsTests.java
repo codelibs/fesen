@@ -19,8 +19,8 @@
 package org.codelibs.fesen.test;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.VersionUtils;
 

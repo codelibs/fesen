@@ -20,12 +20,12 @@ package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedCallable;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedRunnable;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool;

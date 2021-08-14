@@ -24,10 +24,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.spell.LevenshteinDistance;
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.fesen.client.node.NodeClient;
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.plugins.ActionPlugin;
 import org.codelibs.fesen.rest.action.admin.cluster.RestNodesUsageAction;
 

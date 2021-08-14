@@ -22,7 +22,7 @@ package org.codelibs.fesen.action.support.master;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.io.IOException;
 

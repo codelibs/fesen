@@ -25,7 +25,7 @@ import org.codelibs.fesen.cluster.ClusterInfoService;
 import org.codelibs.fesen.cluster.InternalClusterInfoService;
 import org.codelibs.fesen.cluster.routing.allocation.DiskThresholdSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.query.QueryBuilders;
 import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;

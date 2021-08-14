@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common.compress;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Objects;

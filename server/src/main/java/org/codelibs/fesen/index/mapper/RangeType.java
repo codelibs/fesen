@@ -34,12 +34,12 @@ import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.FutureArrays;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.geo.ShapeRelation;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 
 import java.io.IOException;

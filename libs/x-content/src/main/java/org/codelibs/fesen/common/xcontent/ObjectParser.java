@@ -18,8 +18,8 @@
  */
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Array;

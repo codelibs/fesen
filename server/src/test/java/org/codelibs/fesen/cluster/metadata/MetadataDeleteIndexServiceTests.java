@@ -30,8 +30,8 @@ import org.codelibs.fesen.cluster.metadata.MetadataDeleteIndexService;
 import org.codelibs.fesen.cluster.routing.RoutingTable;
 import org.codelibs.fesen.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.repositories.IndexId;
@@ -87,7 +87,7 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         String index = randomAlphaOfLength(5);
         Snapshot snapshot = new Snapshot("doesn't matter", new SnapshotId("snapshot name", "snapshot uuid"));
         SnapshotsInProgress snaps = SnapshotsInProgress.of(
-            org.codelibs.fesen.common.collect.List.of(new SnapshotsInProgress.Entry(snapshot, true, false,
+            org.codelibs.fesen.core.List.of(new SnapshotsInProgress.Entry(snapshot, true, false,
                 SnapshotsInProgress.State.INIT, singletonList(new IndexId(index, "doesn't matter")),
                 Collections.emptyList(), System.currentTimeMillis(), (long) randomIntBetween(0, 1000), ImmutableOpenMap.of(), null,
                 SnapshotInfoTests.randomUserMetadata(), VersionUtils.randomVersion(random()))));
@@ -124,13 +124,13 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndices = randomIntBetween(2, 5);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.common.collect.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.common.collect.List.of());
+            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
+            org.codelibs.fesen.core.List.of());
 
         int numIndexToDelete = randomIntBetween(1, numBackingIndices - 1);
 
         Index indexToDelete = before.metadata().index(DataStream.getDefaultBackingIndexName(dataStreamName, numIndexToDelete)).getIndex();
-        ClusterState after = service.deleteIndices(before, org.codelibs.fesen.common.collect.Set.of(indexToDelete));
+        ClusterState after = service.deleteIndices(before, org.codelibs.fesen.core.Set.of(indexToDelete));
 
         assertThat(after.metadata().getIndices().get(indexToDelete.getName()), IsNull.nullValue());
         assertThat(after.metadata().getIndices().size(), equalTo(numBackingIndices - 1));
@@ -143,8 +143,8 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndicesToDelete = randomIntBetween(2, numBackingIndices - 1);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.common.collect.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.common.collect.List.of());
+            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
+            org.codelibs.fesen.core.List.of());
 
         List<Integer> indexNumbersToDelete =
             randomSubsetOf(numBackingIndicesToDelete, IntStream.rangeClosed(1, numBackingIndices - 1).boxed().collect(Collectors.toList()));
@@ -169,12 +169,12 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndices = randomIntBetween(1, 5);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.common.collect.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.common.collect.List.of());
+            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
+            org.codelibs.fesen.core.List.of());
 
         Index indexToDelete = before.metadata().index(DataStream.getDefaultBackingIndexName(dataStreamName, numBackingIndices)).getIndex();
         Exception e = expectThrows(IllegalArgumentException.class,
-            () -> service.deleteIndices(before, org.codelibs.fesen.common.collect.Set.of(indexToDelete)));
+            () -> service.deleteIndices(before, org.codelibs.fesen.core.Set.of(indexToDelete)));
 
         assertThat(e.getMessage(), containsString("index [" + indexToDelete.getName() + "] is the write index for data stream [" +
             dataStreamName + "] and cannot be deleted"));

@@ -21,10 +21,10 @@ package org.codelibs.fesen.search.aggregations.metrics;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.ObjectArray;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregator;

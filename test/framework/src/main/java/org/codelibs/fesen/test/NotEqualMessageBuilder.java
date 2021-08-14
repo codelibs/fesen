@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Builds a message describing how two sets of values are unequal. 

@@ -21,20 +21,20 @@ package org.codelibs.fesen.rest;
 
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.http.HttpChannel;
 import org.codelibs.fesen.http.HttpRequest;
 
@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
-import static org.codelibs.fesen.common.unit.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 public class RestRequest implements ToXContent.Params {
 

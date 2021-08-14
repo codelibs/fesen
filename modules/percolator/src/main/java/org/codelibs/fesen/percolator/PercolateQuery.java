@@ -36,9 +36,9 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.Bits;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.lucene.Lucene;
+import org.codelibs.fesen.core.CheckedFunction;
 
 import java.io.IOException;
 import java.util.List;

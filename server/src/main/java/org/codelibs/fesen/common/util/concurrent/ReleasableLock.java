@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.Assertions;
 import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.engine.EngineException;
 
 import java.util.concurrent.locks.Lock;

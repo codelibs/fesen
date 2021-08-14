@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.rounding;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.rounding.DateTimeUnit;
 import org.codelibs.fesen.common.rounding.Rounding;
 import org.codelibs.fesen.common.rounding.Rounding.TimeIntervalRounding;
 import org.codelibs.fesen.common.rounding.Rounding.TimeUnitRounding;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

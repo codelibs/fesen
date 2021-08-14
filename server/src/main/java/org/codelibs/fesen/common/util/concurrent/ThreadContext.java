@@ -23,13 +23,13 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.support.ContextPreservingActionListener;
 import org.codelibs.fesen.client.OriginSettingClient;
 import org.codelibs.fesen.common.collect.MapBuilder;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.http.HttpTransportSettings;
 import org.codelibs.fesen.tasks.Task;
 

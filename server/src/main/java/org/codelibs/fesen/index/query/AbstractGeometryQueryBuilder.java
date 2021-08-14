@@ -27,7 +27,6 @@ import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.get.GetRequest;
 import org.codelibs.fesen.action.get.GetResponse;
 import org.codelibs.fesen.client.Client;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.geo.GeoJson;
@@ -42,6 +41,7 @@ import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.geometry.Geometry;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 

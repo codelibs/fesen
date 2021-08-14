@@ -44,7 +44,7 @@ import org.codelibs.fesen.common.io.stream.ByteBufferStreamInput;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.snapshots.Snapshot;

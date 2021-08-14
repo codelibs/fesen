@@ -456,7 +456,7 @@ public class IngestDocumentTests extends ESTestCase {
         @SuppressWarnings("unchecked")
         List<Object> list = (List<Object>) object;
         assertThat(list.size(), equalTo(3));
-        assertThat(list, equalTo(org.codelibs.fesen.common.collect.List.of("foo", "bar", "baz")));
+        assertThat(list, equalTo(org.codelibs.fesen.core.List.of("foo", "bar", "baz")));
     }
 
     public void testListAppendFieldValueWithoutDuplicate() {
@@ -466,7 +466,7 @@ public class IngestDocumentTests extends ESTestCase {
         @SuppressWarnings("unchecked")
         List<Object> list = (List<Object>) object;
         assertThat(list.size(), equalTo(4));
-        assertThat(list, equalTo(org.codelibs.fesen.common.collect.List.of("foo", "bar", "baz", "foo2")));
+        assertThat(list, equalTo(org.codelibs.fesen.core.List.of("foo", "bar", "baz", "foo2")));
     }
 
     public void testListAppendFieldValues() {
@@ -484,7 +484,7 @@ public class IngestDocumentTests extends ESTestCase {
     }
 
     public void testListAppendFieldValuesWithoutDuplicates() {
-        ingestDocument.appendFieldValue("list2", org.codelibs.fesen.common.collect.List.of("foo", "bar", "baz", "foo2"), false);
+        ingestDocument.appendFieldValue("list2", org.codelibs.fesen.core.List.of("foo", "bar", "baz", "foo2"), false);
         Object object = ingestDocument.getSourceAndMetadata().get("list2");
         assertThat(object, instanceOf(List.class));
         @SuppressWarnings("unchecked")

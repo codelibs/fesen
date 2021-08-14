@@ -62,13 +62,13 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
             deferringCollector.prepareSelectedBuckets(0, 8, 9);
 
             equalTo(
-                org.codelibs.fesen.common.collect.Map.of(
+                org.codelibs.fesen.core.Map.of(
                     0L,
-                    org.codelibs.fesen.common.collect.List.of(0, 1, 2, 3, 4, 5, 6, 7),
+                    org.codelibs.fesen.core.List.of(0, 1, 2, 3, 4, 5, 6, 7),
                     1L,
-                    org.codelibs.fesen.common.collect.List.of(8),
+                    org.codelibs.fesen.core.List.of(8),
                     2L,
-                    org.codelibs.fesen.common.collect.List.of(9)
+                    org.codelibs.fesen.core.List.of(9)
                 )
             );
         });
@@ -90,13 +90,13 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
             assertThat(
                 finalCollector.collection,
                 equalTo(
-                    org.codelibs.fesen.common.collect.Map.of(
+                    org.codelibs.fesen.core.Map.of(
                         0L,
-                        org.codelibs.fesen.common.collect.List.of(4, 5, 6, 7),
+                        org.codelibs.fesen.core.List.of(4, 5, 6, 7),
                         1L,
-                        org.codelibs.fesen.common.collect.List.of(8),
+                        org.codelibs.fesen.core.List.of(8),
                         2L,
-                        org.codelibs.fesen.common.collect.List.of(9)
+                        org.codelibs.fesen.core.List.of(9)
                     )
                 )
             );
@@ -120,13 +120,13 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
             assertThat(
                 finalCollector.collection,
                 equalTo(
-                    org.codelibs.fesen.common.collect.Map.of(
+                    org.codelibs.fesen.core.Map.of(
                         0L,
-                        org.codelibs.fesen.common.collect.List.of(0, 1, 2, 3),
+                        org.codelibs.fesen.core.List.of(0, 1, 2, 3),
                         1L,
-                        org.codelibs.fesen.common.collect.List.of(8),
+                        org.codelibs.fesen.core.List.of(8),
                         2L,
-                        org.codelibs.fesen.common.collect.List.of(9)
+                        org.codelibs.fesen.core.List.of(9)
                     )
                 )
             );

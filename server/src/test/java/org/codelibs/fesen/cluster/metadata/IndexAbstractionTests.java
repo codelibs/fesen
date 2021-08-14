@@ -25,7 +25,7 @@ import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.AliasMetadata;
 import org.codelibs.fesen.cluster.metadata.IndexAbstraction;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.Objects;

@@ -20,13 +20,13 @@
 package org.codelibs.fesen.plugins;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.bootstrap.JarHell;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.jdk.JarHell;
 
 import java.io.IOException;
 import java.io.InputStream;

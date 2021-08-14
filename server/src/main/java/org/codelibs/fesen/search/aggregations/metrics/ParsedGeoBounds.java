@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 
 import java.io.IOException;

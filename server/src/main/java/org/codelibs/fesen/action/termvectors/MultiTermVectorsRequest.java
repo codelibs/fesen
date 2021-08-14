@@ -25,10 +25,10 @@ import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
 import org.codelibs.fesen.action.RealtimeRequest;
 import org.codelibs.fesen.action.ValidateActions;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
 import java.io.IOException;

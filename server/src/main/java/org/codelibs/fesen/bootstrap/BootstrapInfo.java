@@ -22,7 +22,7 @@ package org.codelibs.fesen.bootstrap;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /**
  * Exposes system startup information

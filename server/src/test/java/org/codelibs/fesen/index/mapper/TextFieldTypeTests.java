@@ -169,18 +169,18 @@ public class TextFieldTypeTests extends FieldTypeTestCase {
         TextFieldType fieldType = createFieldType();
         fieldType.setIndexAnalyzer(Lucene.STANDARD_ANALYZER);
 
-        assertEquals(org.codelibs.fesen.common.collect.List.of("value"), fetchSourceValue(fieldType, "value"));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("42"), fetchSourceValue(fieldType, 42L));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("true"), fetchSourceValue(fieldType, true));
+        assertEquals(org.codelibs.fesen.core.List.of("value"), fetchSourceValue(fieldType, "value"));
+        assertEquals(org.codelibs.fesen.core.List.of("42"), fetchSourceValue(fieldType, 42L));
+        assertEquals(org.codelibs.fesen.core.List.of("true"), fetchSourceValue(fieldType, true));
 
         TextFieldMapper.PrefixFieldType prefixFieldType = new TextFieldMapper.PrefixFieldType(fieldType, "field._index_prefix", 2, 10);
-        assertEquals(org.codelibs.fesen.common.collect.List.of("value"), fetchSourceValue(prefixFieldType, "value"));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("42"), fetchSourceValue(prefixFieldType, 42L));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("true"), fetchSourceValue(prefixFieldType, true));
+        assertEquals(org.codelibs.fesen.core.List.of("value"), fetchSourceValue(prefixFieldType, "value"));
+        assertEquals(org.codelibs.fesen.core.List.of("42"), fetchSourceValue(prefixFieldType, 42L));
+        assertEquals(org.codelibs.fesen.core.List.of("true"), fetchSourceValue(prefixFieldType, true));
 
         TextFieldMapper.PhraseFieldType phraseFieldType = new TextFieldMapper.PhraseFieldType(fieldType);
-        assertEquals(org.codelibs.fesen.common.collect.List.of("value"), fetchSourceValue(phraseFieldType, "value"));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("42"), fetchSourceValue(phraseFieldType, 42L));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("true"), fetchSourceValue(phraseFieldType, true));
+        assertEquals(org.codelibs.fesen.core.List.of("value"), fetchSourceValue(phraseFieldType, "value"));
+        assertEquals(org.codelibs.fesen.core.List.of("42"), fetchSourceValue(phraseFieldType, 42L));
+        assertEquals(org.codelibs.fesen.core.List.of("true"), fetchSourceValue(phraseFieldType, true));
     }
 }

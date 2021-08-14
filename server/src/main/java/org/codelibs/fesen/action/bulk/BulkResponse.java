@@ -22,10 +22,10 @@ package org.codelibs.fesen.action.bulk;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.StatusToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.rest.RestStatus;
 
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;

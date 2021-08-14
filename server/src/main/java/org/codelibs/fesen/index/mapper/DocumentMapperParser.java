@@ -20,8 +20,6 @@
 package org.codelibs.fesen.index.mapper;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.compress.CompressedXContent;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
@@ -29,6 +27,8 @@ import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.similarity.SimilarityService;

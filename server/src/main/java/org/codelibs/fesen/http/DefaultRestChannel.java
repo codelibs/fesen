@@ -20,7 +20,6 @@
 package org.codelibs.fesen.http;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
@@ -30,6 +29,7 @@ import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.network.CloseableChannel;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.AbstractRestChannel;
 import org.codelibs.fesen.rest.RestChannel;
 import org.codelibs.fesen.rest.RestRequest;

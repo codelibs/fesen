@@ -264,9 +264,9 @@ public class DocumentMapperTests extends MapperServiceTestCase {
             b.endObject();
         }));
 
-        Map<String, Object> expected = org.codelibs.fesen.common.collect.Map.of(
+        Map<String, Object> expected = org.codelibs.fesen.core.Map.of(
             "field", "value",
-            "object", org.codelibs.fesen.common.collect.Map.of("field1", "value1", "field2", "value2"));
+            "object", org.codelibs.fesen.core.Map.of("field1", "value1", "field2", "value2"));
         assertThat(initMapper.meta(), equalTo(expected));
 
         DocumentMapper updatedMapper = createDocumentMapper(fieldMapping(b -> b.field("type", "text")));
@@ -288,9 +288,9 @@ public class DocumentMapperTests extends MapperServiceTestCase {
         }));
         mergedMapper = mergedMapper.merge(updatedMapper.mapping(), MergeReason.INDEX_TEMPLATE);
 
-        expected = org.codelibs.fesen.common.collect.Map.of(
+        expected = org.codelibs.fesen.core.Map.of(
             "field", "value",
-            "object", org.codelibs.fesen.common.collect.Map.of("field1", "value1", "field2", "new_value", "field3", "value3"));
+            "object", org.codelibs.fesen.core.Map.of("field1", "value1", "field2", "new_value", "field3", "value3"));
         assertThat(mergedMapper.meta(), equalTo(expected));
     }
 }

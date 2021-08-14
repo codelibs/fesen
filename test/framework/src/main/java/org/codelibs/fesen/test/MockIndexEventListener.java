@@ -19,11 +19,11 @@
 package org.codelibs.fesen.test;
 
 import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.inject.Module;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexModule;
 import org.codelibs.fesen.index.IndexService;

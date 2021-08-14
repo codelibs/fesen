@@ -32,10 +32,10 @@ import org.codelibs.fesen.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 

@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.common.geo;
 
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.geometry.LinearRing;
 import org.codelibs.fesen.geometry.MultiPolygon;
 import org.codelibs.fesen.geometry.Point;

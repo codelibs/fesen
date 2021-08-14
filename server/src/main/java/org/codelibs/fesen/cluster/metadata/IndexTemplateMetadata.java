@@ -25,7 +25,6 @@ import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.common.collect.MapBuilder;
@@ -40,6 +39,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
 import static org.codelibs.fesen.cluster.metadata.Metadata.CONTEXT_MODE_PARAM;

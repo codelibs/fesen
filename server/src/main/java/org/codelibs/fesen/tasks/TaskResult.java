@@ -20,7 +20,6 @@ package org.codelibs.fesen.tasks;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.client.Requests;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -34,6 +33,7 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Map;

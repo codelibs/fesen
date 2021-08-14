@@ -28,15 +28,15 @@ import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.bytes.ReleasableBytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.BigArrays;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.tasks.TaskManager;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.MockLogAppender;
@@ -208,8 +208,8 @@ public class InboundHandlerTests extends ESTestCase {
             TransportStatus.setRequest(TransportStatus.setHandshake((byte) 0)), remoteVersion);
         final InboundMessage requestMessage = unreadableInboundHandshake(remoteVersion, requestHeader);
         requestHeader.actionName = TransportHandshaker.HANDSHAKE_ACTION_NAME;
-        requestHeader.headers = Tuple.tuple(org.codelibs.fesen.common.collect.Map.of(), org.codelibs.fesen.common.collect.Map.of());
-        requestHeader.features = org.codelibs.fesen.common.collect.Set.of();
+        requestHeader.headers = Tuple.tuple(org.codelibs.fesen.core.Map.of(), org.codelibs.fesen.core.Map.of());
+        requestHeader.features = org.codelibs.fesen.core.Set.of();
         handler.inboundMessage(channel, requestMessage);
 
         final BytesReference responseBytesReference = channel.getMessageCaptor().get();
@@ -247,8 +247,8 @@ public class InboundHandlerTests extends ESTestCase {
                 TransportStatus.setRequest(TransportStatus.setHandshake((byte) 0)), remoteVersion);
             final InboundMessage requestMessage = unreadableInboundHandshake(remoteVersion, requestHeader);
             requestHeader.actionName = TransportHandshaker.HANDSHAKE_ACTION_NAME;
-            requestHeader.headers = Tuple.tuple(org.codelibs.fesen.common.collect.Map.of(), org.codelibs.fesen.common.collect.Map.of());
-            requestHeader.features = org.codelibs.fesen.common.collect.Set.of();
+            requestHeader.headers = Tuple.tuple(org.codelibs.fesen.core.Map.of(), org.codelibs.fesen.core.Map.of());
+            requestHeader.features = org.codelibs.fesen.core.Set.of();
             handler.inboundMessage(channel, requestMessage);
             assertTrue(isClosed.get());
             assertNull(channel.getMessageCaptor().get());
@@ -287,7 +287,7 @@ public class InboundHandlerTests extends ESTestCase {
                     });
             requestHeader.actionName = TransportHandshaker.HANDSHAKE_ACTION_NAME;
             requestHeader.headers = Tuple.tuple(Collections.emptyMap(), Collections.emptyMap());
-            requestHeader.features = org.codelibs.fesen.common.collect.Set.of();
+            requestHeader.features = org.codelibs.fesen.core.Set.of();
             handler.inboundMessage(channel, requestMessage);
             assertNotNull(channel.getMessageCaptor().get());
             mockAppender.assertAllExpectationsMatched();

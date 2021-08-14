@@ -22,10 +22,10 @@ import org.apache.lucene.geo.GeoEncodingUtils;
 import org.apache.lucene.util.SloppyMath;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.GeoPoint;
-import org.codelibs.fesen.common.util.ESSloppyMath;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.ESSloppyMath;
 import org.codelibs.fesen.geometry.Rectangle;
 
 import static org.codelibs.fesen.common.geo.GeoUtils.normalizeLat;

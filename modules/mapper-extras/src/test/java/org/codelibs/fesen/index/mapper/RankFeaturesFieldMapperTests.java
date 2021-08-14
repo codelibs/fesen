@@ -50,7 +50,7 @@ public class RankFeaturesFieldMapperTests extends MapperTestCase {
 
     @Override
     protected Collection<? extends Plugin> getPlugins() {
-        return org.codelibs.fesen.common.collect.List.of(new MapperExtrasPlugin());
+        return org.codelibs.fesen.core.List.of(new MapperExtrasPlugin());
     }
 
     @Override

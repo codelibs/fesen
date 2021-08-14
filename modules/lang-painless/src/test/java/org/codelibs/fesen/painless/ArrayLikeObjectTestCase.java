@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.painless;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.hamcrest.Matcher;
 
 import static java.util.Collections.singletonMap;

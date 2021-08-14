@@ -28,7 +28,6 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.OutputStreamIndexOutput;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.blobstore.BlobContainer;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.compress.CompressorFactory;
@@ -44,6 +43,7 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.gateway.CorruptStateException;
 import org.codelibs.fesen.snapshots.SnapshotInfo;
 

@@ -20,7 +20,6 @@
 package org.codelibs.fesen.cluster.metadata;
 
 import org.codelibs.fesen.cluster.AbstractDiffable;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.compress.CompressedXContent;
@@ -34,6 +33,7 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
 import java.io.IOException;

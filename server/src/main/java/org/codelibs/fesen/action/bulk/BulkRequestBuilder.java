@@ -30,9 +30,9 @@ import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.action.update.UpdateRequest;
 import org.codelibs.fesen.action.update.UpdateRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.MapperService;
 
 /**

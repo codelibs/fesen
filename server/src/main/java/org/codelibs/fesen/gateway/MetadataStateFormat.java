@@ -31,7 +31,6 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.lucene.store.IndexOutputOutputStream;
 import org.codelibs.fesen.common.lucene.store.InputStreamIndexInput;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
@@ -40,6 +39,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.FileNotFoundException;

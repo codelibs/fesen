@@ -20,11 +20,11 @@
 package org.codelibs.fesen.common;
 
 import org.codelibs.fesen.common.Rounding;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.rounding.DateTimeUnit;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

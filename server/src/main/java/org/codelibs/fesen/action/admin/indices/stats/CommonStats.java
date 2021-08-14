@@ -20,7 +20,6 @@
 package org.codelibs.fesen.action.admin.indices.stats;
 
 import org.apache.lucene.store.AlreadyClosedException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -28,6 +27,7 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.cache.query.QueryCacheStats;
 import org.codelibs.fesen.index.cache.request.RequestCacheStats;
 import org.codelibs.fesen.index.engine.SegmentsStats;

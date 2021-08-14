@@ -86,7 +86,7 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
         if (in.getVersion().onOrAfter(StoreStats.RESERVED_BYTES_VERSION)) {
             reservedSpaceMap = in.readMap(NodeAndPath::new, ReservedSpace::new);
         } else {
-            reservedSpaceMap = org.codelibs.fesen.common.collect.Map.of();
+            reservedSpaceMap = org.codelibs.fesen.core.Map.of();
         }
 
         ImmutableOpenMap.Builder<String, DiskUsage> leastBuilder = ImmutableOpenMap.builder();

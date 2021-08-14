@@ -21,7 +21,7 @@ package org.codelibs.fesen.indices.recovery;
 
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.test.ESTestCase;
 

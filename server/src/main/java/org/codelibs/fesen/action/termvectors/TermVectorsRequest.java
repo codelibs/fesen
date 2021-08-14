@@ -26,7 +26,6 @@ import org.codelibs.fesen.action.RealtimeRequest;
 import org.codelibs.fesen.action.ValidateActions;
 import org.codelibs.fesen.action.get.MultiGetRequest;
 import org.codelibs.fesen.action.support.single.shard.SingleShardRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -39,6 +38,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.rest.action.document.RestTermVectorsAction;
 

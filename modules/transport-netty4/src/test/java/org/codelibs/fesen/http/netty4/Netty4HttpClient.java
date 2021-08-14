@@ -43,9 +43,9 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 import io.netty.handler.codec.http.HttpVersion;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.NettyAllocator;
 

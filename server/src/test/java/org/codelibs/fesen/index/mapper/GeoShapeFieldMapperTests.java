@@ -20,10 +20,10 @@ package org.codelibs.fesen.index.mapper;
 
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.List;
 import org.codelibs.fesen.common.geo.builders.ShapeBuilder;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.List;
 import org.codelibs.fesen.index.mapper.AbstractShapeGeometryFieldMapper;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.GeoShapeFieldMapper;
@@ -48,7 +48,7 @@ public class GeoShapeFieldMapperTests extends FieldMapperTestCase2<GeoShapeField
 
     @Override
     protected Set<String> unsupportedProperties() {
-        return org.codelibs.fesen.common.collect.Set.of("analyzer", "similarity", "doc_values", "store");
+        return org.codelibs.fesen.core.Set.of("analyzer", "similarity", "doc_values", "store");
     }
 
     @Override

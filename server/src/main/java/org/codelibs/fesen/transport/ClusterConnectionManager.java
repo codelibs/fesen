@@ -23,11 +23,11 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.common.util.concurrent.ListenableFuture;
 import org.codelibs.fesen.common.util.concurrent.RunOnce;
+import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.util.Collections;

@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * Specification of an Fesen endpoint used by the YAML specs to generate REST requests.

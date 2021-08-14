@@ -41,7 +41,7 @@ import java.util.Map;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkByScrollResponse> {
 

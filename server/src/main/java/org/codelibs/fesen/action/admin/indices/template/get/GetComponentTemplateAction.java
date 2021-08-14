@@ -24,12 +24,12 @@ import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.master.MasterNodeReadRequest;
 import org.codelibs.fesen.cluster.metadata.ComponentTemplate;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Map;

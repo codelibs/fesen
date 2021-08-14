@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.index.snapshots.blobstore;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.snapshots.blobstore.BlobStoreIndexShardSnapshot.FileInfo;
 
 import java.util.HashMap;

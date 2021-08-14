@@ -21,13 +21,13 @@ package org.codelibs.fesen.index.mapper;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Explicit;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.DynamicTemplate.XContentFieldType;
 import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
 

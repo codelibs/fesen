@@ -30,10 +30,10 @@ import org.codelibs.fesen.action.index.IndexResponseTests;
 import org.codelibs.fesen.action.update.UpdateResponse;
 import org.codelibs.fesen.action.update.UpdateResponseTests;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;

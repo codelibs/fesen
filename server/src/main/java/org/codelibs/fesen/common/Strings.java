@@ -22,12 +22,12 @@ package org.codelibs.fesen.common;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;

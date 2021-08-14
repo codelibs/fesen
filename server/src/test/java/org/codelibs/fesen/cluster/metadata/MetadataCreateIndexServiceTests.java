@@ -54,10 +54,10 @@ import org.codelibs.fesen.common.compress.CompressedXContent;
 import org.codelibs.fesen.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.IndexSettings;
@@ -759,7 +759,7 @@ public class MetadataCreateIndexServiceTests extends ESTestCase {
 
         assertThat(
             expectThrows(IllegalStateException.class,
-                () -> clusterStateCreateIndex(currentClusterState, org.codelibs.fesen.common.collect.Set.of(), newIndex,
+                () -> clusterStateCreateIndex(currentClusterState, org.codelibs.fesen.core.Set.of(), newIndex,
                     (state, reason) -> state, null)).getMessage(),
             startsWith("alias [alias1] has more than one write index [")
         );
@@ -784,7 +784,7 @@ public class MetadataCreateIndexServiceTests extends ESTestCase {
         };
 
         ClusterState updatedClusterState = clusterStateCreateIndex(currentClusterState,
-            org.codelibs.fesen.common.collect.Set.of(INDEX_READ_ONLY_BLOCK), newIndexMetadata, rerouteRoutingTable, null);
+            org.codelibs.fesen.core.Set.of(INDEX_READ_ONLY_BLOCK), newIndexMetadata, rerouteRoutingTable, null);
         assertThat(updatedClusterState.blocks().getIndexBlockWithId("test", INDEX_READ_ONLY_BLOCK.id()), is(INDEX_READ_ONLY_BLOCK));
         assertThat(updatedClusterState.routingTable().index("test"), is(notNullValue()));
         assertThat(allocationRerouted.get(), is(true));
@@ -813,7 +813,7 @@ public class MetadataCreateIndexServiceTests extends ESTestCase {
             builder.put(IndexMetadata.builder(myIndex).putAlias(AliasMetadata.builder(newAlias.getAlias()).build()));
         };
 
-        ClusterState updatedClusterState = clusterStateCreateIndex(currentClusterState, org.codelibs.fesen.common.collect.Set.of(
+        ClusterState updatedClusterState = clusterStateCreateIndex(currentClusterState, org.codelibs.fesen.core.Set.of(
             INDEX_READ_ONLY_BLOCK), newIndexMetadata, (clusterState, y) -> clusterState, metadataTransformer);
         assertTrue(updatedClusterState.metadata().findAllAliases(new String[]{"my-index"}).containsKey("my-index"));
         assertNotNull(updatedClusterState.metadata().findAllAliases(new String[]{"my-index"}).get("my-index"));

@@ -43,7 +43,7 @@ import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.network.NetworkModule;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.snapshots.EmptySnapshotsInfoService;
 import org.codelibs.fesen.test.gateway.TestGatewayAllocator;
 

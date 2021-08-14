@@ -23,13 +23,13 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.BytesRefHash;
 import org.codelibs.fesen.common.util.IntArray;
 import org.codelibs.fesen.common.util.LongArray;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 

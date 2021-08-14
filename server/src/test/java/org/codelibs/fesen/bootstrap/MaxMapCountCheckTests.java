@@ -29,9 +29,9 @@ import org.codelibs.fesen.bootstrap.BootstrapCheck;
 import org.codelibs.fesen.bootstrap.BootstrapChecks;
 import org.codelibs.fesen.bootstrap.BootstrapContext;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.test.AbstractBootstrapCheckTestCase;
 import org.codelibs.fesen.test.MockLogAppender;
 

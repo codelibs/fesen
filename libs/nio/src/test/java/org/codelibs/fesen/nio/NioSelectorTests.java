@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.common.CheckedRunnable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.CheckedRunnable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.nio.ChannelContext;
 import org.codelibs.fesen.nio.EventHandler;
 import org.codelibs.fesen.nio.FlushReadyWrite;

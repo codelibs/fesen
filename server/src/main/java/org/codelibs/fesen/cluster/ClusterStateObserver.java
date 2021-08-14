@@ -23,9 +23,9 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.service.ClusterApplierService;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 import java.util.Objects;

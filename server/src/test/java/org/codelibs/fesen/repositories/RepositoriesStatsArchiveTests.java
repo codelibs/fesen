@@ -20,7 +20,7 @@
 package org.codelibs.fesen.repositories;
 
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.repositories.RepositoriesStatsArchive;
 import org.codelibs.fesen.repositories.RepositoryInfo;
 import org.codelibs.fesen.repositories.RepositoryStats;
@@ -51,7 +51,7 @@ public class RepositoriesStatsArchiveTests extends ESTestCase {
         int statsToBeRetainedCount = randomInt(10);
         for (int i = 0; i < statsToBeRetainedCount; i++) {
             RepositoryStatsSnapshot repoStats =
-                createRepositoryStats(new RepositoryStats(org.codelibs.fesen.common.collect.Map.of("GET", 10L)));
+                createRepositoryStats(new RepositoryStats(org.codelibs.fesen.core.Map.of("GET", 10L)));
             repositoriesStatsArchive.archive(repoStats);
         }
 
@@ -59,7 +59,7 @@ public class RepositoriesStatsArchiveTests extends ESTestCase {
         assertThat(archivedStats.size(), equalTo(statsToBeRetainedCount));
         for (RepositoryStatsSnapshot repositoryStatsSnapshot : archivedStats) {
             assertThat(repositoryStatsSnapshot.getRepositoryStats().requestCounts,
-                equalTo(org.codelibs.fesen.common.collect.Map.of("GET", 10L)));
+                equalTo(org.codelibs.fesen.core.Map.of("GET", 10L)));
         }
     }
 
@@ -113,7 +113,7 @@ public class RepositoriesStatsArchiveTests extends ESTestCase {
         RepositoryInfo repositoryInfo = new RepositoryInfo(UUIDs.randomBase64UUID(),
             randomAlphaOfLength(10),
             randomAlphaOfLength(10),
-            org.codelibs.fesen.common.collect.Map.of("bucket", randomAlphaOfLength(10)),
+            org.codelibs.fesen.core.Map.of("bucket", randomAlphaOfLength(10)),
             System.currentTimeMillis(),
             null);
         return new RepositoryStatsSnapshot(repositoryInfo, repositoryStats, clusterVersion, true);

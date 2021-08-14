@@ -25,7 +25,7 @@ import io.netty.util.concurrent.Future;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
+import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.http.netty4.Netty4HttpServerTransport;
 import org.codelibs.fesen.transport.TcpTransport;

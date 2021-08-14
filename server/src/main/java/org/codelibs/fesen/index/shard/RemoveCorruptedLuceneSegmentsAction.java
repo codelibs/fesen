@@ -23,7 +23,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.io.PrintStream;

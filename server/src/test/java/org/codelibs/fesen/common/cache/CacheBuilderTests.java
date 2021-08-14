@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.containsString;
 
 import org.codelibs.fesen.common.cache.Cache;
 import org.codelibs.fesen.common.cache.CacheBuilder;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class CacheBuilderTests extends ESTestCase {

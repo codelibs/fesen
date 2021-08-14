@@ -22,7 +22,7 @@ package org.codelibs.fesen.bootstrap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.io.IOError;
 import java.security.AccessController;

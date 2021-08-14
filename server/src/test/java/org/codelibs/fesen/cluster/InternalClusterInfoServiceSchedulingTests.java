@@ -181,7 +181,7 @@ public class InternalClusterInfoServiceSchedulingTests extends ESTestCase {
                 requestCount++;
                 // ClusterInfoService handles ClusterBlockExceptions quietly, so we invent such an exception to avoid excess logging
                 listener.onFailure(new ClusterBlockException(
-                        org.codelibs.fesen.common.collect.Set.of(NoMasterBlockService.NO_MASTER_BLOCK_ALL)));
+                        org.codelibs.fesen.core.Set.of(NoMasterBlockService.NO_MASTER_BLOCK_ALL)));
             } else {
                 fail("unexpected action: " + action.name());
             }

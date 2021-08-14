@@ -37,7 +37,7 @@ import org.apache.lucene.util.AttributeSource;
 import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;

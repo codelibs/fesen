@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ack.ClusterStateUpdateRequest;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.Map;
 

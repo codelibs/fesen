@@ -31,7 +31,7 @@ import org.codelibs.fesen.cluster.metadata.MetadataCreateDataStreamService;
 import org.codelibs.fesen.cluster.metadata.MetadataCreateIndexService;
 import org.codelibs.fesen.cluster.metadata.MetadataCreateDataStreamService.CreateDataStreamClusterStateUpdateRequest;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.Collections;

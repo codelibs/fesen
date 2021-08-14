@@ -20,7 +20,7 @@ package org.codelibs.fesen.test.test;
 
 import com.carrotsearch.randomizedtesting.annotations.Repeat;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.test.ESIntegTestCase;
 import org.codelibs.fesen.test.TestCluster;
 import org.junit.Test;

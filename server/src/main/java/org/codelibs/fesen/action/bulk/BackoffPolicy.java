@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.bulk;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Provides a backoff policy for bulk requests. Whenever a bulk request is rejected due to resource constraints (i.e. the client's internal

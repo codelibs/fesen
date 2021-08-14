@@ -24,17 +24,17 @@ import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.routing.allocation.decider.AwarenessAllocationDecider;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.node.ResponseCollectorService;
 
-import static org.codelibs.fesen.common.Booleans.parseBoolean;
+import static org.codelibs.fesen.core.Booleans.parseBoolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;

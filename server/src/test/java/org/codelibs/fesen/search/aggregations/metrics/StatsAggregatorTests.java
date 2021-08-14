@@ -29,8 +29,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.NumericUtils;
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.index.mapper.NumberFieldMapper.NumberType;
@@ -509,7 +509,7 @@ public class StatsAggregatorTests extends AggregatorTestCase {
 
     @Override
     protected ScriptService getMockScriptService() {
-        final Map<String, Function<Map<String, Object>, Object>> scripts = org.codelibs.fesen.common.collect.Map.of(
+        final Map<String, Function<Map<String, Object>, Object>> scripts = org.codelibs.fesen.core.Map.of(
             VALUE_SCRIPT_NAME, vars -> ((Number) vars.get("_value")).doubleValue() + 1,
             FIELD_SCRIPT_NAME, vars -> {
                 final String fieldName = (String) vars.get("field");

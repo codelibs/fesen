@@ -30,13 +30,13 @@ import org.codelibs.fesen.cluster.coordination.FollowersChecker;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.service.ClusterApplier;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.component.AbstractLifecycleComponent;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 

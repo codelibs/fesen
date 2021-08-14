@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.cluster.ack;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Identifies a cluster state update request with acknowledgement support

@@ -20,9 +20,9 @@
 package org.codelibs.fesen.ingest.common;
 
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.util.LocaleUtils;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.ConfigurationUtils;
 import org.codelibs.fesen.ingest.IngestDocument;

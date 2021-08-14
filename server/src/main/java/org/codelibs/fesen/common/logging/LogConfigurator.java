@@ -41,8 +41,8 @@ import org.apache.logging.log4j.status.StatusLogger;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.UserException;
 import org.codelibs.fesen.cluster.ClusterName;
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.node.Node;
 

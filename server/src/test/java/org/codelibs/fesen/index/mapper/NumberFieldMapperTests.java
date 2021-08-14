@@ -48,12 +48,12 @@ public class NumberFieldMapperTests extends AbstractNumericFieldMapperTestCase {
 
     @Override
     protected Set<String> types() {
-        return org.codelibs.fesen.common.collect.Set.of("byte", "short", "integer", "long", "float", "double", "half_float");
+        return org.codelibs.fesen.core.Set.of("byte", "short", "integer", "long", "float", "double", "half_float");
     }
 
     @Override
     protected Set<String> wholeTypes() {
-        return org.codelibs.fesen.common.collect.Set.of("byte", "short", "integer", "long");
+        return org.codelibs.fesen.core.Set.of("byte", "short", "integer", "long");
     }
 
     @Override

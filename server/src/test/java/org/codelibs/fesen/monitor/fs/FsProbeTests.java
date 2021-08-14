@@ -20,7 +20,7 @@
 package org.codelibs.fesen.monitor.fs;
 
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.env.NodeEnvironment.NodePath;
 import org.codelibs.fesen.monitor.fs.FsInfo;

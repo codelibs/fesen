@@ -20,7 +20,7 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedConsumer;
 
 import java.util.function.Consumer;
 

@@ -25,7 +25,7 @@ import org.codelibs.fesen.action.admin.indices.stats.IndicesStatsRequest;
 import org.codelibs.fesen.action.admin.indices.stats.IndicesStatsResponse;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.seqno.ReplicationTracker;

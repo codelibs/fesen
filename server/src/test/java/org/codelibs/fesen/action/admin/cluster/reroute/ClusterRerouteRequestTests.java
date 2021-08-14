@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 /**
  * Test for serialization and parsing of {@link ClusterRerouteRequest} and its commands. See the superclass for, well, everything.

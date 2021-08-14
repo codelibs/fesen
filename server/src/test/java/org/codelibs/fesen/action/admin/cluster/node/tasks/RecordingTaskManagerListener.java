@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskInfo;
 import org.codelibs.fesen.test.tasks.MockTaskManagerListener;

@@ -234,11 +234,11 @@ public class TextFieldMapperTests extends MapperTestCase {
             )
         );
         return new IndexAnalyzers(
-            org.codelibs.fesen.common.collect.Map.of(
+            org.codelibs.fesen.core.Map.of(
                 "default", dflt, "standard", standard, "keyword", keyword, "whitespace", whitespace, "my_stop_analyzer", stop
             ),
-            org.codelibs.fesen.common.collect.Map.of(),
-            org.codelibs.fesen.common.collect.Map.of()
+            org.codelibs.fesen.core.Map.of(),
+            org.codelibs.fesen.core.Map.of()
         );
     }
 

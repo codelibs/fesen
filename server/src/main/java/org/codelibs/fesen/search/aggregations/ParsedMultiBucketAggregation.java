@@ -20,11 +20,11 @@
 package org.codelibs.fesen.search.aggregations;
 
 import org.codelibs.fesen.common.CheckedBiConsumer;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;

@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.settings.AbstractScopedSettings;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.transport.MockTransportService;

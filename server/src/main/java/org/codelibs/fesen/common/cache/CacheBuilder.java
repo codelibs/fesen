@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.cache;
 import java.util.Objects;
 import java.util.function.ToLongBiFunction;
 
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 public class CacheBuilder<K, V> {
     private long maximumWeight = -1;

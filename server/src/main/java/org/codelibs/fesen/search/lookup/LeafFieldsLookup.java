@@ -20,7 +20,7 @@ package org.codelibs.fesen.search.lookup;
 
 import org.apache.lucene.index.LeafReader;
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fieldvisitor.SingleFieldsVisitor;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;

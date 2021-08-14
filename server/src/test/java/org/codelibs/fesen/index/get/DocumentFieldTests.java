@@ -21,12 +21,12 @@ package org.codelibs.fesen.index.get;
 
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Map;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.document.DocumentField;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Map;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.mapper.IgnoredFieldMapper;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.test.ESTestCase;

@@ -19,8 +19,8 @@
 package org.codelibs.fesen.index.shard;
 
 import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.IndexSettings;

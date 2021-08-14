@@ -23,8 +23,8 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.AbstractRefCounted;
 
 import java.io.IOException;
 import java.io.OutputStream;

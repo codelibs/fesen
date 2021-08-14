@@ -989,7 +989,7 @@ public class MetadataTests extends ESTestCase {
                 .numberOfReplicas(1)
                 .build(), false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(idx.getIndex())));
+                org.codelibs.fesen.core.List.of(idx.getIndex())));
 
         IllegalStateException e = expectThrows(IllegalStateException.class, b::build);
         assertThat(e.getMessage(),
@@ -1005,7 +1005,7 @@ public class MetadataTests extends ESTestCase {
         Metadata.Builder b = Metadata.builder()
             .put(idx, false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(idx.getIndex())));
+                org.codelibs.fesen.core.List.of(idx.getIndex())));
 
         IllegalStateException e = expectThrows(IllegalStateException.class, b::build);
         assertThat(e.getMessage(),
@@ -1023,7 +1023,7 @@ public class MetadataTests extends ESTestCase {
             .put(validIdx, false)
             .put(invalidIdx, false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(validIdx.getIndex())));
+                org.codelibs.fesen.core.List.of(validIdx.getIndex())));
 
         IllegalStateException e = expectThrows(IllegalStateException.class, b::build);
         assertThat(e.getMessage(), containsString("data stream [" + dataStreamName +
@@ -1039,7 +1039,7 @@ public class MetadataTests extends ESTestCase {
         Metadata.Builder b = Metadata.builder()
             .put(idx, false)
             .put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
-                org.codelibs.fesen.common.collect.List.of(idx.getIndex())));
+                org.codelibs.fesen.core.List.of(idx.getIndex())));
 
         IllegalStateException e = expectThrows(IllegalStateException.class, b::build);
         assertThat(e.getMessage(), containsString("data stream [" + dataStreamName +
@@ -1163,7 +1163,7 @@ public class MetadataTests extends ESTestCase {
         Index index = standaloneIndexConflictingWithBackingIndices.getIndex();
         indicesLookup.put(index.getName(), new IndexAbstraction.Index(standaloneIndexConflictingWithBackingIndices, null));
 
-        DataStreamMetadata dataStreamMetadata = new DataStreamMetadata(org.codelibs.fesen.common.collect.Map.of(dataStreamName, dataStream));
+        DataStreamMetadata dataStreamMetadata = new DataStreamMetadata(org.codelibs.fesen.core.Map.of(dataStreamName, dataStream));
 
         IllegalStateException illegalStateException =
             expectThrows(IllegalStateException.class, () -> validateDataStreams(indicesLookup, dataStreamMetadata));
@@ -1253,7 +1253,7 @@ public class MetadataTests extends ESTestCase {
                 indicesLookup.put(indexMeta.getIndex().getName(), new IndexAbstraction.Index(indexMeta, dataStreamAbstraction));
             }
         }
-        DataStreamMetadata dataStreamMetadata = new DataStreamMetadata(org.codelibs.fesen.common.collect.Map.of(dataStreamName, dataStream));
+        DataStreamMetadata dataStreamMetadata = new DataStreamMetadata(org.codelibs.fesen.core.Map.of(dataStreamName, dataStream));
 
         // prefixed indices with a lower generation than the data stream's generation are allowed even if the non-prefixed, matching the
         // data stream backing indices naming pattern, indices are already in the system

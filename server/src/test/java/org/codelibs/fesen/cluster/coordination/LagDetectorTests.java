@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.coordination;
 import org.codelibs.fesen.cluster.coordination.LagDetector;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
 

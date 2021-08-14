@@ -26,8 +26,6 @@ import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
-import org.codelibs.fesen.common.Booleans;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -35,6 +33,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;

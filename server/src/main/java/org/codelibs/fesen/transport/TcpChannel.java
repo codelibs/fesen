@@ -22,7 +22,7 @@ package org.codelibs.fesen.transport;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.network.CloseableChannel;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.net.InetSocketAddress;
 

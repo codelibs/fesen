@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.action.support;
 
-import org.codelibs.fesen.common.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedConsumer;
 
 public class PlainActionFuture<T> extends AdapterActionFuture<T, T> {
 

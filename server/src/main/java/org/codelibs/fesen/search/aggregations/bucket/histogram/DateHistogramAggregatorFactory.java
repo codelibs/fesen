@@ -20,7 +20,7 @@
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
 import org.codelibs.fesen.common.Rounding;
-import org.codelibs.fesen.common.collect.List;
+import org.codelibs.fesen.core.List;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;

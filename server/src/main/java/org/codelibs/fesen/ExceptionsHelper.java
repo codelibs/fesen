@@ -26,8 +26,8 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexFormatTooNewException;
 import org.apache.lucene.index.IndexFormatTooOldException;
 import org.codelibs.fesen.action.ShardOperationFailedException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.rest.RestStatus;
 

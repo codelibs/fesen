@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.cluster.node;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.network.NetworkAddress;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.TransportAddress;
+import org.codelibs.fesen.core.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

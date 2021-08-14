@@ -23,7 +23,7 @@ import com.carrotsearch.hppc.LongObjectHashMap;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /**
  * This class generates sequences numbers and keeps track of the so-called "local checkpoint" which is the highest number for which all

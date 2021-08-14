@@ -35,7 +35,7 @@ import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.util.CancellableThreads;
-import org.codelibs.fesen.common.util.concurrent.AbstractRefCounted;
+import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.mapper.MapperException;
 import org.codelibs.fesen.index.seqno.ReplicationTracker;

@@ -21,7 +21,7 @@ package org.codelibs.fesen.common.util.concurrent;
 
 import org.codelibs.fesen.cluster.service.ClusterApplierService;
 import org.codelibs.fesen.cluster.service.MasterService;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.Transports;
 

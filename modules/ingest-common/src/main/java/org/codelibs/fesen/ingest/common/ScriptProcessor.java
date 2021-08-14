@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.util.CollectionUtils;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.Processor;
@@ -53,7 +53,7 @@ public final class ScriptProcessor extends AbstractProcessor {
 
     private static final DeprecationLogger deprecationLogger =
             DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.common.collect.Map.of(
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
             "_type", value -> {
                 deprecationLogger.deprecate("script_processor",
                         "[types removal] Looking up doc types [_type] in scripts is deprecated.");

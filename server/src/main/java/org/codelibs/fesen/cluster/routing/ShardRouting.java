@@ -22,12 +22,12 @@ package org.codelibs.fesen.cluster.routing;
 import org.codelibs.fesen.cluster.routing.RecoverySource.ExistingStoreRecoverySource;
 import org.codelibs.fesen.cluster.routing.RecoverySource.PeerRecoverySource;
 import org.codelibs.fesen.cluster.routing.allocation.allocator.BalancedShardsAllocator;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 

@@ -52,7 +52,7 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
 
     @Override
     protected Set<String> unsupportedProperties() {
-        return org.codelibs.fesen.common.collect.Set.of("analyzer", "similarity", "doc_values");
+        return org.codelibs.fesen.core.Set.of("analyzer", "similarity", "doc_values");
     }
 
     @Override

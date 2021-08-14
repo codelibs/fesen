@@ -30,9 +30,9 @@ import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo.AllocationStatus;
 import org.codelibs.fesen.cluster.routing.allocation.ExistingShardsAllocator;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Randomness;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 

@@ -27,11 +27,11 @@ import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.action.support.master.MasterNodeRequest;
 import org.codelibs.fesen.cluster.metadata.ComposableIndexTemplate;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Nullable;
 
 import static org.codelibs.fesen.action.ValidateActions.addValidationError;
 

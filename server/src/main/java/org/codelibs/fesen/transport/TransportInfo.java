@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
@@ -27,9 +26,10 @@ import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.transport.BoundTransportAddress;
 import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.node.ReportingService;
 
-import static org.codelibs.fesen.common.Booleans.parseBoolean;
+import static org.codelibs.fesen.core.Booleans.parseBoolean;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -20,7 +20,7 @@
 package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 
 
 /**

@@ -20,7 +20,7 @@ package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.transport.TcpChannel;
 
 import java.net.InetSocketAddress;

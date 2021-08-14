@@ -36,7 +36,7 @@ import org.codelibs.fesen.common.blobstore.BlobStore;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.io.Streams;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.repositories.RepositoriesService;
 import org.codelibs.fesen.repositories.Repository;

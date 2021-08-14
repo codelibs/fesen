@@ -21,7 +21,6 @@ package org.codelibs.fesen.common.xcontent.support;
 
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Tuple;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -189,9 +189,9 @@ public class XContentMapValuesTests extends AbstractFilteringTestCase {
         assertNull(XContentMapValues.extractValue("object1.missing", map, "NULL"));
 
         assertEquals("NULL", XContentMapValues.extractValue("other_field", map, "NULL"));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("value1", "NULL", "value2"),
+        assertEquals(org.codelibs.fesen.core.List.of("value1", "NULL", "value2"),
             XContentMapValues.extractValue("array", map, "NULL"));
-        assertEquals(org.codelibs.fesen.common.collect.List.of("NULL", "value"),
+        assertEquals(org.codelibs.fesen.core.List.of("NULL", "value"),
             XContentMapValues.extractValue("object_array.field", map, "NULL"));
         assertEquals("NULL", XContentMapValues.extractValue("object1.object2.field", map, "NULL"));
     }

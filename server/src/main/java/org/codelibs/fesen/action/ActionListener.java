@@ -20,10 +20,10 @@
 package org.codelibs.fesen.action;
 
 import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.CheckedConsumer;
-import org.codelibs.fesen.common.CheckedFunction;
-import org.codelibs.fesen.common.CheckedRunnable;
 import org.codelibs.fesen.common.CheckedSupplier;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.core.CheckedRunnable;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.codelibs.fesen.common.SuppressForbidden;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /** custom policy for union of static and dynamic permissions */
 final class ESPolicy extends Policy {

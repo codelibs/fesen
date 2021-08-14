@@ -23,7 +23,7 @@ import javax.crypto.Cipher;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.codelibs.fesen.bootstrap.JavaVersion;
+import org.codelibs.fesen.jdk.JavaVersion;
 
 import static org.codelibs.fesen.common.ssl.KeyStoreUtil.inferKeyStoreType;
 import static org.codelibs.fesen.common.ssl.SslConfiguration.ORDERED_PROTOCOL_ALGORITHM_MAP;

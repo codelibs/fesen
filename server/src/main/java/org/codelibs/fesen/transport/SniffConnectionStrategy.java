@@ -30,7 +30,6 @@ import org.codelibs.fesen.action.admin.cluster.state.ClusterStateResponse;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -42,6 +41,7 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
 

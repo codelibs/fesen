@@ -18,8 +18,8 @@
  */
 package org.codelibs.fesen.action.search;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.concurrent.CountDown;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.SearchPhaseResult;
 import org.codelibs.fesen.search.SearchShardTarget;
 

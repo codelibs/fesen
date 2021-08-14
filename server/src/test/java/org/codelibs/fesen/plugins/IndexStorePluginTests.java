@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.plugins;
 
-import org.codelibs.fesen.bootstrap.JavaVersion;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexModule;
 import org.codelibs.fesen.index.store.FsDirectoryFactory;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.node.MockNode;
 import org.codelibs.fesen.plugins.IndexStorePlugin;
 import org.codelibs.fesen.plugins.Plugin;

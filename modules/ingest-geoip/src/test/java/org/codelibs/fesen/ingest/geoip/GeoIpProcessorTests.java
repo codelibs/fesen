@@ -22,7 +22,7 @@ package org.codelibs.fesen.ingest.geoip;
 import com.maxmind.geoip2.DatabaseReader;
 
 import org.codelibs.fesen.common.CheckedSupplier;
-import org.codelibs.fesen.common.io.PathUtils;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
 import org.codelibs.fesen.ingest.geoip.DatabaseReaderLazyLoader;

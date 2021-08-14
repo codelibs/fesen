@@ -21,7 +21,7 @@ package org.codelibs.fesen.cluster.routing.allocation;
 
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * A class representing a failed shard.

@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.util.concurrent;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRunnable;
 import org.codelibs.fesen.action.support.ContextPreservingActionListener;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;

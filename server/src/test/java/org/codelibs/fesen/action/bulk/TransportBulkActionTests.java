@@ -46,8 +46,8 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.IndexingPressure;
 import org.codelibs.fesen.index.VersionType;
@@ -289,18 +289,18 @@ public class TransportBulkActionTests extends ESTestCase {
             new Index(IndexMetadata.builder(".foo").settings(settings).system(true).numberOfShards(1).numberOfReplicas(0).build()));
         indicesLookup.put(".bar",
             new Index(IndexMetadata.builder(".bar").settings(settings).system(true).numberOfShards(1).numberOfReplicas(0).build()));
-        SystemIndices systemIndices = new SystemIndices(org.codelibs.fesen.common.collect.Map.of("plugin",
-            org.codelibs.fesen.common.collect.List.of(new SystemIndexDescriptor(".test", ""))));
-        List<String> onlySystem = org.codelibs.fesen.common.collect.List.of(".foo", ".bar");
+        SystemIndices systemIndices = new SystemIndices(org.codelibs.fesen.core.Map.of("plugin",
+            org.codelibs.fesen.core.List.of(new SystemIndexDescriptor(".test", ""))));
+        List<String> onlySystem = org.codelibs.fesen.core.List.of(".foo", ".bar");
         assertTrue(bulkAction.includesSystem(buildBulkRequest(onlySystem), indicesLookup, systemIndices));
 
-        onlySystem = org.codelibs.fesen.common.collect.List.of(".foo", ".bar", ".test");
+        onlySystem = org.codelibs.fesen.core.List.of(".foo", ".bar", ".test");
         assertTrue(bulkAction.includesSystem(buildBulkRequest(onlySystem), indicesLookup, systemIndices));
 
-        List<String> nonSystem = org.codelibs.fesen.common.collect.List.of("foo", "bar");
+        List<String> nonSystem = org.codelibs.fesen.core.List.of("foo", "bar");
         assertFalse(bulkAction.includesSystem(buildBulkRequest(nonSystem), indicesLookup, systemIndices));
 
-        List<String> mixed = org.codelibs.fesen.common.collect.List.of(".foo", ".test", "other");
+        List<String> mixed = org.codelibs.fesen.core.List.of(".foo", ".test", "other");
         assertTrue(bulkAction.includesSystem(buildBulkRequest(mixed), indicesLookup, systemIndices));
     }
 

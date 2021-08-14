@@ -42,7 +42,7 @@ import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.AbstractIndexComponent;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.IndexWarmer;

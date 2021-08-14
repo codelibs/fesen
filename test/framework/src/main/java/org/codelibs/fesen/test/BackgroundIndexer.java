@@ -32,10 +32,10 @@ import org.codelibs.fesen.action.bulk.BulkResponse;
 import org.codelibs.fesen.action.bulk.BulkShardRequest;
 import org.codelibs.fesen.action.index.IndexResponse;
 import org.codelibs.fesen.client.Client;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.core.TimeValue;
 import org.junit.Assert;
 
 import java.io.IOException;

@@ -21,8 +21,8 @@ package org.codelibs.fesen.discovery;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.discovery.BlockingClusterStatePublishResponseHandler;
 import org.codelibs.fesen.test.ESTestCase;
 

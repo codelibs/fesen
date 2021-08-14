@@ -47,19 +47,19 @@ import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.ValidationException;
 import org.codelibs.fesen.common.compress.CompressedXContent;
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
@@ -581,7 +581,7 @@ public class MetadataCreateIndexService {
                 // the context is only used for validation so it's fine to pass fake values for the
                 // shard id and the current timestamp
                 indexService.newQueryShardContext(0, null, () -> 0L, null)),
-            org.codelibs.fesen.common.collect.List.of(), metadataTransformer);
+            org.codelibs.fesen.core.List.of(), metadataTransformer);
     }
 
     /**

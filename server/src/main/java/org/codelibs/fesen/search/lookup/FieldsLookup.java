@@ -19,7 +19,7 @@
 package org.codelibs.fesen.search.lookup;
 
 import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
 public class FieldsLookup {

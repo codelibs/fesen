@@ -202,7 +202,7 @@ public class ClusterFormationFailureHelperTests extends ESTestCase {
             is("this node is unhealthy: unhealthy-info"));
 
         final DiscoveryNode masterNode = new DiscoveryNode("local", buildNewFakeTransportAddress(), emptyMap(),
-            org.codelibs.fesen.common.collect.Set.of(DiscoveryNodeRole.MASTER_ROLE), Version.CURRENT);
+            org.codelibs.fesen.core.Set.of(DiscoveryNodeRole.MASTER_ROLE), Version.CURRENT);
         clusterState = ClusterState.builder(ClusterName.DEFAULT)
             .version(12L).nodes(DiscoveryNodes.builder().add(masterNode).localNodeId(masterNode.getId())).build();
 

@@ -44,11 +44,11 @@ import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardId;
@@ -406,7 +406,7 @@ public class MetadataIndexStateServiceTests extends ESTestCase {
             writeIndices.add(DataStream.getDefaultBackingIndexName(dataStreamName, numBackingIndices));
         }
         ClusterState cs = DataStreamTestHelper.getClusterStateWithDataStreams(dataStreamsToCreate,
-            org.codelibs.fesen.common.collect.List.of());
+            org.codelibs.fesen.core.List.of());
 
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(cs);

@@ -36,7 +36,7 @@ import org.codelibs.fesen.common.TimeBasedUUIDGenerator;
 import org.codelibs.fesen.common.UUIDGenerator;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
 

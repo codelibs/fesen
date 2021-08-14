@@ -25,9 +25,9 @@ import org.apache.logging.log4j.util.Supplier;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.block.ClusterBlocks;
 import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
 
 import static org.codelibs.fesen.cluster.ClusterState.builder;
 import static org.codelibs.fesen.common.settings.AbstractScopedSettings.ARCHIVED_SETTINGS_PREFIX;

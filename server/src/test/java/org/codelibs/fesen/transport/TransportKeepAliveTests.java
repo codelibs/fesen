@@ -20,10 +20,10 @@ package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.common.AsyncBiFunction;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;
 import org.codelibs.fesen.transport.ConnectionProfile;

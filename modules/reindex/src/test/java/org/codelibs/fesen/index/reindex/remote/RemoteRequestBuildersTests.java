@@ -27,7 +27,7 @@ import org.codelibs.fesen.client.Request;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.Streams;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.remote.RemoteRequestBuilders;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.test.ESTestCase;
@@ -37,7 +37,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.codelibs.fesen.common.unit.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 import static org.codelibs.fesen.index.reindex.remote.RemoteRequestBuilders.DEPRECATED_URL_ENCODED_INDEX_WARNING;
 import static org.codelibs.fesen.index.reindex.remote.RemoteRequestBuilders.clearScroll;
 import static org.codelibs.fesen.index.reindex.remote.RemoteRequestBuilders.initialSearch;

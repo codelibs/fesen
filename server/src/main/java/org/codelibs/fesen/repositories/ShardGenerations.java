@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.repositories;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.snapshots.IndexShardSnapshotStatus;
 
 import java.util.Arrays;

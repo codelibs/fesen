@@ -22,7 +22,7 @@ package org.codelibs.fesen.http.netty4;
 import io.netty.channel.Channel;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.http.HttpChannel;
 import org.codelibs.fesen.http.HttpResponse;
 import org.codelibs.fesen.transport.netty4.Netty4TcpChannel;

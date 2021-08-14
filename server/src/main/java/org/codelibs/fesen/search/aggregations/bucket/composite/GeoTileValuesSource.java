@@ -21,8 +21,8 @@ package org.codelibs.fesen.search.aggregations.bucket.composite;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.util.BigArrays;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.bucket.geogrid.GeoTileUtils;

@@ -34,10 +34,10 @@ import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.cluster.metadata.MetadataCreateIndexService;
 import org.codelibs.fesen.cluster.metadata.MetadataIndexAliasesService;
 import org.codelibs.fesen.cluster.metadata.MetadataIndexTemplateService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 import static org.codelibs.fesen.cluster.metadata.IndexAbstraction.Type.ALIAS;
@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
  */
 public class MetadataRolloverService {
     private static final Pattern INDEX_NAME_PATTERN = Pattern.compile("^.*-\\d+$");
-    private static final List<IndexAbstraction.Type> VALID_ROLLOVER_TARGETS = org.codelibs.fesen.common.collect.List.of(ALIAS, DATA_STREAM);
+    private static final List<IndexAbstraction.Type> VALID_ROLLOVER_TARGETS = org.codelibs.fesen.core.List.of(ALIAS, DATA_STREAM);
 
     private final ThreadPool threadPool;
     private final MetadataCreateIndexService createIndexService;

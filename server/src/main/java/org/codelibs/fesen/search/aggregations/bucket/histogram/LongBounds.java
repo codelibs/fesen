@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import org.codelibs.fesen.common.CheckedFunction;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Rounding;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,6 +30,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 

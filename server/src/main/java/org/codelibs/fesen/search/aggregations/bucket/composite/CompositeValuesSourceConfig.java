@@ -20,8 +20,8 @@
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
 import org.apache.lucene.index.IndexReader;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.BigArrays;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;

@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.common;
 
-import org.codelibs.fesen.common.SuppressForbidden;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 import java.lang.reflect.Method;
 import java.security.SecureRandom;

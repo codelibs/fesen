@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.codelibs.fesen.common.Glob;
+import org.codelibs.fesen.core.Glob;
 
 public class FilterPath {
 

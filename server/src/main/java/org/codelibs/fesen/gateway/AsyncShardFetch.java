@@ -30,9 +30,9 @@ import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.transport.ReceiveTimeoutTransportException;
 

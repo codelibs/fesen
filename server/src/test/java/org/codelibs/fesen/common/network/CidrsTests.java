@@ -22,8 +22,8 @@ package org.codelibs.fesen.common.network;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.network.Cidrs;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.hamcrest.Matchers.containsString;

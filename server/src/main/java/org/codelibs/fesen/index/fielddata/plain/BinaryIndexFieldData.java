@@ -21,8 +21,8 @@ package org.codelibs.fesen.index.fielddata.plain;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.SortField;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.util.BigArrays;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;

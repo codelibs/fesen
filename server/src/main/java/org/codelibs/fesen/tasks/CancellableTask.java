@@ -22,7 +22,7 @@ package org.codelibs.fesen.tasks;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * A task that can be canceled

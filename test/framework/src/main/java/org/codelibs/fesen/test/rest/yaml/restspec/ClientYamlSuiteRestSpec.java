@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.test.rest.yaml.restspec;
 
-import org.codelibs.fesen.common.io.PathUtils;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.PathUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

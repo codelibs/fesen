@@ -20,7 +20,7 @@ package org.codelibs.fesen.recovery;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.replication.ESIndexLevelReplicationTestCase;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.shard.ShardId;

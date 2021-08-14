@@ -21,7 +21,7 @@ package org.codelibs.fesen.action.get;
 
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * A multi get document action request builder.

@@ -24,9 +24,9 @@ import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 
 import java.util.List;

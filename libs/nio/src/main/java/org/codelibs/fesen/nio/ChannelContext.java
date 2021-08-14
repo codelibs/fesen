@@ -26,7 +26,7 @@ import java.nio.channels.SelectionKey;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.codelibs.fesen.common.concurrent.CompletableContext;
+import org.codelibs.fesen.core.CompletableContext;
 
 /**
  * Implements the logic related to interacting with a java.nio channel. For example: registering with a

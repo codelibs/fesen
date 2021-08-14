@@ -16,8 +16,8 @@
 
 package org.codelibs.fesen.common.network;
 
-import org.codelibs.fesen.common.collect.Tuple;
 import org.codelibs.fesen.common.network.InetAddresses;
+import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
 

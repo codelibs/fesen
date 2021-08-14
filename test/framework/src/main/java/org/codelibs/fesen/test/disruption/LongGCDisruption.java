@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.test.disruption;
 
-import org.codelibs.fesen.common.Nullable;
-import org.codelibs.fesen.common.SuppressForbidden;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
 
 import java.lang.management.ManagementFactory;

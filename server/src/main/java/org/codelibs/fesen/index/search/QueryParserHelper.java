@@ -20,8 +20,8 @@
 package org.codelibs.fesen.index.search;
 
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;

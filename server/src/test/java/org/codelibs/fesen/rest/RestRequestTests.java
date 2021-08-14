@@ -20,13 +20,13 @@
 package org.codelibs.fesen.rest;
 
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.collect.MapBuilder;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.http.HttpChannel;
 import org.codelibs.fesen.http.HttpRequest;
 import org.codelibs.fesen.rest.RestRequest;

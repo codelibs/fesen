@@ -24,11 +24,11 @@ import org.apache.lucene.util.automaton.Automaton;
 import org.apache.lucene.util.automaton.CharacterRunAutomaton;
 import org.apache.lucene.util.automaton.Operations;
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.Numbers;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.regex.Regex;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.TimeValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;

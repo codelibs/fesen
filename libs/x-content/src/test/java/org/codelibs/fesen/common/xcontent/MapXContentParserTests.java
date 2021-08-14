@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.CheckedConsumer;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
+import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.test.ESTestCase;
 
 import static org.codelibs.fesen.common.xcontent.XContentParserTests.generateRandomObject;

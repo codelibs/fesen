@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import org.codelibs.fesen.common.Booleans;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -30,6 +29,7 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.rest.RestRequest;
 
 import java.io.IOException;

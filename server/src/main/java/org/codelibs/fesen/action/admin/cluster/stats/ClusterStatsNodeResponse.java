@@ -25,9 +25,9 @@ import org.codelibs.fesen.action.admin.indices.stats.ShardStats;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
 import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 

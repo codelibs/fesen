@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.support.PlainActionFuture;
 import org.codelibs.fesen.action.support.RetryableAction;
 import org.codelibs.fesen.action.support.replication.PendingReplicationActions;
 import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.unit.TimeValue;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.IndexShardClosedException;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.test.ESTestCase;

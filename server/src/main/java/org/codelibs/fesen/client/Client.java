@@ -62,11 +62,11 @@ import org.codelibs.fesen.action.termvectors.TermVectorsResponse;
 import org.codelibs.fesen.action.update.UpdateRequest;
 import org.codelibs.fesen.action.update.UpdateRequestBuilder;
 import org.codelibs.fesen.action.update.UpdateResponse;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.Nullable;
 
 import java.util.Map;
 

@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,6 +28,7 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.util.Objects;

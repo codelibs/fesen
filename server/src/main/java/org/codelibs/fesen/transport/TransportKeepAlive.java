@@ -27,9 +27,9 @@ import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.component.Lifecycle;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.metrics.CounterMetric;
-import org.codelibs.fesen.common.unit.TimeValue;
 import org.codelibs.fesen.common.util.concurrent.AbstractLifecycleRunnable;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
+import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
 import java.io.Closeable;

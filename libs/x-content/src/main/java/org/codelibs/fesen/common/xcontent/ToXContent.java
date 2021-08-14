@@ -22,7 +22,7 @@ package org.codelibs.fesen.common.xcontent;
 import java.io.IOException;
 import java.util.Map;
 
-import org.codelibs.fesen.common.Booleans;
+import org.codelibs.fesen.core.Booleans;
 
 /**
  * An interface allowing to transfer an object to "XContent" using an {@link XContentBuilder}.

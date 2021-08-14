@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.search.aggregations.support;
 
-import org.codelibs.fesen.common.Nullable;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexGeoPointFieldData;
 import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;

@@ -21,10 +21,9 @@ package org.codelibs.fesen.index.mapper;
 
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexableField;
-import org.codelibs.fesen.bootstrap.JavaVersion;
-import org.codelibs.fesen.common.collect.List;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.List;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
@@ -32,6 +31,7 @@ import org.codelibs.fesen.index.mapper.MapperParsingException;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.ParsedDocument;
 import org.codelibs.fesen.index.termvectors.TermVectorsService;
+import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.search.DocValueFormat;
 
 import java.io.IOException;

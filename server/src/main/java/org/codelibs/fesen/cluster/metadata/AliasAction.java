@@ -20,8 +20,8 @@
 package org.codelibs.fesen.cluster.metadata;
 
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesRequest;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Individual operation to perform on the cluster state as part of an {@link IndicesAliasesRequest}.

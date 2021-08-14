@@ -19,9 +19,9 @@
 package org.codelibs.fesen.cluster.metadata;
 
 import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.collect.Tuple;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static org.codelibs.fesen.cluster.metadata.DataStream.getDefaultBackingIndexName;
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.INDEX_HIDDEN_SETTING;
-import static org.codelibs.fesen.common.collect.List.copyOf;
+import static org.codelibs.fesen.core.List.copyOf;
 
 /**
  * An index abstraction is a reference to one or more concrete indices.

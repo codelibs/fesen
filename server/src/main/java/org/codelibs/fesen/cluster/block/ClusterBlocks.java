@@ -24,11 +24,11 @@ import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.MetadataIndexStateService;
-import org.codelibs.fesen.common.Nullable;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
 
 import java.io.IOException;

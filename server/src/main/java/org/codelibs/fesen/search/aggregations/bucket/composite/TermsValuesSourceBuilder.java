@@ -96,7 +96,7 @@ public class TermsValuesSourceBuilder extends CompositeValuesSourceBuilder<Terms
     static void register(ValuesSourceRegistry.Builder builder) {
         builder.register(
             REGISTRY_KEY,
-            org.codelibs.fesen.common.collect.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC, CoreValuesSourceType.BOOLEAN),
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC, CoreValuesSourceType.BOOLEAN),
             (valuesSourceConfig, name, hasScript, format, missingBucket, order) -> {
                 final DocValueFormat docValueFormat;
                 if (format == null && valuesSourceConfig.valueSourceType() == CoreValuesSourceType.DATE) {
@@ -154,7 +154,7 @@ public class TermsValuesSourceBuilder extends CompositeValuesSourceBuilder<Terms
 
         builder.register(
             REGISTRY_KEY,
-            org.codelibs.fesen.common.collect.List.of(CoreValuesSourceType.BYTES, CoreValuesSourceType.IP),
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.BYTES, CoreValuesSourceType.IP),
             (valuesSourceConfig, name, hasScript, format, missingBucket, order) -> new CompositeValuesSourceConfig(
                 name,
                 valuesSourceConfig.fieldType(),

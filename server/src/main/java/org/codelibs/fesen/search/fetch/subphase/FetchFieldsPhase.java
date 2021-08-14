@@ -79,7 +79,7 @@ public final class FetchFieldsPhase implements FetchSubPhase {
     private Set<String> getIgnoredFields(SearchHit hit) {
         DocumentField field = hit.field(IgnoredFieldMapper.NAME);
         if (field == null) {
-            return org.codelibs.fesen.common.collect.Set.of();
+            return org.codelibs.fesen.core.Set.of();
         }
 
         Set<String> ignoredFields = new HashSet<>();
