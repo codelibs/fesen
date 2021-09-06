@@ -264,8 +264,8 @@ public class Netty4Transport extends TcpTransport {
         return new ClientChannelInitializer();
     }
 
-    static final AttributeKey<Netty4TcpChannel> CHANNEL_KEY = AttributeKey.newInstance("es-channel");
-    static final AttributeKey<Netty4TcpServerChannel> SERVER_CHANNEL_KEY = AttributeKey.newInstance("es-server-channel");
+    static final AttributeKey<Netty4TcpChannel> CHANNEL_KEY = AttributeKey.newInstance("fesen-channel");
+    static final AttributeKey<Netty4TcpServerChannel> SERVER_CHANNEL_KEY = AttributeKey.newInstance("fesen-server-channel");
 
     @Override
     protected Netty4TcpChannel initiateChannel(DiscoveryNode node) throws IOException {
