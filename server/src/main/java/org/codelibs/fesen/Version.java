@@ -160,7 +160,8 @@ public class Version implements Comparable<Version>, ToXContentFragment {
     public static final Version V_0_13_0 = new Version(7130399, org.apache.lucene.util.Version.LUCENE_8_8_2);
     public static final Version V_0_14_0 = new Version(7140399, org.apache.lucene.util.Version.LUCENE_8_9_0);
     public static final Version V_0_15_0 = new Version(7150399, org.apache.lucene.util.Version.LUCENE_8_9_0);
-    public static final Version CURRENT = V_0_15_0;
+    public static final Version V_1_0_0 = new Version(8000099, org.apache.lucene.util.Version.LUCENE_8_9_0);
+    public static final Version CURRENT = V_1_0_0;
 
     private static final ImmutableOpenIntMap<Version> idToVersion;
     private static final ImmutableOpenMap<String, Version> stringToVersion;
@@ -191,6 +192,8 @@ public class Version implements Comparable<Version>, ToXContentFragment {
                             final int adjustment; // FESEN
                             if (fields[1].equals("0")) {
                                 adjustment = 7000300;
+                            } else if (fields[1].equals("1")) {
+                                adjustment = 7000000;
                             } else {
                                 adjustment = 0;
                             }
