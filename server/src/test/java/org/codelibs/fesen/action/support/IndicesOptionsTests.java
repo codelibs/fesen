@@ -88,7 +88,7 @@ public class IndicesOptionsTests extends ESTestCase {
     public void testSerializationPre70() throws Exception {
         int iterations = randomIntBetween(5, 20);
         List<Version> declaredVersions = Version.getDeclaredVersions(Version.class);
-        OptionalInt maxV6Id = declaredVersions.stream().filter(v -> v.major == 6).mapToInt(v -> v.id).max();
+        OptionalInt maxV6Id = declaredVersions.stream().filter(v -> v.major == 7).mapToInt(v -> v.id).max();
         assertTrue(maxV6Id.isPresent());
         final Version maxVersion = Version.fromId(maxV6Id.getAsInt());
         for (int i = 0; i < iterations; i++) {

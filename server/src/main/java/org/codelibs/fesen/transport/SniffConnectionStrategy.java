@@ -66,7 +66,7 @@ public class SniffConnectionStrategy extends RemoteConnectionStrategy {
 
     static {
         // remove search.remote.* settings in 8.0.0
-        assert Version.CURRENT.major < 8;
+        assert Version.CURRENT.major < 9;
     }
 
     public static final Setting.AffixSetting<List<String>> SEARCH_REMOTE_CLUSTERS_SEEDS =

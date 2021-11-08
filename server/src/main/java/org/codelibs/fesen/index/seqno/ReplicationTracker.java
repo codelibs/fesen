@@ -465,7 +465,7 @@ public class ReplicationTracker extends AbstractIndexShardComponent implements L
         }
 
         // TODO after backporting we expect this never to happen in 8.x, so adjust this to throw an exception instead.
-        assert Version.CURRENT.major <= 8 : "throw an exception instead of returning EMPTY on null";
+        assert Version.CURRENT.major <= 9 : "throw an exception instead of returning EMPTY on null";
         if (retentionLeases == null) {
             return RetentionLeases.EMPTY;
         }
