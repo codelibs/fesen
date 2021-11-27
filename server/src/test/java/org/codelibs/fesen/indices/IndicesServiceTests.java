@@ -520,7 +520,7 @@ public class IndicesServiceTests extends ESSingleNodeTestCase {
 
     public void testIsMetadataField() {
         IndicesService indicesService = getIndicesService();
-        final Version randVersion = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+        final Version randVersion = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         assertFalse(indicesService.isMetadataField(randVersion, randomAlphaOfLengthBetween(10, 15)));
         for (String builtIn : IndicesModule.getBuiltInMetadataFields()) {
             assertTrue(indicesService.isMetadataField(randVersion, builtIn));

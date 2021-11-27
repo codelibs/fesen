@@ -297,8 +297,9 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
      * upgrades from 6.x to 7.x. Once all the 6.x master-eligible nodes have left the cluster, the 7.x nodes use this value to determine how
      * many master-eligible nodes must be discovered before the cluster can be bootstrapped. Note that this method returns the node-level
      * value of this setting, and ignores any cluster-level override that was set via the API. Callers are expected to combine this value
-     * with any value set in the cluster-level settings. This should be removed once we no longer need support for {@link Version#V_6_7_0}.
+     * with any value set in the cluster-level settings.
      */
+    @Deprecated
     public int getMinimumMasterNodesOnPublishingMaster() {
         return minimumMasterNodesOnPublishingMaster;
     }
@@ -711,7 +712,7 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             Custom customIndexMetadata = in.readNamedWriteable(Custom.class);
             builder.putCustom(customIndexMetadata.getWriteableName(), customIndexMetadata);
         }
-        builder.minimumMasterNodesOnPublishingMaster = in.getVersion().onOrAfter(Version.V_6_7_0) ? in.readVInt() : -1;
+        builder.minimumMasterNodesOnPublishingMaster = in.readVInt();
         return builder.build();
     }
 
@@ -737,9 +738,7 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
                 out.writeNamedWriteable(cursor.value);
             }
         }
-        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
-            out.writeVInt(minimumMasterNodesOnPublishingMaster);
-        }
+        out.writeVInt(minimumMasterNodesOnPublishingMaster);
     }
 
     private static class ClusterStateDiff implements Diff<ClusterState> {
@@ -787,7 +786,7 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             metadata = Metadata.readDiffFrom(in);
             blocks = ClusterBlocks.readDiffFrom(in);
             customs = DiffableUtils.readImmutableOpenMapDiff(in, DiffableUtils.getStringKeySerializer(), CUSTOM_VALUE_SERIALIZER);
-            minimumMasterNodesOnPublishingMaster = in.getVersion().onOrAfter(Version.V_6_7_0) ? in.readVInt() : -1;
+            minimumMasterNodesOnPublishingMaster = in.readVInt();
         }
 
         @Override
@@ -801,9 +800,7 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             metadata.writeTo(out);
             blocks.writeTo(out);
             customs.writeTo(out);
-            if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
-                out.writeVInt(minimumMasterNodesOnPublishingMaster);
-            }
+            out.writeVInt(minimumMasterNodesOnPublishingMaster);
         }
 
         @Override

@@ -620,10 +620,10 @@ public class PluginsServiceTests extends ESTestCase {
     }*/ // FESEN ignore jarhell
 
     public void testIncompatibleElasticsearchVersion() throws Exception {
-        PluginInfo info = new PluginInfo("my_plugin", "desc", "1.0", Version.V_6_0_0,
+        PluginInfo info = new PluginInfo("my_plugin", "desc", "1.0", Version.V_7_0_0,
             "1.8", "FakePlugin", Collections.emptyList(), false);
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> PluginsService.verifyCompatibility(info));
-        assertThat(e.getMessage(), containsString("was built for Elasticsearch version 6.0.0"));
+        assertThat(e.getMessage(), containsString("was built for Elasticsearch version 7.0.0"));
     }
 
     public void testIncompatibleJavaVersion() throws Exception {

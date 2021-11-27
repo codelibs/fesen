@@ -471,12 +471,7 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
         out.writeTimeValue(retryBackoffInitialTime);
         out.writeVInt(maxRetries);
         out.writeFloat(requestsPerSecond);
-        if (out.getVersion().before(Version.V_6_1_0) && slices == AUTO_SLICES) {
-            throw new IllegalArgumentException("Slices set as \"auto\" are not supported before version [" + Version.V_6_1_0 + "]. " +
-                "Found version [" + out.getVersion() + "]");
-        } else {
-            out.writeVInt(slices);
-        }
+        out.writeVInt(slices);
     }
 
     /**

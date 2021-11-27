@@ -387,7 +387,7 @@ public class ExceptionSerializationTests extends ESTestCase {
     }
 
     public void testTooManyBucketsException() throws IOException {
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_2_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         MultiBucketConsumerService.TooManyBucketsException ex =
             serialize(new MultiBucketConsumerService.TooManyBucketsException("Too many buckets", 100), version);
         assertEquals("Too many buckets", ex.getMessage());
@@ -904,7 +904,7 @@ public class ExceptionSerializationTests extends ESTestCase {
     public void testShardLockObtainFailedException() throws IOException {
         ShardId shardId = new ShardId("foo", "_na_", 1);
         ShardLockObtainFailedException orig = new ShardLockObtainFailedException(shardId, "boom");
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         ShardLockObtainFailedException ex = serialize(orig, version);
         assertEquals(orig.getMessage(), ex.getMessage());
         assertEquals(orig.getShardId(), ex.getShardId());
@@ -912,7 +912,7 @@ public class ExceptionSerializationTests extends ESTestCase {
 
     public void testSnapshotInProgressException() throws IOException {
         SnapshotInProgressException orig = new SnapshotInProgressException("boom");
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_7_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         SnapshotInProgressException ex = serialize(orig, version);
         assertEquals(orig.getMessage(), ex.getMessage());
     }

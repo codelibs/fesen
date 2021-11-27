@@ -412,11 +412,9 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         List<PreConfiguredCharFilter> filters = new ArrayList<>();
         filters.add(PreConfiguredCharFilter.singleton("html_strip", false, HTMLStripCharFilter::new));
         filters.add(PreConfiguredCharFilter.fesenVersion("htmlStrip", false, (reader, version) -> {
-            if (version.onOrAfter(org.codelibs.fesen.Version.V_6_3_0)) {
-                deprecationLogger.deprecate("htmlStrip_deprecation",
-                        "The [htmpStrip] char filter name is deprecated and will be removed in a future version. "
-                                + "Please change the filter name to [html_strip] instead.");
-            }
+            deprecationLogger.deprecate("htmlStrip_deprecation",
+                    "The [htmpStrip] char filter name is deprecated and will be removed in a future version. "
+                            + "Please change the filter name to [html_strip] instead.");
             return new HTMLStripCharFilter(reader);
         }));
         return filters;
@@ -443,10 +441,8 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
                 throw new IllegalArgumentException(
                     "[delimited_payload_filter] is not supported for new indices, use [delimited_payload] instead");
             }
-            if (version.onOrAfter(Version.V_6_2_0)) {
-                deprecationLogger.deprecate("analysis_delimited_payload_filter",
-                    "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
-            }
+            deprecationLogger.deprecate("analysis_delimited_payload_filter",
+                "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
             return new DelimitedPayloadTokenFilter(input,
                 DelimitedPayloadTokenFilterFactory.DEFAULT_DELIMITER,
                 DelimitedPayloadTokenFilterFactory.DEFAULT_ENCODER);

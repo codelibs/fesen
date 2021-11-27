@@ -96,19 +96,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         for (int i = 0; i < size; i++) {
             final String type = in.readString();
             String source = in.readString();
-            if (in.getVersion().before(Version.V_6_0_0_alpha1)) { // TODO change to 5.3.0 after backport
-                // we do not know the content type that comes from earlier versions so we autodetect and convert
-                source = XContentHelper.convertToJson(new BytesArray(source), false, false, XContentFactory.xContentType(source));
-            }
             mappings.put(type, source);
-        }
-        if (in.getVersion().before(Version.V_6_5_0)) {
-            // This used to be the size of custom metadata classes
-            int customSize = in.readVInt();
-            assert customSize == 0 : "unexpected custom metadata when none is supported";
-            if (customSize > 0) {
-                throw new IllegalStateException("unexpected custom metadata when none is supported");
-            }
         }
         int aliasesSize = in.readVInt();
         for (int i = 0; i < aliasesSize; i++) {
@@ -464,10 +452,6 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             out.writeString(entry.getKey());
             out.writeString(entry.getValue());
-        }
-        if (out.getVersion().before(Version.V_6_5_0)) {
-            // Size of custom index metadata, which is removed
-            out.writeVInt(0);
         }
         out.writeVInt(aliases.size());
         for (Alias alias : aliases) {

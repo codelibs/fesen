@@ -92,11 +92,7 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         cause = in.readString();
         name = in.readString();
 
-        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
-            indexPatterns = in.readStringList();
-        } else {
-            indexPatterns = Collections.singletonList(in.readString());
-        }
+        indexPatterns = in.readStringList();
         order = in.readInt();
         create = in.readBoolean();
         settings = readSettingsFromStream(in);
@@ -105,14 +101,6 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
             final String type = in.readString();
             String mappingSource = in.readString();
             mappings.put(type, mappingSource);
-        }
-        if (in.getVersion().before(Version.V_6_5_0)) {
-            // Used to be used for custom index metadata
-            int customSize = in.readVInt();
-            assert customSize == 0 : "expected not to have any custom metadata";
-            if (customSize > 0) {
-                throw new IllegalStateException("unexpected custom metadata when none is supported");
-            }
         }
         int aliasesSize = in.readVInt();
         for (int i = 0; i < aliasesSize; i++) {
@@ -483,11 +471,7 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         super.writeTo(out);
         out.writeString(cause);
         out.writeString(name);
-        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
-            out.writeStringCollection(indexPatterns);
-        } else {
-            out.writeString(indexPatterns.size() > 0 ? indexPatterns.get(0) : "");
-        }
+        out.writeStringCollection(indexPatterns);
         out.writeInt(order);
         out.writeBoolean(create);
         writeSettingsToStream(settings, out);
@@ -495,9 +479,6 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             out.writeString(entry.getKey());
             out.writeString(entry.getValue());
-        }
-        if (out.getVersion().before(Version.V_6_5_0)) {
-            out.writeVInt(0);
         }
         out.writeVInt(aliases.size());
         for (Alias alias : aliases) {

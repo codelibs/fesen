@@ -278,8 +278,7 @@ public class MapperService extends AbstractIndexComponent implements Closeable {
         final IndexMetadata newIndexMetadata,
         final Map<String, DocumentMapper> updatedEntries) throws IOException {
         if (Assertions.ENABLED
-            && currentIndexMetadata != null
-            && currentIndexMetadata.getCreationVersion().onOrAfter(Version.V_6_5_0)) {
+            && currentIndexMetadata != null) {
             if (currentIndexMetadata.getMappingVersion() == newIndexMetadata.getMappingVersion()) {
                 // if the mapping version is unchanged, then there should not be any updates and all mappings should be the same
                 assert updatedEntries.isEmpty() : updatedEntries;

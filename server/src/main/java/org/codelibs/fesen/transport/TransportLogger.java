@@ -106,10 +106,8 @@ public final class TransportLogger {
                 ThreadContext.readHeadersFromStream(streamInput);
 
                 if (isRequest) {
-                    if (streamInput.getVersion().onOrAfter(Version.V_6_3_0)) {
-                        // discard features
-                        streamInput.readStringArray();
-                    }
+                    // discard features
+                    streamInput.readStringArray();
                     sb.append(", action: ").append(streamInput.readString());
                 }
                 sb.append(']');

@@ -104,23 +104,14 @@ public class SliceBuilder implements Writeable, ToXContentObject {
     }
 
     public SliceBuilder(StreamInput in) throws IOException {
-        String field = in.readString();
-        if ("_uid".equals(field) && in.getVersion().before(Version.V_6_3_0)) {
-            // This is safe because _id and _uid are handled the same way in #toFilter
-            field = IdFieldMapper.NAME;
-        }
-        this.field = field;
+        this.field = in.readString();
         this.id = in.readVInt();
         this.max = in.readVInt();
     }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        if (IdFieldMapper.NAME.equals(field) && out.getVersion().before(Version.V_6_3_0)) {
-            out.writeString("_uid");
-        } else {
-            out.writeString(field);
-        }
+        out.writeString(field);
         out.writeVInt(id);
         out.writeVInt(max);
     }
@@ -224,8 +215,7 @@ public class SliceBuilder implements Writeable, ToXContentObject {
 
         int shardId = request.shardId().id();
         int numShards = context.getIndexSettings().getNumberOfShards();
-        if (minNodeVersion.onOrAfter(Version.V_6_4_0) &&
-                (request.preference() != null || request.indexRoutings().length > 0)) {
+        if (request.preference() != null || request.indexRoutings().length > 0) {
             GroupShardsIterator<ShardIterator> group = buildShardIterator(clusterService, request);
             assert group.size() <= numShards : "index routing shards: " + group.size() +
                 " cannot be greater than total number of shards: " + numShards;
@@ -234,7 +224,7 @@ public class SliceBuilder implements Writeable, ToXContentObject {
                  * The routing of this request targets a subset of the shards of this index so we need to we retrieve
                  * the original {@link GroupShardsIterator} and compute the request shard id and number of
                  * shards from it.
-                 * This behavior has been added in {@link Version#V_6_4_0} so if there is another node in the cluster
+                 * This behavior has been added in Version 6.4.0 so if there is another node in the cluster
                  * with an older version we use the original shard id and number of shards in order to ensure that all
                  * slices use the same numbers.
                  */

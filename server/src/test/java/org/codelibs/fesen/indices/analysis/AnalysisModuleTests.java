@@ -137,7 +137,7 @@ public class AnalysisModuleTests extends ESTestCase {
         Settings settings2 = Settings.builder()
                 .loadFromStream(yaml, getClass().getResourceAsStream(yaml), false)
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_6_0_0)
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_7_0_0)
                 .build();
         AnalysisRegistry newRegistry = getNewRegistry(settings2);
         IndexAnalyzers indexAnalyzers = getIndexAnalyzers(newRegistry, settings2);
@@ -150,9 +150,9 @@ public class AnalysisModuleTests extends ESTestCase {
 
         // analysis service has the expected version
         assertThat(indexAnalyzers.get("standard").analyzer(), is(instanceOf(StandardAnalyzer.class)));
-        assertEquals(Version.V_6_0_0.luceneVersion,
+        assertEquals(Version.V_7_0_0.luceneVersion,
                 indexAnalyzers.get("standard").analyzer().getVersion());
-        assertEquals(Version.V_6_0_0.luceneVersion,
+        assertEquals(Version.V_7_0_0.luceneVersion,
                 indexAnalyzers.get("stop").analyzer().getVersion());
 
         assertThat(indexAnalyzers.get("custom7").analyzer(), is(instanceOf(StandardAnalyzer.class)));

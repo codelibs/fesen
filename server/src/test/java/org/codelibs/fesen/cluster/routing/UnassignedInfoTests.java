@@ -116,7 +116,7 @@ public class UnassignedInfoTests extends ESAllocationTestCase {
     public void testBwcSerialization() throws Exception {
         final UnassignedInfo unassignedInfo = new UnassignedInfo(UnassignedInfo.Reason.INDEX_CLOSED, "message");
         BytesStreamOutput out = new BytesStreamOutput();
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         out.setVersion(version);
         unassignedInfo.writeTo(out);
         out.close();

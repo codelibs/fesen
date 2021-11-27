@@ -41,15 +41,9 @@ public class ClusterRerouteResponse extends AcknowledgedResponse implements ToXC
     private final RoutingExplanations explanations;
 
     ClusterRerouteResponse(StreamInput in) throws IOException {
-        super(in, in.getVersion().onOrAfter(Version.V_6_4_0));
-        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
-            state = ClusterState.readFrom(in, null);
-            explanations = RoutingExplanations.readFrom(in);
-        } else {
-            state = ClusterState.readFrom(in, null);
-            acknowledged = in.readBoolean();
-            explanations = RoutingExplanations.readFrom(in);
-        }
+        super(in, true);
+        state = ClusterState.readFrom(in, null);
+        explanations = RoutingExplanations.readFrom(in);
     }
 
     ClusterRerouteResponse(boolean acknowledged, ClusterState state, RoutingExplanations explanations) {
@@ -71,19 +65,9 @@ public class ClusterRerouteResponse extends AcknowledgedResponse implements ToXC
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
-            super.writeTo(out);
-            state.writeTo(out);
-            RoutingExplanations.writeTo(explanations, out);
-        } else {
-            if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
-                state.writeTo(out);
-            } else {
-                ClusterModule.filterCustomsForPre63Clients(state).writeTo(out);
-            }
-            out.writeBoolean(acknowledged);
-            RoutingExplanations.writeTo(explanations, out);
-        }
+        super.writeTo(out);
+        state.writeTo(out);
+        RoutingExplanations.writeTo(explanations, out);
     }
 
     @Override

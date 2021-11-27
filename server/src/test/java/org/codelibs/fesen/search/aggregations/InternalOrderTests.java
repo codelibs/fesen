@@ -89,28 +89,6 @@ public class InternalOrderTests extends AbstractSerializingTestCase<BucketOrder>
         }
     }
 
-    public void testHistogramOrderBwc() throws IOException {
-        for (int runs = 0; runs < NUMBER_OF_TEST_RUNS; runs++) {
-            BucketOrder order = createTestInstance();
-            Version bwcVersion = VersionUtils.randomVersionBetween(random(), VersionUtils.getFirstVersion(),
-                VersionUtils.getPreviousVersion(Version.V_6_0_0_alpha2));
-            boolean bwcOrderFlag = randomBoolean();
-            try (BytesStreamOutput out = new BytesStreamOutput()) {
-                out.setVersion(bwcVersion);
-                InternalOrder.Streams.writeHistogramOrder(order, out, bwcOrderFlag);
-                try (StreamInput in = out.bytes().streamInput()) {
-                    in.setVersion(bwcVersion);
-                    BucketOrder actual = InternalOrder.Streams.readHistogramOrder(in, bwcOrderFlag);
-                    BucketOrder expected = order;
-                    if (order instanceof CompoundOrder) {
-                        expected = ((CompoundOrder) order).orderElements.get(0);
-                    }
-                    assertEquals(expected, actual);
-                }
-            }
-        }
-    }
-
     public void testAggregationOrderEqualsAndHashCode() {
         String path = randomAlphaOfLength(10);
         boolean asc = randomBoolean();

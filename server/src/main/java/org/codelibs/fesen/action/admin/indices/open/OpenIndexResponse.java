@@ -41,7 +41,7 @@ public class OpenIndexResponse extends ShardsAcknowledgedResponse {
     }
 
     public OpenIndexResponse(StreamInput in) throws IOException {
-        super(in, in.getVersion().onOrAfter(Version.V_6_1_0), true);
+        super(in, true, true);
     }
 
     public OpenIndexResponse(boolean acknowledged, boolean shardsAcknowledged) {
@@ -51,9 +51,7 @@ public class OpenIndexResponse extends ShardsAcknowledgedResponse {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
-        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
-            writeShardsAcknowledged(out);
-        }
+        writeShardsAcknowledged(out);
     }
 
     public static OpenIndexResponse fromXContent(XContentParser parser) {

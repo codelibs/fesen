@@ -188,7 +188,7 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
     protected Settings createTestIndexSettings() {
         // we have to prefer CURRENT since with the range of versions we support it's rather unlikely to get the current actually.
         Version indexVersionCreated = randomBoolean() ? Version.CURRENT
-                : VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+                : VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         return Settings.builder()
             .put(IndexMetadata.SETTING_VERSION_CREATED, indexVersionCreated)
             .build();

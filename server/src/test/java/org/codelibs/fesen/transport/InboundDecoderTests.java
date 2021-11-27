@@ -307,11 +307,7 @@ public class InboundDecoderTests extends ESTestCase {
             + version.minimumCompatibilityVersion() + "]", ise.getMessage());
 
         // For handshake we are compatible with N-2
-        ise = InboundDecoder.ensureVersionCompatibility(Version.fromString("5.6.0"), version, true);
+        ise = InboundDecoder.ensureVersionCompatibility(Version.fromString("6.6.0"), version, true);
         assertNull(ise);
-
-        ise = InboundDecoder.ensureVersionCompatibility(Version.fromString("5.6.0"), version, false);
-        assertEquals("Received message from unsupported version: [5.6.0] minimal compatible version is: ["
-            + version.minimumCompatibilityVersion() + "]", ise.getMessage());
     }
 }

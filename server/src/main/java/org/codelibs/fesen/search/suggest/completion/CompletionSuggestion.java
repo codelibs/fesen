@@ -85,9 +85,7 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
 
     public CompletionSuggestion(StreamInput in) throws IOException {
         super(in);
-        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
-            skipDuplicates = in.readBoolean();
-        }
+        skipDuplicates = in.readBoolean();
     }
 
     @Override
@@ -98,9 +96,7 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
-        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
-            out.writeBoolean(skipDuplicates);
-        }
+        out.writeBoolean(skipDuplicates);
     }
 
     /**

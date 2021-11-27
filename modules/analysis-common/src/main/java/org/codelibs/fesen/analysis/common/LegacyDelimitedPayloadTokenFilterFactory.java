@@ -36,9 +36,7 @@ public class LegacyDelimitedPayloadTokenFilterFactory extends DelimitedPayloadTo
             throw new IllegalArgumentException(
                     "[delimited_payload_filter] is not supported for new indices, use [delimited_payload] instead");
         }
-        if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_6_2_0)) {
-            deprecationLogger.deprecate("analysis_legacy_delimited_payload_filter",
-                "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
-        }
+        deprecationLogger.deprecate("analysis_legacy_delimited_payload_filter",
+            "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
     }
 }

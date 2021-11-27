@@ -38,9 +38,6 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         super(in);
         queryCache = in.readBoolean();
         fieldDataCache = in.readBoolean();
-        if (in.getVersion().before(Version.V_6_0_0_beta1)) {
-            in.readBoolean(); // recycler
-        }
         fields = in.readStringArray();
         requestCache = in.readBoolean();
     }
@@ -90,9 +87,6 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         super.writeTo(out);
         out.writeBoolean(queryCache);
         out.writeBoolean(fieldDataCache);
-        if (out.getVersion().before(Version.V_6_0_0_beta1)) {
-            out.writeBoolean(false); // recycler
-        }
         out.writeStringArrayNullable(fields);
         out.writeBoolean(requestCache);
     }

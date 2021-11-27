@@ -51,11 +51,7 @@ public class FieldCapabilitiesIndexRequest extends ActionRequest implements Indi
         shardId = in.readOptionalWriteable(ShardId::new);
         index = in.readOptionalString();
         fields = in.readStringArray();
-        if (in.getVersion().onOrAfter(Version.V_6_2_0)) {
-            originalIndices = OriginalIndices.readOriginalIndices(in);
-        } else {
-            originalIndices = OriginalIndices.NONE;
-        }
+        originalIndices = OriginalIndices.readOriginalIndices(in);
         indexFilter = in.getVersion().onOrAfter(Version.V_7_9_0) ? in.readOptionalNamedWriteable(QueryBuilder.class) : null;
         nowInMillis =  in.getVersion().onOrAfter(Version.V_7_9_0) ? in.readLong() : 0L;
     }
@@ -116,9 +112,7 @@ public class FieldCapabilitiesIndexRequest extends ActionRequest implements Indi
         out.writeOptionalWriteable(shardId);
         out.writeOptionalString(index);
         out.writeStringArray(fields);
-        if (out.getVersion().onOrAfter(Version.V_6_2_0)) {
-            OriginalIndices.writeOriginalIndices(originalIndices, out);
-        }
+        OriginalIndices.writeOriginalIndices(originalIndices, out);
         if (out.getVersion().onOrAfter(Version.V_7_9_0)) {
             out.writeOptionalNamedWriteable(indexFilter);
             out.writeLong(nowInMillis);

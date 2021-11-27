@@ -89,9 +89,6 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
         shouldClauses.addAll(readQueries(in));
         filterClauses.addAll(readQueries(in));
         adjustPureNegative = in.readBoolean();
-        if (in.getVersion().before(Version.V_6_0_0_alpha1)) {
-            in.readBoolean(); // disable_coord
-        }
         minimumShouldMatch = in.readOptionalString();
     }
 
@@ -102,9 +99,6 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
         writeQueries(out, shouldClauses);
         writeQueries(out, filterClauses);
         out.writeBoolean(adjustPureNegative);
-        if (out.getVersion().before(Version.V_6_0_0_alpha1)) {
-            out.writeBoolean(true); // disable_coord
-        }
         out.writeOptionalString(minimumShouldMatch);
     }
 

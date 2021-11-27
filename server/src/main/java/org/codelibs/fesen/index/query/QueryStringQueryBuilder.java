@@ -195,10 +195,8 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         timeZone = in.readOptionalZoneId();
         escape = in.readBoolean();
         maxDeterminizedStates = in.readVInt();
-        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
-            autoGenerateSynonymsPhraseQuery = in.readBoolean();
-            fuzzyTranspositions = in.readBoolean();
-        }
+        autoGenerateSynonymsPhraseQuery = in.readBoolean();
+        fuzzyTranspositions = in.readBoolean();
     }
 
     @Override
@@ -230,10 +228,8 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         out.writeOptionalZoneId(timeZone);
         out.writeBoolean(this.escape);
         out.writeVInt(this.maxDeterminizedStates);
-        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
-            out.writeBoolean(autoGenerateSynonymsPhraseQuery);
-            out.writeBoolean(fuzzyTranspositions);
-        }
+        out.writeBoolean(autoGenerateSynonymsPhraseQuery);
+        out.writeBoolean(fuzzyTranspositions);
     }
 
     public String queryString() {

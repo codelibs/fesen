@@ -86,13 +86,6 @@ public class TermsLookupTests extends ESTestCase {
                 assertNotSame(deserializedLookup, termsLookup);
             }
         }
-
-        try (BytesStreamOutput output = new BytesStreamOutput()) {
-            output.setVersion(Version.V_6_7_0);
-            IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> termsLookup.writeTo(output));
-            assertEquals("Typeless [terms] lookup queries are not supported if any " +
-                "node is running a version before 7.0.", e.getMessage());
-        }
     }
 
     public void testSerializationWithTypes() throws IOException {

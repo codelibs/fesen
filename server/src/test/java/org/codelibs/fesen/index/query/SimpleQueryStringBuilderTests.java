@@ -244,9 +244,6 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     }
 
     public void testDefaultFieldParsing() throws IOException {
-        assumeTrue("5.x behaves differently, so skip on non-6.x indices",
-                indexSettings().getIndexVersionCreated().onOrAfter(Version.V_6_0_0_alpha1));
-
         String query = randomAlphaOfLengthBetween(1, 10).toLowerCase(Locale.ROOT);
         String contentString = "{\n" +
                 "    \"simple_query_string\" : {\n" +

@@ -273,7 +273,7 @@ public class PercolatorFieldMapper extends ParametrizedFieldMapper {
             }
 
             BooleanQuery.Builder candidateQuery = new BooleanQuery.Builder();
-            if (canUseMinimumShouldMatchField && indexVersion.onOrAfter(Version.V_6_1_0)) {
+            if (canUseMinimumShouldMatchField) {
                 LongValuesSource valuesSource = LongValuesSource.fromIntField(minimumShouldMatchField.name());
                 for (BytesRef extractedTerm : extractedTerms) {
                     subQueries.add(new TermQuery(new Term(queryTermsField.name(), extractedTerm)));
@@ -380,21 +380,12 @@ public class PercolatorFieldMapper extends ParametrizedFieldMapper {
 
     static void createQueryBuilderField(Version indexVersion, BinaryFieldMapper qbField,
                                         QueryBuilder queryBuilder, ParseContext context) throws IOException {
-        if (indexVersion.onOrAfter(Version.V_6_0_0_beta2)) {
-            try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-                try (OutputStreamStreamOutput out  = new OutputStreamStreamOutput(stream)) {
-                    out.setVersion(indexVersion);
-                    out.writeNamedWriteable(queryBuilder);
-                    byte[] queryBuilderAsBytes = stream.toByteArray();
-                    qbField.parse(context.createExternalValueContext(queryBuilderAsBytes));
-                }
-            }
-        } else {
-            try (XContentBuilder builder = XContentFactory.contentBuilder(QUERY_BUILDER_CONTENT_TYPE)) {
-                queryBuilder.toXContent(builder, new MapParams(Collections.emptyMap()));
-                builder.flush();
-                byte[] queryBuilderAsBytes = BytesReference.toBytes(BytesReference.bytes(builder));
-                context.doc().add(new BinaryDocValuesField(qbField.name(), new BytesRef(queryBuilderAsBytes)));
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+            try (OutputStreamStreamOutput out = new OutputStreamStreamOutput(stream)) {
+                out.setVersion(indexVersion);
+                out.writeNamedWriteable(queryBuilder);
+                byte[] queryBuilderAsBytes = stream.toByteArray();
+                qbField.parse(context.createExternalValueContext(queryBuilderAsBytes));
             }
         }
     }
@@ -444,9 +435,7 @@ public class PercolatorFieldMapper extends ParametrizedFieldMapper {
         }
 
         createFieldNamesField(context);
-        if (indexVersionCreated.onOrAfter(Version.V_6_1_0)) {
-            doc.add(new NumericDocValuesField(minimumShouldMatchFieldMapper.name(), result.minimumShouldMatch));
-        }
+        doc.add(new NumericDocValuesField(minimumShouldMatchFieldMapper.name(), result.minimumShouldMatch));
     }
 
     static void configureContext(QueryShardContext context, boolean mapUnmappedFieldsAsString) {

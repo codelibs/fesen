@@ -155,10 +155,6 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
             }
         }
 
-        if (context.indexVersionCreated().before(Version.V_6_1_0)) {
-            return newLegacyExistsQuery(context, fields);
-        }
-
         if (fields.size() == 1) {
             String field = fields.iterator().next();
             return newFieldExistsQuery(context, field);

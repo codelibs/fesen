@@ -194,11 +194,7 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
     public static IndexTemplateMetadata readFrom(StreamInput in) throws IOException {
         Builder builder = new Builder(in.readString());
         builder.order(in.readInt());
-        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
-            builder.patterns(in.readStringList());
-        } else {
-            builder.patterns(Collections.singletonList(in.readString()));
-        }
+        builder.patterns(in.readStringList());
         builder.settings(Settings.readSettingsFromStream(in));
         int mappingsSize = in.readVInt();
         for (int i = 0; i < mappingsSize; i++) {
@@ -208,14 +204,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         for (int i = 0; i < aliasesSize; i++) {
             AliasMetadata aliasMd = new AliasMetadata(in);
             builder.putAlias(aliasMd);
-        }
-        if (in.getVersion().before(Version.V_6_5_0)) {
-            // Previously we allowed custom metadata
-            int customSize = in.readVInt();
-            assert customSize == 0 : "expected no custom metadata";
-            if (customSize > 0) {
-                throw new IllegalStateException("unexpected custom metadata when none is supported");
-            }
         }
         builder.version(in.readOptionalVInt());
         return builder.build();
@@ -229,11 +217,7 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(name);
         out.writeInt(order);
-        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
-            out.writeStringCollection(patterns);
-        } else {
-            out.writeString(patterns.get(0));
-        }
+        out.writeStringCollection(patterns);
         Settings.writeSettingsToStream(settings, out);
         out.writeVInt(mappings.size());
         for (ObjectObjectCursor<String, CompressedXContent> cursor : mappings) {
@@ -243,9 +227,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         out.writeVInt(aliases.size());
         for (ObjectCursor<AliasMetadata> cursor : aliases.values()) {
             cursor.value.writeTo(out);
-        }
-        if (out.getVersion().before(Version.V_6_5_0)) {
-            out.writeVInt(0);
         }
         out.writeOptionalVInt(version);
     }

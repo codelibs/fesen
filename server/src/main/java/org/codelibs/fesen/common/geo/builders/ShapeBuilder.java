@@ -113,10 +113,7 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
     protected static Coordinate readFromStream(StreamInput in) throws IOException {
         double x = in.readDouble();
         double y = in.readDouble();
-        Double z = null;
-        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
-            z = in.readOptionalDouble();
-        }
+        Double z = in.readOptionalDouble();
         return z == null ? new Coordinate(x, y) : new Coordinate(x, y, z);
     }
 
@@ -131,9 +128,7 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
     protected static void writeCoordinateTo(Coordinate coordinate, StreamOutput out) throws IOException {
         out.writeDouble(coordinate.x);
         out.writeDouble(coordinate.y);
-        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
-            out.writeOptionalDouble(Double.isNaN(coordinate.z) ? null : coordinate.z);
-        }
+        out.writeOptionalDouble(Double.isNaN(coordinate.z) ? null : coordinate.z);
     }
 
     @SuppressWarnings("unchecked")

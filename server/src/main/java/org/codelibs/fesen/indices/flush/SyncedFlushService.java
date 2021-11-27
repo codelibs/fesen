@@ -627,11 +627,11 @@ public class SyncedFlushService implements IndexEventListener {
         }
 
         boolean includeNumDocs(Version version) {
-            return version.onOrAfter(Version.V_6_2_2);
+            return true;
         }
 
         boolean includeExistingSyncId(Version version) {
-            return version.onOrAfter(Version.V_6_3_0);
+            return true;
         }
 
         @Override

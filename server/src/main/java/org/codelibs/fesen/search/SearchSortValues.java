@@ -70,19 +70,13 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
 
     SearchSortValues(StreamInput in) throws IOException {
         this.formattedSortValues = in.readArray(Lucene::readSortValue, Object[]::new);
-        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
-            this.rawSortValues = in.readArray(Lucene::readSortValue, Object[]::new);
-        } else {
-            this.rawSortValues = EMPTY_ARRAY;
-        }
+        this.rawSortValues = in.readArray(Lucene::readSortValue, Object[]::new);
     }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeArray(Lucene::writeSortValue, this.formattedSortValues);
-        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
-            out.writeArray(Lucene::writeSortValue, this.rawSortValues);
-        }
+        out.writeArray(Lucene::writeSortValue, this.rawSortValues);
     }
 
     @Override

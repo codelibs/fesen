@@ -81,7 +81,7 @@ public final class NodeMetadata {
 
     public NodeMetadata upgradeToCurrentVersion() {
         if (nodeVersion.equals(Version.V_EMPTY)) {
-            assert Version.CURRENT.major <= Version.V_1_0_0.major + 1 : "version is required in the node metadata from v2 onwards";
+            assert Version.CURRENT.major <= Version.V_8_0_0.major + 1 : "version is required in the node metadata from v2 onwards";
             return new NodeMetadata(nodeId, Version.CURRENT);
         }
 
@@ -113,7 +113,7 @@ public final class NodeMetadata {
         public NodeMetadata build() {
             final Version nodeVersion;
             if (this.nodeVersion == null) {
-                assert Version.CURRENT.major <= Version.V_1_0_0.major + 1 : "version is required in the node metadata from v2 onwards";
+                assert Version.CURRENT.major <= Version.V_8_0_0.major + 1 : "version is required in the node metadata from v2 onwards";
                 nodeVersion = Version.V_EMPTY;
             } else {
                 nodeVersion = this.nodeVersion;

@@ -452,15 +452,9 @@ public class OsStats implements Writeable, ToXContentFragment {
             cpuCfsPeriodMicros = in.readLong();
             cpuCfsQuotaMicros = in.readLong();
             cpuStat = new CpuStat(in);
-            if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
-                memoryControlGroup = in.readOptionalString();
-                memoryLimitInBytes = in.readOptionalString();
-                memoryUsageInBytes = in.readOptionalString();
-            } else {
-                memoryControlGroup = null;
-                memoryLimitInBytes = null;
-                memoryUsageInBytes = null;
-            }
+            memoryControlGroup = in.readOptionalString();
+            memoryLimitInBytes = in.readOptionalString();
+            memoryUsageInBytes = in.readOptionalString();
         }
 
         @Override
@@ -471,11 +465,9 @@ public class OsStats implements Writeable, ToXContentFragment {
             out.writeLong(cpuCfsPeriodMicros);
             out.writeLong(cpuCfsQuotaMicros);
             cpuStat.writeTo(out);
-            if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
-                out.writeOptionalString(memoryControlGroup);
-                out.writeOptionalString(memoryLimitInBytes);
-                out.writeOptionalString(memoryUsageInBytes);
-            }
+            out.writeOptionalString(memoryControlGroup);
+            out.writeOptionalString(memoryLimitInBytes);
+            out.writeOptionalString(memoryUsageInBytes);
         }
 
         @Override

@@ -149,11 +149,9 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
         String expectedFieldName = expectedFieldName(queryBuilder.fieldName());
         if (queryBuilder.from() == null && queryBuilder.to() == null) {
             final Query expectedQuery;
-            if (context.getIndexSettings().getIndexVersionCreated().onOrAfter(Version.V_6_1_0)
-                    && context.getMapperService().fieldType(queryBuilder.fieldName()).hasDocValues()) {
+            if (context.getMapperService().fieldType(queryBuilder.fieldName()).hasDocValues()) {
                 expectedQuery = new ConstantScoreQuery(new DocValuesFieldExistsQuery(expectedFieldName));
-            } else if (context.getIndexSettings().getIndexVersionCreated().onOrAfter(Version.V_6_1_0) &&
-                            context.getMapperService().fieldType(queryBuilder.fieldName()).getTextSearchInfo().hasNorms()) {
+            } else if (context.getMapperService().fieldType(queryBuilder.fieldName()).getTextSearchInfo().hasNorms()) {
                 expectedQuery = new ConstantScoreQuery(new NormsFieldExistsQuery(expectedFieldName));
             } else {
                 expectedQuery = new ConstantScoreQuery(new TermQuery(new Term(FieldNamesFieldMapper.NAME, expectedFieldName)));
@@ -427,8 +425,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
         // Range query with open bounds rewrite to an exists query
         Query luceneQuery = rewrittenRange.toQuery(queryShardContext);
         final Query expectedQuery;
-        if (queryShardContext.getIndexSettings().getIndexVersionCreated().onOrAfter(Version.V_6_1_0)
-                && queryShardContext.fieldMapper(query.fieldName()).hasDocValues()) {
+        if (queryShardContext.fieldMapper(query.fieldName()).hasDocValues()) {
             expectedQuery = new ConstantScoreQuery(new DocValuesFieldExistsQuery(query.fieldName()));
         } else {
             expectedQuery = new ConstantScoreQuery(new TermQuery(new Term(FieldNamesFieldMapper.NAME, query.fieldName())));

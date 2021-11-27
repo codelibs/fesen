@@ -204,8 +204,6 @@ public class LegacyGeoShapeFieldMapper extends AbstractShapeGeometryFieldMapper<
             }
             if (deprecatedParameters.tree != null) {
                 ft.setTree(deprecatedParameters.tree);
-            } else if (context.indexCreatedVersion().before(Version.V_6_6_0)) {
-                ft.setTree(DeprecatedParameters.PrefixTrees.GEOHASH);
             }
             if (deprecatedParameters.treeLevels != null) {
                 ft.setTreeLevels(deprecatedParameters.treeLevels);
@@ -468,8 +466,7 @@ public class LegacyGeoShapeFieldMapper extends AbstractShapeGeometryFieldMapper<
         super.doXContentBody(builder, includeDefaults, params);
 
         if (includeDefaults
-            || (fieldType().tree().equals(indexCreatedVersion.onOrAfter(Version.V_6_6_0) ?
-                    DeprecatedParameters.Defaults.TREE : DeprecatedParameters.PrefixTrees.GEOHASH)) == false) {
+            || (fieldType().tree().equals(DeprecatedParameters.Defaults.TREE)) == false) {
             builder.field(DeprecatedParameters.Names.TREE.getPreferredName(), fieldType().tree());
         }
 

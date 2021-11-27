@@ -75,9 +75,7 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
             source = null;
         }
 
-        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
-            id = in.readString();
-        }
+        id = in.readString();
     }
 
     GetStoredScriptResponse(String id, StoredScriptSource source) {
@@ -128,9 +126,7 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
             out.writeBoolean(true);
             source.writeTo(out);
         }
-        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
-            out.writeString(id);
-        }
+        out.writeString(id);
     }
 
     @Override

@@ -42,32 +42,6 @@ public class AllFieldMapperTests extends ESSingleNodeTestCase {
 
     public void testAllDisabled() throws Exception {
         {
-            final Version version = VersionUtils.randomVersionBetween(random(),
-                Version.V_6_0_0, Version.V_7_0_0.minimumCompatibilityVersion());
-            IndexService indexService = createIndex("test_6x",
-                Settings.builder()
-                    .put(IndexMetadata.SETTING_VERSION_CREATED, version)
-                    .build()
-            );
-            String mappingDisabled = Strings.toString(XContentFactory.jsonBuilder().startObject()
-                .startObject("_all")
-                    .field("enabled", false)
-                .endObject().endObject()
-            );
-            indexService.mapperService().merge("_doc", new CompressedXContent(mappingDisabled), MergeReason.MAPPING_UPDATE);
-            assertEquals("{\"_doc\":{\"_all\":{\"enabled\":false}}}",
-                Strings.toString(indexService.mapperService().documentMapper()));
-
-            String mappingEnabled = Strings.toString(XContentFactory.jsonBuilder().startObject()
-                .startObject("_all")
-                    .field("enabled", true)
-                .endObject().endObject()
-            );
-            MapperParsingException exc = expectThrows(MapperParsingException.class,
-                () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingEnabled), MergeReason.MAPPING_UPDATE));
-            assertThat(exc.getMessage(), containsString("[_all] is disabled in this version."));
-        }
-        {
             IndexService indexService = createIndex("test");
             String mappingEnabled = Strings.toString(XContentFactory.jsonBuilder().startObject()
                 .startObject("_all")

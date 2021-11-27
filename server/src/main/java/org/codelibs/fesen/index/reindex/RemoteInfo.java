@@ -107,11 +107,7 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         this.headers = unmodifiableMap(headers);
         socketTimeout = in.readTimeValue();
         connectTimeout = in.readTimeValue();
-        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
-            pathPrefix = in.readOptionalString();
-        } else {
-            pathPrefix = null;
-        }
+        pathPrefix = in.readOptionalString();
     }
 
     @Override
@@ -129,9 +125,7 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         }
         out.writeTimeValue(socketTimeout);
         out.writeTimeValue(connectTimeout);
-        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
-            out.writeOptionalString(pathPrefix);
-        }
+        out.writeOptionalString(pathPrefix);
     }
 
     public String getScheme() {

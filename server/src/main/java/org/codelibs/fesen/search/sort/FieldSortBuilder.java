@@ -143,9 +143,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
         order = in.readOptionalWriteable(SortOrder::readFromStream);
         sortMode = in.readOptionalWriteable(SortMode::readFromStream);
         unmappedType = in.readOptionalString();
-        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
-            nestedSort = in.readOptionalWriteable(NestedSortBuilder::new);
-        }
+        nestedSort = in.readOptionalWriteable(NestedSortBuilder::new);
         if (in.getVersion().onOrAfter(Version.V_7_2_0)) {
             numericType = in.readOptionalString();
         }
@@ -160,9 +158,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
         out.writeOptionalWriteable(order);
         out.writeOptionalWriteable(sortMode);
         out.writeOptionalString(unmappedType);
-        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
-            out.writeOptionalWriteable(nestedSort);
-        }
+        out.writeOptionalWriteable(nestedSort);
         if (out.getVersion().onOrAfter(Version.V_7_2_0)) {
             out.writeOptionalString(numericType);
         }
@@ -528,10 +524,6 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
         // If we have a nestedSort we'll use that. Otherwise, use old style.
         if (nestedSort == null) {
             return resolveNested(context, nestedPath, nestedFilter);
-        }
-        if (context.indexVersionCreated().before(Version.V_6_5_0) && nestedSort.getMaxChildren() != Integer.MAX_VALUE) {
-            throw new QueryShardException(context,
-                "max_children is only supported on v6.5.0 or higher");
         }
         validateMaxChildrenExistOnlyInTopLevelNestedSort(context, nestedSort);
         return resolveNested(context, nestedSort);

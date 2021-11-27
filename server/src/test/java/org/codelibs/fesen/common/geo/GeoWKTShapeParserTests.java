@@ -350,7 +350,7 @@ public class GeoWKTShapeParserTests extends BaseGeoParsingTestCase {
         parser.nextToken();
 
         Settings indexSettings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_6_3_0)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_7_0_0)
             .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
             .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
             .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()).build();
@@ -380,7 +380,7 @@ public class GeoWKTShapeParserTests extends BaseGeoParsingTestCase {
         parser.nextToken();
 
         Settings indexSettings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_6_3_0)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_7_0_0)
             .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
             .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
             .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()).build();
@@ -401,7 +401,7 @@ public class GeoWKTShapeParserTests extends BaseGeoParsingTestCase {
         parser.nextToken();
 
         Settings indexSettings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_6_3_0)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.V_7_0_0)
             .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
             .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
             .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()).build();

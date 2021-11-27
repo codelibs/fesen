@@ -136,7 +136,7 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
                     iterator.remove();
                 }
             }
-            if (parserContext.indexVersionCreated().onOrAfter(Version.V_6_6_0) && parsedDeprecatedParameters == false) {
+            if (parsedDeprecatedParameters == false) {
                 params.remove(DEPRECATED_PARAMETERS_KEY);
             }
 

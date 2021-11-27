@@ -75,7 +75,7 @@ public abstract class GeoShapeQueryBuilderTests extends AbstractQueryTestCase<Ge
     @Override
     protected Settings createTestIndexSettings() {
         // force the new shape impl
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_6_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         return Settings.builder()
                 .put(super.createTestIndexSettings())
                 .put(IndexMetadata.SETTING_VERSION_CREATED, version)

@@ -72,9 +72,7 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         fieldName = in.readString();
         value = in.readGenericValue();
         slop = in.readVInt();
-        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
-            zeroTermsQuery = ZeroTermsQuery.readFromStream(in);
-        }
+        zeroTermsQuery = ZeroTermsQuery.readFromStream(in);
         analyzer = in.readOptionalString();
     }
 
@@ -83,9 +81,7 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         out.writeString(fieldName);
         out.writeGenericValue(value);
         out.writeVInt(slop);
-        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
-            zeroTermsQuery.writeTo(out);
-        }
+        zeroTermsQuery.writeTo(out);
         out.writeOptionalString(analyzer);
     }
 

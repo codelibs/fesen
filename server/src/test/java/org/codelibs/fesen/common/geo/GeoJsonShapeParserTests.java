@@ -296,7 +296,7 @@ public class GeoJsonShapeParserTests extends BaseGeoParsingTestCase {
         shellCoordinates.add(new Coordinate(100, 0, 10));
         Coordinate[] coordinates = shellCoordinates.toArray(new Coordinate[shellCoordinates.size()]);
 
-        Version randomVersion = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+        Version randomVersion = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
         Settings indexSettings = Settings.builder()
             .put(IndexMetadata.SETTING_VERSION_CREATED, randomVersion)
             .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)

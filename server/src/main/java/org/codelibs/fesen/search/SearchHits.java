@@ -95,15 +95,9 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
                 hits[i] = new SearchHit(in);
             }
         }
-        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
-            sortFields = in.readOptionalArray(Lucene::readSortField, SortField[]::new);
-            collapseField = in.readOptionalString();
-            collapseValues = in.readOptionalArray(Lucene::readSortValue, Object[]::new);
-        } else {
-            sortFields = null;
-            collapseField = null;
-            collapseValues = null;
-        }
+        sortFields = in.readOptionalArray(Lucene::readSortField, SortField[]::new);
+        collapseField = in.readOptionalString();
+        collapseValues = in.readOptionalArray(Lucene::readSortValue, Object[]::new);
     }
 
     @Override
@@ -120,11 +114,9 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
                 hit.writeTo(out);
             }
         }
-        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
-            out.writeOptionalArray(Lucene::writeSortField, sortFields);
-            out.writeOptionalString(collapseField);
-            out.writeOptionalArray(Lucene::writeSortValue, collapseValues);
-        }
+        out.writeOptionalArray(Lucene::writeSortField, sortFields);
+        out.writeOptionalString(collapseField);
+        out.writeOptionalArray(Lucene::writeSortValue, collapseValues);
     }
 
     /**

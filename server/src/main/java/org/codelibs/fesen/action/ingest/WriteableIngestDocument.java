@@ -112,12 +112,6 @@ final class WriteableIngestDocument implements Writeable, ToXContentFragment {
     WriteableIngestDocument(StreamInput in) throws IOException {
         Map<String, Object> sourceAndMetadata = in.readMap();
         Map<String, Object> ingestMetadata = in.readMap();
-        if (in.getVersion().before(Version.V_6_0_0_beta1)) {
-            ingestMetadata.computeIfPresent("timestamp", (k, o) -> {
-                Date date = (Date) o;
-                return date.toInstant().atZone(ZoneId.systemDefault());
-            });
-        }
         this.ingestDocument = new IngestDocument(sourceAndMetadata, ingestMetadata);
     }
 

@@ -45,7 +45,7 @@ public class GeoTileGridValuesSourceBuilderTests extends ESTestCase {
     }
 
     public void testBWCBounds() throws IOException {
-        Version noBoundsSupportVersion = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.V_7_5_0);
+        Version noBoundsSupportVersion = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.V_7_5_0);
         GeoTileGridValuesSourceBuilder builder = new GeoTileGridValuesSourceBuilder("name");
         if (randomBoolean()) {
             builder.geoBoundingBox(GeoBoundingBoxTests.randomBBox());

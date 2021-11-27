@@ -105,9 +105,7 @@ public class ExternalMapper extends ParametrizedFieldMapper {
             BinaryFieldMapper binMapper = binBuilder.build(context);
             BooleanFieldMapper boolMapper = boolBuilder.build(context);
             GeoPointFieldMapper pointMapper = (GeoPointFieldMapper) latLonPointBuilder.build(context);
-            AbstractShapeGeometryFieldMapper<?, ?> shapeMapper = (context.indexCreatedVersion().before(Version.V_6_6_0))
-                ? legacyShapeBuilder.build(context)
-                : shapeBuilder.build(context);
+            AbstractShapeGeometryFieldMapper<?, ?> shapeMapper = shapeBuilder.build(context);
             FieldMapper stringMapper = (FieldMapper)stringBuilder.build(context);
             context.path().remove();
 

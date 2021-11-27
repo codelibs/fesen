@@ -177,13 +177,6 @@ public class MetadataCreateIndexServiceTests extends ESTestCase {
 
     public void testNumberOfShards() {
         {
-            final Version versionCreated = VersionUtils.randomVersionBetween(
-                random(),
-                Version.V_6_0_0_alpha1, VersionUtils.getPreviousVersion(Version.V_7_0_0));
-            final Settings.Builder indexSettingsBuilder = Settings.builder().put(SETTING_VERSION_CREATED, versionCreated);
-            assertThat(MetadataCreateIndexService.getNumberOfShards(indexSettingsBuilder), equalTo(5));
-        }
-        {
             final Version versionCreated = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
             final Settings.Builder indexSettingsBuilder = Settings.builder().put(SETTING_VERSION_CREATED, versionCreated);
             assertThat(MetadataCreateIndexService.getNumberOfShards(indexSettingsBuilder), equalTo(1));

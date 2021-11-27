@@ -131,7 +131,7 @@ public class RecoverySourceHandler {
         this.logger = Loggers.getLogger(getClass(), request.shardId(), "recover to " + request.targetNode().getName());
         this.chunkSizeInBytes = fileChunkSizeInBytes;
         // if the target is on an old version, it won't be able to handle out-of-order file chunks.
-        this.maxConcurrentFileChunks = request.targetNode().getVersion().onOrAfter(Version.V_6_7_0) ? maxConcurrentFileChunks : 1;
+        this.maxConcurrentFileChunks = maxConcurrentFileChunks;
         this.maxConcurrentOperations = maxConcurrentOperations;
     }
 
@@ -353,7 +353,7 @@ public class RecoverySourceHandler {
 
     private boolean isTargetSameHistory() {
         final String targetHistoryUUID = request.metadataSnapshot().getHistoryUUID();
-        assert targetHistoryUUID != null || shard.indexSettings().getIndexVersionCreated().before(Version.V_6_0_0_rc1) :
+        assert targetHistoryUUID != null :
             "incoming target history N/A but index was created after or on 6.0.0-rc1";
         return targetHistoryUUID != null && targetHistoryUUID.equals(shard.getHistoryUUID());
     }

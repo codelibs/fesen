@@ -93,13 +93,9 @@ public class TransportUpdateByQueryAction extends HandledTransportAction<UpdateB
         AsyncIndexBySearchAction(BulkByScrollTask task, Logger logger, ParentTaskAssigningClient client,
                                  ThreadPool threadPool, ScriptService scriptService, UpdateByQueryRequest request,
                                  ClusterState clusterState, ActionListener<BulkByScrollResponse> listener) {
-            super(task,
-                // not all nodes support sequence number powered optimistic concurrency control, we fall back to version
-                clusterState.nodes().getMinNodeVersion().onOrAfter(Version.V_6_7_0) == false,
-                // all nodes support sequence number powered optimistic concurrency control and we can use it
-                clusterState.nodes().getMinNodeVersion().onOrAfter(Version.V_6_7_0),
+            super(task, false, true,
                 logger, client, threadPool, request, listener, scriptService, null);
-            useSeqNoForCAS = clusterState.nodes().getMinNodeVersion().onOrAfter(Version.V_6_7_0);
+            useSeqNoForCAS = true;
         }
 
         @Override

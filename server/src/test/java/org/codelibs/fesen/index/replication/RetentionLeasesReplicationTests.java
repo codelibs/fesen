@@ -153,7 +153,7 @@ public class RetentionLeasesReplicationTests extends ESIndexLevelReplicationTest
         final Settings.Builder settings = Settings.builder().put(IndexSettings.INDEX_SOFT_DELETES_SETTING.getKey(), true);
         if (randomBoolean()) {
             settings.put(IndexMetadata.SETTING_VERSION_CREATED,
-                VersionUtils.randomVersionBetween(random(), Version.V_6_5_0, Version.CURRENT));
+                VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT));
         }
         try (ReplicationGroup group = createGroup(between(1, 2), settings.build())) {
             group.startAll();

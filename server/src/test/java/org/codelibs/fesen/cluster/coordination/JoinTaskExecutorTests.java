@@ -91,7 +91,7 @@ public class JoinTaskExecutorTests extends ESTestCase {
 
         final Version maxNodeVersion = nodes.getMaxNodeVersion();
         final Version minNodeVersion = nodes.getMinNodeVersion();
-        if (maxNodeVersion.onOrAfter(Version.V_7_0_0)) {
+        if (maxNodeVersion.onOrAfter(Version.V_8_0_0)) {
             final Version tooLow = getPreviousVersion(maxNodeVersion.minimumCompatibilityVersion());
             expectThrows(IllegalStateException.class, () -> {
                 if (randomBoolean()) {
@@ -102,7 +102,7 @@ public class JoinTaskExecutorTests extends ESTestCase {
             });
         }
 
-        if (minNodeVersion.before(Version.V_6_0_0)) {
+        if (minNodeVersion.before(Version.V_7_0_0)) {
             Version tooHigh = incompatibleFutureVersion(minNodeVersion);
             expectThrows(IllegalStateException.class, () -> {
                 if (randomBoolean()) {
@@ -113,8 +113,8 @@ public class JoinTaskExecutorTests extends ESTestCase {
             });
         }
 
-        if (minNodeVersion.onOrAfter(Version.V_7_0_0)) {
-            Version oldMajor = Version.V_6_4_0.minimumCompatibilityVersion();
+        if (minNodeVersion.onOrAfter(Version.V_8_0_0)) {
+            Version oldMajor = Version.V_7_0_0.minimumCompatibilityVersion();
             expectThrows(IllegalStateException.class, () -> JoinTaskExecutor.ensureMajorVersionBarrier(oldMajor, minNodeVersion));
         }
 

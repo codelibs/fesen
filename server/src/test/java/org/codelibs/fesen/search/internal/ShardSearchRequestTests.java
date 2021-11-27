@@ -76,18 +76,6 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
         }
     }
 
-    public void testAllowPartialResultsSerializationPre7_0_0() throws IOException {
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, VersionUtils.getPreviousVersion(Version.V_7_0_0));
-        ShardSearchRequest shardSearchTransportRequest = createShardSearchRequest();
-        ShardSearchRequest deserializedRequest =
-            copyWriteable(shardSearchTransportRequest, namedWriteableRegistry, ShardSearchRequest::new, version);
-        if (version.before(Version.V_6_3_0)) {
-            assertFalse(deserializedRequest.allowPartialSearchResults());
-        } else {
-            assertEquals(shardSearchTransportRequest.allowPartialSearchResults(), deserializedRequest.allowPartialSearchResults());
-        }
-    }
-
     private ShardSearchRequest createShardSearchRequest() throws IOException {
         SearchRequest searchRequest = createSearchRequest();
         ShardId shardId = new ShardId(randomAlphaOfLengthBetween(2, 10), randomAlphaOfLengthBetween(2, 10), randomInt());

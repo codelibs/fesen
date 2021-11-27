@@ -101,9 +101,4 @@ public class ClusterUpdateSettingsResponseTests extends AbstractSerializingTestC
     protected Writeable.Reader<ClusterUpdateSettingsResponse> instanceReader() {
         return ClusterUpdateSettingsResponse::new;
     }
-
-    public void testOldSerialisation() throws IOException {
-        ClusterUpdateSettingsResponse original = createTestInstance();
-        assertSerialization(original, VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.V_6_4_0));
-    }
 }
