@@ -33,8 +33,8 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSort.ForFloats> {
     @Override
-    public BucketedSort.ForFloats build(SortOrder sortOrder, DocValueFormat format, int bucketSize,
-            BucketedSort.ExtraData extra, double[] values) {
+    public BucketedSort.ForFloats build(SortOrder sortOrder, DocValueFormat format, int bucketSize, BucketedSort.ExtraData extra,
+            double[] values) {
         return new BucketedSort.ForFloats(bigArrays(), sortOrder, format, bucketSize, extra) {
             @Override
             public boolean needsScores() {
@@ -58,7 +58,8 @@ public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSor
                     }
 
                     @Override
-                    public void setScorer(Scorable scorer) {}
+                    public void setScorer(Scorable scorer) {
+                    }
                 };
             }
         };
@@ -119,7 +120,7 @@ public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSor
             MockScorable scorer = new MockScorable();
             leaf.setScorer(scorer);
             scorer.score = 10;
-            leaf.collect(0, 0); 
+            leaf.collect(0, 0);
             scorer.score = 1;
             leaf.collect(0, 0);
             scorer.score = 0;
@@ -150,11 +151,14 @@ public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSor
         try (BucketedSort sort = new BucketedSort.ForFloats(bigArrays(), SortOrder.DESC, DocValueFormat.RAW,
                 BucketedSort.ForFloats.MAX_BUCKET_SIZE, BucketedSort.NOOP_EXTRA_DATA) {
             @Override
-            public boolean needsScores() { return false; }
+            public boolean needsScores() {
+                return false;
+            }
 
             public Leaf forLeaf(LeafReaderContext ctx) throws IOException {
                 return new Leaf(ctx) {
                     int doc;
+
                     @Override
                     protected boolean advanceExact(int doc) throws IOException {
                         this.doc = doc;
@@ -167,7 +171,8 @@ public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSor
                     }
 
                     @Override
-                    public void setScorer(Scorable scorer) {}
+                    public void setScorer(Scorable scorer) {
+                    }
                 };
             }
         }) {
@@ -186,8 +191,8 @@ public class BucketedSortForFloatsTests extends BucketedSortTestCase<BucketedSor
 
     public void testTooBig() {
         int tooBig = BucketedSort.ForFloats.MAX_BUCKET_SIZE + 1;
-        Exception e = expectThrows(IllegalArgumentException.class, () ->
-                build(randomFrom(SortOrder.values()), DocValueFormat.RAW, tooBig, BucketedSort.NOOP_EXTRA_DATA, new double[] {}));
+        Exception e = expectThrows(IllegalArgumentException.class,
+                () -> build(randomFrom(SortOrder.values()), DocValueFormat.RAW, tooBig, BucketedSort.NOOP_EXTRA_DATA, new double[] {}));
         assertThat(e.getMessage(), equalTo("bucket size must be less than [2^24] but was [" + tooBig + "]"));
     }
 }

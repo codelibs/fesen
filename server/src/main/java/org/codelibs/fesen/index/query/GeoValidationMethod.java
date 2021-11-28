@@ -55,10 +55,10 @@ public enum GeoValidationMethod implements Writeable {
                 return method;
             }
         }
-        throw new IllegalArgumentException("operator needs to be either " + CollectionUtils.arrayAsArrayList(GeoValidationMethod.values())
-                + ", but not [" + op + "]");
+        throw new IllegalArgumentException(
+                "operator needs to be either " + CollectionUtils.arrayAsArrayList(GeoValidationMethod.values()) + ", but not [" + op + "]");
     }
-    
+
     /** Returns whether or not to skip bounding box validation. */
     public static boolean isIgnoreMalformed(GeoValidationMethod method) {
         return (method == GeoValidationMethod.IGNORE_MALFORMED || method == GeoValidationMethod.COERCE);

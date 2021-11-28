@@ -19,13 +19,17 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.command;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
+
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.RecoverySource;
+import org.codelibs.fesen.cluster.routing.RecoverySource.EmptyStoreRecoverySource;
 import org.codelibs.fesen.cluster.routing.RoutingNode;
 import org.codelibs.fesen.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.UnassignedInfo;
-import org.codelibs.fesen.cluster.routing.RecoverySource.EmptyStoreRecoverySource;
 import org.codelibs.fesen.cluster.routing.allocation.RerouteExplanation;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
@@ -36,10 +40,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.shard.ShardNotFoundException;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Optional;
 
 /**
  * Allocates an unassigned empty primary shard to a specific node. Use with extreme care as this will result in data loss.
@@ -129,22 +129,22 @@ public class AllocateEmptyPrimaryAllocationCommand extends BasePrimaryAllocation
         }
 
         if (shardRouting.recoverySource().getType() != RecoverySource.Type.EMPTY_STORE && acceptDataLoss == false) {
-            String dataLossWarning = "allocating an empty primary for [" + index + "][" + shardId +
-                "] can result in data loss. Please confirm by setting the accept_data_loss parameter to true";
+            String dataLossWarning = "allocating an empty primary for [" + index + "][" + shardId
+                    + "] can result in data loss. Please confirm by setting the accept_data_loss parameter to true";
             return explainOrThrowRejectedCommand(explain, allocation, dataLossWarning);
         }
 
         UnassignedInfo unassignedInfoToUpdate = null;
         if (shardRouting.unassignedInfo().getReason() != UnassignedInfo.Reason.FORCED_EMPTY_PRIMARY) {
-            String unassignedInfoMessage = "force empty allocation from previous reason " + shardRouting.unassignedInfo().getReason() +
-                ", " + shardRouting.unassignedInfo().getMessage();
+            String unassignedInfoMessage = "force empty allocation from previous reason " + shardRouting.unassignedInfo().getReason() + ", "
+                    + shardRouting.unassignedInfo().getMessage();
             unassignedInfoToUpdate = new UnassignedInfo(UnassignedInfo.Reason.FORCED_EMPTY_PRIMARY, unassignedInfoMessage,
-                shardRouting.unassignedInfo().getFailure(), 0, System.nanoTime(), System.currentTimeMillis(), false,
-                shardRouting.unassignedInfo().getLastAllocationStatus(), Collections.emptySet());
+                    shardRouting.unassignedInfo().getFailure(), 0, System.nanoTime(), System.currentTimeMillis(), false,
+                    shardRouting.unassignedInfo().getLastAllocationStatus(), Collections.emptySet());
         }
 
         initializeUnassignedShard(allocation, routingNodes, routingNode, shardRouting, unassignedInfoToUpdate,
-            EmptyStoreRecoverySource.INSTANCE);
+                EmptyStoreRecoverySource.INSTANCE);
 
         return new RerouteExplanation(this, allocation.decision(Decision.YES, name() + " (allocation command)", "ignore deciders"));
     }

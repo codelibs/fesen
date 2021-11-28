@@ -22,7 +22,6 @@ package org.codelibs.fesen.action.admin.cluster.storedscripts;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 
-
 public class PutStoredScriptAction extends ActionType<AcknowledgedResponse> {
 
     public static final PutStoredScriptAction INSTANCE = new PutStoredScriptAction();

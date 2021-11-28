@@ -25,14 +25,14 @@ public class NonDeterministicAnnotationParser implements WhitelistAnnotationPars
 
     public static final NonDeterministicAnnotationParser INSTANCE = new NonDeterministicAnnotationParser();
 
-    private NonDeterministicAnnotationParser() {}
+    private NonDeterministicAnnotationParser() {
+    }
 
     @Override
     public Object parse(Map<String, String> arguments) {
         if (arguments.isEmpty() == false) {
             throw new IllegalArgumentException(
-                "unexpected parameters for [@" + NonDeterministicAnnotation.NAME + "] annotation, found " + arguments
-            );
+                    "unexpected parameters for [@" + NonDeterministicAnnotation.NAME + "] annotation, found " + arguments);
         }
 
         return NonDeterministicAnnotation.INSTANCE;

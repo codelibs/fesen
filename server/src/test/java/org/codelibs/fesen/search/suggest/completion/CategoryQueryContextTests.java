@@ -46,9 +46,8 @@ public class CategoryQueryContextTests extends QueryContextTestCase<CategoryQuer
 
     public void testNullCategoryIsIllegal() {
         final CategoryQueryContext categoryQueryContext = randomCategoryQueryContext();
-        final CategoryQueryContext.Builder builder = CategoryQueryContext.builder()
-            .setBoost(categoryQueryContext.getBoost())
-            .setPrefix(categoryQueryContext.isPrefix());
+        final CategoryQueryContext.Builder builder =
+                CategoryQueryContext.builder().setBoost(categoryQueryContext.getBoost()).setPrefix(categoryQueryContext.isPrefix());
         try {
             builder.build();
             fail("null category is illegal");

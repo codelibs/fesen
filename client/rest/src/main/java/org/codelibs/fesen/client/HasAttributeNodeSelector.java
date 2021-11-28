@@ -42,7 +42,8 @@ public final class HasAttributeNodeSelector implements NodeSelector {
         Iterator<Node> itr = nodes.iterator();
         while (itr.hasNext()) {
             Map<String, List<String>> allAttributes = itr.next().getAttributes();
-            if (allAttributes == null) continue;
+            if (allAttributes == null)
+                continue;
             List<String> values = allAttributes.get(key);
             if (values == null || false == values.contains(value)) {
                 itr.remove();
@@ -59,8 +60,7 @@ public final class HasAttributeNodeSelector implements NodeSelector {
             return false;
         }
         HasAttributeNodeSelector that = (HasAttributeNodeSelector) o;
-        return Objects.equals(key, that.key) &&
-                Objects.equals(value, that.value);
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
     }
 
     @Override

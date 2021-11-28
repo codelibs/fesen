@@ -31,7 +31,7 @@ import org.codelibs.fesen.rest.RestStatus;
  * some shard group in an index has not been allocated post api action.
  */
 public class IndexPrimaryShardNotAllocatedException extends FesenException {
-    public IndexPrimaryShardNotAllocatedException(StreamInput in) throws IOException{
+    public IndexPrimaryShardNotAllocatedException(StreamInput in) throws IOException {
         super(in);
     }
 

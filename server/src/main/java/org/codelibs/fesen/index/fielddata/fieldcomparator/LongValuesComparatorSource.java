@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.index.fielddata.fieldcomparator;
 
+import java.io.IOException;
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
@@ -39,9 +42,6 @@ import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
 
-import java.io.IOException;
-import java.util.function.Function;
-
 /**
  * Comparator source for long values.
  */
@@ -50,14 +50,13 @@ public class LongValuesComparatorSource extends IndexFieldData.XFieldComparatorS
     private final IndexNumericFieldData indexFieldData;
     private final Function<SortedNumericDocValues, SortedNumericDocValues> converter;
 
-    public LongValuesComparatorSource(IndexNumericFieldData indexFieldData, @Nullable Object missingValue,
-                                      MultiValueMode sortMode, Nested nested) {
+    public LongValuesComparatorSource(IndexNumericFieldData indexFieldData, @Nullable Object missingValue, MultiValueMode sortMode,
+            Nested nested) {
         this(indexFieldData, missingValue, sortMode, nested, null);
     }
 
-    public LongValuesComparatorSource(IndexNumericFieldData indexFieldData, @Nullable Object missingValue,
-                                      MultiValueMode sortMode, Nested nested,
-                                      Function<SortedNumericDocValues, SortedNumericDocValues> converter) {
+    public LongValuesComparatorSource(IndexNumericFieldData indexFieldData, @Nullable Object missingValue, MultiValueMode sortMode,
+            Nested nested, Function<SortedNumericDocValues, SortedNumericDocValues> converter) {
         super(missingValue, sortMode, nested);
         this.indexFieldData = indexFieldData;
         this.converter = converter;
@@ -111,8 +110,8 @@ public class LongValuesComparatorSource extends IndexFieldData.XFieldComparatorS
     }
 
     @Override
-    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
-            int bucketSize, BucketedSort.ExtraData extra) {
+    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
+            BucketedSort.ExtraData extra) {
         return new BucketedSort.ForLongs(bigArrays, sortOrder, format, bucketSize, extra) {
             private final long lMissingValue = (Long) missingObject(missingValue, sortOrder == SortOrder.DESC);
 

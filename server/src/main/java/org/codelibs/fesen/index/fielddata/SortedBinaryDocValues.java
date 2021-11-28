@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import org.apache.lucene.util.BytesRef;
-
 import java.io.IOException;
+
+import org.apache.lucene.util.BytesRef;
 
 /**
  * A list of per-document binary values, sorted

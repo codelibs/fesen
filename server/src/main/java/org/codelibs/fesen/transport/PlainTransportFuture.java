@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.util.concurrent.BaseFuture;
 
 public class PlainTransportFuture<V extends TransportResponse> extends BaseFuture<V>
-    implements TransportFuture<V>, TransportResponseHandler<V> {
+        implements TransportFuture<V>, TransportResponseHandler<V> {
 
     private final TransportResponseHandler<V> handler;
 

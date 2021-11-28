@@ -20,7 +20,6 @@ package org.codelibs.fesen.action.admin.indices.alias.get;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.AliasesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;

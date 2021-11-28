@@ -18,22 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.completion;
 
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.util.PriorityQueue;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.lucene.Lucene;
-import org.codelibs.fesen.common.text.Text;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.SearchHit;
-import org.codelibs.fesen.search.suggest.Suggest;
-import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
-
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 import static org.codelibs.fesen.search.SearchHit.unknownMetaFieldConsumer;
 import static org.codelibs.fesen.search.suggest.Suggest.COMPARATOR;
@@ -48,6 +32,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.util.PriorityQueue;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.lucene.Lucene;
+import org.codelibs.fesen.common.text.Text;
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.SearchHit;
+import org.codelibs.fesen.search.suggest.Suggest;
+import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
 
 /**
  * Suggestion response for {@link CompletionSuggester} results
@@ -120,8 +119,7 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
 
     @Override
     public boolean equals(Object other) {
-        return super.equals(other)
-            && Objects.equals(skipDuplicates, ((CompletionSuggestion) other).skipDuplicates);
+        return super.equals(other) && Objects.equals(skipDuplicates, ((CompletionSuggestion) other).skipDuplicates);
     }
 
     @Override
@@ -212,8 +210,7 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
                         //options exhausted for this shard
                         pq.pop();
                     }
-                    if (leader.skipDuplicates == false ||
-                        seenSurfaceForms.add(current.getText().toString())) {
+                    if (leader.skipDuplicates == false || seenSurfaceForms.add(current.getText().toString())) {
                         options.add(current);
                         if (options.size() >= size) {
                             break;
@@ -251,7 +248,8 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
             super(text, offset, length);
         }
 
-        private Entry() {}
+        private Entry() {
+        }
 
         public Entry(StreamInput in) throws IOException {
             super(in);
@@ -262,15 +260,14 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
             return new Option(in);
         }
 
-        private static final ObjectParser<Entry, Void> PARSER = new ObjectParser<>("CompletionSuggestionEntryParser", true,
-                Entry::new);
+        private static final ObjectParser<Entry, Void> PARSER = new ObjectParser<>("CompletionSuggestionEntryParser", true, Entry::new);
         static {
             declareCommonFields(PARSER);
             /*
              * The use of a lambda expression instead of the method reference Entry::addOptions is a workaround for a JDK 14 compiler bug.
              * The bug is: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8242214
              */
-            PARSER.declareObjectArray((e, o) -> e.addOptions(o), (p,c) -> Option.fromXContent(p), new ParseField(OPTIONS));
+            PARSER.declareObjectArray((e, o) -> e.addOptions(o), (p, c) -> Option.fromXContent(p), new ParseField(OPTIONS));
         }
 
         public static Entry fromXContent(XContentParser parser) {
@@ -358,8 +355,8 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
                 return builder;
             }
 
-            private static final ObjectParser<Map<String, Object>, Void> PARSER = new ObjectParser<>("CompletionOptionParser",
-                unknownMetaFieldConsumer, HashMap::new);
+            private static final ObjectParser<Map<String, Object>, Void> PARSER =
+                    new ObjectParser<>("CompletionOptionParser", unknownMetaFieldConsumer, HashMap::new);
 
             static {
                 SearchHit.declareInnerHitsParseFields(PARSER);
@@ -368,17 +365,17 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
                 PARSER.declareFloat((map, value) -> map.put(Suggestion.Entry.Option.SCORE.getPreferredName(), value),
                         Suggestion.Entry.Option.SCORE);
                 PARSER.declareObject((map, value) -> map.put(CompletionSuggestion.Entry.Option.CONTEXTS.getPreferredName(), value),
-                        (p,c) -> parseContexts(p), CompletionSuggestion.Entry.Option.CONTEXTS);
+                        (p, c) -> parseContexts(p), CompletionSuggestion.Entry.Option.CONTEXTS);
             }
 
             private static Map<String, Set<String>> parseContexts(XContentParser parser) throws IOException {
                 Map<String, Set<String>> contexts = new HashMap<>();
-                while((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+                while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                     ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
                     String key = parser.currentName();
                     ensureExpectedToken(XContentParser.Token.START_ARRAY, parser.nextToken(), parser);
                     Set<String> values = new HashSet<>();
-                    while((parser.nextToken()) != XContentParser.Token.END_ARRAY) {
+                    while ((parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                         ensureExpectedToken(XContentParser.Token.VALUE_STRING, parser.currentToken(), parser);
                         values.add(parser.text());
                     }
@@ -393,8 +390,8 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
                 Text text = new Text((String) values.get(Suggestion.Entry.Option.TEXT.getPreferredName()));
                 Float score = (Float) values.get(Suggestion.Entry.Option.SCORE.getPreferredName());
                 @SuppressWarnings("unchecked")
-                Map<String, Set<String>> contexts = (Map<String, Set<String>>) values
-                        .get(CompletionSuggestion.Entry.Option.CONTEXTS.getPreferredName());
+                Map<String, Set<String>> contexts =
+                        (Map<String, Set<String>>) values.get(CompletionSuggestion.Entry.Option.CONTEXTS.getPreferredName());
                 if (contexts == null) {
                     contexts = Collections.emptyMap();
                 }
@@ -438,7 +435,7 @@ public final class CompletionSuggestion extends Suggest.Suggestion<CompletionSug
                 stringBuilder.append(" score:");
                 stringBuilder.append(getScore());
                 stringBuilder.append(" context:[");
-                for (Map.Entry<String, Set<String>> entry: contexts.entrySet()) {
+                for (Map.Entry<String, Set<String>> entry : contexts.entrySet()) {
                     stringBuilder.append(" ");
                     stringBuilder.append(entry.getKey());
                     stringBuilder.append(":");

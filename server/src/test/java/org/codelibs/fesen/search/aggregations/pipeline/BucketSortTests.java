@@ -90,7 +90,7 @@ public class BucketSortTests extends BasePipelineAggregationTestCase<BucketSortP
 
     public void testNoParent() {
         List<FieldSortBuilder> sorts = singletonList(new FieldSortBuilder("bar"));
-        assertThat(validate(emptyList(), new BucketSortPipelineAggregationBuilder("foo", sorts)), 
-            equalTo("Validation Failed: 1: bucket_sort aggregation [foo] must be declared inside of another aggregation;"));
+        assertThat(validate(emptyList(), new BucketSortPipelineAggregationBuilder("foo", sorts)),
+                equalTo("Validation Failed: 1: bucket_sort aggregation [foo] must be declared inside of another aggregation;"));
     }
 }

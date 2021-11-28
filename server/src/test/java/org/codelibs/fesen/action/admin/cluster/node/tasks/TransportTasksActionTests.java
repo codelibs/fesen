@@ -185,7 +185,8 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
             super(in);
         }
 
-        TestTasksRequest() {}
+        TestTasksRequest() {
+        }
     }
 
     static class TestTasksResponse extends BaseTasksResponse {
@@ -223,10 +224,9 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
      */
     abstract static class TestTasksAction extends TransportTasksAction<Task, TestTasksRequest, TestTasksResponse, TestTaskResponse> {
 
-        protected TestTasksAction(String actionName,
-                ClusterService clusterService, TransportService transportService) {
-            super(actionName, clusterService, transportService, new ActionFilters(new HashSet<>()),
-                TestTasksRequest::new, TestTasksResponse::new, TestTaskResponse::new, ThreadPool.Names.MANAGEMENT);
+        protected TestTasksAction(String actionName, ClusterService clusterService, TransportService transportService) {
+            super(actionName, clusterService, transportService, new ActionFilters(new HashSet<>()), TestTasksRequest::new,
+                    TestTasksResponse::new, TestTaskResponse::new, ThreadPool.Names.MANAGEMENT);
         }
 
         @Override
@@ -259,21 +259,21 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         TestNodesAction[] actions = new TestNodesAction[nodesCount];
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
-            actions[i] = new TestNodesAction("internal:testAction", threadPool, testNodes[i].clusterService,
-                    testNodes[i].transportService) {
-                @Override
-                protected NodeResponse nodeOperation(NodeRequest request) {
-                    logger.info("Action on node {}", node);
-                    actionLatch.countDown();
-                    try {
-                        checkLatch.await();
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                    logger.info("Action on node {} finished", node);
-                    return new NodeResponse(testNodes[node].discoveryNode());
-                }
-            };
+            actions[i] =
+                    new TestNodesAction("internal:testAction", threadPool, testNodes[i].clusterService, testNodes[i].transportService) {
+                        @Override
+                        protected NodeResponse nodeOperation(NodeRequest request) {
+                            logger.info("Action on node {}", node);
+                            actionLatch.countDown();
+                            try {
+                                checkLatch.await();
+                            } catch (InterruptedException ex) {
+                                Thread.currentThread().interrupt();
+                            }
+                            logger.info("Action on node {} finished", node);
+                            return new NodeResponse(testNodes[node].discoveryNode());
+                        }
+                    };
         }
         // Make sure no tasks are running
         for (TestNode node : testNodes) {
@@ -308,9 +308,8 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
 
         // Check task counts using taskManager
         Map<Long, Task> localTasks = testNodes[0].transportService.getTaskManager().getTasks();
-        logger.info("local tasks [{}]", localTasks.values().stream()
-            .map(t -> Strings.toString(t.taskInfo(testNodes[0].getNodeId(), true)))
-            .collect(Collectors.joining(",")));
+        logger.info("local tasks [{}]", localTasks.values().stream().map(t -> Strings.toString(t.taskInfo(testNodes[0].getNodeId(), true)))
+                .collect(Collectors.joining(",")));
         assertEquals(2, localTasks.size()); // all node tasks + 1 coordinating task
         Task coordinatingTask = localTasks.get(Collections.min(localTasks.keySet()));
         Task subTask = localTasks.get(Collections.max(localTasks.keySet()));
@@ -471,21 +470,20 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         request.setNodes(testNodes[0].getNodeId());
         request.setReason("Testing Cancellation");
         request.setActions(actionName);
-        CancelTasksResponse response = ActionTestUtils.executeBlocking(
-            testNodes[randomIntBetween(0, testNodes.length - 1)].transportCancelTasksAction, request);
+        CancelTasksResponse response =
+                ActionTestUtils.executeBlocking(testNodes[randomIntBetween(0, testNodes.length - 1)].transportCancelTasksAction, request);
 
         // Shouldn't match any tasks since testAction doesn't support cancellation
         assertEquals(0, response.getTasks().size());
         assertEquals(0, response.getTaskFailures().size());
         assertEquals(0, response.getNodeFailures().size());
 
-
         // Try to cancel main task using id
         request = new CancelTasksRequest();
         request.setReason("Testing Cancellation");
         request.setTaskId(new TaskId(testNodes[0].getNodeId(), task.getId()));
-        response = ActionTestUtils.executeBlocking(
-            testNodes[randomIntBetween(0, testNodes.length - 1)].transportCancelTasksAction, request);
+        response =
+                ActionTestUtils.executeBlocking(testNodes[randomIntBetween(0, testNodes.length - 1)].transportCancelTasksAction, request);
 
         // Shouldn't match any tasks since testAction doesn't support cancellation
         assertEquals(0, response.getTasks().size());
@@ -496,8 +494,8 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         // Make sure that task is still running
         ListTasksRequest listTasksRequest = new ListTasksRequest();
         listTasksRequest.setActions(actionName);
-        ListTasksResponse listResponse = ActionTestUtils.executeBlocking(
-            testNodes[randomIntBetween(0, testNodes.length - 1)].transportListTasksAction, listTasksRequest);
+        ListTasksResponse listResponse = ActionTestUtils
+                .executeBlocking(testNodes[randomIntBetween(0, testNodes.length - 1)].transportListTasksAction, listTasksRequest);
         assertEquals(1, listResponse.getPerNodeTasks().size());
         // Verify that tasks are marked as non-cancellable
         for (TaskInfo taskInfo : listResponse.getTasks()) {
@@ -517,14 +515,14 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         RecordingTaskManagerListener[] listeners = setupListeners(testNodes, "internal:testAction*");
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
-            actions[i] = new TestNodesAction("internal:testAction", threadPool, testNodes[i].clusterService,
-                    testNodes[i].transportService) {
-                @Override
-                protected NodeResponse nodeOperation(NodeRequest request) {
-                    logger.info("Action on node {}", node);
-                    throw new RuntimeException("Test exception");
-                }
-            };
+            actions[i] =
+                    new TestNodesAction("internal:testAction", threadPool, testNodes[i].clusterService, testNodes[i].transportService) {
+                        @Override
+                        protected NodeResponse nodeOperation(NodeRequest request) {
+                            logger.info("Action on node {}", node);
+                            throw new RuntimeException("Test exception");
+                        }
+                    };
         }
 
         for (TestNode testNode : testNodes) {
@@ -557,29 +555,24 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
             // Simulate task action that fails on one of the tasks on one of the nodes
-            tasksActions[i] = new TestTasksAction("internal:testTasksAction", testNodes[i].clusterService,
-                    testNodes[i].transportService) {
+            tasksActions[i] = new TestTasksAction("internal:testTasksAction", testNodes[i].clusterService, testNodes[i].transportService) {
                 @Override
                 protected void taskOperation(TestTasksRequest request, Task task, ActionListener<TestTaskResponse> listener) {
                     logger.info("Task action on node {}", node);
                     if (failTaskOnNode == node && task.getParentTaskId().isSet()) {
                         logger.info("Failing on node {}", node);
                         // Fail in a random way to make sure we can handle all these ways
-                        Runnable failureMode = randomFrom(
-                                () -> {
-                                    logger.info("Throwing exception from taskOperation");
-                                    throw new RuntimeException("Task level failure (direct)");
-                                },
-                                () -> {
-                                    logger.info("Calling listener synchronously with exception from taskOperation");
-                                    listener.onFailure(new RuntimeException("Task level failure (sync listener)"));
-                                },
-                                () -> {
-                                    logger.info("Calling listener asynchronously with exception from taskOperation");
-                                    threadPool.generic()
-                                            .execute(() -> listener.onFailure(new RuntimeException("Task level failure (async listener)")));
-                                }
-                                );
+                        Runnable failureMode = randomFrom(() -> {
+                            logger.info("Throwing exception from taskOperation");
+                            throw new RuntimeException("Task level failure (direct)");
+                        }, () -> {
+                            logger.info("Calling listener synchronously with exception from taskOperation");
+                            listener.onFailure(new RuntimeException("Task level failure (sync listener)"));
+                        }, () -> {
+                            logger.info("Calling listener asynchronously with exception from taskOperation");
+                            threadPool.generic()
+                                    .execute(() -> listener.onFailure(new RuntimeException("Task level failure (async listener)")));
+                        });
                         failureMode.run();
                     } else {
                         if (randomBoolean()) {
@@ -609,7 +602,6 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         assertEquals(0, responses.failureCount());
     }
 
-
     /**
      * This test starts nodes actions that blocks on all nodes. While node actions are blocked in the middle of execution
      * it executes a tasks action that targets these blocked node actions. The test verifies that task actions are only
@@ -636,8 +628,7 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
             final int node = i;
             // Simulate a task action that works on all nodes except nodes listed in filterNodes.
             // We are testing that it works.
-            tasksActions[i] = new TestTasksAction("internal:testTasksAction",
-                testNodes[i].clusterService, testNodes[i].transportService) {
+            tasksActions[i] = new TestTasksAction("internal:testTasksAction", testNodes[i].clusterService, testNodes[i].transportService) {
 
                 @Override
                 protected String[] filterNodeIds(DiscoveryNodes nodes, String[] nodesIds) {

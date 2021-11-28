@@ -152,15 +152,13 @@ public class CoordinationMetadataTests extends ESTestCase {
     }
 
     public void testCoordinationMetadataSerializationEqualsHashCode() {
-        CoordinationMetadata initialMetadata = new CoordinationMetadata(randomNonNegativeLong(), randomVotingConfig(), randomVotingConfig(),
-                randomVotingTombstones());
+        CoordinationMetadata initialMetadata =
+                new CoordinationMetadata(randomNonNegativeLong(), randomVotingConfig(), randomVotingConfig(), randomVotingTombstones());
         // Note: the explicit cast of the CopyFunction is needed for some IDE (specifically Eclipse 4.8.0) to infer the right type
-        EqualsHashCodeTestUtils.checkEqualsAndHashCode(initialMetadata,
-                (CopyFunction<CoordinationMetadata>) orig -> ESTestCase.copyWriteable(orig,
-                        new NamedWriteableRegistry(Collections.emptyList()), CoordinationMetadata::new),
-            meta -> {
-                CoordinationMetadata.Builder builder = CoordinationMetadata.builder(meta);
-                switch (randomInt(3)) {
+        EqualsHashCodeTestUtils.checkEqualsAndHashCode(initialMetadata, (CopyFunction<CoordinationMetadata>) orig -> ESTestCase
+                .copyWriteable(orig, new NamedWriteableRegistry(Collections.emptyList()), CoordinationMetadata::new), meta -> {
+                    CoordinationMetadata.Builder builder = CoordinationMetadata.builder(meta);
+                    switch (randomInt(3)) {
                     case 0:
                         builder.term(randomValueOtherThan(meta.term(), ESTestCase::randomNonNegativeLong));
                         break;
@@ -177,14 +175,14 @@ public class CoordinationMetadataTests extends ESTestCase {
                             randomVotingTombstones().forEach(dn -> builder.addVotingConfigExclusion(dn));
                         }
                         break;
-                }
-                return builder.build();
-            });
+                    }
+                    return builder.build();
+                });
     }
 
     public void testXContent() throws IOException {
-        CoordinationMetadata originalMeta = new CoordinationMetadata(randomNonNegativeLong(), randomVotingConfig(), randomVotingConfig(),
-                randomVotingTombstones());
+        CoordinationMetadata originalMeta =
+                new CoordinationMetadata(randomNonNegativeLong(), randomVotingConfig(), randomVotingConfig(), randomVotingTombstones());
 
         final XContentBuilder builder = JsonXContent.contentBuilder();
         builder.startObject();

@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.io.stream;
 
+import java.io.IOException;
+
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -27,8 +29,6 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.ByteArray;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
 
 /**
  * A @link {@link StreamOutput} that uses {@link BigArrays} to acquire pages of

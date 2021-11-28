@@ -19,16 +19,15 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.apache.lucene.search.spell.LevenshteinDistance;
-import org.apache.lucene.util.CollectionUtil;
-import org.codelibs.fesen.common.xcontent.ErrorOnUnknown;
-import org.codelibs.fesen.core.Tuple;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.stream.Collectors.toList;
+import org.apache.lucene.search.spell.LevenshteinDistance;
+import org.apache.lucene.util.CollectionUtil;
+import org.codelibs.fesen.core.Tuple;
 
 public class SuggestingErrorOnUnknown implements ErrorOnUnknown {
     @Override

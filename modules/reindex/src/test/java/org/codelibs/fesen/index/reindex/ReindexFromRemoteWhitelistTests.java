@@ -19,21 +19,20 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.index.reindex.RemoteInfo;
-import org.codelibs.fesen.test.ESTestCase;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.index.reindex.ReindexValidator.buildRemoteWhitelist;
+import static org.codelibs.fesen.index.reindex.ReindexValidator.checkRemoteWhitelist;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.index.reindex.ReindexValidator.buildRemoteWhitelist;
-import static org.codelibs.fesen.index.reindex.ReindexValidator.checkRemoteWhitelist;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.test.ESTestCase;
 
 /**
  * Tests the reindex-from-remote whitelist of remotes.
@@ -54,8 +53,8 @@ public class ReindexFromRemoteWhitelistTests extends ESTestCase {
      * Build a {@link RemoteInfo}, defaulting values that we don't care about in this test to values that don't hurt anything.
      */
     private RemoteInfo newRemoteInfo(String host, int port) {
-        return new RemoteInfo(randomAlphaOfLength(5), host, port, null, query, null, null, emptyMap(),
-                RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+        return new RemoteInfo(randomAlphaOfLength(5), host, port, null, query, null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT,
+                RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
     }
 
     public void testWhitelistedRemote() {
@@ -116,8 +115,8 @@ public class ReindexFromRemoteWhitelistTests extends ESTestCase {
     private void assertMatchesTooMuch(List<String> whitelist) {
         Exception e = expectThrows(IllegalArgumentException.class, () -> buildRemoteWhitelist(whitelist));
         assertEquals("Refusing to start because whitelist " + whitelist + " accepts all addresses. "
-                + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs "
-                + "for them.", e.getMessage());
+                + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs " + "for them.",
+                e.getMessage());
     }
 
     private List<String> randomWhitelist() {

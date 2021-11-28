@@ -50,7 +50,7 @@ public class GetComposableIndexTemplateResponseTests extends AbstractWireSeriali
 
     @Override
     protected GetComposableIndexTemplateAction.Response mutateInstance(GetComposableIndexTemplateAction.Response instance)
-        throws IOException {
+            throws IOException {
         return randomValueOtherThan(instance, this::createTestInstance);
     }
 }

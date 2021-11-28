@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.cluster.block;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -30,8 +32,6 @@ import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.rest.RestStatus;
-
-import static java.util.Collections.unmodifiableSet;
 
 public class ClusterBlockException extends FesenException {
     private final Set<ClusterBlock> blocks;

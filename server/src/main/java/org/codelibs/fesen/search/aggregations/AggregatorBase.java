@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.ScoreMode;
@@ -28,14 +36,6 @@ import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.query.QueryPhaseExecutionException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Base implementation for concrete aggregators.
@@ -80,9 +80,10 @@ public abstract class AggregatorBase extends Aggregator {
         final SearchShardTarget shardTarget = context.shardTarget();
         // Register a safeguard to highlight any invalid construction logic (call to this constructor without subsequent preCollection call)
         collectableSubAggregators = new BucketCollector() {
-            void badState(){
+            void badState() {
                 throw new QueryPhaseExecutionException(shardTarget, "preCollection not called on new Aggregator before use", null);
             }
+
             @Override
             public LeafBucketCollector getLeafCollector(LeafReaderContext reader) {
                 badState();
@@ -99,6 +100,7 @@ public abstract class AggregatorBase extends Aggregator {
             public void postCollection() throws IOException {
                 badState();
             }
+
             @Override
             public ScoreMode scoreMode() {
                 badState();
@@ -143,17 +145,14 @@ public abstract class AggregatorBase extends Aggregator {
     protected long addRequestCircuitBreakerBytes(long bytes) {
         // Only use the potential to circuit break if bytes are being incremented
         if (bytes > 0) {
-            this.breakerService
-                    .getBreaker(CircuitBreaker.REQUEST)
-                    .addEstimateBytesAndMaybeBreak(bytes, "<agg [" + name + "]>");
+            this.breakerService.getBreaker(CircuitBreaker.REQUEST).addEstimateBytesAndMaybeBreak(bytes, "<agg [" + name + "]>");
         } else {
-            this.breakerService
-                    .getBreaker(CircuitBreaker.REQUEST)
-                    .addWithoutBreaking(bytes);
+            this.breakerService.getBreaker(CircuitBreaker.REQUEST).addWithoutBreaking(bytes);
         }
         this.requestBytesUsed += bytes;
         return requestBytesUsed;
     }
+
     /**
      * Most aggregators don't need scores, make sure to extend this method if
      * your aggregator needs them.
@@ -272,7 +271,8 @@ public abstract class AggregatorBase extends Aggregator {
     }
 
     /** Release instance-specific data. */
-    protected void doClose() {}
+    protected void doClose() {
+    }
 
     /**
      * Can be overridden by aggregator implementation to be called back when the collection phase ends.

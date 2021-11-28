@@ -18,7 +18,6 @@
  */
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.rest.RestStatus;
 
 /**

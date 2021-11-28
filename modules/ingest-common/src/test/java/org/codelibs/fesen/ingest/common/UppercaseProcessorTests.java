@@ -21,9 +21,6 @@ package org.codelibs.fesen.ingest.common;
 
 import java.util.Locale;
 
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.UppercaseProcessor;
-
 public class UppercaseProcessorTests extends AbstractStringProcessorTestCase<String> {
 
     @Override

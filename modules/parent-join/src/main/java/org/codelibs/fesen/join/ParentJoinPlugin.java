@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.join;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.index.mapper.Mapper;
 import org.codelibs.fesen.join.aggregations.ChildrenAggregationBuilder;
 import org.codelibs.fesen.join.aggregations.InternalChildren;
@@ -32,11 +37,6 @@ import org.codelibs.fesen.plugins.MapperPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.SearchPlugin;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class ParentJoinPlugin extends Plugin implements SearchPlugin, MapperPlugin {
 
     public ParentJoinPlugin() {
@@ -44,21 +44,18 @@ public class ParentJoinPlugin extends Plugin implements SearchPlugin, MapperPlug
 
     @Override
     public List<QuerySpec<?>> getQueries() {
-        return Arrays.asList(
-            new QuerySpec<>(HasChildQueryBuilder.NAME, HasChildQueryBuilder::new, HasChildQueryBuilder::fromXContent),
-            new QuerySpec<>(HasParentQueryBuilder.NAME, HasParentQueryBuilder::new, HasParentQueryBuilder::fromXContent),
-            new QuerySpec<>(ParentIdQueryBuilder.NAME, ParentIdQueryBuilder::new, ParentIdQueryBuilder::fromXContent)
-        );
+        return Arrays.asList(new QuerySpec<>(HasChildQueryBuilder.NAME, HasChildQueryBuilder::new, HasChildQueryBuilder::fromXContent),
+                new QuerySpec<>(HasParentQueryBuilder.NAME, HasParentQueryBuilder::new, HasParentQueryBuilder::fromXContent),
+                new QuerySpec<>(ParentIdQueryBuilder.NAME, ParentIdQueryBuilder::new, ParentIdQueryBuilder::fromXContent));
     }
 
     @Override
     public List<AggregationSpec> getAggregations() {
         return Arrays.asList(
-            new AggregationSpec(ChildrenAggregationBuilder.NAME, ChildrenAggregationBuilder::new, ChildrenAggregationBuilder::parse)
-                .addResultReader(InternalChildren::new),
-            new AggregationSpec(ParentAggregationBuilder.NAME, ParentAggregationBuilder::new, ParentAggregationBuilder::parse)
-                .addResultReader(InternalParent::new)
-        );
+                new AggregationSpec(ChildrenAggregationBuilder.NAME, ChildrenAggregationBuilder::new, ChildrenAggregationBuilder::parse)
+                        .addResultReader(InternalChildren::new),
+                new AggregationSpec(ParentAggregationBuilder.NAME, ParentAggregationBuilder::new, ParentAggregationBuilder::parse)
+                        .addResultReader(InternalParent::new));
     }
 
     @Override

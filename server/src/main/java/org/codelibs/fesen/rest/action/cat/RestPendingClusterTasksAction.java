@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.util.List;
 
 import org.codelibs.fesen.action.admin.cluster.tasks.PendingClusterTasksRequest;
@@ -29,9 +32,6 @@ import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestPendingClusterTasksAction extends AbstractCatAction {
 
@@ -55,16 +55,14 @@ public class RestPendingClusterTasksAction extends AbstractCatAction {
         PendingClusterTasksRequest pendingClusterTasksRequest = new PendingClusterTasksRequest();
         pendingClusterTasksRequest.masterNodeTimeout(request.paramAsTime("master_timeout", pendingClusterTasksRequest.masterNodeTimeout()));
         pendingClusterTasksRequest.local(request.paramAsBoolean("local", pendingClusterTasksRequest.local()));
-        return channel ->
-                client.admin()
-                        .cluster()
-                        .pendingClusterTasks(pendingClusterTasksRequest, new RestResponseListener<PendingClusterTasksResponse>(channel) {
-                            @Override
-                            public RestResponse buildResponse(PendingClusterTasksResponse pendingClusterTasks) throws Exception {
-                                Table tab = buildTable(request, pendingClusterTasks);
-                                return RestTable.buildResponse(tab, channel);
-                            }
-                        });
+        return channel -> client.admin().cluster().pendingClusterTasks(pendingClusterTasksRequest,
+                new RestResponseListener<PendingClusterTasksResponse>(channel) {
+                    @Override
+                    public RestResponse buildResponse(PendingClusterTasksResponse pendingClusterTasks) throws Exception {
+                        Table tab = buildTable(request, pendingClusterTasks);
+                        return RestTable.buildResponse(tab, channel);
+                    }
+                });
     }
 
     @Override

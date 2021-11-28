@@ -54,16 +54,15 @@ public class InternalAvgTests extends InternalAggregationTestCase<InternalAvg> {
     }
 
     public void testSummationAccuracy() {
-        double[] values = new double[]{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7};
+        double[] values = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
         verifyAvgOfDoubles(values, 0.9, 0d);
 
         int n = randomIntBetween(5, 10);
         values = new double[n];
         double sum = 0;
         for (int i = 0; i < n; i++) {
-            values[i] = frequently()
-                ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-                : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
+            values[i] = frequently() ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+                    : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
             sum += values[i];
         }
         verifyAvgOfDoubles(values, sum / n, TOLERANCE);

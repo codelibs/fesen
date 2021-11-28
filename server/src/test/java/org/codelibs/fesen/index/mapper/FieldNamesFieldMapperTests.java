@@ -77,12 +77,11 @@ public class FieldNamesFieldMapperTests extends ESSingleNodeTestCase {
     }
 
     public void testFieldType() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_field_names").endObject()
-            .endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_field_names")
+                .endObject().endObject().endObject());
 
-        DocumentMapper docMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        DocumentMapper docMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
         FieldNamesFieldMapper fieldNamesMapper = docMapper.metadataMapper(FieldNamesFieldMapper.class);
         assertFalse(fieldNamesMapper.fieldType().hasDocValues());
 
@@ -94,80 +93,61 @@ public class FieldNamesFieldMapperTests extends ESSingleNodeTestCase {
 
     public void testInjectIntoDocDuringParsing() throws Exception {
         String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
-        DocumentMapper defaultMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        DocumentMapper defaultMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
 
-        ParsedDocument doc = defaultMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder()
-                        .startObject()
-                            .field("a", "100")
-                            .startObject("b")
-                                .field("c", 42)
-                            .endObject()
-                        .endObject()),
+        ParsedDocument doc = defaultMapper.parse(new SourceToParse("test", "type", "1", BytesReference.bytes(
+                XContentFactory.jsonBuilder().startObject().field("a", "100").startObject("b").field("c", 42).endObject().endObject()),
                 XContentType.JSON));
 
         assertFieldNames(Collections.emptySet(), doc);
     }
 
     public void testExplicitEnabled() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_field_names").field("enabled", true).endObject()
-            .startObject("properties")
-            .startObject("field").field("type", "keyword").field("doc_values", false).endObject()
-            .endObject().endObject().endObject());
-        DocumentMapper docMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_field_names")
+                .field("enabled", true).endObject().startObject("properties").startObject("field").field("type", "keyword")
+                .field("doc_values", false).endObject().endObject().endObject().endObject());
+        DocumentMapper docMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
         FieldNamesFieldMapper fieldNamesMapper = docMapper.metadataMapper(FieldNamesFieldMapper.class);
         assertTrue(fieldNamesMapper.fieldType().isEnabled());
 
         ParsedDocument doc = docMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder()
-                .startObject()
-                .field("field", "value")
-                .endObject()),
-            XContentType.JSON));
+                BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field("field", "value").endObject()), XContentType.JSON));
 
         assertFieldNames(set("field"), doc);
         assertWarnings(FieldNamesFieldMapper.ENABLED_DEPRECATION_MESSAGE);
     }
 
     public void testDisabled() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_field_names").field("enabled", false).endObject()
-            .endObject().endObject());
-        DocumentMapper docMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_field_names")
+                .field("enabled", false).endObject().endObject().endObject());
+        DocumentMapper docMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
         FieldNamesFieldMapper fieldNamesMapper = docMapper.metadataMapper(FieldNamesFieldMapper.class);
         assertFalse(fieldNamesMapper.fieldType().isEnabled());
 
         ParsedDocument doc = docMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder()
-                .startObject()
-                .field("field", "value")
-                .endObject()),
-            XContentType.JSON));
+                BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field("field", "value").endObject()), XContentType.JSON));
 
         assertNull(doc.rootDoc().get("_field_names"));
         assertWarnings(FieldNamesFieldMapper.ENABLED_DEPRECATION_MESSAGE.replace("{}", "test"));
     }
 
     public void testMergingMappings() throws Exception {
-        String enabledMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_field_names").field("enabled", true).endObject()
-            .endObject().endObject());
+        String enabledMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_field_names")
+                .field("enabled", true).endObject().endObject().endObject());
         String disabledMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_field_names").field("enabled", false).endObject()
-            .endObject().endObject());
+                .startObject("_field_names").field("enabled", false).endObject().endObject().endObject());
         MapperService mapperService = createIndex("test").mapperService();
 
         mapperService.merge("type", new CompressedXContent(enabledMapping), MapperService.MergeReason.MAPPING_UPDATE);
-        DocumentMapper mapperDisabled = mapperService.merge("type", new CompressedXContent(disabledMapping),
-            MapperService.MergeReason.MAPPING_UPDATE);
+        DocumentMapper mapperDisabled =
+                mapperService.merge("type", new CompressedXContent(disabledMapping), MapperService.MergeReason.MAPPING_UPDATE);
         assertFalse(mapperDisabled.metadataMapper(FieldNamesFieldMapper.class).fieldType().isEnabled());
 
-        DocumentMapper mapperEnabled
-            = mapperService.merge("type", new CompressedXContent(enabledMapping), MapperService.MergeReason.MAPPING_UPDATE);
+        DocumentMapper mapperEnabled =
+                mapperService.merge("type", new CompressedXContent(enabledMapping), MapperService.MergeReason.MAPPING_UPDATE);
         assertTrue(mapperEnabled.metadataMapper(FieldNamesFieldMapper.class).fieldType().isEnabled());
         assertWarnings(FieldNamesFieldMapper.ENABLED_DEPRECATION_MESSAGE.replace("{}", "test"));
     }

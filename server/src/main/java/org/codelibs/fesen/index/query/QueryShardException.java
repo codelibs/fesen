@@ -49,7 +49,7 @@ public class QueryShardException extends FesenException {
         setIndex(index);
     }
 
-    public QueryShardException(StreamInput in) throws IOException{
+    public QueryShardException(StreamInput in) throws IOException {
         super(in);
     }
 

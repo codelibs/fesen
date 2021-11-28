@@ -106,16 +106,15 @@ public class TestTranslog {
                     long newTrimmedAboveSeqNo = Math.min(newMaxSeqNo, checkpoint.trimmedAboveSeqNo + random.nextInt(2));
 
                     checkpointCopy = new Checkpoint(checkpoint.offset + random.nextInt(2), checkpoint.numOps + random.nextInt(2),
-                        newTranslogGeneration, newMinSeqNo,
-                        newMaxSeqNo, checkpoint.globalCheckpoint + random.nextInt(2),
-                        newMinTranslogGeneration, newTrimmedAboveSeqNo);
+                            newTranslogGeneration, newMinSeqNo, newMaxSeqNo, checkpoint.globalCheckpoint + random.nextInt(2),
+                            newMinTranslogGeneration, newTrimmedAboveSeqNo);
                 }
-                Checkpoint.write(FileChannel::open, unnecessaryCheckpointCopyPath, checkpointCopy,
-                    StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+                Checkpoint.write(FileChannel::open, unnecessaryCheckpointCopyPath, checkpointCopy, StandardOpenOption.WRITE,
+                        StandardOpenOption.CREATE_NEW);
 
                 if (checkpointCopy.equals(checkpoint) == false) {
                     logger.info("corruptRandomTranslogFile: created [{}] containing [{}] instead of [{}]", unnecessaryCheckpointCopyPath,
-                        checkpointCopy, checkpoint);
+                            checkpointCopy, checkpoint);
                     return;
                 } // else checkpoint copy has the correct content so it's now a candidate for the usual kinds of corruption
             }
@@ -184,7 +183,7 @@ public class TestTranslog {
                     fileChannel.position(corruptPosition);
                     fileChannel.write(bb);
                     logger.info("corruptFile: corrupting file {} at position {} turning 0x{} into 0x{}", fileToCorrupt, corruptPosition,
-                        Integer.toHexString(oldValue & 0xff), Integer.toHexString(newValue & 0xff));
+                            Integer.toHexString(oldValue & 0xff), Integer.toHexString(newValue & 0xff));
                 } while (isTranslogHeaderVersionFlipped(fileToCorrupt, fileChannel));
 
             } else {

@@ -19,20 +19,21 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import org.codelibs.fesen.common.ssl.DefaultJdkTrustConfig;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Assert;
+import static org.hamcrest.Matchers.emptyArray;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
-import javax.net.ssl.X509ExtendedTrustManager;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.emptyArray;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.not;
+import javax.net.ssl.X509ExtendedTrustManager;
+
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Assert;
 
 public class DefaultJdkTrustConfigTests extends ESTestCase {
 
@@ -66,8 +67,7 @@ public class DefaultJdkTrustConfigTests extends ESTestCase {
     private void assertHasTrustedIssuer(X509ExtendedTrustManager trustManager, String name) {
         final String lowerName = name.toLowerCase(Locale.ROOT);
         final Optional<X509Certificate> ca = Stream.of(trustManager.getAcceptedIssuers())
-            .filter(cert -> cert.getSubjectDN().getName().toLowerCase(Locale.ROOT).contains(lowerName))
-            .findAny();
+                .filter(cert -> cert.getSubjectDN().getName().toLowerCase(Locale.ROOT).contains(lowerName)).findAny();
         if (ca.isPresent() == false) {
             logger.info("Failed to find issuer [{}] in trust manager, but did find ...", lowerName);
             for (X509Certificate cert : trustManager.getAcceptedIssuers()) {

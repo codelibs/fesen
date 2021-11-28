@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
 
 public abstract class ParsedGeoGridBucket extends ParsedMultiBucketAggregation.ParsedBucket implements GeoGrid.Bucket {
 

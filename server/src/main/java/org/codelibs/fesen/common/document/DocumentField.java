@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.common.document;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.get.GetResult;
-import org.codelibs.fesen.search.SearchHit;
-
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.parseFieldsValue;
 
@@ -36,6 +27,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.index.get.GetResult;
+import org.codelibs.fesen.search.SearchHit;
 
 /**
  * A single field name and values part of {@link SearchHit} and {@link GetResult}.
@@ -72,7 +72,7 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
         if (values == null || values.isEmpty()) {
             return null;
         }
-        return (V)values.get(0);
+        return (V) values.get(0);
     }
 
     /**
@@ -137,9 +137,6 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
 
     @Override
     public String toString() {
-        return "DocumentField{" +
-                "name='" + name + '\'' +
-                ", values=" + values +
-                '}';
+        return "DocumentField{" + "name='" + name + '\'' + ", values=" + values + '}';
     }
 }

@@ -48,8 +48,7 @@ public class SequenceNumbers {
      * @param commitData       the commit data
      * @return the sequence number stats
      */
-    public static CommitInfo loadSeqNoInfoFromLuceneCommit(
-        final Iterable<Map.Entry<String, String>> commitData) {
+    public static CommitInfo loadSeqNoInfoFromLuceneCommit(final Iterable<Map.Entry<String, String>> commitData) {
         long maxSeqNo = NO_OPS_PERFORMED;
         long localCheckpoint = NO_OPS_PERFORMED;
 
@@ -126,10 +125,7 @@ public class SequenceNumbers {
 
         @Override
         public String toString() {
-            return "CommitInfo{" +
-                "maxSeqNo=" + maxSeqNo +
-                ", localCheckpoint=" + localCheckpoint +
-                '}';
+            return "CommitInfo{" + "maxSeqNo=" + maxSeqNo + ", localCheckpoint=" + localCheckpoint + '}';
         }
     }
 }

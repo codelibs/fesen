@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import org.codelibs.fesen.analysis.common.CharMatcher;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class CharMatcherTests extends ESTestCase {

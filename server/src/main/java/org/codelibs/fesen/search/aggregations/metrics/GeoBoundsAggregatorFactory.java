@@ -37,34 +37,22 @@ class GeoBoundsAggregatorFactory extends ValuesSourceAggregatorFactory {
 
     private final boolean wrapLongitude;
 
-    GeoBoundsAggregatorFactory(String name,
-                                ValuesSourceConfig config,
-                                boolean wrapLongitude,
-                                QueryShardContext queryShardContext,
-                                AggregatorFactory parent,
-                                AggregatorFactories.Builder subFactoriesBuilder,
-                                Map<String, Object> metadata) throws IOException {
+    GeoBoundsAggregatorFactory(String name, ValuesSourceConfig config, boolean wrapLongitude, QueryShardContext queryShardContext,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.wrapLongitude = wrapLongitude;
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                            Aggregator parent,
-                                            Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
         return new GeoBoundsAggregator(name, searchContext, parent, config, wrapLongitude, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(
-        SearchContext searchContext,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(GeoBoundsAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, searchContext, parent, config, wrapLongitude, metadata);
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
+        return queryShardContext.getValuesSourceRegistry().getAggregator(GeoBoundsAggregationBuilder.REGISTRY_KEY, config).build(name,
+                searchContext, parent, config, wrapLongitude, metadata);
     }
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {

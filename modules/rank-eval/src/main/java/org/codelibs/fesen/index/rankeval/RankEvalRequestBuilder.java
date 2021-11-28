@@ -25,8 +25,7 @@ import org.codelibs.fesen.client.FesenClient;
 
 public class RankEvalRequestBuilder extends ActionRequestBuilder<RankEvalRequest, RankEvalResponse> {
 
-    public RankEvalRequestBuilder(FesenClient client, ActionType<RankEvalResponse> action,
-            RankEvalRequest request) {
+    public RankEvalRequestBuilder(FesenClient client, ActionType<RankEvalResponse> action, RankEvalRequest request) {
         super(client, action, request);
     }
 

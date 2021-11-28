@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.script;
 
+import static com.carrotsearch.hppc.BitMixer.mix32;
+
+import java.time.ZoneId;
+
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.StringHelper;
 import org.codelibs.fesen.ExceptionsHelper;
@@ -31,24 +35,20 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 
-import java.time.ZoneId;
-
-import static com.carrotsearch.hppc.BitMixer.mix32;
-
 public final class ScoreScriptUtils {
 
     /****** STATIC FUNCTIONS that can be used by users for score calculations **/
 
     public static double saturation(double value, double k) {
-        return value/ (k + value);
+        return value / (k + value);
     }
 
     /**
      * Calculate a sigmoid of <code>value</code>
      * with scaling parameters <code>k</code> and <code>a</code>
      */
-    public static double sigmoid(double value, double k, double a){
-        return Math.pow(value,a) / (Math.pow(k,a) + Math.pow(value,a));
+    public static double sigmoid(double value, double k, double a) {
+        return Math.pow(value, a) / (Math.pow(k, a) + Math.pow(value, a));
     }
 
     // random score based on the documents' values of the given field
@@ -56,7 +56,6 @@ public final class ScoreScriptUtils {
         private final ScoreScript scoreScript;
         private final ScriptDocValues docValues;
         private final int saltedSeed;
-
 
         public RandomScoreField(ScoreScript scoreScript, int seed, String fieldName) {
             this.scoreScript = scoreScript;
@@ -71,7 +70,7 @@ public final class ScoreScriptUtils {
                 docValues.setNextDocId(scoreScript._getDocId());
                 String seedValue = String.valueOf(docValues.get(0));
                 int hash = StringHelper.murmurhash3_x86_32(new BytesRef(seedValue), saltedSeed);
-                return (hash & 0x00FFFFFF) / (float)(1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
+                return (hash & 0x00FFFFFF) / (float) (1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
             } catch (Exception e) {
                 throw ExceptionsHelper.convertToElastic(e);
             }
@@ -92,7 +91,7 @@ public final class ScoreScriptUtils {
         public double randomScore() {
             String seedValue = Integer.toString(scoreScript._getDocBaseId());
             int hash = StringHelper.murmurhash3_x86_32(new BytesRef(seedValue), saltedSeed);
-            return (hash & 0x00FFFFFF) / (float)(1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
+            return (hash & 0x00FFFFFF) / (float) (1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
         }
     }
 
@@ -154,7 +153,7 @@ public final class ScoreScriptUtils {
             this.originLat = origin.lat();
             this.originLon = origin.lon();
             this.offset = DistanceUnit.DEFAULT.parse(offsetStr, DistanceUnit.DEFAULT);
-            this.scaling =  0.5 * Math.pow(scale, 2.0) / Math.log(decay);
+            this.scaling = 0.5 * Math.pow(scale, 2.0) / Math.log(decay);
         }
 
         public double decayGeoGauss(GeoPoint docValue) {
@@ -226,7 +225,7 @@ public final class ScoreScriptUtils {
      *
      */
     private static final ZoneId defaultZoneId = ZoneId.of("UTC");
-    private static final DateMathParser dateParser =  DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER.toDateMathParser();
+    private static final DateMathParser dateParser = DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER.toDateMathParser();
 
     public static final class DecayDateLinear {
         long origin;
@@ -235,10 +234,10 @@ public final class ScoreScriptUtils {
 
         public DecayDateLinear(String originStr, String scaleStr, String offsetStr, double decay) {
             this.origin = dateParser.parse(originStr, null, false, defaultZoneId).toEpochMilli();
-            long scale = TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale")
-                .getMillis();
-            this.offset = TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset")
-                .getMillis();
+            long scale =
+                    TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale").getMillis();
+            this.offset =
+                    TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset").getMillis();
             this.scaling = scale / (1.0 - decay);
         }
 
@@ -258,10 +257,10 @@ public final class ScoreScriptUtils {
 
         public DecayDateExp(String originStr, String scaleStr, String offsetStr, double decay) {
             this.origin = dateParser.parse(originStr, null, false, defaultZoneId).toEpochMilli();
-            long scale = TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale")
-                .getMillis();
-            this.offset = TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset")
-                .getMillis();
+            long scale =
+                    TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale").getMillis();
+            this.offset =
+                    TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset").getMillis();
             this.scaling = Math.log(decay) / scale;
         }
 
@@ -273,7 +272,6 @@ public final class ScoreScriptUtils {
         }
     }
 
-
     public static final class DecayDateGauss {
         long origin;
         long offset;
@@ -281,10 +279,10 @@ public final class ScoreScriptUtils {
 
         public DecayDateGauss(String originStr, String scaleStr, String offsetStr, double decay) {
             this.origin = dateParser.parse(originStr, null, false, defaultZoneId).toEpochMilli();
-            long scale = TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale")
-                .getMillis();
-            this.offset = TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset")
-                .getMillis();
+            long scale =
+                    TimeValue.parseTimeValue(scaleStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".scale").getMillis();
+            this.offset =
+                    TimeValue.parseTimeValue(offsetStr, TimeValue.timeValueHours(24), getClass().getSimpleName() + ".offset").getMillis();
             this.scaling = 0.5 * Math.pow(scale, 2.0) / Math.log(decay);
         }
 

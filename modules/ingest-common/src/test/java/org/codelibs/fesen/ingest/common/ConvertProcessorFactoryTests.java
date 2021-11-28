@@ -19,17 +19,16 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.common.ConvertProcessor;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 public class ConvertProcessorFactoryTests extends ESTestCase {
 

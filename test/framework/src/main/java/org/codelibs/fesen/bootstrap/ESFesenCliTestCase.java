@@ -19,19 +19,18 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import org.codelibs.fesen.bootstrap.Fesen;
-import org.codelibs.fesen.cli.MockTerminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.cli.MockTerminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.test.ESTestCase;
 
 abstract class ESFesenCliTestCase extends ESTestCase {
 
@@ -39,12 +38,8 @@ abstract class ESFesenCliTestCase extends ESTestCase {
         void accept(boolean foreground, Path pidFile, boolean quiet, Environment initialEnv);
     }
 
-    void runTest(
-            final int expectedStatus,
-            final boolean expectedInit,
-            final BiConsumer<String, String> outputConsumer,
-            final InitConsumer initConsumer,
-            final String... args) throws Exception {
+    void runTest(final int expectedStatus, final boolean expectedInit, final BiConsumer<String, String> outputConsumer,
+            final InitConsumer initConsumer, final String... args) throws Exception {
         final MockTerminal terminal = new MockTerminal();
         final Path home = createTempDir();
         try {
@@ -53,10 +48,11 @@ abstract class ESFesenCliTestCase extends ESTestCase {
                 @Override
                 protected Environment createEnv(final Map<String, String> settings) throws UserException {
                     Settings.Builder builder = Settings.builder().put("path.home", home);
-                    settings.forEach((k,v) -> builder.put(k, v));
+                    settings.forEach((k, v) -> builder.put(k, v));
                     final Settings realSettings = builder.build();
                     return new Environment(realSettings, home.resolve("config"));
                 }
+
                 @Override
                 void init(final boolean daemonize, final Path pidFile, final boolean quiet, Environment initialEnv) {
                     init.set(true);

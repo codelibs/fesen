@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.HtmlStripProcessor;
-
 public class HtmlStripProcessorFactoryTests extends AbstractStringProcessorFactoryTestCase {
     @Override
     protected AbstractStringProcessor.Factory newFactory() {

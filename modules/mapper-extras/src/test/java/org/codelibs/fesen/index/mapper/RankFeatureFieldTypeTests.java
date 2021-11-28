@@ -25,10 +25,6 @@ import java.util.Collections;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.index.mapper.ContentPath;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.Mapper;
-import org.codelibs.fesen.index.mapper.RankFeatureFieldMapper;
 
 public class RankFeatureFieldTypeTests extends FieldTypeTestCase {
 

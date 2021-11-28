@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -27,12 +31,8 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 
 public class SamplerAggregationBuilder extends AbstractAggregationBuilder<SamplerAggregationBuilder> {
     public static final String NAME = "sampler";
@@ -137,9 +137,12 @@ public class SamplerAggregationBuilder extends AbstractAggregationBuilder<Sample
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         SamplerAggregationBuilder other = (SamplerAggregationBuilder) obj;
         return Objects.equals(shardSize, other.shardSize);
     }

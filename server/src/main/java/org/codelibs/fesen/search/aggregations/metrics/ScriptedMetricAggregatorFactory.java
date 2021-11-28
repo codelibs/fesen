@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.script.Script;
@@ -30,12 +36,6 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 class ScriptedMetricAggregatorFactory extends AggregatorFactory {
 
@@ -50,22 +50,11 @@ class ScriptedMetricAggregatorFactory extends AggregatorFactory {
     private final ScriptedMetricAggContexts.InitScript.Factory initScript;
     private final Map<String, Object> initScriptParams;
 
-    ScriptedMetricAggregatorFactory(
-        String name,
-        ScriptedMetricAggContexts.MapScript.Factory mapScript,
-        Map<String, Object> mapScriptParams,
-        @Nullable ScriptedMetricAggContexts.InitScript.Factory initScript,
-        Map<String, Object> initScriptParams,
-        ScriptedMetricAggContexts.CombineScript.Factory combineScript,
-        Map<String, Object> combineScriptParams,
-        Script reduceScript,
-        Map<String, Object> aggParams,
-        SearchLookup lookup,
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactories,
-        Map<String, Object> metadata
-    ) throws IOException {
+    ScriptedMetricAggregatorFactory(String name, ScriptedMetricAggContexts.MapScript.Factory mapScript, Map<String, Object> mapScriptParams,
+            @Nullable ScriptedMetricAggContexts.InitScript.Factory initScript, Map<String, Object> initScriptParams,
+            ScriptedMetricAggContexts.CombineScript.Factory combineScript, Map<String, Object> combineScriptParams, Script reduceScript,
+            Map<String, Object> aggParams, SearchLookup lookup, QueryShardContext queryShardContext, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactories, Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactories, metadata);
         this.mapScript = mapScript;
         this.mapScriptParams = mapScriptParams;
@@ -79,29 +68,14 @@ class ScriptedMetricAggregatorFactory extends AggregatorFactory {
     }
 
     @Override
-    public Aggregator createInternal(SearchContext searchContext,
-                                        Aggregator parent,
-                                        CardinalityUpperBound cardinality,
-                                        Map<String, Object> metadata) throws IOException {
+    public Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         Map<String, Object> aggParams = this.aggParams == null ? org.codelibs.fesen.core.Map.of() : this.aggParams;
 
         Script reduceScript = deepCopyScript(this.reduceScript, searchContext, aggParams);
 
-        return new ScriptedMetricAggregator(
-            name,
-            lookup,
-            aggParams,
-            initScript,
-            initScriptParams,
-            mapScript,
-            mapScriptParams,
-            combineScript,
-            combineScriptParams,
-            reduceScript,
-            searchContext,
-            parent,
-            metadata
-        );
+        return new ScriptedMetricAggregator(name, lookup, aggParams, initScript, initScriptParams, mapScript, mapScriptParams,
+                combineScript, combineScriptParams, reduceScript, searchContext, parent, metadata);
     }
 
     private static Script deepCopyScript(Script script, SearchContext context, Map<String, Object> aggParams) {
@@ -131,12 +105,12 @@ class ScriptedMetricAggregatorFactory extends AggregatorFactory {
             }
             clone = (T) clonedList;
         } else if (original instanceof String || original instanceof Integer || original instanceof Long || original instanceof Short
-            || original instanceof Byte || original instanceof Float || original instanceof Double || original instanceof Character
-            || original instanceof Boolean) {
+                || original instanceof Byte || original instanceof Float || original instanceof Double || original instanceof Character
+                || original instanceof Boolean) {
             clone = original;
         } else {
             throw new SearchParseException(context.shardTarget(),
-                "Can only clone primitives, String, ArrayList, and HashMap. Found: " + original.getClass().getCanonicalName(), null);
+                    "Can only clone primitives, String, ArrayList, and HashMap. Found: " + original.getClass().getCanonicalName(), null);
         }
         return clone;
     }
@@ -148,12 +122,11 @@ class ScriptedMetricAggregatorFactory extends AggregatorFactory {
         // Add in agg params, throwing an exception if any conflicts are detected
         for (Map.Entry<String, Object> aggEntry : agg.entrySet()) {
             if (combined.putIfAbsent(aggEntry.getKey(), aggEntry.getValue()) != null) {
-                throw new IllegalArgumentException("Parameter name \"" + aggEntry.getKey() +
-                    "\" used in both aggregation and script parameters");
+                throw new IllegalArgumentException(
+                        "Parameter name \"" + aggEntry.getKey() + "\" used in both aggregation and script parameters");
             }
         }
 
         return combined;
     }
 }
-

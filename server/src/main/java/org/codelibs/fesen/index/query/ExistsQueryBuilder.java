@@ -19,10 +19,19 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.codelibs.fesen.Version;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ConstantScoreQuery;
+import org.apache.lucene.search.MatchNoDocsQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -33,16 +42,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.FieldNamesFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 
 /**
  * Constructs a query that only match on documents that the field has a value in them.
@@ -119,12 +118,12 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
                 } else if (AbstractQueryBuilder.BOOST_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     boost = parser.floatValue();
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(), "[" + ExistsQueryBuilder.NAME +
-                            "] query does not support [" + currentFieldName + "]");
+                    throw new ParsingException(parser.getTokenLocation(),
+                            "[" + ExistsQueryBuilder.NAME + "] query does not support [" + currentFieldName + "]");
                 }
             } else {
-                throw new ParsingException(parser.getTokenLocation(), "[" + ExistsQueryBuilder.NAME +
-                        "] unknown token [" + token + "] after [" + currentFieldName + "]");
+                throw new ParsingException(parser.getTokenLocation(),
+                        "[" + ExistsQueryBuilder.NAME + "] unknown token [" + token + "] after [" + currentFieldName + "]");
             }
         }
 
@@ -145,7 +144,7 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
 
     public static Query newFilter(QueryShardContext context, String fieldPattern, boolean checkRewrite) {
 
-       Collection<String> fields = getMappedField(context, fieldPattern);
+        Collection<String> fields = getMappedField(context, fieldPattern);
 
         if (fields.isEmpty()) {
             if (checkRewrite) {
@@ -218,8 +217,8 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
      * @return return collection of fields if exists else return empty.
      */
     private static Collection<String> getMappedField(QueryShardContext context, String fieldPattern) {
-        final FieldNamesFieldMapper.FieldNamesFieldType fieldNamesFieldType = (FieldNamesFieldMapper.FieldNamesFieldType) context
-            .getMapperService().fieldType(FieldNamesFieldMapper.NAME);
+        final FieldNamesFieldMapper.FieldNamesFieldType fieldNamesFieldType =
+                (FieldNamesFieldMapper.FieldNamesFieldType) context.getMapperService().fieldType(FieldNamesFieldMapper.NAME);
 
         if (fieldNamesFieldType == null) {
             // can only happen when no types exist, so no docs exist either

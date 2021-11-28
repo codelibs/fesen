@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.seqno;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A "shard history retention lease" (or "retention lease" for short) is conceptually a marker containing a retaining sequence number such
@@ -145,8 +145,7 @@ public final class RetentionLease implements ToXContentObject, Writeable {
     private static final ParseField TIMESTAMP_FIELD = new ParseField("timestamp");
     private static final ParseField SOURCE_FIELD = new ParseField("source");
 
-    private static final ConstructingObjectParser<RetentionLease, Void> PARSER = new ConstructingObjectParser<>(
-            "retention_leases",
+    private static final ConstructingObjectParser<RetentionLease, Void> PARSER = new ConstructingObjectParser<>("retention_leases",
             (a) -> new RetentionLease((String) a[0], (Long) a[1], (Long) a[2], (String) a[3]));
 
     static {
@@ -187,13 +186,13 @@ public final class RetentionLease implements ToXContentObject, Writeable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         final RetentionLease that = (RetentionLease) o;
-        return Objects.equals(id, that.id) &&
-                retainingSequenceNumber == that.retainingSequenceNumber &&
-                timestamp == that.timestamp &&
-                Objects.equals(source, that.source);
+        return Objects.equals(id, that.id) && retainingSequenceNumber == that.retainingSequenceNumber && timestamp == that.timestamp
+                && Objects.equals(source, that.source);
     }
 
     @Override
@@ -203,12 +202,8 @@ public final class RetentionLease implements ToXContentObject, Writeable {
 
     @Override
     public String toString() {
-        return "RetentionLease{" +
-                "id='" + id + '\'' +
-                ", retainingSequenceNumber=" + retainingSequenceNumber +
-                ", timestamp=" + timestamp +
-                ", source='" + source + '\'' +
-                '}';
+        return "RetentionLease{" + "id='" + id + '\'' + ", retainingSequenceNumber=" + retainingSequenceNumber + ", timestamp=" + timestamp
+                + ", source='" + source + '\'' + '}';
     }
 
 }

@@ -19,11 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.DiversifiedTopDocsCollector;
 import org.apache.lucene.search.DiversifiedTopDocsCollector.ScoreDocKey;
+import org.apache.lucene.search.TopDocsCollector;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.index.fielddata.AbstractNumericDocValues;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -32,27 +37,14 @@ import org.codelibs.fesen.search.aggregations.bucket.DeferringBucketCollector;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
-import org.apache.lucene.search.TopDocsCollector;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class DiversifiedNumericSamplerAggregator extends SamplerAggregator {
 
     private ValuesSource.Numeric valuesSource;
     private int maxDocsPerValue;
 
-    DiversifiedNumericSamplerAggregator(
-        String name,
-        int shardSize,
-        AggregatorFactories factories,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata,
-        ValuesSourceConfig valuesSourceConfig,
-        int maxDocsPerValue
-    ) throws IOException {
+    DiversifiedNumericSamplerAggregator(String name, int shardSize, AggregatorFactories factories, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata, ValuesSourceConfig valuesSourceConfig, int maxDocsPerValue) throws IOException {
         super(name, shardSize, factories, context, parent, metadata);
         assert valuesSourceConfig.hasValues();
         this.valuesSource = (ValuesSource.Numeric) valuesSourceConfig.getValuesSource();
@@ -110,8 +102,7 @@ public class DiversifiedNumericSamplerAggregator extends SamplerAggregator {
                     public boolean advanceExact(int target) throws IOException {
                         if (values.advanceExact(target)) {
                             if (values.docValueCount() > 1) {
-                                throw new IllegalArgumentException(
-                                        "Sample diversifying key must be a single valued-field");
+                                throw new IllegalArgumentException("Sample diversifying key must be a single valued-field");
                             }
                             return true;
                         } else {

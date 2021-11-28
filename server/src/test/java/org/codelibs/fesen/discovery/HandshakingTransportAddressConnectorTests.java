@@ -76,10 +76,8 @@ public class HandshakingTransportAddressConnectorTests extends ESTestCase {
     @Before
     public void startServices() {
         localNode = new DiscoveryNode("local-node", buildNewFakeTransportAddress(), Version.CURRENT);
-        final Settings settings = Settings.builder()
-            .put(NODE_NAME_SETTING.getKey(), "node")
-            .put(CLUSTER_NAME_SETTING.getKey(), "local-cluster")
-            .build();
+        final Settings settings =
+                Settings.builder().put(NODE_NAME_SETTING.getKey(), "node").put(CLUSTER_NAME_SETTING.getKey(), "local-cluster").build();
         threadPool = new TestThreadPool("node", settings);
 
         remoteNode = null;
@@ -105,8 +103,8 @@ public class HandshakingTransportAddressConnectorTests extends ESTestCase {
             }
         };
 
-        transportService = mockTransport.createTransportService(settings, threadPool,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR, address -> localNode, null, emptySet());
+        transportService = mockTransport.createTransportService(settings, threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+                address -> localNode, null, emptySet());
 
         transportService.start();
         transportService.acceptIncomingRequests();
@@ -145,7 +143,7 @@ public class HandshakingTransportAddressConnectorTests extends ESTestCase {
         assertEquals(remoteNode, receivedNode.get());
     }
 
-    @TestLogging(reason="ensure logging happens", value="org.codelibs.fesen.discovery.HandshakingTransportAddressConnector:INFO")
+    @TestLogging(reason = "ensure logging happens", value = "org.codelibs.fesen.discovery.HandshakingTransportAddressConnector:INFO")
     public void testLogsFullConnectionFailureAfterSuccessfulHandshake() throws Exception {
 
         remoteNode = new DiscoveryNode("remote-node", buildNewFakeTransportAddress(), Version.CURRENT);
@@ -159,11 +157,8 @@ public class HandshakingTransportAddressConnectorTests extends ESTestCase {
         MockLogAppender mockAppender = new MockLogAppender();
         mockAppender.start();
         mockAppender.addExpectation(
-            new MockLogAppender.SeenEventExpectation(
-                "message",
-                HandshakingTransportAddressConnector.class.getCanonicalName(),
-                Level.WARN,
-                "*completed handshake with [*] but followup connection failed*"));
+                new MockLogAppender.SeenEventExpectation("message", HandshakingTransportAddressConnector.class.getCanonicalName(),
+                        Level.WARN, "*completed handshake with [*] but followup connection failed*"));
         Logger targetLogger = LogManager.getLogger(HandshakingTransportAddressConnector.class);
         Loggers.addAppender(targetLogger, mockAppender);
 

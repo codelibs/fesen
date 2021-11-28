@@ -19,20 +19,6 @@
 
 package org.codelibs.fesen.search.suggest.completion.context;
 
-import org.apache.lucene.search.suggest.document.CompletionQuery;
-import org.apache.lucene.search.suggest.document.ContextQuery;
-import org.apache.lucene.search.suggest.document.ContextSuggestField;
-import org.apache.lucene.util.CharsRef;
-import org.apache.lucene.util.CharsRefBuilder;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.index.mapper.CompletionFieldMapper;
-import org.codelibs.fesen.index.mapper.DocumentMapperParser;
-import org.codelibs.fesen.index.mapper.ParseContext;
-import org.codelibs.fesen.search.suggest.completion.context.ContextMapping.Type;
-
 import static org.codelibs.fesen.search.suggest.completion.context.ContextMapping.FIELD_NAME;
 import static org.codelibs.fesen.search.suggest.completion.context.ContextMapping.FIELD_TYPE;
 
@@ -47,6 +33,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.lucene.search.suggest.document.CompletionQuery;
+import org.apache.lucene.search.suggest.document.ContextQuery;
+import org.apache.lucene.search.suggest.document.ContextSuggestField;
+import org.apache.lucene.util.CharsRef;
+import org.apache.lucene.util.CharsRefBuilder;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.index.mapper.CompletionFieldMapper;
+import org.codelibs.fesen.index.mapper.DocumentMapperParser;
+import org.codelibs.fesen.index.mapper.ParseContext;
+import org.codelibs.fesen.search.suggest.completion.context.ContextMapping.Type;
 
 /**
  * ContextMappings indexes context-enabled suggestion fields
@@ -126,8 +126,7 @@ public class ContextMappings implements ToXContent, Iterable<ContextMapping<?>> 
         private final Map<String, Set<String>> contexts;
         private final ParseContext.Document document;
 
-        TypedContextField(String name, String value, int weight, Map<String, Set<String>> contexts,
-                          ParseContext.Document document) {
+        TypedContextField(String name, String value, int weight, Map<String, Set<String>> contexts, ParseContext.Document document) {
             super(name, value, weight);
             this.contexts = contexts;
             this.document = document;
@@ -248,14 +247,14 @@ public class ContextMappings implements ToXContent, Iterable<ContextMapping<?>> 
         String type = extractRequiredValue(contextConfig, FIELD_TYPE);
         final ContextMapping<?> contextMapping;
         switch (Type.fromString(type)) {
-            case CATEGORY:
-                contextMapping = CategoryContextMapping.load(name, contextConfig);
-                break;
-            case GEO:
-                contextMapping = GeoContextMapping.load(name, contextConfig);
-                break;
-            default:
-                throw new FesenParseException("unknown context type[" + type + "]");
+        case CATEGORY:
+            contextMapping = CategoryContextMapping.load(name, contextConfig);
+            break;
+        case GEO:
+            contextMapping = GeoContextMapping.load(name, contextConfig);
+            break;
+        default:
+            throw new FesenParseException("unknown context type[" + type + "]");
         }
         DocumentMapperParser.checkNoRemainingFields(name, contextConfig, indexVersionCreated);
         return contextMapping;

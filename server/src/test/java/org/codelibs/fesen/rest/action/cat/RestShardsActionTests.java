@@ -62,9 +62,9 @@ public class RestShardsActionTests extends ESTestCase {
             ShardRoutingState shardRoutingState = ShardRoutingState.fromValue((byte) randomIntBetween(2, 3));
             ShardRouting shardRouting = TestShardRouting.newShardRouting(index, i, localNode.getId(), randomBoolean(), shardRoutingState);
             Path path = createTempDir().resolve("indices").resolve(shardRouting.shardId().getIndex().getUUID())
-                .resolve(String.valueOf(shardRouting.shardId().id()));
-            ShardStats shardStats = new ShardStats(shardRouting, new ShardPath(false, path, path, shardRouting.shardId()),
-                null, null, null, null);
+                    .resolve(String.valueOf(shardRouting.shardId().id()));
+            ShardStats shardStats =
+                    new ShardStats(shardRouting, new ShardPath(false, path, path, shardRouting.shardId()), null, null, null, null);
             shardStatsMap.put(shardRouting, shardStats);
             shardRoutings.add(shardRouting);
         }

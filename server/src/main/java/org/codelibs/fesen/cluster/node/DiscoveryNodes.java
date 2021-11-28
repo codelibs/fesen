@@ -19,9 +19,16 @@
 
 package org.codelibs.fesen.cluster.node;
 
-import com.carrotsearch.hppc.ObjectHashSet;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
@@ -36,16 +43,9 @@ import org.codelibs.fesen.common.util.set.Sets;
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.core.Nullable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import com.carrotsearch.hppc.ObjectHashSet;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * This class holds all {@link DiscoveryNode} in the cluster and provides convenience methods to
@@ -68,9 +68,9 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     private final Version minNodeVersion;
 
     private DiscoveryNodes(ImmutableOpenMap<String, DiscoveryNode> nodes, ImmutableOpenMap<String, DiscoveryNode> dataNodes,
-                           ImmutableOpenMap<String, DiscoveryNode> masterNodes, ImmutableOpenMap<String, DiscoveryNode> ingestNodes,
-                           String masterNodeId, String localNodeId, Version minNonClientNodeVersion, Version maxNonClientNodeVersion,
-                           Version maxNodeVersion, Version minNodeVersion) {
+            ImmutableOpenMap<String, DiscoveryNode> masterNodes, ImmutableOpenMap<String, DiscoveryNode> ingestNodes, String masterNodeId,
+            String localNodeId, Version minNonClientNodeVersion, Version maxNonClientNodeVersion, Version maxNodeVersion,
+            Version minNodeVersion) {
         this.nodes = nodes;
         this.dataNodes = dataNodes;
         this.masterNodes = masterNodes;
@@ -171,7 +171,7 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
      */
     public Stream<DiscoveryNode> mastersFirstStream() {
         return Stream.concat(StreamSupport.stream(masterNodes.spliterator(), false).map(cur -> cur.value),
-            StreamSupport.stream(this.spliterator(), false).filter(n -> n.isMasterNode() == false));
+                StreamSupport.stream(this.spliterator(), false).filter(n -> n.isMasterNode() == false));
     }
 
     /**
@@ -318,8 +318,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     public DiscoveryNode resolveNode(String node) {
         String[] resolvedNodeIds = resolveNodes(node);
         if (resolvedNodeIds.length > 1) {
-            throw new IllegalArgumentException("resolved [" + node + "] into [" + resolvedNodeIds.length
-                + "] nodes, where expected to be resolved to a single node");
+            throw new IllegalArgumentException(
+                    "resolved [" + node + "] into [" + resolvedNodeIds.length + "] nodes, where expected to be resolved to a single node");
         }
         if (resolvedNodeIds.length == 0) {
             throw new IllegalArgumentException("failed to resolve [" + node + "], no matching nodes");
@@ -366,10 +366,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
                     resolvedNodesIds.add(nodeId);
                 } else {
                     for (DiscoveryNode node : this) {
-                        if ("_all".equals(nodeId)
-                                || Regex.simpleMatch(nodeId, node.getName())
-                                || Regex.simpleMatch(nodeId, node.getHostAddress())
-                                || Regex.simpleMatch(nodeId, node.getHostName())) {
+                        if ("_all".equals(nodeId) || Regex.simpleMatch(nodeId, node.getName())
+                                || Regex.simpleMatch(nodeId, node.getHostAddress()) || Regex.simpleMatch(nodeId, node.getHostName())) {
                             resolvedNodesIds.add(node.getId());
                         }
                     }
@@ -452,7 +450,7 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         }
 
         return new Delta(other.getMasterNode(), getMasterNode(), localNodeId, Collections.unmodifiableList(removed),
-            Collections.unmodifiableList(added));
+                Collections.unmodifiableList(added));
     }
 
     @Override
@@ -475,13 +473,15 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     public static class Delta {
 
         private final String localNodeId;
-        @Nullable private final DiscoveryNode previousMasterNode;
-        @Nullable private final DiscoveryNode newMasterNode;
+        @Nullable
+        private final DiscoveryNode previousMasterNode;
+        @Nullable
+        private final DiscoveryNode newMasterNode;
         private final List<DiscoveryNode> removed;
         private final List<DiscoveryNode> added;
 
         private Delta(@Nullable DiscoveryNode previousMasterNode, @Nullable DiscoveryNode newMasterNode, String localNodeId,
-                     List<DiscoveryNode> removed, List<DiscoveryNode> added) {
+                List<DiscoveryNode> removed, List<DiscoveryNode> added) {
             this.previousMasterNode = previousMasterNode;
             this.newMasterNode = newMasterNode;
             this.localNodeId = localNodeId;
@@ -543,9 +543,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
                 summary.append("removed {").append(Strings.collectionToCommaDelimitedString(removedNodes())).append('}');
             }
             if (added()) {
-                final String addedNodesExceptLocalNode = addedNodes().stream()
-                    .filter(node -> node.getId().equals(localNodeId) == false).map(DiscoveryNode::toString)
-                    .collect(Collectors.joining(","));
+                final String addedNodesExceptLocalNode = addedNodes().stream().filter(node -> node.getId().equals(localNodeId) == false)
+                        .map(DiscoveryNode::toString).collect(Collectors.joining(","));
                 if (addedNodesExceptLocalNode.length() > 0) {
                     // ignore ourselves when reporting on nodes being added
                     if (summary.length() > 0) {
@@ -589,7 +588,7 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
             }
             // some one already built this and validated it's OK, skip the n2 scans
             assert builder.validateAdd(node) == null : "building disco nodes from network doesn't pass preflight: "
-                + builder.validateAdd(node);
+                    + builder.validateAdd(node);
             builder.putUnsafe(node);
         }
         return builder.build();
@@ -642,7 +641,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
          * @param nodeId id of the wanted node
          * @return wanted node if it exists. Otherwise <code>null</code>
          */
-        @Nullable public DiscoveryNode get(String nodeId) {
+        @Nullable
+        public DiscoveryNode get(String nodeId) {
             return nodes.get(nodeId);
         }
 
@@ -661,7 +661,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
             }
             return this;
         }
-
 
         public Builder masterNodeId(String masterNodeId) {
             this.masterNodeId = masterNodeId;
@@ -684,14 +683,12 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         private String validateAdd(DiscoveryNode node) {
             for (ObjectCursor<DiscoveryNode> cursor : nodes.values()) {
                 final DiscoveryNode existingNode = cursor.value;
-                if (node.getAddress().equals(existingNode.getAddress()) &&
-                    node.getId().equals(existingNode.getId()) == false) {
+                if (node.getAddress().equals(existingNode.getAddress()) && node.getId().equals(existingNode.getId()) == false) {
                     return "can't add node " + node + ", found existing node " + existingNode + " with same address";
                 }
-                if (node.getId().equals(existingNode.getId()) &&
-                    node.equals(existingNode) == false) {
+                if (node.getId().equals(existingNode.getId()) && node.equals(existingNode) == false) {
                     return "can't add node " + node + ", found existing node " + existingNode
-                        + " with the same id but is a different node instance";
+                            + " with the same id but is a different node instance";
                 }
             }
             return null;
@@ -729,13 +726,10 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
                 maxNodeVersion = maxNodeVersion == null ? version : Version.max(maxNodeVersion, version);
             }
 
-            return new DiscoveryNodes(
-                nodes.build(), dataNodesBuilder.build(), masterNodesBuilder.build(), ingestNodesBuilder.build(),
-                masterNodeId, localNodeId, minNonClientNodeVersion == null ? Version.CURRENT : minNonClientNodeVersion,
-                maxNonClientNodeVersion == null ? Version.CURRENT : maxNonClientNodeVersion,
-                maxNodeVersion == null ? Version.CURRENT : maxNodeVersion,
-                minNodeVersion == null ? Version.CURRENT : minNodeVersion
-            );
+            return new DiscoveryNodes(nodes.build(), dataNodesBuilder.build(), masterNodesBuilder.build(), ingestNodesBuilder.build(),
+                    masterNodeId, localNodeId, minNonClientNodeVersion == null ? Version.CURRENT : minNonClientNodeVersion,
+                    maxNonClientNodeVersion == null ? Version.CURRENT : maxNonClientNodeVersion,
+                    maxNodeVersion == null ? Version.CURRENT : maxNodeVersion, minNodeVersion == null ? Version.CURRENT : minNodeVersion);
         }
 
         public boolean isLocalNodeElectedMaster() {

@@ -48,9 +48,8 @@ public class AnalyzeResponseTests extends AbstractWireSerializingTestCase<Analyz
         AnalyzeAction.AnalyzeToken[] tokens = null;
         AnalyzeAction.AnalyzeTokenList tokenizer = null;
 
-
         AnalyzeAction.AnalyzeTokenList tokenfiltersItem = new AnalyzeAction.AnalyzeTokenList(name, tokens);
-        AnalyzeAction.AnalyzeTokenList[] tokenfilters = {tokenfiltersItem};
+        AnalyzeAction.AnalyzeTokenList[] tokenfilters = { tokenfiltersItem };
 
         AnalyzeAction.DetailAnalyzeResponse detail = new AnalyzeAction.DetailAnalyzeResponse(charfilters, tokenizer, tokenfilters);
 
@@ -58,8 +57,8 @@ public class AnalyzeResponseTests extends AbstractWireSerializingTestCase<Analyz
         try (XContentBuilder builder = JsonXContent.contentBuilder()) {
             response.toXContent(builder, ToXContent.EMPTY_PARAMS);
             Map<String, Object> converted = XContentHelper.convertToMap(BytesReference.bytes(builder), false, builder.contentType()).v2();
-            List<Map<String, Object>> tokenfiltersValue = (List<Map<String, Object>>) ((Map<String, Object>)
-                converted.get("detail")).get("tokenfilters");
+            List<Map<String, Object>> tokenfiltersValue =
+                    (List<Map<String, Object>>) ((Map<String, Object>) converted.get("detail")).get("tokenfilters");
             List<Map<String, Object>> nullTokens = (List<Map<String, Object>>) tokenfiltersValue.get(0).get("tokens");
             String nameValue = (String) tokenfiltersValue.get(0).get("name");
             assertThat(nullTokens.size(), equalTo(0));
@@ -83,20 +82,15 @@ public class AnalyzeResponseTests extends AbstractWireSerializingTestCase<Analyz
             AnalyzeAction.CharFilteredText[] charfilters = null;
             AnalyzeAction.AnalyzeTokenList[] tokenfilters = null;
             if (randomBoolean()) {
-                charfilters = new AnalyzeAction.CharFilteredText[]{
-                    new AnalyzeAction.CharFilteredText("my_charfilter", new String[]{"one two"})
-                };
+                charfilters = new AnalyzeAction.CharFilteredText[] {
+                        new AnalyzeAction.CharFilteredText("my_charfilter", new String[] { "one two" }) };
             }
             if (randomBoolean()) {
-                tokenfilters = new AnalyzeAction.AnalyzeTokenList[]{
-                    new AnalyzeAction.AnalyzeTokenList("my_tokenfilter_1", tokens),
-                    new AnalyzeAction.AnalyzeTokenList("my_tokenfilter_2", tokens)
-                };
+                tokenfilters = new AnalyzeAction.AnalyzeTokenList[] { new AnalyzeAction.AnalyzeTokenList("my_tokenfilter_1", tokens),
+                        new AnalyzeAction.AnalyzeTokenList("my_tokenfilter_2", tokens) };
             }
-            AnalyzeAction.DetailAnalyzeResponse dar = new AnalyzeAction.DetailAnalyzeResponse(
-                charfilters,
-                new AnalyzeAction.AnalyzeTokenList("my_tokenizer", tokens),
-                tokenfilters);
+            AnalyzeAction.DetailAnalyzeResponse dar = new AnalyzeAction.DetailAnalyzeResponse(charfilters,
+                    new AnalyzeAction.AnalyzeTokenList("my_tokenizer", tokens), tokenfilters);
             return new AnalyzeAction.Response(null, dar);
         }
         return new AnalyzeAction.Response(Arrays.asList(tokens), null);
@@ -113,10 +107,8 @@ public class AnalyzeResponseTests extends AbstractWireSerializingTestCase<Analyz
             return new AnalyzeAction.Response(extendedList, null);
         } else {
             AnalyzeToken[] tokens = instance.detail().tokenizer().getTokens();
-            return new AnalyzeAction.Response(null, new AnalyzeAction.DetailAnalyzeResponse(
-                    instance.detail().charfilters(),
-                    new AnalyzeAction.AnalyzeTokenList("my_other_tokenizer", tokens),
-                    instance.detail().tokenfilters()));
+            return new AnalyzeAction.Response(null, new AnalyzeAction.DetailAnalyzeResponse(instance.detail().charfilters(),
+                    new AnalyzeAction.AnalyzeTokenList("my_other_tokenizer", tokens), instance.detail().tokenfilters()));
         }
     }
 

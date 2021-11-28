@@ -89,8 +89,7 @@ public class SimulateProcessorResultTests extends AbstractXContentTestCase<Simul
         assertNull(otherSimulateProcessorResult.getDescription());
     }
 
-    static SimulateProcessorResult createTestInstance(boolean isSuccessful,
-                                                                boolean isIgnoredException, boolean hasCondition) {
+    static SimulateProcessorResult createTestInstance(boolean isSuccessful, boolean isIgnoredException, boolean hasCondition) {
         String type = randomAlphaOfLengthBetween(1, 10);
         String processorTag = randomAlphaOfLengthBetween(1, 10);
         String description = randomAlphaOfLengthBetween(1, 10);
@@ -100,13 +99,13 @@ public class SimulateProcessorResultTests extends AbstractXContentTestCase<Simul
             IngestDocument ingestDocument = createRandomIngestDoc();
             if (isIgnoredException) {
                 simulateProcessorResult = new SimulateProcessorResult(type, processorTag, description, ingestDocument,
-                    new IllegalArgumentException("test"), conditionWithResult);
+                        new IllegalArgumentException("test"), conditionWithResult);
             } else {
                 simulateProcessorResult = new SimulateProcessorResult(type, processorTag, description, ingestDocument, conditionWithResult);
             }
         } else {
-            simulateProcessorResult = new SimulateProcessorResult(type, processorTag, description,
-                new IllegalArgumentException("test"), conditionWithResult);
+            simulateProcessorResult =
+                    new SimulateProcessorResult(type, processorTag, description, new IllegalArgumentException("test"), conditionWithResult);
         }
         return simulateProcessorResult;
     }
@@ -137,29 +136,18 @@ public class SimulateProcessorResultTests extends AbstractXContentTestCase<Simul
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
         // We cannot have random fields in the _source field and _ingest field
-        return field ->
-            field.startsWith(
-                new StringJoiner(".")
-                    .add(WriteableIngestDocument.DOC_FIELD)
-                    .add(WriteableIngestDocument.SOURCE_FIELD).toString()
-            ) ||
-                field.startsWith(
-                    new StringJoiner(".")
-                        .add(WriteableIngestDocument.DOC_FIELD)
-                        .add(WriteableIngestDocument.INGEST_FIELD).toString()
-                );
+        return field -> field.startsWith(
+                new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.SOURCE_FIELD).toString())
+                || field.startsWith(
+                        new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.INGEST_FIELD).toString());
     }
 
-    static void assertEqualProcessorResults(SimulateProcessorResult response,
-                                                      SimulateProcessorResult parsedResponse) {
+    static void assertEqualProcessorResults(SimulateProcessorResult response, SimulateProcessorResult parsedResponse) {
         assertEquals(response.getProcessorTag(), parsedResponse.getProcessorTag());
         assertEquals(response.getIngestDocument(), parsedResponse.getIngestDocument());
-        if (response.getFailure() != null ) {
+        if (response.getFailure() != null) {
             assertNotNull(parsedResponse.getFailure());
-            assertThat(
-                parsedResponse.getFailure().getMessage(),
-                containsString(response.getFailure().getMessage())
-            );
+            assertThat(parsedResponse.getFailure().getMessage(), containsString(response.getFailure().getMessage()));
         } else {
             assertNull(parsedResponse.getFailure());
         }
@@ -183,15 +171,15 @@ public class SimulateProcessorResultTests extends AbstractXContentTestCase<Simul
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields,
-            getShuffleFieldsExceptions(), getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
-            this::assertEqualInstances, assertToXContentEquivalence, getToXContentParams());
+                getShuffleFieldsExceptions(), getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
+                this::assertEqualInstances, assertToXContentEquivalence, getToXContentParams());
     }
 
-    public void testStatus(){
+    public void testStatus() {
         SimulateProcessorResult result;
         // conditional returned false
         result = new SimulateProcessorResult(null, null, null, createRandomIngestDoc(), null,
-            new Tuple<>(randomAlphaOfLengthBetween(1, 10), false));
+                new Tuple<>(randomAlphaOfLengthBetween(1, 10), false));
         assertEquals(SimulateProcessorResult.Status.SKIPPED, result.getStatus("set"));
 
         // no ingest doc
@@ -216,7 +204,7 @@ public class SimulateProcessorResultTests extends AbstractXContentTestCase<Simul
 
         //success - conditional true
         result = new SimulateProcessorResult(null, null, null, createRandomIngestDoc(), null,
-            new Tuple<>(randomAlphaOfLengthBetween(1, 10), true));
+                new Tuple<>(randomAlphaOfLengthBetween(1, 10), true));
         assertEquals(SimulateProcessorResult.Status.SUCCESS, result.getStatus(null));
     }
 }

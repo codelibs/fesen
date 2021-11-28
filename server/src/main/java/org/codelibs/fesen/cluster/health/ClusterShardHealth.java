@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.cluster.health;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.routing.IndexShardRoutingTable;
 import org.codelibs.fesen.cluster.routing.RecoverySource;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
@@ -34,13 +41,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
 public final class ClusterShardHealth implements Writeable, ToXContentFragment {
     private static final String STATUS = "status";
     private static final String ACTIVE_SHARDS = "active_shards";
@@ -50,19 +50,18 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
     private static final String PRIMARY_ACTIVE = "primary_active";
 
     public static final ConstructingObjectParser<ClusterShardHealth, Integer> PARSER =
-        new ConstructingObjectParser<>("cluster_shard_health", true,
-                (parsedObjects, shardId) -> {
-                    int i = 0;
-                    boolean primaryActive = (boolean) parsedObjects[i++];
-                    int activeShards = (int) parsedObjects[i++];
-                    int relocatingShards = (int) parsedObjects[i++];
-                    int initializingShards = (int) parsedObjects[i++];
-                    int unassignedShards = (int) parsedObjects[i++];
-                    String statusStr = (String) parsedObjects[i];
-                    ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
-                    return new ClusterShardHealth(shardId, status, activeShards, relocatingShards, initializingShards, unassignedShards,
+            new ConstructingObjectParser<>("cluster_shard_health", true, (parsedObjects, shardId) -> {
+                int i = 0;
+                boolean primaryActive = (boolean) parsedObjects[i++];
+                int activeShards = (int) parsedObjects[i++];
+                int relocatingShards = (int) parsedObjects[i++];
+                int initializingShards = (int) parsedObjects[i++];
+                int unassignedShards = (int) parsedObjects[i++];
+                String statusStr = (String) parsedObjects[i];
+                ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
+                return new ClusterShardHealth(shardId, status, activeShards, relocatingShards, initializingShards, unassignedShards,
                         primaryActive);
-                });
+            });
 
     static {
         PARSER.declareBoolean(constructorArg(), new ParseField(PRIMARY_ACTIVE));
@@ -133,7 +132,7 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
      * For XContent Parser and serialization tests
      */
     ClusterShardHealth(int shardId, ClusterHealthStatus status, int activeShards, int relocatingShards, int initializingShards,
-        int unassignedShards, boolean primaryActive) {
+            int unassignedShards, boolean primaryActive) {
         this.shardId = shardId;
         this.status = status;
         this.activeShards = activeShards;
@@ -201,9 +200,8 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
         final UnassignedInfo unassignedInfo = shardRouting.unassignedInfo();
         RecoverySource.Type recoveryType = shardRouting.recoverySource().getType();
         if (unassignedInfo.getLastAllocationStatus() != AllocationStatus.DECIDERS_NO && unassignedInfo.getNumFailedAllocations() == 0
-                && (recoveryType == RecoverySource.Type.EMPTY_STORE
-                    || recoveryType == RecoverySource.Type.LOCAL_SHARDS
-                    || recoveryType == RecoverySource.Type.SNAPSHOT)) {
+                && (recoveryType == RecoverySource.Type.EMPTY_STORE || recoveryType == RecoverySource.Type.LOCAL_SHARDS
+                        || recoveryType == RecoverySource.Type.SNAPSHOT)) {
             return ClusterHealthStatus.YELLOW;
         } else {
             return ClusterHealthStatus.RED;
@@ -244,16 +242,14 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClusterShardHealth)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof ClusterShardHealth))
+            return false;
         ClusterShardHealth that = (ClusterShardHealth) o;
-        return shardId == that.shardId &&
-                activeShards == that.activeShards &&
-                relocatingShards == that.relocatingShards &&
-                initializingShards == that.initializingShards &&
-                unassignedShards == that.unassignedShards &&
-                primaryActive == that.primaryActive &&
-                status == that.status;
+        return shardId == that.shardId && activeShards == that.activeShards && relocatingShards == that.relocatingShards
+                && initializingShards == that.initializingShards && unassignedShards == that.unassignedShards
+                && primaryActive == that.primaryActive && status == that.status;
     }
 
     @Override

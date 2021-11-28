@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.regex.Regex;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
 public class DynamicTemplate implements ToXContentObject {
 
@@ -43,6 +43,7 @@ public class DynamicTemplate implements ToXContentObject {
             public boolean matches(String pattern, String value) {
                 return Regex.simpleMatch(pattern, value);
             }
+
             @Override
             public String toString() {
                 return "simple";
@@ -53,6 +54,7 @@ public class DynamicTemplate implements ToXContentObject {
             public boolean matches(String pattern, String value) {
                 return value.matches(pattern);
             }
+
             @Override
             public String toString() {
                 return "regex";
@@ -79,6 +81,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return ObjectMapper.CONTENT_TYPE;
             }
+
             @Override
             public String toString() {
                 return "object";
@@ -89,6 +92,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return TextFieldMapper.CONTENT_TYPE;
             }
+
             @Override
             public String toString() {
                 return "string";
@@ -99,6 +103,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return NumberFieldMapper.NumberType.LONG.typeName();
             }
+
             @Override
             public String toString() {
                 return "long";
@@ -109,6 +114,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return NumberFieldMapper.NumberType.FLOAT.typeName();
             }
+
             @Override
             public String toString() {
                 return "double";
@@ -119,6 +125,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return BooleanFieldMapper.CONTENT_TYPE;
             }
+
             @Override
             public String toString() {
                 return "boolean";
@@ -129,6 +136,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return DateFieldMapper.CONTENT_TYPE;
             }
+
             @Override
             public String toString() {
                 return "date";
@@ -139,6 +147,7 @@ public class DynamicTemplate implements ToXContentObject {
             public String defaultMappingType() {
                 return BinaryFieldMapper.CONTENT_TYPE;
             }
+
             @Override
             public String toString() {
                 return "binary";
@@ -151,16 +160,15 @@ public class DynamicTemplate implements ToXContentObject {
                     return v;
                 }
             }
-            throw new IllegalArgumentException("No field type matched on [" + value + "], possible values are "
-                    + Arrays.toString(values()));
+            throw new IllegalArgumentException(
+                    "No field type matched on [" + value + "], possible values are " + Arrays.toString(values()));
         }
 
         /** The default mapping type to use for fields of this {@link XContentFieldType}. */
         public abstract String defaultMappingType();
     }
 
-    public static DynamicTemplate parse(String name, Map<String, Object> conf,
-            Version indexVersionCreated) throws MapperParsingException {
+    public static DynamicTemplate parse(String name, Map<String, Object> conf, Version indexVersionCreated) throws MapperParsingException {
         String match = null;
         String pathMatch = null;
         String unmatch = null;
@@ -306,7 +314,7 @@ public class DynamicTemplate implements ToXContentObject {
             }
         }
         return type;
-     }
+    }
 
     public Map<String, Object> mappingForName(String name, String dynamicType) {
         return processMap(mapping, name, dynamicType);
@@ -315,16 +323,16 @@ public class DynamicTemplate implements ToXContentObject {
     private Map<String, Object> processMap(Map<String, Object> map, String name, String dynamicType) {
         Map<String, Object> processedMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = entry.getKey().replace("{name}", name).replace("{dynamic_type}", dynamicType)
-                .replace("{dynamicType}", dynamicType);
+            String key =
+                    entry.getKey().replace("{name}", name).replace("{dynamic_type}", dynamicType).replace("{dynamicType}", dynamicType);
             Object value = entry.getValue();
             if (value instanceof Map) {
                 value = processMap((Map<String, Object>) value, name, dynamicType);
             } else if (value instanceof List) {
                 value = processList((List) value, name, dynamicType);
             } else if (value instanceof String) {
-                value = value.toString().replace("{name}", name).replace("{dynamic_type}", dynamicType)
-                    .replace("{dynamicType}", dynamicType);
+                value = value.toString().replace("{name}", name).replace("{dynamic_type}", dynamicType).replace("{dynamicType}",
+                        dynamicType);
             }
             processedMap.put(key, value);
         }
@@ -339,9 +347,8 @@ public class DynamicTemplate implements ToXContentObject {
             } else if (value instanceof List) {
                 value = processList((List) value, name, dynamicType);
             } else if (value instanceof String) {
-                value = value.toString().replace("{name}", name)
-                    .replace("{dynamic_type}", dynamicType)
-                    .replace("{dynamicType}", dynamicType);
+                value = value.toString().replace("{name}", name).replace("{dynamic_type}", dynamicType).replace("{dynamicType}",
+                        dynamicType);
             }
             processedList.add(value);
         }

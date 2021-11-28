@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.clusterHealthRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -36,17 +41,11 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.clusterHealthRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestClusterHealthAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_cluster/health"),
-            new Route(GET, "/_cluster/health/{index}")));
+        return unmodifiableList(asList(new Route(GET, "/_cluster/health"), new Route(GET, "/_cluster/health/{index}")));
     }
 
     @Override
@@ -76,13 +75,13 @@ public class RestClusterHealthAction extends BaseRestHandler {
             clusterHealthRequest.waitForStatus(ClusterHealthStatus.valueOf(waitForStatus.toUpperCase(Locale.ROOT)));
         }
         clusterHealthRequest.waitForNoRelocatingShards(
-            request.paramAsBoolean("wait_for_no_relocating_shards", clusterHealthRequest.waitForNoRelocatingShards()));
+                request.paramAsBoolean("wait_for_no_relocating_shards", clusterHealthRequest.waitForNoRelocatingShards()));
         clusterHealthRequest.waitForNoInitializingShards(
-            request.paramAsBoolean("wait_for_no_initializing_shards", clusterHealthRequest.waitForNoInitializingShards()));
+                request.paramAsBoolean("wait_for_no_initializing_shards", clusterHealthRequest.waitForNoInitializingShards()));
         if (request.hasParam("wait_for_relocating_shards")) {
             // wait_for_relocating_shards has been removed in favor of wait_for_no_relocating_shards
-            throw new IllegalArgumentException("wait_for_relocating_shards has been removed, " +
-                "use wait_for_no_relocating_shards [true/false] instead");
+            throw new IllegalArgumentException(
+                    "wait_for_relocating_shards has been removed, " + "use wait_for_no_relocating_shards [true/false] instead");
         }
         String waitForActiveShards = request.param("wait_for_active_shards");
         if (waitForActiveShards != null) {

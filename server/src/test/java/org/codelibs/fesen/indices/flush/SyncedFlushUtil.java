@@ -62,7 +62,7 @@ public class SyncedFlushUtil {
             service.attemptSyncedFlush(shardId, listener);
             listener.latch.await();
             if (listener.result != null && listener.result.failureReason() != null
-                && listener.result.failureReason().contains("ongoing operations on primary")) {
+                    && listener.result.failureReason().contains("ongoing operations on primary")) {
                 throw new AssertionError(listener.result.failureReason()); // cause the assert busy to retry
             }
         });
@@ -94,9 +94,7 @@ public class SyncedFlushUtil {
      * Blocking version of {@link SyncedFlushService#sendPreSyncRequests(List, ClusterState, ShardId, ActionListener)}
      */
     public static Map<String, SyncedFlushService.PreSyncedFlushResponse> sendPreSyncRequests(SyncedFlushService service,
-                                                                                             List<ShardRouting> activeShards,
-                                                                                             ClusterState state,
-                                                                                             ShardId shardId) {
+            List<ShardRouting> activeShards, ClusterState state, ShardId shardId) {
         LatchedListener<Map<String, SyncedFlushService.PreSyncedFlushResponse>> listener = new LatchedListener<>();
         service.sendPreSyncRequests(activeShards, state, shardId, listener);
         try {

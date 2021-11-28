@@ -18,9 +18,18 @@
  */
 package org.codelibs.fesen.index.shard;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.IndexWriter;
@@ -59,17 +68,9 @@ import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.translog.TruncateTranslogAction;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.StreamSupport;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
 
@@ -86,16 +87,11 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
     public RemoveCorruptedShardDataCommand() {
         super("Removes corrupted shard files");
 
-        folderOption = parser.acceptsAll(Arrays.asList("d", "dir"),
-            "Index directory location on disk")
-            .withRequiredArg();
+        folderOption = parser.acceptsAll(Arrays.asList("d", "dir"), "Index directory location on disk").withRequiredArg();
 
-        indexNameOption = parser.accepts("index", "Index name")
-            .withRequiredArg();
+        indexNameOption = parser.accepts("index", "Index name").withRequiredArg();
 
-        shardIdOption = parser.accepts("shard-id", "Shard id")
-            .withRequiredArg()
-            .ofType(Integer.class);
+        shardIdOption = parser.accepts("shard-id", "Shard id").withRequiredArg().ofType(Integer.class);
 
         parser.accepts(TRUNCATE_CLEAN_TRANSLOG_FLAG, "Truncate the translog even if it is not corrupt");
 
@@ -119,8 +115,7 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
     }
 
     protected void findAndProcessShardPath(OptionSet options, Environment environment, Path[] dataPaths, int nodeLockId,
-                                           ClusterState clusterState, CheckedConsumer<ShardPath, IOException> consumer)
-    throws IOException {
+            ClusterState clusterState, CheckedConsumer<ShardPath, IOException> consumer) throws IOException {
         final Settings settings = environment.settings();
 
         final IndexMetadata indexMetadata;
@@ -141,20 +136,18 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
             final String nodeIdFileName = shardParentParent.getParent().getFileName().toString();
             final String indexUUIDFolderName = shardParent.getFileName().toString();
             if (Files.isDirectory(path) && shardIdFileName.chars().allMatch(Character::isDigit) // SHARD-ID path element check
-                && NodeEnvironment.INDICES_FOLDER.equals(shardParentParent.getFileName().toString()) // `indices` check
-                && nodeIdFileName.chars().allMatch(Character::isDigit) // NODE-ID check
-                && NodeEnvironment.NODES_FOLDER.equals(shardParentParent.getParent().getParent().getFileName().toString()) // `nodes` check
+                    && NodeEnvironment.INDICES_FOLDER.equals(shardParentParent.getFileName().toString()) // `indices` check
+                    && nodeIdFileName.chars().allMatch(Character::isDigit) // NODE-ID check
+                    && NodeEnvironment.NODES_FOLDER.equals(shardParentParent.getParent().getParent().getFileName().toString()) // `nodes` check
             ) {
                 shardId = Integer.parseInt(shardIdFileName);
                 fromNodeId = Integer.parseInt(nodeIdFileName);
                 toNodeId = fromNodeId + 1;
-                indexMetadata = StreamSupport.stream(clusterState.metadata().indices().values().spliterator(), false)
-                    .map(imd -> imd.value)
-                    .filter(imd -> imd.getIndexUUID().equals(indexUUIDFolderName)).findFirst()
-                    .orElse(null);
+                indexMetadata = StreamSupport.stream(clusterState.metadata().indices().values().spliterator(), false).map(imd -> imd.value)
+                        .filter(imd -> imd.getIndexUUID().equals(indexUUIDFolderName)).findFirst().orElse(null);
             } else {
                 throw new FesenException("Unable to resolve shard id. Wrong folder structure at [ " + path.toString()
-                    + " ], expected .../nodes/[NODE-ID]/indices/[INDEX-UUID]/[SHARD-ID]");
+                        + " ], expected .../nodes/[NODE-ID]/indices/[INDEX-UUID]/[SHARD-ID]");
             }
         } else {
             // otherwise resolve shardPath based on the index name and shard id
@@ -172,21 +165,19 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
         final ShardId shId = new ShardId(index, shardId);
 
         for (Path dataPath : dataPaths) {
-            final Path shardPathLocation = dataPath
-                .resolve(NodeEnvironment.INDICES_FOLDER)
-                .resolve(index.getUUID())
-                .resolve(Integer.toString(shId.id()));
+            final Path shardPathLocation =
+                    dataPath.resolve(NodeEnvironment.INDICES_FOLDER).resolve(index.getUUID()).resolve(Integer.toString(shId.id()));
             if (Files.exists(shardPathLocation)) {
                 final ShardPath shardPath = ShardPath.loadShardPath(logger, shId, indexSettings.customDataPath(),
-                    new Path[]{shardPathLocation}, nodeLockId, dataPath);
+                        new Path[] { shardPathLocation }, nodeLockId, dataPath);
                 if (shardPath != null) {
                     consumer.accept(shardPath);
                     return;
                 }
             }
         }
-        throw new FesenException("Unable to resolve shard path for index [" + indexMetadata.getIndex().getName() +
-            "] and shard id [" + shardId + "]");
+        throw new FesenException(
+                "Unable to resolve shard path for index [" + indexMetadata.getIndex().getName() + "] and shard id [" + shardId + "]");
     }
 
     public static boolean isCorruptMarkerFileIsPresent(final Directory directory) throws IOException {
@@ -206,10 +197,9 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
     protected void dropCorruptMarkerFiles(Terminal terminal, Path path, Directory directory, boolean clean) throws IOException {
         if (clean) {
             confirm("This shard has been marked as corrupted but no corruption can now be detected.\n"
-                + "This may indicate an intermittent hardware problem. The corruption marker can be \n"
-                + "removed, but there is a risk that data has been undetectably lost.\n\n"
-                + "Are you taking a risk of losing documents and proceed with removing a corrupted marker ?",
-                terminal);
+                    + "This may indicate an intermittent hardware problem. The corruption marker can be \n"
+                    + "removed, but there is a risk that data has been undetectably lost.\n\n"
+                    + "Are you taking a risk of losing documents and proceed with removing a corrupted marker ?", terminal);
         }
         String[] files = directory.listAll();
         boolean found = false;
@@ -249,11 +239,11 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
     // Visible for testing
     @Override
     public void processNodePaths(Terminal terminal, Path[] dataPaths, int nodeLockId, OptionSet options, Environment environment)
-        throws IOException {
+            throws IOException {
         warnAboutIndexBackup(terminal);
 
         final ClusterState clusterState =
-            loadTermAndClusterState(createPersistedClusterStateService(environment.settings(), dataPaths), environment).v2();
+                loadTermAndClusterState(createPersistedClusterStateService(environment.settings(), dataPaths), environment).v2();
 
         findAndProcessShardPath(options, environment, dataPaths, nodeLockId, clusterState, shardPath -> {
             final Path indexPath = shardPath.resolveIndex();
@@ -284,8 +274,8 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
                     terminal.println("Opening Lucene index at " + indexPath);
                     terminal.println("");
                     try {
-                        indexCleanStatus = removeCorruptedLuceneSegmentsAction.getCleanStatus(indexDir,
-                            writeIndexLock, printStream, verbose);
+                        indexCleanStatus =
+                                removeCorruptedLuceneSegmentsAction.getCleanStatus(indexDir, writeIndexLock, printStream, verbose);
                     } catch (Exception e) {
                         terminal.println(e.getMessage());
                         throw e;
@@ -298,7 +288,7 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
                     ////////// Translog
                     if (options.has(TRUNCATE_CLEAN_TRANSLOG_FLAG)) {
                         translogCleanStatus = Tuple.tuple(CleanStatus.OVERRIDDEN,
-                            "Translog was not analysed and will be truncated due to the --" + TRUNCATE_CLEAN_TRANSLOG_FLAG + " flag");
+                                "Translog was not analysed and will be truncated due to the --" + TRUNCATE_CLEAN_TRANSLOG_FLAG + " flag");
                     } else if (indexCleanStatus.v1() != CleanStatus.UNRECOVERABLE) {
                         // translog relies on data stored in an index commit so we have to have a recoverable index to check the translog
                         terminal.println("");
@@ -323,8 +313,8 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
                     final CleanStatus translogStatus = translogCleanStatus.v1();
 
                     if (indexStatus == CleanStatus.CLEAN && translogStatus == CleanStatus.CLEAN) {
-                        throw new FesenException("Shard does not seem to be corrupted at " + shardPath.getDataPath()
-                            + " (pass --" + TRUNCATE_CLEAN_TRANSLOG_FLAG + " to truncate the translog anyway)");
+                        throw new FesenException("Shard does not seem to be corrupted at " + shardPath.getDataPath() + " (pass --"
+                                + TRUNCATE_CLEAN_TRANSLOG_FLAG + " to truncate the translog anyway)");
                     }
 
                     if (indexStatus == CleanStatus.UNRECOVERABLE) {
@@ -339,7 +329,6 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
                         throw new FesenException("Index is unrecoverable");
                     }
 
-
                     terminal.println("-----------------------------------------------------------------------");
                     if (indexStatus != CleanStatus.CLEAN) {
                         loseDataDetailsBanner(terminal, indexCleanStatus);
@@ -350,12 +339,10 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
                     terminal.println("            WARNING:              YOU MAY LOSE DATA.");
                     terminal.println("-----------------------------------------------------------------------");
 
-
                     confirm("Continue and remove corrupted data from the shard ?", terminal);
 
                     if (indexStatus != CleanStatus.CLEAN) {
-                        removeCorruptedLuceneSegmentsAction.execute(terminal, indexDir,
-                            writeIndexLock, printStream, verbose);
+                        removeCorruptedLuceneSegmentsAction.execute(terminal, indexDir, writeIndexLock, printStream, verbose);
                     }
 
                     if (translogStatus != CleanStatus.CLEAN) {
@@ -396,13 +383,11 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
         terminal.println("Marking index with the new history uuid : " + historyUUID);
         // commit the new history id
         final IndexWriterConfig iwc = new IndexWriterConfig(null)
-            // we don't want merges to happen here - we call maybe merge on the engine
-            // later once we stared it up otherwise we would need to wait for it here
-            // we also don't specify a codec here and merges should use the engines for this index
-            .setCommitOnClose(false)
-            .setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
-            .setMergePolicy(NoMergePolicy.INSTANCE)
-            .setOpenMode(IndexWriterConfig.OpenMode.APPEND);
+                // we don't want merges to happen here - we call maybe merge on the engine
+                // later once we stared it up otherwise we would need to wait for it here
+                // we also don't specify a codec here and merges should use the engines for this index
+                .setCommitOnClose(false).setSoftDeletesField(Lucene.SOFT_DELETES_FIELD).setMergePolicy(NoMergePolicy.INSTANCE)
+                .setOpenMode(IndexWriterConfig.OpenMode.APPEND);
         // IndexWriter acquires directory lock by its own
         try (IndexWriter indexWriter = new IndexWriter(indexDirectory, iwc)) {
             final Map<String, String> userData = new HashMap<>();
@@ -427,7 +412,7 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
     private void newAllocationId(ShardPath shardPath, Terminal terminal) throws IOException {
         final Path shardStatePath = shardPath.getShardStatePath();
         final ShardStateMetadata shardStateMetadata =
-            ShardStateMetadata.FORMAT.loadLatestState(logger, namedXContentRegistry, shardStatePath);
+                ShardStateMetadata.FORMAT.loadLatestState(logger, namedXContentRegistry, shardStatePath);
 
         if (shardStateMetadata == null) {
             throw new FesenException("No shard state meta data at " + shardStatePath);
@@ -435,11 +420,10 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
 
         final AllocationId newAllocationId = AllocationId.newInitializing();
 
-        terminal.println("Changing allocation id " + shardStateMetadata.allocationId.getId()
-            + " to " + newAllocationId.getId());
+        terminal.println("Changing allocation id " + shardStateMetadata.allocationId.getId() + " to " + newAllocationId.getId());
 
         final ShardStateMetadata newShardStateMetadata =
-            new ShardStateMetadata(shardStateMetadata.primary, shardStateMetadata.indexUUID, newAllocationId);
+                new ShardStateMetadata(shardStateMetadata.primary, shardStateMetadata.indexUUID, newAllocationId);
 
         ShardStateMetadata.FORMAT.writeAndCleanup(newShardStateMetadata, shardStatePath);
 
@@ -449,8 +433,7 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
         printRerouteCommand(shardPath, terminal, true);
     }
 
-    private void printRerouteCommand(ShardPath shardPath, Terminal terminal, boolean allocateStale)
-        throws IOException {
+    private void printRerouteCommand(ShardPath shardPath, Terminal terminal, boolean allocateStale) throws IOException {
         final Path nodePath = getNodePath(shardPath);
         final NodeMetadata nodeMetadata = PersistedClusterStateService.nodeMetadata(nodePath);
 
@@ -461,10 +444,9 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
         final String nodeId = nodeMetadata.nodeId();
         final String index = shardPath.getShardId().getIndexName();
         final int id = shardPath.getShardId().id();
-        final AllocationCommands commands = new AllocationCommands(
-            allocateStale
-                ? new AllocateStalePrimaryAllocationCommand(index, id, nodeId, false)
-                : new AllocateEmptyPrimaryAllocationCommand(index, id, nodeId, false));
+        final AllocationCommands commands =
+                new AllocationCommands(allocateStale ? new AllocateStalePrimaryAllocationCommand(index, id, nodeId, false)
+                        : new AllocateEmptyPrimaryAllocationCommand(index, id, nodeId, false));
 
         terminal.println("");
         terminal.println("POST /_cluster/reroute\n" + Strings.toString(commands, true, true));
@@ -475,19 +457,16 @@ public class RemoveCorruptedShardDataCommand extends FesenNodeCommand {
 
     private Path getNodePath(ShardPath shardPath) {
         final Path nodePath = shardPath.getDataPath().getParent().getParent().getParent();
-        if (Files.exists(nodePath) == false ||
-            Files.exists(nodePath.resolve(PersistedClusterStateService.METADATA_DIRECTORY_NAME)) == false) {
+        if (Files.exists(nodePath) == false
+                || Files.exists(nodePath.resolve(PersistedClusterStateService.METADATA_DIRECTORY_NAME)) == false) {
             throw new FesenException("Unable to resolve node path for " + shardPath);
         }
         return nodePath;
     }
 
     public enum CleanStatus {
-        CLEAN("clean"),
-        CLEAN_WITH_CORRUPTED_MARKER("marked corrupted, but no corruption detected"),
-        CORRUPTED("corrupted"),
-        UNRECOVERABLE("corrupted and unrecoverable"),
-        OVERRIDDEN("to be truncated regardless of whether it is corrupt");
+        CLEAN("clean"), CLEAN_WITH_CORRUPTED_MARKER("marked corrupted, but no corruption detected"), CORRUPTED("corrupted"), UNRECOVERABLE(
+                "corrupted and unrecoverable"), OVERRIDDEN("to be truncated regardless of whether it is corrupt");
 
         private final String msg;
 

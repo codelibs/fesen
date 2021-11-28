@@ -22,8 +22,8 @@ package org.codelibs.fesen.monitor.jvm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
 
@@ -37,9 +37,8 @@ public class JvmService implements ReportingService<JvmInfo> {
 
     private JvmStats jvmStats;
 
-    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING =
-        Setting.timeSetting("monitor.jvm.refresh_interval", TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1),
-            Property.NodeScope);
+    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING = Setting.timeSetting("monitor.jvm.refresh_interval",
+            TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1), Property.NodeScope);
 
     public JvmService(Settings settings) {
         this.jvmInfo = JvmInfo.jvmInfo();

@@ -18,14 +18,12 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
-import org.codelibs.fesen.cluster.coordination.MockSinglePrioritizingExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
 import org.codelibs.fesen.common.util.concurrent.PrioritizedRunnable;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MockSinglePrioritizingExecutorTests extends ESTestCase {
 

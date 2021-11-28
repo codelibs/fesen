@@ -56,8 +56,7 @@ public class ClusterUpdateSettingsRequestTests extends ESTestCase {
                     Collections.singletonList(""), () -> unsupportedField, () -> randomAlphaOfLengthBetween(3, 10)));
             XContentParseException iae = expectThrows(XContentParseException.class,
                     () -> ClusterUpdateSettingsRequest.fromXContent(createParser(xContentType.xContent(), mutated)));
-            assertThat(iae.getMessage(),
-                    containsString("[cluster_update_settings_request] unknown field [" + unsupportedField + "]"));
+            assertThat(iae.getMessage(), containsString("[cluster_update_settings_request] unknown field [" + unsupportedField + "]"));
         } else {
             try (XContentParser parser = createParser(xContentType.xContent(), originalBytes)) {
                 ClusterUpdateSettingsRequest parsedRequest = ClusterUpdateSettingsRequest.fromXContent(parser);

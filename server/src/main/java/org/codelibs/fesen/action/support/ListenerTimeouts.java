@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.action.support;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+
 import org.codelibs.fesen.FesenTimeoutException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class ListenerTimeouts {
 
@@ -43,7 +43,7 @@ public class ListenerTimeouts {
      * @return the wrapped listener that will timeout
      */
     public static <Response> ActionListener<Response> wrapWithTimeout(ThreadPool threadPool, ActionListener<Response> listener,
-                                                                      TimeValue timeout, String executor, String listenerName) {
+            TimeValue timeout, String executor, String listenerName) {
         return wrapWithTimeout(threadPool, timeout, executor, listener, (ignore) -> {
             String timeoutMessage = "[" + listenerName + "]" + " timed out after [" + timeout + "]";
             listener.onFailure(new FesenTimeoutException(timeoutMessage));
@@ -62,8 +62,7 @@ public class ListenerTimeouts {
      * @return the wrapped listener that will timeout
      */
     public static <Response> ActionListener<Response> wrapWithTimeout(ThreadPool threadPool, TimeValue timeout, String executor,
-                                                                      ActionListener<Response> listener,
-                                                                      Consumer<ActionListener<Response>> onTimeout) {
+            ActionListener<Response> listener, Consumer<ActionListener<Response>> onTimeout) {
         TimeoutableListener<Response> wrappedListener = new TimeoutableListener<>(listener, onTimeout);
         wrappedListener.cancellable = threadPool.schedule(wrappedListener, timeout, executor);
         return wrappedListener;

@@ -19,11 +19,9 @@
 
 package org.codelibs.fesen.client;
 
-import org.apache.http.HttpHost;
-import org.codelibs.fesen.client.HasAttributeNodeSelector;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.Node.Roles;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertEquals;
+import org.apache.http.HttpHost;
+import org.codelibs.fesen.client.Node.Roles;
 
 public class HasAttributeNodeSelectorTests extends RestClientTestCase {
     public void testHasAttribute() {
@@ -66,9 +63,7 @@ public class HasAttributeNodeSelectorTests extends RestClientTestCase {
         if (randomBoolean()) {
             roles.add("ingest");
         }
-        return new Node(new HttpHost("dummy"), Collections.<HttpHost>emptySet(),
-                randomAsciiAlphanumOfLength(5), randomAsciiAlphanumOfLength(5),
-                new Roles(roles),
-                attributes);
+        return new Node(new HttpHost("dummy"), Collections.<HttpHost> emptySet(), randomAsciiAlphanumOfLength(5),
+                randomAsciiAlphanumOfLength(5), new Roles(roles), attributes);
     }
 }

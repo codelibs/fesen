@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.settings;
 
-import joptsimple.OptionSet;
-
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
 import org.codelibs.fesen.env.Environment;
+
+import joptsimple.OptionSet;
 
 /**
  * A sub-command for the keystore cli which changes the password.

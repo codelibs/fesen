@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -28,25 +40,11 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.ingest.common.GrokProcessorGetAction;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.mockito.Mockito.mock;
-
 public class GrokProcessorGetActionTests extends ESTestCase {
-    private static final Map<String, String> TEST_PATTERNS =
-        org.codelibs.fesen.core.Map.of("PATTERN2", "foo2", "PATTERN1", "foo1");
+    private static final Map<String, String> TEST_PATTERNS = org.codelibs.fesen.core.Map.of("PATTERN2", "foo2", "PATTERN1", "foo1");
 
     public void testRequest() throws Exception {
         GrokProcessorGetAction.Request request = new GrokProcessorGetAction.Request(false);
@@ -71,7 +69,7 @@ public class GrokProcessorGetActionTests extends ESTestCase {
         List<String> sortedKeys = new ArrayList<>(TEST_PATTERNS.keySet());
         Collections.sort(sortedKeys);
         GrokProcessorGetAction.TransportAction transportAction =
-            new GrokProcessorGetAction.TransportAction(mock(TransportService.class), mock(ActionFilters.class), TEST_PATTERNS);
+                new GrokProcessorGetAction.TransportAction(mock(TransportService.class), mock(ActionFilters.class), TEST_PATTERNS);
         GrokProcessorGetAction.Response[] receivedResponse = new GrokProcessorGetAction.Response[1];
         transportAction.doExecute(null, new GrokProcessorGetAction.Request(true), new ActionListener<GrokProcessorGetAction.Response>() {
             @Override

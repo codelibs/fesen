@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.support.nodes;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -26,8 +28,6 @@ import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
 
 public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>> extends ActionRequest {
 
@@ -92,6 +92,7 @@ public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>
         this.timeout = TimeValue.parseTimeValue(timeout, null, getClass().getSimpleName() + ".timeout");
         return (Request) this;
     }
+
     public DiscoveryNode[] concreteNodes() {
         return concreteNodes;
     }

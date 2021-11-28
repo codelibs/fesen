@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.search.LeafCollector;
@@ -37,12 +43,6 @@ import org.codelibs.fesen.search.aggregations.BucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.MultiBucketCollector;
 import org.codelibs.fesen.search.aggregations.bucket.DeferringBucketCollector;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * A specialization of {@link DeferringBucketCollector} that collects all
@@ -128,7 +128,6 @@ public class BestDocsDeferringCollector extends DeferringBucketCollector impleme
     public void postCollection() throws IOException {
         runDeferredAggs();
     }
-
 
     @Override
     public void prepareSelectedBuckets(long... selectedBuckets) throws IOException {

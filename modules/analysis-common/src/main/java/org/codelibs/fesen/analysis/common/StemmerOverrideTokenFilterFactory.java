@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.StemmerOverrideFilter;
 import org.apache.lucene.analysis.miscellaneous.StemmerOverrideFilter.StemmerOverrideMap;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
-
-import java.io.IOException;
-import java.util.List;
 
 public class StemmerOverrideTokenFilterFactory extends AbstractTokenFilterFactory {
 

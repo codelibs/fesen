@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.index;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StringBuilders;
@@ -35,32 +42,24 @@ import org.codelibs.fesen.index.mapper.ParsedDocument;
 import org.codelibs.fesen.index.shard.IndexingOperationListener;
 import org.codelibs.fesen.index.shard.ShardId;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 public final class IndexingSlowLog implements IndexingOperationListener {
     public static final String INDEX_INDEXING_SLOWLOG_PREFIX = "index.indexing.slowlog";
     public static final Setting<TimeValue> INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_WARN_SETTING =
-        Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX +".threshold.index.warn", TimeValue.timeValueNanos(-1),
-            TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
+            Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX + ".threshold.index.warn", TimeValue.timeValueNanos(-1),
+                    TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
     public static final Setting<TimeValue> INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_INFO_SETTING =
-        Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX +".threshold.index.info", TimeValue.timeValueNanos(-1),
-            TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
+            Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX + ".threshold.index.info", TimeValue.timeValueNanos(-1),
+                    TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
     public static final Setting<TimeValue> INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_DEBUG_SETTING =
-        Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX +".threshold.index.debug", TimeValue.timeValueNanos(-1),
-            TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
+            Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX + ".threshold.index.debug", TimeValue.timeValueNanos(-1),
+                    TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
     public static final Setting<TimeValue> INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_TRACE_SETTING =
-        Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX +".threshold.index.trace", TimeValue.timeValueNanos(-1),
-            TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
+            Setting.timeSetting(INDEX_INDEXING_SLOWLOG_PREFIX + ".threshold.index.trace", TimeValue.timeValueNanos(-1),
+                    TimeValue.timeValueMillis(-1), Property.Dynamic, Property.IndexScope);
     public static final Setting<Boolean> INDEX_INDEXING_SLOWLOG_REFORMAT_SETTING =
-        Setting.boolSetting(INDEX_INDEXING_SLOWLOG_PREFIX +".reformat", true, Property.Dynamic, Property.IndexScope);
-    public static final Setting<SlowLogLevel> INDEX_INDEXING_SLOWLOG_LEVEL_SETTING =
-        new Setting<>(INDEX_INDEXING_SLOWLOG_PREFIX +".level", SlowLogLevel.TRACE.name(), SlowLogLevel::parse, Property.Dynamic,
-            Property.IndexScope);
+            Setting.boolSetting(INDEX_INDEXING_SLOWLOG_PREFIX + ".reformat", true, Property.Dynamic, Property.IndexScope);
+    public static final Setting<SlowLogLevel> INDEX_INDEXING_SLOWLOG_LEVEL_SETTING = new Setting<>(INDEX_INDEXING_SLOWLOG_PREFIX + ".level",
+            SlowLogLevel.TRACE.name(), SlowLogLevel::parse, Property.Dynamic, Property.IndexScope);
 
     private final Logger indexLogger;
     private final Index index;
@@ -99,17 +98,17 @@ public final class IndexingSlowLog implements IndexingOperationListener {
 
         indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_REFORMAT_SETTING, this::setReformat);
         this.reformat = indexSettings.getValue(INDEX_INDEXING_SLOWLOG_REFORMAT_SETTING);
-        indexSettings.getScopedSettings()
-                .addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_WARN_SETTING, this::setWarnThreshold);
+        indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_WARN_SETTING,
+                this::setWarnThreshold);
         this.indexWarnThreshold = indexSettings.getValue(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_WARN_SETTING).nanos();
-        indexSettings.getScopedSettings()
-                .addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_INFO_SETTING, this::setInfoThreshold);
+        indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_INFO_SETTING,
+                this::setInfoThreshold);
         this.indexInfoThreshold = indexSettings.getValue(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_INFO_SETTING).nanos();
-        indexSettings.getScopedSettings()
-                .addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_DEBUG_SETTING, this::setDebugThreshold);
+        indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_DEBUG_SETTING,
+                this::setDebugThreshold);
         this.indexDebugThreshold = indexSettings.getValue(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_DEBUG_SETTING).nanos();
-        indexSettings.getScopedSettings()
-                .addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_TRACE_SETTING, this::setTraceThreshold);
+        indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_TRACE_SETTING,
+                this::setTraceThreshold);
         this.indexTraceThreshold = indexSettings.getValue(INDEX_INDEXING_SLOWLOG_THRESHOLD_INDEX_TRACE_SETTING).nanos();
         indexSettings.getScopedSettings().addSettingsUpdateConsumer(INDEX_INDEXING_SLOWLOG_LEVEL_SETTING, this::setLevel);
         setLevel(indexSettings.getValue(INDEX_INDEXING_SLOWLOG_LEVEL_SETTING));
@@ -153,13 +152,13 @@ public final class IndexingSlowLog implements IndexingOperationListener {
             final long tookInNanos = result.getTook();
             // when logger level is more specific than WARN AND event is within threshold it should be logged
             if (indexWarnThreshold >= 0 && tookInNanos > indexWarnThreshold && level.isLevelEnabledFor(SlowLogLevel.WARN)) {
-                indexLogger.warn( new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
+                indexLogger.warn(new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
             } else if (indexInfoThreshold >= 0 && tookInNanos > indexInfoThreshold && level.isLevelEnabledFor(SlowLogLevel.INFO)) {
                 indexLogger.info(new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
             } else if (indexDebugThreshold >= 0 && tookInNanos > indexDebugThreshold && level.isLevelEnabledFor(SlowLogLevel.DEBUG)) {
                 indexLogger.debug(new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
             } else if (indexTraceThreshold >= 0 && tookInNanos > indexTraceThreshold && level.isLevelEnabledFor(SlowLogLevel.TRACE)) {
-                indexLogger.trace( new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
+                indexLogger.trace(new IndexingSlowLogMessage(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
             }
         }
     }
@@ -167,16 +166,16 @@ public final class IndexingSlowLog implements IndexingOperationListener {
     static final class IndexingSlowLogMessage extends ESLogMessage {
 
         IndexingSlowLogMessage(Index index, ParsedDocument doc, long tookInNanos, boolean reformat, int maxSourceCharsToLog) {
-            super(prepareMap(index,doc,tookInNanos,reformat,maxSourceCharsToLog),
-                message(index,doc,tookInNanos,reformat,maxSourceCharsToLog));
+            super(prepareMap(index, doc, tookInNanos, reformat, maxSourceCharsToLog),
+                    message(index, doc, tookInNanos, reformat, maxSourceCharsToLog));
         }
 
         private static Map<String, Object> prepareMap(Index index, ParsedDocument doc, long tookInNanos, boolean reformat,
-                                                      int maxSourceCharsToLog) {
-            Map<String,Object> map = new HashMap<>();
+                int maxSourceCharsToLog) {
+            Map<String, Object> map = new HashMap<>();
             map.put("message", index);
             map.put("took", TimeValue.timeValueNanos(tookInNanos));
-            map.put("took_millis", ""+TimeUnit.NANOSECONDS.toMillis(tookInNanos));
+            map.put("took_millis", "" + TimeUnit.NANOSECONDS.toMillis(tookInNanos));
             map.put("doc_type", doc.type());
             map.put("id", doc.id());
             map.put("routing", doc.routing());
@@ -187,12 +186,12 @@ public final class IndexingSlowLog implements IndexingOperationListener {
             try {
                 String source = XContentHelper.convertToJson(doc.source(), reformat, doc.getXContentType());
                 String trim = Strings.cleanTruncate(source, maxSourceCharsToLog).trim();
-                StringBuilder sb  = new StringBuilder(trim);
-                StringBuilders.escapeJson(sb,0);
+                StringBuilder sb = new StringBuilder(trim);
+                StringBuilders.escapeJson(sb, 0);
                 map.put("source", sb.toString());
             } catch (IOException e) {
-                StringBuilder sb  = new StringBuilder("_failed_to_convert_[" + e.getMessage()+"]");
-                StringBuilders.escapeJson(sb,0);
+                StringBuilder sb = new StringBuilder("_failed_to_convert_[" + e.getMessage() + "]");
+                StringBuilders.escapeJson(sb, 0);
                 map.put("source", sb.toString());
                 /*
                  * We choose to fail to write to the slow log and instead let this percolate up to the post index listener loop where this

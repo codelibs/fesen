@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -30,20 +34,13 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestGetSettingsAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_settings"),
-            new Route(GET, "/_settings/{name}"),
-            new Route(GET, "/{index}/_settings"),
-            new Route(GET, "/{index}/_settings/{name}"),
-            new Route(GET, "/{index}/_setting/{name}")));
+        return unmodifiableList(
+                asList(new Route(GET, "/_settings"), new Route(GET, "/_settings/{name}"), new Route(GET, "/{index}/_settings"),
+                        new Route(GET, "/{index}/_settings/{name}"), new Route(GET, "/{index}/_setting/{name}")));
     }
 
     @Override
@@ -57,12 +54,9 @@ public class RestGetSettingsAction extends BaseRestHandler {
         final boolean renderDefaults = request.paramAsBoolean("include_defaults", false);
         // This is required so the "flat_settings" parameter counts as consumed
         request.paramAsBoolean("flat_settings", false);
-        GetSettingsRequest getSettingsRequest = new GetSettingsRequest()
-                .indices(Strings.splitStringByCommaToArray(request.param("index")))
+        GetSettingsRequest getSettingsRequest = new GetSettingsRequest().indices(Strings.splitStringByCommaToArray(request.param("index")))
                 .indicesOptions(IndicesOptions.fromRequest(request, IndicesOptions.strictExpandOpen()))
-                .humanReadable(request.hasParam("human"))
-                .includeDefaults(renderDefaults)
-                .names(names);
+                .humanReadable(request.hasParam("human")).includeDefaults(renderDefaults).names(names);
         getSettingsRequest.local(request.paramAsBoolean("local", getSettingsRequest.local()));
         getSettingsRequest.masterNodeTimeout(request.paramAsTime("master_timeout", getSettingsRequest.masterNodeTimeout()));
         return channel -> client.admin().indices().getSettings(getSettingsRequest, new RestToXContentListener<>(channel));

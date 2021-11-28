@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.suggest.completion;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.suggest.document.FuzzyCompletionQuery;
 import org.apache.lucene.util.automaton.Operations;
 import org.codelibs.fesen.common.ParseField;
@@ -30,9 +33,6 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Fuzzy options for completion suggester
@@ -55,8 +55,7 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
      *     "max_determinized_states" : INT
      * }
      */
-    private static final ObjectParser<Builder, Void> PARSER = new ObjectParser<>(FUZZY_OPTIONS.getPreferredName(),
-            Builder::new);
+    private static final ObjectParser<Builder, Void> PARSER = new ObjectParser<>(FUZZY_OPTIONS.getPreferredName(), Builder::new);
     static {
         PARSER.declareInt(Builder::setFuzzyMinLength, MIN_LENGTH_FIELD);
         PARSER.declareInt(Builder::setMaxDeterminizedStates, MAX_DETERMINIZED_STATES_FIELD);
@@ -81,8 +80,8 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
     private boolean unicodeAware;
     private int maxDeterminizedStates;
 
-    private FuzzyOptions(int editDistance, boolean transpositions, int fuzzyMinLength, int fuzzyPrefixLength,
-                         boolean unicodeAware, int maxDeterminizedStates) {
+    private FuzzyOptions(int editDistance, boolean transpositions, int fuzzyMinLength, int fuzzyPrefixLength, boolean unicodeAware,
+            int maxDeterminizedStates) {
         this.editDistance = editDistance;
         this.transpositions = transpositions;
         this.fuzzyMinLength = fuzzyMinLength;
@@ -160,16 +159,23 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         FuzzyOptions that = (FuzzyOptions) o;
 
-        if (editDistance != that.editDistance) return false;
-        if (transpositions != that.transpositions) return false;
-        if (fuzzyMinLength != that.fuzzyMinLength) return false;
-        if (fuzzyPrefixLength != that.fuzzyPrefixLength) return false;
-        if (unicodeAware != that.unicodeAware) return false;
+        if (editDistance != that.editDistance)
+            return false;
+        if (transpositions != that.transpositions)
+            return false;
+        if (fuzzyMinLength != that.fuzzyMinLength)
+            return false;
+        if (fuzzyPrefixLength != that.fuzzyPrefixLength)
+            return false;
+        if (unicodeAware != that.unicodeAware)
+            return false;
         return maxDeterminizedStates == that.maxDeterminizedStates;
 
     }
@@ -289,8 +295,7 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         }
 
         public FuzzyOptions build() {
-            return new FuzzyOptions(editDistance, transpositions, fuzzyMinLength, fuzzyPrefixLength,
-                unicodeAware, maxDeterminizedStates);
+            return new FuzzyOptions(editDistance, transpositions, fuzzyMinLength, fuzzyPrefixLength, unicodeAware, maxDeterminizedStates);
         }
     }
 }

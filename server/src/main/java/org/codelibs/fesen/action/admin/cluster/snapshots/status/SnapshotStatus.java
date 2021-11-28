@@ -19,6 +19,22 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
 import org.codelibs.fesen.cluster.SnapshotsInProgress.State;
@@ -35,22 +51,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.snapshots.Snapshot;
 import org.codelibs.fesen.snapshots.SnapshotId;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 /**
  * Status of a snapshot
@@ -89,8 +89,8 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         updateShardStats(startTime, time);
     }
 
-    SnapshotStatus(Snapshot snapshot, State state, List<SnapshotIndexShardStatus> shards, Boolean includeGlobalState,
-                   long startTime, long time) {
+    SnapshotStatus(Snapshot snapshot, State state, List<SnapshotIndexShardStatus> shards, Boolean includeGlobalState, long startTime,
+            long time) {
         this.snapshot = Objects.requireNonNull(snapshot);
         this.state = Objects.requireNonNull(state);
         this.shards = Objects.requireNonNull(shards);
@@ -101,8 +101,8 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
     }
 
     private SnapshotStatus(Snapshot snapshot, State state, List<SnapshotIndexShardStatus> shards,
-                          Map<String, SnapshotIndexStatus> indicesStatus, SnapshotShardsStats shardsStats,
-                          SnapshotStats stats, Boolean includeGlobalState) {
+            Map<String, SnapshotIndexStatus> indicesStatus, SnapshotShardsStats shardsStats, SnapshotStats stats,
+            Boolean includeGlobalState) {
         this.snapshot = snapshot;
         this.state = state;
         this.shards = shards;
@@ -226,36 +226,36 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         return builder;
     }
 
-    static final ConstructingObjectParser<SnapshotStatus, Void> PARSER = new ConstructingObjectParser<>(
-        "snapshot_status", true,
-        (Object[] parsedObjects) -> {
-            int i = 0;
-            String name = (String) parsedObjects[i++];
-            String repository = (String) parsedObjects[i++];
-            String uuid = (String) parsedObjects[i++];
-            String rawState = (String) parsedObjects[i++];
-            Boolean includeGlobalState = (Boolean) parsedObjects[i++];
-            SnapshotStats stats = ((SnapshotStats) parsedObjects[i++]);
-            SnapshotShardsStats shardsStats = ((SnapshotShardsStats) parsedObjects[i++]);
-            @SuppressWarnings("unchecked") List<SnapshotIndexStatus> indices = ((List<SnapshotIndexStatus>) parsedObjects[i]);
+    static final ConstructingObjectParser<SnapshotStatus, Void> PARSER =
+            new ConstructingObjectParser<>("snapshot_status", true, (Object[] parsedObjects) -> {
+                int i = 0;
+                String name = (String) parsedObjects[i++];
+                String repository = (String) parsedObjects[i++];
+                String uuid = (String) parsedObjects[i++];
+                String rawState = (String) parsedObjects[i++];
+                Boolean includeGlobalState = (Boolean) parsedObjects[i++];
+                SnapshotStats stats = ((SnapshotStats) parsedObjects[i++]);
+                SnapshotShardsStats shardsStats = ((SnapshotShardsStats) parsedObjects[i++]);
+                @SuppressWarnings("unchecked")
+                List<SnapshotIndexStatus> indices = ((List<SnapshotIndexStatus>) parsedObjects[i]);
 
-            Snapshot snapshot = new Snapshot(repository, new SnapshotId(name, uuid));
-            SnapshotsInProgress.State state = SnapshotsInProgress.State.valueOf(rawState);
-            Map<String, SnapshotIndexStatus> indicesStatus;
-            List<SnapshotIndexShardStatus> shards;
-            if (indices == null || indices.isEmpty()) {
-                indicesStatus = emptyMap();
-                shards = emptyList();
-            } else {
-                indicesStatus = new HashMap<>(indices.size());
-                shards = new ArrayList<>();
-                for (SnapshotIndexStatus index : indices) {
-                    indicesStatus.put(index.getIndex(), index);
-                    shards.addAll(index.getShards().values());
+                Snapshot snapshot = new Snapshot(repository, new SnapshotId(name, uuid));
+                SnapshotsInProgress.State state = SnapshotsInProgress.State.valueOf(rawState);
+                Map<String, SnapshotIndexStatus> indicesStatus;
+                List<SnapshotIndexShardStatus> shards;
+                if (indices == null || indices.isEmpty()) {
+                    indicesStatus = emptyMap();
+                    shards = emptyList();
+                } else {
+                    indicesStatus = new HashMap<>(indices.size());
+                    shards = new ArrayList<>();
+                    for (SnapshotIndexStatus index : indices) {
+                        indicesStatus.put(index.getIndex(), index);
+                        shards.addAll(index.getShards().values());
+                    }
                 }
-            }
-            return new SnapshotStatus(snapshot, state, shards, indicesStatus, shardsStats, stats, includeGlobalState);
-        });
+                return new SnapshotStatus(snapshot, state, shards, indicesStatus, shardsStats, stats, includeGlobalState);
+            });
     static {
         PARSER.declareString(constructorArg(), new ParseField(SNAPSHOT));
         PARSER.declareString(constructorArg(), new ParseField(REPOSITORY));
@@ -263,7 +263,7 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         PARSER.declareString(constructorArg(), new ParseField(STATE));
         PARSER.declareBoolean(optionalConstructorArg(), new ParseField(INCLUDE_GLOBAL_STATE));
         PARSER.declareField(constructorArg(), SnapshotStats::fromXContent, new ParseField(SnapshotStats.Fields.STATS),
-            ObjectParser.ValueType.OBJECT);
+                ObjectParser.ValueType.OBJECT);
         PARSER.declareObject(constructorArg(), SnapshotShardsStats.PARSER, new ParseField(SnapshotShardsStats.Fields.SHARDS_STATS));
         PARSER.declareNamedObjects(constructorArg(), SnapshotIndexStatus.PARSER, new ParseField(INDICES));
     }
@@ -283,8 +283,10 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         SnapshotStatus that = (SnapshotStatus) o;
         return Objects.equals(snapshot, that.snapshot) && state == that.state && Objects.equals(indicesStatus, that.indicesStatus)

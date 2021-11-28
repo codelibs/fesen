@@ -19,7 +19,11 @@
 
 package org.codelibs.fesen.cluster.block;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -28,15 +32,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Objects;
-
 public class ClusterBlock implements Writeable, ToXContentFragment {
 
     private final int id;
-    @Nullable private final String uuid;
+    @Nullable
+    private final String uuid;
     private final String description;
     private final EnumSet<ClusterBlockLevel> levels;
     private final boolean retryable;
@@ -55,13 +55,13 @@ public class ClusterBlock implements Writeable, ToXContentFragment {
         allowReleaseResources = in.readBoolean();
     }
 
-    public ClusterBlock(int id, String description, boolean retryable, boolean disableStatePersistence,
-                        boolean allowReleaseResources, RestStatus status, EnumSet<ClusterBlockLevel> levels) {
+    public ClusterBlock(int id, String description, boolean retryable, boolean disableStatePersistence, boolean allowReleaseResources,
+            RestStatus status, EnumSet<ClusterBlockLevel> levels) {
         this(id, null, description, retryable, disableStatePersistence, allowReleaseResources, status, levels);
     }
 
     public ClusterBlock(int id, String uuid, String description, boolean retryable, boolean disableStatePersistence,
-                        boolean allowReleaseResources, RestStatus status, EnumSet<ClusterBlockLevel> levels) {
+            boolean allowReleaseResources, RestStatus status, EnumSet<ClusterBlockLevel> levels) {
         this.id = id;
         this.uuid = uuid;
         this.description = description;

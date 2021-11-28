@@ -110,9 +110,8 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
     }
 
     public void testArrayLatLonValues() throws Exception {
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false).field("store", true))
-        );
+        DocumentMapper mapper =
+                createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false).field("store", true)));
         ParsedDocument doc = mapper.parse(source(b -> {
             b.startArray("field");
             b.startObject().field("lat", 1.2).field("lon", 1.3).endObject();
@@ -150,9 +149,8 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
     }
 
     public void testLatLonInOneValueArray() throws Exception {
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false).field("store", true))
-        );
+        DocumentMapper mapper =
+                createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false).field("store", true)));
         ParsedDocument doc = mapper.parse(source(b -> b.startArray("field").value("1.2,1.3").value("1.4,1.5").endArray()));
 
         // doc values are enabled by default, but in this test we disable them; we should only have 2 points
@@ -190,9 +188,8 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
     }
 
     public void testLonLatArrayArrayStored() throws Exception {
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("store", true).field("doc_values", false))
-        );
+        DocumentMapper mapper =
+                createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("store", true).field("doc_values", false)));
         ParsedDocument doc = mapper.parse(source(b -> {
             b.startArray("field");
             b.startArray().value(1.3).value(1.2).endArray();
@@ -210,14 +207,14 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
         DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("ignore_z_value", true)));
         Mapper fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
-        boolean ignoreZValue = ((GeoPointFieldMapper)fieldMapper).ignoreZValue().value();
+        boolean ignoreZValue = ((GeoPointFieldMapper) fieldMapper).ignoreZValue().value();
         assertThat(ignoreZValue, equalTo(true));
 
         // explicit false accept_z_value test
         mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("ignore_z_value", false)));
         fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
-        ignoreZValue = ((GeoPointFieldMapper)fieldMapper).ignoreZValue().value();
+        ignoreZValue = ((GeoPointFieldMapper) fieldMapper).ignoreZValue().value();
         assertThat(ignoreZValue, equalTo(false));
     }
 
@@ -226,8 +223,8 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
             b.field("type", "geo_point").field("doc_values", false);
             b.startObject("fields");
             {
-                b.startObject("geohash").field("type", "keyword").field("doc_values", false).endObject();  // test geohash as keyword
-                b.startObject("latlon").field("type", "text").endObject();  // test geohash as text
+                b.startObject("geohash").field("type", "keyword").field("doc_values", false).endObject(); // test geohash as keyword
+                b.startObject("latlon").field("type", "text").endObject(); // test geohash as text
             }
             b.endObject();
         }));
@@ -241,9 +238,7 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
     }
 
     public void testNullValue() throws Exception {
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point"))
-        );
+        DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point")));
         Mapper fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
 
@@ -251,9 +246,7 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
         assertThat(doc.rootDoc().getField("field"), nullValue());
         assertThat(doc.rootDoc().getFields(FieldNamesFieldMapper.NAME).length, equalTo(0));
 
-        mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false))
-        );
+        mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("doc_values", false)));
         fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
 
@@ -261,9 +254,7 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
         assertThat(doc.rootDoc().getField("field"), nullValue());
         assertThat(doc.rootDoc().getFields(FieldNamesFieldMapper.NAME).length, equalTo(0));
 
-        mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("null_value", "1,2"))
-        );
+        mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("null_value", "1,2")));
         fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
 
@@ -288,14 +279,8 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
      */
     public void testNullValueWithIgnoreMalformed() throws Exception {
         // Set ignore_z_value = false and ignore_malformed = true and test that a malformed point for null_value is normalized.
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(
-                b -> b.field("type", "geo_point")
-                    .field("ignore_z_value", false)
-                    .field("ignore_malformed", true)
-                    .field("null_value", "91,181")
-            )
-        );
+        DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("ignore_z_value", false)
+                .field("ignore_malformed", true).field("null_value", "91,181")));
         Mapper fieldMapper = mapper.mappers().getMapper("field");
         assertThat(fieldMapper, instanceOf(GeoPointFieldMapper.class));
 
@@ -305,19 +290,15 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
     }
 
     public void testInvalidGeohashIgnored() throws Exception {
-        DocumentMapper mapper = createDocumentMapper(
-            fieldMapping(b -> b.field("type", "geo_point").field("ignore_malformed", "true"))
-        );
+        DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("ignore_malformed", "true")));
         ParsedDocument doc = mapper.parse(source(b -> b.field("field", "1234.333")));
         assertThat(doc.rootDoc().getField("field"), nullValue());
     }
 
     public void testInvalidGeohashNotIgnored() throws Exception {
         DocumentMapper mapper = createDocumentMapper(fieldMapping(this::minimalMapping));
-        MapperParsingException e = expectThrows(
-            MapperParsingException.class,
-            () -> mapper.parse(source(b -> b.field("field", "1234.333")))
-        );
+        MapperParsingException e =
+                expectThrows(MapperParsingException.class, () -> mapper.parse(source(b -> b.field("field", "1234.333"))));
         assertThat(e.getMessage(), containsString("failed to parse field [field] of type [geo_point]"));
         assertThat(e.getRootCause().getMessage(), containsString("unsupported symbol [.] in geohash [1234.333]"));
     }
@@ -326,34 +307,22 @@ public class GeoPointFieldMapperTests extends FieldMapperTestCase2<GeoPointField
         DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "geo_point").field("ignore_malformed", "true")));
 
         assertThat(mapper.parse(source(b -> b.field("field", "1234.333"))).rootDoc().getField("field"), nullValue());
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").field("lat", "-").field("lon", 1.3).endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").field("lat", 1.3).field("lon", "-").endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
+        assertThat(mapper.parse(source(b -> b.startObject("field").field("lat", "-").field("lon", 1.3).endObject())).rootDoc()
+                .getField("field"), nullValue());
+        assertThat(mapper.parse(source(b -> b.startObject("field").field("lat", 1.3).field("lon", "-").endObject())).rootDoc()
+                .getField("field"), nullValue());
         assertThat(mapper.parse(source(b -> b.field("field", "-,1.3"))).rootDoc().getField("field"), nullValue());
         assertThat(mapper.parse(source(b -> b.field("field", "1.3,-"))).rootDoc().getField("field"), nullValue());
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").field("lat", "NaN").field("lon", 1.2).endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").field("lat", 1.2).field("lon", "NaN").endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
+        assertThat(mapper.parse(source(b -> b.startObject("field").field("lat", "NaN").field("lon", 1.2).endObject())).rootDoc()
+                .getField("field"), nullValue());
+        assertThat(mapper.parse(source(b -> b.startObject("field").field("lat", 1.2).field("lon", "NaN").endObject())).rootDoc()
+                .getField("field"), nullValue());
         assertThat(mapper.parse(source(b -> b.field("field", "1.3,NaN"))).rootDoc().getField("field"), nullValue());
         assertThat(mapper.parse(source(b -> b.field("field", "NaN,1.3"))).rootDoc().getField("field"), nullValue());
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").nullField("lat").field("lon", 1.2).endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
-        assertThat(
-            mapper.parse(source(b -> b.startObject("field").field("lat", 1.2).nullField("lon").endObject())).rootDoc().getField("field"),
-            nullValue()
-        );
+        assertThat(mapper.parse(source(b -> b.startObject("field").nullField("lat").field("lon", 1.2).endObject())).rootDoc()
+                .getField("field"), nullValue());
+        assertThat(mapper.parse(source(b -> b.startObject("field").field("lat", 1.2).nullField("lon").endObject())).rootDoc()
+                .getField("field"), nullValue());
     }
 
     @Override

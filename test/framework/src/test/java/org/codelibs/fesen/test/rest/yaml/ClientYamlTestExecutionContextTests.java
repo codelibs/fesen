@@ -19,39 +19,36 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import org.apache.http.HttpEntity;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.client.NodeSelector;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.VersionUtils;
-import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
-import org.codelibs.fesen.test.rest.yaml.ClientYamlTestResponse;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.http.HttpEntity;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.client.NodeSelector;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.VersionUtils;
+
 public class ClientYamlTestExecutionContextTests extends ESTestCase {
 
     public void testHeadersSupportStashedValueReplacement() throws IOException {
         final AtomicReference<Map<String, String>> headersRef = new AtomicReference<>();
         final Version version = VersionUtils.randomVersion(random());
-        final ClientYamlTestExecutionContext context =
-            new ClientYamlTestExecutionContext(null, randomBoolean()) {
-                @Override
-                ClientYamlTestResponse callApiInternal(String apiName, Map<String, String> params,
-                        HttpEntity entity, Map<String, String> headers, NodeSelector nodeSelector) {
-                    headersRef.set(headers);
-                    return null;
-                }
+        final ClientYamlTestExecutionContext context = new ClientYamlTestExecutionContext(null, randomBoolean()) {
+            @Override
+            ClientYamlTestResponse callApiInternal(String apiName, Map<String, String> params, HttpEntity entity,
+                    Map<String, String> headers, NodeSelector nodeSelector) {
+                headersRef.set(headers);
+                return null;
+            }
 
-                @Override
-                public Version esVersion() {
-                    return version;
-                }
-            };
+            @Override
+            public Version esVersion() {
+                return version;
+            }
+        };
         final Map<String, String> headers = new HashMap<>();
         headers.put("foo", "$bar");
         headers.put("foo1", "baz ${c}");

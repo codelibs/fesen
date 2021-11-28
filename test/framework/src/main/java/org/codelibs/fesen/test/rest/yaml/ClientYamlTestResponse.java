@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.util.EntityUtils;
@@ -30,12 +36,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Response obtained from a REST call, eagerly reads the response body into a string for later optional parsing.
@@ -116,8 +116,8 @@ public class ClientYamlTestResponse {
             } else {
                 //if the body is in a binary format and gets requested as a string (e.g. to log a test failure), we convert it to json
                 try (XContentBuilder jsonBuilder = XContentFactory.jsonBuilder()) {
-                    try (XContentParser parser = bodyContentType.xContent()
-                            .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, body)) {
+                    try (XContentParser parser = bodyContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                            LoggingDeprecationHandler.INSTANCE, body)) {
                         jsonBuilder.copyCurrentStructure(parser);
                     }
                     bodyAsString = Strings.toString(jsonBuilder);

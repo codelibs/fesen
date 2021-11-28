@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.common;
 
-import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.core.TimeValue;
-
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import org.codelibs.fesen.common.lease.Releasable;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Simple stop watch, allowing for timing of a number of tasks,

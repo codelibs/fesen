@@ -44,11 +44,9 @@ public class MainResponseTests extends AbstractSerializingTestCase<MainResponse>
         String nodeName = randomAlphaOfLength(10);
         final String date = new Date(randomNonNegativeLong()).toString();
         Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
-        Build build = new Build(
-            Build.Flavor.UNKNOWN, Build.Type.UNKNOWN, randomAlphaOfLength(8), date, randomBoolean(),
-            version.toString()
-        );
-        return new MainResponse(nodeName, version, clusterName, clusterUuid , build);
+        Build build =
+                new Build(Build.Flavor.UNKNOWN, Build.Type.UNKNOWN, randomAlphaOfLength(8), date, randomBoolean(), version.toString());
+        return new MainResponse(nodeName, version, clusterName, clusterUuid, build);
     }
 
     @Override
@@ -64,30 +62,20 @@ public class MainResponseTests extends AbstractSerializingTestCase<MainResponse>
     public void testToXContent() throws IOException {
         String clusterUUID = randomAlphaOfLengthBetween(10, 20);
         final Build current = Build.CURRENT;
-        Build build = new Build(
-            current.flavor(), current.type(), current.hash(), current.date(), current.isSnapshot(),
-            current.getQualifiedVersion()
-        );
+        Build build = new Build(current.flavor(), current.type(), current.hash(), current.date(), current.isSnapshot(),
+                current.getQualifiedVersion());
         Version version = Version.CURRENT;
         MainResponse response = new MainResponse("nodeName", version, new ClusterName("clusterName"), clusterUUID, build);
         XContentBuilder builder = XContentFactory.jsonBuilder();
         response.toXContent(builder, ToXContent.EMPTY_PARAMS);
-        assertEquals("{"
-                + "\"name\":\"nodeName\","
-                + "\"cluster_name\":\"clusterName\","
-                + "\"cluster_uuid\":\"" + clusterUUID + "\","
-                + "\"version\":{"
-                    + "\"number\":\"" + build.getQualifiedVersion() + "\","
-                    + "\"build_flavor\":\"" + current.flavor().displayName() + "\","
-                    + "\"build_type\":\"" + current.type().displayName() + "\","
-                    + "\"build_hash\":\"" + current.hash() + "\","
-                    + "\"build_date\":\"" + current.date() + "\","
-                    + "\"build_snapshot\":" + current.isSnapshot() + ","
-                    + "\"lucene_version\":\"" + version.luceneVersion.toString() + "\","
-                    + "\"minimum_wire_compatibility_version\":\"" + version.minimumCompatibilityVersion().toString() + "\","
-                    + "\"minimum_index_compatibility_version\":\"" + version.minimumIndexCompatibilityVersion().toString() + "\"},"
-                + "\"tagline\":\"You Know, for Search\""
-          + "}", Strings.toString(builder));
+        assertEquals("{" + "\"name\":\"nodeName\"," + "\"cluster_name\":\"clusterName\"," + "\"cluster_uuid\":\"" + clusterUUID + "\","
+                + "\"version\":{" + "\"number\":\"" + build.getQualifiedVersion() + "\"," + "\"build_flavor\":\""
+                + current.flavor().displayName() + "\"," + "\"build_type\":\"" + current.type().displayName() + "\"," + "\"build_hash\":\""
+                + current.hash() + "\"," + "\"build_date\":\"" + current.date() + "\"," + "\"build_snapshot\":" + current.isSnapshot() + ","
+                + "\"lucene_version\":\"" + version.luceneVersion.toString() + "\"," + "\"minimum_wire_compatibility_version\":\""
+                + version.minimumCompatibilityVersion().toString() + "\"," + "\"minimum_index_compatibility_version\":\""
+                + version.minimumIndexCompatibilityVersion().toString() + "\"}," + "\"tagline\":\"You Know, for Search\"" + "}",
+                Strings.toString(builder));
     }
 
     @Override
@@ -98,25 +86,23 @@ public class MainResponseTests extends AbstractSerializingTestCase<MainResponse>
         String nodeName = mutateInstance.getNodeName();
         ClusterName clusterName = mutateInstance.getClusterName();
         switch (randomIntBetween(0, 4)) {
-            case 0:
-                clusterUuid = clusterUuid + randomAlphaOfLength(5);
-                break;
-            case 1:
-                nodeName = nodeName + randomAlphaOfLength(5);
-                break;
-            case 2:
-                // toggle the snapshot flag of the original Build parameter
-                build = new Build(
-                    Build.Flavor.UNKNOWN, Build.Type.UNKNOWN, build.hash(), build.date(), !build.isSnapshot(),
-                    build.getQualifiedVersion()
-                );
-                break;
-            case 3:
-                version = randomValueOtherThan(version, () -> VersionUtils.randomVersion(random()));
-                break;
-            case 4:
-                clusterName = new ClusterName(clusterName + randomAlphaOfLength(5));
-                break;
+        case 0:
+            clusterUuid = clusterUuid + randomAlphaOfLength(5);
+            break;
+        case 1:
+            nodeName = nodeName + randomAlphaOfLength(5);
+            break;
+        case 2:
+            // toggle the snapshot flag of the original Build parameter
+            build = new Build(Build.Flavor.UNKNOWN, Build.Type.UNKNOWN, build.hash(), build.date(), !build.isSnapshot(),
+                    build.getQualifiedVersion());
+            break;
+        case 3:
+            version = randomValueOtherThan(version, () -> VersionUtils.randomVersion(random()));
+            break;
+        case 4:
+            clusterName = new ClusterName(clusterName + randomAlphaOfLength(5));
+            break;
         }
         return new MainResponse(nodeName, version, clusterName, clusterUuid, build);
     }

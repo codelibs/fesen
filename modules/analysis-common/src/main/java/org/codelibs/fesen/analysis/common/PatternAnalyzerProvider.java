@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.util.regex.Pattern;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.codelibs.fesen.common.regex.Regex;
@@ -27,8 +29,6 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractIndexAnalyzerProvider;
 import org.codelibs.fesen.index.analysis.Analysis;
-
-import java.util.regex.Pattern;
 
 public class PatternAnalyzerProvider extends AbstractIndexAnalyzerProvider<Analyzer> {
 

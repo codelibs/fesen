@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.translog;
 
-import org.apache.lucene.store.BufferedChecksum;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-
 import java.io.IOException;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import org.apache.lucene.store.BufferedChecksum;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
 
 /**
  * Similar to Lucene's BufferedChecksumIndexOutput, however this wraps a

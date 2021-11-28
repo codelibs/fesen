@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
@@ -27,11 +30,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.unit.DistanceUnit;
 import org.codelibs.fesen.common.unit.DistanceUnit.Distance;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.locationtech.spatial4j.shape.Circle;
 import org.locationtech.jts.geom.Coordinate;
-
-import java.io.IOException;
-import java.util.Objects;
+import org.locationtech.spatial4j.shape.Circle;
 
 public class CircleBuilder extends ShapeBuilder<Circle, org.codelibs.fesen.geometry.Circle, CircleBuilder> {
 
@@ -164,7 +164,7 @@ public class CircleBuilder extends ShapeBuilder<Circle, org.codelibs.fesen.geome
 
     @Override
     public org.codelibs.fesen.geometry.Circle buildGeometry() {
-       return new org.codelibs.fesen.geometry.Circle(center.x, center.y, unit.toMeters(radius));
+        return new org.codelibs.fesen.geometry.Circle(center.x, center.y, unit.toMeters(radius));
     }
 
     @Override
@@ -195,8 +195,7 @@ public class CircleBuilder extends ShapeBuilder<Circle, org.codelibs.fesen.geome
             return false;
         }
         CircleBuilder other = (CircleBuilder) obj;
-        return Objects.equals(center, other.center) &&
-                Objects.equals(radius, other.radius) &&
-                Objects.equals(unit.ordinal(), other.unit.ordinal());
+        return Objects.equals(center, other.center) && Objects.equals(radius, other.radius)
+                && Objects.equals(unit.ordinal(), other.unit.ordinal());
     }
 }

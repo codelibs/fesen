@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -33,14 +41,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-
 /**
  * An aggregator that finds "rare" string values (e.g. terms agg that orders ascending)
  */
@@ -49,29 +49,10 @@ public class LongRareTermsAggregator extends AbstractRareTermsAggregator {
     private final IncludeExclude.LongFilter filter;
     private final LongKeyedBucketOrds bucketOrds;
 
-    LongRareTermsAggregator(
-        String name,
-        AggregatorFactories factories,
-        ValuesSource.Numeric valuesSource,
-        DocValueFormat format,
-        SearchContext aggregationContext,
-        Aggregator parent,
-        IncludeExclude.LongFilter filter,
-        int maxDocCount,
-        double precision,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        super(
-            name,
-            factories,
-            aggregationContext,
-            parent,
-            metadata,
-            maxDocCount,
-            precision,
-            format
-        );
+    LongRareTermsAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, DocValueFormat format,
+            SearchContext aggregationContext, Aggregator parent, IncludeExclude.LongFilter filter, int maxDocCount, double precision,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+        super(name, factories, aggregationContext, parent, metadata, maxDocCount, precision, format);
         this.valuesSource = valuesSource;
         this.filter = filter;
         this.bucketOrds = LongKeyedBucketOrds.build(context.bigArrays(), cardinality);
@@ -166,15 +147,8 @@ public class LongRareTermsAggregator extends AbstractRareTermsAggregator {
         InternalAggregation[] result = new InternalAggregation[owningBucketOrds.length];
         for (int ordIdx = 0; ordIdx < owningBucketOrds.length; ordIdx++) {
             Arrays.sort(rarestPerOrd[ordIdx], ORDER.comparator());
-            result[ordIdx] = new LongRareTerms(
-                name,
-                ORDER,
-                metadata(),
-                format,
-                Arrays.asList(rarestPerOrd[ordIdx]),
-                maxDocCount,
-                filters[ordIdx]
-            );
+            result[ordIdx] =
+                    new LongRareTerms(name, ORDER, metadata(), format, Arrays.asList(rarestPerOrd[ordIdx]), maxDocCount, filters[ordIdx]);
         }
         return result;
     }

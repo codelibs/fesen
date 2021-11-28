@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.index.fielddata.fieldcomparator;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.search.DocIdSetIterator;
@@ -38,8 +40,6 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
 
 /**
  * Comparator source for float values.
@@ -92,13 +92,15 @@ public class FloatValuesComparatorSource extends IndexFieldData.XFieldComparator
     }
 
     @Override
-    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
-                int bucketSize, BucketedSort.ExtraData extra) {
+    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
+            BucketedSort.ExtraData extra) {
         return new BucketedSort.ForFloats(bigArrays, sortOrder, format, bucketSize, extra) {
             private final float dMissingValue = (Float) missingObject(missingValue, sortOrder == SortOrder.DESC);
 
             @Override
-            public boolean needsScores() { return false; }
+            public boolean needsScores() {
+                return false;
+            }
 
             @Override
             public Leaf forLeaf(LeafReaderContext ctx) throws IOException {
@@ -107,7 +109,8 @@ public class FloatValuesComparatorSource extends IndexFieldData.XFieldComparator
                     private float docValue;
 
                     @Override
-                    public void setScorer(Scorable scorer) {}
+                    public void setScorer(Scorable scorer) {
+                    }
 
                     @Override
                     protected boolean advanceExact(int doc) throws IOException {

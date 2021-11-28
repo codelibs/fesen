@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.search.rescore;
 
+import java.io.IOException;
+
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.lucene.search.TopDocsAndMaxScore;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import java.io.IOException;
 
 /**
  * Rescore phase of a search request, used to run potentially expensive scoring models against the top matching documents.
@@ -42,7 +42,7 @@ public class RescorePhase {
                 topDocs = ctx.rescorer().rescore(topDocs, context.searcher(), ctx);
                 // It is the responsibility of the rescorer to sort the resulted top docs,
                 // here we only assert that this condition is met.
-                assert context.sort() == null && topDocsSortedByScore(topDocs): "topdocs should be sorted after rescore";
+                assert context.sort() == null && topDocsSortedByScore(topDocs) : "topdocs should be sorted after rescore";
             }
             context.queryResult().topDocs(new TopDocsAndMaxScore(topDocs, topDocs.scoreDocs[0].score),
                     context.queryResult().sortValueFormats());

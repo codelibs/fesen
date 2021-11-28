@@ -41,6 +41,6 @@ public abstract class AbstractDiffableWireSerializationTestCase<T extends Diffab
 
     public final void testDiffableSerialization() throws IOException {
         DiffableTestUtils.testDiffableSerialization(this::createTestInstance, this::makeTestChanges, getNamedWriteableRegistry(),
-            instanceReader(), diffReader());
+                instanceReader(), diffReader());
     }
 }

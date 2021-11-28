@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -39,11 +44,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * A builder for histograms on numeric fields.  This builder can operate on either base numeric fields, or numeric range fields.  IP range
  * fields are unsupported, and will throw at the factory layer.
@@ -51,11 +51,10 @@ import java.util.Objects;
 public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<HistogramAggregationBuilder> {
     public static final String NAME = "histogram";
     public static final ValuesSourceRegistry.RegistryKey<HistogramAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, HistogramAggregatorSupplier.class);
+            new ValuesSourceRegistry.RegistryKey<>(NAME, HistogramAggregatorSupplier.class);
 
     private static final ObjectParser<double[], Void> EXTENDED_BOUNDS_PARSER = new ObjectParser<>(
-            Histogram.EXTENDED_BOUNDS_FIELD.getPreferredName(),
-            () -> new double[]{ Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY });
+            Histogram.EXTENDED_BOUNDS_FIELD.getPreferredName(), () -> new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY });
     static {
         EXTENDED_BOUNDS_PARSER.declareDouble((bounds, d) -> bounds[0] = d, new ParseField("min"));
         EXTENDED_BOUNDS_PARSER.declareDouble((bounds, d) -> bounds[1] = d, new ParseField("max"));
@@ -75,13 +74,13 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         PARSER.declareLong(HistogramAggregationBuilder::minDocCount, Histogram.MIN_DOC_COUNT_FIELD);
 
         PARSER.declareField(HistogramAggregationBuilder::extendedBounds, parser -> DoubleBounds.PARSER.apply(parser, null),
-            Histogram.EXTENDED_BOUNDS_FIELD, ObjectParser.ValueType.OBJECT);
+                Histogram.EXTENDED_BOUNDS_FIELD, ObjectParser.ValueType.OBJECT);
 
         PARSER.declareField(HistogramAggregationBuilder::hardBounds, parser -> DoubleBounds.PARSER.apply(parser, null),
-            Histogram.HARD_BOUNDS_FIELD, ObjectParser.ValueType.OBJECT);
+                Histogram.HARD_BOUNDS_FIELD, ObjectParser.ValueType.OBJECT);
 
         PARSER.declareObjectArray(HistogramAggregationBuilder::order, (p, c) -> InternalOrder.Parser.parseOrderParam(p),
-            Histogram.ORDER_FIELD);
+                Histogram.ORDER_FIELD);
     }
 
     public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
@@ -106,9 +105,8 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         super(name);
     }
 
-    protected HistogramAggregationBuilder(HistogramAggregationBuilder clone,
-                                          AggregatorFactories.Builder factoriesBuilder,
-                                          Map<String, Object> metadata) {
+    protected HistogramAggregationBuilder(HistogramAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.interval = clone.interval;
         this.offset = clone.offset;
@@ -138,7 +136,7 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         } else {
             double minBound = in.readDouble();
             double maxBound = in.readDouble();
-            if (minBound ==  Double.POSITIVE_INFINITY && maxBound == Double.NEGATIVE_INFINITY) {
+            if (minBound == Double.POSITIVE_INFINITY && maxBound == Double.NEGATIVE_INFINITY) {
                 extendedBounds = null;
             } else {
                 extendedBounds = new DoubleBounds(minBound, maxBound);
@@ -258,7 +256,7 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         if (order == null) {
             throw new IllegalArgumentException("[order] must not be null: [" + name + "]");
         }
-        if(order instanceof CompoundOrder || InternalOrder.isKeyOrder(order)) {
+        if (order instanceof CompoundOrder || InternalOrder.isKeyOrder(order)) {
             this.order = order; // if order already contains a tie-breaker we are good to go
         } else { // otherwise add a tie-breaker by using a compound order
             this.order = BucketOrder.compound(order);
@@ -355,23 +353,21 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
-                                                       ValuesSourceConfig config,
-                                                       AggregatorFactory parent,
-                                                       AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
 
         if (hardBounds != null && extendedBounds != null) {
             if (hardBounds.getMax() != null && extendedBounds.getMax() != null && hardBounds.getMax() < extendedBounds.getMax()) {
-                throw new IllegalArgumentException("Extended bounds have to be inside hard bounds, hard bounds: [" +
-                    hardBounds + "], extended bounds: [" + extendedBounds.getMin() + "--" + extendedBounds.getMax() + "]");
+                throw new IllegalArgumentException("Extended bounds have to be inside hard bounds, hard bounds: [" + hardBounds
+                        + "], extended bounds: [" + extendedBounds.getMin() + "--" + extendedBounds.getMax() + "]");
             }
             if (hardBounds.getMin() != null && extendedBounds.getMin() != null && hardBounds.getMin() > extendedBounds.getMin()) {
-                throw new IllegalArgumentException("Extended bounds have to be inside hard bounds, hard bounds: [" +
-                    hardBounds + "], extended bounds: [" + extendedBounds.getMin() + "--" + extendedBounds.getMax() + "]");
+                throw new IllegalArgumentException("Extended bounds have to be inside hard bounds, hard bounds: [" + hardBounds
+                        + "], extended bounds: [" + extendedBounds.getMin() + "--" + extendedBounds.getMax() + "]");
             }
         }
-        return new HistogramAggregatorFactory(name, config, interval, offset, order, keyed, minDocCount, extendedBounds,
-            hardBounds, queryShardContext, parent, subFactoriesBuilder, metadata);
+        return new HistogramAggregatorFactory(name, config, interval, offset, order, keyed, minDocCount, extendedBounds, hardBounds,
+                queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override
@@ -381,16 +377,15 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         HistogramAggregationBuilder other = (HistogramAggregationBuilder) obj;
-        return Objects.equals(order, other.order)
-            && Objects.equals(keyed, other.keyed)
-            && Objects.equals(minDocCount, other.minDocCount)
-            && Objects.equals(interval, other.interval)
-            && Objects.equals(offset, other.offset)
-            && Objects.equals(extendedBounds, other.extendedBounds)
-            && Objects.equals(hardBounds, other.hardBounds);
+        return Objects.equals(order, other.order) && Objects.equals(keyed, other.keyed) && Objects.equals(minDocCount, other.minDocCount)
+                && Objects.equals(interval, other.interval) && Objects.equals(offset, other.offset)
+                && Objects.equals(extendedBounds, other.extendedBounds) && Objects.equals(hardBounds, other.hardBounds);
     }
 }

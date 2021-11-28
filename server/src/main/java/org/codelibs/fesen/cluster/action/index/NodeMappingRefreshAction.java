@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.cluster.action.index;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -38,8 +40,6 @@ import org.codelibs.fesen.transport.TransportRequestHandler;
 import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-
 public class NodeMappingRefreshAction {
 
     private static final Logger logger = LogManager.getLogger(NodeMappingRefreshAction.class);
@@ -53,8 +53,8 @@ public class NodeMappingRefreshAction {
     public NodeMappingRefreshAction(TransportService transportService, MetadataMappingService metadataMappingService) {
         this.transportService = transportService;
         this.metadataMappingService = metadataMappingService;
-        transportService.registerRequestHandler(ACTION_NAME,
-           ThreadPool.Names.SAME,  NodeMappingRefreshRequest::new, new NodeMappingRefreshTransportHandler());
+        transportService.registerRequestHandler(ACTION_NAME, ThreadPool.Names.SAME, NodeMappingRefreshRequest::new,
+                new NodeMappingRefreshTransportHandler());
     }
 
     public void nodeMappingRefresh(final DiscoveryNode masterNode, final NodeMappingRefreshRequest request) {
@@ -95,7 +95,7 @@ public class NodeMappingRefreshAction {
 
         @Override
         public String[] indices() {
-            return new String[]{index};
+            return new String[] { index };
         }
 
         @Override

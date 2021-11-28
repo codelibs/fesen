@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.get;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -31,24 +36,18 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.snapshots.SnapshotInfo;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 /**
  * Get snapshots response
  */
 public class GetSnapshotsResponse extends ActionResponse implements ToXContentObject {
 
     @SuppressWarnings("unchecked")
-    private static final ConstructingObjectParser<GetSnapshotsResponse, Void> GET_SNAPSHOT_PARSER =
-        new ConstructingObjectParser<>(GetSnapshotsResponse.class.getName(), true,
-            (args) -> new GetSnapshotsResponse((List<SnapshotInfo>) args[0]));
+    private static final ConstructingObjectParser<GetSnapshotsResponse, Void> GET_SNAPSHOT_PARSER = new ConstructingObjectParser<>(
+            GetSnapshotsResponse.class.getName(), true, (args) -> new GetSnapshotsResponse((List<SnapshotInfo>) args[0]));
 
     static {
         GET_SNAPSHOT_PARSER.declareObjectArray(ConstructingObjectParser.constructorArg(),
-            (p, c) -> SnapshotInfo.SNAPSHOT_INFO_PARSER.apply(p, c).build(), new ParseField("snapshots"));
+                (p, c) -> SnapshotInfo.SNAPSHOT_INFO_PARSER.apply(p, c).build(), new ParseField("snapshots"));
     }
 
     private final List<SnapshotInfo> snapshots;
@@ -94,8 +93,10 @@ public class GetSnapshotsResponse extends ActionResponse implements ToXContentOb
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         GetSnapshotsResponse that = (GetSnapshotsResponse) o;
         return Objects.equals(snapshots, that.snapshots);
     }

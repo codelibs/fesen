@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.test.test;
 
-import com.carrotsearch.randomizedtesting.annotations.Repeat;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
 
 import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.test.ESIntegTestCase;
 import org.codelibs.fesen.test.TestCluster;
 import org.junit.Test;
 
-import java.io.IOException;
-
-import static org.hamcrest.Matchers.equalTo;
+import com.carrotsearch.randomizedtesting.annotations.Repeat;
 
 /**
  * This test ensures that the cluster initializion for suite scope is not influencing

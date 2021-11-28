@@ -19,11 +19,18 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import org.codelibs.fesen.FesenException;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.throwUnknownField;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.action.DocWriteResponse;
 import org.codelibs.fesen.action.DocWriteRequest.OpType;
+import org.codelibs.fesen.action.DocWriteResponse;
 import org.codelibs.fesen.action.delete.DeleteResponse;
 import org.codelibs.fesen.action.index.IndexResponse;
 import org.codelibs.fesen.action.update.UpdateResponse;
@@ -41,13 +48,6 @@ import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.io.IOException;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.throwUnknownField;
 
 /**
  * Represents a single item response for an action executed as part of the bulk API. Holds the index/type/id
@@ -180,15 +180,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
         private final long term;
         private final boolean aborted;
 
-        public static final ConstructingObjectParser<Failure, Void> PARSER =
-            new ConstructingObjectParser<>(
-                "bulk_failures",
-                true,
-                a ->
-                    new Failure(
-                        (String)a[0], (String)a[1], (String)a[2], (Exception)a[3], RestStatus.fromCode((int)a[4])
-                    )
-            );
+        public static final ConstructingObjectParser<Failure, Void> PARSER = new ConstructingObjectParser<>("bulk_failures", true,
+                a -> new Failure((String) a[0], (String) a[1], (String) a[2], (Exception) a[3], RestStatus.fromCode((int) a[4])));
         static {
             PARSER.declareString(constructorArg(), new ParseField(INDEX_FIELD));
             PARSER.declareString(constructorArg(), new ParseField(TYPE_FIELD));
@@ -205,12 +198,12 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
          */
         public Failure(String index, String type, String id, Exception cause) {
             this(index, type, id, cause, ExceptionsHelper.status(cause), SequenceNumbers.UNASSIGNED_SEQ_NO,
-                SequenceNumbers.UNASSIGNED_PRIMARY_TERM, false);
+                    SequenceNumbers.UNASSIGNED_PRIMARY_TERM, false);
         }
 
         public Failure(String index, String type, String id, Exception cause, boolean aborted) {
             this(index, type, id, cause, ExceptionsHelper.status(cause), SequenceNumbers.UNASSIGNED_SEQ_NO,
-                SequenceNumbers.UNASSIGNED_PRIMARY_TERM, aborted);
+                    SequenceNumbers.UNASSIGNED_PRIMARY_TERM, aborted);
         }
 
         public Failure(String index, String type, String id, Exception cause, RestStatus status) {
@@ -365,7 +358,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     private Failure failure;
 
-    BulkItemResponse() {}
+    BulkItemResponse() {
+    }
 
     BulkItemResponse(ShardId shardId, StreamInput in) throws IOException {
         id = in.readVInt();

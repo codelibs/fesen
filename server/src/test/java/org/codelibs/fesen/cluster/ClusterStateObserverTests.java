@@ -53,8 +53,8 @@ public class ClusterStateObserverTests extends ESTestCase {
         final ClusterState clusterState = ClusterState.builder(new ClusterName("test")).nodes(DiscoveryNodes.builder()).build();
         when(clusterApplierService.state()).thenReturn(clusterState);
 
-        final ClusterStateObserver clusterStateObserver
-                = new ClusterStateObserver(clusterState, clusterApplierService, null, logger, new ThreadContext(Settings.EMPTY));
+        final ClusterStateObserver clusterStateObserver =
+                new ClusterStateObserver(clusterState, clusterApplierService, null, logger, new ThreadContext(Settings.EMPTY));
         clusterStateObserver.waitForNextChange(new ClusterStateObserver.Listener() {
             @Override
             public void onNewClusterState(ClusterState state) {

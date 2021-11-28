@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Tuple;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A response for the upgrade action.
@@ -46,7 +46,7 @@ public class UpgradeResponse extends BroadcastResponse {
     }
 
     UpgradeResponse(Map<String, Tuple<Version, String>> versions, int totalShards, int successfulShards, int failedShards,
-                    List<DefaultShardOperationFailedException> shardFailures) {
+            List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.versions = versions;
     }

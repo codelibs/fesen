@@ -38,7 +38,7 @@ public class GetComposableIndexTemplateRequestTests extends AbstractWireSerializ
 
     @Override
     protected GetComposableIndexTemplateAction.Request mutateInstance(GetComposableIndexTemplateAction.Request instance)
-        throws IOException {
+            throws IOException {
         return randomValueOtherThan(instance, this::createTestInstance);
     }
 }

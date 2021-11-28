@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.codelibs.fesen.FesenParseException;
@@ -43,16 +52,6 @@ import org.codelibs.fesen.script.TemplateScript;
 import org.codelibs.fesen.search.suggest.SuggestionBuilder;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
 import org.codelibs.fesen.search.suggest.phrase.PhraseSuggestionContext.DirectCandidateGenerator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Defines the actual suggest command for phrase suggestions ( {@code phrase}).
@@ -553,7 +552,7 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
                                 postTag = parser.text();
                             } else {
                                 throw new ParsingException(parser.getTokenLocation(),
-                                    "suggester[phrase][highlight] doesn't support field [" + currentFieldName + "]");
+                                        "suggester[phrase][highlight] doesn't support field [" + currentFieldName + "]");
                             }
                         }
                     }
@@ -565,8 +564,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
                         } else if (PhraseSuggestionBuilder.COLLATE_QUERY_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                             if (tmpSuggestion.collateQuery() != null) {
                                 throw new ParsingException(parser.getTokenLocation(),
-                                        "suggester[phrase][collate] query already set, doesn't support additional ["
-                                        + currentFieldName + "]");
+                                        "suggester[phrase][collate] query already set, doesn't support additional [" + currentFieldName
+                                                + "]");
                             }
                             Script template = Script.parse(parser, Script.DEFAULT_TEMPLATE_LANG);
                             tmpSuggestion.collateQuery(template);
@@ -589,19 +588,16 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
                             "suggester[phrase]  doesn't support array field [" + currentFieldName + "]");
                 }
             } else {
-                throw new ParsingException(parser.getTokenLocation(),
-                        "suggester[phrase] doesn't support field [" + currentFieldName + "]");
+                throw new ParsingException(parser.getTokenLocation(), "suggester[phrase] doesn't support field [" + currentFieldName + "]");
             }
         }
 
         // now we should have field name, check and copy fields over to the suggestion builder we return
         if (fieldname == null) {
-            throw new FesenParseException(
-                "the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
+            throw new FesenParseException("the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new PhraseSuggestionBuilder(fieldname, tmpSuggestion);
     }
-
 
     @Override
     public SuggestionContext build(QueryShardContext context) throws IOException {
@@ -673,13 +669,13 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     private static ShingleTokenFilterFactory.Factory getShingleFilterFactory(Analyzer analyzer) {
         if (analyzer instanceof NamedAnalyzer) {
-            analyzer = ((NamedAnalyzer)analyzer).analyzer();
+            analyzer = ((NamedAnalyzer) analyzer).analyzer();
         }
         if (analyzer instanceof AnalyzerComponentsProvider) {
             final TokenFilterFactory[] tokenFilters = ((AnalyzerComponentsProvider) analyzer).getComponents().getTokenFilters();
             for (TokenFilterFactory tokenFilterFactory : tokenFilters) {
                 if (tokenFilterFactory instanceof ShingleTokenFilterFactory) {
-                    return ((ShingleTokenFilterFactory)tokenFilterFactory).getInnerFactory();
+                    return ((ShingleTokenFilterFactory) tokenFilterFactory).getInnerFactory();
                 } else if (tokenFilterFactory instanceof ShingleTokenFilterFactory.Factory) {
                     return (ShingleTokenFilterFactory.Factory) tokenFilterFactory;
                 }
@@ -701,27 +697,19 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     @Override
     protected boolean doEquals(PhraseSuggestionBuilder other) {
-        return Objects.equals(maxErrors, other.maxErrors) &&
-                Objects.equals(separator, other.separator) &&
-                Objects.equals(realWordErrorLikelihood, other.realWordErrorLikelihood) &&
-                Objects.equals(confidence, other.confidence) &&
-                Objects.equals(generators, other.generators) &&
-                Objects.equals(gramSize, other.gramSize) &&
-                Objects.equals(model, other.model) &&
-                Objects.equals(forceUnigrams, other.forceUnigrams) &&
-                Objects.equals(tokenLimit, other.tokenLimit) &&
-                Objects.equals(preTag, other.preTag) &&
-                Objects.equals(postTag, other.postTag) &&
-                Objects.equals(collateQuery, other.collateQuery) &&
-                Objects.equals(collateParams, other.collateParams) &&
-                Objects.equals(collatePrune, other.collatePrune);
+        return Objects.equals(maxErrors, other.maxErrors) && Objects.equals(separator, other.separator)
+                && Objects.equals(realWordErrorLikelihood, other.realWordErrorLikelihood) && Objects.equals(confidence, other.confidence)
+                && Objects.equals(generators, other.generators) && Objects.equals(gramSize, other.gramSize)
+                && Objects.equals(model, other.model) && Objects.equals(forceUnigrams, other.forceUnigrams)
+                && Objects.equals(tokenLimit, other.tokenLimit) && Objects.equals(preTag, other.preTag)
+                && Objects.equals(postTag, other.postTag) && Objects.equals(collateQuery, other.collateQuery)
+                && Objects.equals(collateParams, other.collateParams) && Objects.equals(collatePrune, other.collatePrune);
     }
 
     @Override
     protected int doHashCode() {
-        return Objects.hash(maxErrors, separator, realWordErrorLikelihood, confidence,
-                generators, gramSize, model, forceUnigrams, tokenLimit, preTag, postTag,
-                collateQuery, collateParams, collatePrune);
+        return Objects.hash(maxErrors, separator, realWordErrorLikelihood, confidence, generators, gramSize, model, forceUnigrams,
+                tokenLimit, preTag, postTag, collateQuery, collateParams, collatePrune);
     }
 
     /**

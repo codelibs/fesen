@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.Index;
-import org.codelibs.fesen.index.shard.ShardId;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.Index;
+import org.codelibs.fesen.index.shard.ShardId;
 
 /**
  * A {@link RoutingNode} represents a cluster node associated with a single {@link DiscoveryNode} including all shards
@@ -81,8 +81,8 @@ public class RoutingNode implements Iterable<ShardRouting> {
         for (ShardRouting shardRouting : shardRoutings) {
             ShardRouting previousValue = shards.put(shardRouting.shardId(), shardRouting);
             if (previousValue != null) {
-                throw new IllegalArgumentException("Cannot have two different shards with same shard id " + shardRouting.shardId() +
-                    " on same node ");
+                throw new IllegalArgumentException(
+                        "Cannot have two different shards with same shard id " + shardRouting.shardId() + " on same node ");
             }
         }
         return shards;
@@ -127,7 +127,7 @@ public class RoutingNode implements Iterable<ShardRouting> {
         assert invariant();
         if (shards.containsKey(shard.shardId())) {
             throw new IllegalStateException("Trying to add a shard " + shard.shardId() + " to a node [" + nodeId
-                + "] where it already exists. current [" + shards.get(shard.shardId()) + "]. new [" + shard + "]");
+                    + "] where it already exists. current [" + shards.get(shard.shardId()) + "]. new [" + shard + "]");
         }
         shards.put(shard.shardId(), shard);
 
@@ -333,18 +333,18 @@ public class RoutingNode implements Iterable<ShardRouting> {
 
         // initializingShards must consistent with that in shards
         Collection<ShardRouting> shardRoutingsInitializing =
-            shards.values().stream().filter(ShardRouting::initializing).collect(Collectors.toList());
+                shards.values().stream().filter(ShardRouting::initializing).collect(Collectors.toList());
         assert initializingShards.size() == shardRoutingsInitializing.size();
         assert initializingShards.containsAll(shardRoutingsInitializing);
 
         // relocatingShards must consistent with that in shards
         Collection<ShardRouting> shardRoutingsRelocating =
-            shards.values().stream().filter(ShardRouting::relocating).collect(Collectors.toList());
+                shards.values().stream().filter(ShardRouting::relocating).collect(Collectors.toList());
         assert relocatingShards.size() == shardRoutingsRelocating.size();
         assert relocatingShards.containsAll(shardRoutingsRelocating);
 
         final Map<Index, Set<ShardRouting>> shardRoutingsByIndex =
-            shards.values().stream().collect(Collectors.groupingBy(ShardRouting::index, Collectors.toSet()));
+                shards.values().stream().collect(Collectors.groupingBy(ShardRouting::index, Collectors.toSet()));
         assert shardRoutingsByIndex.equals(shardsByIndex);
 
         return true;

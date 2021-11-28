@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.index.search;
 
+import static org.codelibs.fesen.common.lucene.search.Queries.newLenientFieldQuery;
+import static org.codelibs.fesen.common.lucene.search.Queries.newUnmappedFieldQuery;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CachingTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -57,17 +68,6 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.TextFieldMapper;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.support.QueryParsers;
-
-import static org.codelibs.fesen.common.lucene.search.Queries.newLenientFieldQuery;
-import static org.codelibs.fesen.common.lucene.search.Queries.newUnmappedFieldQuery;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 
 public class MatchQuery {
 
@@ -112,8 +112,7 @@ public class MatchQuery {
     }
 
     public enum ZeroTermsQuery implements Writeable {
-        NONE(0),
-        ALL(1),
+        NONE(0), ALL(1),
         // this is used internally to make sure that query_string and simple_query_string
         // ignores query part that removes all tokens.
         NULL(2);
@@ -163,7 +162,7 @@ public class MatchQuery {
     protected int maxExpansions = FuzzyQuery.defaultMaxExpansions;
 
     protected SpanMultiTermQueryWrapper.SpanRewriteMethod spanRewriteMethod =
-        new SpanBooleanQueryRewriteWithMaxClause(FuzzyQuery.defaultMaxExpansions, false);
+            new SpanBooleanQueryRewriteWithMaxClause(FuzzyQuery.defaultMaxExpansions, false);
 
     protected boolean transpositions = FuzzyQuery.defaultTranspositions;
 
@@ -285,35 +284,35 @@ public class MatchQuery {
     protected final Query parseInternal(Type type, String fieldName, MatchQueryBuilder builder, Object value) throws IOException {
         final Query query;
         switch (type) {
-            case BOOLEAN:
-                if (commonTermsCutoff == null) {
-                    query = builder.createBooleanQuery(fieldName, value.toString(), occur);
-                } else {
-                    query = createCommonTermsQuery(builder, fieldName, value.toString(), occur, occur, commonTermsCutoff);
-                }
-                break;
+        case BOOLEAN:
+            if (commonTermsCutoff == null) {
+                query = builder.createBooleanQuery(fieldName, value.toString(), occur);
+            } else {
+                query = createCommonTermsQuery(builder, fieldName, value.toString(), occur, occur, commonTermsCutoff);
+            }
+            break;
 
-            case BOOLEAN_PREFIX:
-                query = builder.createBooleanPrefixQuery(fieldName, value.toString(), occur);
-                break;
+        case BOOLEAN_PREFIX:
+            query = builder.createBooleanPrefixQuery(fieldName, value.toString(), occur);
+            break;
 
-            case PHRASE:
-                query = builder.createPhraseQuery(fieldName, value.toString(), phraseSlop);
-                break;
+        case PHRASE:
+            query = builder.createPhraseQuery(fieldName, value.toString(), phraseSlop);
+            break;
 
-            case PHRASE_PREFIX:
-                query = builder.createPhrasePrefixQuery(fieldName, value.toString(), phraseSlop);
-                break;
+        case PHRASE_PREFIX:
+            query = builder.createPhrasePrefixQuery(fieldName, value.toString(), phraseSlop);
+            break;
 
-            default:
-                throw new IllegalStateException("No type found for [" + type + "]");
+        default:
+            throw new IllegalStateException("No type found for [" + type + "]");
         }
 
         return query == null ? zeroTermsQuery() : query;
     }
 
-    private Query createCommonTermsQuery(MatchQueryBuilder builder, String field, String queryText,
-                                         Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency) {
+    private Query createCommonTermsQuery(MatchQueryBuilder builder, String field, String queryText, Occur highFreqOccur, Occur lowFreqOccur,
+            float maxTermFrequency) {
         Query booleanQuery = builder.createBooleanQuery(field, queryText, lowFreqOccur);
         if (booleanQuery != null && booleanQuery instanceof BooleanQuery) {
             BooleanQuery bq = (BooleanQuery) booleanQuery;
@@ -322,10 +321,7 @@ public class MatchQuery {
         return booleanQuery;
     }
 
-    private Query boolToExtendedCommonTermsQuery(BooleanQuery bq,
-                                                 Occur highFreqOccur,
-                                                 Occur lowFreqOccur,
-                                                 float maxTermFrequency) {
+    private Query boolToExtendedCommonTermsQuery(BooleanQuery bq, Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency) {
         ExtendedCommonTermsQuery query = new ExtendedCommonTermsQuery(highFreqOccur, lowFreqOccur, maxTermFrequency);
         for (BooleanClause clause : bq.clauses()) {
             if ((clause.getQuery() instanceof TermQuery) == false) {
@@ -346,14 +342,14 @@ public class MatchQuery {
 
     protected Query zeroTermsQuery() {
         switch (zeroTermsQuery) {
-            case NULL:
-                return null;
-            case NONE:
-                return Queries.newMatchNoDocsQuery("Matching no documents because no terms present");
-            case ALL:
-                return Queries.newMatchAllQuery();
-            default:
-                throw new IllegalStateException("unknown zeroTermsQuery " + zeroTermsQuery);
+        case NULL:
+            return null;
+        case NONE:
+            return Queries.newMatchNoDocsQuery("Matching no documents because no terms present");
+        case ALL:
+            return Queries.newMatchAllQuery();
+        default:
+            throw new IllegalStateException("unknown zeroTermsQuery " + zeroTermsQuery);
         }
     }
 
@@ -363,8 +359,8 @@ public class MatchQuery {
         /**
          * Creates a new QueryBuilder using the given analyzer.
          */
-        MatchQueryBuilder(Analyzer analyzer, MappedFieldType fieldType,
-                            boolean enablePositionIncrements, boolean autoGenerateSynonymsPhraseQuery) {
+        MatchQueryBuilder(Analyzer analyzer, MappedFieldType fieldType, boolean enablePositionIncrements,
+                boolean autoGenerateSynonymsPhraseQuery) {
             super(analyzer);
             this.fieldType = fieldType;
             setEnablePositionIncrements(enablePositionIncrements);
@@ -376,8 +372,8 @@ public class MatchQuery {
         }
 
         @Override
-        protected Query createFieldQuery(Analyzer analyzer, BooleanClause.Occur operator, String field,
-                                         String queryText, boolean quoted, int slop) {
+        protected Query createFieldQuery(Analyzer analyzer, BooleanClause.Occur operator, String field, String queryText, boolean quoted,
+                int slop) {
             assert operator == BooleanClause.Occur.SHOULD || operator == BooleanClause.Occur.MUST;
             Type type = quoted ? Type.PHRASE : Type.BOOLEAN;
             return createQuery(field, queryText, type, operator, slop);
@@ -515,8 +511,8 @@ public class MatchQuery {
             }
             SpanQuery[] spanQueries = new SpanQuery[terms.length];
             for (int i = 0; i < terms.length; i++) {
-                spanQueries[i] = isPrefix ? fieldType.spanPrefixQuery(terms[i].text(), spanRewriteMethod, context) :
-                    new SpanTermQuery(terms[i]);
+                spanQueries[i] =
+                        isPrefix ? fieldType.spanPrefixQuery(terms[i].text(), spanRewriteMethod, context) : new SpanTermQuery(terms[i]);
             }
             return new SpanOrQuery(spanQueries);
         }
@@ -537,7 +533,7 @@ public class MatchQuery {
             Term lastTerm = null;
             while (in.incrementToken()) {
                 if (posIncAtt.getPositionIncrement() > 1) {
-                    builder.addGap(posIncAtt.getPositionIncrement()-1);
+                    builder.addGap(posIncAtt.getPositionIncrement() - 1);
                 }
                 if (lastTerm != null) {
                     builder.addClause(new SpanTermQuery(lastTerm));
@@ -545,8 +541,8 @@ public class MatchQuery {
                 lastTerm = new Term(field, termAtt.getBytesRef());
             }
             if (lastTerm != null) {
-                SpanQuery spanQuery = isPrefix ?
-                    fieldType.spanPrefixQuery(lastTerm.text(), spanRewriteMethod, context) : new SpanTermQuery(lastTerm);
+                SpanQuery spanQuery =
+                        isPrefix ? fieldType.spanPrefixQuery(lastTerm.text(), spanRewriteMethod, context) : new SpanTermQuery(lastTerm);
                 builder.addClause(spanQuery);
             }
             SpanNearQuery query = builder.build();
@@ -563,8 +559,7 @@ public class MatchQuery {
             Supplier<Query> querySupplier;
             if (fuzziness != null) {
                 querySupplier = () -> {
-                    Query query = fieldType.fuzzyQuery(term.text(), fuzziness, fuzzyPrefixLength, maxExpansions,
-                            transpositions, context);
+                    Query query = fieldType.fuzzyQuery(term.text(), fuzziness, fuzzyPrefixLength, maxExpansions, transpositions, context);
                     if (query instanceof FuzzyQuery) {
                         QueryParsers.setRewriteMethod((FuzzyQuery) query, fuzzyRewriteMethod);
                     }
@@ -610,8 +605,8 @@ public class MatchQuery {
             final Term term = new Term(field, termAtt.getBytesRef());
             int lastOffset = offsetAtt.endOffset();
             stream.end();
-            return isPrefix && lastOffset == offsetAtt.endOffset() ?
-                newPrefixQuery(term) : newTermQuery(term, BoostAttribute.DEFAULT_BOOST);
+            return isPrefix && lastOffset == offsetAtt.endOffset() ? newPrefixQuery(term)
+                    : newTermQuery(term, BoostAttribute.DEFAULT_BOOST);
         }
 
         private void add(BooleanQuery.Builder q, String field, List<Term> current, BooleanClause.Occur operator, boolean isPrefix) {
@@ -626,15 +621,14 @@ public class MatchQuery {
                 }
             } else {
                 // We don't apply prefix on synonyms
-                final TermAndBoost[] termAndBoosts = current.stream()
-                    .map(t -> new TermAndBoost(t, BoostAttribute.DEFAULT_BOOST))
-                    .toArray(TermAndBoost[]::new);
+                final TermAndBoost[] termAndBoosts =
+                        current.stream().map(t -> new TermAndBoost(t, BoostAttribute.DEFAULT_BOOST)).toArray(TermAndBoost[]::new);
                 q.add(newSynonymQuery(termAndBoosts), operator);
             }
         }
 
-        private Query analyzeMultiBoolean(String field, TokenStream stream,
-                                          BooleanClause.Occur operator, boolean isPrefix) throws IOException {
+        private Query analyzeMultiBoolean(String field, TokenStream stream, BooleanClause.Occur operator, boolean isPrefix)
+                throws IOException {
             BooleanQuery.Builder q = newBooleanQuery();
             List<Term> currentQuery = new ArrayList<>();
 
@@ -697,8 +691,8 @@ public class MatchQuery {
             }
         }
 
-        private Query analyzeGraphBoolean(String field, TokenStream source,
-                                            BooleanClause.Occur operator, boolean isPrefix) throws IOException {
+        private Query analyzeGraphBoolean(String field, TokenStream source, BooleanClause.Occur operator, boolean isPrefix)
+                throws IOException {
             source.reset();
             GraphTokenStreamFiniteStrings graph = new GraphTokenStreamFiniteStrings(source);
             BooleanQuery.Builder builder = new BooleanQuery.Builder();
@@ -726,9 +720,7 @@ public class MatchQuery {
                             TokenStream ts = it.next();
                             final Type type;
                             if (getAutoGenerateMultiTermSynonymsPhraseQuery()) {
-                                type = usePrefix
-                                    ? Type.PHRASE_PREFIX
-                                    : Type.PHRASE;
+                                type = usePrefix ? Type.PHRASE_PREFIX : Type.PHRASE;
                             } else {
                                 type = Type.BOOLEAN;
                             }
@@ -744,8 +736,7 @@ public class MatchQuery {
                     } else {
                         // We don't apply prefix on synonyms
                         final TermAndBoost[] termAndBoosts = Arrays.stream(terms)
-                            .map(t -> new TermAndBoost(t, BoostAttribute.DEFAULT_BOOST))
-                            .toArray(TermAndBoost[]::new);
+                                .map(t -> new TermAndBoost(t, BoostAttribute.DEFAULT_BOOST)).toArray(TermAndBoost[]::new);
                         queryPos = newSynonymQuery(termAndBoosts);
                     }
                 }

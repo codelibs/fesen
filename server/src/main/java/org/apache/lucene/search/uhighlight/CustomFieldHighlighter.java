@@ -19,8 +19,7 @@
 
 package org.apache.lucene.search.uhighlight;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.util.BytesRef;
+import static org.apache.lucene.search.uhighlight.CustomUnifiedHighlighter.MULTIVAL_SEP_CHAR;
 
 import java.io.IOException;
 import java.text.BreakIterator;
@@ -29,7 +28,8 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.PriorityQueue;
 
-import static org.apache.lucene.search.uhighlight.CustomUnifiedHighlighter.MULTIVAL_SEP_CHAR;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.util.BytesRef;
 
 /**
  * Custom {@link FieldHighlighter} that creates a single passage bounded to {@code noMatchSize} when
@@ -42,12 +42,9 @@ class CustomFieldHighlighter extends FieldHighlighter {
     private final int noMatchSize;
     private String fieldValue;
 
-    CustomFieldHighlighter(String field, FieldOffsetStrategy fieldOffsetStrategy,
-                           Locale breakIteratorLocale, BreakIterator breakIterator,
-                           PassageScorer passageScorer, int maxPassages, int maxNoHighlightPassages,
-                           PassageFormatter passageFormatter, int noMatchSize) {
-        super(field, fieldOffsetStrategy, breakIterator, passageScorer, maxPassages,
-            maxNoHighlightPassages, passageFormatter);
+    CustomFieldHighlighter(String field, FieldOffsetStrategy fieldOffsetStrategy, Locale breakIteratorLocale, BreakIterator breakIterator,
+            PassageScorer passageScorer, int maxPassages, int maxNoHighlightPassages, PassageFormatter passageFormatter, int noMatchSize) {
+        super(field, fieldOffsetStrategy, breakIterator, passageScorer, maxPassages, maxNoHighlightPassages, passageFormatter);
         this.breakIteratorLocale = breakIteratorLocale;
         this.noMatchSize = noMatchSize;
     }
@@ -68,14 +65,14 @@ class CustomFieldHighlighter extends FieldHighlighter {
         if (noMatchSize > 0) {
             int pos = 0;
             while (pos < fieldValue.length() && fieldValue.charAt(pos) == MULTIVAL_SEP_CHAR) {
-                pos ++;
+                pos++;
             }
             if (pos < fieldValue.length()) {
                 int end = fieldValue.indexOf(MULTIVAL_SEP_CHAR, pos);
                 if (end == -1) {
                     end = fieldValue.length();
                 }
-                if (noMatchSize+pos < end) {
+                if (noMatchSize + pos < end) {
                     BreakIterator bi = BreakIterator.getWordInstance(breakIteratorLocale);
                     bi.setText(fieldValue);
                     // Finds the next word boundary **after** noMatchSize.
@@ -88,7 +85,7 @@ class CustomFieldHighlighter extends FieldHighlighter {
                 passage.setScore(Float.NaN);
                 passage.setStartOffset(pos);
                 passage.setEndOffset(end);
-                return new Passage[]{passage};
+                return new Passage[] { passage };
             }
         }
         return EMPTY_PASSAGE;
@@ -99,8 +96,7 @@ class CustomFieldHighlighter extends FieldHighlighter {
     // which doesn't work well with BoundedBreakIteratorScanner
     // This is the copy of highlightOffsetsEnums before LUCENE-9093.
     @Override
-    protected Passage[] highlightOffsetsEnums(OffsetsEnum off)
-        throws IOException {
+    protected Passage[] highlightOffsetsEnums(OffsetsEnum off) throws IOException {
 
         final int contentLength = this.breakIterator.getText().getEndIndex();
 

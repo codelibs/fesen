@@ -18,6 +18,26 @@
  */
 package org.codelibs.fesen.repositories.blobstore;
 
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.apache.lucene.util.SetOnce;
@@ -41,32 +61,11 @@ import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.repositories.RepositoriesService;
 import org.codelibs.fesen.repositories.Repository;
 import org.codelibs.fesen.repositories.RepositoryData;
-import org.codelibs.fesen.repositories.blobstore.BlobStoreRepository;
 import org.codelibs.fesen.snapshots.SnapshotMissingException;
 import org.codelibs.fesen.snapshots.SnapshotRestoreException;
 import org.codelibs.fesen.test.ESIntegTestCase;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.hamcrest.CoreMatchers;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.NoSuchFileException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Integration tests for {@link BlobStoreRepository} implementations.
@@ -91,10 +90,8 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
         final boolean verify = randomBoolean();
 
         logger.debug("-->  creating repository [name: {}, verify: {}, settings: {}]", name, verify, settings);
-        assertAcked(client().admin().cluster().preparePutRepository(name)
-            .setType(repositoryType())
-            .setVerify(verify)
-            .setSettings(settings));
+        assertAcked(
+                client().admin().cluster().preparePutRepository(name).setType(repositoryType()).setVerify(verify).setSettings(settings));
 
         internalCluster().getDataOrMasterNodeInstances(RepositoriesService.class).forEach(repositories -> {
             assertThat(repositories.repository(name), notNullValue());
@@ -205,7 +202,7 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
     }
 
     public static void writeBlob(final BlobContainer container, final String blobName, final BytesArray bytesArray,
-        boolean failIfAlreadyExists) throws IOException {
+            boolean failIfAlreadyExists) throws IOException {
         try (InputStream stream = bytesArray.streamInput()) {
             if (randomBoolean()) {
                 container.writeBlob(blobName, stream, bytesArray.length(), failIfAlreadyExists);
@@ -266,9 +263,9 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
     protected BlobStore newBlobStore() {
         final String repository = createRepository(randomName());
         final BlobStoreRepository blobStoreRepository =
-            (BlobStoreRepository) internalCluster().getMasterNodeInstance(RepositoriesService.class).repository(repository);
-        return PlainActionFuture.get(
-            f -> blobStoreRepository.threadPool().generic().execute(ActionRunnable.supply(f, blobStoreRepository::blobStore)));
+                (BlobStoreRepository) internalCluster().getMasterNodeInstance(RepositoriesService.class).repository(repository);
+        return PlainActionFuture
+                .get(f -> blobStoreRepository.threadPool().generic().execute(ActionRunnable.supply(f, blobStoreRepository::blobStore)));
     }
 
     public void testSnapshotAndRestore() throws Exception {
@@ -285,8 +282,8 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
 
         final String snapshotName = randomName();
         logger.info("-->  create snapshot {}:{}", repoName, snapshotName);
-        assertSuccessfulSnapshot(client().admin().cluster().prepareCreateSnapshot(repoName, snapshotName)
-                .setWaitForCompletion(true).setIndices(indexNames));
+        assertSuccessfulSnapshot(
+                client().admin().cluster().prepareCreateSnapshot(repoName, snapshotName).setWaitForCompletion(true).setIndices(indexNames));
 
         List<String> deleteIndices = randomSubsetOf(randomIntBetween(0, indexCount), indexNames);
         if (deleteIndices.size() > 0) {
@@ -333,14 +330,13 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
         logger.info("-->  delete snapshot {}:{}", repoName, snapshotName);
         assertAcked(client().admin().cluster().prepareDeleteSnapshot(repoName, snapshotName).get());
 
-        expectThrows(SnapshotMissingException.class, () ->
-            client().admin().cluster().prepareGetSnapshots(repoName).setSnapshots(snapshotName).get());
+        expectThrows(SnapshotMissingException.class,
+                () -> client().admin().cluster().prepareGetSnapshots(repoName).setSnapshots(snapshotName).get());
 
-        expectThrows(SnapshotMissingException.class, () ->
-            client().admin().cluster().prepareDeleteSnapshot(repoName, snapshotName).get());
+        expectThrows(SnapshotMissingException.class, () -> client().admin().cluster().prepareDeleteSnapshot(repoName, snapshotName).get());
 
-        expectThrows(SnapshotRestoreException.class, () ->
-            client().admin().cluster().prepareRestoreSnapshot(repoName, snapshotName).setWaitForCompletion(randomBoolean()).get());
+        expectThrows(SnapshotRestoreException.class, () -> client().admin().cluster().prepareRestoreSnapshot(repoName, snapshotName)
+                .setWaitForCompletion(randomBoolean()).get());
     }
 
     public void testMultipleSnapshotAndRollback() throws Exception {
@@ -414,7 +410,7 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
 
         logger.info("--> take a snapshot");
         CreateSnapshotResponse createSnapshotResponse =
-            client.admin().cluster().prepareCreateSnapshot(repoName, "test-snap").setWaitForCompletion(true).get();
+                client.admin().cluster().prepareCreateSnapshot(repoName, "test-snap").setWaitForCompletion(true).get();
         assertEquals(createSnapshotResponse.getSnapshotInfo().successfulShards(), createSnapshotResponse.getSnapshotInfo().totalShards());
 
         logger.info("--> indexing more data");
@@ -425,10 +421,8 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
         }
 
         logger.info("--> take another snapshot with only 2 of the 3 indices");
-        createSnapshotResponse = client.admin().cluster().prepareCreateSnapshot(repoName, "test-snap2")
-                                     .setWaitForCompletion(true)
-                                     .setIndices("test-idx-1", "test-idx-2")
-                                     .get();
+        createSnapshotResponse = client.admin().cluster().prepareCreateSnapshot(repoName, "test-snap2").setWaitForCompletion(true)
+                .setIndices("test-idx-1", "test-idx-2").get();
         assertEquals(createSnapshotResponse.getSnapshotInfo().successfulShards(), createSnapshotResponse.getSnapshotInfo().totalShards());
 
         logger.info("--> delete a snapshot");
@@ -459,7 +453,7 @@ public abstract class ESBlobStoreRepositoryIntegTestCase extends ESIntegTestCase
         IndexRequestBuilder[] indexRequestBuilders = new IndexRequestBuilder[numDocs];
         for (int i = 0; i < numDocs; i++) {
             indexRequestBuilders[i] = client().prepareIndex(name, name, Integer.toString(i))
-                .setRouting(randomAlphaOfLength(randomIntBetween(1, 10))).setSource("field", "value");
+                    .setRouting(randomAlphaOfLength(randomIntBetween(1, 10))).setSource("field", "value");
         }
         indexRandom(true, indexRequestBuilders);
     }

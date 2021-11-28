@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.index.analysis;
 
+import java.io.Reader;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.util.CloseableThreadLocal;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.CollectionUtils;
-
-import java.io.Reader;
-import java.util.Map;
 
 public final class ReloadableCustomAnalyzer extends Analyzer implements AnalyzerComponentsProvider {
 
@@ -116,11 +116,8 @@ public final class ReloadableCustomAnalyzer extends Analyzer implements Analyzer
         return result;
     }
 
-    public synchronized void reload(String name,
-                                    Settings settings,
-                                    final Map<String, TokenizerFactory> tokenizers,
-                                    final Map<String, CharFilterFactory> charFilters,
-                                    final Map<String, TokenFilterFactory> tokenFilters) {
+    public synchronized void reload(String name, Settings settings, final Map<String, TokenizerFactory> tokenizers,
+            final Map<String, CharFilterFactory> charFilters, final Map<String, TokenFilterFactory> tokenFilters) {
         AnalyzerComponents components = AnalyzerComponents.createComponents(name, settings, tokenizers, charFilters, tokenFilters);
         this.components = components;
     }

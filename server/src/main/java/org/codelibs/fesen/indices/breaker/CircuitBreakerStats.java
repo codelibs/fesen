@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.indices.breaker;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Locale;
 
 /**
  * Class encapsulating stats about the circuit breaker
@@ -100,10 +100,8 @@ public class CircuitBreakerStats implements Writeable, ToXContentObject {
 
     @Override
     public String toString() {
-        return "[" + this.name +
-                ",limit=" + this.limit + "/" + new ByteSizeValue(this.limit) +
-                ",estimated=" + this.estimated + "/" + new ByteSizeValue(this.estimated) +
-                ",overhead=" + this.overhead + ",tripped=" + this.trippedCount + "]";
+        return "[" + this.name + ",limit=" + this.limit + "/" + new ByteSizeValue(this.limit) + ",estimated=" + this.estimated + "/"
+                + new ByteSizeValue(this.estimated) + ",overhead=" + this.overhead + ",tripped=" + this.trippedCount + "]";
     }
 
     static final class Fields {

@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.termvectors;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Terms;
@@ -37,12 +43,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class TermVectorsResponse extends ActionResponse implements ToXContentObject {
 
@@ -194,8 +194,8 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         return builder;
     }
 
-    private void buildField(XContentBuilder builder, final CharsRefBuilder spare,
-                            Fields theFields, Iterator<String> fieldIter) throws IOException {
+    private void buildField(XContentBuilder builder, final CharsRefBuilder spare, Fields theFields, Iterator<String> fieldIter)
+            throws IOException {
         String fieldName = fieldIter.next();
         builder.startObject(fieldName);
         Terms curTerms = theFields.terms(fieldName);
@@ -211,8 +211,8 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         builder.endObject();
     }
 
-    private void buildTerm(XContentBuilder builder, final CharsRefBuilder spare, Terms curTerms,
-                           TermsEnum termIter, BoostAttribute boostAtt) throws IOException {
+    private void buildTerm(XContentBuilder builder, final CharsRefBuilder spare, Terms curTerms, TermsEnum termIter,
+            BoostAttribute boostAtt) throws IOException {
         // start term, optimized writing
         BytesRef term = termIter.next();
         spare.copyUTF8Bytes(term);
@@ -234,8 +234,8 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         // boolean that says if these values actually were requested.
         // However, we can assume that they were not if the statistic values are
         // <= 0.
-        assert (((termIter.docFreq() > 0) && (termIter.totalTermFreq() > 0)) ||
-            ((termIter.docFreq() == -1) && (termIter.totalTermFreq() == -1)));
+        assert (((termIter.docFreq() > 0) && (termIter.totalTermFreq() > 0))
+                || ((termIter.docFreq() == -1) && (termIter.totalTermFreq() == -1)));
         int docFreq = termIter.docFreq();
         if (docFreq > 0) {
             builder.field(FieldStrings.DOC_FREQ, docFreq);
@@ -320,10 +320,9 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
             assert ((sumDocFreq == -1)) : "docCount was -1 but sumDocFreq ain't!";
             assert ((sumTotalTermFrequencies == -1)) : "docCount was -1 but sumTotalTermFrequencies ain't!";
         } else {
-            throw new IllegalStateException(
-                    "Something is wrong with the field statistics of the term vector request: Values are " + "\n"
-                            + FieldStrings.SUM_DOC_FREQ + " " + sumDocFreq + "\n" + FieldStrings.DOC_COUNT + " " + docCount + "\n"
-                            + FieldStrings.SUM_TTF + " " + sumTotalTermFrequencies);
+            throw new IllegalStateException("Something is wrong with the field statistics of the term vector request: Values are " + "\n"
+                    + FieldStrings.SUM_DOC_FREQ + " " + sumDocFreq + "\n" + FieldStrings.DOC_COUNT + " " + docCount + "\n"
+                    + FieldStrings.SUM_TTF + " " + sumTotalTermFrequencies);
         }
     }
 
@@ -346,16 +345,16 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
     }
 
     public void setExists(boolean exists) {
-         this.exists = exists;
+        this.exists = exists;
     }
 
-    public void setFields(Fields termVectorsByField, Set<String> selectedFields,
-                          EnumSet<Flag> flags, Fields topLevelFields) throws IOException {
+    public void setFields(Fields termVectorsByField, Set<String> selectedFields, EnumSet<Flag> flags, Fields topLevelFields)
+            throws IOException {
         setFields(termVectorsByField, selectedFields, flags, topLevelFields, null);
     }
 
-    public void setFields(Fields termVectorsByField, Set<String> selectedFields, EnumSet<Flag> flags,
-                          Fields topLevelFields, TermVectorsFilter termVectorsFilter) throws IOException {
+    public void setFields(Fields termVectorsByField, Set<String> selectedFields, EnumSet<Flag> flags, Fields topLevelFields,
+            TermVectorsFilter termVectorsFilter) throws IOException {
         TermVectorsWriter tvw = new TermVectorsWriter(this);
 
         if (termVectorsByField != null) {

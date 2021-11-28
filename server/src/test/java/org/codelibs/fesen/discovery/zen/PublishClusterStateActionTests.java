@@ -106,29 +106,27 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         private final Logger logger;
 
-        public MockNode(DiscoveryNode discoveryNode, MockTransportService service,
-                        @Nullable ClusterStateListener listener, Logger logger) {
+        public MockNode(DiscoveryNode discoveryNode, MockTransportService service, @Nullable ClusterStateListener listener, Logger logger) {
             this.discoveryNode = discoveryNode;
             this.service = service;
             this.listener = listener;
             this.logger = logger;
-            this.clusterState = ClusterState.builder(CLUSTER_NAME).nodes(DiscoveryNodes.builder()
-                .add(discoveryNode).localNodeId(discoveryNode.getId()).build()).build();
+            this.clusterState = ClusterState.builder(CLUSTER_NAME)
+                    .nodes(DiscoveryNodes.builder().add(discoveryNode).localNodeId(discoveryNode.getId()).build()).build();
             this.pendingStatesQueue = new PendingClusterStatesQueue(logger, 25);
         }
 
         public MockNode setAsMaster() {
-            this.clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes())
-                .masterNodeId(discoveryNode.getId())).build();
+            this.clusterState = ClusterState.builder(clusterState)
+                    .nodes(DiscoveryNodes.builder(clusterState.nodes()).masterNodeId(discoveryNode.getId())).build();
             return this;
         }
 
         public MockNode resetMasterId() {
-            this.clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes())
-                .masterNodeId(null)).build();
+            this.clusterState =
+                    ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes()).masterNodeId(null)).build();
             return this;
         }
-
 
         public void connectTo(DiscoveryNode node) {
             service.connectToNode(node);
@@ -141,22 +139,22 @@ public class PublishClusterStateActionTests extends ESTestCase {
         }
 
         public void onClusterStateCommitted(String stateUUID, ActionListener<Void> processedListener) {
-            final ClusterState state = pendingStatesQueue.markAsCommitted(stateUUID,
-                new PendingClusterStatesQueue.StateProcessedListener() {
-                    @Override
-                    public void onNewClusterStateProcessed() {
-                        processedListener.onResponse(null);
-                    }
+            final ClusterState state =
+                    pendingStatesQueue.markAsCommitted(stateUUID, new PendingClusterStatesQueue.StateProcessedListener() {
+                        @Override
+                        public void onNewClusterStateProcessed() {
+                            processedListener.onResponse(null);
+                        }
 
-                    @Override
-                    public void onNewClusterStateFailed(Exception e) {
-                        processedListener.onFailure(e);
-                    }
-                });
+                        @Override
+                        public void onNewClusterStateFailed(Exception e) {
+                            processedListener.onFailure(e);
+                        }
+                    });
             if (state != null) {
                 ClusterState newClusterState = pendingStatesQueue.getNextClusterStateToProcess();
-                logger.debug("[{}] received version [{}], uuid [{}]",
-                    discoveryNode.getName(), newClusterState.version(), newClusterState.stateUUID());
+                logger.debug("[{}] received version [{}], uuid [{}]", discoveryNode.getName(), newClusterState.version(),
+                        newClusterState.stateUUID());
                 if (listener != null) {
                     ClusterChangedEvent event = new ClusterChangedEvent("", newClusterState, clusterState);
                     listener.clusterChanged(event);
@@ -183,13 +181,9 @@ public class PublishClusterStateActionTests extends ESTestCase {
     }
 
     public static MockNode createMockNode(String name, final Settings basSettings, @Nullable ClusterStateListener listener,
-                                          ThreadPool threadPool, Logger logger, Map<String, MockNode> nodes) throws Exception {
-        final Settings settings = Settings.builder()
-                .put("name", name)
-                .put(TransportSettings.TRACE_LOG_INCLUDE_SETTING.getKey(), "").put(
-                     TransportSettings.TRACE_LOG_EXCLUDE_SETTING.getKey(), "NOTHING")
-                .put(basSettings)
-                .build();
+            ThreadPool threadPool, Logger logger, Map<String, MockNode> nodes) throws Exception {
+        final Settings settings = Settings.builder().put("name", name).put(TransportSettings.TRACE_LOG_INCLUDE_SETTING.getKey(), "")
+                .put(TransportSettings.TRACE_LOG_EXCLUDE_SETTING.getKey(), "NOTHING").put(basSettings).build();
 
         MockTransportService service = buildTransportService(settings, threadPool);
         DiscoveryNode discoveryNode = service.getLocalDiscoNode();
@@ -264,19 +258,12 @@ public class PublishClusterStateActionTests extends ESTestCase {
         return transportService;
     }
 
-    private static MockPublishAction buildPublishClusterStateAction(
-            Settings settings,
-            MockTransportService transportService,
-            PublishClusterStateAction.IncomingClusterStateListener listener
-    ) {
+    private static MockPublishAction buildPublishClusterStateAction(Settings settings, MockTransportService transportService,
+            PublishClusterStateAction.IncomingClusterStateListener listener) {
         DiscoverySettings discoverySettings =
                 new DiscoverySettings(settings, new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
         NamedWriteableRegistry namedWriteableRegistry = new NamedWriteableRegistry(ClusterModule.getNamedWriteables());
-        return new MockPublishAction(
-                transportService,
-                namedWriteableRegistry,
-                listener,
-                discoverySettings);
+        return new MockPublishAction(transportService, namedWriteableRegistry, listener, discoverySettings);
     }
 
     public void testSimpleClusterStatePublishing() throws Exception {
@@ -295,8 +282,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         // cluster state update - add block
         previousClusterState = clusterState;
-        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder()
-            .addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK)).incrementVersion().build();
+        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder().addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK))
+                .incrementVersion().build();
         publishStateAndWait(nodeA.action, clusterState, previousClusterState);
         assertSameStateFromDiff(nodeB.clusterState, clusterState);
         assertThat(nodeB.clusterState.blocks().global().size(), equalTo(1));
@@ -323,8 +310,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         // cluster state update 4 - update settings
         previousClusterState = clusterState;
-        Metadata metadata = Metadata.builder(clusterState.metadata())
-            .transientSettings(Settings.builder().put("foo", "bar").build()).build();
+        Metadata metadata =
+                Metadata.builder(clusterState.metadata()).transientSettings(Settings.builder().put("foo", "bar").build()).build();
         clusterState = ClusterState.builder(clusterState).metadata(metadata).incrementVersion().build();
         publishStateAndWait(nodeA.action, clusterState, previousClusterState);
         assertSameStateFromDiff(nodeB.clusterState, clusterState);
@@ -346,13 +333,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
         nodeC.resetMasterId();
 
         // node B becomes the master and sends a version of the cluster state that goes back
-        discoveryNodes = DiscoveryNodes.builder(discoveryNodes)
-                .add(nodeA.discoveryNode)
-                .add(nodeB.discoveryNode)
-                .add(nodeC.discoveryNode)
-                .masterNodeId(nodeB.discoveryNode.getId())
-                .localNodeId(nodeB.discoveryNode.getId())
-                .build();
+        discoveryNodes = DiscoveryNodes.builder(discoveryNodes).add(nodeA.discoveryNode).add(nodeB.discoveryNode).add(nodeC.discoveryNode)
+                .masterNodeId(nodeB.discoveryNode.getId()).localNodeId(nodeB.discoveryNode.getId()).build();
         previousClusterState = ClusterState.builder(new ClusterName("test")).nodes(discoveryNodes).build();
         clusterState = ClusterState.builder(clusterState).nodes(discoveryNodes).incrementVersion().build();
         publishStateAndWait(nodeB.action, clusterState, previousClusterState);
@@ -377,8 +359,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         // cluster state update - add block
         previousClusterState = clusterState;
-        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder()
-            .addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK)).incrementVersion().build();
+        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder().addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK))
+                .incrementVersion().build();
         publishStateAndWait(nodeA.action, clusterState, previousClusterState);
         assertSameStateFromDiff(nodeB.clusterState, clusterState);
     }
@@ -401,8 +383,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
         });
 
         // Initial cluster state
-        DiscoveryNodes discoveryNodes = DiscoveryNodes.builder()
-            .add(nodeA.discoveryNode).localNodeId(nodeA.discoveryNode.getId()).masterNodeId(nodeA.discoveryNode.getId()).build();
+        DiscoveryNodes discoveryNodes = DiscoveryNodes.builder().add(nodeA.discoveryNode).localNodeId(nodeA.discoveryNode.getId())
+                .masterNodeId(nodeA.discoveryNode.getId()).build();
         ClusterState clusterState = ClusterState.builder(CLUSTER_NAME).nodes(discoveryNodes).build();
 
         // cluster state update - add nodeB
@@ -413,15 +395,13 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         // cluster state update - add block
         previousClusterState = clusterState;
-        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder()
-            .addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK)).incrementVersion().build();
+        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder().addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK))
+                .incrementVersion().build();
         publishStateAndWait(nodeA.action, clusterState, previousClusterState);
 
-        assertWarnings(
-            "[discovery.zen.publish_diff.enable] setting was deprecated in Fesen and will be removed in a future release! " +
-                "See the breaking changes documentation for the next major version.");
+        assertWarnings("[discovery.zen.publish_diff.enable] setting was deprecated in Fesen and will be removed in a future release! "
+                + "See the breaking changes documentation for the next major version.");
     }
-
 
     /**
      * Test not waiting on publishing works correctly (i.e., publishing times out)
@@ -472,9 +452,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
             assertThat(node.clusterState.nodes().getLocalNode(), equalTo(node.discoveryNode));
         }
 
-        assertWarnings(
-            "[discovery.zen.publish_diff.enable] setting was deprecated in Fesen and will be removed in a future release! " +
-                "See the breaking changes documentation for the next major version.");
+        assertWarnings("[discovery.zen.publish_diff.enable] setting was deprecated in Fesen and will be removed in a future release! "
+                + "See the breaking changes documentation for the next major version.");
     }
 
     public void testSerializationFailureDuringDiffPublishing() throws Exception {
@@ -497,11 +476,10 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
         // cluster state update - add block
         previousClusterState = clusterState;
-        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder()
-            .addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK)).incrementVersion().build();
+        clusterState = ClusterState.builder(clusterState).blocks(ClusterBlocks.builder().addGlobalBlock(Metadata.CLUSTER_READ_ONLY_BLOCK))
+                .incrementVersion().build();
 
-        ClusterState unserializableClusterState = new ClusterState(clusterState.version(), clusterState.stateUUID(),
-                                                                   clusterState) {
+        ClusterState unserializableClusterState = new ClusterState(clusterState.version(), clusterState.stateUUID(), clusterState) {
             @Override
             public Diff<ClusterState> diff(ClusterState previousState) {
                 return new Diff<ClusterState>() {
@@ -526,7 +504,6 @@ public class PublishClusterStateActionTests extends ESTestCase {
             assertThat(e.getCause().getMessage(), containsString("failed to serialize"));
         }
     }
-
 
     public void testFailToPublishWithLessThanMinMasterNodes() throws Exception {
         final int masterNodes = randomIntBetween(1, 10);
@@ -585,18 +562,17 @@ public class PublishClusterStateActionTests extends ESTestCase {
             final MockNode mockNode = createMockNode("node" + i);
             discoveryNodesBuilder.add(mockNode.discoveryNode);
             switch (nodeTypes[i]) {
-                case 1:
-                    mockNode.action.errorOnSend.set(true);
-                    break;
-                case 2:
-                    mockNode.action.timeoutOnSend.set(true);
-                    break;
+            case 1:
+                mockNode.action.errorOnSend.set(true);
+                break;
+            case 2:
+                mockNode.action.timeoutOnSend.set(true);
+                break;
             }
         }
         final int dataNodes = randomIntBetween(0, 3); // data nodes don't matter
         for (int i = 0; i < dataNodes; i++) {
-            final MockNode mockNode = createMockNode("data_" + i,
-                Settings.builder().put(nonMasterNode()).build(), null);
+            final MockNode mockNode = createMockNode("data_" + i, Settings.builder().put(nonMasterNode()).build(), null);
             discoveryNodesBuilder.add(mockNode.discoveryNode);
             if (randomBoolean()) {
                 // we really don't care - just chaos monkey
@@ -616,8 +592,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
             minMasterNodes = randomIntBetween(goodNodes + 2, numberOfMasterNodes); // +2 because of master
             expectedBehavior = timeOutNodes > 0 ? "timeout" : "fail";
         }
-        logger.info("--> expecting commit to {}. good nodes [{}], errors [{}], timeouts [{}]. min_master_nodes [{}]",
-                expectedBehavior, goodNodes + 1, errorNodes, timeOutNodes, minMasterNodes);
+        logger.info("--> expecting commit to {}. good nodes [{}], errors [{}], timeouts [{}]. min_master_nodes [{}]", expectedBehavior,
+                goodNodes + 1, errorNodes, timeOutNodes, minMasterNodes);
 
         discoveryNodesBuilder.localNodeId(master.discoveryNode.getId()).masterNodeId(master.discoveryNode.getId());
         DiscoveryNodes discoveryNodes = discoveryNodesBuilder.build();
@@ -638,10 +614,10 @@ public class PublishClusterStateActionTests extends ESTestCase {
         }
 
         assertWarnings(
-            "[discovery.zen.publish_timeout] setting was deprecated in Fesen and will be removed in a future release! " +
-                "See the breaking changes documentation for the next major version.",
-            "[discovery.zen.commit_timeout] setting was deprecated in Fesen and will be removed in a future release! " +
-                "See the breaking changes documentation for the next major version.");
+                "[discovery.zen.publish_timeout] setting was deprecated in Fesen and will be removed in a future release! "
+                        + "See the breaking changes documentation for the next major version.",
+                "[discovery.zen.commit_timeout] setting was deprecated in Fesen and will be removed in a future release! "
+                        + "See the breaking changes documentation for the next major version.");
     }
 
     public void testOutOfOrderCommitMessages() throws Throwable {
@@ -659,8 +635,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
         logger.info("--> publishing states");
         for (ClusterState state : states) {
             node.action.handleIncomingClusterStateRequest(
-                new BytesTransportRequest(PublishClusterStateAction.serializeFullClusterState(state, Version.CURRENT), Version.CURRENT),
-                channel);
+                    new BytesTransportRequest(PublishClusterStateAction.serializeFullClusterState(state, Version.CURRENT), Version.CURRENT),
+                    channel);
             assertThat(channel.response.get(), equalTo((TransportResponse) TransportResponse.Empty.INSTANCE));
             assertThat(channel.error.get(), nullValue());
             channel.clear();
@@ -697,14 +673,14 @@ public class PublishClusterStateActionTests extends ESTestCase {
      */
     public void testTimeoutOrCommit() throws Exception {
         Settings settings = Settings.builder()
-            // short but so we will sometime commit sometime timeout
-            .put(DiscoverySettings.COMMIT_TIMEOUT_SETTING.getKey(), "1ms").build();
+                // short but so we will sometime commit sometime timeout
+                .put(DiscoverySettings.COMMIT_TIMEOUT_SETTING.getKey(), "1ms").build();
 
         MockNode master = createMockNode("master", settings, null);
         MockNode node = createMockNode("node", settings, null);
-        ClusterState state = ClusterState.builder(master.clusterState)
-                .nodes(DiscoveryNodes.builder(master.clusterState.nodes())
-                    .add(node.discoveryNode).masterNodeId(master.discoveryNode.getId())).build();
+        ClusterState state = ClusterState.builder(master.clusterState).nodes(
+                DiscoveryNodes.builder(master.clusterState.nodes()).add(node.discoveryNode).masterNodeId(master.discoveryNode.getId()))
+                .build();
 
         for (int i = 0; i < 10; i++) {
             state = ClusterState.builder(state).incrementVersion().build();
@@ -725,19 +701,18 @@ public class PublishClusterStateActionTests extends ESTestCase {
             }
         }
 
-        assertWarnings(
-            "[discovery.zen.commit_timeout] setting was deprecated in Fesen and will be removed in a future release! " +
-                "See the breaking changes documentation for the next major version.");
+        assertWarnings("[discovery.zen.commit_timeout] setting was deprecated in Fesen and will be removed in a future release! "
+                + "See the breaking changes documentation for the next major version.");
     }
 
     private void assertPublishClusterStateStats(String description, MockNode node, long expectedFull, long expectedIncompatibleDiffs,
-                                                long expectedCompatibleDiffs) {
+            long expectedCompatibleDiffs) {
         PublishClusterStateStats stats = node.action.stats();
         assertThat(description + ": full cluster states", stats.getFullClusterStateReceivedCount(), equalTo(expectedFull));
         assertThat(description + ": incompatible cluster state diffs", stats.getIncompatibleClusterStateDiffReceivedCount(),
-            equalTo(expectedIncompatibleDiffs));
+                equalTo(expectedIncompatibleDiffs));
         assertThat(description + ": compatible cluster state diffs", stats.getCompatibleClusterStateDiffReceivedCount(),
-            equalTo(expectedCompatibleDiffs));
+                equalTo(expectedCompatibleDiffs));
     }
 
     public void testPublishClusterStateStats() throws Exception {
@@ -783,12 +758,8 @@ public class PublishClusterStateActionTests extends ESTestCase {
         nodeB.resetMasterId();
 
         // node B becomes the master and sends a version of the cluster state that goes back
-        discoveryNodes = DiscoveryNodes.builder(discoveryNodes)
-            .add(nodeA.discoveryNode)
-            .add(nodeB.discoveryNode)
-            .masterNodeId(nodeB.discoveryNode.getId())
-            .localNodeId(nodeB.discoveryNode.getId())
-            .build();
+        discoveryNodes = DiscoveryNodes.builder(discoveryNodes).add(nodeA.discoveryNode).add(nodeB.discoveryNode)
+                .masterNodeId(nodeB.discoveryNode.getId()).localNodeId(nodeB.discoveryNode.getId()).build();
         previousClusterState = ClusterState.builder(new ClusterName("test")).nodes(discoveryNodes).build();
         clusterState = ClusterState.builder(clusterState).nodes(discoveryNodes).incrementVersion().build();
         publishStateAndWait(nodeB.action, clusterState, previousClusterState);
@@ -800,12 +771,11 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
     private Metadata buildMetadataForVersion(Metadata metadata, long version) {
         ImmutableOpenMap.Builder<String, IndexMetadata> indices = ImmutableOpenMap.builder(metadata.indices());
-        indices.put("test" + version, IndexMetadata.builder("test" + version)
-                .settings(Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT))
-                .numberOfShards((int) version).numberOfReplicas(0).build());
-        return Metadata.builder(metadata)
-                .transientSettings(Settings.builder().put("test", version).build())
-                .indices(indices.build())
+        indices.put("test" + version,
+                IndexMetadata.builder("test" + version)
+                        .settings(Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT))
+                        .numberOfShards((int) version).numberOfReplicas(0).build());
+        return Metadata.builder(metadata).transientSettings(Settings.builder().put("test", version).build()).indices(indices.build())
                 .build();
     }
 
@@ -818,19 +788,19 @@ public class PublishClusterStateActionTests extends ESTestCase {
         assertThat(metadata.transientSettings().get("test"), equalTo(Long.toString(version)));
     }
 
-    public void publishStateAndWait(PublishClusterStateAction action, ClusterState state,
-                                    ClusterState previousState) throws InterruptedException {
+    public void publishStateAndWait(PublishClusterStateAction action, ClusterState state, ClusterState previousState)
+            throws InterruptedException {
         publishState(action, state, previousState).await(1, TimeUnit.SECONDS);
     }
 
-    public AssertingAckListener publishState(PublishClusterStateAction action, ClusterState state,
-                                             ClusterState previousState) throws InterruptedException {
+    public AssertingAckListener publishState(PublishClusterStateAction action, ClusterState state, ClusterState previousState)
+            throws InterruptedException {
         final int minimumMasterNodes = randomIntBetween(-1, state.nodes().getMasterNodes().size());
         return publishState(action, state, previousState, minimumMasterNodes);
     }
 
-    public AssertingAckListener publishState(PublishClusterStateAction action, ClusterState state,
-                                             ClusterState previousState, int minMasterNodes) throws InterruptedException {
+    public AssertingAckListener publishState(PublishClusterStateAction action, ClusterState state, ClusterState previousState,
+            int minMasterNodes) throws InterruptedException {
         AssertingAckListener assertingAckListener = new AssertingAckListener(state.nodes().getSize() - 1);
         ClusterChangedEvent changedEvent = new ClusterChangedEvent("test update", state, previousState);
         action.publish(changedEvent, minMasterNodes, assertingAckListener);
@@ -878,8 +848,7 @@ public class PublishClusterStateActionTests extends ESTestCase {
 
     void assertSameState(ClusterState actual, ClusterState expected) {
         assertThat(actual, notNullValue());
-        final String reason = "\n--> actual ClusterState: " + actual + "\n" +
-                                "--> expected ClusterState:" + expected;
+        final String reason = "\n--> actual ClusterState: " + actual + "\n" + "--> expected ClusterState:" + expected;
         assertThat("unequal UUIDs" + reason, actual.stateUUID(), equalTo(expected.stateUUID()));
         assertThat("unequal versions" + reason, actual.version(), equalTo(expected.version()));
     }
@@ -902,7 +871,7 @@ public class PublishClusterStateActionTests extends ESTestCase {
         AtomicBoolean errorOnCommit = new AtomicBoolean();
 
         public MockPublishAction(TransportService transportService, NamedWriteableRegistry namedWriteableRegistry,
-                                 IncomingClusterStateListener listener, DiscoverySettings discoverySettings) {
+                IncomingClusterStateListener listener, DiscoverySettings discoverySettings) {
             super(transportService, namedWriteableRegistry, listener, discoverySettings);
         }
 

@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.join.aggregations;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * A {@link BucketsAggregator} which resolves to the matching parent documents.
  */
@@ -38,17 +38,16 @@ public class ChildrenToParentAggregator extends ParentJoinAggregator {
 
     static final ParseField TYPE_FIELD = new ParseField("type");
 
-    public ChildrenToParentAggregator(String name, AggregatorFactories factories,
-            SearchContext context, Aggregator parent, Query childFilter,
-            Query parentFilter, ValuesSource.Bytes.WithOrdinals valuesSource,
-            long maxOrd, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+    public ChildrenToParentAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent,
+            Query childFilter, Query parentFilter, ValuesSource.Bytes.WithOrdinals valuesSource, long maxOrd,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
         super(name, factories, context, parent, childFilter, parentFilter, valuesSource, maxOrd, cardinality, metadata);
     }
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) ->
-            new InternalParent(name, bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
+        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) -> new InternalParent(name,
+                bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
     }
 
     @Override

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import java.util.Map;
+
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
-
-import java.util.Map;
 
 /**
  * Interface shared by {@link AggregationBuilder} and {@link PipelineAggregationBuilder} so they can conveniently share the same namespace

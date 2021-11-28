@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.indices.store;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -39,8 +49,8 @@ import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.Tuple;
@@ -60,16 +70,6 @@ import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class IndicesStore implements ClusterStateListener, Closeable {
 
     private static final Logger logger = LogManager.getLogger(IndicesStore.class);
@@ -77,8 +77,7 @@ public class IndicesStore implements ClusterStateListener, Closeable {
     // TODO this class can be foled into either IndicesService and partially into IndicesClusterStateService
     // there is no need for a separate public service
     public static final Setting<TimeValue> INDICES_STORE_DELETE_SHARD_TIMEOUT =
-        Setting.positiveTimeSetting("indices.store.delete.shard.timeout", new TimeValue(30, TimeUnit.SECONDS),
-            Property.NodeScope);
+            Setting.positiveTimeSetting("indices.store.delete.shard.timeout", new TimeValue(30, TimeUnit.SECONDS), Property.NodeScope);
     public static final String ACTION_SHARD_EXISTS = "internal:index/shard/exists";
     private static final EnumSet<IndexShardState> ACTIVE_STATES = EnumSet.of(IndexShardState.STARTED);
     private final Settings settings;
@@ -93,15 +92,15 @@ public class IndicesStore implements ClusterStateListener, Closeable {
     private final TimeValue deleteShardTimeout;
 
     @Inject
-    public IndicesStore(Settings settings, IndicesService indicesService,
-                        ClusterService clusterService, TransportService transportService, ThreadPool threadPool) {
+    public IndicesStore(Settings settings, IndicesService indicesService, ClusterService clusterService, TransportService transportService,
+            ThreadPool threadPool) {
         this.settings = settings;
         this.indicesService = indicesService;
         this.clusterService = clusterService;
         this.transportService = transportService;
         this.threadPool = threadPool;
         transportService.registerRequestHandler(ACTION_SHARD_EXISTS, ThreadPool.Names.SAME, ShardActiveRequest::new,
-            new ShardActiveRequestHandler());
+                new ShardActiveRequestHandler());
         this.deleteShardTimeout = INDICES_STORE_DELETE_SHARD_TIMEOUT.get(settings);
         // Doesn't make sense to delete shards on non-data nodes
         if (DiscoveryNode.isDataNode(settings)) {
@@ -158,23 +157,23 @@ public class IndicesStore implements ClusterStateListener, Closeable {
                         indexSettings = indexService.getIndexSettings();
                     }
                     IndicesService.ShardDeletionCheckResult shardDeletionCheckResult =
-                        indicesService.canDeleteShardContent(shardId, indexSettings);
+                            indicesService.canDeleteShardContent(shardId, indexSettings);
                     switch (shardDeletionCheckResult) {
-                        case FOLDER_FOUND_CAN_DELETE:
-                            deleteShardIfExistElseWhere(event.state(), indexShardRoutingTable);
-                            break;
-                        case NO_FOLDER_FOUND:
-                            folderNotFoundCache.add(shardId);
-                            break;
-                        case NO_LOCAL_STORAGE:
-                            assert false : "shard deletion only runs on data nodes which always have local storage";
-                            // nothing to do
-                            break;
-                        case STILL_ALLOCATED:
-                            // nothing to do
-                            break;
-                        default:
-                            assert false : "unknown shard deletion check result: " + shardDeletionCheckResult;
+                    case FOLDER_FOUND_CAN_DELETE:
+                        deleteShardIfExistElseWhere(event.state(), indexShardRoutingTable);
+                        break;
+                    case NO_FOLDER_FOUND:
+                        folderNotFoundCache.add(shardId);
+                        break;
+                    case NO_LOCAL_STORAGE:
+                        assert false : "shard deletion only runs on data nodes which always have local storage";
+                        // nothing to do
+                        break;
+                    case STILL_ALLOCATED:
+                        // nothing to do
+                        break;
+                    default:
+                        assert false : "unknown shard deletion check result: " + shardDeletionCheckResult;
                     }
                 }
             }
@@ -211,12 +210,12 @@ public class IndicesStore implements ClusterStateListener, Closeable {
         for (ShardRouting shardRouting : indexShardRoutingTable) {
             assert shardRouting.started() : "expected started shard but was " + shardRouting;
             DiscoveryNode currentNode = state.nodes().get(shardRouting.currentNodeId());
-            requests.add(new Tuple<>(currentNode,
-                new ShardActiveRequest(clusterName, indexUUID, shardRouting.shardId(), deleteShardTimeout)));
+            requests.add(
+                    new Tuple<>(currentNode, new ShardActiveRequest(clusterName, indexUUID, shardRouting.shardId(), deleteShardTimeout)));
         }
 
-        ShardActiveResponseHandler responseHandler = new ShardActiveResponseHandler(indexShardRoutingTable.shardId(), state.getVersion(),
-            requests.size());
+        ShardActiveResponseHandler responseHandler =
+                new ShardActiveResponseHandler(indexShardRoutingTable.shardId(), state.getVersion(), requests.size());
         for (Tuple<DiscoveryNode, ShardActiveRequest> request : requests) {
             logger.trace("{} sending shard active check to {}", request.v2().shardId, request.v1());
             transportService.sendRequest(request.v1(), ACTION_SHARD_EXISTS, request.v2(), responseHandler);
@@ -271,34 +270,32 @@ public class IndicesStore implements ClusterStateListener, Closeable {
 
         private void allNodesResponded() {
             if (activeCopies.get() != expectedActiveCopies) {
-                logger.trace("not deleting shard {}, expected {} active copies, but only {} found active copies",
-                    shardId, expectedActiveCopies, activeCopies.get());
+                logger.trace("not deleting shard {}, expected {} active copies, but only {} found active copies", shardId,
+                        expectedActiveCopies, activeCopies.get());
                 return;
             }
 
             ClusterState latestClusterState = clusterService.state();
             if (clusterStateVersion != latestClusterState.getVersion()) {
-                logger.trace("not deleting shard {}, the latest cluster state version[{}] is not equal to cluster state " +
-                    "before shard active api call [{}]", shardId, latestClusterState.getVersion(), clusterStateVersion);
+                logger.trace("not deleting shard {}, the latest cluster state version[{}] is not equal to cluster state "
+                        + "before shard active api call [{}]", shardId, latestClusterState.getVersion(), clusterStateVersion);
                 return;
             }
 
             clusterService.getClusterApplierService().runOnApplierThread("indices_store ([" + shardId + "] active fully on other nodes)",
-                currentState -> {
-                    if (clusterStateVersion != currentState.getVersion()) {
-                        logger.trace("not deleting shard {}, the update task state version[{}] is not equal to cluster state before " +
-                            "shard active api call [{}]", shardId, currentState.getVersion(), clusterStateVersion);
-                        return;
-                    }
-                    try {
-                        indicesService.deleteShardStore("no longer used", shardId, currentState);
-                    } catch (Exception ex) {
-                        logger.debug(() -> new ParameterizedMessage("{} failed to delete unallocated shard, ignoring", shardId), ex);
-                    }
-                },
-                (source, e) -> logger.error(() -> new ParameterizedMessage("{} unexpected error during deletion of unallocated shard",
-                    shardId), e)
-            );
+                    currentState -> {
+                        if (clusterStateVersion != currentState.getVersion()) {
+                            logger.trace("not deleting shard {}, the update task state version[{}] is not equal to cluster state before "
+                                    + "shard active api call [{}]", shardId, currentState.getVersion(), clusterStateVersion);
+                            return;
+                        }
+                        try {
+                            indicesService.deleteShardStore("no longer used", shardId, currentState);
+                        } catch (Exception ex) {
+                            logger.debug(() -> new ParameterizedMessage("{} failed to delete unallocated shard, ignoring", shardId), ex);
+                        }
+                    }, (source, e) -> logger
+                            .error(() -> new ParameterizedMessage("{} unexpected error during deletion of unallocated shard", shardId), e));
         }
 
     }
@@ -320,7 +317,7 @@ public class IndicesStore implements ClusterStateListener, Closeable {
                 // shard state changes explicitly. instead we wait for the cluster state changes because we know any
                 // shard state change will trigger or be triggered by a cluster state change.
                 ClusterStateObserver observer =
-                    new ClusterStateObserver(clusterService, request.timeout, logger, threadPool.getThreadContext());
+                        new ClusterStateObserver(clusterService, request.timeout, logger, threadPool.getThreadContext());
                 // check if shard is active. if so, all is good
                 boolean shardActive = shardActive(indexShard);
                 if (shardActive) {
@@ -347,8 +344,8 @@ public class IndicesStore implements ClusterStateListener, Closeable {
                             try {
                                 channel.sendResponse(new ShardActiveResponse(shardActive, clusterService.localNode()));
                             } catch (IOException | EsRejectedExecutionException e) {
-                                logger.error(() -> new ParameterizedMessage("failed send response for shard active while trying to " +
-                                    "delete shard {} - shard will probably not be removed", request.shardId), e);
+                                logger.error(() -> new ParameterizedMessage("failed send response for shard active while trying to "
+                                        + "delete shard {} - shard will probably not be removed", request.shardId), e);
                             }
                         }
                     }, newState -> {
@@ -374,8 +371,8 @@ public class IndicesStore implements ClusterStateListener, Closeable {
         private IndexShard getShard(ShardActiveRequest request) {
             ClusterName thisClusterName = clusterService.getClusterName();
             if (!thisClusterName.equals(request.clusterName)) {
-                logger.trace("shard exists request meant for cluster[{}], but this is cluster[{}], ignoring request",
-                    request.clusterName, thisClusterName);
+                logger.trace("shard exists request meant for cluster[{}], but this is cluster[{}], ignoring request", request.clusterName,
+                        thisClusterName);
                 return null;
             }
             ShardId shardId = request.shardId;

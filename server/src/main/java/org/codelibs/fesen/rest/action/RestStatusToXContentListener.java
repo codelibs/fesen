@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.rest.action;
 
+import java.util.function.Function;
+
 import org.codelibs.fesen.common.xcontent.StatusToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestChannel;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.util.function.Function;
 
 /**
  * Content listener that extracts that {@link RestStatus} from the response.
@@ -38,7 +38,7 @@ public class RestStatusToXContentListener<Response extends StatusToXContentObjec
      */
     public RestStatusToXContentListener(RestChannel channel) {
         this(channel, r -> {
-            assert false: "Returned a 201 CREATED but not set up to support a Location header";
+            assert false : "Returned a 201 CREATED but not set up to support a Location header";
             return null;
         });
     }

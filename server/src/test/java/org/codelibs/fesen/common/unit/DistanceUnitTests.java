@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.common.unit;
 
-
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -36,7 +35,7 @@ public class DistanceUnitTests extends ESTestCase {
         assertThat(DistanceUnit.NAUTICALMILES.convert(10, DistanceUnit.MILES), closeTo(8.689762, 0.001));
         assertThat(DistanceUnit.KILOMETERS.convert(10, DistanceUnit.KILOMETERS), closeTo(10, 0.001));
         assertThat(DistanceUnit.KILOMETERS.convert(10, DistanceUnit.METERS), closeTo(0.01, 0.00001));
-        assertThat(DistanceUnit.KILOMETERS.convert(1000,DistanceUnit.METERS), closeTo(1, 0.001));
+        assertThat(DistanceUnit.KILOMETERS.convert(1000, DistanceUnit.METERS), closeTo(1, 0.001));
         assertThat(DistanceUnit.METERS.convert(1, DistanceUnit.KILOMETERS), closeTo(1000, 0.001));
     }
 
@@ -54,10 +53,10 @@ public class DistanceUnitTests extends ESTestCase {
         double testValue = 12345.678;
         for (DistanceUnit unit : DistanceUnit.values()) {
             assertThat("Unit can be parsed from '" + unit.toString() + "'", DistanceUnit.fromString(unit.toString()), equalTo(unit));
-            assertThat("Unit can be parsed from '" + testValue + unit.toString() + "'",
-                DistanceUnit.fromString(unit.toString()), equalTo(unit));
+            assertThat("Unit can be parsed from '" + testValue + unit.toString() + "'", DistanceUnit.fromString(unit.toString()),
+                    equalTo(unit));
             assertThat("Value can be parsed from '" + testValue + unit.toString() + "'",
-                DistanceUnit.Distance.parseDistance(unit.toString(testValue)).value, equalTo(testValue));
+                    DistanceUnit.Distance.parseDistance(unit.toString(testValue)).value, equalTo(testValue));
         }
     }
 
@@ -79,12 +78,12 @@ public class DistanceUnitTests extends ESTestCase {
 
     public void testReadWrite() throws Exception {
         for (DistanceUnit unit : DistanceUnit.values()) {
-          try (BytesStreamOutput out = new BytesStreamOutput()) {
-              unit.writeTo(out);
-              try (StreamInput in = out.bytes().streamInput()) {
-                  assertThat("Roundtrip serialisation failed.", DistanceUnit.readFromStream(in), equalTo(unit));
-              }
-          }
+            try (BytesStreamOutput out = new BytesStreamOutput()) {
+                unit.writeTo(out);
+                try (StreamInput in = out.bytes().streamInput()) {
+                    assertThat("Roundtrip serialisation failed.", DistanceUnit.readFromStream(in), equalTo(unit));
+                }
+            }
         }
     }
 

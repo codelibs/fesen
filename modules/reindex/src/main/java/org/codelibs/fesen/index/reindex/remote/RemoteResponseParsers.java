@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.reindex.remote;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.BiFunction;
+
 import org.apache.lucene.search.TotalHits;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -27,11 +37,11 @@ import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.BasicHit;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.Hit;
@@ -39,34 +49,24 @@ import org.codelibs.fesen.index.reindex.ScrollableHitSource.Response;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
 import org.codelibs.fesen.search.SearchHits;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.BiFunction;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
 /**
  * Parsers to convert the response from the remote host into objects useful for {@link RemoteScrollableHitSource}.
  */
 final class RemoteResponseParsers {
-    private RemoteResponseParsers() {}
+    private RemoteResponseParsers() {
+    }
 
     /**
      * Parser for an individual {@code hit} element.
      */
-    public static final ConstructingObjectParser<BasicHit, XContentType> HIT_PARSER =
-            new ConstructingObjectParser<>("hit", true, a -> {
-                int i = 0;
-                String index = (String) a[i++];
-                String type = (String) a[i++];
-                String id = (String) a[i++];
-                Long version = (Long) a[i++];
-                return new BasicHit(index, type, id, version == null ? -1 : version);
-            });
+    public static final ConstructingObjectParser<BasicHit, XContentType> HIT_PARSER = new ConstructingObjectParser<>("hit", true, a -> {
+        int i = 0;
+        String index = (String) a[i++];
+        String type = (String) a[i++];
+        String id = (String) a[i++];
+        Long version = (Long) a[i++];
+        return new BasicHit(index, type, id, version == null ? -1 : version);
+    });
     static {
         HIT_PARSER.declareString(constructorArg(), new ParseField("_index"));
         HIT_PARSER.declareString(constructorArg(), new ParseField("_type"));
@@ -107,8 +107,7 @@ final class RemoteResponseParsers {
     /**
      * Parser for the {@code hits} element. Parsed to an array of {@code [total (Long), hits (List<Hit>)]}.
      */
-    public static final ConstructingObjectParser<Object[], XContentType> HITS_PARSER =
-            new ConstructingObjectParser<>("hits", true, a -> a);
+    public static final ConstructingObjectParser<Object[], XContentType> HITS_PARSER = new ConstructingObjectParser<>("hits", true, a -> a);
     static {
         HITS_PARSER.declareField(constructorArg(), (p, c) -> {
             if (p.currentToken() == XContentParser.Token.START_OBJECT) {
@@ -258,15 +257,19 @@ final class RemoteResponseParsers {
         public void setType(String type) {
             this.type = type;
         }
+
         public void setReason(String reason) {
             this.reason = reason;
         }
+
         public void setLine(Integer line) {
             this.line = line;
         }
+
         public void setColumn(Integer column) {
             this.column = column;
         }
+
         public void setCausedBy(Throwable causedBy) {
             this.causedBy = causedBy;
         }
@@ -275,15 +278,11 @@ final class RemoteResponseParsers {
     /**
      * Parses the main action to return just the {@linkplain Version} that it returns. We throw everything else out.
      */
-    public static final ConstructingObjectParser<Version, XContentType> MAIN_ACTION_PARSER = new ConstructingObjectParser<>(
-            "/", true, a -> (Version) a[0]);
+    public static final ConstructingObjectParser<Version, XContentType> MAIN_ACTION_PARSER =
+            new ConstructingObjectParser<>("/", true, a -> (Version) a[0]);
     static {
-        ConstructingObjectParser<Version, XContentType> versionParser = new ConstructingObjectParser<>(
-                "version", true, a -> Version.fromString(
-                    ((String) a[0])
-                        .replace("-SNAPSHOT", "")
-                        .replaceFirst("-(alpha\\d+|beta\\d+|rc\\d+)", "")
-        ));
+        ConstructingObjectParser<Version, XContentType> versionParser = new ConstructingObjectParser<>("version", true,
+                a -> Version.fromString(((String) a[0]).replace("-SNAPSHOT", "").replaceFirst("-(alpha\\d+|beta\\d+|rc\\d+)", "")));
         versionParser.declareString(constructorArg(), new ParseField("number"));
         MAIN_ACTION_PARSER.declareObject(constructorArg(), versionParser, new ParseField("version"));
     }

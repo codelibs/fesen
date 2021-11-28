@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
+import java.util.Map;
+
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
@@ -29,13 +31,11 @@ import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-import java.util.Map;
-
 /**
  * Builder for a create index request
  */
 public class CreateIndexRequestBuilder
-    extends AcknowledgedRequestBuilder<CreateIndexRequest, CreateIndexResponse, CreateIndexRequestBuilder> {
+        extends AcknowledgedRequestBuilder<CreateIndexRequest, CreateIndexResponse, CreateIndexRequestBuilder> {
 
     public CreateIndexRequestBuilder(FesenClient client, CreateIndexAction action) {
         super(client, action, new CreateIndexRequest());

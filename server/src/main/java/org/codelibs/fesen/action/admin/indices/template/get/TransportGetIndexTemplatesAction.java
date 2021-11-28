@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.get;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,15 +38,15 @@ import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportGetIndexTemplatesAction extends
-    TransportMasterNodeReadAction<GetIndexTemplatesRequest, GetIndexTemplatesResponse> {
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+
+public class TransportGetIndexTemplatesAction extends TransportMasterNodeReadAction<GetIndexTemplatesRequest, GetIndexTemplatesResponse> {
 
     @Inject
-    public TransportGetIndexTemplatesAction(TransportService transportService, ClusterService clusterService,
-                                            ThreadPool threadPool, ActionFilters actionFilters,
-                                            IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(GetIndexTemplatesAction.NAME, transportService, clusterService, threadPool, actionFilters,
-            GetIndexTemplatesRequest::new, indexNameExpressionResolver);
+    public TransportGetIndexTemplatesAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+        super(GetIndexTemplatesAction.NAME, transportService, clusterService, threadPool, actionFilters, GetIndexTemplatesRequest::new,
+                indexNameExpressionResolver);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class TransportGetIndexTemplatesAction extends
 
     @Override
     protected void masterOperation(GetIndexTemplatesRequest request, ClusterState state,
-                                   ActionListener<GetIndexTemplatesResponse> listener) {
+            ActionListener<GetIndexTemplatesResponse> listener) {
         List<IndexTemplateMetadata> results;
 
         // If we did not ask for a specific name, then we return all templates

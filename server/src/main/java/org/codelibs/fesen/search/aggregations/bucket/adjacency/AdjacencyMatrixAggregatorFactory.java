@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.adjacency;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
@@ -31,19 +35,14 @@ import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregator.KeyedFilter;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 public class AdjacencyMatrixAggregatorFactory extends AggregatorFactory {
 
     private final String[] keys;
     private final Weight[] weights;
     private final String separator;
 
-    public AdjacencyMatrixAggregatorFactory(String name, List<KeyedFilter> filters, String separator,
-                                            QueryShardContext queryShardContext, AggregatorFactory parent,
-                                            AggregatorFactories.Builder subFactories, Map<String, Object> metadata) throws IOException {
+    public AdjacencyMatrixAggregatorFactory(String name, List<KeyedFilter> filters, String separator, QueryShardContext queryShardContext,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactories, Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactories, metadata);
         IndexSearcher contextSearcher = queryShardContext.searcher();
         this.separator = separator;
@@ -58,10 +57,8 @@ public class AdjacencyMatrixAggregatorFactory extends AggregatorFactory {
     }
 
     @Override
-    public Aggregator createInternal(SearchContext searchContext,
-                                        Aggregator parent,
-                                        CardinalityUpperBound cardinality,
-                                        Map<String, Object> metadata) throws IOException {
+    public Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         return new AdjacencyMatrixAggregator(name, factories, separator, keys, weights, searchContext, parent, metadata);
     }
 

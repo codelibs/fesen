@@ -47,6 +47,7 @@ import static org.hamcrest.Matchers.lessThan;
 public class EsExecutorsTests extends ESTestCase {
 
     private final ThreadContext threadContext = new ThreadContext(Settings.EMPTY);
+
     private TimeUnit randomTimeUnit() {
         return TimeUnit.values()[between(0, TimeUnit.values().length - 1)];
     }
@@ -56,8 +57,7 @@ public class EsExecutorsTests extends ESTestCase {
     }
 
     public void testFixedForcedExecution() throws Exception {
-        EsThreadPoolExecutor executor =
-                EsExecutors.newFixed(getName(), 1, 1, EsExecutors.daemonThreadFactory("test"), threadContext);
+        EsThreadPoolExecutor executor = EsExecutors.newFixed(getName(), 1, 1, EsExecutors.daemonThreadFactory("test"), threadContext);
         final CountDownLatch wait = new CountDownLatch(1);
 
         final CountDownLatch exec1Wait = new CountDownLatch(1);
@@ -119,8 +119,7 @@ public class EsExecutorsTests extends ESTestCase {
     }
 
     public void testFixedRejected() throws Exception {
-        EsThreadPoolExecutor executor =
-                EsExecutors.newFixed(getName(), 1, 1, EsExecutors.daemonThreadFactory("test"), threadContext);
+        EsThreadPoolExecutor executor = EsExecutors.newFixed(getName(), 1, 1, EsExecutors.daemonThreadFactory("test"), threadContext);
         final CountDownLatch wait = new CountDownLatch(1);
 
         final CountDownLatch exec1Wait = new CountDownLatch(1);
@@ -178,9 +177,8 @@ public class EsExecutorsTests extends ESTestCase {
         final int max = between(min + 1, 6);
         final CyclicBarrier barrier = new CyclicBarrier(max + 1);
 
-        ThreadPoolExecutor pool =
-                EsExecutors.newScaling(getClass().getName() + "/" + getTestName(), min, max, between(1, 100), randomTimeUnit(),
-                    EsExecutors.daemonThreadFactory("test"), threadContext);
+        ThreadPoolExecutor pool = EsExecutors.newScaling(getClass().getName() + "/" + getTestName(), min, max, between(1, 100),
+                randomTimeUnit(), EsExecutors.daemonThreadFactory("test"), threadContext);
         assertThat("Min property", pool.getCorePoolSize(), equalTo(min));
         assertThat("Max property", pool.getMaximumPoolSize(), equalTo(max));
 
@@ -213,9 +211,8 @@ public class EsExecutorsTests extends ESTestCase {
         final int max = between(min + 1, 6);
         final CyclicBarrier barrier = new CyclicBarrier(max + 1);
 
-        final ThreadPoolExecutor pool =
-                EsExecutors.newScaling(getClass().getName() + "/" + getTestName(), min, max, between(1, 100), TimeUnit.MILLISECONDS,
-                    EsExecutors.daemonThreadFactory("test"), threadContext);
+        final ThreadPoolExecutor pool = EsExecutors.newScaling(getClass().getName() + "/" + getTestName(), min, max, between(1, 100),
+                TimeUnit.MILLISECONDS, EsExecutors.daemonThreadFactory("test"), threadContext);
         assertThat("Min property", pool.getCorePoolSize(), equalTo(min));
         assertThat("Max property", pool.getMaximumPoolSize(), equalTo(max));
 
@@ -410,16 +407,13 @@ public class EsExecutorsTests extends ESTestCase {
         processorsSetting.get(settings);
         final Setting<?>[] deprecatedSettings;
         if (processorsSetting.getProperties().contains(Setting.Property.Deprecated)) {
-            deprecatedSettings = new Setting<?>[]{processorsSetting};
+            deprecatedSettings = new Setting<?>[] { processorsSetting };
         } else {
             deprecatedSettings = new Setting<?>[0];
         }
-        final String expectedWarning = String.format(
-            Locale.ROOT,
-            "setting [%s] to value [%d] which is more than available processors [%d] is deprecated",
-            processorsSetting.getKey(),
-            processors,
-            available);
+        final String expectedWarning =
+                String.format(Locale.ROOT, "setting [%s] to value [%d] which is more than available processors [%d] is deprecated",
+                        processorsSetting.getKey(), processors, available);
         assertSettingDeprecationsAndWarnings(deprecatedSettings, expectedWarning);
     }
 

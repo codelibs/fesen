@@ -20,8 +20,9 @@
 package org.codelibs.fesen.core;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
-import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class TupleTests extends ESTestCase {

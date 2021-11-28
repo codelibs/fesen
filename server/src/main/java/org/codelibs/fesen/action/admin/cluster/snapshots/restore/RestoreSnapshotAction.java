@@ -33,4 +33,3 @@ public class RestoreSnapshotAction extends ActionType<RestoreSnapshotResponse> {
         super(NAME, RestoreSnapshotResponse::new);
     }
 }
-

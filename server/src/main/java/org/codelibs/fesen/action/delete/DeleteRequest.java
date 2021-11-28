@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.delete;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
+
+import java.io.IOException;
+
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -33,12 +39,6 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
-
-import java.io.IOException;
 
 /**
  * A request to delete a document from an index based on its type and id. Best created using
@@ -152,7 +152,7 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
     @Override
     public String type() {
         if (type == null) {
-            return MapperService.SINGLE_MAPPING_NAME;                    
+            return MapperService.SINGLE_MAPPING_NAME;
         }
         return type;
     }
@@ -168,7 +168,7 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
         this.type = type;
         return this;
     }
-    
+
     /**
      * Set the default type supplied to a bulk
      * request if this individual request's type is null
@@ -183,7 +183,7 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
             type = defaultType;
         }
         return this;
-    }    
+    }
 
     /**
      * The id of the document to delete.
@@ -269,7 +269,7 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
      */
     public DeleteRequest setIfSeqNo(long seqNo) {
         if (seqNo < 0 && seqNo != UNASSIGNED_SEQ_NO) {
-            throw new IllegalArgumentException("sequence numbers must be non negative. got [" +  seqNo + "].");
+            throw new IllegalArgumentException("sequence numbers must be non negative. got [" + seqNo + "].");
         }
         ifSeqNo = seqNo;
         return this;

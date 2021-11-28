@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.test.client;
 
+import java.util.concurrent.TimeUnit;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.client.support.AbstractClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.threadpool.TestThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Client that always responds with {@code null} to every request. Override {@link #doExecute(ActionType, ActionRequest, ActionListener)}
@@ -53,8 +53,8 @@ public class NoOpClient extends AbstractClient {
     }
 
     @Override
-    protected <Request extends ActionRequest, Response extends ActionResponse>
-    void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
+    protected <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action, Request request,
+            ActionListener<Response> listener) {
         listener.onResponse(null);
     }
 

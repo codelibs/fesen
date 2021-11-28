@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.script.expression;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.TimeZone;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValues;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.search.MultiValueMode;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.TimeZone;
 
 /** Extracts a portion of a date field with {@code Calendar.get()} */
 class DateMethodValueSource extends FieldDataValueSource {
@@ -55,7 +55,7 @@ class DateMethodValueSource extends FieldDataValueSource {
         return new DoubleValues() {
             @Override
             public double doubleValue() throws IOException {
-                calendar.setTimeInMillis((long)docValues.doubleValue());
+                calendar.setTimeInMillis((long) docValues.doubleValue());
                 return calendar.get(calendarType);
             }
 
@@ -73,13 +73,17 @@ class DateMethodValueSource extends FieldDataValueSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
 
         DateMethodValueSource that = (DateMethodValueSource) o;
 
-        if (calendarType != that.calendarType) return false;
+        if (calendarType != that.calendarType)
+            return false;
         return methodName.equals(that.methodName);
 
     }

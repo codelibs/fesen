@@ -50,7 +50,8 @@ public abstract class ChannelContext<S extends SelectableChannel & NetworkChanne
         doSelectorRegister();
     }
 
-    protected void channelActive() throws IOException {}
+    protected void channelActive() throws IOException {
+    }
 
     // Package private for testing
     void doSelectorRegister() throws IOException {

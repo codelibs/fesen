@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,17 +35,11 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public class RestCloseIndexAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/_close"),
-            new Route(POST, "/{index}/_close")));
+        return unmodifiableList(asList(new Route(POST, "/_close"), new Route(POST, "/{index}/_close")));
     }
 
     @Override

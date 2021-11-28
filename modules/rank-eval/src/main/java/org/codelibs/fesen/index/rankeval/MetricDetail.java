@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
 
 /**
  * Details about a specific {@link EvaluationMetric} that should be included in the response.

@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.get;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParsingException;
@@ -31,12 +37,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.get.GetResult;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * The response of a get action.

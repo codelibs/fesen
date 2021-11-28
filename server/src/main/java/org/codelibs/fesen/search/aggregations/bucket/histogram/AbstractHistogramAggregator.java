@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import static org.codelibs.fesen.search.aggregations.bucket.histogram.DoubleBounds.getEffectiveMax;
+import static org.codelibs.fesen.search.aggregations.bucket.histogram.DoubleBounds.getEffectiveMin;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.search.DocValueFormat;
@@ -31,14 +39,6 @@ import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.InternalHistogram.EmptyBucketInfo;
 import org.codelibs.fesen.search.aggregations.bucket.terms.LongKeyedBucketOrds;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import static org.codelibs.fesen.search.aggregations.bucket.histogram.DoubleBounds.getEffectiveMax;
-import static org.codelibs.fesen.search.aggregations.bucket.histogram.DoubleBounds.getEffectiveMin;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Base class for functionality shared between aggregators for this
@@ -55,22 +55,10 @@ public abstract class AbstractHistogramAggregator extends BucketsAggregator {
     protected final DoubleBounds hardBounds;
     protected final LongKeyedBucketOrds bucketOrds;
 
-    public AbstractHistogramAggregator(
-        String name,
-        AggregatorFactories factories,
-        double interval,
-        double offset,
-        BucketOrder order,
-        boolean keyed,
-        long minDocCount,
-        DoubleBounds extendedBounds,
-        DoubleBounds hardBounds,
-        DocValueFormat formatter,
-        SearchContext context,
-        Aggregator parent,
-        CardinalityUpperBound cardinalityUpperBound,
-        Map<String, Object> metadata
-    ) throws IOException {
+    public AbstractHistogramAggregator(String name, AggregatorFactories factories, double interval, double offset, BucketOrder order,
+            boolean keyed, long minDocCount, DoubleBounds extendedBounds, DoubleBounds hardBounds, DocValueFormat formatter,
+            SearchContext context, Aggregator parent, CardinalityUpperBound cardinalityUpperBound, Map<String, Object> metadata)
+            throws IOException {
         super(name, factories, context, parent, CardinalityUpperBound.MANY, metadata);
         if (interval <= 0) {
             throw new IllegalArgumentException("interval must be positive, got: " + interval);
@@ -89,22 +77,21 @@ public abstract class AbstractHistogramAggregator extends BucketsAggregator {
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForVariableBuckets(owningBucketOrds, bucketOrds,
-            (bucketValue, docCount, subAggregationResults) -> {
-                double roundKey = Double.longBitsToDouble(bucketValue);
-                double key = roundKey * interval + offset;
-                return new InternalHistogram.Bucket(key, docCount, keyed, formatter, subAggregationResults);
-            }, (owningBucketOrd, buckets) -> {
-                // the contract of the histogram aggregation is that shards must return buckets ordered by key in ascending order
-                CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
+        return buildAggregationsForVariableBuckets(owningBucketOrds, bucketOrds, (bucketValue, docCount, subAggregationResults) -> {
+            double roundKey = Double.longBitsToDouble(bucketValue);
+            double key = roundKey * interval + offset;
+            return new InternalHistogram.Bucket(key, docCount, keyed, formatter, subAggregationResults);
+        }, (owningBucketOrd, buckets) -> {
+            // the contract of the histogram aggregation is that shards must return buckets ordered by key in ascending order
+            CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
 
-                EmptyBucketInfo emptyBucketInfo = null;
-                if (minDocCount == 0) {
-                    emptyBucketInfo = new EmptyBucketInfo(interval, offset, getEffectiveMin(extendedBounds),
-                        getEffectiveMax(extendedBounds), buildEmptySubAggregations());
-                }
-                return new InternalHistogram(name, buckets, order, minDocCount, emptyBucketInfo, formatter, keyed, metadata());
-            });
+            EmptyBucketInfo emptyBucketInfo = null;
+            if (minDocCount == 0) {
+                emptyBucketInfo = new EmptyBucketInfo(interval, offset, getEffectiveMin(extendedBounds), getEffectiveMax(extendedBounds),
+                        buildEmptySubAggregations());
+            }
+            return new InternalHistogram(name, buckets, order, minDocCount, emptyBucketInfo, formatter, keyed, metadata());
+        });
     }
 
     @Override
@@ -112,7 +99,7 @@ public abstract class AbstractHistogramAggregator extends BucketsAggregator {
         InternalHistogram.EmptyBucketInfo emptyBucketInfo = null;
         if (minDocCount == 0) {
             emptyBucketInfo = new InternalHistogram.EmptyBucketInfo(interval, offset, getEffectiveMin(extendedBounds),
-                getEffectiveMax(extendedBounds), buildEmptySubAggregations());
+                    getEffectiveMax(extendedBounds), buildEmptySubAggregations());
         }
         return new InternalHistogram(name, Collections.emptyList(), order, minDocCount, emptyBucketInfo, formatter, keyed, metadata());
     }

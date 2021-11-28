@@ -24,7 +24,6 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
-import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 
 public class MyFilterTokenFilterFactory extends AbstractTokenFilterFactory {
 

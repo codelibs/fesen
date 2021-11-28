@@ -27,9 +27,6 @@ import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.tasks.BaseTasksRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
 
 /**
  * A request to change throttling on a task.

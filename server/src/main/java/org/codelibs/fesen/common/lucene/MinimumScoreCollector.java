@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.lucene;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
@@ -26,8 +28,6 @@ import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreCachingWrappingScorer;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.SimpleCollector;
-
-import java.io.IOException;
 
 public class MinimumScoreCollector extends SimpleCollector {
 
@@ -65,6 +65,6 @@ public class MinimumScoreCollector extends SimpleCollector {
 
     @Override
     public ScoreMode scoreMode() {
-        return collector.scoreMode() == ScoreMode.TOP_SCORES ? ScoreMode.TOP_SCORES :  ScoreMode.COMPLETE;
+        return collector.scoreMode() == ScoreMode.TOP_SCORES ? ScoreMode.TOP_SCORES : ScoreMode.COMPLETE;
     }
 }

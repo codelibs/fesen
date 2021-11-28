@@ -72,10 +72,8 @@ public class RestGetSourceActionTests extends RestActionTestCase {
         for (Method method : Arrays.asList(Method.GET, Method.HEAD)) {
             // Ensure we have a fresh context for each request so we don't get duplicate headers
             try (ThreadContext.StoredContext ignore = verifyingClient.threadPool().getThreadContext().stashContext()) {
-                RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                    .withMethod(method)
-                    .withPath("/some_index/some_type/id/_source")
-                    .build();
+                RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(method)
+                        .withPath("/some_index/some_type/id/_source").build();
 
                 dispatchRequest(request);
                 assertWarnings(RestGetSourceAction.TYPES_DEPRECATION_MESSAGE);
@@ -94,13 +92,10 @@ public class RestGetSourceActionTests extends RestActionTestCase {
         for (Method method : Arrays.asList(Method.GET, Method.HEAD)) {
             // Ensure we have a fresh context for each request so we don't get duplicate headers
             try (ThreadContext.StoredContext ignore = verifyingClient.threadPool().getThreadContext().stashContext()) {
-            RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                    .withMethod(method)
-                    .withPath("/some_index/_source/id")
-                    .withParams(params)
-                    .build();
-            dispatchRequest(request);
-            assertWarnings(RestGetSourceAction.TYPES_DEPRECATION_MESSAGE);
+                RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(method).withPath("/some_index/_source/id")
+                        .withParams(params).build();
+                dispatchRequest(request);
+                assertWarnings(RestGetSourceAction.TYPES_DEPRECATION_MESSAGE);
             }
         }
     }
@@ -108,7 +103,7 @@ public class RestGetSourceActionTests extends RestActionTestCase {
     public void testRestGetSourceAction() throws Exception {
         final BytesReference source = new BytesArray("{\"foo\": \"bar\"}");
         final GetResponse response =
-            new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, true, source, emptyMap(), null));
+                new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, true, source, emptyMap(), null));
 
         final RestResponse restResponse = listener.buildResponse(response);
 
@@ -119,7 +114,7 @@ public class RestGetSourceActionTests extends RestActionTestCase {
 
     public void testRestGetSourceActionWithMissingDocument() {
         final GetResponse response =
-            new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, false, null, emptyMap(), null));
+                new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, false, null, emptyMap(), null));
 
         final ResourceNotFoundException exception = expectThrows(ResourceNotFoundException.class, () -> listener.buildResponse(response));
 
@@ -128,7 +123,7 @@ public class RestGetSourceActionTests extends RestActionTestCase {
 
     public void testRestGetSourceActionWithMissingDocumentSource() {
         final GetResponse response =
-            new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, true, null, emptyMap(), null));
+                new GetResponse(new GetResult("index1", "_doc", "1", UNASSIGNED_SEQ_NO, 0, -1, true, null, emptyMap(), null));
 
         final ResourceNotFoundException exception = expectThrows(ResourceNotFoundException.class, () -> listener.buildResponse(response));
 

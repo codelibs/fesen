@@ -34,8 +34,7 @@ import org.codelibs.fesen.env.OverrideNodeVersionCommand;
 public class NodeToolCli extends MultiCommand {
 
     public NodeToolCli() {
-        super("A CLI tool to do unsafe cluster and index manipulations on current node",
-            ()->{});
+        super("A CLI tool to do unsafe cluster and index manipulations on current node", () -> {});
         CommandLoggingConfigurator.configureLoggingWithoutConfig();
         subcommands.put("repurpose", new NodeRepurposeCommand());
         subcommands.put("unsafe-bootstrap", new UnsafeBootstrapMasterCommand());

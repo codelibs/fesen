@@ -37,9 +37,8 @@ import static java.util.Collections.emptyMap;
 public class InternalHDRPercentilesTests extends InternalPercentilesTestCase<InternalHDRPercentiles> {
 
     @Override
-    protected InternalHDRPercentiles createTestInstance(String name,
-                                                        Map<String, Object> metadata,
-                                                        boolean keyed, DocValueFormat format, double[] percents, double[] values) {
+    protected InternalHDRPercentiles createTestInstance(String name, Map<String, Object> metadata, boolean keyed, DocValueFormat format,
+            double[] percents, double[] values) {
 
         final DoubleHistogram state = new DoubleHistogram(3);
         Arrays.stream(values).forEach(state::recordValue);
@@ -63,14 +62,13 @@ public class InternalHDRPercentilesTests extends InternalPercentilesTestCase<Int
     }
 
     public void testIterator() {
-        final double[] percents =  randomPercents(false);
+        final double[] percents = randomPercents(false);
         final double[] values = new double[frequently() ? randomIntBetween(1, 10) : 0];
         for (int i = 0; i < values.length; ++i) {
             values[i] = randomDouble();
         }
 
-        InternalHDRPercentiles aggregation =
-                createTestInstance("test", emptyMap(), false, randomNumericDocValueFormat(), percents, values);
+        InternalHDRPercentiles aggregation = createTestInstance("test", emptyMap(), false, randomNumericDocValueFormat(), percents, values);
 
         Iterator<Percentile> iterator = aggregation.iterator();
         for (double percent : percents) {

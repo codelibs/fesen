@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.search.rescore;
 
-import org.apache.lucene.search.Query;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.lucene.search.Query;
 
 /**
  * Context available to the rescore while it is running. Rescore

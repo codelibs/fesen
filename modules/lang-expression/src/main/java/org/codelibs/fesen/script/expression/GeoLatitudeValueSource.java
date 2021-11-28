@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.script.expression;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValues;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.LeafGeoPointFieldData;
 import org.codelibs.fesen.index.fielddata.MultiGeoPointValues;
-
-import java.io.IOException;
 
 /**
  * ValueSource to return latitudes as a double "stream" for geopoint fields
@@ -60,9 +60,12 @@ final class GeoLatitudeValueSource extends FieldDataBasedDoubleValuesSource {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
         GeoLatitudeValueSource other = (GeoLatitudeValueSource) obj;
         return fieldData.equals(other.fieldData);
     }

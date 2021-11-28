@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.common.geo.parsers;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.geo.GeoPoint;
@@ -32,32 +36,23 @@ import org.codelibs.fesen.common.xcontent.XContentSubParser;
 import org.codelibs.fesen.index.mapper.AbstractShapeGeometryFieldMapper;
 import org.locationtech.jts.geom.Coordinate;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Parses shape geometry represented in geojson
  *
  * complies with geojson specification: https://tools.ietf.org/html/rfc7946
  */
 abstract class GeoJsonParser {
-    protected static ShapeBuilder parse(XContentParser parser, AbstractShapeGeometryFieldMapper shapeMapper)
-        throws IOException {
+    protected static ShapeBuilder parse(XContentParser parser, AbstractShapeGeometryFieldMapper shapeMapper) throws IOException {
         GeoShapeType shapeType = null;
         DistanceUnit.Distance radius = null;
         CoordinateNode coordinateNode = null;
         GeometryCollectionBuilder geometryCollections = null;
 
-        Orientation orientation = (shapeMapper == null)
-            ? AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value()
-            : shapeMapper.orientation();
-        Explicit<Boolean> coerce = (shapeMapper == null)
-            ? AbstractShapeGeometryFieldMapper.Defaults.COERCE
-            : shapeMapper.coerce();
-        Explicit<Boolean> ignoreZValue = (shapeMapper == null)
-            ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE
-            : shapeMapper.ignoreZValue();
+        Orientation orientation =
+                (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value() : shapeMapper.orientation();
+        Explicit<Boolean> coerce = (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.COERCE : shapeMapper.coerce();
+        Explicit<Boolean> ignoreZValue =
+                (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE : shapeMapper.ignoreZValue();
 
         String malformedException = null;
 
@@ -71,8 +66,8 @@ abstract class GeoJsonParser {
                         subParser.nextToken();
                         final GeoShapeType type = GeoShapeType.forName(subParser.text());
                         if (shapeType != null && shapeType.equals(type) == false) {
-                            malformedException = ShapeParser.FIELD_TYPE + " already parsed as ["
-                                + shapeType + "] cannot redefine as [" + type + "]";
+                            malformedException =
+                                    ShapeParser.FIELD_TYPE + " already parsed as [" + shapeType + "] cannot redefine as [" + type + "]";
                         } else {
                             shapeType = type;
                         }
@@ -80,16 +75,14 @@ abstract class GeoJsonParser {
                         subParser.nextToken();
                         CoordinateNode tempNode = parseCoordinates(subParser, ignoreZValue.value());
                         if (coordinateNode != null && tempNode.numDimensions() != coordinateNode.numDimensions()) {
-                            throw new FesenParseException("Exception parsing coordinates: " +
-                                "number of dimensions do not match");
+                            throw new FesenParseException("Exception parsing coordinates: " + "number of dimensions do not match");
                         }
                         coordinateNode = tempNode;
                     } else if (ShapeParser.FIELD_GEOMETRIES.match(fieldName, subParser.getDeprecationHandler())) {
                         if (shapeType == null) {
                             shapeType = GeoShapeType.GEOMETRYCOLLECTION;
                         } else if (shapeType.equals(GeoShapeType.GEOMETRYCOLLECTION) == false) {
-                            malformedException = "cannot have [" + ShapeParser.FIELD_GEOMETRIES + "] with type set to ["
-                                + shapeType + "]";
+                            malformedException = "cannot have [" + ShapeParser.FIELD_GEOMETRIES + "] with type set to [" + shapeType + "]";
                         }
                         subParser.nextToken();
                         geometryCollections = parseGeometries(subParser, shapeMapper);
@@ -97,14 +90,13 @@ abstract class GeoJsonParser {
                         if (shapeType == null) {
                             shapeType = GeoShapeType.CIRCLE;
                         } else if (shapeType != null && shapeType.equals(GeoShapeType.CIRCLE) == false) {
-                            malformedException = "cannot have [" + CircleBuilder.FIELD_RADIUS + "] with type set to ["
-                                + shapeType + "]";
+                            malformedException = "cannot have [" + CircleBuilder.FIELD_RADIUS + "] with type set to [" + shapeType + "]";
                         }
                         subParser.nextToken();
                         radius = DistanceUnit.Distance.parseDistance(subParser.text());
                     } else if (ShapeParser.FIELD_ORIENTATION.match(fieldName, subParser.getDeprecationHandler())) {
                         if (shapeType != null
-                            && (shapeType.equals(GeoShapeType.POLYGON) || shapeType.equals(GeoShapeType.MULTIPOLYGON)) == false) {
+                                && (shapeType.equals(GeoShapeType.POLYGON) || shapeType.equals(GeoShapeType.MULTIPOLYGON)) == false) {
                             malformedException = "cannot have [" + ShapeParser.FIELD_ORIENTATION + "] with type set to [" + shapeType + "]";
                         }
                         subParser.nextToken();
@@ -126,8 +118,7 @@ abstract class GeoJsonParser {
         } else if (geometryCollections == null && GeoShapeType.GEOMETRYCOLLECTION == shapeType) {
             throw new FesenParseException("geometries not included");
         } else if (radius != null && GeoShapeType.CIRCLE != shapeType) {
-            throw new FesenParseException("field [{}] is supported for [{}] only", CircleBuilder.FIELD_RADIUS,
-                CircleBuilder.TYPE);
+            throw new FesenParseException("field [{}] is supported for [{}] only", CircleBuilder.FIELD_RADIUS, CircleBuilder.TYPE);
         }
 
         if (shapeType.equals(GeoShapeType.GEOMETRYCOLLECTION)) {
@@ -157,9 +148,8 @@ abstract class GeoJsonParser {
 
         XContentParser.Token token = parser.nextToken();
         // Base cases
-        if (token != XContentParser.Token.START_ARRAY &&
-            token != XContentParser.Token.END_ARRAY &&
-            token != XContentParser.Token.VALUE_NULL) {
+        if (token != XContentParser.Token.START_ARRAY && token != XContentParser.Token.END_ARRAY
+                && token != XContentParser.Token.VALUE_NULL) {
             return new CoordinateNode(parseCoordinate(parser, ignoreZValue));
         } else if (token == XContentParser.Token.VALUE_NULL) {
             throw new IllegalArgumentException("coordinates cannot contain NULL values)");
@@ -208,8 +198,7 @@ abstract class GeoJsonParser {
      * @return Geometry[] geometries of the GeometryCollection
      * @throws IOException Thrown if an error occurs while reading from the XContentParser
      */
-    static GeometryCollectionBuilder parseGeometries(XContentParser parser, AbstractShapeGeometryFieldMapper mapper) throws
-        IOException {
+    static GeometryCollectionBuilder parseGeometries(XContentParser parser, AbstractShapeGeometryFieldMapper mapper) throws IOException {
         if (parser.currentToken() != XContentParser.Token.START_ARRAY) {
             throw new FesenParseException("geometries must be an array of geojson objects");
         }

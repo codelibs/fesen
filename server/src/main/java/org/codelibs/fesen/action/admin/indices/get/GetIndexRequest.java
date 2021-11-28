@@ -21,7 +21,6 @@ package org.codelibs.fesen.action.admin.indices.get;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.info.ClusterInfoRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,9 +32,7 @@ import org.codelibs.fesen.common.util.ArrayUtils;
  */
 public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
     public enum Feature {
-        ALIASES((byte) 0),
-        MAPPINGS((byte) 1),
-        SETTINGS((byte) 2);
+        ALIASES((byte) 0), MAPPINGS((byte) 1), SETTINGS((byte) 2);
 
         private static final Feature[] FEATURES = new Feature[Feature.values().length];
 

@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Query;
@@ -29,8 +31,6 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
 
 /**
  * A source that can record and compare values of similar type.
@@ -57,9 +57,8 @@ abstract class SingleDimensionValuesSource<T extends Comparable<T>> implements R
      * @param size The number of values to record.
      * @param reverseMul -1 if the natural order ({@link SortOrder#ASC} should be reversed.
      */
-    SingleDimensionValuesSource(BigArrays bigArrays, DocValueFormat format,
-                                @Nullable MappedFieldType fieldType, boolean missingBucket,
-                                int size, int reverseMul) {
+    SingleDimensionValuesSource(BigArrays bigArrays, DocValueFormat format, @Nullable MappedFieldType fieldType, boolean missingBucket,
+            int size, int reverseMul) {
         this.bigArrays = bigArrays;
         this.format = format;
         this.fieldType = fieldType;
@@ -138,8 +137,7 @@ abstract class SingleDimensionValuesSource<T extends Comparable<T>> implements R
      * Creates a {@link LeafBucketCollector} that sets the current value for each document to the provided
      * <code>value</code> and invokes {@link LeafBucketCollector#collect} on the provided <code>next</code> collector.
      */
-    abstract LeafBucketCollector getLeafCollector(Comparable value,
-                                                  LeafReaderContext context, LeafBucketCollector next) throws IOException;
+    abstract LeafBucketCollector getLeafCollector(Comparable value, LeafReaderContext context, LeafBucketCollector next) throws IOException;
 
     /**
      * Returns a {@link SortedDocsProducer} or null if this source cannot produce sorted docs.
@@ -150,16 +148,13 @@ abstract class SingleDimensionValuesSource<T extends Comparable<T>> implements R
      * Returns true if a {@link SortedDocsProducer} should be used to optimize the execution.
      */
     protected boolean checkIfSortedDocsIsApplicable(IndexReader reader, MappedFieldType fieldType) {
-        if (fieldType == null ||
-                (missingBucket && afterValue == null) ||
-                fieldType.isSearchable() == false ||
-                // inverse of the natural order
+        if (fieldType == null || (missingBucket && afterValue == null) || fieldType.isSearchable() == false ||
+        // inverse of the natural order
                 reverseMul == -1) {
             return false;
         }
 
-        if (reader.hasDeletions() &&
-                (reader.numDocs() == 0 || (double) reader.numDocs() / (double) reader.maxDoc() < 0.5)) {
+        if (reader.hasDeletions() && (reader.numDocs() == 0 || (double) reader.numDocs() / (double) reader.maxDoc() < 0.5)) {
             // do not use the index if it has more than 50% of deleted docs
             return false;
         }

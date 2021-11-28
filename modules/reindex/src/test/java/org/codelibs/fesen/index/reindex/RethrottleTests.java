@@ -19,27 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.action.ActionFuture;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.TaskGroup;
-import org.codelibs.fesen.action.index.IndexRequestBuilder;
-import org.codelibs.fesen.index.query.QueryBuilders;
-import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequestBuilder;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.BulkByScrollTask;
-import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
-import org.codelibs.fesen.tasks.TaskId;
-
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.empty;
@@ -49,6 +28,21 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.action.ActionFuture;
+import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.codelibs.fesen.action.admin.cluster.node.tasks.list.TaskGroup;
+import org.codelibs.fesen.action.index.IndexRequestBuilder;
+import org.codelibs.fesen.index.query.QueryBuilders;
+import org.codelibs.fesen.tasks.TaskId;
 
 /**
  * Tests that you can set requests_per_second over the Java API and that you can rethrottle running requests. There are REST tests for this
@@ -97,8 +91,8 @@ public class RethrottleTests extends ReindexTestCase {
         indexRandom(true, docs);
 
         // Start a request that will never finish unless we rethrottle it
-        request.setRequestsPerSecond(.000001f);  // Throttle "forever"
-        request.source().setSize(1);             // Make sure we use multiple batches
+        request.setRequestsPerSecond(.000001f); // Throttle "forever"
+        request.source().setSize(1); // Make sure we use multiple batches
         ActionFuture<? extends BulkByScrollResponse> responseListener = request.execute();
 
         TaskGroup taskGroupToRethrottle = findTaskToRethrottle(actionName, numSlices);
@@ -108,8 +102,7 @@ public class RethrottleTests extends ReindexTestCase {
             assertThat(taskGroupToRethrottle.getChildTasks(), empty());
         } else {
             // There should be a sane number of child tasks running
-            assertThat(taskGroupToRethrottle.getChildTasks(),
-                    hasSize(allOf(greaterThanOrEqualTo(1), lessThanOrEqualTo(numSlices))));
+            assertThat(taskGroupToRethrottle.getChildTasks(), hasSize(allOf(greaterThanOrEqualTo(1), lessThanOrEqualTo(numSlices))));
             // Wait for all of the sub tasks to start (or finish, some might finish early, all that matters is that not all do)
             assertBusy(() -> {
                 BulkByScrollTask.Status parent = (BulkByScrollTask.Status) client().admin().cluster().prepareGetTask(taskToRethrottle).get()
@@ -134,14 +127,12 @@ public class RethrottleTests extends ReindexTestCase {
         } else {
             /* Check that at least one slice was rethrottled. We won't always rethrottle all of them because they might have completed.
              * With multiple slices these numbers might not add up perfectly, thus the 1.01F. */
-            long unfinished = status.getSliceStatuses().stream()
-                    .filter(Objects::nonNull)
-                    .filter(slice -> slice.getStatus().getTotal() > slice.getStatus().getSuccessfullyProcessed())
-                    .count();
-            float maxExpectedSliceRequestsPerSecond = newRequestsPerSecond == Float.POSITIVE_INFINITY ?
-                    Float.POSITIVE_INFINITY : (newRequestsPerSecond / unfinished) * 1.01F;
-            float minExpectedSliceRequestsPerSecond = newRequestsPerSecond == Float.POSITIVE_INFINITY ?
-                    Float.POSITIVE_INFINITY : (newRequestsPerSecond / numSlices) * 0.99F;
+            long unfinished = status.getSliceStatuses().stream().filter(Objects::nonNull)
+                    .filter(slice -> slice.getStatus().getTotal() > slice.getStatus().getSuccessfullyProcessed()).count();
+            float maxExpectedSliceRequestsPerSecond =
+                    newRequestsPerSecond == Float.POSITIVE_INFINITY ? Float.POSITIVE_INFINITY : (newRequestsPerSecond / unfinished) * 1.01F;
+            float minExpectedSliceRequestsPerSecond =
+                    newRequestsPerSecond == Float.POSITIVE_INFINITY ? Float.POSITIVE_INFINITY : (newRequestsPerSecond / numSlices) * 0.99F;
             boolean oneSliceRethrottled = false;
             float totalRequestsPerSecond = 0;
             for (BulkByScrollTask.StatusOrException statusOrException : status.getSliceStatuses()) {
@@ -189,10 +180,8 @@ public class RethrottleTests extends ReindexTestCase {
 
         assertBusy(() -> {
             try {
-                ListTasksResponse rethrottleResponse = rethrottle()
-                    .setTaskId(taskToRethrottle)
-                    .setRequestsPerSecond(newRequestsPerSecond)
-                    .get();
+                ListTasksResponse rethrottleResponse =
+                        rethrottle().setTaskId(taskToRethrottle).setRequestsPerSecond(newRequestsPerSecond).get();
                 rethrottleResponse.rethrowFailures("Rethrottle");
                 assertThat(rethrottleResponse.getTasks(), hasSize(1));
                 response.set(rethrottleResponse);
@@ -203,7 +192,7 @@ public class RethrottleTests extends ReindexTestCase {
                 }
                 // We want to retry in this case so we throw an assertion error
                 assertThat(unwrapped.getMessage(), equalTo("task [" + taskToRethrottle.getId()
-                    + "] has not yet been initialized to the point where it knows how to rethrottle itself"));
+                        + "] has not yet been initialized to the point where it knows how to rethrottle itself"));
                 logger.info("caught unprepared task, retrying until prepared");
                 throw new AssertionError("Rethrottle request for task [" + taskToRethrottle.getId() + "] failed", e);
             }
@@ -217,8 +206,7 @@ public class RethrottleTests extends ReindexTestCase {
         do {
             ListTasksResponse tasks = client().admin().cluster().prepareListTasks().setActions(actionName).setDetailed(true).get();
             tasks.rethrowFailures("Finding tasks to rethrottle");
-            assertThat("tasks are left over from the last execution of this test",
-                tasks.getTaskGroups(), hasSize(lessThan(2)));
+            assertThat("tasks are left over from the last execution of this test", tasks.getTaskGroups(), hasSize(lessThan(2)));
             if (0 == tasks.getTaskGroups().size()) {
                 // The parent task hasn't started yet
                 continue;
@@ -232,11 +220,9 @@ public class RethrottleTests extends ReindexTestCase {
                  * (maybe even empty!) that complete super fast so we have to
                  * count them too.
                  */
-                long finishedChildStatuses = status.getSliceStatuses().stream()
-                    .filter(n -> n != null)
-                    .count();
-                logger.info("Expected [{}] total children, [{}] are running and [{}] are finished\n{}",
-                    sliceCount, taskGroup.getChildTasks().size(), finishedChildStatuses, status.getSliceStatuses());
+                long finishedChildStatuses = status.getSliceStatuses().stream().filter(n -> n != null).count();
+                logger.info("Expected [{}] total children, [{}] are running and [{}] are finished\n{}", sliceCount,
+                        taskGroup.getChildTasks().size(), finishedChildStatuses, status.getSliceStatuses());
                 if (sliceCount == finishedChildStatuses) {
                     fail("all slices finished:\n" + status);
                 }
@@ -246,7 +232,7 @@ public class RethrottleTests extends ReindexTestCase {
             }
             return taskGroup;
         } while (System.nanoTime() - start < TimeUnit.SECONDS.toNanos(10));
-        throw new AssertionError("Couldn't find tasks to rethrottle. Here are the running tasks " +
-                client().admin().cluster().prepareListTasks().get());
+        throw new AssertionError(
+                "Couldn't find tasks to rethrottle. Here are the running tasks " + client().admin().cluster().prepareListTasks().get());
     }
 }

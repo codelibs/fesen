@@ -32,21 +32,18 @@ import org.codelibs.fesen.test.ESTestCase;
 public class RestReloadSecureSettingsActionTests extends ESTestCase {
 
     public void testParserWithPassword() throws Exception {
-        final String request = "{" +
-            "\"secure_settings_password\": \"secure_settings_password_string\"" +
-            "}";
-        try (XContentParser parser = XContentType.JSON.xContent()
-            .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, request)) {
+        final String request = "{" + "\"secure_settings_password\": \"secure_settings_password_string\"" + "}";
+        try (XContentParser parser = XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, request)) {
             NodesReloadSecureSettingsRequest reloadSecureSettingsRequest = RestReloadSecureSettingsAction.PARSER.parse(parser, null);
             assertEquals("secure_settings_password_string", reloadSecureSettingsRequest.getSecureSettingsPassword().toString());
         }
     }
 
     public void testParserWithoutPassword() throws Exception {
-        final String request = "{" +
-            "}";
-        try (XContentParser parser = XContentType.JSON.xContent()
-            .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, request)) {
+        final String request = "{" + "}";
+        try (XContentParser parser = XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, request)) {
             NodesReloadSecureSettingsRequest reloadSecureSettingsRequest = RestReloadSecureSettingsAction.PARSER.parse(parser, null);
             assertThat(reloadSecureSettingsRequest.getSecureSettingsPassword(), nullValue());
         }

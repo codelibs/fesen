@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.profile.aggregation;
 
+import java.io.IOException;
+import java.util.Iterator;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.search.aggregations.support.AggregationPath.PathElemen
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.profile.Timer;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
-import java.util.Iterator;
 
 public class ProfilingAggregator extends Aggregator {
 

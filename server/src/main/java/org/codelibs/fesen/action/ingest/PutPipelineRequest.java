@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.ingest;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequest;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class PutPipelineRequest extends AcknowledgedRequest<PutPipelineRequest> implements ToXContentObject {
 

@@ -19,12 +19,8 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.ingest.common.SortProcessor;
-import org.codelibs.fesen.ingest.common.SortProcessor.SortOrder;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +28,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.SortProcessor.SortOrder;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class SortProcessorTests extends ESTestCase {
 
@@ -63,7 +62,7 @@ public class SortProcessorTests extends ESTestCase {
     public void testSortIntegersNonRandom() throws Exception {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
 
-        Integer[] expectedResult = new Integer[]{1,2,3,4,5,10,20,21,22,50,100};
+        Integer[] expectedResult = new Integer[] { 1, 2, 3, 4, 5, 10, 20, 21, 22, 50, 100 };
         List<Integer> fieldValue = new ArrayList<>(expectedResult.length);
         fieldValue.addAll(Arrays.asList(expectedResult).subList(0, expectedResult.length));
         Collections.shuffle(fieldValue, random());
@@ -248,7 +247,7 @@ public class SortProcessorTests extends ESTestCase {
         Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName, order, fieldName);
         try {
             processor.execute(ingestDocument);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), equalTo("field [" + fieldName + "] of type [java.lang.String] cannot be cast to [java.util.List]"));
         }
     }
@@ -260,7 +259,7 @@ public class SortProcessorTests extends ESTestCase {
         Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName, order, fieldName);
         try {
             processor.execute(ingestDocument);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("not present as part of path [" + fieldName + "]"));
         }
     }
@@ -271,7 +270,7 @@ public class SortProcessorTests extends ESTestCase {
         Processor processor = new SortProcessor(randomAlphaOfLength(10), null, "field", order, "field");
         try {
             processor.execute(ingestDocument);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), equalTo("field [field] is null, cannot sort."));
         }
     }
@@ -291,8 +290,7 @@ public class SortProcessorTests extends ESTestCase {
 
         String fieldName = RandomDocumentPicks.addRandomField(random(), ingestDocument, fieldValue);
         String targetFieldName = fieldName + "foo";
-        Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName,
-            SortOrder.DESCENDING, targetFieldName);
+        Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName, SortOrder.DESCENDING, targetFieldName);
         processor.execute(ingestDocument);
         assertEquals(ingestDocument.getFieldValue(targetFieldName, List.class), expectedResult);
     }
@@ -312,8 +310,7 @@ public class SortProcessorTests extends ESTestCase {
 
         String fieldName = RandomDocumentPicks.addRandomField(random(), ingestDocument, fieldValue);
         String targetFieldName = fieldName + "foo";
-        Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName,
-            SortOrder.ASCENDING, targetFieldName);
+        Processor processor = new SortProcessor(randomAlphaOfLength(10), null, fieldName, SortOrder.ASCENDING, targetFieldName);
         processor.execute(ingestDocument);
         assertEquals(ingestDocument.getFieldValue(targetFieldName, List.class), expectedResult);
     }

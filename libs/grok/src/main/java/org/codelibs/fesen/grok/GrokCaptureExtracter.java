@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.grok;
 
-import org.joni.Region;
+import static java.util.Collections.emptyMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.emptyMap;
+import org.joni.Region;
 
 /**
  * How to extract matches.

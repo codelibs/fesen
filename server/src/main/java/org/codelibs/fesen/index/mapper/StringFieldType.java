@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import static org.codelibs.fesen.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
+
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.AutomatonQuery;
@@ -38,12 +44,6 @@ import org.codelibs.fesen.common.unit.Fuzziness;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.support.QueryParsers;
 
-import static org.codelibs.fesen.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
-
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /** Base class for {@link MappedFieldType} implementations that use the same
  * representation for internal index terms as the external representation so
  * that partial matching queries such as prefix, wildcard and fuzzy queries
@@ -52,29 +52,27 @@ public abstract class StringFieldType extends TermBasedFieldType {
 
     private static final Pattern WILDCARD_PATTERN = Pattern.compile("(\\\\.)|([?*]+)");
 
-    public StringFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues,
-                           TextSearchInfo textSearchInfo, Map<String, String> meta) {
+    public StringFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues, TextSearchInfo textSearchInfo,
+            Map<String, String> meta) {
         super(name, isSearchable, isStored, hasDocValues, textSearchInfo, meta);
     }
 
     @Override
-    public Query fuzzyQuery(Object value, Fuzziness fuzziness, int prefixLength, int maxExpansions,
-            boolean transpositions, QueryShardContext context) {
+    public Query fuzzyQuery(Object value, Fuzziness fuzziness, int prefixLength, int maxExpansions, boolean transpositions,
+            QueryShardContext context) {
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[fuzzy] queries cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
+            throw new FesenException("[fuzzy] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         failIfNotIndexed();
-        return new FuzzyQuery(new Term(name(), indexedValueForSearch(value)),
-                fuzziness.asDistance(BytesRefs.toString(value)), prefixLength, maxExpansions, transpositions);
+        return new FuzzyQuery(new Term(name(), indexedValueForSearch(value)), fuzziness.asDistance(BytesRefs.toString(value)), prefixLength,
+                maxExpansions, transpositions);
     }
 
     @Override
     public Query prefixQuery(String value, MultiTermQuery.RewriteMethod method, boolean caseInsensitive, QueryShardContext context) {
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[prefix] queries cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false. For optimised prefix queries on text " +
-                    "fields please enable [index_prefixes].");
+            throw new FesenException("[prefix] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey()
+                    + "' is set to false. For optimised prefix queries on text " + "fields please enable [index_prefixes].");
         }
         failIfNotIndexed();
         if (caseInsensitive) {
@@ -92,7 +90,7 @@ public abstract class StringFieldType extends TermBasedFieldType {
         return query;
     }
 
-    public static final String normalizeWildcardPattern(String fieldname, String value, Analyzer normalizer)  {
+    public static final String normalizeWildcardPattern(String fieldname, String value, Analyzer normalizer) {
         if (normalizer == null) {
             return value;
         }
@@ -126,8 +124,8 @@ public abstract class StringFieldType extends TermBasedFieldType {
     public Query wildcardQuery(String value, MultiTermQuery.RewriteMethod method, boolean caseInsensitive, QueryShardContext context) {
         failIfNotIndexed();
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[wildcard] queries cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
+            throw new FesenException(
+                    "[wildcard] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
 
         Term term;
@@ -148,15 +146,14 @@ public abstract class StringFieldType extends TermBasedFieldType {
     }
 
     @Override
-    public Query regexpQuery(String value, int syntaxFlags, int matchFlags, int maxDeterminizedStates,
-            MultiTermQuery.RewriteMethod method, QueryShardContext context) {
+    public Query regexpQuery(String value, int syntaxFlags, int matchFlags, int maxDeterminizedStates, MultiTermQuery.RewriteMethod method,
+            QueryShardContext context) {
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[regexp] queries cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
+            throw new FesenException(
+                    "[regexp] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         failIfNotIndexed();
-        RegexpQuery query = new RegexpQuery(new Term(name(), indexedValueForSearch(value)), syntaxFlags,
-            matchFlags, maxDeterminizedStates);
+        RegexpQuery query = new RegexpQuery(new Term(name(), indexedValueForSearch(value)), syntaxFlags, matchFlags, maxDeterminizedStates);
         if (method != null) {
             query.setRewriteMethod(method);
         }
@@ -166,13 +163,11 @@ public abstract class StringFieldType extends TermBasedFieldType {
     @Override
     public Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, QueryShardContext context) {
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[range] queries on [text] or [keyword] fields cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
+            throw new FesenException("[range] queries on [text] or [keyword] fields cannot be executed when '"
+                    + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         failIfNotIndexed();
-        return new TermRangeQuery(name(),
-            lowerTerm == null ? null : indexedValueForSearch(lowerTerm),
-            upperTerm == null ? null : indexedValueForSearch(upperTerm),
-            includeLower, includeUpper);
+        return new TermRangeQuery(name(), lowerTerm == null ? null : indexedValueForSearch(lowerTerm),
+                upperTerm == null ? null : indexedValueForSearch(upperTerm), includeLower, includeUpper);
     }
 }

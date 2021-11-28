@@ -36,7 +36,6 @@ public class LaplaceModelTests extends SmoothingModelTestCase {
         return createRandomModel();
     }
 
-
     static SmoothingModel createRandomModel() {
         return new Laplace(randomDoubleBetween(0.0, 10.0, false));
     }

@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.common.xcontent.json;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import java.io.IOException;
+import java.nio.CharBuffer;
 
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -30,15 +29,15 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.AbstractXContentParser;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
-import java.io.IOException;
-import java.nio.CharBuffer;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 public class JsonXContentParser extends AbstractXContentParser {
 
     final JsonParser parser;
 
-    public JsonXContentParser(NamedXContentRegistry xContentRegistry,
-            DeprecationHandler deprecationHandler, JsonParser parser) {
+    public JsonXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler);
         this.parser = parser;
     }
@@ -198,18 +197,18 @@ public class JsonXContentParser extends AbstractXContentParser {
 
     private NumberType convertNumberType(JsonParser.NumberType numberType) {
         switch (numberType) {
-            case INT:
-                return NumberType.INT;
-            case BIG_INTEGER:
-                return NumberType.BIG_INTEGER;
-            case LONG:
-                return NumberType.LONG;
-            case FLOAT:
-                return NumberType.FLOAT;
-            case DOUBLE:
-                return NumberType.DOUBLE;
-            case BIG_DECIMAL:
-                return NumberType.BIG_DECIMAL;
+        case INT:
+            return NumberType.INT;
+        case BIG_INTEGER:
+            return NumberType.BIG_INTEGER;
+        case LONG:
+            return NumberType.LONG;
+        case FLOAT:
+            return NumberType.FLOAT;
+        case DOUBLE:
+            return NumberType.DOUBLE;
+        case BIG_DECIMAL:
+            return NumberType.BIG_DECIMAL;
         }
         throw new IllegalStateException("No matching token for number_type [" + numberType + "]");
     }
@@ -219,28 +218,28 @@ public class JsonXContentParser extends AbstractXContentParser {
             return null;
         }
         switch (token) {
-            case FIELD_NAME:
-                return Token.FIELD_NAME;
-            case VALUE_FALSE:
-            case VALUE_TRUE:
-                return Token.VALUE_BOOLEAN;
-            case VALUE_STRING:
-                return Token.VALUE_STRING;
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-                return Token.VALUE_NUMBER;
-            case VALUE_NULL:
-                return Token.VALUE_NULL;
-            case START_OBJECT:
-                return Token.START_OBJECT;
-            case END_OBJECT:
-                return Token.END_OBJECT;
-            case START_ARRAY:
-                return Token.START_ARRAY;
-            case END_ARRAY:
-                return Token.END_ARRAY;
-            case VALUE_EMBEDDED_OBJECT:
-                return Token.VALUE_EMBEDDED_OBJECT;
+        case FIELD_NAME:
+            return Token.FIELD_NAME;
+        case VALUE_FALSE:
+        case VALUE_TRUE:
+            return Token.VALUE_BOOLEAN;
+        case VALUE_STRING:
+            return Token.VALUE_STRING;
+        case VALUE_NUMBER_INT:
+        case VALUE_NUMBER_FLOAT:
+            return Token.VALUE_NUMBER;
+        case VALUE_NULL:
+            return Token.VALUE_NULL;
+        case START_OBJECT:
+            return Token.START_OBJECT;
+        case END_OBJECT:
+            return Token.END_OBJECT;
+        case START_ARRAY:
+            return Token.START_ARRAY;
+        case END_ARRAY:
+            return Token.END_ARRAY;
+        case VALUE_EMBEDDED_OBJECT:
+            return Token.VALUE_EMBEDDED_OBJECT;
         }
         throw new IllegalStateException("No matching token for json_token [" + token + "]");
     }

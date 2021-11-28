@@ -19,24 +19,6 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentBuilderExtension;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
-import org.joda.time.MutableDateTime;
-import org.joda.time.ReadableInstant;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.tz.CachedDateTimeZone;
-import org.joda.time.tz.FixedDateTimeZone;
-
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -57,6 +39,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+
+import org.apache.lucene.util.BytesRef;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Instant;
+import org.joda.time.MutableDateTime;
+import org.joda.time.ReadableInstant;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.joda.time.tz.CachedDateTimeZone;
+import org.joda.time.tz.FixedDateTimeZone;
 
 /**
  * SPI extensions for Fesen-specific classes (like the Lucene or Joda
@@ -141,11 +139,11 @@ public class XContentFesenExtension implements XContentBuilderExtension {
         transformers.put(OffsetTime.class, d -> OFFSET_TIME_FORMATTER.format((OffsetTime) d));
         transformers.put(LocalDateTime.class, d -> DEFAULT_FORMATTER.format((LocalDateTime) d));
         transformers.put(java.time.Instant.class,
-            d -> DEFAULT_FORMATTER.format(ZonedDateTime.ofInstant((java.time.Instant) d, ZoneOffset.UTC)));
+                d -> DEFAULT_FORMATTER.format(ZonedDateTime.ofInstant((java.time.Instant) d, ZoneOffset.UTC)));
         transformers.put(LocalDate.class, d -> ((LocalDate) d).toString());
         transformers.put(LocalTime.class, d -> LOCAL_TIME_FORMATTER.format((LocalTime) d));
         transformers.put(JodaCompatibleZonedDateTime.class,
-            d -> DEFAULT_FORMATTER.format(((JodaCompatibleZonedDateTime) d).getZonedDateTime()));
+                d -> DEFAULT_FORMATTER.format(((JodaCompatibleZonedDateTime) d).getZonedDateTime()));
         return transformers;
     }
 }

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.search.DocIdSetIterator;
-
-import java.io.IOException;
 
 /**
  * Base implementation that throws an {@link IOException} for the
@@ -51,6 +51,5 @@ public abstract class AbstractSortedSetDocValues extends SortedSetDocValues {
     public long cost() {
         throw new UnsupportedOperationException();
     }
-
 
 }

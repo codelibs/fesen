@@ -56,7 +56,7 @@ public final class LongHash extends AbstractHash {
      */
     public long find(long key) {
         final long slot = slot(hash(key), mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long id = id(index);
             if (id == -1 || keys.get(id) == key) {
                 return id;
@@ -67,7 +67,7 @@ public final class LongHash extends AbstractHash {
     private long set(long key, long id) {
         assert size < maxSize;
         final long slot = slot(hash(key), mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long curId = id(index);
             if (curId == -1) { // means unset
                 id(index, id);
@@ -87,7 +87,7 @@ public final class LongHash extends AbstractHash {
 
     private void reset(long key, long id) {
         final long slot = slot(hash(key), mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long curId = id(index);
             if (curId == -1) { // means unset
                 id(index, id);

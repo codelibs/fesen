@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.admin.indices.template.post;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.Template;
 import org.codelibs.fesen.common.ParseField;
@@ -27,12 +33,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Contains the information on what V2 templates would match a given index.
@@ -117,7 +117,7 @@ public class SimulateIndexTemplateResponse extends ActionResponse implements ToX
         }
         SimulateIndexTemplateResponse that = (SimulateIndexTemplateResponse) o;
         return Objects.equals(resolvedTemplate, that.resolvedTemplate)
-            && Objects.deepEquals(overlappingTemplates, that.overlappingTemplates);
+                && Objects.deepEquals(overlappingTemplates, that.overlappingTemplates);
     }
 
     @Override
@@ -128,6 +128,6 @@ public class SimulateIndexTemplateResponse extends ActionResponse implements ToX
     @Override
     public String toString() {
         return "SimulateIndexTemplateResponse{" + "resolved template=" + resolvedTemplate + ", overlapping templates="
-            + String.join("|", overlappingTemplates.keySet()) + "}";
+                + String.join("|", overlappingTemplates.keySet()) + "}";
     }
 }

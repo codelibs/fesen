@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -27,14 +35,6 @@ import org.codelibs.fesen.common.text.Text;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * A field highlighted with its highlighted fragments.
@@ -126,8 +126,7 @@ public class HighlightField implements ToXContentFragment, Writeable {
         } else if (token == XContentParser.Token.VALUE_NULL) {
             fragments = null;
         } else {
-            throw new ParsingException(parser.getTokenLocation(),
-                    "unexpected token type [" + token + "]");
+            throw new ParsingException(parser.getTokenLocation(), "unexpected token type [" + token + "]");
         }
         return new HighlightField(fieldName, fragments);
     }

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +31,7 @@ import java.util.function.Consumer;
 
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
-import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
-import org.codelibs.fesen.index.reindex.DeleteByQueryRequest;
 import org.codelibs.fesen.rest.RestRequest;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 public class RestDeleteByQueryAction extends AbstractBulkByQueryRestHandler<DeleteByQueryRequest, DeleteByQueryAction> {
 
@@ -43,9 +41,7 @@ public class RestDeleteByQueryAction extends AbstractBulkByQueryRestHandler<Dele
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/{index}/_delete_by_query"),
-            new Route(POST, "/{index}/{type}/_delete_by_query")));
+        return unmodifiableList(asList(new Route(POST, "/{index}/_delete_by_query"), new Route(POST, "/{index}/{type}/_delete_by_query")));
     }
 
     @Override

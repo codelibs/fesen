@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.support.replication;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -34,18 +40,11 @@ import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Requests that are run on a particular replica, first on the primary and then on the replicas like {@link IndexRequest} or
  * {@link TransportShardRefreshAction}.
  */
-public abstract class ReplicationRequest<Request extends ReplicationRequest<Request>> extends ActionRequest
-        implements IndicesRequest {
+public abstract class ReplicationRequest<Request extends ReplicationRequest<Request>> extends ActionRequest implements IndicesRequest {
 
     public static final TimeValue DEFAULT_TIMEOUT = new TimeValue(1, TimeUnit.MINUTES);
 
@@ -77,7 +76,7 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
             this.shardId = shardId;
         } else {
             this.shardId = in.readOptionalWriteable(ShardId::new);
-       }
+        }
         waitForActiveShards = ActiveShardCount.readFrom(in);
         timeout = in.readTimeValue();
         if (thinRead) {
@@ -133,7 +132,7 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
 
     @Override
     public String[] indices() {
-        return new String[]{index};
+        return new String[] { index };
     }
 
     @Override

@@ -51,7 +51,7 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
 
     @Inject
     public TransportMultiSearchAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                      ClusterService clusterService, ActionFilters actionFilters, NodeClient client) {
+            ClusterService clusterService, ActionFilters actionFilters, NodeClient client) {
         super(MultiSearchAction.NAME, transportService, actionFilters, (Writeable.Reader<MultiSearchRequest>) MultiSearchRequest::new);
         this.threadPool = threadPool;
         this.clusterService = clusterService;
@@ -61,8 +61,7 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
     }
 
     TransportMultiSearchAction(ThreadPool threadPool, ActionFilters actionFilters, TransportService transportService,
-                               ClusterService clusterService, int allocatedProcessors,
-                               LongSupplier relativeTimeProvider, NodeClient client) {
+            ClusterService clusterService, int allocatedProcessors, LongSupplier relativeTimeProvider, NodeClient client) {
         super(MultiSearchAction.NAME, transportService, actionFilters, (Writeable.Reader<MultiSearchRequest>) MultiSearchRequest::new);
         this.threadPool = threadPool;
         this.clusterService = clusterService;
@@ -120,12 +119,8 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
      * @param responseCounter incremented on each response
      * @param listener the listener attached to the multi-search request
      */
-    void executeSearch(
-            final Queue<SearchRequestSlot> requests,
-            final AtomicArray<MultiSearchResponse.Item> responses,
-            final AtomicInteger responseCounter,
-            final ActionListener<MultiSearchResponse> listener,
-            final long relativeStartTime) {
+    void executeSearch(final Queue<SearchRequestSlot> requests, final AtomicArray<MultiSearchResponse.Item> responses,
+            final AtomicInteger responseCounter, final ActionListener<MultiSearchResponse> listener, final long relativeStartTime) {
         SearchRequestSlot request = requests.poll();
         if (request == null) {
             /*
@@ -175,8 +170,8 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
             }
 
             private void finish() {
-                listener.onResponse(new MultiSearchResponse(responses.toArray(new MultiSearchResponse.Item[responses.length()]),
-                        buildTookInMillis()));
+                listener.onResponse(
+                        new MultiSearchResponse(responses.toArray(new MultiSearchResponse.Item[responses.length()]), buildTookInMillis()));
             }
 
             /**

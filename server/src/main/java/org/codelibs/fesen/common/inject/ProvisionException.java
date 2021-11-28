@@ -16,16 +16,16 @@
 
 package org.codelibs.fesen.common.inject;
 
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 import org.codelibs.fesen.common.inject.internal.Errors;
 import org.codelibs.fesen.common.inject.spi.Message;
-
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
 
 /**
  * Indicates that there was a runtime failure while providing an instance.

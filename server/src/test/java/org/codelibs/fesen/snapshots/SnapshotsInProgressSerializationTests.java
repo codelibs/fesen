@@ -67,7 +67,7 @@ public class SnapshotsInProgressSerializationTests extends AbstractDiffableWireS
         long repositoryStateId = randomLong();
         ImmutableOpenMap.Builder<ShardId, SnapshotsInProgress.ShardSnapshotStatus> builder = ImmutableOpenMap.builder();
         final List<Index> esIndices =
-            indices.stream().map(i -> new Index(i.getName(), randomAlphaOfLength(10))).collect(Collectors.toList());
+                indices.stream().map(i -> new Index(i.getName(), randomAlphaOfLength(10))).collect(Collectors.toList());
         List<String> dataStreams = Arrays.asList(generateRandomStringArray(10, 10, false));
         for (Index idx : esIndices) {
             int shardsCount = randomIntBetween(1, 10);
@@ -76,14 +76,14 @@ public class SnapshotsInProgressSerializationTests extends AbstractDiffableWireS
                 String nodeId = randomAlphaOfLength(10);
                 ShardState shardState = randomFrom(ShardState.values());
                 builder.put(shardId,
-                        shardState == ShardState.QUEUED ? SnapshotsInProgress.ShardSnapshotStatus.UNASSIGNED_QUEUED :
-                                new SnapshotsInProgress.ShardSnapshotStatus(nodeId, shardState,
+                        shardState == ShardState.QUEUED ? SnapshotsInProgress.ShardSnapshotStatus.UNASSIGNED_QUEUED
+                                : new SnapshotsInProgress.ShardSnapshotStatus(nodeId, shardState,
                                         shardState.failed() ? randomAlphaOfLength(10) : null, "1"));
             }
         }
         ImmutableOpenMap<ShardId, SnapshotsInProgress.ShardSnapshotStatus> shards = builder.build();
-        return new Entry(snapshot, includeGlobalState, partial, randomState(shards), indices, dataStreams,
-                startTime, repositoryStateId, shards, null, SnapshotInfoTests.randomUserMetadata(), VersionUtils.randomVersion(random()));
+        return new Entry(snapshot, includeGlobalState, partial, randomState(shards), indices, dataStreams, startTime, repositoryStateId,
+                shards, null, SnapshotInfoTests.randomUserMetadata(), VersionUtils.randomVersion(random()));
     }
 
     @Override
@@ -142,7 +142,7 @@ public class SnapshotsInProgressSerializationTests extends AbstractDiffableWireS
     }
 
     public static State randomState(ImmutableOpenMap<ShardId, SnapshotsInProgress.ShardSnapshotStatus> shards) {
-        return SnapshotsInProgress.completed(shards.values())
-                ? randomFrom(State.SUCCESS, State.FAILED) : randomFrom(State.STARTED, State.INIT, State.ABORTED);
+        return SnapshotsInProgress.completed(shards.values()) ? randomFrom(State.SUCCESS, State.FAILED)
+                : randomFrom(State.STARTED, State.INIT, State.ABORTED);
     }
 }

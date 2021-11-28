@@ -19,10 +19,12 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
-import joptsimple.util.PathConverter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.security.Permission;
+import java.security.Security;
+import java.util.Arrays;
+import java.util.Locale;
 
 import org.codelibs.fesen.Build;
 import org.codelibs.fesen.cli.EnvironmentAwareCommand;
@@ -34,12 +36,10 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 import org.codelibs.fesen.node.NodeValidationException;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.security.Permission;
-import java.security.Security;
-import java.util.Arrays;
-import java.util.Locale;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
+import joptsimple.util.PathConverter;
 
 /**
  * This class starts fesen.
@@ -54,20 +54,13 @@ class Fesen extends EnvironmentAwareCommand {
     // visible for testing
     Fesen() {
         super("Starts Fesen", () -> {}); // we configure logging later so we override the base class from configuring logging
-        versionOption = parser.acceptsAll(Arrays.asList("V", "version"),
-            "Prints Fesen version information and exits");
-        daemonizeOption = parser.acceptsAll(Arrays.asList("d", "daemonize"),
-            "Starts Fesen in the background")
-            .availableUnless(versionOption);
-        pidfileOption = parser.acceptsAll(Arrays.asList("p", "pidfile"),
-            "Creates a pid file in the specified path on start")
-            .availableUnless(versionOption)
-            .withRequiredArg()
-            .withValuesConvertedBy(new PathConverter());
-        quietOption = parser.acceptsAll(Arrays.asList("q", "quiet"),
-            "Turns off standard output/error streams logging in console")
-            .availableUnless(versionOption)
-            .availableUnless(daemonizeOption);
+        versionOption = parser.acceptsAll(Arrays.asList("V", "version"), "Prints Fesen version information and exits");
+        daemonizeOption =
+                parser.acceptsAll(Arrays.asList("d", "daemonize"), "Starts Fesen in the background").availableUnless(versionOption);
+        pidfileOption = parser.acceptsAll(Arrays.asList("p", "pidfile"), "Creates a pid file in the specified path on start")
+                .availableUnless(versionOption).withRequiredArg().withValuesConvertedBy(new PathConverter());
+        quietOption = parser.acceptsAll(Arrays.asList("q", "quiet"), "Turns off standard output/error streams logging in console")
+                .availableUnless(versionOption).availableUnless(daemonizeOption);
     }
 
     /**
@@ -96,19 +89,15 @@ class Fesen extends EnvironmentAwareCommand {
             // It's possible to fail before logging has been configured, in which case there's no point
             // suggesting that the user look in the log file.
             if (basePath != null) {
-                Terminal.DEFAULT.errorPrintln(
-                    "ERROR: Fesen did not exit normally - check the logs at "
-                        + basePath
-                        + System.getProperty("file.separator")
-                        + System.getProperty("es.logs.cluster_name") + ".log"
-                );
+                Terminal.DEFAULT.errorPrintln("ERROR: Fesen did not exit normally - check the logs at " + basePath
+                        + System.getProperty("file.separator") + System.getProperty("es.logs.cluster_name") + ".log");
             }
             exit(status);
         }
     }
 
     private static void overrideDnsCachePolicyProperties() {
-        for (final String property : new String[] {"networkaddress.cache.ttl", "networkaddress.cache.negative.ttl" }) {
+        for (final String property : new String[] { "networkaddress.cache.ttl", "networkaddress.cache.negative.ttl" }) {
             final String overrideProperty = "es." + property;
             final String overrideValue = System.getProperty(overrideProperty);
             if (overrideValue != null) {
@@ -116,8 +105,7 @@ class Fesen extends EnvironmentAwareCommand {
                     // round-trip the property to an integer and back to a string to ensure that it parses properly
                     Security.setProperty(property, Integer.toString(Integer.valueOf(overrideValue)));
                 } catch (final NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "failed to parse [" + overrideProperty + "] with value [" + overrideValue + "]", e);
+                    throw new IllegalArgumentException("failed to parse [" + overrideProperty + "] with value [" + overrideValue + "]", e);
                 }
             }
         }
@@ -133,16 +121,9 @@ class Fesen extends EnvironmentAwareCommand {
             throw new UserException(ExitCodes.USAGE, "Positional arguments not allowed, found " + options.nonOptionArguments());
         }
         if (options.has(versionOption)) {
-            final String versionOutput = String.format(
-                Locale.ROOT,
-                "Version: %s, Build: %s/%s/%s/%s, JVM: %s",
-                Build.CURRENT.getQualifiedVersion(),
-                Build.CURRENT.flavor().displayName(),
-                Build.CURRENT.type().displayName(),
-                Build.CURRENT.hash(),
-                Build.CURRENT.date(),
-                JvmInfo.jvmInfo().version()
-            );
+            final String versionOutput = String.format(Locale.ROOT, "Version: %s, Build: %s/%s/%s/%s, JVM: %s",
+                    Build.CURRENT.getQualifiedVersion(), Build.CURRENT.flavor().displayName(), Build.CURRENT.type().displayName(),
+                    Build.CURRENT.hash(), Build.CURRENT.date(), JvmInfo.jvmInfo().version());
             terminal.println(versionOutput);
             return;
         }
@@ -166,7 +147,7 @@ class Fesen extends EnvironmentAwareCommand {
     }
 
     void init(final boolean daemonize, final Path pidFile, final boolean quiet, Environment initialEnv)
-        throws NodeValidationException, UserException {
+            throws NodeValidationException, UserException {
         try {
             Bootstrap.init(!daemonize, pidFile, quiet, initialEnv);
         } catch (BootstrapException | RuntimeException e) {

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.internal;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.BulkScorer;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.util.Bits;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A {@link BulkScorer} wrapper that runs a {@link Runnable} on a regular basis

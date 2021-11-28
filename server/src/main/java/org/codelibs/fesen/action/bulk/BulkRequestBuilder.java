@@ -39,8 +39,7 @@ import org.codelibs.fesen.index.mapper.MapperService;
  * A bulk request holds an ordered {@link IndexRequest}s and {@link DeleteRequest}s and allows to executes
  * it in a single batch.
  */
-public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkResponse>
-        implements WriteRequestBuilder<BulkRequestBuilder> {
+public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkResponse> implements WriteRequestBuilder<BulkRequestBuilder> {
 
     /**
      * @deprecated use {@link #BulkRequestBuilder(FesenClient, BulkAction, String)} instead
@@ -92,7 +91,6 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
         return this;
     }
 
-
     /**
      * Adds an {@link UpdateRequest} to the list of actions to execute.
      */
@@ -121,9 +119,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
      * Adds a framed data in binary format
      * @deprecated use {@link #add(byte[], int, int, String, XContentType)} instead
      */
-    @Deprecated 
+    @Deprecated
     public BulkRequestBuilder add(byte[] data, int from, int length, @Nullable String defaultIndex, @Nullable String defaultType,
-                                  XContentType xContentType) throws Exception {
+            XContentType xContentType) throws Exception {
         request.add(data, from, length, defaultIndex, defaultType, xContentType);
         return this;
     }
@@ -131,11 +129,11 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
     /**
      * Adds a framed data in binary format
      */
-    public BulkRequestBuilder add(byte[] data, int from, int length, @Nullable String defaultIndex,
-                                  XContentType xContentType) throws Exception {
+    public BulkRequestBuilder add(byte[] data, int from, int length, @Nullable String defaultIndex, XContentType xContentType)
+            throws Exception {
         request.add(data, from, length, defaultIndex, MapperService.SINGLE_MAPPING_NAME, xContentType);
         return this;
-    }    
+    }
 
     /**
      * Sets the number of shard copies that must be active before proceeding with the write.

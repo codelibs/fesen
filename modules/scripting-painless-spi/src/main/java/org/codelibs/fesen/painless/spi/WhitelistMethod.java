@@ -72,9 +72,8 @@ public class WhitelistMethod {
      * augmentedCanonicalClassName; augmentedCanonicalClassName will be {@code null} unless the method
      * is augmented as described in the class documentation.
      */
-    public WhitelistMethod(String origin, String augmentedCanonicalClassName, String methodName,
-            String returnCanonicalTypeName, List<String> canonicalTypeNameParameters,
-            List<Object> painlessAnnotations) {
+    public WhitelistMethod(String origin, String augmentedCanonicalClassName, String methodName, String returnCanonicalTypeName,
+            List<String> canonicalTypeNameParameters, List<Object> painlessAnnotations) {
 
         this.origin = Objects.requireNonNull(origin);
         this.augmentedCanonicalClassName = augmentedCanonicalClassName;

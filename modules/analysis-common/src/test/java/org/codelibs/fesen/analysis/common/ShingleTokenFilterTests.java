@@ -19,11 +19,12 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.StringReader;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.miscellaneous.DisableGraphAttribute;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
@@ -31,16 +32,11 @@ import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 
-import java.io.StringReader;
-
 public class ShingleTokenFilterTests extends ESTokenStreamTestCase {
     public void testPreConfiguredShingleFilterDisableGraphAttribute() throws Exception {
-        ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(
-            Settings.builder()
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .put("index.analysis.filter.my_ascii_folding.type", "asciifolding")
-                .build(),
-            new CommonAnalysisPlugin());
+        ESTestCase.TestAnalysis analysis = AnalysisTestsHelper
+                .createTestAnalysisFromSettings(Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+                        .put("index.analysis.filter.my_ascii_folding.type", "asciifolding").build(), new CommonAnalysisPlugin());
         TokenFilterFactory tokenFilter = analysis.tokenFilter.get("shingle");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("this is a test"));

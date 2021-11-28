@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.cluster.coordination;
 
-import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.threadpool.Scheduler;
-import org.codelibs.fesen.threadpool.ThreadPool;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static org.codelibs.fesen.node.Node.NODE_NAME_SETTING;
 import static org.codelibs.fesen.threadpool.ThreadPool.Names.GENERIC;
 import static org.hamcrest.Matchers.contains;
@@ -43,6 +30,18 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.oneOf;
 import static org.hamcrest.core.Is.is;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.threadpool.Scheduler;
+import org.codelibs.fesen.threadpool.ThreadPool;
 
 public class DeterministicTaskQueueTests extends ESTestCase {
 
@@ -97,8 +96,7 @@ public class DeterministicTaskQueueTests extends ESTestCase {
     }
 
     private void advanceToRandomTime(DeterministicTaskQueue taskQueue) {
-        taskQueue.scheduleAt(randomLongBetween(1, 100), () -> {
-        });
+        taskQueue.scheduleAt(randomLongBetween(1, 100), () -> {});
         taskQueue.advanceTime();
         taskQueue.runRandomTask();
         assertFalse(taskQueue.hasRunnableTasks());
@@ -316,7 +314,7 @@ public class DeterministicTaskQueueTests extends ESTestCase {
 
         final TimeValue cancelledDelay = TimeValue.timeValueMillis(randomLongBetween(1, 100));
         final Scheduler.Cancellable cancelledBeforeExecution =
-            threadPool.schedule(() -> strings.add("cancelled before execution"), cancelledDelay, "");
+                threadPool.schedule(() -> strings.add("cancelled before execution"), cancelledDelay, "");
 
         cancelledBeforeExecution.cancel();
         taskQueue.runAllTasks();
@@ -367,8 +365,8 @@ public class DeterministicTaskQueueTests extends ESTestCase {
         final long intervalMillis = randomLongBetween(1, 100);
 
         final AtomicInteger counter = new AtomicInteger(0);
-        Scheduler.Cancellable cancellable = threadPool.scheduleWithFixedDelay(
-            () -> strings.add("periodic-" + counter.getAndIncrement()), TimeValue.timeValueMillis(intervalMillis), GENERIC);
+        Scheduler.Cancellable cancellable = threadPool.scheduleWithFixedDelay(() -> strings.add("periodic-" + counter.getAndIncrement()),
+                TimeValue.timeValueMillis(intervalMillis), GENERIC);
         assertFalse(taskQueue.hasRunnableTasks());
         assertTrue(taskQueue.hasDeferredTasks());
 

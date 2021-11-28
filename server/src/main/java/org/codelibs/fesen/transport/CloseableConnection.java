@@ -22,7 +22,6 @@ package org.codelibs.fesen.transport;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.core.CompletableContext;
 
-
 /**
  * Abstract Transport.Connection that provides common close logic.
  */

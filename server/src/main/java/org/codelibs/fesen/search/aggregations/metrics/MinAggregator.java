@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.PointValues;
@@ -39,10 +43,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Function;
-
 class MinAggregator extends NumericMetricsAggregator.SingleValue {
     private static final int MAX_BKD_LOOKUPS = 1024;
 
@@ -54,11 +54,8 @@ class MinAggregator extends NumericMetricsAggregator.SingleValue {
 
     DoubleArray mins;
 
-    MinAggregator(String name,
-                    ValuesSourceConfig config,
-                    SearchContext context,
-                    Aggregator parent,
-                    Map<String, Object> metadata) throws IOException {
+    MinAggregator(String name, ValuesSourceConfig config, SearchContext context, Aggregator parent, Map<String, Object> metadata)
+            throws IOException {
         super(name, context, parent, metadata);
         // TODO: Stop using nulls here
         this.valuesSource = config.hasValues() ? (ValuesSource.Numeric) config.getValuesSource() : null;
@@ -81,8 +78,7 @@ class MinAggregator extends NumericMetricsAggregator.SingleValue {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         if (valuesSource == null) {
             if (parent == null) {
                 return LeafBucketCollector.NO_OP_COLLECTOR;
@@ -153,7 +149,6 @@ class MinAggregator extends NumericMetricsAggregator.SingleValue {
     public void doClose() {
         Releasables.close(mins);
     }
-
 
     /**
      * Returns the minimum value indexed in the <code>fieldName</code> field or <code>null</code>

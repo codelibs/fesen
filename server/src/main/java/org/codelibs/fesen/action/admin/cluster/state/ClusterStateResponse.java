@@ -24,7 +24,6 @@ import java.util.Objects;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
-import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
@@ -92,27 +91,23 @@ public class ClusterStateResponse extends ActionResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ClusterStateResponse response = (ClusterStateResponse) o;
-        return waitForTimedOut == response.waitForTimedOut &&
-            Objects.equals(clusterName, response.clusterName) &&
-            // Best effort. Only compare cluster state version and master node id,
-            // because cluster state doesn't implement equals()
-            Objects.equals(getVersion(clusterState), getVersion(response.clusterState)) &&
-            Objects.equals(getMasterNodeId(clusterState), getMasterNodeId(response.clusterState));
+        return waitForTimedOut == response.waitForTimedOut && Objects.equals(clusterName, response.clusterName) &&
+        // Best effort. Only compare cluster state version and master node id,
+        // because cluster state doesn't implement equals()
+                Objects.equals(getVersion(clusterState), getVersion(response.clusterState))
+                && Objects.equals(getMasterNodeId(clusterState), getMasterNodeId(response.clusterState));
     }
 
     @Override
     public int hashCode() {
         // Best effort. Only use cluster state version and master node id,
         // because cluster state doesn't implement  hashcode()
-        return Objects.hash(
-            clusterName,
-            getVersion(clusterState),
-            getMasterNodeId(clusterState),
-            waitForTimedOut
-        );
+        return Objects.hash(clusterName, getVersion(clusterState), getMasterNodeId(clusterState), waitForTimedOut);
     }
 
     private static String getMasterNodeId(ClusterState clusterState) {

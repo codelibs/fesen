@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.index.fielddata.plain;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.lucene.geo.GeoEncodingUtils;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReader;
@@ -25,10 +29,6 @@ import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.index.fielddata.MultiGeoPointValues;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 final class LatLonPointDVLeafFieldData extends AbstractLeafGeoPointFieldData {
     private final LeafReader reader;
@@ -76,8 +76,7 @@ final class LatLonPointDVLeafFieldData extends AbstractLeafGeoPointFieldData {
                 @Override
                 public GeoPoint nextValue() throws IOException {
                     final long encoded = numericValues.nextValue();
-                    point.reset(GeoEncodingUtils.decodeLatitude((int) (encoded >>> 32)),
-                            GeoEncodingUtils.decodeLongitude((int) encoded));
+                    point.reset(GeoEncodingUtils.decodeLatitude((int) (encoded >>> 32)), GeoEncodingUtils.decodeLongitude((int) encoded));
                     return point;
                 }
             };

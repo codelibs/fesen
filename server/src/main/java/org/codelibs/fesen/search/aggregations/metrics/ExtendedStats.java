@@ -83,7 +83,6 @@ public interface ExtendedStats extends Stats {
      */
     String getStdDeviationBoundAsString(Bounds bound);
 
-
     /**
      * The sum of the squares of the collected values as a String.
      */

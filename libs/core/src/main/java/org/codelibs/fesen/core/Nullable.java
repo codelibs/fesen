@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.core;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.meta.TypeQualifierNickname;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.meta.TypeQualifierNickname;
 
 /**
  * The presence of this annotation on a method parameter indicates that
@@ -38,6 +39,6 @@ import java.lang.annotation.Target;
 @TypeQualifierNickname
 @CheckForNull
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+@Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 public @interface Nullable {
 }

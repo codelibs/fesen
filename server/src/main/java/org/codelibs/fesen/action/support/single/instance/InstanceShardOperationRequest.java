@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.support.single.instance;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -29,9 +32,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 // TODO: This request and its associated transport action can be folded into UpdateRequest which is its only concrete production code
 //       implementation
@@ -90,7 +90,7 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
 
     @Override
     public String[] indices() {
-        return new String[]{index};
+        return new String[] { index };
     }
 
     @Override
@@ -153,4 +153,3 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         out.writeOptionalString(concreteIndex);
     }
 }
-

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.query;
 
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.common.lucene.search.Queries;
+import static java.util.Collections.emptyMap;
 
 import java.util.Map;
 
-import static java.util.Collections.emptyMap;
+import org.apache.lucene.search.Query;
+import org.codelibs.fesen.common.lucene.search.Queries;
 
 /**
  * The result of parsing a query.

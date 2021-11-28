@@ -18,9 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import com.carrotsearch.hppc.BitMixer;
-import com.carrotsearch.hppc.LongHashSet;
-import com.carrotsearch.hppc.LongSet;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.Terms;
@@ -45,12 +48,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.DocValueFormat;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.carrotsearch.hppc.BitMixer;
+import com.carrotsearch.hppc.LongHashSet;
+import com.carrotsearch.hppc.LongSet;
 
 /**
  * Defines the include/exclude regular expression filtering for string terms aggregation. In this filtering logic,
@@ -81,8 +81,8 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         String includeMethod = include.isRegexBased() ? "regex" : "set";
         String excludeMethod = exclude.isRegexBased() ? "regex" : "set";
         if (includeMethod.equals(excludeMethod) == false) {
-            throw new IllegalArgumentException("Cannot mix a " + includeMethod + "-based include with a "
-                    + excludeMethod + "-based method");
+            throw new IllegalArgumentException(
+                    "Cannot mix a " + includeMethod + "-based include with a " + excludeMethod + "-based method");
         }
         if (include.isRegexBased()) {
             return new IncludeExclude(include.include, exclude.exclude);
@@ -108,17 +108,16 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
                 } else if (PARTITION_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     partition = parser.intValue();
                 } else {
-                    throw new FesenParseException(
-                            "Unknown parameter in Include/Exclude clause: " + currentFieldName);
+                    throw new FesenParseException("Unknown parameter in Include/Exclude clause: " + currentFieldName);
                 }
             }
             if (partition == null) {
-                throw new IllegalArgumentException("Missing [" + PARTITION_FIELD.getPreferredName()
-                    + "] parameter for partition-based include");
+                throw new IllegalArgumentException(
+                        "Missing [" + PARTITION_FIELD.getPreferredName() + "] parameter for partition-based include");
             }
             if (numPartitions == null) {
-                throw new IllegalArgumentException("Missing [" + NUM_PARTITIONS_FIELD.getPreferredName()
-                    + "] parameter for partition-based include");
+                throw new IllegalArgumentException(
+                        "Missing [" + NUM_PARTITIONS_FIELD.getPreferredName() + "] parameter for partition-based include");
             }
             return new IncludeExclude(partition, numPartitions);
         } else {
@@ -137,7 +136,8 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         }
     }
 
-    public abstract static class Filter {}
+    public abstract static class Filter {
+    }
 
     // The includeValue and excludeValue ByteRefs which are the result of the parsing
     // process are converted into a LongFilter when used on numeric fields
@@ -155,7 +155,6 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
             return Math.floorMod(hashCode, incNumPartitions) == incZeroBasedPartition;
         }
     }
-
 
     public static class SetBackedLongFilter extends LongFilter {
         private LongSet valids;
@@ -377,7 +376,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
 
     public IncludeExclude(int partition, int numPartitions) {
         if (partition < 0 || partition >= numPartitions) {
-            throw new IllegalArgumentException("Partition must be >=0 and < numPartition which is "+numPartitions);
+            throw new IllegalArgumentException("Partition must be >=0 and < numPartition which is " + numPartitions);
         }
         this.incZeroBasedPartition = partition;
         this.incNumPartitions = numPartitions;
@@ -387,8 +386,6 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         this.excludeValues = null;
 
     }
-
-
 
     /**
      * Read from a stream.
@@ -592,7 +589,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         if (isRegexBased()) {
             return new AutomatonBackedStringFilter(toAutomaton());
         }
-        if (isPartitionBased()){
+        if (isPartitionBased()) {
             return new PartitionedStringFilter();
         }
         return new TermListBackedStringFilter(parseForDocValues(includeValues, format), parseForDocValues(excludeValues, format));
@@ -616,7 +613,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         if (isRegexBased()) {
             return new AutomatonBackedOrdinalsFilter(toAutomaton());
         }
-        if (isPartitionBased()){
+        if (isPartitionBased()) {
             return new PartitionedOrdinalsFilter();
         }
 
@@ -625,7 +622,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
 
     public LongFilter convertToLongFilter(DocValueFormat format) {
 
-        if(isPartitionBased()){
+        if (isPartitionBased()) {
             return new PartitionedLongFilter();
         }
 
@@ -646,7 +643,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
     }
 
     public LongFilter convertToDoubleFilter() {
-        if(isPartitionBased()){
+        if (isPartitionBased()) {
             return new PartitionedLongFilter();
         }
 
@@ -698,9 +695,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                include == null ? null : include.getOriginalString(),
-                exclude == null ? null : exclude.getOriginalString(),
+        return Objects.hash(include == null ? null : include.getOriginalString(), exclude == null ? null : exclude.getOriginalString(),
                 includeValues, excludeValues, incZeroBasedPartition, incNumPartitions);
     }
 
@@ -708,7 +703,8 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        } if (getClass() != obj.getClass()) {
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         IncludeExclude other = (IncludeExclude) obj;

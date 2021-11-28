@@ -35,7 +35,7 @@ public class FieldCapabilitiesRequestTests extends AbstractWireSerializingTestCa
 
     @Override
     protected FieldCapabilitiesRequest createTestInstance() {
-        FieldCapabilitiesRequest request =  new FieldCapabilitiesRequest();
+        FieldCapabilitiesRequest request = new FieldCapabilitiesRequest();
         int size = randomIntBetween(1, 20);
         String[] randomFields = new String[size];
         for (int i = 0; i < size; i++) {
@@ -65,7 +65,7 @@ public class FieldCapabilitiesRequestTests extends AbstractWireSerializingTestCa
     protected FieldCapabilitiesRequest mutateInstance(FieldCapabilitiesRequest instance) throws IOException {
         List<Consumer<FieldCapabilitiesRequest>> mutators = new ArrayList<>();
         mutators.add(request -> {
-            String[] fields = ArrayUtils.concat(request.fields(), new String[] {randomAlphaOfLength(10)});
+            String[] fields = ArrayUtils.concat(request.fields(), new String[] { randomAlphaOfLength(10) });
             request.fields(fields);
         });
         mutators.add(request -> {
@@ -74,7 +74,7 @@ public class FieldCapabilitiesRequestTests extends AbstractWireSerializingTestCa
         });
         mutators.add(request -> {
             IndicesOptions indicesOptions = randomValueOtherThan(request.indicesOptions(),
-                () -> IndicesOptions.fromOptions(randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()));
+                    () -> IndicesOptions.fromOptions(randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()));
             request.indicesOptions(indicesOptions);
         });
         mutators.add(request -> request.setMergeResults(!request.isMergeResults()));
@@ -87,8 +87,7 @@ public class FieldCapabilitiesRequestTests extends AbstractWireSerializingTestCa
     }
 
     public void testValidation() {
-        FieldCapabilitiesRequest request = new FieldCapabilitiesRequest()
-            .indices("index2");
+        FieldCapabilitiesRequest request = new FieldCapabilitiesRequest().indices("index2");
         ActionRequestValidationException exception = request.validate();
         assertNotNull(exception);
     }

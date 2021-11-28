@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -36,11 +41,6 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * A template consists of optional settings, mappings, or alias configuration for an index, however,
  * it is entirely independent from an index. It's a building block forming part of a regular index
@@ -53,12 +53,12 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<Template, Void> PARSER = new ConstructingObjectParser<>("template", false,
-        a -> new Template((Settings) a[0], (CompressedXContent) a[1], (Map<String, AliasMetadata>) a[2]));
+            a -> new Template((Settings) a[0], (CompressedXContent) a[1], (Map<String, AliasMetadata>) a[2]));
 
     static {
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> Settings.fromXContent(p), SETTINGS);
-        PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) ->
-            new CompressedXContent(Strings.toString(XContentFactory.jsonBuilder().map(p.mapOrdered()))), MAPPINGS);
+        PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(),
+                (p, c) -> new CompressedXContent(Strings.toString(XContentFactory.jsonBuilder().map(p.mapOrdered()))), MAPPINGS);
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> {
             Map<String, AliasMetadata> aliasMap = new HashMap<>();
             while ((p.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -148,9 +148,8 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
             return false;
         }
         Template other = (Template) obj;
-        return Objects.equals(settings, other.settings) &&
-            Objects.equals(mappings, other.mappings) &&
-            Objects.equals(aliases, other.aliases);
+        return Objects.equals(settings, other.settings) && Objects.equals(mappings, other.mappings)
+                && Objects.equals(aliases, other.aliases);
     }
 
     @Override
@@ -168,7 +167,7 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
         }
         if (this.mappings != null) {
             Map<String, Object> uncompressedMapping =
-                XContentHelper.convertToMap(this.mappings.uncompressed(), true, XContentType.JSON).v2();
+                    XContentHelper.convertToMap(this.mappings.uncompressed(), true, XContentType.JSON).v2();
             if (uncompressedMapping.size() > 0) {
                 builder.field(MAPPINGS.getPreferredName());
                 builder.map(reduceMapping(uncompressedMapping));

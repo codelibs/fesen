@@ -53,12 +53,9 @@ public class JodaDateMathParserTests extends ESTestCase {
     void assertDateEquals(long gotMillis, String original, String expected) {
         long expectedMillis = parser.parse(expected, () -> 0).toEpochMilli();
         if (gotMillis != expectedMillis) {
-            fail("Date math not equal\n" +
-                "Original              : " + original + "\n" +
-                "Parsed                : " + formatter.formatMillis(gotMillis) + "\n" +
-                "Expected              : " + expected + "\n" +
-                "Expected milliseconds : " + expectedMillis + "\n" +
-                "Actual milliseconds   : " + gotMillis + "\n");
+            fail("Date math not equal\n" + "Original              : " + original + "\n" + "Parsed                : "
+                    + formatter.formatMillis(gotMillis) + "\n" + "Expected              : " + expected + "\n" + "Expected milliseconds : "
+                    + expectedMillis + "\n" + "Actual milliseconds   : " + gotMillis + "\n");
         }
     }
 
@@ -161,7 +158,6 @@ public class JodaDateMathParserTests extends ESTestCase {
         assertDateMathEquals("2014-11-18||+1M/M+1h", "2014-12-01T01");
     }
 
-
     public void testNow() {
         final long now = parser.parse("2014-11-18T14:27:32", () -> 0, false, (ZoneId) null).toEpochMilli();
 
@@ -183,11 +179,9 @@ public class JodaDateMathParserTests extends ESTestCase {
         // If a user only specifies times, then the date needs to always be 1970-01-01 regardless of rounding
         DateFormatter formatter = DateFormatter.forPattern("HH:mm:ss");
         DateMathParser parser = formatter.toDateMathParser();
-        assertEquals(
-                this.formatter.parseMillis("1970-01-01T04:52:20.000Z"),
+        assertEquals(this.formatter.parseMillis("1970-01-01T04:52:20.000Z"),
                 parser.parse("04:52:20", () -> 0, false, (ZoneId) null).toEpochMilli());
-        assertEquals(
-                this.formatter.parseMillis("1970-01-01T04:52:20.999Z"),
+        assertEquals(this.formatter.parseMillis("1970-01-01T04:52:20.999Z"),
                 parser.parse("04:52:20", () -> 0, true, (ZoneId) null).toEpochMilli());
     }
 
@@ -332,7 +326,7 @@ public class JodaDateMathParserTests extends ESTestCase {
         try {
             parser.parse("1234567890123", () -> 42, false, ZoneId.of("CET"));
             fail("Expected FesenParseException");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), containsString("failed to parse date field"));
             assertThat(e.getMessage(), containsString("with format [epoch_millis]"));
         }

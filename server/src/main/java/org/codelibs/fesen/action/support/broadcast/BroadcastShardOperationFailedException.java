@@ -46,7 +46,7 @@ public class BroadcastShardOperationFailedException extends FesenException imple
         setShard(shardId);
     }
 
-    public BroadcastShardOperationFailedException(StreamInput in) throws IOException{
+    public BroadcastShardOperationFailedException(StreamInput in) throws IOException {
         super(in);
     }
 }

@@ -54,8 +54,7 @@ public class RemoteConnectionManager implements ConnectionManager {
 
     @Override
     public void connectToNode(DiscoveryNode node, ConnectionProfile connectionProfile,
-                              ConnectionManager.ConnectionValidator connectionValidator,
-                              ActionListener<Void> listener) throws ConnectTransportException {
+            ConnectionManager.ConnectionValidator connectionValidator, ActionListener<Void> listener) throws ConnectTransportException {
         delegate.connectToNode(node, connectionProfile, connectionValidator, listener);
     }
 
@@ -101,7 +100,8 @@ public class RemoteConnectionManager implements ConnectionManager {
     public Transport.Connection getAnyRemoteConnection() {
         List<DiscoveryNode> localConnectedNodes = this.connectedNodes;
         long curr;
-        while ((curr = counter.incrementAndGet()) == Long.MIN_VALUE);
+        while ((curr = counter.incrementAndGet()) == Long.MIN_VALUE)
+            ;
         if (localConnectedNodes.isEmpty() == false) {
             DiscoveryNode nextNode = localConnectedNodes.get(Math.toIntExact(Math.floorMod(curr, (long) localConnectedNodes.size())));
             try {
@@ -175,14 +175,14 @@ public class RemoteConnectionManager implements ConnectionManager {
 
         @Override
         public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-            throws IOException, TransportException {
+                throws IOException, TransportException {
             connection.sendRequest(requestId, TransportActionProxy.getProxyAction(action),
-                TransportActionProxy.wrapRequest(targetNode, request), options);
+                    TransportActionProxy.wrapRequest(targetNode, request), options);
         }
 
         @Override
         public void close() {
-            assert false: "proxy connections must not be closed";
+            assert false : "proxy connections must not be closed";
         }
 
         @Override

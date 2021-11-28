@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.action;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.core.CheckedRunnable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * A listener for action responses or failures.

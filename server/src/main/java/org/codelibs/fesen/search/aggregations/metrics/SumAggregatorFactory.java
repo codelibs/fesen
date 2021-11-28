@@ -35,40 +35,26 @@ import org.codelibs.fesen.search.internal.SearchContext;
 
 class SumAggregatorFactory extends ValuesSourceAggregatorFactory {
 
-    SumAggregatorFactory(String name,
-                            ValuesSourceConfig config,
-                            QueryShardContext queryShardContext,
-                            AggregatorFactory parent,
-                            AggregatorFactories.Builder subFactoriesBuilder,
-                            Map<String, Object> metadata) throws IOException {
+    SumAggregatorFactory(String name, ValuesSourceConfig config, QueryShardContext queryShardContext, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        builder.register(
-            SumAggregationBuilder.REGISTRY_KEY,
-            org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
-            SumAggregator::new,
-                true);
+        builder.register(SumAggregationBuilder.REGISTRY_KEY,
+                org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
+                SumAggregator::new, true);
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                            Aggregator parent,
-                                            Map<String, Object> metadata)
-            throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
         return new SumAggregator(name, config, searchContext, parent, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(
-        SearchContext searchContext,
-        Aggregator parent,
-        CardinalityUpperBound bucketCardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(SumAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, config, searchContext, parent, metadata);
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound bucketCardinality,
+            Map<String, Object> metadata) throws IOException {
+        return queryShardContext.getValuesSourceRegistry().getAggregator(SumAggregationBuilder.REGISTRY_KEY, config).build(name, config,
+                searchContext, parent, metadata);
     }
 }

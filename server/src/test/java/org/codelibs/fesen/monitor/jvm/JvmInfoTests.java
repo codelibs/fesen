@@ -42,19 +42,16 @@ public class JvmInfoTests extends ESTestCase {
         final boolean g1GCEnabled = flagIsEnabled(argline, "UseG1GC");
         // for JDK 9 the default collector when no collector is specified is G1 GC
         final boolean versionIsAtLeastJava9 = JavaVersion.current().compareTo(JavaVersion.parse("9")) >= 0;
-        final boolean noOtherCollectorSpecified =
-                argline == null ||
-                        (!flagIsEnabled(argline, "UseParNewGC") &&
-                                !flagIsEnabled(argline, "UseParallelGC") &&
-                                !flagIsEnabled(argline, "UseParallelOldGC") &&
-                                !flagIsEnabled(argline, "UseSerialGC") &&
-                                !flagIsEnabled(argline, "UseConcMarkSweepGC"));
+        final boolean noOtherCollectorSpecified = argline == null || (!flagIsEnabled(argline, "UseParNewGC")
+                && !flagIsEnabled(argline, "UseParallelGC") && !flagIsEnabled(argline, "UseParallelOldGC")
+                && !flagIsEnabled(argline, "UseSerialGC") && !flagIsEnabled(argline, "UseConcMarkSweepGC"));
         return g1GCEnabled || (versionIsAtLeastJava9 && noOtherCollectorSpecified);
     }
 
     private boolean flagIsEnabled(String argline, String flag) {
         final boolean containsPositiveFlag = argline != null && argline.contains("-XX:+" + flag);
-        if (!containsPositiveFlag) return false;
+        if (!containsPositiveFlag)
+            return false;
         final int index = argline.lastIndexOf(flag);
         return argline.charAt(index - 1) == '+';
     }

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.Query;
@@ -29,15 +32,12 @@ import org.codelibs.fesen.common.lucene.BytesRefs;
 import org.codelibs.fesen.common.lucene.search.AutomatonQueries;
 import org.codelibs.fesen.index.query.QueryShardContext;
 
-import java.util.List;
-import java.util.Map;
-
 /** Base {@link MappedFieldType} implementation for a field that is indexed
  *  with the inverted index. */
 public abstract class TermBasedFieldType extends SimpleMappedFieldType {
 
-    public TermBasedFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues,
-                       TextSearchInfo textSearchInfo, Map<String, String> meta) {
+    public TermBasedFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues, TextSearchInfo textSearchInfo,
+            Map<String, String> meta) {
         super(name, isSearchable, isStored, hasDocValues, textSearchInfo, meta);
     }
 

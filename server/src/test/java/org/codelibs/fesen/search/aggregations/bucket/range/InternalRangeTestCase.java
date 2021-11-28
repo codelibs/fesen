@@ -60,8 +60,7 @@ public abstract class InternalRangeTestCase<T extends InternalAggregation & Rang
         }
         final Map<String, Long> actualCounts = new TreeMap<>();
         for (Range.Bucket bucket : reduced.getBuckets()) {
-            actualCounts.compute(bucket.getKeyAsString(),
-                    (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
+            actualCounts.compute(bucket.getKeyAsString(), (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
         }
         assertEquals(expectedCounts, actualCounts);
     }

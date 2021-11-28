@@ -19,28 +19,28 @@
 
 package org.codelibs.fesen.common.geo;
 
+import java.util.List;
+
 import org.locationtech.spatial4j.context.SpatialContext;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.ShapeCollection;
-
-import java.util.List;
 
 /**
  * Extends spatial4j ShapeCollection for points_only shape indexing support
  */
 public class XShapeCollection<S extends Shape> extends ShapeCollection<S> {
 
-  private boolean pointsOnly = false;
+    private boolean pointsOnly = false;
 
-  public XShapeCollection(List<S> shapes, SpatialContext ctx) {
-    super(shapes, ctx);
-  }
+    public XShapeCollection(List<S> shapes, SpatialContext ctx) {
+        super(shapes, ctx);
+    }
 
-  public boolean pointsOnly() {
-    return this.pointsOnly;
-  }
+    public boolean pointsOnly() {
+        return this.pointsOnly;
+    }
 
-  public void setPointsOnly(boolean pointsOnly) {
-    this.pointsOnly = pointsOnly;
-  }
+    public void setPointsOnly(boolean pointsOnly) {
+        this.pointsOnly = pointsOnly;
+    }
 }

@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import static java.util.Collections.singletonList;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreMode;
@@ -36,12 +42,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
 
 class ScriptedMetricAggregator extends MetricsAggregator {
     /**
@@ -67,21 +67,11 @@ class ScriptedMetricAggregator extends MetricsAggregator {
     private final Script reduceScript;
     private ObjectArray<State> states;
 
-    ScriptedMetricAggregator(
-        String name,
-        SearchLookup lookup,
-        Map<String, Object> aggParams,
-        @Nullable ScriptedMetricAggContexts.InitScript.Factory initScriptFactory,
-        Map<String, Object> initScriptParams,
-        ScriptedMetricAggContexts.MapScript.Factory mapScriptFactory,
-        Map<String, Object> mapScriptParams,
-        ScriptedMetricAggContexts.CombineScript.Factory combineScriptFactory,
-        Map<String, Object> combineScriptParams,
-        Script reduceScript,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata
-    ) throws IOException {
+    ScriptedMetricAggregator(String name, SearchLookup lookup, Map<String, Object> aggParams,
+            @Nullable ScriptedMetricAggContexts.InitScript.Factory initScriptFactory, Map<String, Object> initScriptParams,
+            ScriptedMetricAggContexts.MapScript.Factory mapScriptFactory, Map<String, Object> mapScriptParams,
+            ScriptedMetricAggContexts.CombineScript.Factory combineScriptFactory, Map<String, Object> combineScriptParams,
+            Script reduceScript, SearchContext context, Aggregator parent, Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         this.lookup = lookup;
         this.aggParams = aggParams;
@@ -180,11 +170,8 @@ class ScriptedMetricAggregator extends MetricsAggregator {
             mapScriptParamsForState = ScriptedMetricAggregatorFactory.mergeParams(aggParamsForState, mapScriptParams);
             combineScriptParamsForState = ScriptedMetricAggregatorFactory.mergeParams(aggParamsForState, combineScriptParams);
             aggState = newInitialState(ScriptedMetricAggregatorFactory.mergeParams(aggParamsForState, initScriptParams));
-            mapScript = mapScriptFactory.newFactory(
-                ScriptedMetricAggregatorFactory.deepCopyParams(mapScriptParamsForState, context),
-                aggState,
-                lookup
-            );
+            mapScript = mapScriptFactory.newFactory(ScriptedMetricAggregatorFactory.deepCopyParams(mapScriptParamsForState, context),
+                    aggState, lookup);
         }
 
         private Map<String, Object> newInitialState(Map<String, Object> initScriptParamsForState) {

@@ -29,29 +29,11 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 
 public class DateRangeAggregatorFactory extends AbstractRangeAggregatorFactory<RangeAggregator.Range> {
 
-    public DateRangeAggregatorFactory(
-        String name,
-        ValuesSourceConfig config,
-        RangeAggregator.Range[] ranges,
-        boolean keyed,
-        InternalRange.Factory<?, ?> rangeFactory,
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder,
-        Map<String, Object> metadata
-    ) throws IOException {
-        super(
-            name,
-            DateRangeAggregationBuilder.REGISTRY_KEY,
-            config,
-            ranges,
-            keyed,
-            rangeFactory,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
+    public DateRangeAggregatorFactory(String name, ValuesSourceConfig config, RangeAggregator.Range[] ranges, boolean keyed,
+            InternalRange.Factory<?, ?> rangeFactory, QueryShardContext queryShardContext, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
+        super(name, DateRangeAggregationBuilder.REGISTRY_KEY, config, ranges, keyed, rangeFactory, queryShardContext, parent,
+                subFactoriesBuilder, metadata);
     }
 
 }

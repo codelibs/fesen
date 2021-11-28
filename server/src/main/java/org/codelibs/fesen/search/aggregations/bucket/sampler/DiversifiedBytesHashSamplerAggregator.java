@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.search.DiversifiedTopDocsCollector;
@@ -35,10 +39,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Consumer;
-
 /**
  * Alternative, faster implementation for converting String keys to longs but
  * with the potential for hash collisions.
@@ -48,16 +48,9 @@ public class DiversifiedBytesHashSamplerAggregator extends SamplerAggregator {
     private ValuesSource valuesSource;
     private int maxDocsPerValue;
 
-    DiversifiedBytesHashSamplerAggregator(
-        String name,
-        int shardSize,
-        AggregatorFactories factories,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata,
-        ValuesSourceConfig valuesSourceConfig,
-        int maxDocsPerValue
-    ) throws IOException {
+    DiversifiedBytesHashSamplerAggregator(String name, int shardSize, AggregatorFactories factories, SearchContext context,
+            Aggregator parent, Map<String, Object> metadata, ValuesSourceConfig valuesSourceConfig, int maxDocsPerValue)
+            throws IOException {
         super(name, shardSize, factories, context, parent, metadata);
         assert valuesSourceConfig.hasValues();
         this.valuesSource = valuesSourceConfig.getValuesSource();
@@ -80,7 +73,6 @@ public class DiversifiedBytesHashSamplerAggregator extends SamplerAggregator {
         DiverseDocsDeferringCollector(Consumer<Long> circuitBreakerConsumer) {
             super(shardSize, context.bigArrays(), circuitBreakerConsumer);
         }
-
 
         @Override
         protected TopDocsCollector<ScoreDocKey> createTopDocsCollector(int size) {
@@ -120,8 +112,7 @@ public class DiversifiedBytesHashSamplerAggregator extends SamplerAggregator {
                         docID = target;
                         if (values.advanceExact(target)) {
                             if (values.docValueCount() > 1) {
-                                throw new IllegalArgumentException(
-                                        "Sample diversifying key must be a single valued-field");
+                                throw new IllegalArgumentException("Sample diversifying key must be a single valued-field");
                             }
                             return true;
                         } else {

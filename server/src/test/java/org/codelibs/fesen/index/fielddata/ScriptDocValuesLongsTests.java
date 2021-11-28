@@ -25,7 +25,6 @@ import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 
-
 public class ScriptDocValuesLongsTests extends ESTestCase {
     public void testLongs() throws IOException {
         long[][] values = new long[between(3, 10)][];
@@ -46,11 +45,11 @@ public class ScriptDocValuesLongsTests extends ESTestCase {
                 assertEquals(values[d][0], (long) longs.get(0));
             } else {
                 Exception e = expectThrows(IllegalStateException.class, () -> longs.getValue());
-                assertEquals("A document doesn't have a value for a field! " +
-                    "Use doc[<field>].size()==0 to check if a document is missing a field!", e.getMessage());
+                assertEquals("A document doesn't have a value for a field! "
+                        + "Use doc[<field>].size()==0 to check if a document is missing a field!", e.getMessage());
                 e = expectThrows(IllegalStateException.class, () -> longs.get(0));
-                assertEquals("A document doesn't have a value for a field! " +
-                    "Use doc[<field>].size()==0 to check if a document is missing a field!", e.getMessage());
+                assertEquals("A document doesn't have a value for a field! "
+                        + "Use doc[<field>].size()==0 to check if a document is missing a field!", e.getMessage());
             }
             assertEquals(values[d].length, longs.size());
             for (int i = 0; i < values[d].length; i++) {
@@ -73,10 +72,12 @@ public class ScriptDocValuesLongsTests extends ESTestCase {
                 current = values[doc];
                 return current.length > 0;
             }
+
             @Override
             public int docValueCount() {
                 return current.length;
             }
+
             @Override
             public long nextValue() {
                 return current[i++];

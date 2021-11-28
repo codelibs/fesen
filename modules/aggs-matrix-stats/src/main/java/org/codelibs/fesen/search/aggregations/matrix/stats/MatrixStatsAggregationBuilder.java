@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContent;
@@ -30,9 +33,6 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ArrayValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class MatrixStatsAggregationBuilder extends ArrayValuesSourceAggregationBuilder.LeafOnly<MatrixStatsAggregationBuilder> {
     public static final String NAME = "matrix_stats";
 
@@ -42,8 +42,8 @@ public class MatrixStatsAggregationBuilder extends ArrayValuesSourceAggregationB
         super(name);
     }
 
-    protected MatrixStatsAggregationBuilder(MatrixStatsAggregationBuilder clone,
-                                            AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected MatrixStatsAggregationBuilder(MatrixStatsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.multiValueMode = clone.multiValueMode;
     }
@@ -75,10 +75,8 @@ public class MatrixStatsAggregationBuilder extends ArrayValuesSourceAggregationB
     }
 
     @Override
-    protected MatrixStatsAggregatorFactory innerBuild(QueryShardContext queryShardContext,
-                                                        Map<String, ValuesSourceConfig> configs,
-                                                        AggregatorFactory parent,
-                                                        AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected MatrixStatsAggregatorFactory innerBuild(QueryShardContext queryShardContext, Map<String, ValuesSourceConfig> configs,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new MatrixStatsAggregatorFactory(name, configs, multiValueMode, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

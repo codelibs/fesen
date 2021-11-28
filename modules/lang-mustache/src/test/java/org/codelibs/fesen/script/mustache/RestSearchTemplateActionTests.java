@@ -18,15 +18,14 @@
  */
 package org.codelibs.fesen.script.mustache;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.search.RestSearchAction;
-import org.codelibs.fesen.script.mustache.RestSearchTemplateAction;
 import org.codelibs.fesen.test.rest.FakeRestRequest;
 import org.codelibs.fesen.test.rest.RestActionTestCase;
 import org.junit.Before;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RestSearchTemplateActionTests extends RestActionTestCase {
 
@@ -36,10 +35,8 @@ public class RestSearchTemplateActionTests extends RestActionTestCase {
     }
 
     public void testTypeInPath() {
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.GET)
-            .withPath("/some_index/some_type/_search/template")
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
+                .withPath("/some_index/some_type/_search/template").build();
 
         dispatchRequest(request);
         assertWarnings(RestSearchAction.TYPES_DEPRECATION_MESSAGE);
@@ -49,11 +46,8 @@ public class RestSearchTemplateActionTests extends RestActionTestCase {
         Map<String, String> params = new HashMap<>();
         params.put("type", "some_type");
 
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.GET)
-            .withPath("/some_index/_search/template")
-            .withParams(params)
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
+                .withPath("/some_index/_search/template").withParams(params).build();
 
         dispatchRequest(request);
         assertWarnings(RestSearchAction.TYPES_DEPRECATION_MESSAGE);

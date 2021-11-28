@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.bytes;
 
+import java.io.IOException;
+
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.util.ByteArray;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
-
-import java.io.IOException;
 
 /**
  * A page based bytes reference, internally holding the bytes in a paged
@@ -58,8 +58,8 @@ public class PagedBytesReference extends AbstractBytesReference {
     @Override
     public BytesReference slice(int from, int length) {
         if (from < 0 || (from + length) > length()) {
-            throw new IllegalArgumentException("can't slice a buffer with length [" + length() +
-                "], with slice parameters from [" + from + "], length [" + length + "]");
+            throw new IllegalArgumentException("can't slice a buffer with length [" + length() + "], with slice parameters from [" + from
+                    + "], length [" + length + "]");
         }
         return new PagedBytesReference(byteArray, offset + from, length);
     }

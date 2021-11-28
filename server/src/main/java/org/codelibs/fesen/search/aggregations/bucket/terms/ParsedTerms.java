@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static org.codelibs.fesen.search.aggregations.bucket.terms.InternalTerms.DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME;
+import static org.codelibs.fesen.search.aggregations.bucket.terms.InternalTerms.SUM_OF_OTHER_DOC_COUNTS;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -28,14 +36,6 @@ import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import static org.codelibs.fesen.search.aggregations.bucket.terms.InternalTerms.DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME;
-import static org.codelibs.fesen.search.aggregations.bucket.terms.InternalTerms.SUM_OF_OTHER_DOC_COUNTS;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class ParsedTerms extends ParsedMultiBucketAggregation<ParsedTerms.ParsedBucket> implements Terms {
 
@@ -80,12 +80,11 @@ public abstract class ParsedTerms extends ParsedMultiBucketAggregation<ParsedTer
     }
 
     static void declareParsedTermsFields(final ObjectParser<? extends ParsedTerms, Void> objectParser,
-                                         final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser) {
+            final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser) {
         declareMultiBucketAggregationFields(objectParser, bucketParser::apply, bucketParser::apply);
-        objectParser.declareLong((parsedTerms, value) -> parsedTerms.docCountErrorUpperBound = value ,
+        objectParser.declareLong((parsedTerms, value) -> parsedTerms.docCountErrorUpperBound = value,
                 DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME);
-        objectParser.declareLong((parsedTerms, value) -> parsedTerms.sumOtherDocCount = value,
-                SUM_OF_OTHER_DOC_COUNTS);
+        objectParser.declareLong((parsedTerms, value) -> parsedTerms.sumOtherDocCount = value, SUM_OF_OTHER_DOC_COUNTS);
     }
 
     public abstract static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Terms.Bucket {
@@ -111,10 +110,8 @@ public abstract class ParsedTerms extends ParsedMultiBucketAggregation<ParsedTer
             return builder;
         }
 
-
         static <B extends ParsedBucket> B parseTermsBucketXContent(final XContentParser parser, final Supplier<B> bucketSupplier,
-                                                                   final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer)
-                throws IOException {
+                final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer) throws IOException {
 
             final B bucket = bucketSupplier.get();
             final List<Aggregation> aggregations = new ArrayList<>();

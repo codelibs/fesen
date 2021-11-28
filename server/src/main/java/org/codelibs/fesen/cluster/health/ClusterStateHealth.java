@@ -35,7 +35,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.rest.RestStatus;
 
-
 public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, Writeable {
 
     private final int numberOfNodes;
@@ -119,7 +118,8 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
             int activeShardCount = 0;
             int totalShardCount = 0;
             for (ShardRouting shardRouting : shardRoutings) {
-                if (shardRouting.active()) activeShardCount++;
+                if (shardRouting.active())
+                    activeShardCount++;
                 totalShardCount++;
             }
             this.activeShardsPercent = (((double) activeShardCount) / totalShardCount) * 100;
@@ -149,7 +149,7 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
      */
     public ClusterStateHealth(int activePrimaryShards, int activeShards, int relocatingShards, int initializingShards, int unassignedShards,
             int numberOfNodes, int numberOfDataNodes, double activeShardsPercent, ClusterHealthStatus status,
-        Map<String, ClusterIndexHealth> indices) {
+            Map<String, ClusterIndexHealth> indices) {
         this.activePrimaryShards = activePrimaryShards;
         this.activeShards = activeShards;
         this.relocatingShards = relocatingShards;
@@ -226,35 +226,24 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
 
     @Override
     public String toString() {
-        return "ClusterStateHealth{" +
-                "numberOfNodes=" + numberOfNodes +
-                ", numberOfDataNodes=" + numberOfDataNodes +
-                ", activeShards=" + activeShards +
-                ", relocatingShards=" + relocatingShards +
-                ", activePrimaryShards=" + activePrimaryShards +
-                ", initializingShards=" + initializingShards +
-                ", unassignedShards=" + unassignedShards +
-                ", activeShardsPercent=" + activeShardsPercent +
-                ", status=" + status +
-                ", indices.size=" + (indices == null ? "null" : indices.size()) +
-                '}';
+        return "ClusterStateHealth{" + "numberOfNodes=" + numberOfNodes + ", numberOfDataNodes=" + numberOfDataNodes + ", activeShards="
+                + activeShards + ", relocatingShards=" + relocatingShards + ", activePrimaryShards=" + activePrimaryShards
+                + ", initializingShards=" + initializingShards + ", unassignedShards=" + unassignedShards + ", activeShardsPercent="
+                + activeShardsPercent + ", status=" + status + ", indices.size=" + (indices == null ? "null" : indices.size()) + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ClusterStateHealth that = (ClusterStateHealth) o;
-        return numberOfNodes == that.numberOfNodes &&
-                numberOfDataNodes == that.numberOfDataNodes &&
-                activeShards == that.activeShards &&
-                relocatingShards == that.relocatingShards &&
-                activePrimaryShards == that.activePrimaryShards &&
-                initializingShards == that.initializingShards &&
-                unassignedShards == that.unassignedShards &&
-                Double.compare(that.activeShardsPercent, activeShardsPercent) == 0 &&
-                status == that.status &&
-                Objects.equals(indices, that.indices);
+        return numberOfNodes == that.numberOfNodes && numberOfDataNodes == that.numberOfDataNodes && activeShards == that.activeShards
+                && relocatingShards == that.relocatingShards && activePrimaryShards == that.activePrimaryShards
+                && initializingShards == that.initializingShards && unassignedShards == that.unassignedShards
+                && Double.compare(that.activeShardsPercent, activeShardsPercent) == 0 && status == that.status
+                && Objects.equals(indices, that.indices);
     }
 
     @Override

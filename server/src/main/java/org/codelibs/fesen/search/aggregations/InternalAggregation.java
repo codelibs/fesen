@@ -18,6 +18,18 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import static java.util.Objects.requireNonNull;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
@@ -31,18 +43,6 @@ import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
-
 /**
  * An internal implementation of {@link Aggregation}. Serves as a base class for all aggregation implementations.
  */
@@ -55,11 +55,13 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
          * Build a {@linkplain ReduceContext} to perform a partial reduction.
          */
         ReduceContext forPartialReduction();
+
         /**
          * Build a {@linkplain ReduceContext} to perform the final reduction.
          */
         ReduceContext forFinalReduction();
     }
+
     public static class ReduceContext {
         private final BigArrays bigArrays;
         private final ScriptService scriptService;
@@ -84,8 +86,8 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
          * Build a {@linkplain ReduceContext} to perform the final reduction.
          * @param pipelineTreeRoot The root of tree of pipeline aggregations for this request
          */
-        public static ReduceContext forFinalReduction(BigArrays bigArrays, ScriptService scriptService,
-                IntConsumer multiBucketConsumer, PipelineTree pipelineTreeRoot) {
+        public static ReduceContext forFinalReduction(BigArrays bigArrays, ScriptService scriptService, IntConsumer multiBucketConsumer,
+                PipelineTree pipelineTreeRoot) {
             return new ReduceContext(bigArrays, scriptService, multiBucketConsumer,
                     requireNonNull(pipelineTreeRoot, "prefer EMPTY to null"), () -> pipelineTreeRoot);
         }
@@ -178,7 +180,6 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         forEachBucket(bucketAggs -> bucketAggs.mergePipelineTreeForBWCSerialization(pipelineTree));
     }
 
-
     /**
      * Read from a stream.
      */
@@ -195,8 +196,7 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         out.writeString(name);
         out.writeGenericValue(metadata);
         if (out.getVersion().before(Version.V_7_8_0)) {
-            assert pipelineAggregatorsForBwcSerialization != null :
-                "serializing to pre-7.8.0 versions should have called mergePipelineTreeForBWCSerialization";
+            assert pipelineAggregatorsForBwcSerialization != null : "serializing to pre-7.8.0 versions should have called mergePipelineTreeForBWCSerialization";
             out.writeNamedWriteableList(pipelineAggregatorsForBwcSerialization);
         }
         doWriteTo(out);
@@ -235,14 +235,15 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
     /**
      * Run a {@linkplain Consumer} over all buckets in this aggregation.
      */
-    public void forEachBucket(Consumer<InternalAggregations> consumer) {}
+    public void forEachBucket(Consumer<InternalAggregations> consumer) {
+    }
 
     /**
      * Creates the output from all pipeline aggs that this aggregation is associated with.  Should only
      * be called after all aggregations have been fully reduced
      */
-    public InternalAggregation reducePipelines(
-            InternalAggregation reducedAggs, ReduceContext reduceContext, PipelineTree pipelinesForThisAgg) {
+    public InternalAggregation reducePipelines(InternalAggregation reducedAggs, ReduceContext reduceContext,
+            PipelineTree pipelinesForThisAgg) {
         assert reduceContext.isFinalReduce();
         for (PipelineAggregator pipelineAggregator : pipelinesForThisAgg.aggregators()) {
             reducedAggs = pipelineAggregator.reduce(reducedAggs, reduceContext);
@@ -354,11 +355,12 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (obj == this) { return true; }
+        if (obj == this) {
+            return true;
+        }
 
         InternalAggregation other = (InternalAggregation) obj;
-        return Objects.equals(name, other.name) &&
-                Objects.equals(metadata, other.metadata);
+        return Objects.equals(name, other.name) && Objects.equals(metadata, other.metadata);
     }
 
     @Override

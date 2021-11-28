@@ -71,50 +71,26 @@ public class RolloverRequestTests extends ESTestCase {
 
     public void testConditionsParsing() throws Exception {
         final RolloverRequest request = new RolloverRequest(randomAlphaOfLength(10), randomAlphaOfLength(10));
-        final XContentBuilder builder = XContentFactory.jsonBuilder()
-            .startObject()
-                .startObject("conditions")
-                    .field("max_age", "10d")
-                    .field("max_docs", 100)
-                    .field("max_size", "45gb")
-                .endObject()
-            .endObject();
+        final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject("conditions").field("max_age", "10d")
+                .field("max_docs", 100).field("max_size", "45gb").endObject().endObject();
         request.fromXContent(false, createParser(builder));
         Map<String, Condition<?>> conditions = request.getConditions();
         assertThat(conditions.size(), equalTo(3));
-        MaxAgeCondition maxAgeCondition = (MaxAgeCondition)conditions.get(MaxAgeCondition.NAME);
+        MaxAgeCondition maxAgeCondition = (MaxAgeCondition) conditions.get(MaxAgeCondition.NAME);
         assertThat(maxAgeCondition.value.getMillis(), equalTo(TimeValue.timeValueHours(24 * 10).getMillis()));
-        MaxDocsCondition maxDocsCondition = (MaxDocsCondition)conditions.get(MaxDocsCondition.NAME);
+        MaxDocsCondition maxDocsCondition = (MaxDocsCondition) conditions.get(MaxDocsCondition.NAME);
         assertThat(maxDocsCondition.value, equalTo(100L));
-        MaxSizeCondition maxSizeCondition = (MaxSizeCondition)conditions.get(MaxSizeCondition.NAME);
+        MaxSizeCondition maxSizeCondition = (MaxSizeCondition) conditions.get(MaxSizeCondition.NAME);
         assertThat(maxSizeCondition.value.getBytes(), equalTo(ByteSizeUnit.GB.toBytes(45)));
     }
 
     public void testParsingWithIndexSettings() throws Exception {
         final RolloverRequest request = new RolloverRequest(randomAlphaOfLength(10), randomAlphaOfLength(10));
-        final XContentBuilder builder = XContentFactory.jsonBuilder()
-            .startObject()
-                .startObject("conditions")
-                    .field("max_age", "10d")
-                    .field("max_docs", 100)
-                .endObject()
-                .startObject("mappings")
-                    .startObject("type1")
-                        .startObject("properties")
-                            .startObject("field1")
-                                .field("type", "string")
-                                .field("index", "not_analyzed")
-                            .endObject()
-                        .endObject()
-                    .endObject()
-                .endObject()
-                .startObject("settings")
-                    .field("number_of_shards", 10)
-                .endObject()
-                .startObject("aliases")
-                    .startObject("alias1").endObject()
-                .endObject()
-            .endObject();
+        final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject("conditions").field("max_age", "10d")
+                .field("max_docs", 100).endObject().startObject("mappings").startObject("type1").startObject("properties")
+                .startObject("field1").field("type", "string").field("index", "not_analyzed").endObject().endObject().endObject()
+                .endObject().startObject("settings").field("number_of_shards", 10).endObject().startObject("aliases").startObject("alias1")
+                .endObject().endObject().endObject();
         request.fromXContent(true, createParser(builder));
         Map<String, Condition<?>> conditions = request.getConditions();
         assertThat(conditions.size(), equalTo(2));
@@ -125,16 +101,8 @@ public class RolloverRequestTests extends ESTestCase {
 
     public void testTypelessMappingParsing() throws Exception {
         final RolloverRequest request = new RolloverRequest(randomAlphaOfLength(10), randomAlphaOfLength(10));
-        final XContentBuilder builder = XContentFactory.jsonBuilder()
-            .startObject()
-                .startObject("mappings")
-                    .startObject("properties")
-                        .startObject("field1")
-                            .field("type", "keyword")
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .endObject();
+        final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject("mappings").startObject("properties")
+                .startObject("field1").field("type", "keyword").endObject().endObject().endObject().endObject();
 
         boolean includeTypeName = false;
         request.fromXContent(includeTypeName, createParser(builder));
@@ -143,8 +111,7 @@ public class RolloverRequestTests extends ESTestCase {
         String mapping = createIndexRequest.mappings().get(MapperService.SINGLE_MAPPING_NAME);
         assertNotNull(mapping);
 
-        Map<String, Object> parsedMapping = XContentHelper.convertToMap(
-            new BytesArray(mapping), false, XContentType.JSON).v2();
+        Map<String, Object> parsedMapping = XContentHelper.convertToMap(new BytesArray(mapping), false, XContentType.JSON).v2();
 
         @SuppressWarnings("unchecked")
         Map<String, Object> properties = (Map<String, Object>) parsedMapping.get(MapperService.SINGLE_MAPPING_NAME);

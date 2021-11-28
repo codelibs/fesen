@@ -52,8 +52,8 @@ public class StringDistanceImplTests extends AbstractWriteableEnumTestCase {
         assertThat(StringDistanceImpl.resolve("ngram"), equalTo(StringDistanceImpl.NGRAM));
 
         final String doesntExist = "doesnt_exist";
-        expectThrows(IllegalArgumentException.class, () -> StringDistanceImpl.resolve(doesntExist)); 
-        
+        expectThrows(IllegalArgumentException.class, () -> StringDistanceImpl.resolve(doesntExist));
+
         NullPointerException e = expectThrows(NullPointerException.class, () -> StringDistanceImpl.resolve(null));
         assertThat(e.getMessage(), equalTo("Input string is null"));
     }

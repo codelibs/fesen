@@ -56,7 +56,7 @@ public class SimulatePipelineRequestTests extends ESTestCase {
 
     public void testSerializationWithXContent() throws IOException {
         SimulatePipelineRequest request =
-            new SimulatePipelineRequest(new BytesArray("{}".getBytes(StandardCharsets.UTF_8)), XContentType.JSON);
+                new SimulatePipelineRequest(new BytesArray("{}".getBytes(StandardCharsets.UTF_8)), XContentType.JSON);
         assertEquals(XContentType.JSON, request.getXContentType());
 
         BytesStreamOutput output = new BytesStreamOutput();

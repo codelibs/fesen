@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.create;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -32,26 +35,24 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.snapshots.SnapshotInfo;
 import org.codelibs.fesen.snapshots.SnapshotInfo.SnapshotInfoBuilder;
 
-import java.io.IOException;
-import java.util.Objects;
-
 /**
  * Create snapshot response
  */
 public class CreateSnapshotResponse extends ActionResponse implements ToXContentObject {
 
     private static final ObjectParser<CreateSnapshotResponse, Void> PARSER =
-        new ObjectParser<>(CreateSnapshotResponse.class.getName(), true, CreateSnapshotResponse::new);
+            new ObjectParser<>(CreateSnapshotResponse.class.getName(), true, CreateSnapshotResponse::new);
 
     static {
-        PARSER.declareObject(CreateSnapshotResponse::setSnapshotInfoFromBuilder,
-            SnapshotInfo.SNAPSHOT_INFO_PARSER, new ParseField("snapshot"));
+        PARSER.declareObject(CreateSnapshotResponse::setSnapshotInfoFromBuilder, SnapshotInfo.SNAPSHOT_INFO_PARSER,
+                new ParseField("snapshot"));
     }
 
     @Nullable
     private SnapshotInfo snapshotInfo;
 
-    CreateSnapshotResponse() {}
+    CreateSnapshotResponse() {
+    }
 
     public CreateSnapshotResponse(@Nullable SnapshotInfo snapshotInfo) {
         this.snapshotInfo = snapshotInfo;
@@ -114,15 +115,15 @@ public class CreateSnapshotResponse extends ActionResponse implements ToXContent
 
     @Override
     public String toString() {
-        return "CreateSnapshotResponse{" +
-            "snapshotInfo=" + snapshotInfo +
-            '}';
+        return "CreateSnapshotResponse{" + "snapshotInfo=" + snapshotInfo + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         CreateSnapshotResponse that = (CreateSnapshotResponse) o;
         return Objects.equals(snapshotInfo, that.snapshotInfo);
     }

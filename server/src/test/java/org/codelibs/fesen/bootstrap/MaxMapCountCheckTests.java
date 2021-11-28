@@ -64,11 +64,8 @@ public class MaxMapCountCheckTests extends AbstractBootstrapCheckTestCase {
 
     private void assertFailure(final BootstrapCheck.BootstrapCheckResult result) {
         assertTrue(result.isFailure());
-        assertThat(
-                result.getMessage(),
-                equalTo(
-                        "max virtual memory areas vm.max_map_count [" + maxMapCount.get() + "] is too low, "
-                                + "increase to at least [" + BootstrapChecks.MaxMapCountCheck.LIMIT + "]"));
+        assertThat(result.getMessage(), equalTo("max virtual memory areas vm.max_map_count [" + maxMapCount.get() + "] is too low, "
+                + "increase to at least [" + BootstrapChecks.MaxMapCountCheck.LIMIT + "]"));
     }
 
     public void testMaxMapCountCheckBelowLimit() {
@@ -144,13 +141,8 @@ public class MaxMapCountCheckTests extends AbstractBootstrapCheckTestCase {
             final MockLogAppender appender = new MockLogAppender();
             appender.start();
             appender.addExpectation(
-                    new ParameterizedMessageLoggingExpectation(
-                            "expected logged I/O exception",
-                            "testGetMaxMapCountIOException",
-                            Level.WARN,
-                            "I/O exception while trying to read [{}]",
-                            new Object[] { procSysVmMaxMapCountPath },
-                            e -> ioException == e));
+                    new ParameterizedMessageLoggingExpectation("expected logged I/O exception", "testGetMaxMapCountIOException", Level.WARN,
+                            "I/O exception while trying to read [{}]", new Object[] { procSysVmMaxMapCountPath }, e -> ioException == e));
             Loggers.addAppender(logger, appender);
             assertThat(check.getMaxMapCount(logger), equalTo(-1L));
             appender.assertAllExpectationsMatched();
@@ -165,14 +157,9 @@ public class MaxMapCountCheckTests extends AbstractBootstrapCheckTestCase {
             final Logger logger = LogManager.getLogger("testGetMaxMapCountNumberFormatException");
             final MockLogAppender appender = new MockLogAppender();
             appender.start();
-            appender.addExpectation(
-                    new ParameterizedMessageLoggingExpectation(
-                            "expected logged number format exception",
-                            "testGetMaxMapCountNumberFormatException",
-                            Level.WARN,
-                            "unable to parse vm.max_map_count [{}]",
-                            new Object[] { "eof" },
-                            e -> e instanceof NumberFormatException && e.getMessage().equals("For input string: \"eof\"")));
+            appender.addExpectation(new ParameterizedMessageLoggingExpectation("expected logged number format exception",
+                    "testGetMaxMapCountNumberFormatException", Level.WARN, "unable to parse vm.max_map_count [{}]", new Object[] { "eof" },
+                    e -> e instanceof NumberFormatException && e.getMessage().equals("For input string: \"eof\"")));
             Loggers.addAppender(logger, appender);
             assertThat(check.getMaxMapCount(logger), equalTo(-1L));
             appender.assertAllExpectationsMatched();
@@ -194,13 +181,8 @@ public class MaxMapCountCheckTests extends AbstractBootstrapCheckTestCase {
         private final Object[] arguments;
         private final Predicate<Throwable> throwablePredicate;
 
-        private ParameterizedMessageLoggingExpectation(
-                final String name,
-                final String loggerName,
-                final Level level,
-                final String messagePattern,
-                final Object[] arguments,
-                final Predicate<Throwable> throwablePredicate) {
+        private ParameterizedMessageLoggingExpectation(final String name, final String loggerName, final Level level,
+                final String messagePattern, final Object[] arguments, final Predicate<Throwable> throwablePredicate) {
             this.name = name;
             this.loggerName = loggerName;
             this.level = level;
@@ -211,13 +193,11 @@ public class MaxMapCountCheckTests extends AbstractBootstrapCheckTestCase {
 
         @Override
         public void match(final LogEvent event) {
-            if (event.getLevel().equals(level) &&
-                    event.getLoggerName().equals(loggerName) &&
-                    event.getMessage() instanceof ParameterizedMessage) {
-                final ParameterizedMessage message = (ParameterizedMessage)event.getMessage();
-                saw = message.getFormat().equals(messagePattern) &&
-                        Arrays.deepEquals(arguments, message.getParameters()) &&
-                        throwablePredicate.test(event.getThrown());
+            if (event.getLevel().equals(level) && event.getLoggerName().equals(loggerName)
+                    && event.getMessage() instanceof ParameterizedMessage) {
+                final ParameterizedMessage message = (ParameterizedMessage) event.getMessage();
+                saw = message.getFormat().equals(messagePattern) && Arrays.deepEquals(arguments, message.getParameters())
+                        && throwablePredicate.test(event.getThrown());
             }
         }
 

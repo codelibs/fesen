@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.codelibs.fesen.action.admin.cluster.node.reload.NodesReloadSecureSettingsRequest;
 import org.codelibs.fesen.action.admin.cluster.node.reload.NodesReloadSecureSettingsRequestBuilder;
 import org.codelibs.fesen.action.admin.cluster.node.reload.NodesReloadSecureSettingsResponse;
@@ -37,23 +46,14 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public final class RestReloadSecureSettingsAction extends BaseRestHandler implements RestRequestFilter {
 
     static final ObjectParser<NodesReloadSecureSettingsRequest, String> PARSER =
-        new ObjectParser<>("reload_secure_settings", NodesReloadSecureSettingsRequest::new);
+            new ObjectParser<>("reload_secure_settings", NodesReloadSecureSettingsRequest::new);
 
     static {
         PARSER.declareString((request, value) -> request.setSecureStorePassword(new SecureString(value.toCharArray())),
-            new ParseField("secure_settings_password"));
+                new ParseField("secure_settings_password"));
     }
 
     @Override
@@ -63,19 +63,15 @@ public final class RestReloadSecureSettingsAction extends BaseRestHandler implem
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/_nodes/reload_secure_settings"),
-            new Route(POST, "/_nodes/{nodeId}/reload_secure_settings")));
+        return unmodifiableList(
+                asList(new Route(POST, "/_nodes/reload_secure_settings"), new Route(POST, "/_nodes/{nodeId}/reload_secure_settings")));
     }
 
     @Override
     public RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
         final String[] nodesIds = Strings.splitStringByCommaToArray(request.param("nodeId"));
-        final NodesReloadSecureSettingsRequestBuilder nodesRequestBuilder = client.admin()
-            .cluster()
-            .prepareReloadSecureSettings()
-            .setTimeout(request.param("timeout"))
-            .setNodesIds(nodesIds);
+        final NodesReloadSecureSettingsRequestBuilder nodesRequestBuilder =
+                client.admin().cluster().prepareReloadSecureSettings().setTimeout(request.param("timeout")).setNodesIds(nodesIds);
         request.withContentOrSourceParamParserOrNull(parser -> {
             if (parser != null) {
                 final NodesReloadSecureSettingsRequest nodesRequest = PARSER.parse(parser, null);
@@ -83,20 +79,18 @@ public final class RestReloadSecureSettingsAction extends BaseRestHandler implem
             }
         });
 
-        return channel -> nodesRequestBuilder
-                .execute(new RestBuilderListener<NodesReloadSecureSettingsResponse>(channel) {
-                    @Override
-                    public RestResponse buildResponse(NodesReloadSecureSettingsResponse response, XContentBuilder builder)
-                        throws Exception {
-                        builder.startObject();
-                        RestActions.buildNodesHeader(builder, channel.request(), response);
-                        builder.field("cluster_name", response.getClusterName().value());
-                        response.toXContent(builder, channel.request());
-                        builder.endObject();
-                        nodesRequestBuilder.request().closePassword();
-                        return new BytesRestResponse(RestStatus.OK, builder);
-                    }
-                });
+        return channel -> nodesRequestBuilder.execute(new RestBuilderListener<NodesReloadSecureSettingsResponse>(channel) {
+            @Override
+            public RestResponse buildResponse(NodesReloadSecureSettingsResponse response, XContentBuilder builder) throws Exception {
+                builder.startObject();
+                RestActions.buildNodesHeader(builder, channel.request(), response);
+                builder.field("cluster_name", response.getClusterName().value());
+                response.toXContent(builder, channel.request());
+                builder.endObject();
+                nodesRequestBuilder.request().closePassword();
+                return new BytesRestResponse(RestStatus.OK, builder);
+            }
+        });
     }
 
     @Override

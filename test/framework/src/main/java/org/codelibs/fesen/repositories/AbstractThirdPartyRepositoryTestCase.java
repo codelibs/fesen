@@ -18,6 +18,21 @@
  */
 package org.codelibs.fesen.repositories;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
+
+import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executor;
+
 import org.codelibs.fesen.action.ActionRunnable;
 import org.codelibs.fesen.action.admin.cluster.repositories.cleanup.CleanupRepositoryResponse;
 import org.codelibs.fesen.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
@@ -30,36 +45,17 @@ import org.codelibs.fesen.common.blobstore.BlobStore;
 import org.codelibs.fesen.common.blobstore.support.PlainBlobMetadata;
 import org.codelibs.fesen.common.settings.SecureSettings;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.repositories.RepositoriesService;
 import org.codelibs.fesen.repositories.blobstore.BlobStoreRepository;
 import org.codelibs.fesen.repositories.blobstore.BlobStoreTestUtil;
 import org.codelibs.fesen.snapshots.SnapshotState;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.ByteArrayInputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executor;
-
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
-
 public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeTestCase {
 
     @Override
     protected Settings nodeSettings() {
-        return Settings.builder()
-            .put(super.nodeSettings())
-            .setSecureSettings(credentials())
-            .build();
+        return Settings.builder().put(super.nodeSettings()).setSecureSettings(credentials()).build();
     }
 
     protected abstract SecureSettings credentials();
@@ -110,31 +106,17 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
         final String snapshotName = "test-snap-" + System.currentTimeMillis();
 
         logger.info("--> snapshot");
-        CreateSnapshotResponse createSnapshotResponse = client().admin()
-            .cluster()
-            .prepareCreateSnapshot("test-repo", snapshotName)
-            .setWaitForCompletion(true)
-            .setIndices("test-idx-*", "-test-idx-3")
-            .get();
+        CreateSnapshotResponse createSnapshotResponse = client().admin().cluster().prepareCreateSnapshot("test-repo", snapshotName)
+                .setWaitForCompletion(true).setIndices("test-idx-*", "-test-idx-3").get();
         assertThat(createSnapshotResponse.getSnapshotInfo().successfulShards(), greaterThan(0));
         assertThat(createSnapshotResponse.getSnapshotInfo().successfulShards(),
-            equalTo(createSnapshotResponse.getSnapshotInfo().totalShards()));
+                equalTo(createSnapshotResponse.getSnapshotInfo().totalShards()));
 
-        assertThat(client().admin()
-                .cluster()
-                .prepareGetSnapshots("test-repo")
-                .setSnapshots(snapshotName)
-                .get()
-                .getSnapshots()
-                .get(0)
-                .state(),
-            equalTo(SnapshotState.SUCCESS));
+        assertThat(
+                client().admin().cluster().prepareGetSnapshots("test-repo").setSnapshots(snapshotName).get().getSnapshots().get(0).state(),
+                equalTo(SnapshotState.SUCCESS));
 
-        assertTrue(client().admin()
-                .cluster()
-                .prepareDeleteSnapshot("test-repo", snapshotName)
-                .get()
-                .isAcknowledged());
+        assertTrue(client().admin().cluster().prepareDeleteSnapshot("test-repo", snapshotName).get().isAcknowledged());
     }
 
     public void testListChildren() throws Exception {
@@ -144,19 +126,19 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
         final int testBlobLen = randomIntBetween(1, 100);
         genericExec.execute(ActionRunnable.run(future, () -> {
             final BlobStore blobStore = repo.blobStore();
-            blobStore.blobContainer(repo.basePath().add("foo"))
-                .writeBlob("nested-blob", new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
-            blobStore.blobContainer(repo.basePath().add("foo").add("nested"))
-                .writeBlob("bar", new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
-            blobStore.blobContainer(repo.basePath().add("foo").add("nested2"))
-                .writeBlob("blub", new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
+            blobStore.blobContainer(repo.basePath().add("foo")).writeBlob("nested-blob",
+                    new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
+            blobStore.blobContainer(repo.basePath().add("foo").add("nested")).writeBlob("bar",
+                    new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
+            blobStore.blobContainer(repo.basePath().add("foo").add("nested2")).writeBlob("blub",
+                    new ByteArrayInputStream(randomByteArrayOfLength(testBlobLen)), testBlobLen, false);
         }));
         future.actionGet();
         assertChildren(repo.basePath(), Collections.singleton("foo"));
         assertBlobsByPrefix(repo.basePath(), "fo", Collections.emptyMap());
         assertChildren(repo.basePath().add("foo"), Arrays.asList("nested", "nested2"));
         assertBlobsByPrefix(repo.basePath().add("foo"), "nest",
-            Collections.singletonMap("nested-blob", new PlainBlobMetadata("nested-blob", testBlobLen)));
+                Collections.singletonMap("nested-blob", new PlainBlobMetadata("nested-blob", testBlobLen)));
         assertChildren(repo.basePath().add("foo").add("nested"), Collections.emptyList());
         if (randomBoolean()) {
             deleteAndAssertEmpty(repo.basePath());
@@ -186,27 +168,17 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
         final String snapshotName = "test-snap-" + System.currentTimeMillis();
 
         logger.info("--> snapshot");
-        CreateSnapshotResponse createSnapshotResponse = client().admin()
-            .cluster()
-            .prepareCreateSnapshot("test-repo", snapshotName)
-            .setWaitForCompletion(true)
-            .setIndices("test-idx-*", "-test-idx-3")
-            .get();
+        CreateSnapshotResponse createSnapshotResponse = client().admin().cluster().prepareCreateSnapshot("test-repo", snapshotName)
+                .setWaitForCompletion(true).setIndices("test-idx-*", "-test-idx-3").get();
         assertThat(createSnapshotResponse.getSnapshotInfo().successfulShards(), greaterThan(0));
         assertThat(createSnapshotResponse.getSnapshotInfo().successfulShards(),
-            equalTo(createSnapshotResponse.getSnapshotInfo().totalShards()));
+                equalTo(createSnapshotResponse.getSnapshotInfo().totalShards()));
 
-        assertThat(client().admin()
-                .cluster()
-                .prepareGetSnapshots("test-repo")
-                .setSnapshots(snapshotName)
-                .get()
-                .getSnapshots().get(0)
-                .state(),
-            equalTo(SnapshotState.SUCCESS));
+        assertThat(
+                client().admin().cluster().prepareGetSnapshots("test-repo").setSnapshots(snapshotName).get().getSnapshots().get(0).state(),
+                equalTo(SnapshotState.SUCCESS));
 
-        final BlobStoreRepository repo =
-            (BlobStoreRepository) getInstanceFromNode(RepositoriesService.class).repository("test-repo");
+        final BlobStoreRepository repo = (BlobStoreRepository) getInstanceFromNode(RepositoriesService.class).repository("test-repo");
         final Executor genericExec = repo.threadPool().executor(ThreadPool.Names.GENERIC);
 
         logger.info("--> creating a dangling index folder");
@@ -235,8 +207,8 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
         final PlainActionFuture<Void> future = PlainActionFuture.newFuture();
         genericExec.execute(ActionRunnable.run(future, () -> {
             final BlobStore blobStore = repo.blobStore();
-            blobStore.blobContainer(repo.basePath().add("indices").add("foo"))
-                .writeBlob("bar", new ByteArrayInputStream(new byte[3]), 3, false);
+            blobStore.blobContainer(repo.basePath().add("indices").add("foo")).writeBlob("bar", new ByteArrayInputStream(new byte[3]), 3,
+                    false);
             for (String prefix : Arrays.asList("snap-", "meta-")) {
                 blobStore.blobContainer(repo.basePath()).writeBlob(prefix + "foo.dat", new ByteArrayInputStream(new byte[3]), 3, false);
             }
@@ -250,9 +222,9 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
         executor.execute(ActionRunnable.supply(future, () -> {
             final BlobStore blobStore = repo.blobStore();
             return blobStore.blobContainer(repo.basePath().add("indices")).children().containsKey("foo")
-                && blobStore.blobContainer(repo.basePath().add("indices").add("foo")).blobExists("bar")
-                && blobStore.blobContainer(repo.basePath()).blobExists("meta-foo.dat")
-                && blobStore.blobContainer(repo.basePath()).blobExists("snap-foo.dat");
+                    && blobStore.blobContainer(repo.basePath().add("indices").add("foo")).blobExists("bar")
+                    && blobStore.blobContainer(repo.basePath()).blobExists("meta-foo.dat")
+                    && blobStore.blobContainer(repo.basePath()).blobExists("snap-foo.dat");
         }));
         return future.actionGet();
     }
@@ -278,8 +250,8 @@ public abstract class AbstractThirdPartyRepositoryTestCase extends ESSingleNodeT
     private Set<String> listChildren(BlobPath path) {
         final PlainActionFuture<Set<String>> future = PlainActionFuture.newFuture();
         final BlobStoreRepository repository = getRepository();
-        repository.threadPool().generic().execute(
-            ActionRunnable.supply(future, () -> repository.blobStore().blobContainer(path).children().keySet()));
+        repository.threadPool().generic()
+                .execute(ActionRunnable.supply(future, () -> repository.blobStore().blobContainer(path).children().keySet()));
         return future.actionGet();
     }
 

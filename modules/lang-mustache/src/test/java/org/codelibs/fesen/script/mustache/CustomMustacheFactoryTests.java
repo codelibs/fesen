@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.script.ScriptEngine;
-import org.codelibs.fesen.script.TemplateScript;
-import org.codelibs.fesen.script.mustache.CustomMustacheFactory;
-import org.codelibs.fesen.script.mustache.MustacheScriptEngine;
-import org.codelibs.fesen.test.ESTestCase;
-
-import java.util.Map;
-
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.codelibs.fesen.script.mustache.CustomMustacheFactory.JSON_MIME_TYPE;
@@ -35,6 +26,13 @@ import static org.codelibs.fesen.script.mustache.CustomMustacheFactory.PLAIN_TEX
 import static org.codelibs.fesen.script.mustache.CustomMustacheFactory.X_WWW_FORM_URLENCODED_MIME_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+
+import java.util.Map;
+
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.script.ScriptEngine;
+import org.codelibs.fesen.script.TemplateScript;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class CustomMustacheFactoryTests extends ESTestCase {
 
@@ -49,7 +47,7 @@ public class CustomMustacheFactoryTests extends ESTestCase {
         assertThat(e.getMessage(), equalTo("No encoder found for MIME type [test]"));
 
         assertThat(CustomMustacheFactory.createEncoder(CustomMustacheFactory.JSON_MIME_TYPE_WITH_CHARSET),
-            instanceOf(CustomMustacheFactory.JsonEscapeEncoder.class));
+                instanceOf(CustomMustacheFactory.JsonEscapeEncoder.class));
         assertThat(CustomMustacheFactory.createEncoder(CustomMustacheFactory.JSON_MIME_TYPE),
                 instanceOf(CustomMustacheFactory.JsonEscapeEncoder.class));
         assertThat(CustomMustacheFactory.createEncoder(CustomMustacheFactory.PLAIN_TEXT_MIME_TYPE),

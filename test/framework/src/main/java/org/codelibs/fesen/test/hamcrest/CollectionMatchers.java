@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.test.hamcrest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Matchers for easier handling of our custom collections,
@@ -70,7 +70,7 @@ public class CollectionMatchers {
 
         @Override
         protected boolean matchesSafely(ImmutableOpenMap item) {
-            for (String key: keys) {
+            for (String key : keys) {
                 if (!item.containsKey(key)) {
                     missingKey = key;
                     return false;
@@ -91,12 +91,8 @@ public class CollectionMatchers {
 
         @Override
         public void describeTo(Description description) {
-            description
-                .appendText("ImmutableOpenMap should contain all keys ")
-                .appendValue(keys)
-                .appendText(", but key [")
-                .appendValue(missingKey)
-                .appendText("] is missing");
+            description.appendText("ImmutableOpenMap should contain all keys ").appendValue(keys).appendText(", but key [")
+                    .appendValue(missingKey).appendText("] is missing");
         }
     }
 

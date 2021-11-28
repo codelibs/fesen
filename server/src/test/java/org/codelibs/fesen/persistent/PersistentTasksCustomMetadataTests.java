@@ -85,8 +85,7 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
         PersistentTasksCustomMetadata.Builder tasks = PersistentTasksCustomMetadata.builder();
         for (int i = 0; i < numberOfTasks; i++) {
             String taskId = UUIDs.base64UUID();
-            tasks.addTask(taskId, TestPersistentTasksExecutor.NAME, new TestParams(randomAlphaOfLength(10)),
-                    randomAssignment());
+            tasks.addTask(taskId, TestPersistentTasksExecutor.NAME, new TestParams(randomAlphaOfLength(10)), randomAssignment());
             if (randomBoolean()) {
                 // From time to time update status
                 tasks.updateTaskState(taskId, new State(randomAlphaOfLength(10)));
@@ -102,42 +101,41 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
 
     @Override
     protected NamedWriteableRegistry getNamedWriteableRegistry() {
-        return new NamedWriteableRegistry(Arrays.asList(
-                new Entry(Metadata.Custom.class, PersistentTasksCustomMetadata.TYPE, PersistentTasksCustomMetadata::new),
-                new Entry(NamedDiff.class, PersistentTasksCustomMetadata.TYPE, PersistentTasksCustomMetadata::readDiffFrom),
-                new Entry(PersistentTaskParams.class, TestPersistentTasksExecutor.NAME, TestParams::new),
-                new Entry(PersistentTaskState.class, TestPersistentTasksExecutor.NAME, State::new)
-        ));
+        return new NamedWriteableRegistry(
+                Arrays.asList(new Entry(Metadata.Custom.class, PersistentTasksCustomMetadata.TYPE, PersistentTasksCustomMetadata::new),
+                        new Entry(NamedDiff.class, PersistentTasksCustomMetadata.TYPE, PersistentTasksCustomMetadata::readDiffFrom),
+                        new Entry(PersistentTaskParams.class, TestPersistentTasksExecutor.NAME, TestParams::new),
+                        new Entry(PersistentTaskState.class, TestPersistentTasksExecutor.NAME, State::new)));
     }
 
     @Override
     protected Custom makeTestChanges(Custom testInstance) {
         Builder builder = PersistentTasksCustomMetadata.builder((PersistentTasksCustomMetadata) testInstance);
         switch (randomInt(3)) {
-            case 0:
+        case 0:
+            addRandomTask(builder);
+            break;
+        case 1:
+            if (builder.getCurrentTaskIds().isEmpty()) {
                 addRandomTask(builder);
-                break;
-            case 1:
-                if (builder.getCurrentTaskIds().isEmpty()) {
-                    addRandomTask(builder);
-                } else {
-                    builder.reassignTask(pickRandomTask(builder), randomAssignment());
-                }
-                break;
-            case 2:
-                if (builder.getCurrentTaskIds().isEmpty()) {
-                    addRandomTask(builder);
-                } else {
-                    builder.updateTaskState(pickRandomTask(builder), randomBoolean() ? new State(randomAlphaOfLength(10)) : null);
-                }
-                break;
-            case 3:
-                if (builder.getCurrentTaskIds().isEmpty()) {
-                    addRandomTask(builder);
-                } else {
-                    builder.removeTask(pickRandomTask(builder));
-                }
-                break;
+            } else {
+                builder.reassignTask(pickRandomTask(builder), randomAssignment());
+            }
+            break;
+        case 2:
+            if (builder.getCurrentTaskIds().isEmpty()) {
+                addRandomTask(builder);
+            } else {
+                builder.updateTaskState(pickRandomTask(builder), randomBoolean() ? new State(randomAlphaOfLength(10)) : null);
+            }
+            break;
+        case 3:
+            if (builder.getCurrentTaskIds().isEmpty()) {
+                addRandomTask(builder);
+            } else {
+                builder.removeTask(pickRandomTask(builder));
+            }
+            break;
         }
         return builder.build();
     }
@@ -165,11 +163,10 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
     @Override
     protected NamedXContentRegistry xContentRegistry() {
         return new NamedXContentRegistry(Arrays.asList(
-                new NamedXContentRegistry.Entry(PersistentTaskParams.class,
-                    new ParseField(TestPersistentTasksExecutor.NAME), TestParams::fromXContent),
-                new NamedXContentRegistry.Entry(PersistentTaskState.class,
-                    new ParseField(TestPersistentTasksExecutor.NAME), State::fromXContent)
-        ));
+                new NamedXContentRegistry.Entry(PersistentTaskParams.class, new ParseField(TestPersistentTasksExecutor.NAME),
+                        TestParams::fromXContent),
+                new NamedXContentRegistry.Entry(PersistentTaskState.class, new ParseField(TestPersistentTasksExecutor.NAME),
+                        State::fromXContent)));
     }
 
     @SuppressWarnings("unchecked")
@@ -221,37 +218,37 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
             boolean changed = false;
             for (int j = 0; j < randomIntBetween(1, 10); j++) {
                 switch (randomInt(3)) {
-                    case 0:
-                        lastKnownTask = addRandomTask(builder);
+                case 0:
+                    lastKnownTask = addRandomTask(builder);
+                    changed = true;
+                    break;
+                case 1:
+                    if (builder.hasTask(lastKnownTask)) {
                         changed = true;
-                        break;
-                    case 1:
-                        if (builder.hasTask(lastKnownTask)) {
-                            changed = true;
-                            builder.reassignTask(lastKnownTask, randomAssignment());
-                        } else {
-                            String fLastKnownTask = lastKnownTask;
-                            expectThrows(ResourceNotFoundException.class, () -> builder.reassignTask(fLastKnownTask, randomAssignment()));
-                        }
-                        break;
-                    case 2:
-                        if (builder.hasTask(lastKnownTask)) {
-                            changed = true;
-                            builder.updateTaskState(lastKnownTask, randomBoolean() ? new State(randomAlphaOfLength(10)) : null);
-                        } else {
-                            String fLastKnownTask = lastKnownTask;
-                            expectThrows(ResourceNotFoundException.class, () -> builder.updateTaskState(fLastKnownTask, null));
-                        }
-                        break;
-                    case 3:
-                        if (builder.hasTask(lastKnownTask)) {
-                            changed = true;
-                            builder.removeTask(lastKnownTask);
-                        } else {
-                            String fLastKnownTask = lastKnownTask;
-                            expectThrows(ResourceNotFoundException.class, () -> builder.removeTask(fLastKnownTask));
-                        }
-                        break;
+                        builder.reassignTask(lastKnownTask, randomAssignment());
+                    } else {
+                        String fLastKnownTask = lastKnownTask;
+                        expectThrows(ResourceNotFoundException.class, () -> builder.reassignTask(fLastKnownTask, randomAssignment()));
+                    }
+                    break;
+                case 2:
+                    if (builder.hasTask(lastKnownTask)) {
+                        changed = true;
+                        builder.updateTaskState(lastKnownTask, randomBoolean() ? new State(randomAlphaOfLength(10)) : null);
+                    } else {
+                        String fLastKnownTask = lastKnownTask;
+                        expectThrows(ResourceNotFoundException.class, () -> builder.updateTaskState(fLastKnownTask, null));
+                    }
+                    break;
+                case 3:
+                    if (builder.hasTask(lastKnownTask)) {
+                        changed = true;
+                        builder.removeTask(lastKnownTask);
+                    } else {
+                        String fLastKnownTask = lastKnownTask;
+                        expectThrows(ResourceNotFoundException.class, () -> builder.removeTask(fLastKnownTask));
+                    }
+                    break;
                 }
             }
             assertEquals(changed, builder.isChanged());
@@ -264,14 +261,13 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
 
         Version minVersion = allReleasedVersions().stream().filter(Version::isRelease).findFirst().orElseThrow(NoSuchElementException::new);
         final Version streamVersion = randomVersionBetween(random(), minVersion, getPreviousVersion(Version.CURRENT));
-        tasks.addTask("test_compatible_version", TestPersistentTasksExecutor.NAME,
-            new TestParams(null, randomVersionBetween(random(), minVersion, streamVersion),
-                randomBoolean() ? Optional.empty() : Optional.of("test")),
-            randomAssignment());
+        tasks.addTask("test_compatible_version", TestPersistentTasksExecutor.NAME, new TestParams(null,
+                randomVersionBetween(random(), minVersion, streamVersion), randomBoolean() ? Optional.empty() : Optional.of("test")),
+                randomAssignment());
         tasks.addTask("test_incompatible_version", TestPersistentTasksExecutor.NAME,
-            new TestParams(null, randomVersionBetween(random(), compatibleFutureVersion(streamVersion), Version.CURRENT),
-                randomBoolean() ? Optional.empty() : Optional.of("test")),
-            randomAssignment());
+                new TestParams(null, randomVersionBetween(random(), compatibleFutureVersion(streamVersion), Version.CURRENT),
+                        randomBoolean() ? Optional.empty() : Optional.of("test")),
+                randomAssignment());
         final BytesStreamOutput out = new BytesStreamOutput();
         out.setVersion(streamVersion);
         Set<String> features = new HashSet<>();
@@ -289,7 +285,7 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
         final StreamInput input = out.bytes().streamInput();
         input.setVersion(streamVersion);
         PersistentTasksCustomMetadata read =
-            new PersistentTasksCustomMetadata(new NamedWriteableAwareStreamInput(input, getNamedWriteableRegistry()));
+                new PersistentTasksCustomMetadata(new NamedWriteableAwareStreamInput(input, getNamedWriteableRegistry()));
 
         assertThat(read.taskMap().keySet(), equalTo(Collections.singleton("test_compatible_version")));
     }
@@ -298,13 +294,12 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
         PersistentTasksCustomMetadata.Builder tasks = PersistentTasksCustomMetadata.builder();
 
         Version minVersion = getFirstVersion();
-        tasks.addTask("test_compatible", TestPersistentTasksExecutor.NAME,
-            new TestParams(null, randomVersionBetween(random(), minVersion, Version.CURRENT),
-                randomBoolean() ? Optional.empty() : Optional.of("existing")),
-            randomAssignment());
+        tasks.addTask("test_compatible", TestPersistentTasksExecutor.NAME, new TestParams(null,
+                randomVersionBetween(random(), minVersion, Version.CURRENT), randomBoolean() ? Optional.empty() : Optional.of("existing")),
+                randomAssignment());
         tasks.addTask("test_incompatible", TestPersistentTasksExecutor.NAME,
-            new TestParams(null, randomVersionBetween(random(), minVersion, Version.CURRENT), Optional.of("non_existing")),
-            randomAssignment());
+                new TestParams(null, randomVersionBetween(random(), minVersion, Version.CURRENT), Optional.of("non_existing")),
+                randomAssignment());
         final BytesStreamOutput out = new BytesStreamOutput();
         out.setVersion(Version.CURRENT);
         Set<String> features = new HashSet<>();
@@ -314,7 +309,7 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
         tasks.build().writeTo(out);
 
         PersistentTasksCustomMetadata read = new PersistentTasksCustomMetadata(
-            new NamedWriteableAwareStreamInput(out.bytes().streamInput(), getNamedWriteableRegistry()));
+                new NamedWriteableAwareStreamInput(out.bytes().streamInput(), getNamedWriteableRegistry()));
         assertThat(read.taskMap().keySet(), equalTo(Collections.singleton("test_compatible")));
     }
 
@@ -325,21 +320,15 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
     }
 
     public void testDisassociateDeadNodes_givenAssignedPersistentTask() {
-        DiscoveryNodes nodes = DiscoveryNodes.builder()
-                .add(new DiscoveryNode("node1", buildNewFakeTransportAddress(), Version.CURRENT))
-                .localNodeId("node1")
-                .masterNodeId("node1")
-                .build();
+        DiscoveryNodes nodes = DiscoveryNodes.builder().add(new DiscoveryNode("node1", buildNewFakeTransportAddress(), Version.CURRENT))
+                .localNodeId("node1").masterNodeId("node1").build();
 
         String taskName = "test/task";
-        PersistentTasksCustomMetadata.Builder tasksBuilder =  PersistentTasksCustomMetadata.builder()
-                .addTask("task-id", taskName, emptyTaskParams(taskName),
-                        new PersistentTasksCustomMetadata.Assignment("node1", "test assignment"));
+        PersistentTasksCustomMetadata.Builder tasksBuilder = PersistentTasksCustomMetadata.builder().addTask("task-id", taskName,
+                emptyTaskParams(taskName), new PersistentTasksCustomMetadata.Assignment("node1", "test assignment"));
 
-        ClusterState originalState = ClusterState.builder(new ClusterName("persistent-tasks-tests"))
-                .nodes(nodes)
-                .metadata(Metadata.builder().putCustom(PersistentTasksCustomMetadata.TYPE, tasksBuilder.build()))
-                .build();
+        ClusterState originalState = ClusterState.builder(new ClusterName("persistent-tasks-tests")).nodes(nodes)
+                .metadata(Metadata.builder().putCustom(PersistentTasksCustomMetadata.TYPE, tasksBuilder.build())).build();
         ClusterState returnedState = PersistentTasksCustomMetadata.disassociateDeadNodes(originalState);
         assertThat(originalState, sameInstance(returnedState));
 
@@ -349,23 +338,18 @@ public class PersistentTasksCustomMetadataTests extends AbstractDiffableSerializ
     }
 
     public void testDisassociateDeadNodes() {
-        DiscoveryNodes nodes = DiscoveryNodes.builder()
-                .add(new DiscoveryNode("node1", buildNewFakeTransportAddress(), Version.CURRENT))
-                .localNodeId("node1")
-                .masterNodeId("node1")
-                .build();
+        DiscoveryNodes nodes = DiscoveryNodes.builder().add(new DiscoveryNode("node1", buildNewFakeTransportAddress(), Version.CURRENT))
+                .localNodeId("node1").masterNodeId("node1").build();
 
         String taskName = "test/task";
-        PersistentTasksCustomMetadata.Builder tasksBuilder =  PersistentTasksCustomMetadata.builder()
+        PersistentTasksCustomMetadata.Builder tasksBuilder = PersistentTasksCustomMetadata.builder()
                 .addTask("assigned-task", taskName, emptyTaskParams(taskName),
                         new PersistentTasksCustomMetadata.Assignment("node1", "test assignment"))
                 .addTask("task-on-deceased-node", taskName, emptyTaskParams(taskName),
-                new PersistentTasksCustomMetadata.Assignment("left-the-cluster", "test assignment"));
+                        new PersistentTasksCustomMetadata.Assignment("left-the-cluster", "test assignment"));
 
-        ClusterState originalState = ClusterState.builder(new ClusterName("persistent-tasks-tests"))
-                .nodes(nodes)
-                .metadata(Metadata.builder().putCustom(PersistentTasksCustomMetadata.TYPE, tasksBuilder.build()))
-                .build();
+        ClusterState originalState = ClusterState.builder(new ClusterName("persistent-tasks-tests")).nodes(nodes)
+                .metadata(Metadata.builder().putCustom(PersistentTasksCustomMetadata.TYPE, tasksBuilder.build())).build();
         ClusterState returnedState = PersistentTasksCustomMetadata.disassociateDeadNodes(originalState);
         assertThat(originalState, not(sameInstance(returnedState)));
 

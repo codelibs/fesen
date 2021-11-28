@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.threadpool.ThreadPool.Names;
-
 import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
 
 import java.util.Collections;
@@ -39,6 +30,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.threadpool.ThreadPool.Names;
+
 /**
  * A publication can succeed and complete before all nodes have applied the published state and acknowledged it; however we need every node
  * eventually either to apply the published state (or a later state) or be removed from the cluster. This component achieves this by
@@ -49,8 +49,7 @@ public class LagDetector {
     private static final Logger logger = LogManager.getLogger(LagDetector.class);
 
     // the timeout for each node to apply a cluster state update after the leader has applied it, before being removed from the cluster
-    public static final Setting<TimeValue> CLUSTER_FOLLOWER_LAG_TIMEOUT_SETTING =
-        Setting.timeSetting("cluster.follower_lag.timeout",
+    public static final Setting<TimeValue> CLUSTER_FOLLOWER_LAG_TIMEOUT_SETTING = Setting.timeSetting("cluster.follower_lag.timeout",
             TimeValue.timeValueMillis(90000), TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
 
     private final TimeValue clusterStateApplicationTimeout;
@@ -60,7 +59,7 @@ public class LagDetector {
     private final Map<DiscoveryNode, NodeAppliedStateTracker> appliedStateTrackersByNode = newConcurrentMap();
 
     public LagDetector(final Settings settings, final ThreadPool threadPool, final Consumer<DiscoveryNode> onLagDetected,
-                       final Supplier<DiscoveryNode> localNodeSupplier) {
+            final Supplier<DiscoveryNode> localNodeSupplier) {
         this.threadPool = threadPool;
         this.clusterStateApplicationTimeout = CLUSTER_FOLLOWER_LAG_TIMEOUT_SETTING.get(settings);
         this.onLagDetected = onLagDetected;
@@ -90,8 +89,8 @@ public class LagDetector {
     }
 
     public void startLagDetector(final long version) {
-        final List<NodeAppliedStateTracker> laggingTrackers
-            = appliedStateTrackersByNode.values().stream().filter(t -> t.appliedVersionLessThan(version)).collect(Collectors.toList());
+        final List<NodeAppliedStateTracker> laggingTrackers =
+                appliedStateTrackersByNode.values().stream().filter(t -> t.appliedVersionLessThan(version)).collect(Collectors.toList());
 
         if (laggingTrackers.isEmpty()) {
             logger.trace("lag detection for version {} is unnecessary: {}", version, appliedStateTrackersByNode.values());
@@ -114,10 +113,8 @@ public class LagDetector {
 
     @Override
     public String toString() {
-        return "LagDetector{" +
-            "clusterStateApplicationTimeout=" + clusterStateApplicationTimeout +
-            ", appliedStateTrackersByNode=" + appliedStateTrackersByNode.values() +
-            '}';
+        return "LagDetector{" + "clusterStateApplicationTimeout=" + clusterStateApplicationTimeout + ", appliedStateTrackersByNode="
+                + appliedStateTrackersByNode.values() + '}';
     }
 
     // for assertions
@@ -144,10 +141,7 @@ public class LagDetector {
 
         @Override
         public String toString() {
-            return "NodeAppliedStateTracker{" +
-                "discoveryNode=" + discoveryNode +
-                ", appliedVersion=" + appliedVersion +
-                '}';
+            return "NodeAppliedStateTracker{" + "discoveryNode=" + discoveryNode + ", appliedVersion=" + appliedVersion + '}';
         }
 
         void checkForLag(final long version) {
@@ -163,8 +157,8 @@ public class LagDetector {
             }
 
             logger.warn(
-                "node [{}] is lagging at cluster state version [{}], although publication of cluster state version [{}] completed [{}] ago",
-                discoveryNode, appliedVersion, version, clusterStateApplicationTimeout);
+                    "node [{}] is lagging at cluster state version [{}], although publication of cluster state version [{}] completed [{}] ago",
+                    discoveryNode, appliedVersion, version, clusterStateApplicationTimeout);
             onLagDetected.accept(discoveryNode);
         }
     }

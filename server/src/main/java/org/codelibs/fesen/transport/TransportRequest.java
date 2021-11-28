@@ -30,7 +30,8 @@ public abstract class TransportRequest extends TransportMessage implements TaskA
     public static class Empty extends TransportRequest {
         public static final Empty INSTANCE = new Empty();
 
-        public Empty() {}
+        public Empty() {
+        }
 
         public Empty(StreamInput in) throws IOException {
             super(in);

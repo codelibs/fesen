@@ -92,9 +92,8 @@ public class IngestDocumentTests extends ESTestCase {
         assertThat(ingestDocument.getFieldValue("_type", String.class), equalTo("type"));
         assertThat(ingestDocument.getFieldValue("_id", String.class), equalTo("id"));
         assertThat(ingestDocument.getFieldValue("_ingest.timestamp", ZonedDateTime.class),
-            both(notNullValue()).and(not(equalTo(BOGUS_TIMESTAMP))));
-        assertThat(ingestDocument.getFieldValue("_source._ingest.timestamp", ZonedDateTime.class),
-            equalTo(BOGUS_TIMESTAMP));
+                both(notNullValue()).and(not(equalTo(BOGUS_TIMESTAMP))));
+        assertThat(ingestDocument.getFieldValue("_source._ingest.timestamp", ZonedDateTime.class), equalTo(BOGUS_TIMESTAMP));
     }
 
     public void testGetSourceObject() {
@@ -999,8 +998,8 @@ public class IngestDocumentTests extends ESTestCase {
             assertThat(ingestDocument, equalTo(otherIngestDocument));
             assertThat(otherIngestDocument, equalTo(ingestDocument));
             assertThat(ingestDocument.hashCode(), equalTo(otherIngestDocument.hashCode()));
-            IngestDocument thirdIngestDocument = new IngestDocument(Collections.unmodifiableMap(sourceAndMetadata),
-                    Collections.unmodifiableMap(ingestMetadata));
+            IngestDocument thirdIngestDocument =
+                    new IngestDocument(Collections.unmodifiableMap(sourceAndMetadata), Collections.unmodifiableMap(ingestMetadata));
             assertThat(thirdIngestDocument, equalTo(ingestDocument));
             assertThat(ingestDocument, equalTo(thirdIngestDocument));
             assertThat(ingestDocument.hashCode(), equalTo(thirdIngestDocument.hashCode()));
@@ -1035,10 +1034,8 @@ public class IngestDocumentTests extends ESTestCase {
         IngestDocument original = new IngestDocument(sourceAndMetadata, new HashMap<>());
         IngestDocument copy = new IngestDocument(original);
 
-        assertThat(copy.getSourceAndMetadata().get("beforeClockChange"),
-            equalTo(original.getSourceAndMetadata().get("beforeClockChange")));
-        assertThat(copy.getSourceAndMetadata().get("afterClockChange"),
-            equalTo(original.getSourceAndMetadata().get("afterClockChange")));
+        assertThat(copy.getSourceAndMetadata().get("beforeClockChange"), equalTo(original.getSourceAndMetadata().get("beforeClockChange")));
+        assertThat(copy.getSourceAndMetadata().get("afterClockChange"), equalTo(original.getSourceAndMetadata().get("afterClockChange")));
     }
 
     public void testSetInvalidSourceField() throws Exception {

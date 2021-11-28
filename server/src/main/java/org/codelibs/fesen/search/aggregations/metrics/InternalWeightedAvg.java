@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class InternalWeightedAvg extends InternalNumericMetricsAggregation.SingleValue implements WeightedAvg {
     private final double sum;
@@ -116,12 +116,14 @@ public class InternalWeightedAvg extends InternalNumericMetricsAggregation.Singl
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         InternalWeightedAvg other = (InternalWeightedAvg) obj;
-        return Objects.equals(sum, other.sum) &&
-                Objects.equals(weight, other.weight) &&
-                Objects.equals(format.getWriteableName(), other.format.getWriteableName());
+        return Objects.equals(sum, other.sum) && Objects.equals(weight, other.weight)
+                && Objects.equals(format.getWriteableName(), other.format.getWriteableName());
     }
 }

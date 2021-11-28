@@ -78,7 +78,7 @@ public class BatchedRerouteServiceTests extends ESTestCase {
         for (int i = 0; i < iterations; i++) {
             rerouteCountBeforeReroute = Math.max(rerouteCountBeforeReroute, rerouteCount.get());
             batchedRerouteService.reroute("iteration " + i, randomFrom(EnumSet.allOf(Priority.class)),
-                ActionListener.wrap(countDownLatch::countDown));
+                    ActionListener.wrap(countDownLatch::countDown));
         }
         countDownLatch.await(10, TimeUnit.SECONDS);
         assertThat(rerouteCountBeforeReroute, lessThan(rerouteCount.get()));
@@ -133,11 +133,11 @@ public class BatchedRerouteServiceTests extends ESTestCase {
                 }
                 actions.add(() -> {
                     clusterService.submitStateUpdateTask("other task " + iteration + " at " + priority,
-                        new ClusterStateUpdateTask(priority) {
+                            new ClusterStateUpdateTask(priority) {
 
-                            @Override
-                            public ClusterState execute(ClusterState currentState) {
-                                switch (priority) {
+                                @Override
+                                public ClusterState execute(ClusterState currentState) {
+                                    switch (priority) {
                                     case IMMEDIATE:
                                         if (submittedConcurrentlyWithReroute) {
                                             assertFalse("should have rerouted after " + priority + " priority task", rerouteExecuted.get());
@@ -153,20 +153,20 @@ public class BatchedRerouteServiceTests extends ESTestCase {
                                     default:
                                         fail("unexpected priority: " + priority);
                                         break;
+                                    }
+                                    return currentState;
                                 }
-                                return currentState;
-                            }
 
-                            @Override
-                            public void onFailure(String source, Exception e) {
-                                throw new AssertionError(source, e);
-                            }
+                                @Override
+                                public void onFailure(String source, Exception e) {
+                                    throw new AssertionError(source, e);
+                                }
 
-                            @Override
-                            public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
-                                tasksCompletedCountDown.countDown();
-                            }
-                        });
+                                @Override
+                                public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
+                                    tasksCompletedCountDown.countDown();
+                                }
+                            });
                     if (submittedConcurrentlyWithReroute) {
                         tasksSubmittedCountDown.countDown();
                     }
@@ -194,33 +194,31 @@ public class BatchedRerouteServiceTests extends ESTestCase {
         final int iterations = between(1, 100);
         final CountDownLatch countDownLatch = new CountDownLatch(iterations);
         for (int i = 0; i < iterations; i++) {
-            batchedRerouteService.reroute("iteration " + i,
-                randomFrom(EnumSet.allOf(Priority.class)), ActionListener.wrap(
-                    r -> {
-                        countDownLatch.countDown();
-                        if (rarely()) {
-                            throw new FesenException("failure during notification");
-                        }
-                    }, e -> {
-                        countDownLatch.countDown();
-                        if (randomBoolean()) {
-                            throw new FesenException("failure during failure notification", e);
-                        }
-                    }));
+            batchedRerouteService.reroute("iteration " + i, randomFrom(EnumSet.allOf(Priority.class)), ActionListener.wrap(r -> {
+                countDownLatch.countDown();
+                if (rarely()) {
+                    throw new FesenException("failure during notification");
+                }
+            }, e -> {
+                countDownLatch.countDown();
+                if (randomBoolean()) {
+                    throw new FesenException("failure during failure notification", e);
+                }
+            }));
             if (rarely()) {
                 clusterService.getMasterService().setClusterStatePublisher(
-                    randomBoolean()
-                        ? ClusterServiceUtils.createClusterStatePublisher(clusterService.getClusterApplierService())
-                        : (event, publishListener, ackListener)
-                        -> publishListener.onFailure(new FailedToCommitClusterStateException("simulated")));
+                        randomBoolean() ? ClusterServiceUtils.createClusterStatePublisher(clusterService.getClusterApplierService())
+                                : (event, publishListener, ackListener) -> publishListener
+                                        .onFailure(new FailedToCommitClusterStateException("simulated")));
             }
 
             if (rarely()) {
                 clusterService.getClusterApplierService().onNewClusterState("simulated", () -> {
                     ClusterState state = clusterService.state();
-                    return ClusterState.builder(state).nodes(DiscoveryNodes.builder(state.nodes())
-                        .masterNodeId(randomBoolean() ? null : state.nodes().getLocalNodeId())).build();
-                }, (source, e) -> { });
+                    return ClusterState.builder(state).nodes(
+                            DiscoveryNodes.builder(state.nodes()).masterNodeId(randomBoolean() ? null : state.nodes().getLocalNodeId()))
+                            .build();
+                }, (source, e) -> {});
             }
         }
 

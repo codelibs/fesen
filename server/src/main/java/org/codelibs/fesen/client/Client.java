@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.client;
 
+import java.util.Map;
+
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.bulk.BulkRequest;
@@ -64,11 +66,9 @@ import org.codelibs.fesen.action.update.UpdateRequestBuilder;
 import org.codelibs.fesen.action.update.UpdateResponse;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.Nullable;
-
-import java.util.Map;
 
 /**
  * A client provides a one stop interface for performing actions/operations against the cluster.
@@ -87,11 +87,11 @@ public interface Client extends FesenClient, Releasable {
 
     Setting<String> CLIENT_TYPE_SETTING_S = new Setting<>("client.type", "node", (s) -> {
         switch (s) {
-            case "node":
-            case "transport":
-                return s;
-            default:
-                throw new IllegalArgumentException("Can't parse [client.type] must be one of [node, transport]");
+        case "node":
+        case "transport":
+            return s;
+        default:
+            throw new IllegalArgumentException("Can't parse [client.type] must be one of [node, transport]");
         }
     }, Property.NodeScope);
 
@@ -99,7 +99,6 @@ public interface Client extends FesenClient, Releasable {
      * The admin client that can be used to perform administrative operations.
      */
     AdminClient admin();
-
 
     /**
      * Index a JSON source associated with a given index and type.

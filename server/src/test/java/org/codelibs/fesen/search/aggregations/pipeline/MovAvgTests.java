@@ -108,26 +108,21 @@ public class MovAvgTests extends BasePipelineAggregationTestCase<MovAvgPipelineA
 
     public void testDefaultParsing() throws Exception {
         MovAvgPipelineAggregationBuilder expected = new MovAvgPipelineAggregationBuilder("commits_moving_avg", "commits");
-        String json = "{" +
-            "    \"commits_moving_avg\": {" +
-            "        \"moving_avg\": {" +
-            "            \"buckets_path\": \"commits\"" +
-            "        }" +
-            "    }" +
-            "}";
+        String json = "{" + "    \"commits_moving_avg\": {" + "        \"moving_avg\": {" + "            \"buckets_path\": \"commits\""
+                + "        }" + "    }" + "}";
         PipelineAggregationBuilder newAgg = parse(createParser(JsonXContent.jsonXContent, json));
         assertWarnings("The moving_avg aggregation has been deprecated in favor of the moving_fn aggregation.");
         assertNotSame(newAgg, expected);
         assertEquals(expected, newAgg);
         assertEquals(expected.hashCode(), newAgg.hashCode());
     }
-    
+
     /**
      * The validation should verify the parent aggregation is allowed.
      */
     public void testValidate() throws IOException {
         assertThat(validate(PipelineAggregationHelperTests.getRandomSequentiallyOrderedParentAgg(),
-            new MovAvgPipelineAggregationBuilder("name", "valid")), nullValue());
+                new MovAvgPipelineAggregationBuilder("name", "valid")), nullValue());
     }
 
     /**
@@ -136,8 +131,8 @@ public class MovAvgTests extends BasePipelineAggregationTestCase<MovAvgPipelineA
      * DateHistogramAggregatorFactory or AutoDateHistogramAggregatorFactory.
      */
     public void testValidateException() throws IOException {
-        assertThat(validate(emptyList(), new MovAvgPipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
-                "Validation Failed: 1: moving_avg aggregation [name] must have a histogram, date_histogram "
-                    + "or auto_date_histogram as parent but doesn't have a parent;"));
+        assertThat(validate(emptyList(), new MovAvgPipelineAggregationBuilder("name", "invalid_agg>metric")),
+                equalTo("Validation Failed: 1: moving_avg aggregation [name] must have a histogram, date_histogram "
+                        + "or auto_date_histogram as parent but doesn't have a parent;"));
     }
 }

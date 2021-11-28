@@ -19,18 +19,9 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.index.analysis.AnalyzerScope;
-import org.codelibs.fesen.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.index.mapper.ContentPath;
-import org.codelibs.fesen.index.mapper.FieldMapper;
-import org.codelibs.fesen.index.mapper.Mapper;
-import org.codelibs.fesen.index.mapper.MapperService;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,9 +31,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.index.analysis.AnalyzerScope;
+import org.codelibs.fesen.index.analysis.NamedAnalyzer;
 
 /**
  * Base class for testing {@link FieldMapper}s.
@@ -85,49 +81,40 @@ public abstract class FieldMapperTestCase2<T extends FieldMapper.Builder<?>> ext
     }), new Modifier("doc_values", false, (a, b) -> {
         a.docValues(true);
         b.docValues(false);
-    }),
-        booleanModifier("eager_global_ordinals", true, (a, t) -> a.setEagerGlobalOrdinals(t)),
-        booleanModifier("index", false, (a, t) -> a.index(t)),
-        booleanModifier("norms", false, FieldMapper.Builder::omitNorms),
-        new Modifier("search_analyzer", true, (a, b) -> {
-            a.searchAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
-            a.searchAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
-        }),
-        new Modifier("search_quote_analyzer", true, (a, b) -> {
-            a.searchQuoteAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
-            a.searchQuoteAnalyzer(new NamedAnalyzer("whitespace", AnalyzerScope.INDEX, new WhitespaceAnalyzer()));
-        }),
-        new Modifier("store", false, (a, b) -> {
-            a.store(true);
-            b.store(false);
-        }),
-        new Modifier("term_vector", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(false);
-        }),
-        new Modifier("term_vector_positions", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(false);
-        }),
-        new Modifier("term_vector_payloads", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(true);
-            a.storeTermVectorPayloads(true);
-            b.storeTermVectorPayloads(false);
-        }),
-        new Modifier("term_vector_offsets", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(true);
-            a.storeTermVectorOffsets(true);
-            b.storeTermVectorOffsets(false);
-        })
-    ));
+    }), booleanModifier("eager_global_ordinals", true, (a, t) -> a.setEagerGlobalOrdinals(t)),
+            booleanModifier("index", false, (a, t) -> a.index(t)), booleanModifier("norms", false, FieldMapper.Builder::omitNorms),
+            new Modifier("search_analyzer", true, (a, b) -> {
+                a.searchAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
+                a.searchAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
+            }), new Modifier("search_quote_analyzer", true, (a, b) -> {
+                a.searchQuoteAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
+                a.searchQuoteAnalyzer(new NamedAnalyzer("whitespace", AnalyzerScope.INDEX, new WhitespaceAnalyzer()));
+            }), new Modifier("store", false, (a, b) -> {
+                a.store(true);
+                b.store(false);
+            }), new Modifier("term_vector", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(false);
+            }), new Modifier("term_vector_positions", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(false);
+            }), new Modifier("term_vector_payloads", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(true);
+                a.storeTermVectorPayloads(true);
+                b.storeTermVectorPayloads(false);
+            }), new Modifier("term_vector_offsets", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(true);
+                a.storeTermVectorOffsets(true);
+                b.storeTermVectorOffsets(false);
+            })));
 
     /**
      * Add type-specific modifiers for consistency checking.
@@ -159,7 +146,7 @@ public abstract class FieldMapperTestCase2<T extends FieldMapper.Builder<?>> ext
         {
             FieldMapper mapper = (FieldMapper) builder1.build(context);
             FieldMapper toMerge = (FieldMapper) builder2.build(context);
-            mapper.merge(toMerge);  // identical mappers should merge with no issue
+            mapper.merge(toMerge); // identical mappers should merge with no issue
         }
         {
             FieldMapper mapper = (FieldMapper) newBuilder().build(context);
@@ -185,11 +172,8 @@ public abstract class FieldMapperTestCase2<T extends FieldMapper.Builder<?>> ext
             if (modifier.updateable) {
                 mapper.merge(toMerge);
             } else {
-                IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
-                    "Expected an error when merging property difference " + modifier.property,
-                    () -> mapper.merge(toMerge)
-                );
+                IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
+                        "Expected an error when merging property difference " + modifier.property, () -> mapper.merge(toMerge));
                 assertThat(e.getMessage(), containsString(modifier.property));
             }
         }
@@ -229,9 +213,8 @@ public abstract class FieldMapperTestCase2<T extends FieldMapper.Builder<?>> ext
     }
 
     private XContentBuilder mappingsToJson(ToXContent builder, boolean includeDefaults) throws IOException {
-        ToXContent.Params params = includeDefaults
-            ? new ToXContent.MapParams(singletonMap("include_defaults", "true"))
-            : ToXContent.EMPTY_PARAMS;
+        ToXContent.Params params =
+                includeDefaults ? new ToXContent.MapParams(singletonMap("include_defaults", "true")) : ToXContent.EMPTY_PARAMS;
         return mapping(b -> builder.toXContent(b, params));
     }
 

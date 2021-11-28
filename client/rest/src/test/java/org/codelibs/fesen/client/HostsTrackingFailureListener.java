@@ -19,17 +19,15 @@
 
 package org.codelibs.fesen.client;
 
-import org.apache.http.HttpHost;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.RestClient;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.apache.http.HttpHost;
 
 /**
  * {@link RestClient.FailureListener} impl that allows to track when it gets called for which host.
@@ -44,7 +42,7 @@ class HostsTrackingFailureListener extends RestClient.FailureListener {
 
     void assertCalled(List<Node> nodes) {
         HttpHost[] hosts = new HttpHost[nodes.size()];
-        for (int i = 0 ; i < nodes.size(); i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             hosts[i] = nodes.get(i).getHost();
         }
         assertCalled(hosts);

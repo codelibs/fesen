@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.gateway;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.Version;
@@ -31,13 +38,6 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.index.Index;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Handles writing and loading {@link Manifest}, {@link Metadata} and {@link IndexMetadata}
@@ -79,8 +79,8 @@ public class MetaStateService {
         if (manifest.isGlobalGenerationMissing()) {
             metadataBuilder = Metadata.builder();
         } else {
-            final Metadata globalMetadata = METADATA_FORMAT.loadGeneration(logger, namedXContentRegistry, manifest.getGlobalGeneration(),
-                    nodeEnv.nodeDataPaths());
+            final Metadata globalMetadata =
+                    METADATA_FORMAT.loadGeneration(logger, namedXContentRegistry, manifest.getGlobalGeneration(), nodeEnv.nodeDataPaths());
             if (globalMetadata != null) {
                 metadataBuilder = Metadata.builder(globalMetadata);
             } else {
@@ -97,8 +97,8 @@ public class MetaStateService {
             if (indexMetadata != null) {
                 metadataBuilder.put(indexMetadata, false);
             } else {
-                throw new IOException("failed to find metadata for existing index " + index.getName() + " [location: " + indexFolderName +
-                        ", generation: " + generation + "]");
+                throw new IOException("failed to find metadata for existing index " + index.getName() + " [location: " + indexFolderName
+                        + ", generation: " + generation + "]");
             }
         }
 
@@ -128,9 +128,8 @@ public class MetaStateService {
         }
 
         for (String indexFolderName : nodeEnv.availableIndexFolders()) {
-            Tuple<IndexMetadata, Long> indexMetadataAndGeneration =
-                    INDEX_METADATA_FORMAT.loadLatestStateWithGeneration(logger, namedXContentRegistry,
-                            nodeEnv.resolveIndexFolder(indexFolderName));
+            Tuple<IndexMetadata, Long> indexMetadataAndGeneration = INDEX_METADATA_FORMAT.loadLatestStateWithGeneration(logger,
+                    namedXContentRegistry, nodeEnv.resolveIndexFolder(indexFolderName));
             assert Version.CURRENT.major < 9 : "failed to find manifest file, which is mandatory staring with Fesen version 2.0";
             IndexMetadata indexMetadata = indexMetadataAndGeneration.v1();
             long generation = indexMetadataAndGeneration.v2();
@@ -165,10 +164,10 @@ public class MetaStateService {
     List<IndexMetadata> loadIndicesStates(Predicate<String> excludeIndexPathIdsPredicate) throws IOException {
         List<IndexMetadata> indexMetadataList = new ArrayList<>();
         for (String indexFolderName : nodeEnv.availableIndexFolders(excludeIndexPathIdsPredicate)) {
-            assert excludeIndexPathIdsPredicate.test(indexFolderName) == false :
-                    "unexpected folder " + indexFolderName + " which should have been excluded";
-            IndexMetadata indexMetadata = INDEX_METADATA_FORMAT.loadLatestState(logger, namedXContentRegistry,
-                    nodeEnv.resolveIndexFolder(indexFolderName));
+            assert excludeIndexPathIdsPredicate.test(indexFolderName) == false : "unexpected folder " + indexFolderName
+                    + " which should have been excluded";
+            IndexMetadata indexMetadata =
+                    INDEX_METADATA_FORMAT.loadLatestState(logger, namedXContentRegistry, nodeEnv.resolveIndexFolder(indexFolderName));
             if (indexMetadata != null) {
                 final String indexPathId = indexMetadata.getIndex().getUUID();
                 if (indexFolderName.equals(indexPathId)) {
@@ -229,8 +228,7 @@ public class MetaStateService {
         final Index index = indexMetadata.getIndex();
         logger.trace("[{}] writing state, reason [{}]", index, reason);
         try {
-            long generation = INDEX_METADATA_FORMAT.write(indexMetadata,
-                    nodeEnv.indexPaths(indexMetadata.getIndex()));
+            long generation = INDEX_METADATA_FORMAT.write(indexMetadata, nodeEnv.indexPaths(indexMetadata.getIndex()));
             logger.trace("[{}] state written", index);
             return generation;
         } catch (WriteStateException ex) {

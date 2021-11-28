@@ -19,23 +19,12 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.nio.BytesChannelContext;
-import org.codelibs.fesen.nio.ChannelContext;
-import org.codelibs.fesen.nio.ChannelFactory;
-import org.codelibs.fesen.nio.Config;
-import org.codelibs.fesen.nio.EventHandler;
-import org.codelibs.fesen.nio.FlushReadyWrite;
-import org.codelibs.fesen.nio.InboundChannelBuffer;
-import org.codelibs.fesen.nio.NioChannelHandler;
-import org.codelibs.fesen.nio.NioSelector;
-import org.codelibs.fesen.nio.NioServerSocketChannel;
-import org.codelibs.fesen.nio.NioSocketChannel;
-import org.codelibs.fesen.nio.RoundRobinSupplier;
-import org.codelibs.fesen.nio.SelectionKeyUtils;
-import org.codelibs.fesen.nio.ServerChannelContext;
-import org.codelibs.fesen.nio.SocketChannelContext;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,10 +39,8 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 public class EventHandlerTests extends ESTestCase {
 
@@ -236,7 +223,6 @@ public class EventHandlerTests extends ESTestCase {
         NioSocketChannel channel = mock(NioSocketChannel.class);
         when(channel.getContext()).thenReturn(context);
 
-
         assertEquals(SelectionKey.OP_READ | SelectionKey.OP_WRITE, key.interestOps());
         handler.postHandling(context);
         assertEquals(SelectionKey.OP_READ, key.interestOps());
@@ -256,9 +242,8 @@ public class EventHandlerTests extends ESTestCase {
 
     private class DoNotRegisterSocketContext extends BytesChannelContext {
 
-
         DoNotRegisterSocketContext(NioSocketChannel channel, NioSelector selector, Consumer<Exception> exceptionHandler,
-                                   NioChannelHandler handler) {
+                NioChannelHandler handler) {
             super(channel, selector, getSocketConfig(), exceptionHandler, handler, InboundChannelBuffer.allocatingInstance());
         }
 
@@ -271,7 +256,6 @@ public class EventHandlerTests extends ESTestCase {
     }
 
     private class DoNotRegisterServerContext extends ServerChannelContext {
-
 
         @SuppressWarnings("unchecked")
         DoNotRegisterServerContext(NioServerSocketChannel channel, NioSelector selector, Consumer<NioSocketChannel> acceptor) {
@@ -292,6 +276,6 @@ public class EventHandlerTests extends ESTestCase {
 
     private static Config.Socket getSocketConfig() {
         return new Config.Socket(randomBoolean(), randomBoolean(), -1, -1, -1, randomBoolean(), -1, -1, mock(InetSocketAddress.class),
-            randomBoolean());
+                randomBoolean());
     }
 }

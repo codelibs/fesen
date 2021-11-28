@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.discovery.zen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -36,15 +45,6 @@ import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.TimeValue;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * This class processes incoming join request (passed zia {@link ZenDiscovery}). Incoming nodes
  * are directly added to the cluster state or are accumulated during master election.
@@ -60,9 +60,8 @@ public class NodeJoinController {
     // mutation should be done under lock
     private ElectionContext electionContext = null;
 
-
     public NodeJoinController(Settings settings, MasterService masterService, AllocationService allocationService,
-                              ElectMasterService electMaster, RerouteService rerouteService) {
+            ElectMasterService electMaster, RerouteService rerouteService) {
         this.masterService = masterService;
         joinTaskExecutor = new JoinTaskExecutor(settings, allocationService, logger, rerouteService) {
             @Override
@@ -175,9 +174,8 @@ public class NodeJoinController {
             electionContext.addIncomingJoin(node, callback);
             checkPendingJoinsAndElectIfNeeded();
         } else {
-            masterService.submitStateUpdateTask("zen-disco-node-join",
-                new JoinTaskExecutor.Task(node, "no election context"), ClusterStateTaskConfig.build(Priority.URGENT),
-                joinTaskExecutor, new JoinTaskListener(callback, logger));
+            masterService.submitStateUpdateTask("zen-disco-node-join", new JoinTaskExecutor.Task(node, "no election context"),
+                    ClusterStateTaskConfig.build(Priority.URGENT), joinTaskExecutor, new JoinTaskListener(callback, logger));
         }
     }
 
@@ -191,12 +189,12 @@ public class NodeJoinController {
         if (electionContext.isEnoughPendingJoins(pendingMasterJoins) == false) {
             if (logger.isTraceEnabled()) {
                 logger.trace("not enough joins for election. Got [{}], required [{}]", pendingMasterJoins,
-                    electionContext.requiredMasterJoins);
+                        electionContext.requiredMasterJoins);
             }
         } else {
             if (logger.isTraceEnabled()) {
                 logger.trace("have enough joins for election. Got [{}], required [{}]", pendingMasterJoins,
-                    electionContext.requiredMasterJoins);
+                        electionContext.requiredMasterJoins);
             }
             electionContext.closeAndBecomeMaster();
             electionContext = null; // clear this out so future joins won't be accumulated
@@ -237,7 +235,6 @@ public class NodeJoinController {
             joinRequestAccumulator.computeIfAbsent(node, n -> new ArrayList<>()).add(callback);
         }
 
-
         public synchronized boolean isEnoughPendingJoins(int pendingMasterJoins) {
             final boolean hasEnough;
             if (requiredMasterJoins < 0) {
@@ -252,8 +249,8 @@ public class NodeJoinController {
 
         private Map<JoinTaskExecutor.Task, ClusterStateTaskListener> getPendingAsTasks(String reason) {
             Map<JoinTaskExecutor.Task, ClusterStateTaskListener> tasks = new HashMap<>();
-            joinRequestAccumulator.entrySet().stream().forEach(e -> tasks.put(
-                new JoinTaskExecutor.Task(e.getKey(), reason), new JoinTaskListener(e.getValue(), logger)));
+            joinRequestAccumulator.entrySet().stream()
+                    .forEach(e -> tasks.put(new JoinTaskExecutor.Task(e.getKey(), reason), new JoinTaskListener(e.getValue(), logger)));
             return tasks;
         }
 
@@ -270,7 +267,7 @@ public class NodeJoinController {
         public synchronized void closeAndBecomeMaster() {
             assert callback != null : "becoming a master but the callback is not yet set";
             assert isEnoughPendingJoins(getPendingMasterJoinsCount()) : "becoming a master but pending joins of "
-                + getPendingMasterJoinsCount() + " are not enough. needs [" + requiredMasterJoins + "];";
+                    + getPendingMasterJoinsCount() + " are not enough. needs [" + requiredMasterJoins + "];";
 
             innerClose();
 

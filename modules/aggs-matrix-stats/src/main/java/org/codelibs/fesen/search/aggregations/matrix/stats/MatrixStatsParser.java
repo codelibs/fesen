@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.MultiValueMode;
-import org.codelibs.fesen.search.aggregations.support.ValueType;
-import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
-import org.codelibs.fesen.search.aggregations.support.ArrayValuesSourceParser.NumericValuesSourceParser;
-
 import static org.codelibs.fesen.search.aggregations.support.ArrayValuesSourceAggregationBuilder.MULTIVALUE_MODE_FIELD;
 
 import java.io.IOException;
 import java.util.Map;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.MultiValueMode;
+import org.codelibs.fesen.search.aggregations.support.ArrayValuesSourceParser.NumericValuesSourceParser;
+import org.codelibs.fesen.search.aggregations.support.ValueType;
+import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
 public class MatrixStatsParser extends NumericValuesSourceParser {
 
@@ -38,7 +38,7 @@ public class MatrixStatsParser extends NumericValuesSourceParser {
 
     @Override
     protected boolean token(String aggregationName, String currentFieldName, XContentParser.Token token, XContentParser parser,
-                            Map<ParseField, Object> otherOptions) throws IOException {
+            Map<ParseField, Object> otherOptions) throws IOException {
         if (MULTIVALUE_MODE_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
             if (token == XContentParser.Token.VALUE_STRING) {
                 otherOptions.put(MULTIVALUE_MODE_FIELD, parser.text());
@@ -50,9 +50,9 @@ public class MatrixStatsParser extends NumericValuesSourceParser {
 
     @Override
     protected MatrixStatsAggregationBuilder createFactory(String aggregationName, ValuesSourceType valuesSourceType,
-                                                          ValueType targetValueType, Map<ParseField, Object> otherOptions) {
+            ValueType targetValueType, Map<ParseField, Object> otherOptions) {
         MatrixStatsAggregationBuilder builder = new MatrixStatsAggregationBuilder(aggregationName);
-        String mode = (String)otherOptions.get(MULTIVALUE_MODE_FIELD);
+        String mode = (String) otherOptions.get(MULTIVALUE_MODE_FIELD);
         if (mode != null) {
             builder.multiValueMode(MultiValueMode.fromString(mode));
         }

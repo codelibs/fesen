@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.transport;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.monitor.jvm.JvmInfo;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
@@ -27,13 +35,6 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.monitor.jvm.JvmInfo;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NettyAllocator {
 
@@ -53,7 +54,7 @@ public class NettyAllocator {
             ALLOCATOR = ByteBufAllocator.DEFAULT;
             SUGGESTED_MAX_ALLOCATION_SIZE = 1024 * 1024;
             DESCRIPTION = "[name=netty_default, suggested_max_allocation_size=" + new ByteSizeValue(SUGGESTED_MAX_ALLOCATION_SIZE)
-                + ", factors={es.unsafe.use_netty_default_allocator=true}]";
+                    + ", factors={es.unsafe.use_netty_default_allocator=true}]";
         } else {
             final long heapSizeInBytes = JvmInfo.jvmInfo().getMem().getHeapMax().getBytes();
             final boolean g1gcEnabled = Boolean.parseBoolean(JvmInfo.jvmInfo().useG1GC());
@@ -73,10 +74,8 @@ public class NettyAllocator {
                     SUGGESTED_MAX_ALLOCATION_SIZE = 1024 * 1024;
                 }
                 DESCRIPTION = "[name=unpooled, suggested_max_allocation_size=" + new ByteSizeValue(SUGGESTED_MAX_ALLOCATION_SIZE)
-                    + ", factors={es.unsafe.use_unpooled_allocator=" + System.getProperty(USE_UNPOOLED)
-                    + ", g1gc_enabled=" + g1gcEnabled
-                    + ", g1gc_region_size=" + g1gcRegionSize
-                    + ", heap_size=" + heapSize + "}]";
+                        + ", factors={es.unsafe.use_unpooled_allocator=" + System.getProperty(USE_UNPOOLED) + ", g1gc_enabled="
+                        + g1gcEnabled + ", g1gc_region_size=" + g1gcRegionSize + ", heap_size=" + heapSize + "}]";
             } else {
                 int nHeapArena = PooledByteBufAllocator.defaultNumHeapArena();
                 int pageSize;
@@ -101,16 +100,14 @@ public class NettyAllocator {
                 int smallCacheSize = PooledByteBufAllocator.defaultSmallCacheSize();
                 int normalCacheSize = PooledByteBufAllocator.defaultNormalCacheSize();
                 boolean useCacheForAllThreads = PooledByteBufAllocator.defaultUseCacheForAllThreads();
-                delegate = new PooledByteBufAllocator(false, nHeapArena, 0, pageSize, maxOrder, tinyCacheSize,
-                    smallCacheSize, normalCacheSize, useCacheForAllThreads);
+                delegate = new PooledByteBufAllocator(false, nHeapArena, 0, pageSize, maxOrder, tinyCacheSize, smallCacheSize,
+                        normalCacheSize, useCacheForAllThreads);
                 int chunkSizeInBytes = pageSize << maxOrder;
                 ByteSizeValue chunkSize = new ByteSizeValue(chunkSizeInBytes);
                 SUGGESTED_MAX_ALLOCATION_SIZE = chunkSizeInBytes;
-                DESCRIPTION = "[name=fesen_configured, chunk_size=" + chunkSize
-                    + ", suggested_max_allocation_size=" + new ByteSizeValue(SUGGESTED_MAX_ALLOCATION_SIZE)
-                    + ", factors={es.unsafe.use_netty_default_chunk_and_page_size=" + useDefaultChunkAndPageSize()
-                    + ", g1gc_enabled=" + g1gcEnabled
-                    + ", g1gc_region_size=" + g1gcRegionSize + "}]";
+                DESCRIPTION = "[name=fesen_configured, chunk_size=" + chunkSize + ", suggested_max_allocation_size="
+                        + new ByteSizeValue(SUGGESTED_MAX_ALLOCATION_SIZE) + ", factors={es.unsafe.use_netty_default_chunk_and_page_size="
+                        + useDefaultChunkAndPageSize() + ", g1gc_enabled=" + g1gcEnabled + ", g1gc_region_size=" + g1gcRegionSize + "}]";
             }
             ALLOCATOR = new NoDirectBuffers(delegate);
         }

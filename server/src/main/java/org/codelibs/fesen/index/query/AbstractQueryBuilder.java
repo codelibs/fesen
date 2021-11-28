@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
@@ -37,16 +47,6 @@ import org.codelibs.fesen.common.xcontent.SuggestingErrorOnUnknown;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Base class for all classes producing lucene queries.
@@ -146,8 +146,8 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
 
     protected final void checkNegativeBoost(float boost) {
         if (Float.compare(boost, 0f) < 0) {
-            throw new IllegalArgumentException("negative [boost] are not allowed in [" + toString() + "], " +
-                "use a value between 0 and 1 to deboost");
+            throw new IllegalArgumentException(
+                    "negative [boost] are not allowed in [" + toString() + "], " + "use a value between 0 and 1 to deboost");
         }
     }
 
@@ -177,9 +177,7 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         }
         @SuppressWarnings("unchecked")
         QB other = (QB) obj;
-        return Objects.equals(queryName, other.queryName) &&
-                Objects.equals(boost, other.boost) &&
-                doEquals(other);
+        return Objects.equals(queryName, other.queryName) && Objects.equals(boost, other.boost) && doEquals(other);
     }
 
     /**
@@ -232,8 +230,8 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
      * their {@link QueryBuilder#toQuery(QueryShardContext)} method are not added to the
      * resulting collection.
      */
-    static Collection<Query> toQueries(Collection<QueryBuilder> queryBuilders, QueryShardContext context) throws QueryShardException,
-            IOException {
+    static Collection<Query> toQueries(Collection<QueryBuilder> queryBuilders, QueryShardContext context)
+            throws QueryShardException, IOException {
         List<Query> queries = new ArrayList<>(queryBuilders.size());
         for (QueryBuilder queryBuilder : queryBuilders) {
             Query query = queryBuilder.rewrite(context).toQuery(context);
@@ -305,7 +303,7 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         }
         if (parser.nextToken() == XContentParser.Token.END_OBJECT) {
             // we encountered '{}' for a query clause, it used to be supported, deprecated in 5.0 and removed in 6.0
-            throw new IllegalArgumentException("query malformed, empty clause found at [" + parser.getTokenLocation() +"]");
+            throw new IllegalArgumentException("query malformed, empty clause found at [" + parser.getTokenLocation() + "]");
         }
         if (parser.currentToken() != XContentParser.Token.FIELD_NAME) {
             throw new ParsingException(parser.getTokenLocation(), "[_na] query malformed, no field after start_object");
@@ -345,7 +343,7 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
     }
 
     protected static void throwParsingExceptionOnMultipleFields(String queryName, XContentLocation contentLocation,
-                                                                String processedFieldName, String currentFieldName) {
+            String processedFieldName, String currentFieldName) {
         if (processedFieldName != null) {
             throw new ParsingException(contentLocation, "[" + queryName + "] query doesn't support multiple fields, found ["
                     + processedFieldName + "] and [" + currentFieldName + "]");

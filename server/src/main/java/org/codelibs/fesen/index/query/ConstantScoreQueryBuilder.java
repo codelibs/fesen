@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParseField;
@@ -27,10 +31,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A query that wraps a filter and simply returns a constant score equal to the

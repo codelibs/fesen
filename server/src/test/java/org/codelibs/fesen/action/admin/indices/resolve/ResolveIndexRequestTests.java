@@ -34,9 +34,8 @@ public class ResolveIndexRequestTests extends AbstractWireSerializingTestCase<Re
     @Override
     protected Request createTestInstance() {
         String[] names = generateRandomStringArray(1, 4, false);
-        IndicesOptions indicesOptions = IndicesOptions.fromOptions(
-            randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(),
-            randomBoolean(), randomBoolean());
+        IndicesOptions indicesOptions = IndicesOptions.fromOptions(randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(),
+                randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean());
         return new Request(names, indicesOptions);
     }
 }

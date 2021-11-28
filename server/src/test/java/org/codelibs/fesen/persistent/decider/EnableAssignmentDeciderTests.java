@@ -39,8 +39,7 @@ public class EnableAssignmentDeciderTests extends PersistentTasksDecidersTestCas
         final EnableAssignmentDecider.Allocation allocation = randomFrom(EnableAssignmentDecider.Allocation.values());
 
         Settings settings = Settings.builder()
-            .put(EnableAssignmentDecider.CLUSTER_TASKS_ALLOCATION_ENABLE_SETTING.getKey(), allocation.toString())
-            .build();
+                .put(EnableAssignmentDecider.CLUSTER_TASKS_ALLOCATION_ENABLE_SETTING.getKey(), allocation.toString()).build();
         updateSettings(settings);
 
         ClusterState clusterState = reassign(createClusterStateWithTasks(nbNodes, nbTasks));

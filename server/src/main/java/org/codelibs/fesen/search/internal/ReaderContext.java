@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.internal;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.core.AbstractRefCounted;
@@ -28,14 +36,6 @@ import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.search.RescoreDocIds;
 import org.codelibs.fesen.search.dfs.AggregatedDfs;
 import org.codelibs.fesen.transport.TransportRequest;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Holds a reference to a point in time {@link Engine.Searcher} that will be used to construct {@link SearchContext}.
@@ -63,12 +63,8 @@ public class ReaderContext implements Releasable {
 
     private Map<String, Object> context;
 
-    public ReaderContext(ShardSearchContextId id,
-                         IndexService indexService,
-                         IndexShard indexShard,
-                         Engine.SearcherSupplier searcherSupplier,
-                         long keepAliveInMillis,
-                         boolean singleSession) {
+    public ReaderContext(ShardSearchContextId id, IndexService indexService, IndexShard indexShard,
+            Engine.SearcherSupplier searcherSupplier, long keepAliveInMillis, boolean singleSession) {
         this.id = id;
         this.indexService = indexService;
         this.indexShard = indexShard;

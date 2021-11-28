@@ -45,19 +45,16 @@ class PercentilesAggregatorFactory extends ValuesSourceAggregatorFactory {
     private final boolean keyed;
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        builder.register(
-            PercentilesAggregationBuilder.REGISTRY_KEY,
-            Arrays.asList(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
-            (name, valuesSource, context, parent, percents, percentilesConfig, keyed,  formatter,
-                                          metadata) -> percentilesConfig
-                .createPercentilesAggregator(name, valuesSource, context, parent, percents, keyed, formatter, metadata),
+        builder.register(PercentilesAggregationBuilder.REGISTRY_KEY,
+                Arrays.asList(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
+                (name, valuesSource, context, parent, percents, percentilesConfig, keyed, formatter, metadata) -> percentilesConfig
+                        .createPercentilesAggregator(name, valuesSource, context, parent, percents, keyed, formatter, metadata),
                 true);
     }
 
-    PercentilesAggregatorFactory(String name, ValuesSourceConfig config, double[] percents,
-                                 PercentilesConfig percentilesConfig, boolean keyed, QueryShardContext queryShardContext,
-                                 AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
-                                 Map<String, Object> metadata) throws IOException {
+    PercentilesAggregatorFactory(String name, ValuesSourceConfig config, double[] percents, PercentilesConfig percentilesConfig,
+            boolean keyed, QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+            Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.percents = percents;
         this.percentilesConfig = percentilesConfig;
@@ -65,23 +62,15 @@ class PercentilesAggregatorFactory extends ValuesSourceAggregatorFactory {
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                        Aggregator parent,
-                                        Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
 
-        return percentilesConfig.createPercentilesAggregator(name, null, searchContext, parent, percents, keyed,
-            config.format(), metadata);
+        return percentilesConfig.createPercentilesAggregator(name, null, searchContext, parent, percents, keyed, config.format(), metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(
-        SearchContext searchContext,
-        Aggregator parent,
-        CardinalityUpperBound bucketCardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(PercentilesAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, config.getValuesSource(), searchContext, parent, percents, percentilesConfig, keyed, config.format(), metadata);
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound bucketCardinality,
+            Map<String, Object> metadata) throws IOException {
+        return queryShardContext.getValuesSourceRegistry().getAggregator(PercentilesAggregationBuilder.REGISTRY_KEY, config).build(name,
+                config.getValuesSource(), searchContext, parent, percents, percentilesConfig, keyed, config.format(), metadata);
     }
 }

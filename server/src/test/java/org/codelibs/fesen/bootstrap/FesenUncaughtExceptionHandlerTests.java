@@ -52,14 +52,12 @@ public class FesenUncaughtExceptionHandlerTests extends ESTestCase {
     }
 
     public void testUncaughtError() throws InterruptedException {
-        final Error error = randomFrom(
-            new InternalError(),
-            new OutOfMemoryError(),
-            new StackOverflowError(),
-            new UnknownError(),
-            new IOError(new IOException("fatal")),
-            new Error() {});
-        final Thread thread = new Thread(() -> { throw error; });
+        final Error error = randomFrom(new InternalError(), new OutOfMemoryError(), new StackOverflowError(), new UnknownError(),
+                new IOError(new IOException("fatal")), new Error() {
+                });
+        final Thread thread = new Thread(() -> {
+            throw error;
+        });
         final String name = randomAlphaOfLength(10);
         thread.setName(name);
         final AtomicBoolean halt = new AtomicBoolean();
@@ -102,7 +100,9 @@ public class FesenUncaughtExceptionHandlerTests extends ESTestCase {
 
     public void testUncaughtException() throws InterruptedException {
         final RuntimeException e = new RuntimeException("boom");
-        final Thread thread = new Thread(() -> { throw e; });
+        final Thread thread = new Thread(() -> {
+            throw e;
+        });
         final String name = randomAlphaOfLength(10);
         thread.setName(name);
         final AtomicReference<String> threadNameReference = new AtomicReference<>();

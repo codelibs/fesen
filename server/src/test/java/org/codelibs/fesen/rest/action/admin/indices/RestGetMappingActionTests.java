@@ -57,10 +57,8 @@ public class RestGetMappingActionTests extends RestActionTestCase {
     public void testTypeExistsDeprecation() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("type", "_doc");
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.HEAD)
-            .withParams(params)
-            .build();
+        RestRequest request =
+                new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.HEAD).withParams(params).build();
 
         RestGetMappingAction handler = new RestGetMappingAction(threadPool);
         handler.prepareRequest(request, mock(NodeClient.class));
@@ -73,11 +71,8 @@ public class RestGetMappingActionTests extends RestActionTestCase {
         // results in an illegal argument exception.
         Map<String, String> params = new HashMap<>();
         params.put(INCLUDE_TYPE_NAME_PARAMETER, "false");
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.GET)
-            .withPath("some_index/some_type/_mapping/some_field")
-            .withParams(params)
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
+                .withPath("some_index/some_type/_mapping/some_field").withParams(params).build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);
@@ -96,11 +91,8 @@ public class RestGetMappingActionTests extends RestActionTestCase {
     public void testTypeUrlParameterDeprecation() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put(INCLUDE_TYPE_NAME_PARAMETER, Boolean.toString(randomBoolean()));
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.GET)
-            .withParams(params)
-            .withPath("/some_index/_mappings")
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET).withParams(params)
+                .withPath("/some_index/_mappings").build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);

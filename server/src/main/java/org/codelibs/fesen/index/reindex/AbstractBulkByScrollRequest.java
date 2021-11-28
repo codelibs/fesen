@@ -19,7 +19,14 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.Version;
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -32,14 +39,6 @@ import org.codelibs.fesen.search.Scroll;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
 
 public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScrollRequest<Self>> extends ActionRequest {
 

@@ -59,31 +59,27 @@ public class BinaryTermsAggregatorTests extends AggregatorTestCase {
                 d.add((long) i);
             }
         }
-        dataset  = d;
+        dataset = d;
     }
 
     public void testMatchNoDocs() throws IOException {
-        testSearchCase(new MatchNoDocsQuery(), dataset,
-            aggregation -> aggregation.field(BINARY_FIELD),
-            agg -> assertEquals(0, agg.getBuckets().size()), ValueType.STRING
-        );
+        testSearchCase(new MatchNoDocsQuery(), dataset, aggregation -> aggregation.field(BINARY_FIELD),
+                agg -> assertEquals(0, agg.getBuckets().size()), ValueType.STRING);
     }
 
     public void testMatchAllDocs() throws IOException {
         Query query = new MatchAllDocsQuery();
 
-        testSearchCase(query, dataset,
-            aggregation -> aggregation.field(BINARY_FIELD),
-            agg -> {
-                assertEquals(9, agg.getBuckets().size());
-                for (int i = 0; i < 9; i++) {
-                    StringTerms.Bucket bucket = (StringTerms.Bucket) agg.getBuckets().get(i);
-                    byte[] bytes = Numbers.longToBytes(9L - i);
-                    String bytesAsString = (String) DocValueFormat.BINARY.format(new BytesRef(bytes));
-                    assertThat(bucket.getKey(), equalTo(bytesAsString));
-                    assertThat(bucket.getDocCount(), equalTo(9L - i));
-                }
-            }, null);
+        testSearchCase(query, dataset, aggregation -> aggregation.field(BINARY_FIELD), agg -> {
+            assertEquals(9, agg.getBuckets().size());
+            for (int i = 0; i < 9; i++) {
+                StringTerms.Bucket bucket = (StringTerms.Bucket) agg.getBuckets().get(i);
+                byte[] bytes = Numbers.longToBytes(9L - i);
+                String bytesAsString = (String) DocValueFormat.BINARY.format(new BytesRef(bytes));
+                assertThat(bucket.getKey(), equalTo(bytesAsString));
+                assertThat(bucket.getDocCount(), equalTo(9L - i));
+            }
+        }, null);
     }
 
     public void testBadIncludeExclude() throws IOException {
@@ -91,33 +87,31 @@ public class BinaryTermsAggregatorTests extends AggregatorTestCase {
 
         // Make sure the include/exclude fails regardless of how the user tries to type hint the agg
         AggregationExecutionException e = expectThrows(AggregationExecutionException.class,
-            () -> testSearchCase(new MatchNoDocsQuery(), dataset,
-                aggregation -> aggregation.field(BINARY_FIELD).includeExclude(includeExclude).format("yyyy-MM-dd"),
-                agg -> fail("test should have failed with exception"), null // default, no hint
-            ));
-        assertThat(e.getMessage(), equalTo("Aggregation [_name] cannot support regular expression style include/exclude settings as " +
-            "they can only be applied to string fields. Use an array of values for include/exclude clauses"));
+                () -> testSearchCase(new MatchNoDocsQuery(), dataset,
+                        aggregation -> aggregation.field(BINARY_FIELD).includeExclude(includeExclude).format("yyyy-MM-dd"),
+                        agg -> fail("test should have failed with exception"), null // default, no hint
+                ));
+        assertThat(e.getMessage(), equalTo("Aggregation [_name] cannot support regular expression style include/exclude settings as "
+                + "they can only be applied to string fields. Use an array of values for include/exclude clauses"));
 
         e = expectThrows(AggregationExecutionException.class,
-            () -> testSearchCase(new MatchNoDocsQuery(), dataset,
-                aggregation -> aggregation.field(BINARY_FIELD).includeExclude(includeExclude).format("yyyy-MM-dd"),
-                agg -> fail("test should have failed with exception"), ValueType.STRING // string type hint
-            ));
-        assertThat(e.getMessage(), equalTo("Aggregation [_name] cannot support regular expression style include/exclude settings as " +
-            "they can only be applied to string fields. Use an array of values for include/exclude clauses"));
+                () -> testSearchCase(new MatchNoDocsQuery(), dataset,
+                        aggregation -> aggregation.field(BINARY_FIELD).includeExclude(includeExclude).format("yyyy-MM-dd"),
+                        agg -> fail("test should have failed with exception"), ValueType.STRING // string type hint
+                ));
+        assertThat(e.getMessage(), equalTo("Aggregation [_name] cannot support regular expression style include/exclude settings as "
+                + "they can only be applied to string fields. Use an array of values for include/exclude clauses"));
     }
 
     public void testBadUserValueTypeHint() throws IOException {
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> testSearchCase(new MatchNoDocsQuery(), dataset,
-            aggregation -> aggregation.field(BINARY_FIELD),
-            agg -> fail("test should have failed with exception"), ValueType.NUMERIC // numeric type hint
+                aggregation -> aggregation.field(BINARY_FIELD), agg -> fail("test should have failed with exception"), ValueType.NUMERIC // numeric type hint
         ));
         assertThat(e.getMessage(), equalTo("Expected numeric type on field [binary], but got [binary]"));
     }
 
-    private void testSearchCase(Query query, List<Long> dataset,
-                                Consumer<TermsAggregationBuilder> configure,
-                                Consumer<InternalMappedTerms> verify, ValueType valueType) throws IOException {
+    private void testSearchCase(Query query, List<Long> dataset, Consumer<TermsAggregationBuilder> configure,
+            Consumer<InternalMappedTerms> verify, ValueType valueType) throws IOException {
         try (Directory directory = newDirectory()) {
             try (RandomIndexWriter indexWriter = new RandomIndexWriter(random(), directory)) {
                 Document document = new Document();

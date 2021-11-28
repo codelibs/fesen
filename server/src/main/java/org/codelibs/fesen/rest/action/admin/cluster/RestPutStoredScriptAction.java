@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.action.admin.cluster.storedscripts.PutStoredScriptRequest;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -27,23 +35,12 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 import org.codelibs.fesen.script.StoredScriptSource;
 
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 public class RestPutStoredScriptAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/_scripts/{id}"),
-            new Route(PUT, "/_scripts/{id}"),
-            new Route(POST, "/_scripts/{id}/{context}"),
-            new Route(PUT, "/_scripts/{id}/{context}")));
+        return unmodifiableList(asList(new Route(POST, "/_scripts/{id}"), new Route(PUT, "/_scripts/{id}"),
+                new Route(POST, "/_scripts/{id}/{context}"), new Route(PUT, "/_scripts/{id}/{context}")));
     }
 
     @Override

@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.BUCKETS_PATH;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.GAP_POLICY;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -32,16 +42,6 @@ import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.BUCKETS_PATH;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.GAP_POLICY;
-
 public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<MovFnPipelineAggregationBuilder> {
     public static final String NAME = "moving_fn";
     private static final ParseField WINDOW = new ParseField("window");
@@ -54,13 +54,12 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
     private int window;
     private int shift;
 
-    public static final ConstructingObjectParser<MovFnPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
-            NAME, false,
-            (args, name) -> new MovFnPipelineAggregationBuilder(name, (String) args[0], (Script) args[1], (int)args[2]));
+    public static final ConstructingObjectParser<MovFnPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(NAME,
+            false, (args, name) -> new MovFnPipelineAggregationBuilder(name, (String) args[0], (Script) args[1], (int) args[2]));
     static {
         PARSER.declareString(constructorArg(), BUCKETS_PATH_FIELD);
-        PARSER.declareField(constructorArg(),
-            (p, c) -> Script.parse(p), Script.SCRIPT_PARSE_FIELD, ObjectParser.ValueType.OBJECT_OR_STRING);
+        PARSER.declareField(constructorArg(), (p, c) -> Script.parse(p), Script.SCRIPT_PARSE_FIELD,
+                ObjectParser.ValueType.OBJECT_OR_STRING);
         PARSER.declareInt(constructorArg(), WINDOW);
 
         PARSER.declareInt(MovFnPipelineAggregationBuilder::setShift, SHIFT);
@@ -73,9 +72,8 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
         }, GAP_POLICY, ObjectParser.ValueType.STRING);
     };
 
-
     public MovFnPipelineAggregationBuilder(String name, String bucketsPath, Script script, int window) {
-        super(name, NAME, new String[]{bucketsPath});
+        super(name, NAME, new String[] { bucketsPath });
         this.bucketsPathString = bucketsPath;
         this.script = script;
         if (window <= 0) {
@@ -231,16 +229,16 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         MovFnPipelineAggregationBuilder other = (MovFnPipelineAggregationBuilder) obj;
-        return Objects.equals(bucketsPathString, other.bucketsPathString)
-            && Objects.equals(script, other.script)
-            && Objects.equals(format, other.format)
-            && Objects.equals(gapPolicy, other.gapPolicy)
-            && Objects.equals(window, other.window)
-            && Objects.equals(shift, other.shift);
+        return Objects.equals(bucketsPathString, other.bucketsPathString) && Objects.equals(script, other.script)
+                && Objects.equals(format, other.format) && Objects.equals(gapPolicy, other.gapPolicy)
+                && Objects.equals(window, other.window) && Objects.equals(shift, other.shift);
     }
 
     @Override

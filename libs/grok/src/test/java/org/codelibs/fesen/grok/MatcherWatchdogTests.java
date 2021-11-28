@@ -18,17 +18,6 @@
  */
 package org.codelibs.fesen.grok;
 
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.codelibs.fesen.grok.MatcherWatchdog;
-import org.codelibs.fesen.test.ESTestCase;
-import org.joni.Matcher;
-import org.mockito.Mockito;
-
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -38,6 +27,16 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.codelibs.fesen.test.ESTestCase;
+import org.joni.Matcher;
+import org.mockito.Mockito;
 
 public class MatcherWatchdogTests extends ESTestCase {
 
@@ -84,7 +83,7 @@ public class MatcherWatchdogTests extends ESTestCase {
         long interval = 1L;
         ScheduledExecutorService threadPool = mock(ScheduledExecutorService.class);
         MatcherWatchdog watchdog = MatcherWatchdog.newInstance(interval, Long.MAX_VALUE, System::currentTimeMillis,
-            (delay, command) -> threadPool.schedule(command, delay, TimeUnit.MILLISECONDS));
+                (delay, command) -> threadPool.schedule(command, delay, TimeUnit.MILLISECONDS));
         // Periodic action is not scheduled because no thread is registered
         verifyZeroInteractions(threadPool);
         CompletableFuture<Runnable> commandFuture = new CompletableFuture<>();
@@ -92,9 +91,7 @@ public class MatcherWatchdogTests extends ESTestCase {
         doAnswer(invocationOnMock -> {
             commandFuture.complete((Runnable) invocationOnMock.getArguments()[0]);
             return null;
-        }).when(threadPool).schedule(
-            any(Runnable.class), eq(interval), eq(TimeUnit.MILLISECONDS)
-        );
+        }).when(threadPool).schedule(any(Runnable.class), eq(interval), eq(TimeUnit.MILLISECONDS));
         Matcher matcher = mock(Matcher.class);
         watchdog.register(matcher);
         // Registering the first thread should have caused the command to get scheduled again

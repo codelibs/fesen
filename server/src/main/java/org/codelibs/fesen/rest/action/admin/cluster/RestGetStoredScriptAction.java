@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -26,9 +29,6 @@ import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestGetStoredScriptAction extends BaseRestHandler {
 

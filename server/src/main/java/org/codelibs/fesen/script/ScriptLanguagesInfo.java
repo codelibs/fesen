@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.script;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.core.Tuple;
-
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 
 import java.io.IOException;
@@ -39,6 +29,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * The allowable types, languages and their corresponding contexts.  When serialized there is a top level <code>types_allowed</code> list,
@@ -85,11 +85,11 @@ public class ScriptLanguagesInfo implements ToXContentObject, Writeable {
     private static final ParseField CONTEXTS = new ParseField("contexts");
 
     public final Set<String> typesAllowed;
-    public final Map<String,Set<String>> languageContexts;
+    public final Map<String, Set<String>> languageContexts;
 
-    public ScriptLanguagesInfo(Set<String> typesAllowed, Map<String,Set<String>> languageContexts) {
-        this.typesAllowed = typesAllowed != null ? Collections.unmodifiableSet(typesAllowed): Collections.emptySet();
-        this.languageContexts = languageContexts != null ? Collections.unmodifiableMap(languageContexts): Collections.emptyMap();
+    public ScriptLanguagesInfo(Set<String> typesAllowed, Map<String, Set<String>> languageContexts) {
+        this.typesAllowed = typesAllowed != null ? Collections.unmodifiableSet(typesAllowed) : Collections.emptySet();
+        this.languageContexts = languageContexts != null ? Collections.unmodifiableMap(languageContexts) : Collections.emptyMap();
     }
 
     public ScriptLanguagesInfo(StreamInput in) throws IOException {
@@ -98,19 +98,14 @@ public class ScriptLanguagesInfo implements ToXContentObject, Writeable {
     }
 
     @SuppressWarnings("unchecked")
-    public static final ConstructingObjectParser<ScriptLanguagesInfo,Void> PARSER =
-        new ConstructingObjectParser<>("script_languages_info", true,
-            (a) -> new ScriptLanguagesInfo(
-                new HashSet<>((List<String>)a[0]),
-                ((List<Tuple<String,Set<String>>>)a[1]).stream().collect(Collectors.toMap(Tuple::v1, Tuple::v2))
-            )
-        );
+    public static final ConstructingObjectParser<ScriptLanguagesInfo, Void> PARSER =
+            new ConstructingObjectParser<>("script_languages_info", true, (a) -> new ScriptLanguagesInfo(new HashSet<>((List<String>) a[0]),
+                    ((List<Tuple<String, Set<String>>>) a[1]).stream().collect(Collectors.toMap(Tuple::v1, Tuple::v2))));
 
     @SuppressWarnings("unchecked")
-    private static final ConstructingObjectParser<Tuple<String,Set<String>>,Void> LANGUAGE_CONTEXT_PARSER =
-        new ConstructingObjectParser<>("language_contexts", true,
-            (m, name) -> new Tuple<>((String)m[0], Collections.unmodifiableSet(new HashSet<>((List<String>)m[1])))
-        );
+    private static final ConstructingObjectParser<Tuple<String, Set<String>>, Void> LANGUAGE_CONTEXT_PARSER =
+            new ConstructingObjectParser<>("language_contexts", true,
+                    (m, name) -> new Tuple<>((String) m[0], Collections.unmodifiableSet(new HashSet<>((List<String>) m[1]))));
 
     static {
         PARSER.declareStringArray(constructorArg(), TYPES_ALLOWED);
@@ -136,8 +131,7 @@ public class ScriptLanguagesInfo implements ToXContentObject, Writeable {
         if (o == null || getClass() != o.getClass())
             return false;
         ScriptLanguagesInfo that = (ScriptLanguagesInfo) o;
-        return Objects.equals(typesAllowed, that.typesAllowed) &&
-            Objects.equals(languageContexts, that.languageContexts);
+        return Objects.equals(typesAllowed, that.typesAllowed) && Objects.equals(languageContexts, that.languageContexts);
     }
 
     @Override
@@ -148,18 +142,17 @@ public class ScriptLanguagesInfo implements ToXContentObject, Writeable {
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject().startArray(TYPES_ALLOWED.getPreferredName());
-        for (String type: typesAllowed.stream().sorted().collect(Collectors.toList())) {
+        for (String type : typesAllowed.stream().sorted().collect(Collectors.toList())) {
             builder.value(type);
         }
 
         builder.endArray().startArray(LANGUAGE_CONTEXTS.getPreferredName());
-        List<Map.Entry<String,Set<String>>> languagesByName = languageContexts.entrySet().stream().sorted(
-            Map.Entry.comparingByKey()
-        ).collect(Collectors.toList());
+        List<Map.Entry<String, Set<String>>> languagesByName =
+                languageContexts.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
 
-        for (Map.Entry<String,Set<String>> languageContext: languagesByName) {
+        for (Map.Entry<String, Set<String>> languageContext : languagesByName) {
             builder.startObject().field(LANGUAGE.getPreferredName(), languageContext.getKey()).startArray(CONTEXTS.getPreferredName());
-            for (String context: languageContext.getValue().stream().sorted().collect(Collectors.toList())) {
+            for (String context : languageContext.getValue().stream().sorted().collect(Collectors.toList())) {
                 builder.value(context);
             }
             builder.endArray().endObject();

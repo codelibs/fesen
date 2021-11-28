@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.common.joda;
 
-import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.time.DateMathParser;
-import org.codelibs.fesen.common.time.DateUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.common.time.DateMathParser;
+import org.codelibs.fesen.common.time.DateUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
 
 public class JodaDateFormatter implements DateFormatter {
 
@@ -134,8 +134,7 @@ public class JodaDateFormatter implements DateFormatter {
         }
         JodaDateFormatter other = (JodaDateFormatter) obj;
 
-        return Objects.equals(pattern(), other.pattern()) &&
-            Objects.equals(locale(), other.locale()) &&
-            Objects.equals(zone(), other.zone());
+        return Objects.equals(pattern(), other.pattern()) && Objects.equals(locale(), other.locale())
+                && Objects.equals(zone(), other.zone());
     }
 }

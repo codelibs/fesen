@@ -30,7 +30,7 @@ import org.codelibs.fesen.search.aggregations.metrics.InternalExtendedStats;
 
 public class InternalExtendedStatsBucket extends InternalExtendedStats implements ExtendedStatsBucket {
     InternalExtendedStatsBucket(String name, long count, double sum, double min, double max, double sumOfSqrs, double sigma,
-                                            DocValueFormat formatter, Map<String, Object> metadata) {
+            DocValueFormat formatter, Map<String, Object> metadata) {
         super(name, count, sum, min, max, sumOfSqrs, sigma, formatter, metadata);
     }
 

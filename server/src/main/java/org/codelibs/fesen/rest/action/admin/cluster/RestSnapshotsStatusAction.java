@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.snapshotsStatusRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,11 +34,6 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.snapshotsStatusRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 /**
  * Returns status of currently running snapshot
  */
@@ -41,10 +41,8 @@ public class RestSnapshotsStatusAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_snapshot/{repository}/{snapshot}/_status"),
-            new Route(GET, "/_snapshot/{repository}/_status"),
-            new Route(GET, "/_snapshot/_status")));
+        return unmodifiableList(asList(new Route(GET, "/_snapshot/{repository}/{snapshot}/_status"),
+                new Route(GET, "/_snapshot/{repository}/_status"), new Route(GET, "/_snapshot/_status")));
     }
 
     @Override

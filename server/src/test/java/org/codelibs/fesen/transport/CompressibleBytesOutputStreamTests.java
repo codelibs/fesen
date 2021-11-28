@@ -95,7 +95,6 @@ public class CompressibleBytesOutputStreamTests extends ESTestCase {
         byte[] expectedBytes = randomBytes(between(1, 30));
         stream.write(expectedBytes);
 
-
         StreamInput streamInput =
                 new InputStreamStreamInput(CompressorFactory.COMPRESSOR.threadLocalInputStream(bStream.bytes().streamInput()));
         byte[] actualBytes = new byte[expectedBytes.length];

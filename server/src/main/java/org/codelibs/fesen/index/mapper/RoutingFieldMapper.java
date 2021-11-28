@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.util.Collections;
-import java.util.List;
 
 public class RoutingFieldMapper extends MetadataFieldMapper {
 
@@ -75,10 +75,7 @@ public class RoutingFieldMapper extends MetadataFieldMapper {
         }
     }
 
-    public static final TypeParser PARSER = new ConfigurableTypeParser(
-        c -> new RoutingFieldMapper(Defaults.REQUIRED),
-        c -> new Builder()
-    );
+    public static final TypeParser PARSER = new ConfigurableTypeParser(c -> new RoutingFieldMapper(Defaults.REQUIRED), c -> new Builder());
 
     static final class RoutingFieldType extends StringFieldType {
 

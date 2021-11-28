@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import static org.codelibs.fesen.search.aggregations.metrics.InternalMedianAbsoluteDeviation.computeMedianAbsoluteDeviation;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -34,12 +40,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import static org.codelibs.fesen.search.aggregations.metrics.InternalMedianAbsoluteDeviation.computeMedianAbsoluteDeviation;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 public class MedianAbsoluteDeviationAggregator extends NumericMetricsAggregator.SingleValue {
 
     private final ValuesSource.Numeric valuesSource;
@@ -49,13 +49,8 @@ public class MedianAbsoluteDeviationAggregator extends NumericMetricsAggregator.
 
     private ObjectArray<TDigestState> valueSketches;
 
-    MedianAbsoluteDeviationAggregator(String name,
-                                      @Nullable ValuesSource valuesSource,
-                                      DocValueFormat format,
-                                      SearchContext context,
-                                             Aggregator parent,
-                                             Map<String, Object> metadata,
-                                             double compression) throws IOException {
+    MedianAbsoluteDeviationAggregator(String name, @Nullable ValuesSource valuesSource, DocValueFormat format, SearchContext context,
+            Aggregator parent, Map<String, Object> metadata, double compression) throws IOException {
 
         super(name, context, parent, metadata);
 

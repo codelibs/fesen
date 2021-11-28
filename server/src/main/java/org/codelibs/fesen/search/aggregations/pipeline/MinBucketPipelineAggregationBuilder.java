@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Map;
 
 public class MinBucketPipelineAggregationBuilder extends BucketMetricsPipelineAggregationBuilder<MinBucketPipelineAggregationBuilder> {
     public static final String NAME = "min_bucket";
@@ -57,8 +57,8 @@ public class MinBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
 
     public static final PipelineAggregator.Parser PARSER = new BucketMetricsParser() {
         @Override
-        protected MinBucketPipelineAggregationBuilder buildFactory(String pipelineAggregatorName,
-                String bucketsPath, Map<String, Object> params) {
+        protected MinBucketPipelineAggregationBuilder buildFactory(String pipelineAggregatorName, String bucketsPath,
+                Map<String, Object> params) {
             return new MinBucketPipelineAggregationBuilder(pipelineAggregatorName, bucketsPath);
         }
     };

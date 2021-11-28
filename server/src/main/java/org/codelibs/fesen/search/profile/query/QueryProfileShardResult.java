@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.profile.query;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -26,13 +33,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.profile.ProfileResult;
-
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A container class to hold the profile results for a single shard in the request.
@@ -50,9 +50,8 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
 
     private final long rewriteTime;
 
-    public QueryProfileShardResult(List<ProfileResult> queryProfileResults, long rewriteTime,
-                              CollectorResult profileCollector) {
-        assert(profileCollector != null);
+    public QueryProfileShardResult(List<ProfileResult> queryProfileResults, long rewriteTime, CollectorResult profileCollector) {
+        assert (profileCollector != null);
         this.queryProfileResults = queryProfileResults;
         this.profileCollector = profileCollector;
         this.rewriteTime = rewriteTime;
@@ -81,7 +80,6 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
         profileCollector.writeTo(out);
         out.writeLong(rewriteTime);
     }
-
 
     public List<ProfileResult> getQueryResults() {
         return Collections.unmodifiableList(queryProfileResults);
@@ -118,7 +116,7 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
         List<ProfileResult> queryProfileResults = new ArrayList<>();
         long rewriteTime = 0;
         CollectorResult collector = null;
-        while((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 currentFieldName = parser.currentName();
             } else if (token.isValue()) {

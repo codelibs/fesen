@@ -38,9 +38,8 @@ public class IntermittentLongGCDisruption extends LongGCDisruption {
     final long delayDurationMin;
     final long delayDurationMax;
 
-
     public IntermittentLongGCDisruption(Random random, String disruptedNode, long intervalBetweenDelaysMin, long intervalBetweenDelaysMax,
-                                        long delayDurationMin, long delayDurationMax) {
+            long delayDurationMin, long delayDurationMax) {
         super(random, disruptedNode);
         this.intervalBetweenDelaysMin = intervalBetweenDelaysMin;
         this.intervalBetweenDelaysMax = intervalBetweenDelaysMax;
@@ -78,7 +77,8 @@ public class IntermittentLongGCDisruption extends LongGCDisruption {
         logger.info("node [{}] goes into GC for for [{}]", disruptedNode, duration);
         final Set<Thread> nodeThreads = new HashSet<>();
         try {
-            while (suspendThreads(nodeThreads)) ;
+            while (suspendThreads(nodeThreads))
+                ;
             if (!nodeThreads.isEmpty()) {
                 Thread.sleep(duration.millis());
             }
@@ -97,13 +97,12 @@ public class IntermittentLongGCDisruption extends LongGCDisruption {
                     TimeValue duration = new TimeValue(delayDurationMin + random.nextInt((int) (delayDurationMax - delayDurationMin)));
                     simulateLongGC(duration);
 
-                    duration = new TimeValue(intervalBetweenDelaysMin
-                            + random.nextInt((int) (intervalBetweenDelaysMax - intervalBetweenDelaysMin)));
+                    duration = new TimeValue(
+                            intervalBetweenDelaysMin + random.nextInt((int) (intervalBetweenDelaysMax - intervalBetweenDelaysMin)));
                     if (disrupting) {
                         Thread.sleep(duration.millis());
                     }
-                } catch (InterruptedException e) {
-                } catch (Exception e) {
+                } catch (InterruptedException e) {} catch (Exception e) {
                     logger.error("error in background worker", e);
                 }
             }

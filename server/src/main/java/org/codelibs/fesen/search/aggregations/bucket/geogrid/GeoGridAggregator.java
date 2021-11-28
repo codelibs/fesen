@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.ScoreMode;
@@ -33,12 +39,6 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.LongKeyedBucketOrds;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Aggregates data expressed as longs (for efficiency's sake) but formats results as aggregation-specific strings.
  */
@@ -49,9 +49,9 @@ public abstract class GeoGridAggregator<T extends InternalGeoGrid> extends Bucke
     protected final ValuesSource.Numeric valuesSource;
     protected final LongKeyedBucketOrds bucketOrds;
 
-    GeoGridAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource,
-                      int requiredSize, int shardSize, SearchContext aggregationContext,
-                      Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+    GeoGridAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, int requiredSize, int shardSize,
+            SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata)
+            throws IOException {
         super(name, factories, aggregationContext, parent, CardinalityUpperBound.MANY, metadata);
         this.valuesSource = valuesSource;
         this.requiredSize = requiredSize;
@@ -68,8 +68,7 @@ public abstract class GeoGridAggregator<T extends InternalGeoGrid> extends Bucke
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         SortedNumericDocValues values = valuesSource.longValues(ctx);
         return new LeafBucketCollectorBase(sub, null) {
             @Override

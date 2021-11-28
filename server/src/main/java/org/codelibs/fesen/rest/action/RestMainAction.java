@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.rest.action;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.action.main.MainAction;
 import org.codelibs.fesen.action.main.MainRequest;
 import org.codelibs.fesen.action.main.MainResponse;
@@ -30,21 +38,11 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
-
 public class RestMainAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/"),
-            new Route(HEAD, "/")));
+        return unmodifiableList(asList(new Route(GET, "/"), new Route(HEAD, "/")));
     }
 
     @Override

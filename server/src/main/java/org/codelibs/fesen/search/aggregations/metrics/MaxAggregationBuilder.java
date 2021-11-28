@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -34,15 +37,10 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class MaxAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, MaxAggregationBuilder> {
     public static final String NAME = "max";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        MetricAggregatorSupplier.class
-    );
+    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY =
+            new ValuesSourceRegistry.RegistryKey<>(NAME, MetricAggregatorSupplier.class);
 
     public static final ObjectParser<MaxAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, MaxAggregationBuilder::new);
     static {
@@ -57,9 +55,8 @@ public class MaxAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
         super(name);
     }
 
-    protected MaxAggregationBuilder(MaxAggregationBuilder clone,
-                                    AggregatorFactories.Builder factoriesBuilder,
-                                    Map<String, Object> metadata) {
+    protected MaxAggregationBuilder(MaxAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -86,9 +83,8 @@ public class MaxAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
     }
 
     @Override
-    protected MaxAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-                                              AggregatorFactory parent,
-                                              AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected MaxAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new MaxAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

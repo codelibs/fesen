@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Explanation;
-
 import java.io.IOException;
 import java.util.Objects;
+
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.search.Explanation;
 
 public class WeightFactorFunction extends ScoreFunction {
 
@@ -59,8 +59,7 @@ public class WeightFactorFunction extends ScoreFunction {
             @Override
             public Explanation explainScore(int docId, Explanation subQueryScore) throws IOException {
                 Explanation functionExplanation = leafFunction.explainScore(docId, subQueryScore);
-                return Explanation.match(
-                        functionExplanation.getValue().floatValue() * (float) getWeight(), "product of:",
+                return Explanation.match(functionExplanation.getValue().floatValue() * (float) getWeight(), "product of:",
                         functionExplanation, explainWeight());
             }
         };
@@ -87,8 +86,7 @@ public class WeightFactorFunction extends ScoreFunction {
     @Override
     protected boolean doEquals(ScoreFunction other) {
         WeightFactorFunction weightFactorFunction = (WeightFactorFunction) other;
-        return this.weight == weightFactorFunction.weight &&
-                Objects.equals(this.scoreFunction, weightFactorFunction.scoreFunction);
+        return this.weight == weightFactorFunction.weight && Objects.equals(this.scoreFunction, weightFactorFunction.scoreFunction);
     }
 
     @Override

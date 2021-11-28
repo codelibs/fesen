@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.internal;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FieldDoc;
@@ -58,13 +64,6 @@ import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * This class encapsulates the state needed to execute a search. It holds a reference to the
  * shards point in time snapshot (IndexReader / ContextIndexSearcher) and allows passing on
@@ -81,7 +80,8 @@ public abstract class SearchContext implements Releasable {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private InnerHitsContext innerHitsContext;
 
-    protected SearchContext() {}
+    protected SearchContext() {
+    }
 
     public abstract void setTask(SearchShardTask task);
 
@@ -349,7 +349,6 @@ public abstract class SearchContext implements Releasable {
      */
     public abstract Profilers getProfilers();
 
-
     /**
      * Adds a releasable that will be freed when this context is closed.
      */
@@ -361,8 +360,7 @@ public abstract class SearchContext implements Releasable {
      * @return true if the request contains only suggest
      */
     public final boolean hasOnlySuggest() {
-        return request().source() != null
-            && request().source().isSuggestOnly();
+        return request().source() != null && request().source().isSuggestOnly();
     }
 
     /**

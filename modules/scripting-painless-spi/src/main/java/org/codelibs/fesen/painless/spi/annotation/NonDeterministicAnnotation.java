@@ -25,5 +25,6 @@ public class NonDeterministicAnnotation {
 
     public static final NonDeterministicAnnotation INSTANCE = new NonDeterministicAnnotation();
 
-    private NonDeterministicAnnotation() {}
+    private NonDeterministicAnnotation() {
+    }
 }

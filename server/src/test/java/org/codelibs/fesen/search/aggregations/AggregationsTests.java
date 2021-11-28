@@ -247,8 +247,7 @@ public class AggregationsTests extends ESTestCase {
                     || path.endsWith(Aggregation.CommonFields.META.getPreferredName())
                     || path.endsWith(Aggregation.CommonFields.BUCKETS.getPreferredName())
                     || path.endsWith(CommonFields.VALUES.getPreferredName()) || path.endsWith("covariance") || path.endsWith("correlation")
-                    || path.contains(CommonFields.VALUE.getPreferredName())
-                    || path.endsWith(CommonFields.KEY.getPreferredName()))
+                    || path.contains(CommonFields.VALUE.getPreferredName()) || path.endsWith(CommonFields.KEY.getPreferredName()))
                     || path.contains("top_hits");
             mutated = insertRandomFields(xContentType, originalBytes, excludes, random());
         } else {
@@ -293,13 +292,9 @@ public class AggregationsTests extends ESTestCase {
             if (testCase instanceof InternalMultiBucketAggregationTestCase) {
                 InternalMultiBucketAggregationTestCase<?> multiBucketAggTestCase = (InternalMultiBucketAggregationTestCase<?>) testCase;
                 if (currentDepth < maxDepth) {
-                    multiBucketAggTestCase.setSubAggregationsSupplier(
-                        () -> createTestInstance(0, currentDepth + 1, maxDepth)
-                    );
+                    multiBucketAggTestCase.setSubAggregationsSupplier(() -> createTestInstance(0, currentDepth + 1, maxDepth));
                 } else {
-                    multiBucketAggTestCase.setSubAggregationsSupplier(
-                        () -> InternalAggregations.EMPTY
-                    );
+                    multiBucketAggTestCase.setSubAggregationsSupplier(() -> InternalAggregations.EMPTY);
                 }
             } else if (testCase instanceof InternalSingleBucketAggregationTestCase) {
                 InternalSingleBucketAggregationTestCase<?> singleBucketAggTestCase = (InternalSingleBucketAggregationTestCase<?>) testCase;

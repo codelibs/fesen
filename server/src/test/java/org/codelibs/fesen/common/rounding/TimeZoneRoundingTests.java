@@ -127,11 +127,10 @@ public class TimeZoneRoundingTests extends ESTestCase {
 
     public void testDayRounding() {
         int timezoneOffset = -2;
-        Rounding tzRounding = Rounding.builder(DateTimeUnit.DAY_OF_MONTH).timeZone(DateTimeZone.forOffsetHours(timezoneOffset))
-                .build();
+        Rounding tzRounding = Rounding.builder(DateTimeUnit.DAY_OF_MONTH).timeZone(DateTimeZone.forOffsetHours(timezoneOffset)).build();
         assertThat(tzRounding.round(0), equalTo(0L - TimeValue.timeValueHours(24 + timezoneOffset).millis()));
-        assertThat(tzRounding.nextRoundingValue(0L - TimeValue.timeValueHours(24 + timezoneOffset).millis()), equalTo(TimeValue
-                .timeValueHours(-timezoneOffset).millis()));
+        assertThat(tzRounding.nextRoundingValue(0L - TimeValue.timeValueHours(24 + timezoneOffset).millis()),
+                equalTo(TimeValue.timeValueHours(-timezoneOffset).millis()));
 
         DateTimeZone tz = DateTimeZone.forID("-08:00");
         tzRounding = Rounding.builder(DateTimeUnit.DAY_OF_MONTH).timeZone(tz).build();
@@ -169,7 +168,7 @@ public class TimeZoneRoundingTests extends ESTestCase {
         DateTimeZone cet = DateTimeZone.forID("CET");
         tzRounding = Rounding.builder(DateTimeUnit.HOUR_OF_DAY).timeZone(cet).build();
         assertThat(tzRounding.round(time("2014-10-26T01:01:01", cet)), isDate(time("2014-10-26T01:00:00+02:00"), cet));
-        assertThat(tzRounding.nextRoundingValue(time("2014-10-26T01:00:00", cet)),isDate(time("2014-10-26T02:00:00+02:00"), cet));
+        assertThat(tzRounding.nextRoundingValue(time("2014-10-26T01:00:00", cet)), isDate(time("2014-10-26T02:00:00+02:00"), cet));
         assertThat(tzRounding.nextRoundingValue(time("2014-10-26T02:00:00", cet)), isDate(time("2014-10-26T02:00:00+01:00"), cet));
 
         // testing non savings to savings switch
@@ -225,8 +224,8 @@ public class TimeZoneRoundingTests extends ESTestCase {
             if (unitMillis <= DateTimeConstants.MILLIS_PER_DAY) {
                 // if the interval defined didn't cross timezone offset transition, it should cover unitMillis width
                 if (tz.getOffset(roundedDate - 1) == tz.getOffset(nextRoundingValue + 1)) {
-                    assertThat("unit interval width not as expected for [" + timeUnit + "], [" + tz + "] at "
-                            + new DateTime(roundedDate), nextRoundingValue - roundedDate, equalTo(unitMillis));
+                    assertThat("unit interval width not as expected for [" + timeUnit + "], [" + tz + "] at " + new DateTime(roundedDate),
+                            nextRoundingValue - roundedDate, equalTo(unitMillis));
                 }
             }
         }
@@ -239,7 +238,7 @@ public class TimeZoneRoundingTests extends ESTestCase {
     private static long nastyDate(long initialDate, DateTimeZone timezone, long unitMillis) {
         long date = timezone.nextTransition(initialDate);
         if (randomBoolean()) {
-            return date + (randomLong() % unitMillis);  // positive and negative offset possible
+            return date + (randomLong() % unitMillis); // positive and negative offset possible
         } else {
             return date;
         }
@@ -339,7 +338,7 @@ public class TimeZoneRoundingTests extends ESTestCase {
      */
     public void testIntervalRoundingRandom() {
         for (int i = 0; i < 1000; i++) {
-            TimeUnit unit = randomFrom(new TimeUnit[] {TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS});
+            TimeUnit unit = randomFrom(new TimeUnit[] { TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS });
             long interval = unit.toMillis(randomIntBetween(1, 365));
             DateTimeZone tz = randomDateTimeZone();
             Rounding rounding = new Rounding.TimeIntervalRounding(interval, tz);
@@ -396,10 +395,10 @@ public class TimeZoneRoundingTests extends ESTestCase {
 
         long previousDate = Long.MIN_VALUE;
         for (Tuple<String, String> dates : expectedDates) {
-                final long roundedDate = rounding.round(time(dates.v1()));
-                assertThat(roundedDate, isDate(time(dates.v2()), tz));
-                assertThat(roundedDate, greaterThanOrEqualTo(previousDate));
-                previousDate = roundedDate;
+            final long roundedDate = rounding.round(time(dates.v1()));
+            assertThat(roundedDate, isDate(time(dates.v2()), tz));
+            assertThat(roundedDate, greaterThanOrEqualTo(previousDate));
+            previousDate = roundedDate;
         }
         // here's what this means for interval widths
         assertEquals(TimeUnit.MINUTES.toMillis(45), time("2011-10-30T02:15:00.000+02:00") - time("2011-10-30T01:30:00.000+02:00"));
@@ -443,8 +442,7 @@ public class TimeZoneRoundingTests extends ESTestCase {
 
         // Two timestamps in same year and different timezone offset ("Double buckets" issue - #9491)
         tzRounding = Rounding.builder(DateTimeUnit.YEAR_OF_CENTURY).timeZone(tz).build();
-        assertThat(tzRounding.round(time("2014-11-11T17:00:00", tz)),
-                isDate(tzRounding.round(time("2014-08-11T17:00:00", tz)), tz));
+        assertThat(tzRounding.round(time("2014-11-11T17:00:00", tz)), isDate(tzRounding.round(time("2014-08-11T17:00:00", tz)), tz));
     }
 
     /**
@@ -697,8 +695,7 @@ public class TimeZoneRoundingTests extends ESTestCase {
         assertThat(parsedDateTime.getZone(), equalTo(expected.getZone()));
     }
 
-    private static void assertInterval(long rounded, long nextRoundingValue, Rounding rounding, int minutes,
-            DateTimeZone tz) {
+    private static void assertInterval(long rounded, long nextRoundingValue, Rounding rounding, int minutes, DateTimeZone tz) {
         assertInterval(rounded, dateBetween(rounded, nextRoundingValue), nextRoundingValue, rounding, tz);
         assertEquals(DateTimeConstants.MILLIS_PER_MINUTE * minutes, nextRoundingValue - rounded);
     }
@@ -722,32 +719,28 @@ public class TimeZoneRoundingTests extends ESTestCase {
             assertThat("nextRounding value should be greater than date" + rounding, nextRoundingValue, greaterThan(unrounded));
 
             long dateBetween = dateBetween(rounded, nextRoundingValue);
-            assertThat("dateBetween [" + new DateTime(dateBetween, tz) + "] should round down to roundedDate",
-                rounding.round(dateBetween), isDate(rounded, tz));
+            assertThat("dateBetween [" + new DateTime(dateBetween, tz) + "] should round down to roundedDate", rounding.round(dateBetween),
+                    isDate(rounded, tz));
             assertThat("dateBetween [" + new DateTime(dateBetween, tz) + "] should round up to nextRoundingValue",
-                rounding.nextRoundingValue(dateBetween), isDate(nextRoundingValue, tz));
+                    rounding.nextRoundingValue(dateBetween), isDate(nextRoundingValue, tz));
         }
     }
 
     private static boolean isTimeWithWellDefinedRounding(DateTimeZone tz, long t) {
-        if (tz.getID().equals("America/St_Johns")
-            || tz.getID().equals("America/Goose_Bay")
-            || tz.getID().equals("America/Moncton")
-            || tz.getID().equals("Canada/Newfoundland")) {
+        if (tz.getID().equals("America/St_Johns") || tz.getID().equals("America/Goose_Bay") || tz.getID().equals("America/Moncton")
+                || tz.getID().equals("Canada/Newfoundland")) {
 
             // Clocks went back at 00:01 between 1987 and 2010, causing overlapping days.
             // These timezones are otherwise uninteresting, so just skip this period.
 
-            return t <= time("1987-10-01T00:00:00Z")
-                || t >= time("2010-12-01T00:00:00Z");
+            return t <= time("1987-10-01T00:00:00Z") || t >= time("2010-12-01T00:00:00Z");
         }
 
         if (tz.getID().equals("Antarctica/Casey")) {
 
             // Clocks went back 3 hours at 02:00 on 2010-03-05, causing overlapping days.
 
-            return t <= time("2010-03-03T00:00:00Z")
-                || t >= time("2010-03-07T00:00:00Z");
+            return t <= time("2010-03-03T00:00:00Z") || t >= time("2010-03-07T00:00:00Z");
         }
 
         return true;

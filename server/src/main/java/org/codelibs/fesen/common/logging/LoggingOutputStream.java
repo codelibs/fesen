@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.common.logging;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A stream whose output is sent to the configured logger, line by line.
@@ -63,7 +63,8 @@ class LoggingOutputStream extends OutputStream {
         if (threadLocal == null) {
             throw new IOException("buffer closed");
         }
-        if (b == 0) return;
+        if (b == 0)
+            return;
         if (b == '\n') {
             // always flush with newlines instead of adding to the buffer
             flush();
@@ -90,7 +91,8 @@ class LoggingOutputStream extends OutputStream {
     @Override
     public void flush() {
         Buffer buffer = threadLocal.get();
-        if (buffer.used == 0) return;
+        if (buffer.used == 0)
+            return;
         int used = buffer.used;
         if (buffer.bytes[used - 1] == '\r') {
             // windows case: remove the first part of newlines there too

@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.util.concurrent.AtomicArray;
-
-import static java.util.Collections.unmodifiableList;
 
 /**
  * Tracks the state of sliced subtasks and provides unified status information for a sliced BulkByScrollRequest.

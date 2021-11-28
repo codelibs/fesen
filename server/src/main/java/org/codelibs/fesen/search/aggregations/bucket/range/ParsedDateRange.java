@@ -37,8 +37,7 @@ public class ParsedDateRange extends ParsedRange {
     private static final ObjectParser<ParsedDateRange, Void> PARSER =
             new ObjectParser<>(ParsedDateRange.class.getSimpleName(), true, ParsedDateRange::new);
     static {
-        declareParsedRangeFields(PARSER,
-                parser -> ParsedBucket.fromXContent(parser, false),
+        declareParsedRangeFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 

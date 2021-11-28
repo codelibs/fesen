@@ -19,7 +19,9 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import com.carrotsearch.hppc.ObjectIntScatterMap;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 import java.util.List;
 
@@ -40,18 +42,13 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestActionListener;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
+import com.carrotsearch.hppc.ObjectIntScatterMap;
 
 public class RestAllocationAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_cat/allocation"),
-            new Route(GET, "/_cat/allocation/{nodes}")));
+        return unmodifiableList(asList(new Route(GET, "/_cat/allocation"), new Route(GET, "/_cat/allocation/{nodes}")));
     }
 
     @Override
@@ -77,7 +74,7 @@ public class RestAllocationAction extends AbstractCatAction {
             public void processResponse(final ClusterStateResponse state) {
                 NodesStatsRequest statsRequest = new NodesStatsRequest(nodes);
                 statsRequest.clear().addMetric(NodesStatsRequest.Metric.FS.metricName())
-                    .indices(new CommonStatsFlags(CommonStatsFlags.Flag.Store));
+                        .indices(new CommonStatsFlags(CommonStatsFlags.Flag.Store));
 
                 client.admin().cluster().nodesStats(statsRequest, new RestResponseListener<NodesStatsResponse>(channel) {
                     @Override

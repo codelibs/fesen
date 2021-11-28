@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.plugins;
 
-import joptsimple.OptionSet;
-
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.cli.EnvironmentAwareCommand;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.plugins.PluginInfo;
-
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -34,6 +26,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.cli.EnvironmentAwareCommand;
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.env.Environment;
+
+import joptsimple.OptionSet;
 
 /**
  * A command for the plugin cli to list plugins installed in fesen.
@@ -68,15 +67,8 @@ class ListPluginsCommand extends EnvironmentAwareCommand {
         PluginInfo info = PluginInfo.readFromProperties(env.pluginsFile().resolve(plugin));
         terminal.println(Terminal.Verbosity.VERBOSE, info.toString(prefix));
         if (info.getElasticsearchVersion().equals(Version.CURRENT) == false) {
-            terminal.errorPrintln(
-                "WARNING: plugin ["
-                    + info.getName()
-                    + "] was built for Elasticsearch version "
-                    + info.getVersion()
-                    + " but version "
-                    + Version.CURRENT
-                    + " is required"
-            );
+            terminal.errorPrintln("WARNING: plugin [" + info.getName() + "] was built for Elasticsearch version " + info.getVersion()
+                    + " but version " + Version.CURRENT + " is required");
         }
     }
 }

@@ -19,10 +19,9 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import java.util.Collections;
+
 import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.BulkByScrollTask;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.threadpool.TestThreadPool;
@@ -30,11 +29,7 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.junit.After;
 import org.junit.Before;
 
-import java.util.Collections;
-
-public abstract class AbstractAsyncBulkByScrollActionTestCase<
-                Request extends AbstractBulkByScrollRequest<Request>,
-                Response extends BulkByScrollResponse>
+public abstract class AbstractAsyncBulkByScrollActionTestCase<Request extends AbstractBulkByScrollRequest<Request>, Response extends BulkByScrollResponse>
         extends ESTestCase {
     protected ThreadPool threadPool;
     protected BulkByScrollTask task;

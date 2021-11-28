@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,11 +30,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Result of the RareTerms aggregation when the field is some kind of whole number like a integer, long, or a date.
@@ -99,8 +98,8 @@ public class LongRareTerms extends InternalMappedRareTerms<LongRareTerms, LongRa
         }
     }
 
-    LongRareTerms(String name, BucketOrder order, Map<String, Object> metadata, DocValueFormat format,
-                  List<LongRareTerms.Bucket> buckets, long maxDocCount, SetBackedScalingCuckooFilter filter) {
+    LongRareTerms(String name, BucketOrder order, Map<String, Object> metadata, DocValueFormat format, List<LongRareTerms.Bucket> buckets,
+            long maxDocCount, SetBackedScalingCuckooFilter filter) {
         super(name, order, metadata, format, buckets, maxDocCount, filter);
     }
 

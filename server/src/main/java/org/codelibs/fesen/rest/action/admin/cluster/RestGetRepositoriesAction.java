@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.getRepositoryRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -31,11 +36,6 @@ import org.codelibs.fesen.common.settings.SettingsFilter;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.getRepositoryRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 /**
  * Returns repository information
@@ -55,9 +55,7 @@ public class RestGetRepositoriesAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_snapshot"),
-            new Route(GET, "/_snapshot/{repository}")));
+        return unmodifiableList(asList(new Route(GET, "/_snapshot"), new Route(GET, "/_snapshot/{repository}")));
     }
 
     @Override
@@ -67,9 +65,7 @@ public class RestGetRepositoriesAction extends BaseRestHandler {
         getRepositoriesRequest.masterNodeTimeout(request.paramAsTime("master_timeout", getRepositoriesRequest.masterNodeTimeout()));
         getRepositoriesRequest.local(request.paramAsBoolean("local", getRepositoriesRequest.local()));
         settingsFilter.addFilterSettingParams(request);
-        return channel ->
-                client.admin().cluster().getRepositories(getRepositoriesRequest,
-                    new RestToXContentListener<>(channel));
+        return channel -> client.admin().cluster().getRepositories(getRepositoriesRequest, new RestToXContentListener<>(channel));
     }
 
     @Override

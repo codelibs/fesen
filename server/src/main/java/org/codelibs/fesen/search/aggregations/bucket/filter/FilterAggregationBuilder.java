@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -31,12 +37,6 @@ import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
-
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterAggregationBuilder> {
     public static final String NAME = "filter";
@@ -59,8 +59,8 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
         this.filter = filter;
     }
 
-    protected FilterAggregationBuilder(FilterAggregationBuilder clone,
-                                       AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected FilterAggregationBuilder(FilterAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.filter = clone.filter;
     }
@@ -99,7 +99,7 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
 
     @Override
     protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent,
-                                        AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new FilterAggregatorFactory(name, filter, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
@@ -123,9 +123,12 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         FilterAggregationBuilder other = (FilterAggregationBuilder) obj;
         return Objects.equals(filter, other.filter);
     }

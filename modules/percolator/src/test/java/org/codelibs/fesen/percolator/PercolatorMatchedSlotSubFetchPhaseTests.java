@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.percolator;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.stream.IntStream;
+
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.NumericDocValuesField;
@@ -35,20 +41,12 @@ import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.FixedBitSet;
 import org.codelibs.fesen.index.mapper.SeqNoFieldMapper;
-import org.codelibs.fesen.percolator.PercolateQuery;
-import org.codelibs.fesen.percolator.PercolatorMatchedSlotSubFetchPhase;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.fetch.FetchContext;
-import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.fetch.FetchSubPhase.HitContext;
+import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.lookup.SourceLookup;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.util.Collections;
-import java.util.stream.IntStream;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class PercolatorMatchedSlotSubFetchPhaseTests extends ESTestCase {
 
@@ -66,17 +64,13 @@ public class PercolatorMatchedSlotSubFetchPhaseTests extends ESTestCase {
                 LeafReaderContext context = reader.leaves().get(0);
                 // A match:
                 {
-                    HitContext hit = new HitContext(
-                        new SearchHit(0),
-                        context,
-                        0,
-                        new SourceLookup());
+                    HitContext hit = new HitContext(new SearchHit(0), context, 0, new SourceLookup());
                     PercolateQuery.QueryStore queryStore = ctx -> docId -> new TermQuery(new Term("field", "value"));
                     MemoryIndex memoryIndex = new MemoryIndex();
                     memoryIndex.addField("field", "value", new WhitespaceAnalyzer());
                     memoryIndex.addField(new NumericDocValuesField(SeqNoFieldMapper.PRIMARY_TERM_NAME, 0), null);
-                    PercolateQuery percolateQuery =  new PercolateQuery("_name", queryStore, Collections.emptyList(),
-                        new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
+                    PercolateQuery percolateQuery = new PercolateQuery("_name", queryStore, Collections.emptyList(),
+                            new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
 
                     FetchContext sc = mock(FetchContext.class);
                     when(sc.query()).thenReturn(percolateQuery);
@@ -91,17 +85,13 @@ public class PercolatorMatchedSlotSubFetchPhaseTests extends ESTestCase {
 
                 // No match:
                 {
-                    HitContext hit = new HitContext(
-                        new SearchHit(0),
-                        context,
-                        0,
-                        new SourceLookup());
+                    HitContext hit = new HitContext(new SearchHit(0), context, 0, new SourceLookup());
                     PercolateQuery.QueryStore queryStore = ctx -> docId -> new TermQuery(new Term("field", "value"));
                     MemoryIndex memoryIndex = new MemoryIndex();
                     memoryIndex.addField("field", "value1", new WhitespaceAnalyzer());
                     memoryIndex.addField(new NumericDocValuesField(SeqNoFieldMapper.PRIMARY_TERM_NAME, 0), null);
-                    PercolateQuery percolateQuery =  new PercolateQuery("_name", queryStore, Collections.emptyList(),
-                        new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
+                    PercolateQuery percolateQuery = new PercolateQuery("_name", queryStore, Collections.emptyList(),
+                            new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
 
                     FetchContext sc = mock(FetchContext.class);
                     when(sc.query()).thenReturn(percolateQuery);
@@ -115,17 +105,13 @@ public class PercolatorMatchedSlotSubFetchPhaseTests extends ESTestCase {
 
                 // No query:
                 {
-                    HitContext hit = new HitContext(
-                        new SearchHit(0),
-                        context,
-                        0,
-                        new SourceLookup());
+                    HitContext hit = new HitContext(new SearchHit(0), context, 0, new SourceLookup());
                     PercolateQuery.QueryStore queryStore = ctx -> docId -> null;
                     MemoryIndex memoryIndex = new MemoryIndex();
                     memoryIndex.addField("field", "value", new WhitespaceAnalyzer());
                     memoryIndex.addField(new NumericDocValuesField(SeqNoFieldMapper.PRIMARY_TERM_NAME, 0), null);
-                    PercolateQuery percolateQuery =  new PercolateQuery("_name", queryStore, Collections.emptyList(),
-                        new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
+                    PercolateQuery percolateQuery = new PercolateQuery("_name", queryStore, Collections.emptyList(),
+                            new MatchAllDocsQuery(), memoryIndex.createSearcher(), null, new MatchNoDocsQuery());
 
                     FetchContext sc = mock(FetchContext.class);
                     when(sc.query()).thenReturn(percolateQuery);

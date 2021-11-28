@@ -48,7 +48,8 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
 
-    public GetFieldMappingsRequest() {}
+    public GetFieldMappingsRequest() {
+    }
 
     public GetFieldMappingsRequest(StreamInput in) throws IOException {
         super(in);

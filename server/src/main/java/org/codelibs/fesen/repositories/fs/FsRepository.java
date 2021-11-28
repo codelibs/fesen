@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.repositories.fs;
 
+import java.nio.file.Path;
+import java.util.function.Function;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.metadata.RepositoryMetadata;
@@ -34,9 +37,6 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.repositories.RepositoryException;
 import org.codelibs.fesen.repositories.blobstore.BlobStoreRepository;
-
-import java.nio.file.Path;
-import java.util.function.Function;
 
 /**
  * Shared file system implementation of the BlobStoreRepository
@@ -55,17 +55,16 @@ public class FsRepository extends BlobStoreRepository {
 
     public static final String TYPE = "fs";
 
-    public static final Setting<String> LOCATION_SETTING =
-        new Setting<>("location", "", Function.identity(), Property.NodeScope);
+    public static final Setting<String> LOCATION_SETTING = new Setting<>("location", "", Function.identity(), Property.NodeScope);
     public static final Setting<String> REPOSITORIES_LOCATION_SETTING =
-        new Setting<>("repositories.fs.location", LOCATION_SETTING, Function.identity(), Property.NodeScope);
-    public static final Setting<ByteSizeValue> CHUNK_SIZE_SETTING = Setting.byteSizeSetting("chunk_size",
-            new ByteSizeValue(Long.MAX_VALUE), new ByteSizeValue(5), new ByteSizeValue(Long.MAX_VALUE), Property.NodeScope);
+            new Setting<>("repositories.fs.location", LOCATION_SETTING, Function.identity(), Property.NodeScope);
+    public static final Setting<ByteSizeValue> CHUNK_SIZE_SETTING = Setting.byteSizeSetting("chunk_size", new ByteSizeValue(Long.MAX_VALUE),
+            new ByteSizeValue(5), new ByteSizeValue(Long.MAX_VALUE), Property.NodeScope);
     public static final Setting<ByteSizeValue> REPOSITORIES_CHUNK_SIZE_SETTING = Setting.byteSizeSetting("repositories.fs.chunk_size",
-        new ByteSizeValue(Long.MAX_VALUE), new ByteSizeValue(5), new ByteSizeValue(Long.MAX_VALUE), Property.NodeScope);
+            new ByteSizeValue(Long.MAX_VALUE), new ByteSizeValue(5), new ByteSizeValue(Long.MAX_VALUE), Property.NodeScope);
     public static final Setting<Boolean> COMPRESS_SETTING = Setting.boolSetting("compress", false, Property.NodeScope);
     public static final Setting<Boolean> REPOSITORIES_COMPRESS_SETTING =
-        Setting.boolSetting("repositories.fs.compress", false, Property.NodeScope, Property.Deprecated);
+            Setting.boolSetting("repositories.fs.compress", false, Property.NodeScope, Property.Deprecated);
     private final Environment environment;
 
     private ByteSizeValue chunkSize;
@@ -76,27 +75,27 @@ public class FsRepository extends BlobStoreRepository {
      * Constructs a shared file system repository.
      */
     public FsRepository(RepositoryMetadata metadata, Environment environment, NamedXContentRegistry namedXContentRegistry,
-                        ClusterService clusterService, RecoverySettings recoverySettings) {
+            ClusterService clusterService, RecoverySettings recoverySettings) {
         super(metadata, calculateCompress(metadata, environment), namedXContentRegistry, clusterService, recoverySettings);
         this.environment = environment;
         String location = REPOSITORIES_LOCATION_SETTING.get(metadata.settings());
         if (location.isEmpty()) {
             logger.warn("the repository location is missing, it should point to a shared file system location"
-                + " that is available on all master and data nodes");
+                    + " that is available on all master and data nodes");
             throw new RepositoryException(metadata.name(), "missing location");
         }
         Path locationFile = environment.resolveRepoFile(location);
         if (locationFile == null) {
             if (environment.repoFiles().length > 0) {
                 logger.warn("The specified location [{}] doesn't start with any "
-                    + "repository paths specified by the path.repo setting: [{}] ", location, environment.repoFiles());
-                throw new RepositoryException(metadata.name(), "location [" + location
-                    + "] doesn't match any of the locations specified by path.repo");
+                        + "repository paths specified by the path.repo setting: [{}] ", location, environment.repoFiles());
+                throw new RepositoryException(metadata.name(),
+                        "location [" + location + "] doesn't match any of the locations specified by path.repo");
             } else {
                 logger.warn("The specified location [{}] should start with a repository path specified by"
-                    + " the path.repo setting, but the path.repo setting was not set on this node", location);
+                        + " the path.repo setting, but the path.repo setting was not set on this node", location);
                 throw new RepositoryException(metadata.name(), "location [" + location
-                    + "] doesn't match any of the locations specified by path.repo because this setting is empty");
+                        + "] doesn't match any of the locations specified by path.repo because this setting is empty");
             }
         }
 
@@ -109,8 +108,8 @@ public class FsRepository extends BlobStoreRepository {
     }
 
     private static boolean calculateCompress(RepositoryMetadata metadata, Environment environment) {
-        return COMPRESS_SETTING.exists(metadata.settings())
-            ? COMPRESS_SETTING.get(metadata.settings()) : REPOSITORIES_COMPRESS_SETTING.get(environment.settings());
+        return COMPRESS_SETTING.exists(metadata.settings()) ? COMPRESS_SETTING.get(metadata.settings())
+                : REPOSITORIES_COMPRESS_SETTING.get(environment.settings());
     }
 
     @Override

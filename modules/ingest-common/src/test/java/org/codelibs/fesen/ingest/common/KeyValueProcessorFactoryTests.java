@@ -19,20 +19,19 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.util.set.Sets;
-import org.codelibs.fesen.ingest.common.KeyValueProcessor;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class KeyValueProcessorFactoryTests extends ESTestCase {
 
@@ -79,8 +78,7 @@ public class KeyValueProcessorFactoryTests extends ESTestCase {
         KeyValueProcessor.Factory factory = new KeyValueProcessor.Factory();
         Map<String, Object> config = new HashMap<>();
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenParseException.class,
-            () -> factory.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenParseException.class, () -> factory.create(null, processorTag, null, config));
         assertThat(exception.getMessage(), equalTo("[field] required property is missing"));
     }
 
@@ -89,8 +87,7 @@ public class KeyValueProcessorFactoryTests extends ESTestCase {
         Map<String, Object> config = new HashMap<>();
         config.put("field", "field1");
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenParseException.class,
-            () -> factory.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenParseException.class, () -> factory.create(null, processorTag, null, config));
         assertThat(exception.getMessage(), equalTo("[field_split] required property is missing"));
     }
 
@@ -100,8 +97,7 @@ public class KeyValueProcessorFactoryTests extends ESTestCase {
         config.put("field", "field1");
         config.put("field_split", "&");
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenParseException.class,
-            () -> factory.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenParseException.class, () -> factory.create(null, processorTag, null, config));
         assertThat(exception.getMessage(), equalTo("[value_split] required property is missing"));
     }
 }

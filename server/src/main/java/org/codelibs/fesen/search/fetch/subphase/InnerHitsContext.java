@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.search.Collector;
@@ -37,12 +43,6 @@ import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.internal.SubSearchContext;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Context used for inner hits retrieval
@@ -64,8 +64,8 @@ public final class InnerHitsContext {
 
     public void addInnerHitDefinition(InnerHitSubContext innerHit) {
         if (innerHits.containsKey(innerHit.getName())) {
-            throw new IllegalArgumentException("inner_hit definition with the name [" + innerHit.getName() +
-                    "] already exists. Use a different inner_hit name or define one explicitly");
+            throw new IllegalArgumentException("inner_hit definition with the name [" + innerHit.getName()
+                    + "] already exists. Use a different inner_hit name or define one explicitly");
         }
 
         innerHits.put(innerHit.getName(), innerHit);
@@ -111,7 +111,7 @@ public final class InnerHitsContext {
             if (innerHitQueryWeight == null) {
                 final boolean needsScores = size() != 0 && (sort() == null || sort().sort.needsScores());
                 innerHitQueryWeight = context.searcher().createWeight(context.searcher().rewrite(query()),
-                    needsScores ? ScoreMode.COMPLETE : ScoreMode.COMPLETE_NO_SCORES, 1f);
+                        needsScores ? ScoreMode.COMPLETE : ScoreMode.COMPLETE_NO_SCORES, 1f);
             }
             return innerHitQueryWeight;
         }
@@ -173,8 +173,8 @@ public final class InnerHitsContext {
 
         try {
             Bits acceptDocs = ctx.reader().getLiveDocs();
-            DocIdSetIterator iterator = ConjunctionDISI.intersectIterators(Arrays.asList(innerHitQueryScorer.iterator(),
-                scorer.iterator()));
+            DocIdSetIterator iterator =
+                    ConjunctionDISI.intersectIterators(Arrays.asList(innerHitQueryScorer.iterator(), scorer.iterator()));
             for (int docId = iterator.nextDoc(); docId < DocIdSetIterator.NO_MORE_DOCS; docId = iterator.nextDoc()) {
                 if (acceptDocs == null || acceptDocs.get(docId)) {
                     leafCollector.collect(docId);

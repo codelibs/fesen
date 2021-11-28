@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -25,31 +28,28 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.util.CollectionUtils;
 
-import java.io.IOException;
-import java.util.Locale;
-
 public enum Operator implements Writeable {
     OR, AND;
 
     public BooleanClause.Occur toBooleanClauseOccur() {
         switch (this) {
-            case OR:
-                return BooleanClause.Occur.SHOULD;
-            case AND:
-                return BooleanClause.Occur.MUST;
-            default:
-                throw Operator.newOperatorException(this.toString());
+        case OR:
+            return BooleanClause.Occur.SHOULD;
+        case AND:
+            return BooleanClause.Occur.MUST;
+        default:
+            throw Operator.newOperatorException(this.toString());
         }
     }
 
     public QueryParser.Operator toQueryParserOperator() {
         switch (this) {
-            case OR:
-                return QueryParser.Operator.OR;
-            case AND:
-                return QueryParser.Operator.AND;
-            default:
-                throw Operator.newOperatorException(this.toString());
+        case OR:
+            return QueryParser.Operator.OR;
+        case AND:
+            return QueryParser.Operator.AND;
+        default:
+            throw Operator.newOperatorException(this.toString());
         }
     }
 
@@ -67,7 +67,7 @@ public enum Operator implements Writeable {
     }
 
     private static IllegalArgumentException newOperatorException(String op) {
-        return new IllegalArgumentException("operator needs to be either " +
-                CollectionUtils.arrayAsArrayList(values()) + ", but not [" + op + "]");
+        return new IllegalArgumentException(
+                "operator needs to be either " + CollectionUtils.arrayAsArrayList(values()) + ", but not [" + op + "]");
     }
 }

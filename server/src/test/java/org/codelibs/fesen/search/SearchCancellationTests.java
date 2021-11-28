@@ -103,7 +103,9 @@ public class SearchCancellationTests extends ESTestCase {
 
     public void testCancellableCollector() throws IOException {
         TotalHitCountCollector collector1 = new TotalHitCountCollector();
-        Runnable cancellation = () -> { throw new TaskCancelledException("cancelled"); };
+        Runnable cancellation = () -> {
+            throw new TaskCancelledException("cancelled");
+        };
         ContextIndexSearcher searcher = new ContextIndexSearcher(reader, IndexSearcher.getDefaultSimilarity(),
                 IndexSearcher.getDefaultQueryCache(), IndexSearcher.getDefaultQueryCachingPolicy(), true);
 
@@ -111,8 +113,7 @@ public class SearchCancellationTests extends ESTestCase {
         assertThat(collector1.getTotalHits(), equalTo(reader.numDocs()));
 
         searcher.addQueryCancellation(cancellation);
-        expectThrows(TaskCancelledException.class,
-            () -> searcher.search(new MatchAllDocsQuery(), collector1));
+        expectThrows(TaskCancelledException.class, () -> searcher.search(new MatchAllDocsQuery(), collector1));
 
         searcher.removeQueryCancellation(cancellation);
         TotalHitCountCollector collector2 = new TotalHitCountCollector();
@@ -125,7 +126,8 @@ public class SearchCancellationTests extends ESTestCase {
         Runnable cancellation = () -> {
             if (cancelled.get()) {
                 throw new TaskCancelledException("cancelled");
-        }};
+            }
+        };
         ContextIndexSearcher searcher = new ContextIndexSearcher(reader, IndexSearcher.getDefaultSimilarity(),
                 IndexSearcher.getDefaultQueryCache(), IndexSearcher.getDefaultQueryCachingPolicy(), true);
         searcher.addQueryCancellation(cancellation);

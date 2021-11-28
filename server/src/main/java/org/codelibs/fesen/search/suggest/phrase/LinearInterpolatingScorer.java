@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
-
-import java.io.IOException;
 
 //TODO public for tests
 public final class LinearInterpolatingScorer extends WordScorer {

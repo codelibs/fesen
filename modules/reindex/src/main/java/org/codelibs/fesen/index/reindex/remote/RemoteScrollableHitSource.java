@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.reindex.remote;
 
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
+import static org.codelibs.fesen.index.reindex.remote.RemoteResponseParsers.MAIN_ACTION_PARSER;
+import static org.codelibs.fesen.index.reindex.remote.RemoteResponseParsers.RESPONSE_PARSER;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -50,16 +60,6 @@ import org.codelibs.fesen.index.reindex.ScrollableHitSource;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
-import static org.codelibs.fesen.index.reindex.remote.RemoteResponseParsers.MAIN_ACTION_PARSER;
-import static org.codelibs.fesen.index.reindex.remote.RemoteResponseParsers.RESPONSE_PARSER;
-
 public class RemoteScrollableHitSource extends ScrollableHitSource {
     private final RestClient client;
     private final BytesReference query;
@@ -67,8 +67,8 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
     Version remoteVersion;
 
     public RemoteScrollableHitSource(Logger logger, BackoffPolicy backoffPolicy, ThreadPool threadPool, Runnable countSearchRetry,
-                                     Consumer<AsyncResponse> onResponse, Consumer<Exception> fail,
-                                     RestClient client, BytesReference query, SearchRequest searchRequest) {
+            Consumer<AsyncResponse> onResponse, Consumer<Exception> fail, RestClient client, BytesReference query,
+            SearchRequest searchRequest) {
         super(logger, backoffPolicy, threadPool, countSearchRetry, onResponse, fail);
         this.query = query;
         this.searchRequest = searchRequest;
@@ -79,8 +79,8 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
     protected void doStart(RejectAwareActionListener<Response> searchListener) {
         lookupRemoteVersion(RejectAwareActionListener.withResponseHandler(searchListener, version -> {
             remoteVersion = version;
-            execute(RemoteRequestBuilders.initialSearch(searchRequest, query, remoteVersion),
-                RESPONSE_PARSER, RejectAwareActionListener.withResponseHandler(searchListener, r -> onStartResponse(searchListener, r)));
+            execute(RemoteRequestBuilders.initialSearch(searchRequest, query, remoteVersion), RESPONSE_PARSER,
+                    RejectAwareActionListener.withResponseHandler(searchListener, r -> onStartResponse(searchListener, r)));
         }));
     }
 
@@ -121,11 +121,11 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
             private void logFailure(Exception e) {
                 if (e instanceof ResponseException) {
                     ResponseException re = (ResponseException) e;
-                            if (remoteVersion.before(Version.fromId(2000099))
-                                    && re.getResponse().getStatusLine().getStatusCode() == 404) {
+                    if (remoteVersion.before(Version.fromId(2000099)) && re.getResponse().getStatusLine().getStatusCode() == 404) {
                         logger.debug((Supplier<?>) () -> new ParameterizedMessage(
                                 "Failed to clear scroll [{}] from pre-2.0 Elasticsearch. This is normal if the request terminated "
-                                        + "normally as the scroll has already been cleared automatically.", scrollId), e);
+                                        + "normally as the scroll has already been cleared automatically.",
+                                scrollId), e);
                         return;
                     }
                 }
@@ -151,8 +151,8 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
         });
     }
 
-    private <T> void execute(Request request,
-                             BiFunction<XContentParser, XContentType, T> parser, RejectAwareActionListener<? super T> listener) {
+    private <T> void execute(Request request, BiFunction<XContentParser, XContentType, T> parser,
+            RejectAwareActionListener<? super T> listener) {
         // Preserve the thread context so headers survive after the call
         java.util.function.Supplier<ThreadContext.StoredContext> contextSupplier = threadPool.getThreadContext().newRestorableContext(true);
         try {
@@ -173,8 +173,7 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
                             }
                             if (xContentType == null) {
                                 try {
-                                    throw new FesenException(
-                                        "Response didn't include Content-Type: " + bodyMessage(response.getEntity()));
+                                    throw new FesenException("Response didn't include Content-Type: " + bodyMessage(response.getEntity()));
                                 } catch (IOException e) {
                                     FesenException ee = new FesenException("Error extracting body from response");
                                     ee.addSuppressed(e);
@@ -183,17 +182,15 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
                             }
                             // EMPTY is safe here because we don't call namedObject
                             try (XContentParser xContentParser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
-                                LoggingDeprecationHandler.INSTANCE, content)) {
+                                    LoggingDeprecationHandler.INSTANCE, content)) {
                                 parsedResponse = parser.apply(xContentParser, xContentType);
                             } catch (XContentParseException e) {
                                 /* Because we're streaming the response we can't get a copy of it here. The best we can do is hint that it
                                  * is totally wrong and we're probably not talking to Fesen. */
-                                throw new FesenException(
-                                    "Error parsing the response, remote is likely not an Fesen instance", e);
+                                throw new FesenException("Error parsing the response, remote is likely not an Fesen instance", e);
                             }
                         } catch (IOException e) {
-                            throw new FesenException(
-                                "Error deserializing response, remote is likely not an Fesen instance", e);
+                            throw new FesenException("Error deserializing response, remote is likely not an Fesen instance", e);
                         }
                         listener.onResponse(parsedResponse);
                     }
@@ -206,15 +203,14 @@ public class RemoteScrollableHitSource extends ScrollableHitSource {
                         if (e instanceof ResponseException) {
                             ResponseException re = (ResponseException) e;
                             int statusCode = re.getResponse().getStatusLine().getStatusCode();
-                            e = wrapExceptionToPreserveStatus(statusCode,
-                                re.getResponse().getEntity(), re);
+                            e = wrapExceptionToPreserveStatus(statusCode, re.getResponse().getEntity(), re);
                             if (RestStatus.TOO_MANY_REQUESTS.getStatus() == statusCode) {
                                 listener.onRejection(e);
                                 return;
                             }
                         } else if (e instanceof ContentTooLongException) {
-                            e = new IllegalArgumentException(
-                                "Remote responded with a chunk that was too large. Use a smaller batch size.", e);
+                            e = new IllegalArgumentException("Remote responded with a chunk that was too large. Use a smaller batch size.",
+                                    e);
                         }
                         listener.onFailure(e);
                     }

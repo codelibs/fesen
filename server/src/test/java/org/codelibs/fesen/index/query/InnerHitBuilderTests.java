@@ -145,6 +145,7 @@ public class InnerHitBuilderTests extends ESTestCase {
         innerHitBuilder.setSeqNoAndPrimaryTerm(false); // not supported by nested queries
         return innerHitBuilder;
     }
+
     public static InnerHitBuilder randomInnerHits() {
         InnerHitBuilder innerHits = new InnerHitBuilder();
         innerHits.setName(randomAlphaOfLengthBetween(5, 16));
@@ -157,13 +158,11 @@ public class InnerHitBuilderTests extends ESTestCase {
         if (randomBoolean()) {
             innerHits.setStoredFieldNames(randomListStuff(16, () -> randomAlphaOfLengthBetween(1, 16)));
         }
-        innerHits.setDocValueFields(randomListStuff(16,
-                () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null)));
-        innerHits.setFetchFields(randomListStuff(16,
-            () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null)));
+        innerHits.setDocValueFields(randomListStuff(16, () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null)));
+        innerHits.setFetchFields(randomListStuff(16, () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null)));
         // Random script fields deduped on their field name.
         Map<String, SearchSourceBuilder.ScriptField> scriptFields = new HashMap<>();
-        for (SearchSourceBuilder.ScriptField field: randomListStuff(16, InnerHitBuilderTests::randomScript)) {
+        for (SearchSourceBuilder.ScriptField field : randomListStuff(16, InnerHitBuilderTests::randomScript)) {
             scriptFields.put(field.fieldName(), field);
         }
         innerHits.setScriptFields(new HashSet<>(scriptFields.values()));
@@ -172,18 +171,15 @@ public class InnerHitBuilderTests extends ESTestCase {
         if (randomInt == 0) {
             randomFetchSourceContext = new FetchSourceContext(true, Strings.EMPTY_ARRAY, Strings.EMPTY_ARRAY);
         } else if (randomInt == 1) {
-            randomFetchSourceContext = new FetchSourceContext(true,
-                    generateRandomStringArray(12, 16, false),
-                    generateRandomStringArray(12, 16, false)
-            );
+            randomFetchSourceContext =
+                    new FetchSourceContext(true, generateRandomStringArray(12, 16, false), generateRandomStringArray(12, 16, false));
         } else {
             randomFetchSourceContext = new FetchSourceContext(randomBoolean());
         }
         innerHits.setFetchSourceContext(randomFetchSourceContext);
         if (randomBoolean()) {
             innerHits.setSorts(randomListStuff(16,
-                    () -> SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)).order(randomFrom(SortOrder.values())))
-            );
+                    () -> SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)).order(randomFrom(SortOrder.values()))));
         }
         innerHits.setHighlightBuilder(HighlightBuilderTests.randomHighlighterBuilder());
         return innerHits;
@@ -210,7 +206,7 @@ public class InnerHitBuilderTests extends ESTestCase {
         modifiers.add(() -> {
             if (randomBoolean()) {
                 copy.setFetchFields(randomValueOtherThan(copy.getFetchFields(),
-                    () -> randomListStuff(16, () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null))));
+                        () -> randomListStuff(16, () -> new FieldAndFormat(randomAlphaOfLengthBetween(1, 16), null))));
             } else {
                 copy.addFetchField(randomAlphaOfLengthBetween(1, 16));
             }
@@ -230,35 +226,35 @@ public class InnerHitBuilderTests extends ESTestCase {
             if (randomBoolean()) {
                 randomFetchSourceContext = new FetchSourceContext(randomBoolean());
             } else {
-                randomFetchSourceContext = new FetchSourceContext(true, generateRandomStringArray(12, 16, false),
-                        generateRandomStringArray(12, 16, false));
+                randomFetchSourceContext =
+                        new FetchSourceContext(true, generateRandomStringArray(12, 16, false), generateRandomStringArray(12, 16, false));
             }
             return randomFetchSourceContext;
         })));
         modifiers.add(() -> {
-                if (randomBoolean()) {
-                    final List<SortBuilder<?>> sortBuilders = randomValueOtherThan(copy.getSorts(), () -> {
-                        List<SortBuilder<?>> builders = randomListStuff(16,
-                                () -> SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)).order(randomFrom(SortOrder.values())));
-                        return builders;
-                    });
-                    copy.setSorts(sortBuilders);
-                } else {
-                    copy.addSort(SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)));
-                }
+            if (randomBoolean()) {
+                final List<SortBuilder<?>> sortBuilders = randomValueOtherThan(copy.getSorts(), () -> {
+                    List<SortBuilder<?>> builders = randomListStuff(16,
+                            () -> SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)).order(randomFrom(SortOrder.values())));
+                    return builders;
+                });
+                copy.setSorts(sortBuilders);
+            } else {
+                copy.addSort(SortBuilders.fieldSort(randomAlphaOfLengthBetween(5, 20)));
+            }
         });
         modifiers.add(() -> copy
                 .setHighlightBuilder(randomValueOtherThan(copy.getHighlightBuilder(), HighlightBuilderTests::randomHighlighterBuilder)));
         modifiers.add(() -> {
-                if (copy.getStoredFieldsContext() == null || randomBoolean()) {
-                    List<String> previous = copy.getStoredFieldsContext() == null ?
-                        Collections.emptyList() : copy.getStoredFieldsContext().fieldNames();
-                    List<String> newValues = randomValueOtherThan(previous,
-                            () -> randomListStuff(1, 16, () -> randomAlphaOfLengthBetween(1, 16)));
-                    copy.setStoredFieldNames(newValues);
-                } else {
-                    copy.getStoredFieldsContext().addFieldName(randomAlphaOfLengthBetween(1, 16));
-                }
+            if (copy.getStoredFieldsContext() == null || randomBoolean()) {
+                List<String> previous =
+                        copy.getStoredFieldsContext() == null ? Collections.emptyList() : copy.getStoredFieldsContext().fieldNames();
+                List<String> newValues =
+                        randomValueOtherThan(previous, () -> randomListStuff(1, 16, () -> randomAlphaOfLengthBetween(1, 16)));
+                copy.setStoredFieldNames(newValues);
+            } else {
+                copy.getStoredFieldsContext().addFieldName(randomAlphaOfLengthBetween(1, 16));
+            }
         });
         randomFrom(modifiers).run();
         return copy;
@@ -274,7 +270,7 @@ public class InnerHitBuilderTests extends ESTestCase {
             }
         }
         Script script = new Script(randomScriptType, randomScriptType == ScriptType.STORED ? null : randomAlphaOfLengthBetween(1, 4),
-            randomAlphaOfLength(128), randomMap);
+                randomAlphaOfLength(128), randomMap);
         return new SearchSourceBuilder.ScriptField(randomAlphaOfLengthBetween(1, 32), script, randomBoolean());
     }
 
@@ -299,8 +295,7 @@ public class InnerHitBuilderTests extends ESTestCase {
         InnerHitBuilder innerHit = new InnerHitBuilder();
         innerHit.addDocValueField("foo");
         innerHit.addDocValueField("@timestamp", "epoch_millis");
-        assertEquals(
-                Arrays.asList(new FieldAndFormat("foo", null), new FieldAndFormat("@timestamp", "epoch_millis")),
+        assertEquals(Arrays.asList(new FieldAndFormat("foo", null), new FieldAndFormat("@timestamp", "epoch_millis")),
                 innerHit.getDocValueFields());
     }
 
@@ -308,8 +303,7 @@ public class InnerHitBuilderTests extends ESTestCase {
         InnerHitBuilder innerHit = new InnerHitBuilder();
         innerHit.addFetchField("foo");
         innerHit.addFetchField("@timestamp", "epoch_millis");
-        assertEquals(
-            Arrays.asList(new FieldAndFormat("foo", null), new FieldAndFormat("@timestamp", "epoch_millis")),
-            innerHit.getFetchFields());
+        assertEquals(Arrays.asList(new FieldAndFormat("foo", null), new FieldAndFormat("@timestamp", "epoch_millis")),
+                innerHit.getFetchFields());
     }
 }

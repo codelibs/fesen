@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.util.regex.Pattern;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -26,8 +28,6 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.pattern.PatternTokenizer;
-
-import java.util.regex.Pattern;
 
 /** Simple regex-based analyzer based on PatternTokenizer + lowercase + stopwords */
 public final class PatternAnalyzer extends Analyzer {

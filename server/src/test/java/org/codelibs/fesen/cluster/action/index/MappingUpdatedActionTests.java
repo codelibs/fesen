@@ -104,9 +104,9 @@ public class MappingUpdatedActionTests extends ESTestCase {
 
     public void testMappingUpdatedActionBlocks() throws Exception {
         List<ActionListener<Void>> inFlightListeners = new CopyOnWriteArrayList<>();
-        final MappingUpdatedAction mua = new MappingUpdatedAction(Settings.builder()
-            .put(MappingUpdatedAction.INDICES_MAX_IN_FLIGHT_UPDATES_SETTING.getKey(), 1).build(),
-            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), null) {
+        final MappingUpdatedAction mua = new MappingUpdatedAction(
+                Settings.builder().put(MappingUpdatedAction.INDICES_MAX_IN_FLIGHT_UPDATES_SETTING.getKey(), 1).build(),
+                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), null) {
 
             @Override
             protected void sendUpdateMapping(Index index, String type, Mapping mappingUpdate, ActionListener<Void> listener) {
@@ -140,9 +140,8 @@ public class MappingUpdatedActionTests extends ESTestCase {
     }
 
     public void testSendUpdateMappingUsingPutMappingAction() {
-        DiscoveryNodes nodes = DiscoveryNodes.builder()
-            .add(new DiscoveryNode("first", buildNewFakeTransportAddress(), Version.V_7_8_0))
-            .build();
+        DiscoveryNodes nodes =
+                DiscoveryNodes.builder().add(new DiscoveryNode("first", buildNewFakeTransportAddress(), Version.V_7_8_0)).build();
         ClusterState clusterState = ClusterState.builder(new ClusterName("_name")).nodes(nodes).build();
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(clusterState);
@@ -154,7 +153,7 @@ public class MappingUpdatedActionTests extends ESTestCase {
         when(client.admin()).thenReturn(adminClient);
 
         MappingUpdatedAction mua = new MappingUpdatedAction(Settings.EMPTY,
-            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), clusterService);
+                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), clusterService);
         mua.setClient(client);
 
         Settings indexSettings = Settings.builder().put(SETTING_VERSION_CREATED, Version.CURRENT).build();
@@ -167,9 +166,8 @@ public class MappingUpdatedActionTests extends ESTestCase {
     }
 
     public void testSendUpdateMappingUsingAutoPutMappingAction() {
-        DiscoveryNodes nodes = DiscoveryNodes.builder()
-            .add(new DiscoveryNode("first", buildNewFakeTransportAddress(), Version.V_7_9_0))
-            .build();
+        DiscoveryNodes nodes =
+                DiscoveryNodes.builder().add(new DiscoveryNode("first", buildNewFakeTransportAddress(), Version.V_7_9_0)).build();
         ClusterState clusterState = ClusterState.builder(new ClusterName("_name")).nodes(nodes).build();
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(clusterState);
@@ -181,7 +179,7 @@ public class MappingUpdatedActionTests extends ESTestCase {
         when(client.admin()).thenReturn(adminClient);
 
         MappingUpdatedAction mua = new MappingUpdatedAction(Settings.EMPTY,
-            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), clusterService);
+                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), clusterService);
         mua.setClient(client);
 
         Settings indexSettings = Settings.builder().put(SETTING_VERSION_CREATED, Version.CURRENT).build();

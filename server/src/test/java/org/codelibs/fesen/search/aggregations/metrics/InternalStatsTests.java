@@ -48,7 +48,7 @@ public class InternalStatsTests extends InternalAggregationTestCase<InternalStat
     }
 
     protected InternalStats createInstance(String name, long count, double sum, double min, double max, DocValueFormat formatter,
-                                           Map<String, Object> metadata) {
+            Map<String, Object> metadata) {
         return new InternalStats(name, count, sum, min, max, formatter, metadata);
     }
 
@@ -75,16 +75,15 @@ public class InternalStatsTests extends InternalAggregationTestCase<InternalStat
     }
 
     public void testSummationAccuracy() {
-        double[] values = new double[]{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7};
+        double[] values = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
         verifyStatsOfDoubles(values, 13.5, 0.9, 0d);
 
         int n = randomIntBetween(5, 10);
         values = new double[n];
         double sum = 0;
         for (int i = 0; i < n; i++) {
-            values[i] = frequently()
-                ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-                : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
+            values[i] = frequently() ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+                    : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
             sum += values[i];
         }
         verifyStatsOfDoubles(values, sum, sum / n, TOLERANCE);
@@ -214,18 +213,12 @@ public class InternalStatsTests extends InternalAggregationTestCase<InternalStat
         internalStats.doXContentBody(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
 
-        String expected = "{\n" +
-            "  \"count\" : " + count + ",\n" +
-            "  \"min\" : " + min + ",\n" +
-            "  \"max\" : " + max + ",\n" +
-            "  \"avg\" : " + internalStats.getAvg() + ",\n" +
-            "  \"sum\" : " + sum;
+        String expected = "{\n" + "  \"count\" : " + count + ",\n" + "  \"min\" : " + min + ",\n" + "  \"max\" : " + max + ",\n"
+                + "  \"avg\" : " + internalStats.getAvg() + ",\n" + "  \"sum\" : " + sum;
         if (format != DocValueFormat.RAW) {
-            expected += ",\n"+
-                "  \"min_as_string\" : \"" + format.format(internalStats.getMin()) + "\",\n" +
-                "  \"max_as_string\" : \"" + format.format(internalStats.getMax()) + "\",\n" +
-                "  \"avg_as_string\" : \"" + format.format(internalStats.getAvg()) + "\",\n" +
-                "  \"sum_as_string\" : \"" + format.format(internalStats.getSum()) + "\"";
+            expected += ",\n" + "  \"min_as_string\" : \"" + format.format(internalStats.getMin()) + "\",\n" + "  \"max_as_string\" : \""
+                    + format.format(internalStats.getMax()) + "\",\n" + "  \"avg_as_string\" : \"" + format.format(internalStats.getAvg())
+                    + "\",\n" + "  \"sum_as_string\" : \"" + format.format(internalStats.getSum()) + "\"";
         }
         expected += "\n}";
         assertEquals(expected, Strings.toString(builder));
@@ -242,13 +235,7 @@ public class InternalStatsTests extends InternalAggregationTestCase<InternalStat
         internalStats.doXContentBody(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
 
-        assertEquals("{\n" +
-            "  \"count\" : 0,\n" +
-            "  \"min\" : null,\n" +
-            "  \"max\" : null,\n" +
-            "  \"avg\" : null,\n" +
-            "  \"sum\" : 0.0\n" +
-            "}", Strings.toString(builder));
+        assertEquals("{\n" + "  \"count\" : 0,\n" + "  \"min\" : null,\n" + "  \"max\" : null,\n" + "  \"avg\" : null,\n"
+                + "  \"sum\" : 0.0\n" + "}", Strings.toString(builder));
     }
 }
-

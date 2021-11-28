@@ -62,7 +62,7 @@ public class AggregationCollectorTests extends ESSingleNodeTestCase {
             aggParser.nextToken();
             SearchContext context = createSearchContext(index);
             final AggregatorFactories factories =
-                AggregatorFactories.parseAggregators(aggParser).build(context.getQueryShardContext(), null);
+                    AggregatorFactories.parseAggregators(aggParser).build(context.getQueryShardContext(), null);
             final Aggregator[] aggregators = factories.createTopLevelAggregators(context);
             assertEquals(1, aggregators.length);
             return aggregators[0].scoreMode().needsScores();

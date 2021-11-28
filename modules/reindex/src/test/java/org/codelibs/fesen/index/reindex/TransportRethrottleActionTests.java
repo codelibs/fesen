@@ -19,28 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.FailedNodeException;
-import org.codelibs.fesen.action.TaskOperationFailure;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
-import org.codelibs.fesen.client.Client;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.BulkByScrollTask;
-import org.codelibs.fesen.index.reindex.RethrottleAction;
-import org.codelibs.fesen.index.reindex.RethrottleRequest;
-import org.codelibs.fesen.index.reindex.TransportRethrottleAction;
-import org.codelibs.fesen.tasks.TaskId;
-import org.codelibs.fesen.tasks.TaskInfo;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.mockito.ArgumentCaptor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
@@ -51,6 +29,23 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.FailedNodeException;
+import org.codelibs.fesen.action.TaskOperationFailure;
+import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.codelibs.fesen.client.Client;
+import org.codelibs.fesen.tasks.TaskId;
+import org.codelibs.fesen.tasks.TaskInfo;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
 
 public class TransportRethrottleActionTests extends ESTestCase {
     private int slices;
@@ -108,11 +103,10 @@ public class TransportRethrottleActionTests extends ESTestCase {
         for (int i = 0; i < slices; i++) {
             BulkByScrollTask.Status status = believeableInProgressStatus(i);
             tasks.add(new TaskInfo(new TaskId("test", 123), "test", "test", "test", status, 0, 0, true, new TaskId("test", task.getId()),
-                Collections.emptyMap()));
+                    Collections.emptyMap()));
             sliceStatuses.add(new BulkByScrollTask.StatusOrException(status));
         }
-        rethrottleTestCase(slices,
-                listener -> listener.onResponse(new ListTasksResponse(tasks, emptyList(), emptyList())),
+        rethrottleTestCase(slices, listener -> listener.onResponse(new ListTasksResponse(tasks, emptyList(), emptyList())),
                 expectSuccessfulRethrottleWithStatuses(sliceStatuses));
     }
 
@@ -129,11 +123,10 @@ public class TransportRethrottleActionTests extends ESTestCase {
         for (int i = succeeded; i < slices; i++) {
             BulkByScrollTask.Status status = believeableInProgressStatus(i);
             tasks.add(new TaskInfo(new TaskId("test", 123), "test", "test", "test", status, 0, 0, true, new TaskId("test", task.getId()),
-                Collections.emptyMap()));
+                    Collections.emptyMap()));
             sliceStatuses.add(new BulkByScrollTask.StatusOrException(status));
         }
-        rethrottleTestCase(slices - succeeded,
-                listener -> listener.onResponse(new ListTasksResponse(tasks, emptyList(), emptyList())),
+        rethrottleTestCase(slices - succeeded, listener -> listener.onResponse(new ListTasksResponse(tasks, emptyList(), emptyList())),
                 expectSuccessfulRethrottleWithStatuses(sliceStatuses));
     }
 
@@ -143,16 +136,15 @@ public class TransportRethrottleActionTests extends ESTestCase {
             @SuppressWarnings("unchecked")
             ActionListener<BulkByScrollResponse> listener = i < slices - 1 ? neverCalled() : mock(ActionListener.class);
             BulkByScrollTask.Status status = believeableCompletedStatus(i);
-            task.getLeaderState().onSliceResponse(listener, i, new BulkByScrollResponse(timeValueMillis(10), status, emptyList(),
-                emptyList(), false));
+            task.getLeaderState().onSliceResponse(listener, i,
+                    new BulkByScrollResponse(timeValueMillis(10), status, emptyList(), emptyList(), false));
             if (i == slices - 1) {
                 // The whole thing succeeded so we should have got the success
                 captureResponse(BulkByScrollResponse.class, listener).getStatus();
             }
             sliceStatuses.add(new BulkByScrollTask.StatusOrException(status));
         }
-        rethrottleTestCase(0,
-                listener -> { /* There are no async tasks to simulate because the listener is called for us. */},
+        rethrottleTestCase(0, listener -> { /* There are no async tasks to simulate because the listener is called for us. */},
                 expectSuccessfulRethrottleWithStatuses(sliceStatuses));
     }
 
@@ -172,15 +164,13 @@ public class TransportRethrottleActionTests extends ESTestCase {
     public void testRethrottleTaskOperationFailure() {
         Exception e = new Exception();
         TaskOperationFailure failure = new TaskOperationFailure("test", 123, e);
-        rethrottleTestCase(slices,
-                listener -> listener.onResponse(new ListTasksResponse(emptyList(), singletonList(failure), emptyList())),
+        rethrottleTestCase(slices, listener -> listener.onResponse(new ListTasksResponse(emptyList(), singletonList(failure), emptyList())),
                 expectException(hasToString(containsString("Rethrottle of [test:123] failed"))));
     }
 
     public void testRethrottleNodeFailure() {
         FailedNodeException e = new FailedNodeException("test", "test", new Exception());
-        rethrottleTestCase(slices,
-                listener -> listener.onResponse(new ListTasksResponse(emptyList(), emptyList(), singletonList(e))),
+        rethrottleTestCase(slices, listener -> listener.onResponse(new ListTasksResponse(emptyList(), emptyList(), singletonList(e))),
                 expectException(theInstance(e)));
     }
 

@@ -29,10 +29,9 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 
-
 public class NGramTokenFilterFactory extends AbstractTokenFilterFactory {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(NGramTokenFilterFactory.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(NGramTokenFilterFactory.class);
 
     private final int minGram;
     private final int maxGram;
@@ -48,13 +47,13 @@ public class NGramTokenFilterFactory extends AbstractTokenFilterFactory {
         if (ngramDiff > maxAllowedNgramDiff) {
             if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
                 throw new IllegalArgumentException(
-                    "The difference between max_gram and min_gram in NGram Tokenizer must be less than or equal to: ["
-                        + maxAllowedNgramDiff + "] but was [" + ngramDiff + "]. This limit can be set by changing the ["
-                        + IndexSettings.MAX_NGRAM_DIFF_SETTING.getKey() + "] index level setting.");
+                        "The difference between max_gram and min_gram in NGram Tokenizer must be less than or equal to: ["
+                                + maxAllowedNgramDiff + "] but was [" + ngramDiff + "]. This limit can be set by changing the ["
+                                + IndexSettings.MAX_NGRAM_DIFF_SETTING.getKey() + "] index level setting.");
             } else {
                 deprecationLogger.deprecate("ngram_big_difference",
-                    "Deprecated big difference between max_gram and min_gram in NGram Tokenizer,"
-                    + "expected difference must be less than or equal to: [" + maxAllowedNgramDiff + "]");
+                        "Deprecated big difference between max_gram and min_gram in NGram Tokenizer,"
+                                + "expected difference must be less than or equal to: [" + maxAllowedNgramDiff + "]");
             }
         }
         preserveOriginal = settings.getAsBoolean(PRESERVE_ORIG_KEY, false);
@@ -69,10 +68,9 @@ public class NGramTokenFilterFactory extends AbstractTokenFilterFactory {
     public TokenFilterFactory getSynonymFilter() {
         if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
             throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-        }
-        else {
-            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters", "Token filter [" + name()
-                + "] will not be usable to parse synonyms after v7.0");
+        } else {
+            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters",
+                    "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
             return this;
         }
     }

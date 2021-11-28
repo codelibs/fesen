@@ -18,6 +18,13 @@
  */
 package org.codelibs.fesen.repositories;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.apache.lucene.index.IndexCommit;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -36,13 +43,6 @@ import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
 import org.codelibs.fesen.snapshots.SnapshotId;
 import org.codelibs.fesen.snapshots.SnapshotInfo;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class FilterRepository implements Repository {
 
@@ -84,15 +84,15 @@ public class FilterRepository implements Repository {
 
     @Override
     public void finalizeSnapshot(ShardGenerations shardGenerations, long repositoryStateId, Metadata clusterMetadata,
-                                 SnapshotInfo snapshotInfo, Version repositoryMetaVersion,
-                                 Function<ClusterState, ClusterState> stateTransformer, ActionListener<RepositoryData> listener) {
+            SnapshotInfo snapshotInfo, Version repositoryMetaVersion, Function<ClusterState, ClusterState> stateTransformer,
+            ActionListener<RepositoryData> listener) {
         in.finalizeSnapshot(shardGenerations, repositoryStateId, clusterMetadata, snapshotInfo, repositoryMetaVersion, stateTransformer,
-            listener);
+                listener);
     }
 
     @Override
     public void deleteSnapshots(Collection<SnapshotId> snapshotIds, long repositoryStateId, Version repositoryMetaVersion,
-                                ActionListener<RepositoryData> listener) {
+            ActionListener<RepositoryData> listener) {
         in.deleteSnapshots(snapshotIds, repositoryStateId, repositoryMetaVersion, listener);
     }
 
@@ -128,14 +128,15 @@ public class FilterRepository implements Repository {
 
     @Override
     public void snapshotShard(Store store, MapperService mapperService, SnapshotId snapshotId, IndexId indexId,
-                              IndexCommit snapshotIndexCommit, String shardStateIdentifier, IndexShardSnapshotStatus snapshotStatus,
-                              Version repositoryMetaVersion, Map<String, Object> userMetadata, ActionListener<String> listener) {
+            IndexCommit snapshotIndexCommit, String shardStateIdentifier, IndexShardSnapshotStatus snapshotStatus,
+            Version repositoryMetaVersion, Map<String, Object> userMetadata, ActionListener<String> listener) {
         in.snapshotShard(store, mapperService, snapshotId, indexId, snapshotIndexCommit, shardStateIdentifier, snapshotStatus,
-            repositoryMetaVersion, userMetadata, listener);
+                repositoryMetaVersion, userMetadata, listener);
     }
+
     @Override
     public void restoreShard(Store store, SnapshotId snapshotId, IndexId indexId, ShardId snapshotShardId, RecoveryState recoveryState,
-                             ActionListener<Void> listener) {
+            ActionListener<Void> listener) {
         in.restoreShard(store, snapshotId, indexId, snapshotShardId, recoveryState, listener);
     }
 
@@ -151,13 +152,13 @@ public class FilterRepository implements Repository {
 
     @Override
     public void executeConsistentStateUpdate(Function<RepositoryData, ClusterStateUpdateTask> createUpdateTask, String source,
-                                             Consumer<Exception> onFailure) {
+            Consumer<Exception> onFailure) {
         in.executeConsistentStateUpdate(createUpdateTask, source, onFailure);
     }
 
     @Override
     public void cloneShardSnapshot(SnapshotId source, SnapshotId target, RepositoryShardId shardId, String shardGeneration,
-                                   ActionListener<String> listener) {
+            ActionListener<String> listener) {
         in.cloneShardSnapshot(source, target, shardId, shardGeneration, listener);
     }
 

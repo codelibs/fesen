@@ -19,13 +19,12 @@
 
 package org.codelibs.fesen.transport;
 
+import java.net.InetSocketAddress;
+
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.network.CloseableChannel;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.net.InetSocketAddress;
-
 
 /**
  * This is a tcp channel representing a single channel connection to another node. It is the base channel

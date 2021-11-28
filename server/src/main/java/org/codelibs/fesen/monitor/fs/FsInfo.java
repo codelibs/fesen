@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.monitor.fs;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.DiskUsage;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,12 +35,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragment {
 
@@ -180,41 +180,20 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         final long currentSectorsWritten;
         final long previousSectorsWritten;
 
-        public DeviceStats(
-                final int majorDeviceNumber,
-                final int minorDeviceNumber,
-                final String deviceName,
-                final long currentReadsCompleted,
-                final long currentSectorsRead,
-                final long currentWritesCompleted,
-                final long currentSectorsWritten,
-                final DeviceStats previousDeviceStats) {
-            this(
-                    majorDeviceNumber,
-                    minorDeviceNumber,
-                    deviceName,
-                    currentReadsCompleted,
-                    previousDeviceStats != null ? previousDeviceStats.currentReadsCompleted : -1,
-                    currentSectorsWritten,
-                    previousDeviceStats != null ? previousDeviceStats.currentSectorsWritten : -1,
-                    currentSectorsRead,
-                    previousDeviceStats != null ? previousDeviceStats.currentSectorsRead : -1,
-                    currentWritesCompleted,
+        public DeviceStats(final int majorDeviceNumber, final int minorDeviceNumber, final String deviceName,
+                final long currentReadsCompleted, final long currentSectorsRead, final long currentWritesCompleted,
+                final long currentSectorsWritten, final DeviceStats previousDeviceStats) {
+            this(majorDeviceNumber, minorDeviceNumber, deviceName, currentReadsCompleted,
+                    previousDeviceStats != null ? previousDeviceStats.currentReadsCompleted : -1, currentSectorsWritten,
+                    previousDeviceStats != null ? previousDeviceStats.currentSectorsWritten : -1, currentSectorsRead,
+                    previousDeviceStats != null ? previousDeviceStats.currentSectorsRead : -1, currentWritesCompleted,
                     previousDeviceStats != null ? previousDeviceStats.currentWritesCompleted : -1);
         }
 
-        private DeviceStats(
-                final int majorDeviceNumber,
-                final int minorDeviceNumber,
-                final String deviceName,
-                final long currentReadsCompleted,
-                final long previousReadsCompleted,
-                final long currentSectorsWritten,
-                final long previousSectorsWritten,
-                final long currentSectorsRead,
-                final long previousSectorsRead,
-                final long currentWritesCompleted,
-                final long previousWritesCompleted) {
+        private DeviceStats(final int majorDeviceNumber, final int minorDeviceNumber, final String deviceName,
+                final long currentReadsCompleted, final long previousReadsCompleted, final long currentSectorsWritten,
+                final long previousSectorsWritten, final long currentSectorsRead, final long previousSectorsRead,
+                final long currentWritesCompleted, final long previousWritesCompleted) {
             this.majorDeviceNumber = majorDeviceNumber;
             this.minorDeviceNumber = minorDeviceNumber;
             this.deviceName = deviceName;
@@ -258,32 +237,36 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         }
 
         public long operations() {
-            if (previousReadsCompleted == -1 || previousWritesCompleted == -1) return -1;
+            if (previousReadsCompleted == -1 || previousWritesCompleted == -1)
+                return -1;
 
-            return (currentReadsCompleted - previousReadsCompleted) +
-                (currentWritesCompleted - previousWritesCompleted);
+            return (currentReadsCompleted - previousReadsCompleted) + (currentWritesCompleted - previousWritesCompleted);
         }
 
         public long readOperations() {
-            if (previousReadsCompleted == -1) return -1;
+            if (previousReadsCompleted == -1)
+                return -1;
 
             return (currentReadsCompleted - previousReadsCompleted);
         }
 
         public long writeOperations() {
-            if (previousWritesCompleted == -1) return -1;
+            if (previousWritesCompleted == -1)
+                return -1;
 
             return (currentWritesCompleted - previousWritesCompleted);
         }
 
         public long readKilobytes() {
-            if (previousSectorsRead == -1) return -1;
+            if (previousSectorsRead == -1)
+                return -1;
 
             return (currentSectorsRead - previousSectorsRead) / 2;
         }
 
         public long writeKilobytes() {
-            if (previousSectorsWritten == -1) return -1;
+            if (previousSectorsWritten == -1)
+                return -1;
 
             return (currentSectorsWritten - previousSectorsWritten) / 2;
         }

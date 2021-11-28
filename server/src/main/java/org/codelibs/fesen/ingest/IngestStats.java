@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.TimeValue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 
 public class IngestStats implements Writeable, ToXContentFragment {
     private final Stats totalStats;
@@ -149,12 +149,13 @@ public class IngestStats implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         IngestStats that = (IngestStats) o;
-        return Objects.equals(totalStats, that.totalStats)
-            && Objects.equals(pipelineStats, that.pipelineStats)
-            && Objects.equals(processorStats, that.processorStats);
+        return Objects.equals(totalStats, that.totalStats) && Objects.equals(pipelineStats, that.pipelineStats)
+                && Objects.equals(processorStats, that.processorStats);
     }
 
     @Override
@@ -233,13 +234,13 @@ public class IngestStats implements Writeable, ToXContentFragment {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             IngestStats.Stats that = (IngestStats.Stats) o;
-            return Objects.equals(ingestCount, that.ingestCount)
-                && Objects.equals(ingestTimeInMillis, that.ingestTimeInMillis)
-                && Objects.equals(ingestFailedCount, that.ingestFailedCount)
-                && Objects.equals(ingestCurrent, that.ingestCurrent);
+            return Objects.equals(ingestCount, that.ingestCount) && Objects.equals(ingestTimeInMillis, that.ingestTimeInMillis)
+                    && Objects.equals(ingestFailedCount, that.ingestFailedCount) && Objects.equals(ingestCurrent, that.ingestCurrent);
         }
 
         @Override
@@ -256,7 +257,6 @@ public class IngestStats implements Writeable, ToXContentFragment {
         private List<PipelineStat> pipelineStats = new ArrayList<>();
         private Map<String, List<ProcessorStat>> processorStats = new HashMap<>();
 
-
         Builder addTotalMetrics(IngestMetric totalMetric) {
             this.totalStats = totalMetric.createStats();
             return this;
@@ -269,13 +269,12 @@ public class IngestStats implements Writeable, ToXContentFragment {
 
         Builder addProcessorMetrics(String pipelineId, String processorName, String processorType, IngestMetric metric) {
             this.processorStats.computeIfAbsent(pipelineId, k -> new ArrayList<>())
-                .add(new ProcessorStat(processorName, processorType, metric.createStats()));
+                    .add(new ProcessorStat(processorName, processorType, metric.createStats()));
             return this;
         }
 
         IngestStats build() {
-            return new IngestStats(totalStats, Collections.unmodifiableList(pipelineStats),
-                Collections.unmodifiableMap(processorStats));
+            return new IngestStats(totalStats, Collections.unmodifiableList(pipelineStats), Collections.unmodifiableMap(processorStats));
         }
     }
 
@@ -301,11 +300,12 @@ public class IngestStats implements Writeable, ToXContentFragment {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             IngestStats.PipelineStat that = (IngestStats.PipelineStat) o;
-            return Objects.equals(pipelineId, that.pipelineId)
-                && Objects.equals(stats, that.stats);
+            return Objects.equals(pipelineId, that.pipelineId) && Objects.equals(stats, that.stats);
         }
 
         @Override
@@ -340,15 +340,14 @@ public class IngestStats implements Writeable, ToXContentFragment {
             return stats;
         }
 
-
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             IngestStats.ProcessorStat that = (IngestStats.ProcessorStat) o;
-            return Objects.equals(name, that.name)
-                && Objects.equals(type, that.type)
-                && Objects.equals(stats, that.stats);
+            return Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(stats, that.stats);
         }
 
         @Override

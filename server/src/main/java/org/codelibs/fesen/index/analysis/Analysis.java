@@ -19,6 +19,23 @@
 
 package org.codelibs.fesen.index.analysis;
 
+import static java.util.Collections.unmodifiableMap;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.ar.ArabicAnalyzer;
@@ -60,23 +77,6 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.unmodifiableMap;
 
 public class Analysis {
 
@@ -151,7 +151,7 @@ public class Analysis {
     }
 
     public static CharArraySet parseWords(Environment env, Settings settings, String name, CharArraySet defaultWords,
-                                          Map<String, Set<?>> namedWords, boolean ignoreCase) {
+            Map<String, Set<?>> namedWords, boolean ignoreCase) {
         String value = settings.get(name);
         if (value != null) {
             if ("_none_".equals(value)) {
@@ -176,8 +176,7 @@ public class Analysis {
         return parseWords(env, settings, "articles", null, null, articlesCase);
     }
 
-    public static CharArraySet parseStopWords(Environment env, Settings settings,
-                                              CharArraySet defaultStopWords) {
+    public static CharArraySet parseStopWords(Environment env, Settings settings, CharArraySet defaultStopWords) {
         boolean stopwordsCase = settings.getAsBoolean("stopwords_case", false);
         return parseStopWords(env, settings, defaultStopWords, stopwordsCase);
     }
@@ -228,8 +227,8 @@ public class Analysis {
      * @throws IllegalArgumentException
      *          If the word list cannot be found at either key.
      */
-    public static List<String> getWordList(Environment env, Settings settings,
-                                           String settingPath, String settingList, boolean removeComments) {
+    public static List<String> getWordList(Environment env, Settings settings, String settingPath, String settingList,
+            boolean removeComments) {
         String wordListPath = settings.get(settingPath, null);
 
         if (wordListPath == null) {
@@ -246,9 +245,9 @@ public class Analysis {
         try {
             return loadWordList(path, removeComments);
         } catch (CharacterCodingException ex) {
-            String message = String.format(Locale.ROOT,
-                "Unsupported character encoding detected while reading %s: %s - files must be UTF-8 encoded",
-                settingPath, path.toString());
+            String message =
+                    String.format(Locale.ROOT, "Unsupported character encoding detected while reading %s: %s - files must be UTF-8 encoded",
+                            settingPath, path.toString());
             throw new IllegalArgumentException(message, ex);
         } catch (IOException ioe) {
             String message = String.format(Locale.ROOT, "IOException while reading %s: %s", settingPath, path.toString());
@@ -288,8 +287,8 @@ public class Analysis {
             return Files.newBufferedReader(path, StandardCharsets.UTF_8);
         } catch (CharacterCodingException ex) {
             String message = String.format(Locale.ROOT,
-                "Unsupported character encoding detected while reading %s_path: %s files must be UTF-8 encoded",
-                settingPrefix, path.toString());
+                    "Unsupported character encoding detected while reading %s_path: %s files must be UTF-8 encoded", settingPrefix,
+                    path.toString());
             throw new IllegalArgumentException(message, ex);
         } catch (IOException ioe) {
             String message = String.format(Locale.ROOT, "IOException while reading %s_path: %s", settingPrefix, path.toString());

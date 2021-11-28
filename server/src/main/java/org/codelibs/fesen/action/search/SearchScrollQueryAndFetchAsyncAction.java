@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.search;
 
+import java.util.function.BiFunction;
+
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -29,16 +31,14 @@ import org.codelibs.fesen.search.fetch.ScrollQueryFetchSearchResult;
 import org.codelibs.fesen.search.internal.InternalScrollSearchRequest;
 import org.codelibs.fesen.transport.Transport;
 
-import java.util.function.BiFunction;
-
 final class SearchScrollQueryAndFetchAsyncAction extends SearchScrollAsyncAction<ScrollQueryFetchSearchResult> {
 
     private final SearchTask task;
     private final AtomicArray<QueryFetchSearchResult> queryFetchResults;
 
     SearchScrollQueryAndFetchAsyncAction(Logger logger, ClusterService clusterService, SearchTransportService searchTransportService,
-                                         SearchPhaseController searchPhaseController, SearchScrollRequest request, SearchTask task,
-                                         ParsedScrollId scrollId, ActionListener<SearchResponse> listener) {
+            SearchPhaseController searchPhaseController, SearchScrollRequest request, SearchTask task, ParsedScrollId scrollId,
+            ActionListener<SearchResponse> listener) {
         super(scrollId, logger, clusterService.state().nodes(), listener, searchPhaseController, request, searchTransportService);
         this.task = task;
         this.queryFetchResults = new AtomicArray<>(scrollId.getContext().length);
@@ -46,7 +46,7 @@ final class SearchScrollQueryAndFetchAsyncAction extends SearchScrollAsyncAction
 
     @Override
     protected void executeInitialPhase(Transport.Connection connection, InternalScrollSearchRequest internalRequest,
-                                       SearchActionListener<ScrollQueryFetchSearchResult> searchActionListener) {
+            SearchActionListener<ScrollQueryFetchSearchResult> searchActionListener) {
         searchTransportService.sendExecuteScrollFetch(connection, internalRequest, task, searchActionListener);
     }
 

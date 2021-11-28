@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.discovery.zen;
 
+import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -42,15 +51,6 @@ import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
-import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
-
 /**
  * A fault detection of multiple nodes.
  */
@@ -62,9 +62,11 @@ public class NodesFaultDetection extends FaultDetection {
 
     public abstract static class Listener {
 
-        public void onNodeFailure(DiscoveryNode node, String reason) {}
+        public void onNodeFailure(DiscoveryNode node, String reason) {
+        }
 
-        public void onPingReceived(PingRequest pingRequest) {}
+        public void onPingReceived(PingRequest pingRequest) {
+        }
 
     }
 
@@ -77,16 +79,16 @@ public class NodesFaultDetection extends FaultDetection {
     private volatile DiscoveryNode localNode;
 
     public NodesFaultDetection(Settings settings, ThreadPool threadPool, TransportService transportService,
-                               Supplier<ClusterState> clusterStateSupplier, ClusterName clusterName) {
+            Supplier<ClusterState> clusterStateSupplier, ClusterName clusterName) {
         super(settings, threadPool, transportService, clusterName);
 
         this.clusterStateSupplier = clusterStateSupplier;
 
         logger.debug("[node  ] uses ping_interval [{}], ping_timeout [{}], ping_retries [{}]", pingInterval, pingRetryTimeout,
-            pingRetryCount);
+                pingRetryCount);
 
-        transportService.registerRequestHandler(
-            PING_ACTION_NAME, ThreadPool.Names.SAME, false, false, PingRequest::new, new PingRequestHandler());
+        transportService.registerRequestHandler(PING_ACTION_NAME, ThreadPool.Names.SAME, false, false, PingRequest::new,
+                new PingRequestHandler());
     }
 
     public void setLocalNode(DiscoveryNode localNode) {
@@ -185,8 +187,8 @@ public class NodesFaultDetection extends FaultDetection {
                 }
             });
         } catch (EsRejectedExecutionException ex) {
-            logger.trace(() -> new ParameterizedMessage(
-                    "[node  ] [{}] ignoring node failure (reason [{}]). Local node is shutting down", node, reason), ex);
+            logger.trace(() -> new ParameterizedMessage("[node  ] [{}] ignoring node failure (reason [{}]). Local node is shutting down",
+                    node, reason), ex);
         }
     }
 
@@ -202,7 +204,6 @@ public class NodesFaultDetection extends FaultDetection {
 
         });
     }
-
 
     private class NodeFD implements Runnable {
         volatile int retryCount;
@@ -226,56 +227,55 @@ public class NodesFaultDetection extends FaultDetection {
             if (!running()) {
                 return;
             }
-            final TransportRequestOptions options = TransportRequestOptions.builder().withType(TransportRequestOptions.Type.PING)
-                .withTimeout(pingRetryTimeout).build();
+            final TransportRequestOptions options =
+                    TransportRequestOptions.builder().withType(TransportRequestOptions.Type.PING).withTimeout(pingRetryTimeout).build();
             transportService.sendRequest(node, PING_ACTION_NAME, newPingRequest(), options, new TransportResponseHandler<PingResponse>() {
-                        @Override
-                        public PingResponse read(StreamInput in) throws IOException {
-                            return new PingResponse(in);
-                        }
+                @Override
+                public PingResponse read(StreamInput in) throws IOException {
+                    return new PingResponse(in);
+                }
 
-                        @Override
-                        public void handleResponse(PingResponse response) {
-                            if (!running()) {
-                                return;
-                            }
-                            retryCount = 0;
-                            threadPool.schedule(NodeFD.this, pingInterval, ThreadPool.Names.SAME);
-                        }
-
-                        @Override
-                        public void handleException(TransportException exp) {
-                            if (!running()) {
-                                return;
-                            }
-                            if (exp instanceof ConnectTransportException || exp.getCause() instanceof ConnectTransportException) {
-                                handleTransportDisconnect(node);
-                                return;
-                            }
-
-                            retryCount++;
-                            logger.trace( () -> new ParameterizedMessage(
-                                    "[node  ] failed to ping [{}], retry [{}] out of [{}]", node, retryCount, pingRetryCount), exp);
-                            if (retryCount >= pingRetryCount) {
-                                logger.debug("[node  ] failed to ping [{}], tried [{}] times, each with  maximum [{}] timeout", node,
-                                    pingRetryCount, pingRetryTimeout);
-                                // not good, failure
-                                if (nodesFD.remove(node, NodeFD.this)) {
-                                    notifyNodeFailure(node, "failed to ping, tried [" + pingRetryCount + "] times, each with maximum ["
-                                        + pingRetryTimeout + "] timeout");
-                                }
-                            } else {
-                                // resend the request, not reschedule, rely on send timeout
-                                transportService.sendRequest(node, PING_ACTION_NAME, newPingRequest(), options, this);
-                            }
-                        }
-
-                        @Override
-                        public String executor() {
-                            return ThreadPool.Names.SAME;
-                        }
+                @Override
+                public void handleResponse(PingResponse response) {
+                    if (!running()) {
+                        return;
                     }
-            );
+                    retryCount = 0;
+                    threadPool.schedule(NodeFD.this, pingInterval, ThreadPool.Names.SAME);
+                }
+
+                @Override
+                public void handleException(TransportException exp) {
+                    if (!running()) {
+                        return;
+                    }
+                    if (exp instanceof ConnectTransportException || exp.getCause() instanceof ConnectTransportException) {
+                        handleTransportDisconnect(node);
+                        return;
+                    }
+
+                    retryCount++;
+                    logger.trace(() -> new ParameterizedMessage("[node  ] failed to ping [{}], retry [{}] out of [{}]", node, retryCount,
+                            pingRetryCount), exp);
+                    if (retryCount >= pingRetryCount) {
+                        logger.debug("[node  ] failed to ping [{}], tried [{}] times, each with  maximum [{}] timeout", node,
+                                pingRetryCount, pingRetryTimeout);
+                        // not good, failure
+                        if (nodesFD.remove(node, NodeFD.this)) {
+                            notifyNodeFailure(node, "failed to ping, tried [" + pingRetryCount + "] times, each with maximum ["
+                                    + pingRetryTimeout + "] timeout");
+                        }
+                    } else {
+                        // resend the request, not reschedule, rely on send timeout
+                        transportService.sendRequest(node, PING_ACTION_NAME, newPingRequest(), options, this);
+                    }
+                }
+
+                @Override
+                public String executor() {
+                    return ThreadPool.Names.SAME;
+                }
+            });
         }
     }
 
@@ -285,14 +285,14 @@ public class NodesFaultDetection extends FaultDetection {
             // if we are not the node we are supposed to be pinged, send an exception
             // this can happen when a kill -9 is sent, and another node is started using the same port
             if (!localNode.equals(request.targetNode())) {
-                throw new IllegalStateException("Got pinged as node " + request.targetNode() + "], but I am node " + localNode );
+                throw new IllegalStateException("Got pinged as node " + request.targetNode() + "], but I am node " + localNode);
             }
 
             // PingRequest will have clusterName set to null if it came from a node of version <1.4.0
             if (request.clusterName != null && !request.clusterName.equals(clusterName)) {
                 // Don't introduce new exception for bwc reasons
-                throw new IllegalStateException("Got pinged with cluster name [" + request.clusterName + "], but I'm part of cluster ["
-                    + clusterName + "]");
+                throw new IllegalStateException(
+                        "Got pinged with cluster name [" + request.clusterName + "], but I'm part of cluster [" + clusterName + "]");
             }
 
             notifyPingReceived(request);
@@ -300,7 +300,6 @@ public class NodesFaultDetection extends FaultDetection {
             channel.sendResponse(new PingResponse());
         }
     }
-
 
     public static class PingRequest extends TransportRequest {
 
@@ -364,6 +363,7 @@ public class NodesFaultDetection extends FaultDetection {
         }
 
         @Override
-        public void writeTo(StreamOutput out) throws IOException {}
+        public void writeTo(StreamOutput out) throws IOException {
+        }
     }
 }

@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import org.apache.lucene.analysis.Tokenizer;
-
 import java.util.function.Supplier;
+
+import org.apache.lucene.analysis.Tokenizer;
 
 public interface TokenizerFactory {
 

@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.search.lookup;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperService;
-
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+
+import org.apache.lucene.index.LeafReaderContext;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
 
 public class SearchLookup {
     /**
@@ -60,13 +60,11 @@ public class SearchLookup {
      * Create the top level field lookup for a search request. Provides a way to look up fields from  doc_values,
      * stored fields, or _source.
      */
-    public SearchLookup(MapperService mapperService,
-                        BiFunction<MappedFieldType, Supplier<SearchLookup>, IndexFieldData<?>> fieldDataLookup,
-                        @Nullable String[] types) {
+    public SearchLookup(MapperService mapperService, BiFunction<MappedFieldType, Supplier<SearchLookup>, IndexFieldData<?>> fieldDataLookup,
+            @Nullable String[] types) {
         this.fieldChain = Collections.emptySet();
         docMap = new DocLookup(mapperService,
-            fieldType -> fieldDataLookup.apply(fieldType, () -> forkAndTrackFieldReferences(fieldType.name())),
-            types);
+                fieldType -> fieldDataLookup.apply(fieldType, () -> forkAndTrackFieldReferences(fieldType.name())), types);
         sourceLookup = new SourceLookup();
         fieldsLookup = new FieldsLookup(mapperService, types);
         this.fieldDataLookup = fieldDataLookup;
@@ -82,8 +80,8 @@ public class SearchLookup {
     private SearchLookup(SearchLookup searchLookup, Set<String> fieldChain) {
         this.fieldChain = Collections.unmodifiableSet(fieldChain);
         this.docMap = new DocLookup(searchLookup.docMap.mapperService(),
-            fieldType -> searchLookup.fieldDataLookup.apply(fieldType, () -> forkAndTrackFieldReferences(fieldType.name())),
-            searchLookup.docMap.getTypes());
+                fieldType -> searchLookup.fieldDataLookup.apply(fieldType, () -> forkAndTrackFieldReferences(fieldType.name())),
+                searchLookup.docMap.getTypes());
         this.sourceLookup = searchLookup.sourceLookup;
         this.fieldsLookup = searchLookup.fieldsLookup;
         this.fieldDataLookup = searchLookup.fieldDataLookup;
@@ -111,10 +109,7 @@ public class SearchLookup {
     }
 
     public LeafSearchLookup getLeafSearchLookup(LeafReaderContext context) {
-        return new LeafSearchLookup(context,
-                docMap.getLeafDocLookup(context),
-                sourceLookup,
-                fieldsLookup.getLeafFieldsLookup(context));
+        return new LeafSearchLookup(context, docMap.getLeafDocLookup(context), sourceLookup, fieldsLookup.getLeafFieldsLookup(context));
     }
 
     public DocLookup doc() {

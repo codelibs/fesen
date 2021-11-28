@@ -19,8 +19,25 @@
 
 package org.codelibs.fesen.http;
 
-import com.carrotsearch.hppc.IntHashSet;
-import com.carrotsearch.hppc.IntSet;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_BIND_HOST;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CONTENT_LENGTH;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PORT;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PUBLISH_HOST;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PUBLISH_PORT;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.channels.CancelledKeyException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -46,24 +63,8 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.BindTransportException;
 
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_BIND_HOST;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CONTENT_LENGTH;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PORT;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PUBLISH_HOST;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_PUBLISH_PORT;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.nio.channels.CancelledKeyException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
+import com.carrotsearch.hppc.IntHashSet;
+import com.carrotsearch.hppc.IntSet;
 
 public abstract class AbstractHttpServerTransport extends AbstractLifecycleComponent implements HttpServerTransport {
     private static final Logger logger = LogManager.getLogger(AbstractHttpServerTransport.class);
@@ -91,7 +92,7 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
     private final HttpTracer tracer;
 
     protected AbstractHttpServerTransport(Settings settings, NetworkService networkService, BigArrays bigArrays, ThreadPool threadPool,
-                                          NamedXContentRegistry xContentRegistry, Dispatcher dispatcher, ClusterSettings clusterSettings) {
+            NamedXContentRegistry xContentRegistry, Dispatcher dispatcher, ClusterSettings clusterSettings) {
         this.settings = settings;
         this.networkService = networkService;
         this.bigArrays = bigArrays;
@@ -104,11 +105,11 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
         // we can't make the network.bind_host a fallback since we already fall back to http.host hence the extra conditional here
         List<String> httpBindHost = SETTING_HTTP_BIND_HOST.get(settings);
         this.bindHosts = (httpBindHost.isEmpty() ? NetworkService.GLOBAL_NETWORK_BIND_HOST_SETTING.get(settings) : httpBindHost)
-            .toArray(Strings.EMPTY_ARRAY);
+                .toArray(Strings.EMPTY_ARRAY);
         // we can't make the network.publish_host a fallback since we already fall back to http.host hence the extra conditional here
         List<String> httpPublishHost = SETTING_HTTP_PUBLISH_HOST.get(settings);
         this.publishHosts = (httpPublishHost.isEmpty() ? NetworkService.GLOBAL_NETWORK_PUBLISH_HOST_SETTING.get(settings) : httpPublishHost)
-            .toArray(Strings.EMPTY_ARRAY);
+                .toArray(Strings.EMPTY_ARRAY);
 
         this.port = SETTING_HTTP_PORT.get(settings);
 
@@ -179,10 +180,7 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
             return true;
         });
         if (!success) {
-            throw new BindHttpException(
-                "Failed to bind to " + NetworkAddress.format(hostAddress, port),
-                lastException.get()
-            );
+            throw new BindHttpException("Failed to bind to " + NetworkAddress.format(hostAddress, port), lastException.get());
         }
 
         if (logger.isDebugEnabled()) {
@@ -252,9 +250,10 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
         }
 
         if (publishPort < 0) {
-            throw new BindHttpException("Failed to auto-resolve http publish port, multiple bound addresses " + boundAddresses +
-                " with distinct ports and none of them matched the publish address (" + publishInetAddress + "). " +
-                "Please specify a unique port by setting " + SETTING_HTTP_PORT.getKey() + " or " + SETTING_HTTP_PUBLISH_PORT.getKey());
+            throw new BindHttpException("Failed to auto-resolve http publish port, multiple bound addresses " + boundAddresses
+                    + " with distinct ports and none of them matched the publish address (" + publishInetAddress + "). "
+                    + "Please specify a unique port by setting " + SETTING_HTTP_PORT.getKey() + " or "
+                    + SETTING_HTTP_PUBLISH_PORT.getKey());
         }
         return publishPort;
     }
@@ -267,22 +266,23 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
         }
         if (NetworkExceptionHelper.isCloseConnectionException(e)) {
             logger.trace(() -> new ParameterizedMessage(
-                "close connection exception caught while handling client http traffic, closing connection {}", channel), e);
+                    "close connection exception caught while handling client http traffic, closing connection {}", channel), e);
             CloseableChannel.closeChannel(channel);
         } else if (NetworkExceptionHelper.isConnectException(e)) {
             logger.trace(() -> new ParameterizedMessage(
-                "connect exception caught while handling client http traffic, closing connection {}", channel), e);
+                    "connect exception caught while handling client http traffic, closing connection {}", channel), e);
             CloseableChannel.closeChannel(channel);
         } else if (e instanceof HttpReadTimeoutException) {
             logger.trace(() -> new ParameterizedMessage("http read timeout, closing connection {}", channel), e);
             CloseableChannel.closeChannel(channel);
         } else if (e instanceof CancelledKeyException) {
             logger.trace(() -> new ParameterizedMessage(
-                "cancelled key exception caught while handling client http traffic, closing connection {}", channel), e);
+                    "cancelled key exception caught while handling client http traffic, closing connection {}", channel), e);
             CloseableChannel.closeChannel(channel);
         } else {
-            logger.warn(() -> new ParameterizedMessage(
-                "caught exception while handling client http traffic, closing connection {}", channel), e);
+            logger.warn(
+                    () -> new ParameterizedMessage("caught exception while handling client http traffic, closing connection {}", channel),
+                    e);
             CloseableChannel.closeChannel(channel);
         }
     }
@@ -368,15 +368,13 @@ public abstract class AbstractHttpServerTransport extends AbstractLifecycleCompo
             RestChannel innerChannel;
             ThreadContext threadContext = threadPool.getThreadContext();
             try {
-                innerChannel =
-                    new DefaultRestChannel(httpChannel, httpRequest, restRequest, bigArrays, handlingSettings, threadContext, corsHandler,
-                        trace);
+                innerChannel = new DefaultRestChannel(httpChannel, httpRequest, restRequest, bigArrays, handlingSettings, threadContext,
+                        corsHandler, trace);
             } catch (final IllegalArgumentException e) {
                 badRequestCause = ExceptionsHelper.useOrSuppress(badRequestCause, e);
                 final RestRequest innerRequest = RestRequest.requestWithoutParameters(xContentRegistry, httpRequest, httpChannel);
-                innerChannel =
-                    new DefaultRestChannel(httpChannel, httpRequest, innerRequest, bigArrays, handlingSettings, threadContext, corsHandler,
-                        trace);
+                innerChannel = new DefaultRestChannel(httpChannel, httpRequest, innerRequest, bigArrays, handlingSettings, threadContext,
+                        corsHandler, trace);
             }
             channel = innerChannel;
         }

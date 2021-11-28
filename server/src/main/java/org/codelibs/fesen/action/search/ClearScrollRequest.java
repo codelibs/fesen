@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.action.search;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -27,24 +34,18 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class ClearScrollRequest extends ActionRequest implements ToXContentObject {
 
     private List<String> scrollIds;
 
-    public ClearScrollRequest() {}
+    public ClearScrollRequest() {
+    }
 
     public ClearScrollRequest(StreamInput in) throws IOException {
         super(in);
         scrollIds = Arrays.asList(in.readStringArray());
     }
-    
+
     public List<String> getScrollIds() {
         return scrollIds;
     }
@@ -109,7 +110,7 @@ public class ClearScrollRequest extends ActionRequest implements ToXContentObjec
             while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                 if (token == XContentParser.Token.FIELD_NAME) {
                     currentFieldName = parser.currentName();
-                } else if ("scroll_id".equals(currentFieldName)){
+                } else if ("scroll_id".equals(currentFieldName)) {
                     if (token == XContentParser.Token.START_ARRAY) {
                         while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                             if (token.isValue() == false) {

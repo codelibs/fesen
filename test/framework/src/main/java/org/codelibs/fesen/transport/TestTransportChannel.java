@@ -20,8 +20,6 @@
 package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.transport.TransportChannel;
-import org.codelibs.fesen.transport.TransportResponse;
 
 public class TestTransportChannel implements TransportChannel {
 

@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.cluster.routing.allocation;
 
+import java.util.List;
+
 import org.codelibs.fesen.cluster.routing.RecoverySource;
 import org.codelibs.fesen.cluster.routing.RoutingChangesObserver;
 import org.codelibs.fesen.cluster.routing.RoutingNodes;
@@ -26,8 +28,6 @@ import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.gateway.GatewayAllocator;
-
-import java.util.List;
 
 /**
  * Searches for, and allocates, shards for which there is an existing on-disk copy somewhere in the cluster. The default implementation is
@@ -38,9 +38,8 @@ public interface ExistingShardsAllocator {
     /**
      * Allows plugins to override how we allocate shards that may already exist on disk in the cluster.
      */
-    Setting<String> EXISTING_SHARDS_ALLOCATOR_SETTING = Setting.simpleString(
-        "index.allocation.existing_shards_allocator", GatewayAllocator.ALLOCATOR_NAME,
-        Setting.Property.IndexScope, Setting.Property.PrivateIndex);
+    Setting<String> EXISTING_SHARDS_ALLOCATOR_SETTING = Setting.simpleString("index.allocation.existing_shards_allocator",
+            GatewayAllocator.ALLOCATOR_NAME, Setting.Property.IndexScope, Setting.Property.PrivateIndex);
 
     /**
      * Called before starting a round of allocation, allowing the allocator to invalidate some caches if appropriate.
@@ -57,7 +56,7 @@ public interface ExistingShardsAllocator {
      * Allocate any unassigned shards in the given {@link RoutingAllocation} for which this {@link ExistingShardsAllocator} is responsible.
      */
     void allocateUnassigned(ShardRouting shardRouting, RoutingAllocation allocation,
-                            UnassignedAllocationHandler unassignedAllocationHandler);
+            UnassignedAllocationHandler unassignedAllocationHandler);
 
     /**
      * Returns an explanation for a single unassigned shard.
@@ -99,7 +98,7 @@ public interface ExistingShardsAllocator {
          * @param existingAllocationId allocation id to use. If null, a fresh allocation id is generated.
          */
         ShardRouting initialize(String nodeId, @Nullable String existingAllocationId, long expectedShardSize,
-                                RoutingChangesObserver routingChangesObserver);
+                RoutingChangesObserver routingChangesObserver);
 
         /**
          * Removes and ignores the unassigned shard (will be ignored for this run, but

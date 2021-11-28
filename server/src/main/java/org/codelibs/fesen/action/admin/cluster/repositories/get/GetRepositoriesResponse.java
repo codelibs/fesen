@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.admin.cluster.repositories.get;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.RepositoriesMetadata;
 import org.codelibs.fesen.cluster.metadata.RepositoryMetadata;
@@ -27,12 +33,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Get repositories response
@@ -58,7 +58,6 @@ public class GetRepositoriesResponse extends ActionResponse implements ToXConten
         return repositories.repositories();
     }
 
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         repositories.writeTo(out);
@@ -68,7 +67,7 @@ public class GetRepositoriesResponse extends ActionResponse implements ToXConten
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         repositories.toXContent(builder,
-            new DelegatingMapParams(Collections.singletonMap(RepositoriesMetadata.HIDE_GENERATIONS_PARAM, "true"), params));
+                new DelegatingMapParams(Collections.singletonMap(RepositoriesMetadata.HIDE_GENERATIONS_PARAM, "true"), params));
         builder.endObject();
         return builder;
     }

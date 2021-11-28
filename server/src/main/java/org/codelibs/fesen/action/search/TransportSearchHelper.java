@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.search;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Base64;
+
 import org.apache.lucene.store.ByteArrayDataInput;
 import org.apache.lucene.store.RAMOutputStream;
 import org.codelibs.fesen.Version;
@@ -28,10 +32,6 @@ import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.search.internal.InternalScrollSearchRequest;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
 import org.codelibs.fesen.transport.RemoteClusterAware;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Base64;
 
 final class TransportSearchHelper {
 
@@ -57,7 +57,7 @@ final class TransportSearchHelper {
                 SearchShardTarget searchShardTarget = searchPhaseResult.getSearchShardTarget();
                 if (searchShardTarget.getClusterAlias() != null) {
                     out.writeString(
-                        RemoteClusterAware.buildRemoteIndexName(searchShardTarget.getClusterAlias(), searchShardTarget.getNodeId()));
+                            RemoteClusterAware.buildRemoteIndexName(searchShardTarget.getClusterAlias(), searchShardTarget.getNodeId()));
                 } else {
                     out.writeString(searchShardTarget.getNodeId());
                 }
@@ -95,7 +95,7 @@ final class TransportSearchHelper {
                     clusterAlias = null;
                 } else {
                     clusterAlias = target.substring(0, index);
-                    target = target.substring(index+1);
+                    target = target.substring(index + 1);
                 }
                 context[i] = new SearchContextIdForNode(clusterAlias, target, new ShardSearchContextId(contextUUID, id));
             }

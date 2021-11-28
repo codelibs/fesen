@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.geometry.utils.Geohash;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
-
-import java.io.IOException;
 
 public class InternalGeoHashGridBucket extends InternalGeoGridBucket<InternalGeoHashGridBucket> {
     InternalGeoHashGridBucket(long hashAsLong, long docCount, InternalAggregations aggregations) {

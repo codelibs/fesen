@@ -33,8 +33,8 @@ public class AutoDateHistogramAggregationBuilderTests extends ESTestCase {
 
     public void testInvalidInterval() {
         AutoDateHistogramAggregationBuilder builder = new AutoDateHistogramAggregationBuilder("name");
-        IllegalArgumentException wrongIntervalName = expectThrows(IllegalArgumentException.class,
-            () -> builder.setMinimumIntervalExpression("foobar"));
+        IllegalArgumentException wrongIntervalName =
+                expectThrows(IllegalArgumentException.class, () -> builder.setMinimumIntervalExpression("foobar"));
         assertTrue(wrongIntervalName.getMessage().startsWith("minimum_interval must be one of"));
     }
 
@@ -56,11 +56,9 @@ public class AutoDateHistogramAggregationBuilderTests extends ESTestCase {
     }
 
     public void testRoundingsMatchAllowedIntervals() {
-        AutoDateHistogramAggregationBuilder.RoundingInfo[] roundings = AutoDateHistogramAggregationBuilder.buildRoundings(
-            null, "second");
-        Set<String> actualDateTimeUnits = Arrays.stream(roundings)
-            .map(AutoDateHistogramAggregationBuilder.RoundingInfo::getDateTimeUnit)
-            .collect(Collectors.toSet());
+        AutoDateHistogramAggregationBuilder.RoundingInfo[] roundings = AutoDateHistogramAggregationBuilder.buildRoundings(null, "second");
+        Set<String> actualDateTimeUnits =
+                Arrays.stream(roundings).map(AutoDateHistogramAggregationBuilder.RoundingInfo::getDateTimeUnit).collect(Collectors.toSet());
         Set<String> expectedDateTimeUnits = new HashSet<>(AutoDateHistogramAggregationBuilder.ALLOWED_INTERVALS.values());
         assertEquals(actualDateTimeUnits, expectedDateTimeUnits);
     }

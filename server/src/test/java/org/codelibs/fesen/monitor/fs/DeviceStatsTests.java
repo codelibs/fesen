@@ -35,24 +35,10 @@ public class DeviceStatsTests extends ESTestCase {
         final int writesCompleted = randomIntBetween(1, 1 << 16);
         final int sectorsWritten = randomIntBetween(8 * writesCompleted, 16 * writesCompleted);
 
-        FsInfo.DeviceStats previous = new FsInfo.DeviceStats(
-            majorDeviceNumber,
-            minorDeviceNumber,
-            deviceName,
-            readsCompleted,
-            sectorsRead,
-            writesCompleted,
-            sectorsWritten,
-            null);
-        FsInfo.DeviceStats current = new FsInfo.DeviceStats(
-            majorDeviceNumber,
-            minorDeviceNumber,
-            deviceName,
-            readsCompleted + 1024,
-            sectorsRead + 16384,
-            writesCompleted + 2048,
-            sectorsWritten + 32768,
-            previous);
+        FsInfo.DeviceStats previous = new FsInfo.DeviceStats(majorDeviceNumber, minorDeviceNumber, deviceName, readsCompleted, sectorsRead,
+                writesCompleted, sectorsWritten, null);
+        FsInfo.DeviceStats current = new FsInfo.DeviceStats(majorDeviceNumber, minorDeviceNumber, deviceName, readsCompleted + 1024,
+                sectorsRead + 16384, writesCompleted + 2048, sectorsWritten + 32768, previous);
         assertThat(current.operations(), equalTo(1024L + 2048L));
         assertThat(current.readOperations(), equalTo(1024L));
         assertThat(current.writeOperations(), equalTo(2048L));

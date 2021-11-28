@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.transport;
 
+import static org.codelibs.fesen.core.Booleans.parseBoolean;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
@@ -28,12 +34,6 @@ import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.node.ReportingService;
-
-import static org.codelibs.fesen.core.Booleans.parseBoolean;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TransportInfo implements ReportingService.Info {
 
@@ -52,7 +52,7 @@ public class TransportInfo implements ReportingService.Info {
     }
 
     public TransportInfo(BoundTransportAddress address, @Nullable Map<String, BoundTransportAddress> profileAddresses,
-                         boolean cnameInPublishAddress) {
+            boolean cnameInPublishAddress) {
         this.address = address;
         this.profileAddresses = profileAddresses;
         this.cnameInPublishAddress = cnameInPublishAddress;
@@ -95,7 +95,7 @@ public class TransportInfo implements ReportingService.Info {
         static final String PROFILES = "profiles";
     }
 
-    private String formatPublishAddressString(String propertyName, TransportAddress publishAddress){
+    private String formatPublishAddressString(String propertyName, TransportAddress publishAddress) {
         String publishAddressString = publishAddress.toString();
         String hostString = publishAddress.address().getHostString();
         if (InetAddresses.isInetAddress(hostString) == false) {
@@ -105,8 +105,7 @@ public class TransportInfo implements ReportingService.Info {
                 deprecationLogger.deprecate("cname_in_publish_address",
                         propertyName + " was printed as [ip:port] instead of [hostname/ip:port]. "
                                 + "This format is deprecated and will change to [hostname/ip:port] in a future version. "
-                                + "Use -Des.transport.cname_in_publish_address=true to enforce non-deprecated formatting."
-                );
+                                + "Use -Des.transport.cname_in_publish_address=true to enforce non-deprecated formatting.");
             }
         }
         return publishAddressString;

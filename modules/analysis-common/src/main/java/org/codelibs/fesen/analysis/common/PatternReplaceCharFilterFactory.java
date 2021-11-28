@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.analysis.common;
 
+import java.io.Reader;
+import java.util.regex.Pattern;
+
 import org.apache.lucene.analysis.pattern.PatternReplaceCharFilter;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.regex.Regex;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractCharFilterFactory;
 import org.codelibs.fesen.index.analysis.NormalizingCharFilterFactory;
-
-import java.io.Reader;
-import java.util.regex.Pattern;
 
 public class PatternReplaceCharFilterFactory extends AbstractCharFilterFactory implements NormalizingCharFilterFactory {
 

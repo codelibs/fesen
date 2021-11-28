@@ -33,10 +33,8 @@ public class BasqueAnalyzerProvider extends AbstractIndexAnalyzerProvider<Basque
 
     BasqueAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, name, settings);
-        analyzer = new BasqueAnalyzer(
-            Analysis.parseStopWords(env, settings, BasqueAnalyzer.getDefaultStopSet()),
-            Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET)
-        );
+        analyzer = new BasqueAnalyzer(Analysis.parseStopWords(env, settings, BasqueAnalyzer.getDefaultStopSet()),
+                Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET));
         analyzer.setVersion(version);
     }
 

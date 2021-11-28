@@ -83,7 +83,7 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class ClusterStateHealthTests extends ESTestCase {
     private final IndexNameExpressionResolver indexNameExpressionResolver =
-        new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY));
+            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY));
 
     private static ThreadPool threadPool;
 
@@ -102,7 +102,7 @@ public class ClusterStateHealthTests extends ESTestCase {
         clusterService = createClusterService(threadPool);
         CapturingTransport transport = new CapturingTransport();
         transportService = transport.createTransportService(clusterService.getSettings(), threadPool,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
+                TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
         transportService.start();
         transportService.acceptIncomingRequests();
     }
@@ -125,7 +125,7 @@ public class ClusterStateHealthTests extends ESTestCase {
         final CountDownLatch listenerCalled = new CountDownLatch(1);
 
         setState(clusterService, ClusterState.builder(clusterService.state())
-            .nodes(DiscoveryNodes.builder(clusterService.state().nodes()).masterNodeId(null)).build());
+                .nodes(DiscoveryNodes.builder(clusterService.state().nodes()).masterNodeId(null)).build());
 
         clusterService.addStateApplier(event -> {
             listenerCalled.countDown();
@@ -139,16 +139,16 @@ public class ClusterStateHealthTests extends ESTestCase {
         logger.info("--> submit task to restore master");
         ClusterState currentState = clusterService.getClusterApplierService().state();
         clusterService.getClusterApplierService().onNewClusterState("restore master",
-            () -> ClusterState.builder(currentState)
-                .nodes(DiscoveryNodes.builder(currentState.nodes()).masterNodeId(currentState.nodes().getLocalNodeId())).build(),
-            (source, e) -> {});
+                () -> ClusterState.builder(currentState)
+                        .nodes(DiscoveryNodes.builder(currentState.nodes()).masterNodeId(currentState.nodes().getLocalNodeId())).build(),
+                (source, e) -> {});
 
         logger.info("--> waiting for listener to be called and cluster state being blocked");
         listenerCalled.await();
 
-        TransportClusterHealthAction action = new TransportClusterHealthAction(transportService,
-            clusterService, threadPool, new ActionFilters(new HashSet<>()), indexNameExpressionResolver,
-            new AllocationService(null, new TestGatewayAllocator(), null, null, null));
+        TransportClusterHealthAction action =
+                new TransportClusterHealthAction(transportService, clusterService, threadPool, new ActionFilters(new HashSet<>()),
+                        indexNameExpressionResolver, new AllocationService(null, new TestGatewayAllocator(), null, null, null));
         PlainActionFuture<ClusterHealthResponse> listener = new PlainActionFuture<>();
         action.execute(new ClusterHealthRequest().waitForGreenStatus(), listener);
 
@@ -167,23 +167,16 @@ public class ClusterStateHealthTests extends ESTestCase {
         for (int i = randomInt(4); i >= 0; i--) {
             int numberOfShards = randomInt(3) + 1;
             int numberOfReplicas = randomInt(4);
-            IndexMetadata indexMetadata = IndexMetadata
-                    .builder("test_" + Integer.toString(i))
-                    .settings(settings(Version.CURRENT))
-                    .numberOfShards(numberOfShards)
-                    .numberOfReplicas(numberOfReplicas)
-                    .build();
+            IndexMetadata indexMetadata = IndexMetadata.builder("test_" + Integer.toString(i)).settings(settings(Version.CURRENT))
+                    .numberOfShards(numberOfShards).numberOfReplicas(numberOfReplicas).build();
             IndexRoutingTable indexRoutingTable = routingTableGenerator.genIndexRoutingTable(indexMetadata, counter);
             metadata.put(indexMetadata, true);
             routingTable.add(indexRoutingTable);
         }
-        ClusterState clusterState = ClusterState.builder(ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-                                                .metadata(metadata)
-                                                .routingTable(routingTable.build())
-                                                .build();
-        String[] concreteIndices = indexNameExpressionResolver.concreteIndexNames(
-            clusterState, IndicesOptions.strictExpand(), (String[]) null
-        );
+        ClusterState clusterState = ClusterState.builder(ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY)).metadata(metadata)
+                .routingTable(routingTable.build()).build();
+        String[] concreteIndices =
+                indexNameExpressionResolver.concreteIndexNames(clusterState, IndicesOptions.strictExpand(), (String[]) null);
         ClusterStateHealth clusterStateHealth = new ClusterStateHealth(clusterState, concreteIndices);
         logger.info("cluster status: {}, expected {}", clusterStateHealth.getStatus(), counter.status());
         clusterStateHealth = maybeSerialize(clusterStateHealth);
@@ -309,34 +302,24 @@ public class ClusterStateHealthTests extends ESTestCase {
         final int numberOfReplicas = randomIntBetween(1, numberOfShards);
         // initial index creation and new routing table info
         final IndexMetadata indexMetadata = IndexMetadata.builder(indexName)
-                                                         .settings(settings(Version.CURRENT)
-                                                                       .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
-                                                         .numberOfShards(numberOfShards)
-                                                         .numberOfReplicas(numberOfReplicas)
-                                                         .build();
+                .settings(settings(Version.CURRENT).put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
+                .numberOfShards(numberOfShards).numberOfReplicas(numberOfReplicas).build();
         final Metadata metadata = Metadata.builder().put(indexMetadata, true).build();
         final RoutingTable routingTable = RoutingTable.builder().addAsNew(indexMetadata).build();
 
-        ClusterState clusterState = ClusterState.builder(new ClusterName("test_cluster"))
-                                                .metadata(metadata)
-                                                .routingTable(routingTable)
-                                                .build();
+        ClusterState clusterState =
+                ClusterState.builder(new ClusterName("test_cluster")).metadata(metadata).routingTable(routingTable).build();
         return generateClusterStates(clusterState, indexName, numberOfReplicas, withPrimaryAllocationFailures);
     }
 
-    private List<ClusterState> simulateClusterRecoveryStates(final String indexName,
-                                                             final boolean withPreviousAllocationIds,
-                                                             final boolean withPrimaryAllocationFailures) {
+    private List<ClusterState> simulateClusterRecoveryStates(final String indexName, final boolean withPreviousAllocationIds,
+            final boolean withPrimaryAllocationFailures) {
         final int numberOfShards = randomIntBetween(1, 5);
         final int numberOfReplicas = randomIntBetween(1, numberOfShards);
         // initial index creation and new routing table info
         IndexMetadata indexMetadata = IndexMetadata.builder(indexName)
-                                                   .settings(settings(Version.CURRENT)
-                                                                 .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
-                                                   .numberOfShards(numberOfShards)
-                                                   .numberOfReplicas(numberOfReplicas)
-                                                   .state(IndexMetadata.State.OPEN)
-                                                   .build();
+                .settings(settings(Version.CURRENT).put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
+                .numberOfShards(numberOfShards).numberOfReplicas(numberOfReplicas).state(IndexMetadata.State.OPEN).build();
         if (withPreviousAllocationIds) {
             final IndexMetadata.Builder idxMetaWithAllocationIds = IndexMetadata.builder(indexMetadata);
             boolean atLeastOne = false;
@@ -351,17 +334,13 @@ public class ClusterStateHealthTests extends ESTestCase {
         final Metadata metadata = Metadata.builder().put(indexMetadata, true).build();
         final RoutingTable routingTable = RoutingTable.builder().addAsRecovery(indexMetadata).build();
 
-        ClusterState clusterState = ClusterState.builder(new ClusterName("test_cluster"))
-                                                .metadata(metadata)
-                                                .routingTable(routingTable)
-                                                .build();
+        ClusterState clusterState =
+                ClusterState.builder(new ClusterName("test_cluster")).metadata(metadata).routingTable(routingTable).build();
         return generateClusterStates(clusterState, indexName, numberOfReplicas, withPrimaryAllocationFailures);
     }
 
-    private List<ClusterState> generateClusterStates(final ClusterState originalClusterState,
-                                                     final String indexName,
-                                                     final int numberOfReplicas,
-                                                     final boolean withPrimaryAllocationFailures) {
+    private List<ClusterState> generateClusterStates(final ClusterState originalClusterState, final String indexName,
+            final int numberOfReplicas, final boolean withPrimaryAllocationFailures) {
         // generate random node ids
         final Set<String> nodeIds = new HashSet<>();
         final int numNodes = randomIntBetween(numberOfReplicas + 1, 10);
@@ -381,9 +360,7 @@ public class ClusterStateHealthTests extends ESTestCase {
             final IndexShardRoutingTable shardRoutingTable = shardEntry.value;
             for (final ShardRouting shardRouting : shardRoutingTable.getShards()) {
                 if (shardRouting.primary()) {
-                    newIndexRoutingTable.addShard(
-                        shardRouting.initialize(randomFrom(nodeIds), null, shardRouting.getExpectedShardSize())
-                    );
+                    newIndexRoutingTable.addShard(shardRouting.initialize(randomFrom(nodeIds), null, shardRouting.getExpectedShardSize()));
                 } else {
                     newIndexRoutingTable.addShard(shardRouting);
                 }
@@ -396,7 +373,7 @@ public class ClusterStateHealthTests extends ESTestCase {
         // some primaries started
         indexRoutingTable = routingTable.index(indexName);
         newIndexRoutingTable = IndexRoutingTable.builder(indexRoutingTable.getIndex());
-        ImmutableOpenIntMap.Builder<Set<String>> allocationIds = ImmutableOpenIntMap.<Set<String>>builder();
+        ImmutableOpenIntMap.Builder<Set<String>> allocationIds = ImmutableOpenIntMap.<Set<String>> builder();
         for (final ObjectCursor<IndexShardRoutingTable> shardEntry : indexRoutingTable.getShards().values()) {
             final IndexShardRoutingTable shardRoutingTable = shardEntry.value;
             for (final ShardRouting shardRouting : shardRoutingTable.getShards()) {
@@ -427,8 +404,8 @@ public class ClusterStateHealthTests extends ESTestCase {
                 final IndexShardRoutingTable shardRoutingTable = shardEntry.value;
                 for (final ShardRouting shardRouting : shardRoutingTable.getShards()) {
                     if (shardRouting.primary() && (shardRouting.started() == false || alreadyFailedPrimary == false)) {
-                        newIndexRoutingTable.addShard(shardRouting.moveToUnassigned(
-                            new UnassignedInfo(UnassignedInfo.Reason.ALLOCATION_FAILED, "unlucky shard")));
+                        newIndexRoutingTable.addShard(shardRouting
+                                .moveToUnassigned(new UnassignedInfo(UnassignedInfo.Reason.ALLOCATION_FAILED, "unlucky shard")));
                         alreadyFailedPrimary = true;
                     } else {
                         newIndexRoutingTable.addShard(shardRouting);
@@ -443,7 +420,7 @@ public class ClusterStateHealthTests extends ESTestCase {
         // all primaries started
         indexRoutingTable = routingTable.index(indexName);
         newIndexRoutingTable = IndexRoutingTable.builder(indexRoutingTable.getIndex());
-        allocationIds = ImmutableOpenIntMap.<Set<String>>builder();
+        allocationIds = ImmutableOpenIntMap.<Set<String>> builder();
         for (final ObjectCursor<IndexShardRoutingTable> shardEntry : indexRoutingTable.getShards().values()) {
             final IndexShardRoutingTable shardRoutingTable = shardEntry.value;
             for (final ShardRouting shardRouting : shardRoutingTable.getShards()) {
@@ -536,8 +513,8 @@ public class ClusterStateHealthTests extends ESTestCase {
                 if (clusterState.metadata().index(indexName).inSyncAllocationIds(shardRouting.key).isEmpty() == false) {
                     return false;
                 }
-                if (primaryShard.recoverySource() != null &&
-                    primaryShard.recoverySource().getType() == RecoverySource.Type.EXISTING_STORE) {
+                if (primaryShard.recoverySource() != null
+                        && primaryShard.recoverySource().getType() == RecoverySource.Type.EXISTING_STORE) {
                     return false;
                 }
                 if (primaryShard.unassignedInfo().getNumFailedAllocations() > 0) {

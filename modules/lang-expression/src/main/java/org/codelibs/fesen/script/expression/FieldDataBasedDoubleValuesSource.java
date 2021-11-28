@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.script.expression;
 
+import java.util.Objects;
+
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValuesSource;
 import org.apache.lucene.search.IndexSearcher;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-
-import java.util.Objects;
 
 abstract class FieldDataBasedDoubleValuesSource extends DoubleValuesSource {
 

@@ -19,8 +19,11 @@
 
 package org.codelibs.fesen.common.unit;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
+
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,10 +32,6 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.logging.LogConfigurator;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
 
 public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXContentFragment {
 
@@ -235,18 +234,16 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
             } catch (final NumberFormatException e) {
                 try {
                     final double doubleValue = Double.parseDouble(s);
-                    DeprecationLoggerHolder.deprecationLogger
-                        .deprecate("fractional_byte_values",
-                         "Fractional bytes values are deprecated. Use non-fractional bytes values instead: [{}] found for setting [{}]",
-                         initialInput, settingName);
+                    DeprecationLoggerHolder.deprecationLogger.deprecate("fractional_byte_values",
+                            "Fractional bytes values are deprecated. Use non-fractional bytes values instead: [{}] found for setting [{}]",
+                            initialInput, settingName);
                     return new ByteSizeValue((long) (doubleValue * unit.toBytes(1)));
                 } catch (final NumberFormatException ignored) {
                     throw new FesenParseException("failed to parse [{}]", e, initialInput);
                 }
             }
         } catch (IllegalArgumentException e) {
-            throw new FesenParseException("failed to parse setting [{}] with value [{}] as a size in bytes", e, settingName,
-                    initialInput);
+            throw new FesenParseException("failed to parse setting [{}] with value [{}] as a size in bytes", e, settingName, initialInput);
         }
     }
 

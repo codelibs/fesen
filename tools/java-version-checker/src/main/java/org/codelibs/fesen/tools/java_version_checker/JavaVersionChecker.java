@@ -27,7 +27,8 @@ import java.util.Locale;
  */
 final class JavaVersionChecker {
 
-    private JavaVersionChecker() {}
+    private JavaVersionChecker() {
+    }
 
     /**
      * The main entry point. The exit code is 0 if the Java version is at least 1.8, otherwise the exit code is 1.
@@ -40,20 +41,16 @@ final class JavaVersionChecker {
             throw new IllegalArgumentException("expected zero arguments but was " + Arrays.toString(args));
         }
         if (JavaVersion.compare(JavaVersion.CURRENT, JavaVersion.JAVA_8) < 0) {
-            final String message = String.format(
-                Locale.ROOT,
-                "the minimum required Java version is 8; your Java version from [%s] does not meet this requirement",
-                System.getProperty("java.home")
-            );
+            final String message = String.format(Locale.ROOT,
+                    "the minimum required Java version is 8; your Java version from [%s] does not meet this requirement",
+                    System.getProperty("java.home"));
             errPrintln(message);
             exit(1);
         }
         if (JavaVersion.compare(JavaVersion.CURRENT, JavaVersion.JAVA_11) < 0) {
-            final String message = String.format(
-                Locale.ROOT,
-                "future versions of Fesen will require Java 11; your Java version from [%s] does not meet this requirement",
-                System.getProperty("java.home")
-            );
+            final String message = String.format(Locale.ROOT,
+                    "future versions of Fesen will require Java 11; your Java version from [%s] does not meet this requirement",
+                    System.getProperty("java.home"));
             errPrintln(message);
         }
         exit(0);

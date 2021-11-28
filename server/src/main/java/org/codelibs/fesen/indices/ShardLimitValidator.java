@@ -43,7 +43,7 @@ import org.codelibs.fesen.index.Index;
  */
 public class ShardLimitValidator {
     public static final Setting<Integer> SETTING_CLUSTER_MAX_SHARDS_PER_NODE =
-        Setting.intSetting("cluster.max_shards_per_node", 1000, 1, Setting.Property.Dynamic, Setting.Property.NodeScope);
+            Setting.intSetting("cluster.max_shards_per_node", 1000, 1, Setting.Property.Dynamic, Setting.Property.NodeScope);
     protected final AtomicInteger shardLimitPerNode = new AtomicInteger();
 
     public ShardLimitValidator(final Settings settings, ClusterService clusterService) {
@@ -93,9 +93,8 @@ public class ShardLimitValidator {
      */
     public void validateShardLimit(ClusterState currentState, Index[] indicesToOpen) {
         int shardsToOpen = Arrays.stream(indicesToOpen)
-            .filter(index -> currentState.metadata().index(index).getState().equals(IndexMetadata.State.CLOSE))
-            .mapToInt(index -> getTotalShardCount(currentState, index))
-            .sum();
+                .filter(index -> currentState.metadata().index(index).getState().equals(IndexMetadata.State.CLOSE))
+                .mapToInt(index -> getTotalShardCount(currentState, index)).sum();
 
         Optional<String> error = checkShardLimit(shardsToOpen, currentState);
         if (error.isPresent()) {
@@ -137,8 +136,8 @@ public class ShardLimitValidator {
         int currentOpenShards = state.getMetadata().getTotalOpenIndexShards();
 
         if ((currentOpenShards + newShards) > maxShardsInCluster) {
-            String errorMessage = "this action would add [" + newShards + "] total shards, but this cluster currently has [" +
-                currentOpenShards + "]/[" + maxShardsInCluster + "] maximum shards open";
+            String errorMessage = "this action would add [" + newShards + "] total shards, but this cluster currently has ["
+                    + currentOpenShards + "]/[" + maxShardsInCluster + "] maximum shards open";
             return Optional.of(errorMessage);
         }
         return Optional.empty();

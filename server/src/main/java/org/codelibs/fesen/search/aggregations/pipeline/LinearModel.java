@@ -19,17 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.Nullable;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Calculate a linearly weighted moving average, such that older values are

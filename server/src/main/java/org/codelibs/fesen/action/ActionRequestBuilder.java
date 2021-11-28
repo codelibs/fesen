@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.action;
 
+import java.util.Objects;
+
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.util.Objects;
 
 public abstract class ActionRequestBuilder<Request extends ActionRequest, Response extends ActionResponse> {
 

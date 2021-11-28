@@ -18,6 +18,13 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.SetBackedScalingCuckooFilter;
@@ -25,13 +32,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
 
 /**
  * Result of the RareTerms aggregation when the field is unmapped.

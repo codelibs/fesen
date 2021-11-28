@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.suggest.phrase;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -28,12 +34,6 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.suggest.Suggest;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Suggestion entry returned from the {@link PhraseSuggester}.
@@ -85,7 +85,8 @@ public class PhraseSuggestion extends Suggest.Suggestion<PhraseSuggestion.Entry>
             super(text, offset, length);
         }
 
-        Entry() {}
+        Entry() {
+        }
 
         public Entry(StreamInput in) throws IOException {
             super(in);
@@ -147,8 +148,7 @@ public class PhraseSuggestion extends Suggest.Suggestion<PhraseSuggestion.Entry>
 
         @Override
         public boolean equals(Object other) {
-            return super.equals(other)
-                && Objects.equals(cutoffScore, ((Entry) other).cutoffScore);
+            return super.equals(other) && Objects.equals(cutoffScore, ((Entry) other).cutoffScore);
         }
 
         @Override
@@ -170,15 +170,15 @@ public class PhraseSuggestion extends Suggest.Suggestion<PhraseSuggestion.Entry>
                 super(in);
             }
 
-            private static final ConstructingObjectParser<Option, Void> PARSER = new ConstructingObjectParser<>("PhraseOptionParser",
-                true, args -> {
-                    Text text = new Text((String) args[0]);
-                    float score = (Float) args[1];
-                    String highlighted = (String) args[2];
-                    Text highlightedText = highlighted == null ? null : new Text(highlighted);
-                    Boolean collateMatch = (Boolean) args[3];
-                    return new Option(text, highlightedText, score, collateMatch);
-            });
+            private static final ConstructingObjectParser<Option, Void> PARSER =
+                    new ConstructingObjectParser<>("PhraseOptionParser", true, args -> {
+                        Text text = new Text((String) args[0]);
+                        float score = (Float) args[1];
+                        String highlighted = (String) args[2];
+                        Text highlightedText = highlighted == null ? null : new Text(highlighted);
+                        Boolean collateMatch = (Boolean) args[3];
+                        return new Option(text, highlightedText, score, collateMatch);
+                    });
 
             static {
                 PARSER.declareString(constructorArg(), TEXT);
@@ -188,7 +188,7 @@ public class PhraseSuggestion extends Suggest.Suggestion<PhraseSuggestion.Entry>
             }
 
             public static Option fromXContent(XContentParser parser) {
-                    return PARSER.apply(parser, null);
+                return PARSER.apply(parser, null);
             }
         }
     }

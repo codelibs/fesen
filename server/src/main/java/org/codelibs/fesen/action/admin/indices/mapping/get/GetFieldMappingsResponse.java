@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -37,18 +49,6 @@ import org.codelibs.fesen.index.mapper.Mapper;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.rest.BaseRestHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
-
 /**
  * Response object for {@link GetFieldMappingsRequest} API
  *
@@ -60,7 +60,7 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
     private static final ParseField MAPPINGS = new ParseField("mappings");
 
     private static final ObjectParser<Map<String, Map<String, FieldMappingMetadata>>, String> PARSER =
-        new ObjectParser<>(MAPPINGS.getPreferredName(), true, HashMap::new);
+            new ObjectParser<>(MAPPINGS.getPreferredName(), true, HashMap::new);
 
     static {
         PARSER.declareField((p, typeMappings, index) -> {
@@ -139,8 +139,7 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        boolean includeTypeName = params.paramAsBoolean(BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER,
-            DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+        boolean includeTypeName = params.paramAsBoolean(BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
 
         builder.startObject();
         for (Map.Entry<String, Map<String, Map<String, FieldMappingMetadata>>> indexEntry : mappings.entrySet()) {
@@ -173,9 +172,8 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
         return builder;
     }
 
-    private void addFieldMappingsToBuilder(XContentBuilder builder,
-                                           Params params,
-                                           Map<String, FieldMappingMetadata> mappings) throws IOException {
+    private void addFieldMappingsToBuilder(XContentBuilder builder, Params params, Map<String, FieldMappingMetadata> mappings)
+            throws IOException {
         for (Map.Entry<String, FieldMappingMetadata> fieldEntry : mappings.entrySet()) {
             builder.startObject(fieldEntry.getKey());
             fieldEntry.getValue().toXContent(builder, params);
@@ -207,20 +205,16 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
         private static final ParseField FULL_NAME = new ParseField("full_name");
         private static final ParseField MAPPING = new ParseField("mapping");
 
-        private static final ConstructingObjectParser<FieldMappingMetadata, String> PARSER =
-            new ConstructingObjectParser<>("field_mapping_meta_data", true,
-                a -> new FieldMappingMetadata((String)a[0], (BytesReference)a[1])
-            );
+        private static final ConstructingObjectParser<FieldMappingMetadata, String> PARSER = new ConstructingObjectParser<>(
+                "field_mapping_meta_data", true, a -> new FieldMappingMetadata((String) a[0], (BytesReference) a[1]));
 
         static {
-            PARSER.declareField(optionalConstructorArg(),
-                (p, c) -> p.text(), FULL_NAME, ObjectParser.ValueType.STRING);
-            PARSER.declareField(optionalConstructorArg(),
-                (p, c) -> {
-                    final XContentBuilder jsonBuilder = jsonBuilder().copyCurrentStructure(p);
-                    final BytesReference bytes = BytesReference.bytes(jsonBuilder);
-                    return bytes;
-                }, MAPPING, ObjectParser.ValueType.OBJECT);
+            PARSER.declareField(optionalConstructorArg(), (p, c) -> p.text(), FULL_NAME, ObjectParser.ValueType.STRING);
+            PARSER.declareField(optionalConstructorArg(), (p, c) -> {
+                final XContentBuilder jsonBuilder = jsonBuilder().copyCurrentStructure(p);
+                final BytesReference bytes = BytesReference.bytes(jsonBuilder);
+                return bytes;
+            }, MAPPING, ObjectParser.ValueType.OBJECT);
         }
 
         private final String fullName;
@@ -273,11 +267,12 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof FieldMappingMetadata)) return false;
+            if (this == o)
+                return true;
+            if (!(o instanceof FieldMappingMetadata))
+                return false;
             FieldMappingMetadata that = (FieldMappingMetadata) o;
-            return Objects.equals(fullName, that.fullName) &&
-                Objects.equals(source, that.source);
+            return Objects.equals(fullName, that.fullName) && Objects.equals(source, that.source);
         }
 
         @Override
@@ -307,15 +302,15 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
 
     @Override
     public String toString() {
-        return "GetFieldMappingsResponse{" +
-            "mappings=" + mappings +
-            '}';
+        return "GetFieldMappingsResponse{" + "mappings=" + mappings + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GetFieldMappingsResponse)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof GetFieldMappingsResponse))
+            return false;
         GetFieldMappingsResponse that = (GetFieldMappingsResponse) o;
         return Objects.equals(mappings, that.mappings);
     }

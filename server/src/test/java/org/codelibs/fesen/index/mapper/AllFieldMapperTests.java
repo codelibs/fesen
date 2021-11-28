@@ -43,29 +43,21 @@ public class AllFieldMapperTests extends ESSingleNodeTestCase {
     public void testAllDisabled() throws Exception {
         {
             IndexService indexService = createIndex("test");
-            String mappingEnabled = Strings.toString(XContentFactory.jsonBuilder().startObject()
-                .startObject("_all")
-                    .field("enabled", true)
-                .endObject().endObject()
-            );
+            String mappingEnabled = Strings.toString(
+                    XContentFactory.jsonBuilder().startObject().startObject("_all").field("enabled", true).endObject().endObject());
             MapperParsingException exc = expectThrows(MapperParsingException.class,
-                () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingEnabled), MergeReason.MAPPING_UPDATE));
+                    () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingEnabled), MergeReason.MAPPING_UPDATE));
             assertThat(exc.getMessage(), containsString("unsupported parameters:  [_all"));
 
-            String mappingDisabled = Strings.toString(XContentFactory.jsonBuilder().startObject()
-                .startObject("_all")
-                    .field("enabled", false)
-                .endObject().endObject()
-            );
+            String mappingDisabled = Strings.toString(
+                    XContentFactory.jsonBuilder().startObject().startObject("_all").field("enabled", false).endObject().endObject());
             exc = expectThrows(MapperParsingException.class,
-                () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingDisabled), MergeReason.MAPPING_UPDATE));
+                    () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingDisabled), MergeReason.MAPPING_UPDATE));
             assertThat(exc.getMessage(), containsString("unsupported parameters:  [_all"));
 
-            String mappingAll = Strings.toString(XContentFactory.jsonBuilder().startObject()
-                .startObject("_all").endObject().endObject()
-            );
+            String mappingAll = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("_all").endObject().endObject());
             exc = expectThrows(MapperParsingException.class,
-                () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingAll), MergeReason.MAPPING_UPDATE));
+                    () -> indexService.mapperService().merge("_doc", new CompressedXContent(mappingAll), MergeReason.MAPPING_UPDATE));
             assertThat(exc.getMessage(), containsString("unsupported parameters:  [_all"));
 
             String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().endObject());
@@ -75,8 +67,7 @@ public class AllFieldMapperTests extends ESSingleNodeTestCase {
     }
 
     public void testUpdateDefaultSearchAnalyzer() throws Exception {
-        IndexService indexService = createIndex("test", Settings.builder()
-                .put("index.analysis.analyzer.default_search.type", "custom")
+        IndexService indexService = createIndex("test", Settings.builder().put("index.analysis.analyzer.default_search.type", "custom")
                 .put("index.analysis.analyzer.default_search.tokenizer", "standard").build());
         String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("_doc").endObject().endObject());
         indexService.mapperService().merge("_doc", new CompressedXContent(mapping), MergeReason.MAPPING_UPDATE);

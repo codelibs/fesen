@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.script.expression;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collections;
@@ -31,14 +36,8 @@ import org.codelibs.fesen.index.mapper.NumberFieldMapper.NumberFieldType;
 import org.codelibs.fesen.index.mapper.NumberFieldMapper.NumberType;
 import org.codelibs.fesen.script.ScriptException;
 import org.codelibs.fesen.script.TermsSetQueryScript;
-import org.codelibs.fesen.script.expression.ExpressionScriptEngine;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.test.ESTestCase;
-
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ExpressionTermsSetQueryTests extends ESTestCase {
     private ExpressionScriptEngine service;
@@ -69,8 +68,7 @@ public class ExpressionTermsSetQueryTests extends ESTestCase {
     }
 
     private TermsSetQueryScript.LeafFactory compile(String expression) {
-        TermsSetQueryScript.Factory factory =
-            service.compile(null, expression, TermsSetQueryScript.CONTEXT, Collections.emptyMap());
+        TermsSetQueryScript.Factory factory = service.compile(null, expression, TermsSetQueryScript.CONTEXT, Collections.emptyMap());
         return factory.newFactory(Collections.emptyMap(), lookup);
     }
 

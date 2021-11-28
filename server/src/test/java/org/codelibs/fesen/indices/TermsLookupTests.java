@@ -53,20 +53,20 @@ public class TermsLookupTests extends ESTestCase {
         String path = randomAlphaOfLength(5);
         String index = randomAlphaOfLength(5);
         switch (randomIntBetween(0, 3)) {
-            case 0:
-                type = null;
-                break;
-            case 1:
-                id = null;
-                break;
-            case 2:
-                path = null;
-                break;
-            case 3:
-                index = null;
-                break;
-            default:
-                fail("unknown case");
+        case 0:
+            type = null;
+            break;
+        case 1:
+            id = null;
+            break;
+        case 2:
+            path = null;
+            break;
+        case 3:
+            index = null;
+            break;
+        default:
+            fail("unknown case");
         }
         try {
             new TermsLookup(index, type, id, path);
@@ -103,7 +103,7 @@ public class TermsLookupTests extends ESTestCase {
 
     public void testXContentParsingWithType() throws IOException {
         XContentParser parser = createParser(JsonXContent.jsonXContent,
-            "{ \"index\" : \"index\", \"id\" : \"id\", \"type\" : \"type\", \"path\" : \"path\", \"routing\" : \"routing\" }");
+                "{ \"index\" : \"index\", \"id\" : \"id\", \"type\" : \"type\", \"path\" : \"path\", \"routing\" : \"routing\" }");
 
         TermsLookup tl = TermsLookup.parseTermsLookup(parser);
         assertEquals("index", tl.index());
@@ -117,7 +117,7 @@ public class TermsLookupTests extends ESTestCase {
 
     public void testXContentParsing() throws IOException {
         XContentParser parser = createParser(JsonXContent.jsonXContent,
-            "{ \"index\" : \"index\", \"id\" : \"id\", \"path\" : \"path\", \"routing\" : \"routing\" }");
+                "{ \"index\" : \"index\", \"id\" : \"id\", \"path\" : \"path\", \"routing\" : \"routing\" }");
 
         TermsLookup tl = TermsLookup.parseTermsLookup(parser);
         assertEquals("index", tl.index());
@@ -128,19 +128,12 @@ public class TermsLookupTests extends ESTestCase {
     }
 
     public static TermsLookup randomTermsLookup() {
-        return new TermsLookup(
-            randomAlphaOfLength(10),
-            randomAlphaOfLength(10),
-            randomAlphaOfLength(10).replace('.', '_')
-        ).routing(randomBoolean() ? randomAlphaOfLength(10) : null);
+        return new TermsLookup(randomAlphaOfLength(10), randomAlphaOfLength(10), randomAlphaOfLength(10).replace('.', '_'))
+                .routing(randomBoolean() ? randomAlphaOfLength(10) : null);
     }
 
     public static TermsLookup randomTermsLookupWithTypes() {
-        return new TermsLookup(
-                randomAlphaOfLength(10),
-                randomAlphaOfLength(10),
-                randomAlphaOfLength(10),
-                randomAlphaOfLength(10).replace('.', '_')
-        ).routing(randomBoolean() ? randomAlphaOfLength(10) : null);
+        return new TermsLookup(randomAlphaOfLength(10), randomAlphaOfLength(10), randomAlphaOfLength(10),
+                randomAlphaOfLength(10).replace('.', '_')).routing(randomBoolean() ? randomAlphaOfLength(10) : null);
     }
 }

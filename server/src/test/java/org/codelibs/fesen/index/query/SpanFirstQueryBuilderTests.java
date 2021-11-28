@@ -78,21 +78,9 @@ public class SpanFirstQueryBuilderTests extends AbstractQueryTestCase<SpanFirstQ
     }
 
     public void testFromJson() throws IOException {
-        String json =
-                "{\n" +
-                "  \"span_first\" : {\n" +
-                "    \"match\" : {\n" +
-                "      \"span_term\" : {\n" +
-                "        \"user\" : {\n" +
-                "          \"value\" : \"kimchy\",\n" +
-                "          \"boost\" : 1.0\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"end\" : 3,\n" +
-                "    \"boost\" : 1.0\n" +
-                "  }\n" +
-                "}";
+        String json = "{\n" + "  \"span_first\" : {\n" + "    \"match\" : {\n" + "      \"span_term\" : {\n" + "        \"user\" : {\n"
+                + "          \"value\" : \"kimchy\",\n" + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    },\n"
+                + "    \"end\" : 3,\n" + "    \"boost\" : 1.0\n" + "  }\n" + "}";
 
         SpanFirstQueryBuilder parsed = (SpanFirstQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -101,26 +89,12 @@ public class SpanFirstQueryBuilderTests extends AbstractQueryTestCase<SpanFirstQ
         assertEquals(json, "kimchy", ((SpanTermQueryBuilder) parsed.innerQuery()).value());
     }
 
-
     public void testFromJsonWithNonDefaultBoostInMatchQuery() {
-        String json =
-                "{\n" +
-                "  \"span_first\" : {\n" +
-                "    \"match\" : {\n" +
-                "      \"span_term\" : {\n" +
-                "        \"user\" : {\n" +
-                "          \"value\" : \"kimchy\",\n" +
-                "          \"boost\" : 2.0\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"end\" : 3,\n" +
-                "    \"boost\" : 1.0\n" +
-                "  }\n" +
-                "}";
+        String json = "{\n" + "  \"span_first\" : {\n" + "    \"match\" : {\n" + "      \"span_term\" : {\n" + "        \"user\" : {\n"
+                + "          \"value\" : \"kimchy\",\n" + "          \"boost\" : 2.0\n" + "        }\n" + "      }\n" + "    },\n"
+                + "    \"end\" : 3,\n" + "    \"boost\" : 1.0\n" + "  }\n" + "}";
 
         Exception exception = expectThrows(ParsingException.class, () -> parseQuery(json));
-        assertThat(exception.getMessage(),
-            equalTo("span_first [match] as a nested span clause can't have non-default boost value [2.0]"));
+        assertThat(exception.getMessage(), equalTo("span_first [match] as a nested span clause can't have non-default boost value [2.0]"));
     }
 }

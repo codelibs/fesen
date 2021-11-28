@@ -18,6 +18,13 @@
  */
 package org.codelibs.fesen.cluster.metadata;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.common.ParseField;
@@ -29,13 +36,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.Index;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public final class DataStream extends AbstractDiffable<DataStream> implements ToXContentObject {
 
@@ -118,12 +118,13 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         List<Index> backingIndices = new ArrayList<>(indices);
         int backingIndexPosition = backingIndices.indexOf(existingBackingIndex);
         if (backingIndexPosition == -1) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT, "index [%s] is not part of data stream [%s] ",
-                existingBackingIndex.getName(), name));
+            throw new IllegalArgumentException(
+                    String.format(Locale.ROOT, "index [%s] is not part of data stream [%s] ", existingBackingIndex.getName(), name));
         }
         if (generation == (backingIndexPosition + 1)) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT, "cannot replace backing index [%s] of data stream [%s] because " +
-                "it is the write index", existingBackingIndex.getName(), name));
+            throw new IllegalArgumentException(
+                    String.format(Locale.ROOT, "cannot replace backing index [%s] of data stream [%s] because " + "it is the write index",
+                            existingBackingIndex.getName(), name));
         }
         backingIndices.set(backingIndexPosition, newBackingIndex);
         return new DataStream(name, timeStampField, backingIndices, generation);
@@ -164,7 +165,7 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
     @SuppressWarnings("unchecked")
     private static final ConstructingObjectParser<DataStream, Void> PARSER = new ConstructingObjectParser<>("data_stream",
-        args -> new DataStream((String) args[0], (TimestampField) args[1], (List<Index>) args[2], (Long) args[3]));
+            args -> new DataStream((String) args[0], (TimestampField) args[1], (List<Index>) args[2], (Long) args[3]));
 
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), NAME_FIELD);
@@ -190,13 +191,13 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DataStream that = (DataStream) o;
-        return name.equals(that.name) &&
-            timeStampField.equals(that.timeStampField) &&
-            indices.equals(that.indices) &&
-            generation == that.generation;
+        return name.equals(that.name) && timeStampField.equals(that.timeStampField) && indices.equals(that.indices)
+                && generation == that.generation;
     }
 
     @Override
@@ -211,10 +212,8 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         static ParseField NAME_FIELD = new ParseField("name");
 
         @SuppressWarnings("unchecked")
-        private static final ConstructingObjectParser<TimestampField, Void> PARSER = new ConstructingObjectParser<>(
-            "timestamp_field",
-            args -> new TimestampField((String) args[0])
-        );
+        private static final ConstructingObjectParser<TimestampField, Void> PARSER =
+                new ConstructingObjectParser<>("timestamp_field", args -> new TimestampField((String) args[0]));
 
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), NAME_FIELD);
@@ -252,8 +251,10 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             TimestampField that = (TimestampField) o;
             return name.equals(that.name);
         }

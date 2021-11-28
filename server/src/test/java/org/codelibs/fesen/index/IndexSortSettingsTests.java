@@ -42,12 +42,8 @@ public class IndexSortSettingsTests extends ESTestCase {
     }
 
     public void testSimpleIndexSort() {
-        Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .put("index.sort.order", "asc")
-            .put("index.sort.mode", "max")
-            .put("index.sort.missing", "_last")
-            .build();
+        Settings settings = Settings.builder().put("index.sort.field", "field1").put("index.sort.order", "asc")
+                .put("index.sort.mode", "max").put("index.sort.missing", "_last").build();
         IndexSettings indexSettings = indexSettings(settings);
         IndexSortConfig config = indexSettings.getIndexSortConfig();
         assertTrue(config.hasIndexSort());
@@ -60,11 +56,8 @@ public class IndexSortSettingsTests extends ESTestCase {
     }
 
     public void testIndexSortWithArrays() {
-        Settings settings = Settings.builder()
-            .putList("index.sort.field", "field1", "field2")
-            .putList("index.sort.order", "asc", "desc")
-            .putList("index.sort.missing", "_last", "_first")
-            .build();
+        Settings settings = Settings.builder().putList("index.sort.field", "field1", "field2").putList("index.sort.order", "asc", "desc")
+                .putList("index.sort.missing", "_last", "_first").build();
         IndexSettings indexSettings = indexSettings(settings);
         IndexSortConfig config = indexSettings.getIndexSortConfig();
         assertTrue(config.hasIndexSort());
@@ -81,54 +74,33 @@ public class IndexSortSettingsTests extends ESTestCase {
     }
 
     public void testInvalidIndexSort() {
-        final Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .put("index.sort.order", "asc, desc")
-            .build();
-        IllegalArgumentException exc =
-            expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
+        final Settings settings = Settings.builder().put("index.sort.field", "field1").put("index.sort.order", "asc, desc").build();
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
         assertThat(exc.getMessage(), containsString("index.sort.field:[field1] index.sort.order:[asc, desc], size mismatch"));
     }
 
     public void testInvalidIndexSortWithArray() {
-        final Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .putList("index.sort.order", new String[] {"asc", "desc"})
-            .build();
-        IllegalArgumentException exc =
-            expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
-        assertThat(exc.getMessage(),
-            containsString("index.sort.field:[field1] index.sort.order:[asc, desc], size mismatch"));
+        final Settings settings =
+                Settings.builder().put("index.sort.field", "field1").putList("index.sort.order", new String[] { "asc", "desc" }).build();
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
+        assertThat(exc.getMessage(), containsString("index.sort.field:[field1] index.sort.order:[asc, desc], size mismatch"));
     }
 
     public void testInvalidOrder() {
-        final Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .put("index.sort.order", "invalid")
-            .build();
-        IllegalArgumentException exc =
-            expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
+        final Settings settings = Settings.builder().put("index.sort.field", "field1").put("index.sort.order", "invalid").build();
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
         assertThat(exc.getMessage(), containsString("Illegal sort order:invalid"));
     }
 
     public void testInvalidMode() {
-        final Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .put("index.sort.mode", "invalid")
-            .build();
-        IllegalArgumentException exc =
-            expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
+        final Settings settings = Settings.builder().put("index.sort.field", "field1").put("index.sort.mode", "invalid").build();
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
         assertThat(exc.getMessage(), containsString("Illegal sort mode: invalid"));
     }
 
     public void testInvalidMissing() {
-        final Settings settings = Settings.builder()
-            .put("index.sort.field", "field1")
-            .put("index.sort.missing", "default")
-            .build();
-        IllegalArgumentException exc =
-            expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
-        assertThat(exc.getMessage(), containsString("Illegal missing value:[default]," +
-            " must be one of [_last, _first]"));
+        final Settings settings = Settings.builder().put("index.sort.field", "field1").put("index.sort.missing", "default").build();
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> indexSettings(settings));
+        assertThat(exc.getMessage(), containsString("Illegal missing value:[default]," + " must be one of [_last, _first]"));
     }
 }

@@ -46,5 +46,6 @@ public interface ExtensiblePlugin {
      * This method is called once only, after initializing this plugin and all plugins extending this plugin. It is called before
      * any other methods on this Plugin instance are called.
      */
-    default void loadExtensions(ExtensionLoader loader) {}
+    default void loadExtensions(ExtensionLoader loader) {
+    }
 }

@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.DocValueFormat;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.DocValueFormat;
 
 public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<CumulativeSumPipelineAggregationBuilder> {
     public static final String NAME = "cumulative_sum";
@@ -40,7 +40,7 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<CumulativeSumPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
-        NAME, false, (args, name) -> new CumulativeSumPipelineAggregationBuilder(name, (List<String>) args[0]));
+            NAME, false, (args, name) -> new CumulativeSumPipelineAggregationBuilder(name, (List<String>) args[0]));
 
     static {
         PARSER.declareStringArray(constructorArg(), BUCKETS_PATH_FIELD);
@@ -122,9 +122,12 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         CumulativeSumPipelineAggregationBuilder other = (CumulativeSumPipelineAggregationBuilder) obj;
         return Objects.equals(format, other.format);
     }

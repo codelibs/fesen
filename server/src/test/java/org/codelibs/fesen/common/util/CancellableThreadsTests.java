@@ -90,8 +90,7 @@ public class CancellableThreadsTests extends ESTestCase {
             readyForCancel.countDown();
             try {
                 if (plan.busySpin) {
-                    while (!Thread.currentThread().isInterrupted()) {
-                    }
+                    while (!Thread.currentThread().isInterrupted()) {}
                 } else {
                     Thread.sleep(50000);
                 }
@@ -123,8 +122,7 @@ public class CancellableThreadsTests extends ESTestCase {
             readyForCancel.countDown();
             try {
                 if (plan.busySpin) {
-                    while (!Thread.currentThread().isInterrupted()) {
-                    }
+                    while (!Thread.currentThread().isInterrupted()) {}
                 } else {
                     Thread.sleep(50000);
                 }
@@ -208,10 +206,7 @@ public class CancellableThreadsTests extends ESTestCase {
                     assertThat(exceptions[i], Matchers.instanceOf(ExecutionCancelledException.class));
                 }
                 if (plan.exceptAfterCancel) {
-                    assertThat(exceptions[i].getSuppressed(),
-                            Matchers.arrayContaining(
-                                    Matchers.instanceOf(exceptionClass)
-                            ));
+                    assertThat(exceptions[i].getSuppressed(), Matchers.arrayContaining(Matchers.instanceOf(exceptionClass)));
                 } else {
                     assertThat(exceptions[i].getSuppressed(), Matchers.emptyArray());
                 }
@@ -219,14 +214,14 @@ public class CancellableThreadsTests extends ESTestCase {
             assertThat(interrupted[plan.id], equalTo(plan.presetInterrupt));
         }
         assertThat(invokeTimes.longValue(),
-            equalTo(Arrays.stream(plans).filter(p -> p.exceptBeforeCancel == false && p.exitBeforeCancel == false).count()));
+                equalTo(Arrays.stream(plans).filter(p -> p.exceptBeforeCancel == false && p.exitBeforeCancel == false).count()));
         if (throwInOnCancel) {
             expectThrows(ThrowOnCancelException.class, cancellableThreads::checkForCancel);
         } else {
             expectThrows(ExecutionCancelledException.class, cancellableThreads::checkForCancel);
         }
         assertThat(invokeTimes.longValue(),
-            equalTo(Arrays.stream(plans).filter(p -> p.exceptBeforeCancel == false && p.exitBeforeCancel == false).count() + 1));
+                equalTo(Arrays.stream(plans).filter(p -> p.exceptBeforeCancel == false && p.exitBeforeCancel == false).count() + 1));
     }
 
 }

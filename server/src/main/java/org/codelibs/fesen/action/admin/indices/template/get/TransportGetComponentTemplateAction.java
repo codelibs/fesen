@@ -39,15 +39,14 @@ import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportGetComponentTemplateAction extends
-    TransportMasterNodeReadAction<GetComponentTemplateAction.Request, GetComponentTemplateAction.Response> {
+public class TransportGetComponentTemplateAction
+        extends TransportMasterNodeReadAction<GetComponentTemplateAction.Request, GetComponentTemplateAction.Response> {
 
     @Inject
-    public TransportGetComponentTemplateAction(TransportService transportService, ClusterService clusterService,
-                                               ThreadPool threadPool, ActionFilters actionFilters,
-                                               IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportGetComponentTemplateAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(GetComponentTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-            GetComponentTemplateAction.Request::new, indexNameExpressionResolver);
+                GetComponentTemplateAction.Request::new, indexNameExpressionResolver);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class TransportGetComponentTemplateAction extends
 
     @Override
     protected void masterOperation(GetComponentTemplateAction.Request request, ClusterState state,
-                                   ActionListener<GetComponentTemplateAction.Response> listener) {
+            ActionListener<GetComponentTemplateAction.Response> listener) {
         Map<String, ComponentTemplate> allTemplates = state.metadata().componentTemplates();
 
         // If we did not ask for a specific name, then we return all templates

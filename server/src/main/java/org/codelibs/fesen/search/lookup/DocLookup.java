@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.search.lookup;
 
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.MapperService;
-
-import java.util.function.Function;
 
 public class DocLookup {
 

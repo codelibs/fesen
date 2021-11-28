@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.GeoPoint;
@@ -34,9 +37,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 final class GeoBoundsAggregator extends MetricsAggregator {
 
     static final ParseField WRAP_LONGITUDE_FIELD = new ParseField("wrap_longitude");
@@ -50,14 +50,8 @@ final class GeoBoundsAggregator extends MetricsAggregator {
     DoubleArray negLefts;
     DoubleArray negRights;
 
-    GeoBoundsAggregator(
-        String name,
-        SearchContext aggregationContext,
-        Aggregator parent,
-        ValuesSourceConfig valuesSourceConfig,
-        boolean wrapLongitude,
-        Map<String, Object> metadata
-    ) throws IOException {
+    GeoBoundsAggregator(String name, SearchContext aggregationContext, Aggregator parent, ValuesSourceConfig valuesSourceConfig,
+            boolean wrapLongitude, Map<String, Object> metadata) throws IOException {
         super(name, aggregationContext, parent, metadata);
         // TODO: stop expecting nulls here
         this.valuesSource = valuesSourceConfig.hasValues() ? (ValuesSource.GeoPoint) valuesSourceConfig.getValuesSource() : null;
@@ -80,8 +74,7 @@ final class GeoBoundsAggregator extends MetricsAggregator {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            LeafBucketCollector sub) {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, LeafBucketCollector sub) {
         if (valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }
@@ -164,7 +157,7 @@ final class GeoBoundsAggregator extends MetricsAggregator {
     @Override
     public InternalAggregation buildEmptyAggregation() {
         return new InternalGeoBounds(name, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, wrapLongitude, metadata());
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, wrapLongitude, metadata());
     }
 
     @Override

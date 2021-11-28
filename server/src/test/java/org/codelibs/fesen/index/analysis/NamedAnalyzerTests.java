@@ -82,12 +82,12 @@ public class NamedAnalyzerTests extends ESTestCase {
                 return mode;
             }
         };
-        TokenFilterFactory[] tokenfilters = new TokenFilterFactory[] { tokenFilter  };
+        TokenFilterFactory[] tokenfilters = new TokenFilterFactory[] { tokenFilter };
         CharFilterFactory[] charFilters = new CharFilterFactory[0];
         if (mode == AnalysisMode.SEARCH_TIME && randomBoolean()) {
             AnalyzerComponents components = new AnalyzerComponents(null, charFilters, tokenfilters);
             // sometimes also return reloadable custom analyzer
-            return new ReloadableCustomAnalyzer(components , TextFieldMapper.Defaults.POSITION_INCREMENT_GAP, -1);
+            return new ReloadableCustomAnalyzer(components, TextFieldMapper.Defaults.POSITION_INCREMENT_GAP, -1);
         }
         return new CustomAnalyzer(null, charFilters, tokenfilters);
     }

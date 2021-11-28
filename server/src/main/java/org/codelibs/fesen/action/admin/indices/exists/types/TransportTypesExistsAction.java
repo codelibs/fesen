@@ -40,11 +40,10 @@ import org.codelibs.fesen.transport.TransportService;
 public class TransportTypesExistsAction extends TransportMasterNodeReadAction<TypesExistsRequest, TypesExistsResponse> {
 
     @Inject
-    public TransportTypesExistsAction(TransportService transportService, ClusterService clusterService,
-                                      ThreadPool threadPool, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportTypesExistsAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(TypesExistsAction.NAME, transportService, clusterService, threadPool, actionFilters, TypesExistsRequest::new,
-            indexNameExpressionResolver);
+                indexNameExpressionResolver);
     }
 
     @Override
@@ -61,12 +60,12 @@ public class TransportTypesExistsAction extends TransportMasterNodeReadAction<Ty
     @Override
     protected ClusterBlockException checkBlock(TypesExistsRequest request, ClusterState state) {
         return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_READ,
-            indexNameExpressionResolver.concreteIndexNames(state, request));
+                indexNameExpressionResolver.concreteIndexNames(state, request));
     }
 
     @Override
     protected void masterOperation(final TypesExistsRequest request, final ClusterState state,
-                                   final ActionListener<TypesExistsResponse> listener) {
+            final ActionListener<TypesExistsResponse> listener) {
         String[] concreteIndices = indexNameExpressionResolver.concreteIndexNames(state, request.indicesOptions(), request.indices());
         if (concreteIndices.length == 0) {
             listener.onResponse(new TypesExistsResponse(false));

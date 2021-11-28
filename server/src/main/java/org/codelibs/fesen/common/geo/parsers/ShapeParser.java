@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.common.geo.parsers;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.builders.ShapeBuilder;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
 import org.codelibs.fesen.index.mapper.AbstractGeometryFieldMapper;
 import org.codelibs.fesen.index.mapper.AbstractShapeGeometryFieldMapper;
-
-import java.io.IOException;
-import java.util.Collections;
 
 /**
  * first point of entry for a shape parser
@@ -57,11 +57,12 @@ public interface ShapeParser {
             if (geometryMapper instanceof AbstractShapeGeometryFieldMapper == false) {
                 throw new IllegalArgumentException("geometry must be a shape type");
             }
-             shapeMapper = (AbstractShapeGeometryFieldMapper) geometryMapper;
+            shapeMapper = (AbstractShapeGeometryFieldMapper) geometryMapper;
         }
         if (parser.currentToken() == XContentParser.Token.VALUE_NULL) {
             return null;
-        } if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
+        }
+        if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
             return GeoJsonParser.parse(parser, shapeMapper);
         } else if (parser.currentToken() == XContentParser.Token.VALUE_STRING) {
             return GeoWKTParser.parse(parser, shapeMapper);

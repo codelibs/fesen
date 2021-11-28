@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.search.lookup.SourceLookup;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.search.lookup.SourceLookup;
 
 /**
  * An implementation of {@link ValueFetcher} that knows how to extract values

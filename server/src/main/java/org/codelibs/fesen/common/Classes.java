@@ -43,8 +43,7 @@ public class Classes {
     }
 
     public static boolean isInnerClass(Class<?> clazz) {
-        return !Modifier.isStatic(clazz.getModifiers())
-                && clazz.getEnclosingClass() != null;
+        return !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
     }
 
     public static boolean isConcrete(Class<?> clazz) {
@@ -52,5 +51,6 @@ public class Classes {
         return !clazz.isInterface() && !Modifier.isAbstract(modifiers);
     }
 
-    private Classes() {}
+    private Classes() {
+    }
 }

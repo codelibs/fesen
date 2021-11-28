@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen;
 
-import org.codelibs.fesen.common.io.FileSystemUtils;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.core.Booleans;
-
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.Objects;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
+import org.codelibs.fesen.common.io.FileSystemUtils;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Booleans;
 
 /**
  * Information about a build of Fesen.
@@ -43,9 +43,7 @@ public class Build {
 
     public enum Flavor {
 
-        DEFAULT("default"),
-        OSS("oss"),
-        UNKNOWN("unknown");
+        DEFAULT("default"), OSS("oss"), UNKNOWN("unknown");
 
         final String displayName;
 
@@ -59,19 +57,19 @@ public class Build {
 
         public static Flavor fromDisplayName(final String displayName, final boolean strict) {
             switch (displayName) {
-                case "default":
-                    return Flavor.DEFAULT;
-                case "oss":
-                    return Flavor.OSS;
-                case "unknown":
+            case "default":
+                return Flavor.DEFAULT;
+            case "oss":
+                return Flavor.OSS;
+            case "unknown":
+                return Flavor.UNKNOWN;
+            default:
+                if (strict) {
+                    final String message = "unexpected distribution flavor [" + displayName + "]; your distribution is broken";
+                    throw new IllegalStateException(message);
+                } else {
                     return Flavor.UNKNOWN;
-                default:
-                    if (strict) {
-                        final String message = "unexpected distribution flavor [" + displayName + "]; your distribution is broken";
-                        throw new IllegalStateException(message);
-                    } else {
-                        return Flavor.UNKNOWN;
-                    }
+                }
             }
         }
 
@@ -79,12 +77,7 @@ public class Build {
 
     public enum Type {
 
-        DEB("deb"),
-        DOCKER("docker"),
-        RPM("rpm"),
-        TAR("tar"),
-        ZIP("zip"),
-        UNKNOWN("unknown");
+        DEB("deb"), DOCKER("docker"), RPM("rpm"), TAR("tar"), ZIP("zip"), UNKNOWN("unknown");
 
         final String displayName;
 
@@ -98,24 +91,24 @@ public class Build {
 
         public static Type fromDisplayName(final String displayName, final boolean strict) {
             switch (displayName) {
-                case "deb":
-                    return Type.DEB;
-                case "docker":
-                    return Type.DOCKER;
-                case "rpm":
-                    return Type.RPM;
-                case "tar":
-                    return Type.TAR;
-                case "zip":
-                    return Type.ZIP;
-                case "unknown":
+            case "deb":
+                return Type.DEB;
+            case "docker":
+                return Type.DOCKER;
+            case "rpm":
+                return Type.RPM;
+            case "tar":
+                return Type.TAR;
+            case "zip":
+                return Type.ZIP;
+            case "unknown":
+                return Type.UNKNOWN;
+            default:
+                if (strict) {
+                    throw new IllegalStateException("unexpected distribution type [" + displayName + "]; your distribution is broken");
+                } else {
                     return Type.UNKNOWN;
-                default:
-                    if (strict) {
-                        throw new IllegalStateException("unexpected distribution type [" + displayName + "]; your distribution is broken");
-                    } else {
-                        return Type.UNKNOWN;
-                    }
+                }
             }
         }
 
@@ -136,10 +129,8 @@ public class Build {
         final String esPrefix = "fesen-" + Version.CURRENT;
         final URL url = getFesenCodeSourceLocation();
         final String urlStr = url == null ? "" : url.toString();
-        if (urlStr.startsWith("file:/") && (
-            urlStr.endsWith(esPrefix + ".jar") ||
-            urlStr.matches("(.*)" + esPrefix + "(-)?((alpha|beta|rc)[0-9]+)?(-SNAPSHOT)?.jar")
-        )) {
+        if (urlStr.startsWith("file:/") && (urlStr.endsWith(esPrefix + ".jar")
+                || urlStr.matches("(.*)" + esPrefix + "(-)?((alpha|beta|rc)[0-9]+)?(-SNAPSHOT)?.jar"))) {
             try (JarInputStream jar = new JarInputStream(FileSystemUtils.openFileURLStream(url))) {
                 Manifest manifest = jar.getManifest();
                 hash = manifest.getMainAttributes().getValue("Change");
@@ -168,16 +159,16 @@ public class Build {
             }
         }
         if (hash == null) {
-            throw new IllegalStateException("Error finding the build hash. " +
-                    "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
+            throw new IllegalStateException("Error finding the build hash. "
+                    + "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
         if (date == null) {
-            throw new IllegalStateException("Error finding the build date. " +
-                    "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
+            throw new IllegalStateException("Error finding the build date. "
+                    + "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
         if (version == null) {
-            throw new IllegalStateException("Error finding the build version. " +
-                "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
+            throw new IllegalStateException("Error finding the build version. "
+                    + "Stopping Fesen now so it doesn't run in subtly broken ways. This is likely a build bug.");
         }
 
         CURRENT = new Build(flavor, type, hash, date, isSnapshot, version);
@@ -201,10 +192,7 @@ public class Build {
     private final String date;
     private final String version;
 
-    public Build(
-        final Flavor flavor, final Type type, final String hash, final String date, boolean isSnapshot,
-        String version
-    ) {
+    public Build(final Flavor flavor, final Type type, final String hash, final String date, boolean isSnapshot, String version) {
         this.flavor = flavor;
         this.type = type;
         this.hash = hash;
@@ -243,12 +231,7 @@ public class Build {
 
     public static void writeBuild(Build build, StreamOutput out) throws IOException {
         out.writeString(build.flavor().displayName());
-        final Type buildType;
-        if (build.type() == Type.DOCKER) {
-            buildType = Type.TAR;
-        } else {
-            buildType = build.type();
-        }
+        final Type buildType = build.type();
         out.writeString(buildType.displayName());
         out.writeString(build.hash());
         out.writeString(build.date());
@@ -294,7 +277,7 @@ public class Build {
 
     @Override
     public String toString() {
-        return "[" + flavor.displayName() + "][" + type.displayName + "][" + hash + "][" + date + "][" + version +"]";
+        return "[" + flavor.displayName() + "][" + type.displayName + "][" + hash + "][" + date + "][" + version + "]";
     }
 
     @Override

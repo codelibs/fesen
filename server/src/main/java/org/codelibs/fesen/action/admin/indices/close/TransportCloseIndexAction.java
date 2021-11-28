@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.indices.close;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -36,15 +39,12 @@ import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.io.IOException;
-import java.util.Collections;
 
 /**
  * Close index action
@@ -57,15 +57,15 @@ public class TransportCloseIndexAction extends TransportMasterNodeAction<CloseIn
     private final DestructiveOperations destructiveOperations;
     private volatile boolean closeIndexEnabled;
     public static final Setting<Boolean> CLUSTER_INDICES_CLOSE_ENABLE_SETTING =
-        Setting.boolSetting("cluster.indices.close.enable", true, Property.Dynamic, Property.NodeScope);
+            Setting.boolSetting("cluster.indices.close.enable", true, Property.Dynamic, Property.NodeScope);
 
     @Inject
     public TransportCloseIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                     ThreadPool threadPool, MetadataIndexStateService indexStateService,
-                                     ClusterSettings clusterSettings, ActionFilters actionFilters,
-                                     IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations) {
+            ThreadPool threadPool, MetadataIndexStateService indexStateService, ClusterSettings clusterSettings,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            DestructiveOperations destructiveOperations) {
         super(CloseIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, CloseIndexRequest::new,
-            indexNameExpressionResolver);
+                indexNameExpressionResolver);
         this.indexStateService = indexStateService;
         this.destructiveOperations = destructiveOperations;
         this.closeIndexEnabled = CLUSTER_INDICES_CLOSE_ENABLE_SETTING.get(settings);
@@ -91,8 +91,8 @@ public class TransportCloseIndexAction extends TransportMasterNodeAction<CloseIn
     protected void doExecute(Task task, CloseIndexRequest request, ActionListener<CloseIndexResponse> listener) {
         destructiveOperations.failDestructive(request.indices());
         if (closeIndexEnabled == false) {
-            throw new IllegalStateException("closing indices is disabled - set [" + CLUSTER_INDICES_CLOSE_ENABLE_SETTING.getKey() +
-                ": true] to enable it. NOTE: closed indices still consume a significant amount of diskspace");
+            throw new IllegalStateException("closing indices is disabled - set [" + CLUSTER_INDICES_CLOSE_ENABLE_SETTING.getKey()
+                    + ": true] to enable it. NOTE: closed indices still consume a significant amount of diskspace");
         }
         super.doExecute(task, request, listener);
     }
@@ -100,21 +100,18 @@ public class TransportCloseIndexAction extends TransportMasterNodeAction<CloseIn
     @Override
     protected ClusterBlockException checkBlock(CloseIndexRequest request, ClusterState state) {
         return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_WRITE,
-            indexNameExpressionResolver.concreteIndexNames(state, request));
+                indexNameExpressionResolver.concreteIndexNames(state, request));
     }
 
     @Override
-    protected void masterOperation(final CloseIndexRequest request,
-                                   final ClusterState state,
-                                   final ActionListener<CloseIndexResponse> listener) {
+    protected void masterOperation(final CloseIndexRequest request, final ClusterState state,
+            final ActionListener<CloseIndexResponse> listener) {
         throw new UnsupportedOperationException("The task parameter is required");
     }
 
     @Override
-    protected void masterOperation(final Task task,
-                                   final CloseIndexRequest request,
-                                   final ClusterState state,
-                                   final ActionListener<CloseIndexResponse> listener) throws Exception {
+    protected void masterOperation(final Task task, final CloseIndexRequest request, final ClusterState state,
+            final ActionListener<CloseIndexResponse> listener) throws Exception {
         final Index[] concreteIndices = indexNameExpressionResolver.concreteIndices(state, request);
         if (concreteIndices == null || concreteIndices.length == 0) {
             listener.onResponse(new CloseIndexResponse(true, false, Collections.emptyList()));
@@ -122,10 +119,8 @@ public class TransportCloseIndexAction extends TransportMasterNodeAction<CloseIn
         }
 
         final CloseIndexClusterStateUpdateRequest closeRequest = new CloseIndexClusterStateUpdateRequest(task.getId())
-            .ackTimeout(request.timeout())
-            .masterNodeTimeout(request.masterNodeTimeout())
-            .waitForActiveShards(request.waitForActiveShards())
-            .indices(concreteIndices);
+                .ackTimeout(request.timeout()).masterNodeTimeout(request.masterNodeTimeout())
+                .waitForActiveShards(request.waitForActiveShards()).indices(concreteIndices);
         indexStateService.closeIndices(closeRequest, ActionListener.delegateResponse(listener, (delegatedListener, t) -> {
             logger.debug(() -> new ParameterizedMessage("failed to close indices [{}]", (Object) concreteIndices), t);
             delegatedListener.onFailure(t);

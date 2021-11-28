@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.util.Collections;
+
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.search.Query;
@@ -26,8 +28,6 @@ import org.codelibs.fesen.index.mapper.ParseContext.Document;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.util.Collections;
 
 /** Mapper for the _version field. */
 public class VersionFieldMapper extends MetadataFieldMapper {

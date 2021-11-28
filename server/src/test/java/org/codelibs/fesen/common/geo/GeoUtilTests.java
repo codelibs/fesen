@@ -43,10 +43,9 @@ public class GeoUtilTests extends ESTestCase {
     public void testIncorrectPrecisionParser() {
         expectThrows(NumberFormatException.class, () -> parsePrecision(builder -> builder.field("test", "10.1.1.1")));
         expectThrows(NumberFormatException.class, () -> parsePrecision(builder -> builder.field("test", "364.4smoots")));
-        assertEquals(
-            "precision too high [0.01mm]",
-            expectThrows(IllegalArgumentException.class, () -> parsePrecision(builder -> builder.field("test", "0.01mm"))).getMessage()
-        );
+        assertEquals("precision too high [0.01mm]",
+                expectThrows(IllegalArgumentException.class, () -> parsePrecision(builder -> builder.field("test", "0.01mm")))
+                        .getMessage());
     }
 
     /**

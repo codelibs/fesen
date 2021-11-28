@@ -32,19 +32,8 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface GeoDistanceAggregatorSupplier {
-    Aggregator build(
-        String name,
-        AggregatorFactories factories,
-        GeoDistance distanceType,
-        org.codelibs.fesen.common.geo.GeoPoint origin,
-        DistanceUnit units,
-        ValuesSource valuesSource,
-        DocValueFormat format,
-        InternalRange.Factory rangeFactory,
-        RangeAggregator.Range[] ranges,
-        boolean keyed,
-        SearchContext context,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name, AggregatorFactories factories, GeoDistance distanceType, org.codelibs.fesen.common.geo.GeoPoint origin,
+            DistanceUnit units, ValuesSource valuesSource, DocValueFormat format, InternalRange.Factory rangeFactory,
+            RangeAggregator.Range[] ranges, boolean keyed, SearchContext context, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException;
 }

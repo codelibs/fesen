@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -28,10 +32,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.tasks.TaskId;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
 
 /**
  * Creates a new {@link DeleteByQueryRequest} that uses scrolling and bulk requests to delete all documents matching
@@ -51,7 +51,7 @@ import java.io.IOException;
  * </ul>
  */
 public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQueryRequest>
-    implements IndicesRequest.Replaceable, ToXContentObject {
+        implements IndicesRequest.Replaceable, ToXContentObject {
 
     public DeleteByQueryRequest() {
         this(new SearchRequest());

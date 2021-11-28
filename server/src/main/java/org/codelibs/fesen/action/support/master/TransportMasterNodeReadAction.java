@@ -34,17 +34,17 @@ import org.codelibs.fesen.transport.TransportService;
 public abstract class TransportMasterNodeReadAction<Request extends MasterNodeReadRequest<Request>, Response extends ActionResponse>
         extends TransportMasterNodeAction<Request, Response> {
 
-    protected TransportMasterNodeReadAction(String actionName, TransportService transportService,
-                                            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                            Writeable.Reader<Request> request, IndexNameExpressionResolver indexNameExpressionResolver) {
+    protected TransportMasterNodeReadAction(String actionName, TransportService transportService, ClusterService clusterService,
+            ThreadPool threadPool, ActionFilters actionFilters, Writeable.Reader<Request> request,
+            IndexNameExpressionResolver indexNameExpressionResolver) {
         this(actionName, true, transportService, clusterService, threadPool, actionFilters, request, indexNameExpressionResolver);
     }
 
     protected TransportMasterNodeReadAction(String actionName, boolean checkSizeLimit, TransportService transportService,
-                                            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                            Writeable.Reader<Request> request, IndexNameExpressionResolver indexNameExpressionResolver) {
+            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters, Writeable.Reader<Request> request,
+            IndexNameExpressionResolver indexNameExpressionResolver) {
         super(actionName, checkSizeLimit, transportService, clusterService, threadPool, actionFilters, request,
-            indexNameExpressionResolver);
+                indexNameExpressionResolver);
     }
 
     @Override

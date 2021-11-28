@@ -59,15 +59,12 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
     public void testFilterInitialRecovery() {
         ClusterSettings clusterSettings = new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
         FilterAllocationDecider filterAllocationDecider = new FilterAllocationDecider(Settings.EMPTY, clusterSettings);
-        AllocationDeciders allocationDeciders = new AllocationDeciders(
-            Arrays.asList(filterAllocationDecider,
-                new SameShardAllocationDecider(Settings.EMPTY, clusterSettings),
-                new ReplicaAfterPrimaryActiveAllocationDecider()));
-        AllocationService service = new AllocationService(allocationDeciders,
-            new TestGatewayAllocator(), new BalancedShardsAllocator(Settings.EMPTY), EmptyClusterInfoService.INSTANCE,
-            EmptySnapshotsInfoService.INSTANCE);
-        ClusterState state = createInitialClusterState(service, Settings.builder().put("index.routing.allocation.initial_recovery._id",
-            "node2").build());
+        AllocationDeciders allocationDeciders = new AllocationDeciders(Arrays.asList(filterAllocationDecider,
+                new SameShardAllocationDecider(Settings.EMPTY, clusterSettings), new ReplicaAfterPrimaryActiveAllocationDecider()));
+        AllocationService service = new AllocationService(allocationDeciders, new TestGatewayAllocator(),
+                new BalancedShardsAllocator(Settings.EMPTY), EmptyClusterInfoService.INSTANCE, EmptySnapshotsInfoService.INSTANCE);
+        ClusterState state = createInitialClusterState(service,
+                Settings.builder().put("index.routing.allocation.initial_recovery._id", "node2").build());
         RoutingTable routingTable = state.routingTable();
 
         // we can initially only allocate on node2
@@ -79,22 +76,19 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
         assertNull(routingTable.index("idx").shard(0).shards().get(0).currentNodeId());
 
         // after failing the shard we are unassigned since the node is blacklisted and we can't initialize on the other node
-        RoutingAllocation allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state,
-            null, null, 0);
+        RoutingAllocation allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state, null, null, 0);
         allocation.debugDecision(true);
-        Decision.Single decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).primaryShard(),
-            state.getRoutingNodes().node("node2"), allocation);
+        Decision.Single decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).primaryShard(),
+                state.getRoutingNodes().node("node2"), allocation);
         assertEquals(Type.YES, decision.type());
         assertEquals("node passes include/exclude/require filters", decision.getExplanation());
         ShardRouting primaryShard = routingTable.index("idx").shard(0).primaryShard();
-        decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).primaryShard(),
-            state.getRoutingNodes().node("node1"), allocation);
+        decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).primaryShard(),
+                state.getRoutingNodes().node("node1"), allocation);
         assertEquals(Type.NO, decision.type());
         if (primaryShard.recoverySource().getType() == RecoverySource.Type.LOCAL_SHARDS) {
-            assertEquals("initial allocation of the shrunken index is only allowed on nodes [_id:\"node2\"] that " +
-                         "hold a copy of every shard in the index", decision.getExplanation());
+            assertEquals("initial allocation of the shrunken index is only allowed on nodes [_id:\"node2\"] that "
+                    + "hold a copy of every shard in the index", decision.getExplanation());
         } else {
             assertEquals("initial allocation of the index is only allowed on nodes [_id:\"node2\"]", decision.getExplanation());
         }
@@ -119,28 +113,23 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
         // now remove the node of the other copy and fail the current
         DiscoveryNode node1 = state.nodes().resolveNode("node1");
         state = service.disassociateDeadNodes(
-            ClusterState.builder(state).nodes(DiscoveryNodes.builder(state.nodes()).remove("node1")).build(),
-            true, "test");
+                ClusterState.builder(state).nodes(DiscoveryNodes.builder(state.nodes()).remove("node1")).build(), true, "test");
         state = service.applyFailedShard(state, routingTable.index("idx").shard(0).primaryShard(), randomBoolean());
 
         // now bring back node1 and see it's assigned
-        state = service.reroute(
-            ClusterState.builder(state).nodes(DiscoveryNodes.builder(state.nodes()).add(node1)).build(), "test");
+        state = service.reroute(ClusterState.builder(state).nodes(DiscoveryNodes.builder(state.nodes()).add(node1)).build(), "test");
         routingTable = state.routingTable();
         assertEquals(routingTable.index("idx").shard(0).primaryShard().state(), INITIALIZING);
         assertEquals(routingTable.index("idx").shard(0).primaryShard().currentNodeId(), "node1");
 
-        allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state,
-            null, null, 0);
+        allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state, null, null, 0);
         allocation.debugDecision(true);
-        decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).shards().get(0),
-            state.getRoutingNodes().node("node2"), allocation);
+        decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).shards().get(0),
+                state.getRoutingNodes().node("node2"), allocation);
         assertEquals(Type.YES, decision.type());
         assertEquals("node passes include/exclude/require filters", decision.getExplanation());
-        decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).shards().get(0),
-            state.getRoutingNodes().node("node1"), allocation);
+        decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).shards().get(0),
+                state.getRoutingNodes().node("node1"), allocation);
         assertEquals(Type.YES, decision.type());
         assertEquals("node passes include/exclude/require filters", decision.getExplanation());
     }
@@ -148,39 +137,29 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
     public void testTierFilterIgnored() {
         ClusterSettings clusterSettings = new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
         FilterAllocationDecider filterAllocationDecider = new FilterAllocationDecider(Settings.EMPTY, clusterSettings);
-        AllocationDeciders allocationDeciders = new AllocationDeciders(
-            Arrays.asList(filterAllocationDecider,
-                new SameShardAllocationDecider(Settings.EMPTY, clusterSettings),
-                new ReplicaAfterPrimaryActiveAllocationDecider()));
-        AllocationService service = new AllocationService(allocationDeciders,
-            new TestGatewayAllocator(), new BalancedShardsAllocator(Settings.EMPTY), EmptyClusterInfoService.INSTANCE,
-            EmptySnapshotsInfoService.INSTANCE);
-        ClusterState state = createInitialClusterState(service, Settings.builder()
-            .put("index.routing.allocation.require._tier", "data_cold")
-            .put("index.routing.allocation.include._tier", "data_cold")
-            .put("index.routing.allocation.include._tier_preference", "data_cold")
-            .put("index.routing.allocation.exclude._tier", "data_cold")
-            .build(),
-            Settings.builder()
-                .put("cluster.routing.allocation.require._tier", "data_cold")
-                .put("cluster.routing.allocation.include._tier", "data_cold")
-                .put("cluster.routing.allocation.exclude._tier", "data_cold")
-                .build());
+        AllocationDeciders allocationDeciders = new AllocationDeciders(Arrays.asList(filterAllocationDecider,
+                new SameShardAllocationDecider(Settings.EMPTY, clusterSettings), new ReplicaAfterPrimaryActiveAllocationDecider()));
+        AllocationService service = new AllocationService(allocationDeciders, new TestGatewayAllocator(),
+                new BalancedShardsAllocator(Settings.EMPTY), EmptyClusterInfoService.INSTANCE, EmptySnapshotsInfoService.INSTANCE);
+        ClusterState state = createInitialClusterState(service,
+                Settings.builder().put("index.routing.allocation.require._tier", "data_cold")
+                        .put("index.routing.allocation.include._tier", "data_cold")
+                        .put("index.routing.allocation.include._tier_preference", "data_cold")
+                        .put("index.routing.allocation.exclude._tier", "data_cold").build(),
+                Settings.builder().put("cluster.routing.allocation.require._tier", "data_cold")
+                        .put("cluster.routing.allocation.include._tier", "data_cold")
+                        .put("cluster.routing.allocation.exclude._tier", "data_cold").build());
         RoutingTable routingTable = state.routingTable();
-        RoutingAllocation allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state,
-            null, null, 0);
+        RoutingAllocation allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state, null, null, 0);
         allocation.debugDecision(true);
-        allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state,
-            null, null, 0);
+        allocation = new RoutingAllocation(allocationDeciders, state.getRoutingNodes(), state, null, null, 0);
         allocation.debugDecision(true);
-        Decision.Single decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).shards().get(0),
-            state.getRoutingNodes().node("node2"), allocation);
+        Decision.Single decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).shards().get(0),
+                state.getRoutingNodes().node("node2"), allocation);
         assertEquals(decision.toString(), Type.YES, decision.type());
         assertEquals("node passes include/exclude/require filters", decision.getExplanation());
-        decision = (Decision.Single) filterAllocationDecider.canAllocate(
-            routingTable.index("idx").shard(0).shards().get(0),
-            state.getRoutingNodes().node("node1"), allocation);
+        decision = (Decision.Single) filterAllocationDecider.canAllocate(routingTable.index("idx").shard(0).shards().get(0),
+                state.getRoutingNodes().node("node1"), allocation);
         assertEquals(Type.YES, decision.type());
         assertEquals("node passes include/exclude/require filters", decision.getExplanation());
     }
@@ -195,16 +174,13 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
         final Settings.Builder indexSettings = settings(Version.CURRENT).put(idxSettings);
         final IndexMetadata sourceIndex;
         //put a fake closed source index
-        sourceIndex = IndexMetadata.builder("sourceIndex")
-            .settings(settings(Version.CURRENT)).numberOfShards(2).numberOfReplicas(0)
-            .putInSyncAllocationIds(0, Collections.singleton("aid0"))
-            .putInSyncAllocationIds(1, Collections.singleton("aid1"))
-            .build();
+        sourceIndex = IndexMetadata.builder("sourceIndex").settings(settings(Version.CURRENT)).numberOfShards(2).numberOfReplicas(0)
+                .putInSyncAllocationIds(0, Collections.singleton("aid0")).putInSyncAllocationIds(1, Collections.singleton("aid1")).build();
         metadata.put(sourceIndex, false);
         indexSettings.put(INDEX_RESIZE_SOURCE_UUID.getKey(), sourceIndex.getIndexUUID());
         indexSettings.put(INDEX_RESIZE_SOURCE_NAME.getKey(), sourceIndex.getIndex().getName());
-        final IndexMetadata.Builder indexMetadataBuilder = IndexMetadata.builder("idx").settings(indexSettings)
-            .numberOfShards(1).numberOfReplicas(1);
+        final IndexMetadata.Builder indexMetadataBuilder =
+                IndexMetadata.builder("idx").settings(indexSettings).numberOfShards(1).numberOfReplicas(1);
         final IndexMetadata indexMetadata = indexMetadataBuilder.build();
         metadata.put(indexMetadata, false);
         RoutingTable.Builder routingTableBuilder = RoutingTable.builder();
@@ -212,41 +188,42 @@ public class FilterAllocationDeciderTests extends ESAllocationTestCase {
         routingTableBuilder.addAsNew(indexMetadata);
 
         RoutingTable routingTable = routingTableBuilder.build();
-        ClusterState clusterState = ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING
-            .getDefault(Settings.EMPTY)).metadata(metadata).routingTable(routingTable).build();
-        clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder().add(newNode("node1")).add(newNode("node2")))
-            .build();
+        ClusterState clusterState =
+                ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
+                        .metadata(metadata).routingTable(routingTable).build();
+        clusterState =
+                ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder().add(newNode("node1")).add(newNode("node2"))).build();
         return service.reroute(clusterState, "reroute");
     }
 
     public void testInvalidIPFilter() {
         String ipKey = randomFrom("_ip", "_host_ip", "_publish_ip");
         Setting<String> filterSetting = randomFrom(IndexMetadata.INDEX_ROUTING_REQUIRE_GROUP_SETTING,
-            IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
+                IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
         String invalidIP = randomFrom("192..168.1.1", "192.300.1.1");
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> {
             IndexScopedSettings indexScopedSettings = new IndexScopedSettings(Settings.EMPTY, IndexScopedSettings.BUILT_IN_INDEX_SETTINGS);
             indexScopedSettings.updateDynamicSettings(Settings.builder().put(filterSetting.getKey() + ipKey, invalidIP).build(),
-                Settings.builder().put(Settings.EMPTY), Settings.builder(), "test ip validation");
+                    Settings.builder().put(Settings.EMPTY), Settings.builder(), "test ip validation");
         });
         assertEquals("invalid IP address [" + invalidIP + "] for [" + filterSetting.getKey() + ipKey + "]", e.getMessage());
     }
 
     public void testNull() {
         Setting<String> filterSetting = randomFrom(IndexMetadata.INDEX_ROUTING_REQUIRE_GROUP_SETTING,
-            IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
+                IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
 
-        IndexMetadata.builder("test")
-            .settings(settings(Version.CURRENT).putNull(filterSetting.getKey() + "name")).numberOfShards(2).numberOfReplicas(0).build();
+        IndexMetadata.builder("test").settings(settings(Version.CURRENT).putNull(filterSetting.getKey() + "name")).numberOfShards(2)
+                .numberOfReplicas(0).build();
     }
 
     public void testWildcardIPFilter() {
         String ipKey = randomFrom("_ip", "_host_ip", "_publish_ip");
         Setting<String> filterSetting = randomFrom(IndexMetadata.INDEX_ROUTING_REQUIRE_GROUP_SETTING,
-            IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
+                IndexMetadata.INDEX_ROUTING_INCLUDE_GROUP_SETTING, IndexMetadata.INDEX_ROUTING_EXCLUDE_GROUP_SETTING);
         String wildcardIP = randomFrom("192.168.*", "192.*.1.1");
         IndexScopedSettings indexScopedSettings = new IndexScopedSettings(Settings.EMPTY, IndexScopedSettings.BUILT_IN_INDEX_SETTINGS);
         indexScopedSettings.updateDynamicSettings(Settings.builder().put(filterSetting.getKey() + ipKey, wildcardIP).build(),
-            Settings.builder().put(Settings.EMPTY), Settings.builder(), "test ip validation");
+                Settings.builder().put(Settings.EMPTY), Settings.builder(), "test ip validation");
     }
 }

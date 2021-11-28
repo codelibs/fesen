@@ -51,8 +51,6 @@ public class Strings {
         }
         char first = s.charAt(0);
         char capitalized = Character.toUpperCase(first);
-        return (first == capitalized)
-                ? s
-                : capitalized + s.substring(1);
+        return (first == capitalized) ? s : capitalized + s.substring(1);
     }
 }

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,21 +42,13 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions.NodesResponseRestListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestNodesStatsAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_nodes/stats"),
-            new Route(GET, "/_nodes/{nodeId}/stats"),
-            new Route(GET, "/_nodes/stats/{metric}"),
-            new Route(GET, "/_nodes/{nodeId}/stats/{metric}"),
-            new Route(GET, "/_nodes/stats/{metric}/{index_metric}"),
-            new Route(GET, "/_nodes/{nodeId}/stats/{metric}/{index_metric}")));
+        return unmodifiableList(asList(new Route(GET, "/_nodes/stats"), new Route(GET, "/_nodes/{nodeId}/stats"),
+                new Route(GET, "/_nodes/stats/{metric}"), new Route(GET, "/_nodes/{nodeId}/stats/{metric}"),
+                new Route(GET, "/_nodes/stats/{metric}/{index_metric}"), new Route(GET, "/_nodes/{nodeId}/stats/{metric}/{index_metric}")));
     }
 
     static final Map<String, Consumer<NodesStatsRequest>> METRICS;
@@ -91,21 +87,14 @@ public class RestNodesStatsAction extends BaseRestHandler {
 
         if (metrics.size() == 1 && metrics.contains("_all")) {
             if (request.hasParam("index_metric")) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        Locale.ROOT,
-                        "request [%s] contains index metrics [%s] but all stats requested",
-                        request.path(),
-                        request.param("index_metric")));
+                throw new IllegalArgumentException(String.format(Locale.ROOT,
+                        "request [%s] contains index metrics [%s] but all stats requested", request.path(), request.param("index_metric")));
             }
             nodesStatsRequest.all();
             nodesStatsRequest.indices(CommonStatsFlags.ALL);
         } else if (metrics.contains("_all")) {
-            throw new IllegalArgumentException(
-                String.format(Locale.ROOT,
-                    "request [%s] contains _all and individual metrics [%s]",
-                    request.path(),
-                    request.param("metric")));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "request [%s] contains _all and individual metrics [%s]",
+                    request.path(), request.param("metric")));
         } else {
             nodesStatsRequest.clear();
 
@@ -151,21 +140,18 @@ public class RestNodesStatsAction extends BaseRestHandler {
                 }
             } else if (request.hasParam("index_metric")) {
                 throw new IllegalArgumentException(
-                    String.format(
-                        Locale.ROOT,
-                        "request [%s] contains index metrics [%s] but indices stats not requested",
-                        request.path(),
-                        request.param("index_metric")));
+                        String.format(Locale.ROOT, "request [%s] contains index metrics [%s] but indices stats not requested",
+                                request.path(), request.param("index_metric")));
             }
         }
 
         if (nodesStatsRequest.indices().isSet(Flag.FieldData) && (request.hasParam("fields") || request.hasParam("fielddata_fields"))) {
-            nodesStatsRequest.indices().fieldDataFields(
-                    request.paramAsStringArray("fielddata_fields", request.paramAsStringArray("fields", null)));
+            nodesStatsRequest.indices()
+                    .fieldDataFields(request.paramAsStringArray("fielddata_fields", request.paramAsStringArray("fields", null)));
         }
         if (nodesStatsRequest.indices().isSet(Flag.Completion) && (request.hasParam("fields") || request.hasParam("completion_fields"))) {
-            nodesStatsRequest.indices().completionDataFields(
-                    request.paramAsStringArray("completion_fields", request.paramAsStringArray("fields", null)));
+            nodesStatsRequest.indices()
+                    .completionDataFields(request.paramAsStringArray("completion_fields", request.paramAsStringArray("fields", null)));
         }
         if (nodesStatsRequest.indices().isSet(Flag.Search) && (request.hasParam("groups"))) {
             nodesStatsRequest.indices().groups(request.paramAsStringArray("groups", null));

@@ -126,7 +126,7 @@ public class MovAvgUnitTests extends ESTestCase {
         MovAvgModel model = new LinearModel();
 
         int windowSize = randomIntBetween(1, 50);
-        int numPredictions = randomIntBetween(1,50);
+        int numPredictions = randomIntBetween(1, 50);
 
         EvictingQueue<Double> window = new EvictingQueue<>(windowSize);
         for (int i = 0; i < windowSize; i++) {
@@ -191,7 +191,7 @@ public class MovAvgUnitTests extends ESTestCase {
         MovAvgModel model = new EwmaModel(alpha);
 
         int windowSize = randomIntBetween(1, 50);
-        int numPredictions = randomIntBetween(1,50);
+        int numPredictions = randomIntBetween(1, 50);
 
         EvictingQueue<Double> window = new EvictingQueue<>(windowSize);
         for (int i = 0; i < windowSize; i++) {
@@ -259,7 +259,7 @@ public class MovAvgUnitTests extends ESTestCase {
                 last_b = b;
             }
 
-            double expected = s + (0 * b) ;
+            double expected = s + (0 * b);
             double actual = model.next(window);
             assertThat(Double.compare(expected, actual), equalTo(0));
             window.offer(randValue);
@@ -315,7 +315,7 @@ public class MovAvgUnitTests extends ESTestCase {
         double alpha = randomDouble();
         double beta = randomDouble();
         double gamma = randomDouble();
-        int period = randomIntBetween(1,10);
+        int period = randomIntBetween(1, 10);
         MovAvgModel model = new HoltWintersModel(alpha, beta, gamma, period, HoltWintersModel.SeasonalityType.MULTIPLICATIVE, true);
 
         int windowSize = randomIntBetween(period * 2, 50); // HW requires at least two periods of data
@@ -343,7 +343,6 @@ public class MovAvgUnitTests extends ESTestCase {
             counter += 1;
         }
 
-
         // Initial level value is average of first season
         // Calculate the slopes between first and second season for each period
         for (int i = 0; i < period; i++) {
@@ -367,7 +366,7 @@ public class MovAvgUnitTests extends ESTestCase {
             s = alpha * (vs[i] / seasonal[i - period]) + (1.0d - alpha) * (last_s + last_b);
             b = beta * (s - last_s) + (1 - beta) * last_b;
 
-            seasonal[i] = gamma * (vs[i] / (last_s + last_b )) + (1 - gamma) * seasonal[i - period];
+            seasonal[i] = gamma * (vs[i] / (last_s + last_b)) + (1 - gamma) * seasonal[i - period];
             last_s = s;
             last_b = b;
         }
@@ -382,7 +381,7 @@ public class MovAvgUnitTests extends ESTestCase {
         double alpha = randomDouble();
         double beta = randomDouble();
         double gamma = randomDouble();
-        int period = randomIntBetween(1,10);
+        int period = randomIntBetween(1, 10);
         MovAvgModel model = new HoltWintersModel(alpha, beta, gamma, period, HoltWintersModel.SeasonalityType.MULTIPLICATIVE, true);
 
         int windowSize = randomIntBetween(period * 2, 50); // HW requires at least two periods of data
@@ -413,7 +412,6 @@ public class MovAvgUnitTests extends ESTestCase {
             counter += 1;
         }
 
-
         // Initial level value is average of first season
         // Calculate the slopes between first and second season for each period
         for (int i = 0; i < period; i++) {
@@ -437,16 +435,15 @@ public class MovAvgUnitTests extends ESTestCase {
             s = alpha * (vs[i] / seasonal[i - period]) + (1.0d - alpha) * (last_s + last_b);
             b = beta * (s - last_s) + (1 - beta) * last_b;
 
-            seasonal[i] = gamma * (vs[i] / (last_s + last_b )) + (1 - gamma) * seasonal[i - period];
+            seasonal[i] = gamma * (vs[i] / (last_s + last_b)) + (1 - gamma) * seasonal[i - period];
             last_s = s;
             last_b = b;
         }
 
-
         for (int i = 1; i <= numPredictions; i++) {
             int idx = window.size() - period + ((i - 1) % period);
-            expected[i-1] = (s + (i * b)) * seasonal[idx];
-            assertThat(Double.compare(expected[i-1], actual[i-1]), equalTo(0));
+            expected[i - 1] = (s + (i * b)) * seasonal[idx];
+            assertThat(Double.compare(expected[i - 1], actual[i - 1]), equalTo(0));
         }
 
     }
@@ -455,7 +452,7 @@ public class MovAvgUnitTests extends ESTestCase {
         double alpha = randomDouble();
         double beta = randomDouble();
         double gamma = randomDouble();
-        int period = randomIntBetween(1,10);
+        int period = randomIntBetween(1, 10);
         MovAvgModel model = new HoltWintersModel(alpha, beta, gamma, period, HoltWintersModel.SeasonalityType.ADDITIVE, false);
 
         int windowSize = randomIntBetween(period * 2, 50); // HW requires at least two periods of data
@@ -506,7 +503,7 @@ public class MovAvgUnitTests extends ESTestCase {
             s = alpha * (vs[i] - seasonal[i - period]) + (1.0d - alpha) * (last_s + last_b);
             b = beta * (s - last_s) + (1 - beta) * last_b;
 
-            seasonal[i] = gamma * (vs[i] - (last_s - last_b )) + (1 - gamma) * seasonal[i - period];
+            seasonal[i] = gamma * (vs[i] - (last_s - last_b)) + (1 - gamma) * seasonal[i - period];
             last_s = s;
             last_b = b;
         }
@@ -521,7 +518,7 @@ public class MovAvgUnitTests extends ESTestCase {
         double alpha = randomDouble();
         double beta = randomDouble();
         double gamma = randomDouble();
-        int period = randomIntBetween(1,10);
+        int period = randomIntBetween(1, 10);
         MovAvgModel model = new HoltWintersModel(alpha, beta, gamma, period, HoltWintersModel.SeasonalityType.ADDITIVE, false);
 
         int windowSize = randomIntBetween(period * 2, 50); // HW requires at least two periods of data
@@ -575,15 +572,15 @@ public class MovAvgUnitTests extends ESTestCase {
             s = alpha * (vs[i] - seasonal[i - period]) + (1.0d - alpha) * (last_s + last_b);
             b = beta * (s - last_s) + (1 - beta) * last_b;
 
-            seasonal[i] = gamma * (vs[i] - (last_s - last_b )) + (1 - gamma) * seasonal[i - period];
+            seasonal[i] = gamma * (vs[i] - (last_s - last_b)) + (1 - gamma) * seasonal[i - period];
             last_s = s;
             last_b = b;
         }
 
         for (int i = 1; i <= numPredictions; i++) {
             int idx = window.size() - period + ((i - 1) % period);
-            expected[i-1] = s + (i * b) + seasonal[idx];
-            assertThat(Double.compare(expected[i-1], actual[i-1]), equalTo(0));
+            expected[i - 1] = s + (i * b) + seasonal[idx];
+            assertThat(Double.compare(expected[i - 1], actual[i - 1]), equalTo(0));
         }
 
     }
@@ -596,7 +593,7 @@ public class MovAvgUnitTests extends ESTestCase {
         parsers.add(HoltWintersModel.PARSER);
         parsers.add(HoltLinearModel.PARSER);
 
-        Object[] values = {(byte)1, 1, 1L, (short)1, (double)1};
+        Object[] values = { (byte) 1, 1, 1L, (short) 1, (double) 1 };
         Map<String, Object> settings = new HashMap<>(2);
 
         for (MovAvgModel.AbstractModelParser parser : parsers) {
@@ -606,8 +603,8 @@ public class MovAvgUnitTests extends ESTestCase {
                 try {
                     parser.parse(settings, "pipeline", 10);
                 } catch (ParseException e) {
-                    fail(parser + " parser should not have thrown SearchParseException while parsing [" +
-                            v.getClass().getSimpleName() +"]");
+                    fail(parser + " parser should not have thrown SearchParseException while parsing [" + v.getClass().getSimpleName()
+                            + "]");
                 }
             }
         }

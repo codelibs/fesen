@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.rest;
 
+import static java.util.Collections.unmodifiableMap;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +28,6 @@ import java.util.Map;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-
-import static java.util.Collections.unmodifiableMap;
 
 public enum RestStatus {
     /**

@@ -19,6 +19,20 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexableField;
@@ -39,33 +53,10 @@ import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
-import org.codelibs.fesen.index.mapper.DocValueFetcher;
-import org.codelibs.fesen.index.mapper.FieldMapper;
-import org.codelibs.fesen.index.mapper.FieldNamesFieldMapper;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.Mapper;
-import org.codelibs.fesen.index.mapper.MapperParsingException;
-import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.mapper.ParseContext;
-import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.indices.breaker.NoneCircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
 
 /**
  * Base class for testing {@link Mapper}s.
@@ -225,34 +216,26 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
 
     public void testMeta() throws IOException {
         assumeTrue("Field doesn't support meta", supportsMeta());
-        XContentBuilder mapping = fieldMapping(
-            b -> {
-                metaMapping(b);
-                b.field("meta", Collections.singletonMap("foo", "bar"));
-            }
-        );
+        XContentBuilder mapping = fieldMapping(b -> {
+            metaMapping(b);
+            b.field("meta", Collections.singletonMap("foo", "bar"));
+        });
         MapperService mapperService = createMapperService(mapping);
-        assertEquals(
-            XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(),
-            XContentHelper.convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2()
-        );
+        assertEquals(XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(), XContentHelper
+                .convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2());
 
         mapping = fieldMapping(this::metaMapping);
         merge(mapperService, mapping);
-        assertEquals(
-            XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(),
-            XContentHelper.convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2()
-        );
+        assertEquals(XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(), XContentHelper
+                .convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2());
 
         mapping = fieldMapping(b -> {
             metaMapping(b);
             b.field("meta", Collections.singletonMap("baz", "quux"));
         });
         merge(mapperService, mapping);
-        assertEquals(
-            XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(),
-            XContentHelper.convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2()
-        );
+        assertEquals(XContentHelper.convertToMap(BytesReference.bytes(mapping), false, mapping.contentType()).v2(), XContentHelper
+                .convertToMap(mapperService.documentMapper().mappingSource().uncompressed(), false, mapping.contentType()).v2());
     }
 
     protected String typeName() throws IOException {
@@ -271,9 +254,8 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
             b.field("boost", 2.0);
         }));
         String type = typeName();
-        String[] warnings = new String[] {
-            "Parameter [boost] on field [field] is deprecated and will be removed in 8.0",
-            "Parameter [boost] has no effect on type [" + type + "] and will be removed in future" };
+        String[] warnings = new String[] { "Parameter [boost] on field [field] is deprecated and will be removed in 8.0",
+                "Parameter [boost] has no effect on type [" + type + "] and will be removed in future" };
         allowedWarnings(warnings);
     }
 
@@ -281,13 +263,12 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
      * Use a {@linkplain ValueFetcher} to extract values from doc values.
      */
     protected final List<?> fetchFromDocValues(MapperService mapperService, MappedFieldType ft, DocValueFormat format, Object sourceValue)
-        throws IOException {
+            throws IOException {
 
-        BiFunction<MappedFieldType, Supplier<SearchLookup>, IndexFieldData<?>> fieldDataLookup = (mft, lookupSource) -> mft
-            .fielddataBuilder("test", () -> {
-                throw new UnsupportedOperationException();
-            })
-            .build(new IndexFieldDataCache.None(), new NoneCircuitBreakerService());
+        BiFunction<MappedFieldType, Supplier<SearchLookup>, IndexFieldData<?>> fieldDataLookup =
+                (mft, lookupSource) -> mft.fielddataBuilder("test", () -> {
+                    throw new UnsupportedOperationException();
+                }).build(new IndexFieldDataCache.None(), new NoneCircuitBreakerService());
         SetOnce<List<?>> result = new SetOnce<>();
         withLuceneIndex(mapperService, iw -> {
             iw.addDocument(mapperService.documentMapper().parse(source(b -> b.field(ft.name(), sourceValue))).rootDoc());
@@ -308,8 +289,7 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
         final XContentBuilder update;
         final Consumer<FieldMapper> check;
 
-        private UpdateCheck(CheckedConsumer<XContentBuilder, IOException> update,
-                            Consumer<FieldMapper> check) throws IOException {
+        private UpdateCheck(CheckedConsumer<XContentBuilder, IOException> update, Consumer<FieldMapper> check) throws IOException {
             this.init = fieldMapping(MapperTestCase.this::minimalMapping);
             this.update = fieldMapping(b -> {
                 minimalMapping(b);
@@ -318,9 +298,8 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
             this.check = check;
         }
 
-        private UpdateCheck(CheckedConsumer<XContentBuilder, IOException> init,
-                            CheckedConsumer<XContentBuilder, IOException> update,
-                            Consumer<FieldMapper> check) throws IOException {
+        private UpdateCheck(CheckedConsumer<XContentBuilder, IOException> init, CheckedConsumer<XContentBuilder, IOException> update,
+                Consumer<FieldMapper> check) throws IOException {
             this.init = fieldMapping(init);
             this.update = fieldMapping(update);
             this.check = check;
@@ -348,8 +327,8 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
          * @param update a field builder applied on top of the minimal mapping
          * @param check  a check that the updated parameter has been applied to the FieldMapper
          */
-        public void registerUpdateCheck(CheckedConsumer<XContentBuilder, IOException> update,
-                                        Consumer<FieldMapper> check) throws IOException {
+        public void registerUpdateCheck(CheckedConsumer<XContentBuilder, IOException> update, Consumer<FieldMapper> check)
+                throws IOException {
             updateChecks.add(new UpdateCheck(update, check));
         }
 
@@ -361,8 +340,7 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
          * @param check  a check that the updated parameter has been applied to the FieldMapper
          */
         public void registerUpdateCheck(CheckedConsumer<XContentBuilder, IOException> init,
-                                        CheckedConsumer<XContentBuilder, IOException> update,
-                                        Consumer<FieldMapper> check) throws IOException {
+                CheckedConsumer<XContentBuilder, IOException> update, Consumer<FieldMapper> check) throws IOException {
             updateChecks.add(new UpdateCheck(init, update, check));
         }
 
@@ -373,13 +351,10 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
          * @param update a field builder applied on top of the minimal mapping
          */
         public void registerConflictCheck(String param, CheckedConsumer<XContentBuilder, IOException> update) throws IOException {
-            conflictChecks.put(param, new ConflictCheck(
-                fieldMapping(MapperTestCase.this::minimalMapping),
-                fieldMapping(b -> {
-                    minimalMapping(b);
-                    update.accept(b);
-                })
-            ));
+            conflictChecks.put(param, new ConflictCheck(fieldMapping(MapperTestCase.this::minimalMapping), fieldMapping(b -> {
+                minimalMapping(b);
+                update.accept(b);
+            })));
         }
 
         /**
@@ -415,12 +390,10 @@ public abstract class MapperTestCase extends MapperServiceTestCase {
             // merging the same change is fine
             merge(mapperService, checker.conflictChecks.get(param).init);
             // merging the conflicting update should throw an exception
-            Exception e = expectThrows(IllegalArgumentException.class,
-                "No conflict when updating parameter [" + param + "]",
-                () -> merge(mapperService, checker.conflictChecks.get(param).update));
-            assertThat(e.getMessage(), anyOf(
-                containsString("Cannot update parameter [" + param + "]"),
-                containsString("different [" + param + "]")));
+            Exception e = expectThrows(IllegalArgumentException.class, "No conflict when updating parameter [" + param + "]",
+                    () -> merge(mapperService, checker.conflictChecks.get(param).update));
+            assertThat(e.getMessage(),
+                    anyOf(containsString("Cannot update parameter [" + param + "]"), containsString("different [" + param + "]")));
         }
         assertParseMaximalWarnings();
     }

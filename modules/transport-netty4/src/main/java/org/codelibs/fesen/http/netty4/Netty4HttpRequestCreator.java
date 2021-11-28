@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.http.netty4;
 
+import java.util.List;
+
+import org.codelibs.fesen.ExceptionsHelper;
+
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.http.FullHttpRequest;
-
-import java.util.List;
-
-import org.codelibs.fesen.ExceptionsHelper;
 
 @ChannelHandler.Sharable
 class Netty4HttpRequestCreator extends MessageToMessageDecoder<FullHttpRequest> {

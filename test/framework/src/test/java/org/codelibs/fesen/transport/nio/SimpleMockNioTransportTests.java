@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.transport.nio;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Collections;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -34,17 +44,6 @@ import org.codelibs.fesen.transport.ConnectTransportException;
 import org.codelibs.fesen.transport.ConnectionProfile;
 import org.codelibs.fesen.transport.TcpChannel;
 import org.codelibs.fesen.transport.Transport;
-import org.codelibs.fesen.transport.nio.MockNioTransport;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collections;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
 
 public class SimpleMockNioTransportTests extends AbstractSimpleTransportTestCase {
 
@@ -53,11 +52,11 @@ public class SimpleMockNioTransportTests extends AbstractSimpleTransportTestCase
         NamedWriteableRegistry namedWriteableRegistry = new NamedWriteableRegistry(Collections.emptyList());
         NetworkService networkService = new NetworkService(Collections.emptyList());
         return new MockNioTransport(settings, version, threadPool, networkService, new MockPageCacheRecycler(settings),
-            namedWriteableRegistry, new NoneCircuitBreakerService()) {
+                namedWriteableRegistry, new NoneCircuitBreakerService()) {
 
             @Override
             public void executeHandshake(DiscoveryNode node, TcpChannel channel, ConnectionProfile profile,
-                                         ActionListener<Version> listener) {
+                    ActionListener<Version> listener) {
                 if (doHandshake) {
                     super.executeHandshake(node, channel, profile, listener);
                 } else {
@@ -74,8 +73,8 @@ public class SimpleMockNioTransportTests extends AbstractSimpleTransportTestCase
 
     public void testConnectException() throws UnknownHostException {
         try {
-            serviceA.connectToNode(new DiscoveryNode("C", new TransportAddress(InetAddress.getByName("localhost"), 9876),
-                emptyMap(), emptySet(),Version.CURRENT));
+            serviceA.connectToNode(new DiscoveryNode("C", new TransportAddress(InetAddress.getByName("localhost"), 9876), emptyMap(),
+                    emptySet(), Version.CURRENT));
             fail("Expected ConnectTransportException");
         } catch (ConnectTransportException e) {
             assertThat(e.getMessage(), containsString("connect_exception"));

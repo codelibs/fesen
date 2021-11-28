@@ -19,14 +19,13 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.common.Explicit;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.codelibs.fesen.common.Explicit;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 
 /**
  * A mapper for a builtin field containing metadata about a document.
@@ -36,8 +35,7 @@ public abstract class MetadataFieldMapper extends ParametrizedFieldMapper {
     public interface TypeParser extends Mapper.TypeParser {
 
         @Override
-        MetadataFieldMapper.Builder parse(String name, Map<String, Object> node,
-                                               ParserContext parserContext) throws MapperParsingException;
+        MetadataFieldMapper.Builder parse(String name, Map<String, Object> node, ParserContext parserContext) throws MapperParsingException;
 
         /**
          * Get the default {@link MetadataFieldMapper} to use, if nothing had to be parsed.
@@ -62,11 +60,10 @@ public abstract class MetadataFieldMapper extends ParametrizedFieldMapper {
      * will serialize its value if it has been configured, no matter what the value is.
      */
     public static Parameter<Explicit<Boolean>> updateableBoolParam(String name, Function<FieldMapper, Explicit<Boolean>> initializer,
-                                                                   boolean defaultValue) {
+            boolean defaultValue) {
         Explicit<Boolean> defaultExplicit = new Explicit<>(defaultValue, false);
-        return new Parameter<>(name, true, () -> defaultExplicit,
-            (n, c, o) -> new Explicit<>(XContentMapValues.nodeBooleanValue(o), true), initializer)
-            .setSerializer((b, n, v) -> b.field(n, v.value()), v -> Boolean.toString(v.value()));
+        return new Parameter<>(name, true, () -> defaultExplicit, (n, c, o) -> new Explicit<>(XContentMapValues.nodeBooleanValue(o), true),
+                initializer).setSerializer((b, n, v) -> b.field(n, v.value()), v -> Boolean.toString(v.value()));
     }
 
     /**
@@ -97,7 +94,7 @@ public abstract class MetadataFieldMapper extends ParametrizedFieldMapper {
         final Function<ParserContext, Builder> builderFunction;
 
         public ConfigurableTypeParser(Function<ParserContext, MetadataFieldMapper> defaultMapperParser,
-                                      Function<ParserContext, Builder> builderFunction) {
+                Function<ParserContext, Builder> builderFunction) {
             this.defaultMapperParser = defaultMapperParser;
             this.builderFunction = builderFunction;
         }
@@ -140,7 +137,7 @@ public abstract class MetadataFieldMapper extends ParametrizedFieldMapper {
 
     @Override
     public ParametrizedFieldMapper.Builder getMergeBuilder() {
-        return null;    // by default, things can't be configured so we have no builder
+        return null; // by default, things can't be configured so we have no builder
     }
 
     @Override
@@ -158,7 +155,7 @@ public abstract class MetadataFieldMapper extends ParametrizedFieldMapper {
     @Override
     protected void parseCreateField(ParseContext context) throws IOException {
         throw new MapperParsingException("Field [" + name() + "] is a metadata field and cannot be added inside"
-            + " a document. Use the index API request parameters.");
+                + " a document. Use the index API request parameters.");
     }
 
     /**

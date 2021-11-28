@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.discovery.zen;
 
+import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -47,10 +51,6 @@ import org.codelibs.fesen.transport.TransportRequestOptions;
 import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.io.IOException;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A fault detection that pings the master periodically to see if its alive.
@@ -83,17 +83,16 @@ public class MasterFaultDetection extends FaultDetection {
     private final AtomicBoolean notifiedMasterFailure = new AtomicBoolean();
 
     public MasterFaultDetection(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                java.util.function.Supplier<ClusterState> clusterStateSupplier, MasterService masterService,
-                                ClusterName clusterName) {
+            java.util.function.Supplier<ClusterState> clusterStateSupplier, MasterService masterService, ClusterName clusterName) {
         super(settings, threadPool, transportService, clusterName);
         this.clusterStateSupplier = clusterStateSupplier;
         this.masterService = masterService;
 
         logger.debug("[master] uses ping_interval [{}], ping_timeout [{}], ping_retries [{}]", pingInterval, pingRetryTimeout,
-            pingRetryCount);
+                pingRetryCount);
 
-        transportService.registerRequestHandler(
-            MASTER_PING_ACTION_NAME, ThreadPool.Names.SAME, false, false, MasterPingRequest::new, new MasterPingRequestHandler());
+        transportService.registerRequestHandler(MASTER_PING_ACTION_NAME, ThreadPool.Names.SAME, false, false, MasterPingRequest::new,
+                new MasterPingRequestHandler());
     }
 
     public DiscoveryNode masterNode() {
@@ -222,12 +221,12 @@ public class MasterFaultDetection extends FaultDetection {
                 return;
             }
 
-            final MasterPingRequest request = new MasterPingRequest(
-                clusterStateSupplier.get().nodes().getLocalNode(), masterToPing, clusterName);
-            final TransportRequestOptions options = TransportRequestOptions.builder().withType(TransportRequestOptions.Type.PING)
-                .withTimeout(pingRetryTimeout).build();
+            final MasterPingRequest request =
+                    new MasterPingRequest(clusterStateSupplier.get().nodes().getLocalNode(), masterToPing, clusterName);
+            final TransportRequestOptions options =
+                    TransportRequestOptions.builder().withType(TransportRequestOptions.Type.PING).withTimeout(pingRetryTimeout).build();
             transportService.sendRequest(masterToPing, MASTER_PING_ACTION_NAME, request, options,
-                new TransportResponseHandler<MasterPingResponseResponse>() {
+                    new TransportResponseHandler<MasterPingResponseResponse>() {
                         @Override
                         public MasterPingResponseResponse read(StreamInput in) throws IOException {
                             return new MasterPingResponseResponse(in);
@@ -264,25 +263,25 @@ public class MasterFaultDetection extends FaultDetection {
                                         return;
                                     } else if (exp.getCause() instanceof ThisIsNotTheMasterYouAreLookingForException) {
                                         logger.debug("[master] pinging a master {} that is not the master", masterNode);
-                                        notifyMasterFailure(masterToPing, exp,"not master");
+                                        notifyMasterFailure(masterToPing, exp, "not master");
                                         return;
                                     } else if (exp.getCause() instanceof NodeDoesNotExistOnMasterException) {
-                                        logger.debug("[master] pinging a master {} but we do not exists on it, act as if its master failure"
-                                            , masterNode);
-                                        notifyMasterFailure(masterToPing, exp,"do not exists on master, act as master failure");
+                                        logger.debug(
+                                                "[master] pinging a master {} but we do not exists on it, act as if its master failure",
+                                                masterNode);
+                                        notifyMasterFailure(masterToPing, exp, "do not exists on master, act as master failure");
                                         return;
                                     }
 
                                     int retryCount = ++MasterFaultDetection.this.retryCount;
-                                    logger.trace(() -> new ParameterizedMessage(
-                                            "[master] failed to ping [{}], retry [{}] out of [{}]",
+                                    logger.trace(() -> new ParameterizedMessage("[master] failed to ping [{}], retry [{}] out of [{}]",
                                             masterNode, retryCount, pingRetryCount), exp);
                                     if (retryCount >= pingRetryCount) {
                                         logger.debug("[master] failed to ping [{}], tried [{}] times, each with maximum [{}] timeout",
-                                            masterNode, pingRetryCount, pingRetryTimeout);
+                                                masterNode, pingRetryCount, pingRetryTimeout);
                                         // not good, failure
                                         notifyMasterFailure(masterToPing, null, "failed to ping, tried [" + pingRetryCount
-                                            + "] times, each with  maximum [" + pingRetryTimeout + "] timeout");
+                                                + "] times, each with  maximum [" + pingRetryTimeout + "] timeout");
                                     } else {
                                         // resend the request, not reschedule, rely on send timeout
                                         transportService.sendRequest(masterToPing, MASTER_PING_ACTION_NAME, request, options, this);
@@ -295,8 +294,7 @@ public class MasterFaultDetection extends FaultDetection {
                         public String executor() {
                             return ThreadPool.Names.SAME;
                         }
-                    }
-            );
+                    });
         }
     }
 
@@ -337,9 +335,9 @@ public class MasterFaultDetection extends FaultDetection {
             // ping from nodes of version < 1.4.0 will have the clustername set to null
             if (request.clusterName != null && !request.clusterName.equals(clusterName)) {
                 logger.trace("master fault detection ping request is targeted for a different [{}] cluster then us [{}]",
-                    request.clusterName, clusterName);
+                        request.clusterName, clusterName);
                 throw new ThisIsNotTheMasterYouAreLookingForException("master fault detection ping request is targeted for a different ["
-                    + request.clusterName + "] cluster then us [" + clusterName + "]");
+                        + request.clusterName + "] cluster then us [" + clusterName + "]");
             }
 
             // when we are elected as master or when a node joins, we use a cluster state update thread
@@ -398,7 +396,6 @@ public class MasterFaultDetection extends FaultDetection {
         }
     }
 
-
     public static class MasterPingRequest extends TransportRequest {
 
         public DiscoveryNode sourceNode;
@@ -438,6 +435,7 @@ public class MasterFaultDetection extends FaultDetection {
         }
 
         @Override
-        public void writeTo(StreamOutput out) throws IOException {}
+        public void writeTo(StreamOutput out) throws IOException {
+        }
     }
 }

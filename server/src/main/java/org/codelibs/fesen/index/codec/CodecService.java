@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.codec;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.codecs.lucene87.Lucene87Codec;
@@ -26,8 +28,6 @@ import org.apache.lucene.codecs.lucene87.Lucene87Codec.Mode;
 import org.codelibs.fesen.common.collect.MapBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
-
-import java.util.Map;
 
 /**
  * Since Lucene 4.0 low level index segments are read and written through a
@@ -45,15 +45,13 @@ public class CodecService {
     public static final String LUCENE_DEFAULT_CODEC = "lucene_default";
 
     public CodecService(@Nullable MapperService mapperService, Logger logger) {
-        final MapBuilder<String, Codec> codecs = MapBuilder.<String, Codec>newMapBuilder();
+        final MapBuilder<String, Codec> codecs = MapBuilder.<String, Codec> newMapBuilder();
         if (mapperService == null) {
             codecs.put(DEFAULT_CODEC, new Lucene87Codec());
             codecs.put(BEST_COMPRESSION_CODEC, new Lucene87Codec(Mode.BEST_COMPRESSION));
         } else {
-            codecs.put(DEFAULT_CODEC,
-                    new PerFieldMappingPostingFormatCodec(Mode.BEST_SPEED, mapperService, logger));
-            codecs.put(BEST_COMPRESSION_CODEC,
-                    new PerFieldMappingPostingFormatCodec(Mode.BEST_COMPRESSION, mapperService, logger));
+            codecs.put(DEFAULT_CODEC, new PerFieldMappingPostingFormatCodec(Mode.BEST_SPEED, mapperService, logger));
+            codecs.put(BEST_COMPRESSION_CODEC, new PerFieldMappingPostingFormatCodec(Mode.BEST_COMPRESSION, mapperService, logger));
         }
         codecs.put(LUCENE_DEFAULT_CODEC, Codec.getDefault());
         for (String codec : Codec.availableCodecs()) {

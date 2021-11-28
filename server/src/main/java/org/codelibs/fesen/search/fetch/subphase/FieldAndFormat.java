@@ -19,7 +19,9 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -31,9 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 
-import java.io.IOException;
-import java.util.Objects;
-
 /**
  * Wrapper around a field name and the format that should be used to
  * display values of this field.
@@ -42,9 +41,8 @@ public final class FieldAndFormat implements Writeable, ToXContentObject {
     private static final ParseField FIELD_FIELD = new ParseField("field");
     private static final ParseField FORMAT_FIELD = new ParseField("format");
 
-
-    private static final ConstructingObjectParser<FieldAndFormat, Void> PARSER = new ConstructingObjectParser<>("docvalues_field",
-        a -> new FieldAndFormat((String) a[0], (String) a[1]));
+    private static final ConstructingObjectParser<FieldAndFormat, Void> PARSER =
+            new ConstructingObjectParser<>("docvalues_field", a -> new FieldAndFormat((String) a[0], (String) a[1]));
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), new ParseField("field"));
         PARSER.declareStringOrNull(ConstructingObjectParser.optionalConstructorArg(), new ParseField("format"));
@@ -88,11 +86,12 @@ public final class FieldAndFormat implements Writeable, ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         FieldAndFormat that = (FieldAndFormat) o;
-        return Objects.equals(field, that.field) &&
-            Objects.equals(format, that.format);
+        return Objects.equals(field, that.field) && Objects.equals(format, that.format);
     }
 
     @Override

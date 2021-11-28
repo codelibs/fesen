@@ -19,7 +19,9 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import com.carrotsearch.hppc.ObjectLongHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.common.FieldMemoryStats;
 import org.codelibs.fesen.common.metrics.CounterMetric;
@@ -28,8 +30,7 @@ import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.index.shard.ShardId;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import com.carrotsearch.hppc.ObjectLongHashMap;
 
 public class ShardFieldData implements IndexFieldDataCache.Listener {
 
@@ -47,8 +48,8 @@ public class ShardFieldData implements IndexFieldDataCache.Listener {
                 }
             }
         }
-        return new FieldDataStats(totalMetric.count(), evictionsMetric.count(), fieldTotals == null ? null :
-            new FieldMemoryStats(fieldTotals));
+        return new FieldDataStats(totalMetric.count(), evictionsMetric.count(),
+                fieldTotals == null ? null : new FieldMemoryStats(fieldTotals));
     }
 
     @Override

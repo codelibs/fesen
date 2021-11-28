@@ -19,17 +19,13 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-
 import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.Strings;
 
 /**
  * Simple structure with 3 fields: int, double and String.
@@ -46,9 +42,8 @@ class SimpleStruct implements ToXContentObject {
     private static final ParseField S = new ParseField("s");
 
     @SuppressWarnings("unchecked")
-    private static final ConstructingObjectParser<SimpleStruct, Void> PARSER =
-        new ConstructingObjectParser<>(
-            "simple_struct", true, args -> new SimpleStruct((int) args[0], (double) args[1], (String) args[2]));
+    private static final ConstructingObjectParser<SimpleStruct, Void> PARSER = new ConstructingObjectParser<>("simple_struct", true,
+            args -> new SimpleStruct((int) args[0], (double) args[1], (String) args[2]));
 
     static {
         PARSER.declareInt(constructorArg(), I);
@@ -68,18 +63,16 @@ class SimpleStruct implements ToXContentObject {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        return builder
-            .startObject()
-            .field(I.getPreferredName(), i)
-            .field(D.getPreferredName(), d)
-            .field(S.getPreferredName(), s)
-            .endObject();
+        return builder.startObject().field(I.getPreferredName(), i).field(D.getPreferredName(), d).field(S.getPreferredName(), s)
+                .endObject();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SimpleStruct other = (SimpleStruct) o;
         return i == other.i && d == other.d && Objects.equals(s, other.s);
     }
@@ -94,4 +87,3 @@ class SimpleStruct implements ToXContentObject {
         return Strings.toString(this);
     }
 }
-

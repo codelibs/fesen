@@ -30,7 +30,7 @@ public class ClearIndicesCacheResponseTests extends AbstractBroadcastResponseTes
 
     @Override
     protected ClearIndicesCacheResponse createTestInstance(int totalShards, int successfulShards, int failedShards,
-                                                           List<DefaultShardOperationFailedException> failures) {
+            List<DefaultShardOperationFailedException> failures) {
         return new ClearIndicesCacheResponse(totalShards, successfulShards, failedShards, failures);
     }
 

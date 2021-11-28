@@ -19,7 +19,8 @@
 
 package org.codelibs.fesen.search.fetch;
 
-import com.carrotsearch.hppc.IntArrayList;
+import java.io.IOException;
+
 import org.apache.lucene.search.ScoreDoc;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -32,7 +33,7 @@ import org.codelibs.fesen.search.dfs.AggregatedDfs;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
 import org.codelibs.fesen.search.internal.ShardSearchRequest;
 
-import java.io.IOException;
+import com.carrotsearch.hppc.IntArrayList;
 
 /**
  * Shard level fetch request used with search. Holds indices taken from the original search request
@@ -46,7 +47,7 @@ public class ShardFetchSearchRequest extends ShardFetchRequest implements Indice
     private final AggregatedDfs aggregatedDfs;
 
     public ShardFetchSearchRequest(OriginalIndices originalIndices, ShardSearchContextId id, ShardSearchRequest shardSearchRequest,
-                                   IntArrayList list, ScoreDoc lastEmittedDoc, RescoreDocIds rescoreDocIds, AggregatedDfs aggregatedDfs) {
+            IntArrayList list, ScoreDoc lastEmittedDoc, RescoreDocIds rescoreDocIds, AggregatedDfs aggregatedDfs) {
         super(id, list, lastEmittedDoc);
         this.originalIndices = originalIndices;
         this.shardSearchRequest = shardSearchRequest;

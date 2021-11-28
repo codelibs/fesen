@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.index.query;
 
+import java.util.Locale;
+
 import org.apache.lucene.util.automaton.RegExp;
 import org.codelibs.fesen.common.Strings;
-
-import java.util.Locale;
 
 /**
  * Regular expression syntax flags. Each flag represents optional syntax support in the regular expression:
@@ -74,7 +74,6 @@ public enum RegexpFlag {
      * Enables all available option flags
      */
     ALL(RegExp.ALL);
-
 
     final int value;
 

@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cjk.CJKBigramFilter;
 import org.apache.lucene.analysis.miscellaneous.DisableGraphAttribute;
@@ -29,11 +34,6 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Factory that creates a {@link CJKBigramFilter} to form bigrams of CJK terms
@@ -98,12 +98,10 @@ public final class CJKBigramFilterFactory extends AbstractTokenFilterFactory {
     public TokenFilterFactory getSynonymFilter() {
         if (outputUnigrams) {
             if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
-                throw new IllegalArgumentException("Token filter [" + name() +
-                    "] cannot be used to parse synonyms");
-            }
-            else {
-                DEPRECATION_LOGGER.deprecate("synonym_tokenfilters", "Token filter [" + name()
-                    + "] will not be usable to parse synonyms after v7.0");
+                throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
+            } else {
+                DEPRECATION_LOGGER.deprecate("synonym_tokenfilters",
+                        "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
             }
         }
         return this;

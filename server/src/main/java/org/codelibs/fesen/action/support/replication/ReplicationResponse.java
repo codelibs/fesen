@@ -19,8 +19,15 @@
 
 package org.codelibs.fesen.action.support.replication;
 
-import org.codelibs.fesen.FesenException;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -34,13 +41,6 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Base class for write action responses.
  */
@@ -50,7 +50,8 @@ public class ReplicationResponse extends ActionResponse {
 
     private ShardInfo shardInfo;
 
-    public ReplicationResponse() {}
+    public ReplicationResponse() {
+    }
 
     public ReplicationResponse(StreamInput in) throws IOException {
         super(in);
@@ -81,7 +82,8 @@ public class ReplicationResponse extends ActionResponse {
         private int successful;
         private Failure[] failures = EMPTY;
 
-        public ShardInfo() {}
+        public ShardInfo() {
+        }
 
         public ShardInfo(StreamInput in) throws IOException {
             total = in.readVInt();
@@ -209,11 +211,7 @@ public class ReplicationResponse extends ActionResponse {
 
         @Override
         public String toString() {
-            return "ShardInfo{" +
-                "total=" + total +
-                ", successful=" + successful +
-                ", failures=" + Arrays.toString(failures) +
-                '}';
+            return "ShardInfo{" + "total=" + total + ", successful=" + successful + ", failures=" + Arrays.toString(failures) + '}';
         }
 
         public static class Failure extends ShardOperationFailedException implements ToXContentObject {
@@ -239,7 +237,7 @@ public class ReplicationResponse extends ActionResponse {
                 primary = in.readBoolean();
             }
 
-            public Failure(ShardId  shardId, @Nullable String nodeId, Exception cause, RestStatus status, boolean primary) {
+            public Failure(ShardId shardId, @Nullable String nodeId, Exception cause, RestStatus status, boolean primary) {
                 super(shardId.getIndexName(), shardId.getId(), ExceptionsHelper.detailedMessage(cause), status, cause);
                 this.shardId = shardId;
                 this.nodeId = nodeId;

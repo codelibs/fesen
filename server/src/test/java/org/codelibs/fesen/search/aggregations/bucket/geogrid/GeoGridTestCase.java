@@ -40,8 +40,7 @@ public abstract class GeoGridTestCase<B extends InternalGeoGridBucket, T extends
     /**
      * Instantiate a {@link InternalGeoGrid}-derived class using the same parameters as constructor.
      */
-    protected abstract T createInternalGeoGrid(String name, int size, List<InternalGeoGridBucket> buckets,
-                                               Map<String, Object> metadata);
+    protected abstract T createInternalGeoGrid(String name, int size, List<InternalGeoGridBucket> buckets, Map<String, Object> metadata);
 
     /**
      * Instantiate a {@link InternalGeoGridBucket}-derived class using the same parameters as constructor.
@@ -139,8 +138,7 @@ public abstract class GeoGridTestCase<B extends InternalGeoGridBucket, T extends
             break;
         case 1:
             buckets = new ArrayList<>(buckets);
-            buckets.add(
-                    createInternalGeoGridBucket(randomNonNegativeLong(), randomInt(IndexWriter.MAX_DOCS), InternalAggregations.EMPTY));
+            buckets.add(createInternalGeoGridBucket(randomNonNegativeLong(), randomInt(IndexWriter.MAX_DOCS), InternalAggregations.EMPTY));
             break;
         case 2:
             size = size + between(1, 10);
@@ -160,7 +158,7 @@ public abstract class GeoGridTestCase<B extends InternalGeoGridBucket, T extends
     }
 
     public void testCreateFromBuckets() {
-       InternalGeoGrid original = createTestInstance();
-       assertThat(original, equalTo(original.create(original.buckets)));
+        InternalGeoGrid original = createTestInstance();
+        assertThat(original, equalTo(original.create(original.buckets)));
     }
 }

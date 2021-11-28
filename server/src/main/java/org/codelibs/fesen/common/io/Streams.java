@@ -59,6 +59,7 @@ public abstract class Streams {
         public void write(int b) {
             // no-op
         }
+
         @Override
         public void write(byte[] b, int off, int len) {
             // no-op
@@ -80,7 +81,6 @@ public abstract class Streams {
             out2.write(in);
         }
     }
-
 
     //---------------------------------------------------------------------
     // Copy methods for java.io.Reader / java.io.Writer

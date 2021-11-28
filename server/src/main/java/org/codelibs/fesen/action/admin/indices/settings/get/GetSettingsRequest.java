@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.ValidateActions;
@@ -131,14 +130,13 @@ public class GetSettingsRequest extends MasterNodeReadRequest<GetSettingsRequest
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         GetSettingsRequest that = (GetSettingsRequest) o;
-        return humanReadable == that.humanReadable &&
-            includeDefaults == that.includeDefaults &&
-            Arrays.equals(indices, that.indices) &&
-            Objects.equals(indicesOptions, that.indicesOptions) &&
-            Arrays.equals(names, that.names);
+        return humanReadable == that.humanReadable && includeDefaults == that.includeDefaults && Arrays.equals(indices, that.indices)
+                && Objects.equals(indicesOptions, that.indicesOptions) && Arrays.equals(names, that.names);
     }
 
     @Override

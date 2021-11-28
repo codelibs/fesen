@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+
 import org.apache.lucene.analysis.CannedTokenStream;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
-
-import java.io.IOException;
 
 public class FlattenGraphTokenFilterFactoryTests extends ESTokenStreamTestCase {
 
@@ -42,27 +42,17 @@ public class FlattenGraphTokenFilterFactoryTests extends ESTokenStreamTestCase {
         Settings settings = newAnalysisSettingsBuilder().build();
 
         // "wow that's funny" and "what the fudge" are separate side paths, in parallel with "wtf", on input:
-        TokenStream in = new CannedTokenStream(0, 12, new Token[] {
-                    token("wtf", 1, 5, 0, 3),
-                    token("what", 0, 1, 0, 3),
-                    token("wow", 0, 3, 0, 3),
-                    token("the", 1, 1, 0, 3),
-                    token("fudge", 1, 3, 0, 3),
-                    token("that's", 1, 1, 0, 3),
-                    token("funny", 1, 1, 0, 3),
-                    token("happened", 1, 1, 4, 12)
-                });
+        TokenStream in = new CannedTokenStream(0, 12,
+                new Token[] { token("wtf", 1, 5, 0, 3), token("what", 0, 1, 0, 3), token("wow", 0, 3, 0, 3), token("the", 1, 1, 0, 3),
+                        token("fudge", 1, 3, 0, 3), token("that's", 1, 1, 0, 3), token("funny", 1, 1, 0, 3),
+                        token("happened", 1, 1, 4, 12) });
 
         TokenStream tokens = new FlattenGraphTokenFilterFactory(indexProperties, null, name, settings).create(in);
 
         // ... but on output, it's flattened to wtf/what/wow that's/the fudge/funny happened:
-        assertTokenStreamContents(tokens,
-                new String[] {"wtf", "what", "wow", "the", "that's", "fudge", "funny", "happened"},
-                new int[] {0, 0, 0, 0, 0, 0, 0, 4},
-                new int[] {3, 3, 3, 3, 3, 3, 3, 12},
-                new int[] {1, 0, 0, 1, 0, 1, 0, 1},
-                new int[] {3, 1, 1, 1, 1, 1, 1, 1},
-                12);
+        assertTokenStreamContents(tokens, new String[] { "wtf", "what", "wow", "the", "that's", "fudge", "funny", "happened" },
+                new int[] { 0, 0, 0, 0, 0, 0, 0, 4 }, new int[] { 3, 3, 3, 3, 3, 3, 3, 12 }, new int[] { 1, 0, 0, 1, 0, 1, 0, 1 },
+                new int[] { 3, 1, 1, 1, 1, 1, 1, 1 }, 12);
     }
 
     private static Token token(String term, int posInc, int posLength, int startOffset, int endOffset) {

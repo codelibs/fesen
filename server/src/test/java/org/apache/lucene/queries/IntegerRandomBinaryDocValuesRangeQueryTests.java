@@ -44,23 +44,23 @@ public class IntegerRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinar
 
     private int nextIntInternal() {
         switch (random().nextInt(5)) {
-            case 0:
-                return Integer.MIN_VALUE;
-            case 1:
-                return Integer.MAX_VALUE;
+        case 0:
+            return Integer.MIN_VALUE;
+        case 1:
+            return Integer.MAX_VALUE;
+        default:
+            int bpv = random().nextInt(32);
+            switch (bpv) {
+            case 32:
+                return random().nextInt();
             default:
-                int bpv = random().nextInt(32);
-                switch (bpv) {
-                    case 32:
-                        return random().nextInt();
-                    default:
-                        int v = TestUtil.nextInt(random(), 0, (1 << bpv) - 1);
-                        if (bpv > 0) {
-                            // negative values sometimes
-                            v -= 1 << (bpv - 1);
-                        }
-                        return v;
+                int v = TestUtil.nextInt(random(), 0, (1 << bpv) - 1);
+                if (bpv > 0) {
+                    // negative values sometimes
+                    v -= 1 << (bpv - 1);
                 }
+                return v;
+            }
         }
     }
 
@@ -107,13 +107,13 @@ public class IntegerRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinar
 
         @Override
         protected boolean isDisjoint(Range o) {
-            IntTestRange other = (IntTestRange)o;
+            IntTestRange other = (IntTestRange) o;
             return this.min > other.max || this.max < other.min;
         }
 
         @Override
         protected boolean isWithin(Range o) {
-            IntTestRange other = (IntTestRange)o;
+            IntTestRange other = (IntTestRange) o;
             if ((this.min >= other.min && this.max <= other.max) == false) {
                 // not within:
                 return false;

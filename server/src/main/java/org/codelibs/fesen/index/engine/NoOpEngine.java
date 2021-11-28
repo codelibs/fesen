@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.index.engine;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexCommit;
 import org.apache.lucene.index.IndexWriter;
@@ -34,12 +40,6 @@ import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.translog.Translog;
 import org.codelibs.fesen.index.translog.TranslogConfig;
 import org.codelibs.fesen.index.translog.TranslogDeletionPolicy;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * NoOpEngine is an engine implementation that does nothing but the bare minimum
@@ -100,7 +100,7 @@ public final class NoOpEngine extends ReadOnlyEngine {
             }
 
             @Override
-            public IndexCommit getIndexCommit()  {
+            public IndexCommit getIndexCommit() {
                 return indexCommit;
             }
 
@@ -156,12 +156,12 @@ public final class NoOpEngine extends ReadOnlyEngine {
                 final TranslogDeletionPolicy translogDeletionPolicy = new TranslogDeletionPolicy(-1, -1, 0);
                 translogDeletionPolicy.setLocalCheckpointOfSafeCommit(localCheckpoint);
                 try (Translog translog = new Translog(translogConfig, translogUuid, translogDeletionPolicy,
-                    engineConfig.getGlobalCheckpointSupplier(), engineConfig.getPrimaryTermSupplier(), seqNo -> {})) {
+                        engineConfig.getGlobalCheckpointSupplier(), engineConfig.getPrimaryTermSupplier(), seqNo -> {})) {
                     translog.trimUnreferencedReaders();
                     // refresh the translog stats
                     this.translogStats = translog.stats();
                     assert translog.currentFileGeneration() == translog.getMinFileGeneration() : "translog was not trimmed "
-                        + " current gen " + translog.currentFileGeneration() + " != min gen " + translog.getMinFileGeneration();
+                            + " current gen " + translog.currentFileGeneration() + " != min gen " + translog.getMinFileGeneration();
                 }
             }
         } catch (final Exception e) {

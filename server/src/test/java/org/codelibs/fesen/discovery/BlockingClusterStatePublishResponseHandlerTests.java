@@ -49,7 +49,7 @@ public class BlockingClusterStatePublishResponseHandlerTests extends ESTestCase 
         final BlockingClusterStatePublishResponseHandler handler;
 
         PublishResponder(boolean fail, DiscoveryNode node, CyclicBarrier barrier, Logger logger,
-                         BlockingClusterStatePublishResponseHandler handler) {
+                BlockingClusterStatePublishResponseHandler handler) {
             this.fail = fail;
 
             this.node = node;
@@ -83,7 +83,7 @@ public class BlockingClusterStatePublishResponseHandlerTests extends ESTestCase 
         }
 
         BlockingClusterStatePublishResponseHandler handler =
-            new BlockingClusterStatePublishResponseHandler(new HashSet<>(Arrays.asList(allNodes)));
+                new BlockingClusterStatePublishResponseHandler(new HashSet<>(Arrays.asList(allNodes)));
 
         int firstRound = randomIntBetween(5, nodeCount - 1);
         Thread[] threads = new Thread[firstRound];

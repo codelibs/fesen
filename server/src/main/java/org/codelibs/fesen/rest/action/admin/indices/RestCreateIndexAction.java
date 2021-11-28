@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +39,10 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 public class RestCreateIndexAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestCreateIndexAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in create " +
-        "index requests is deprecated. The parameter will be removed in the next major version.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in create "
+            + "index requests is deprecated. The parameter will be removed in the next major version.";
 
     @Override
     public List<Route> routes() {
@@ -56,8 +56,7 @@ public class RestCreateIndexAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
-        final boolean includeTypeName = request.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER,
-            DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+        final boolean includeTypeName = request.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
 
         if (request.hasParam(INCLUDE_TYPE_NAME_PARAMETER)) {
             deprecationLogger.deprecate("create_index_with_types", TYPES_DEPRECATION_MESSAGE);
@@ -66,8 +65,7 @@ public class RestCreateIndexAction extends BaseRestHandler {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(request.param("index"));
 
         if (request.hasContent()) {
-            Map<String, Object> sourceAsMap = XContentHelper.convertToMap(request.requiredContent(), false,
-                request.getXContentType()).v2();
+            Map<String, Object> sourceAsMap = XContentHelper.convertToMap(request.requiredContent(), false, request.getXContentType()).v2();
             sourceAsMap = prepareMappings(sourceAsMap, includeTypeName);
             createIndexRequest.source(sourceAsMap, LoggingDeprecationHandler.INSTANCE);
         }
@@ -78,11 +76,8 @@ public class RestCreateIndexAction extends BaseRestHandler {
         return channel -> client.admin().indices().create(createIndexRequest, new RestToXContentListener<>(channel));
     }
 
-
     static Map<String, Object> prepareMappings(Map<String, Object> source, boolean includeTypeName) {
-        if (includeTypeName
-            || source.containsKey("mappings") == false
-            || (source.get("mappings") instanceof Map) == false) {
+        if (includeTypeName || source.containsKey("mappings") == false || (source.get("mappings") instanceof Map) == false) {
             return source;
         }
 
@@ -91,8 +86,8 @@ public class RestCreateIndexAction extends BaseRestHandler {
         @SuppressWarnings("unchecked")
         Map<String, Object> mappings = (Map<String, Object>) source.get("mappings");
         if (MapperService.isMappingSourceTyped(MapperService.SINGLE_MAPPING_NAME, mappings)) {
-            throw new IllegalArgumentException("The mapping definition cannot be nested under a type " +
-                "[" + MapperService.SINGLE_MAPPING_NAME + "] unless include_type_name is set to true.");
+            throw new IllegalArgumentException("The mapping definition cannot be nested under a type " + "["
+                    + MapperService.SINGLE_MAPPING_NAME + "] unless include_type_name is set to true.");
         }
 
         newSource.put("mappings", singletonMap(MapperService.SINGLE_MAPPING_NAME, mappings));

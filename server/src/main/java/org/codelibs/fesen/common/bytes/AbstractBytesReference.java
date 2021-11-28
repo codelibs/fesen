@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.common.bytes;
 
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefIterator;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.ToIntBiFunction;
+
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.BytesRefIterator;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
 public abstract class AbstractBytesReference implements BytesReference {
 
@@ -71,6 +71,7 @@ public abstract class AbstractBytesReference implements BytesReference {
     public BytesRefIterator iterator() {
         return new BytesRefIterator() {
             BytesRef ref = length() == 0 ? null : toBytesRef();
+
             @Override
             public BytesRef next() {
                 BytesRef r = ref;
@@ -90,8 +91,7 @@ public abstract class AbstractBytesReference implements BytesReference {
             if (length() != otherRef.length()) {
                 return false;
             }
-            return compareIterators(this, otherRef, (a, b) ->
-                a.bytesEquals(b) ? 0 : 1 // this is a call to BytesRef#bytesEquals - this method is the hot one in the comparison
+            return compareIterators(this, otherRef, (a, b) -> a.bytesEquals(b) ? 0 : 1 // this is a call to BytesRef#bytesEquals - this method is the hot one in the comparison
             ) == 0;
         }
         return false;
@@ -174,8 +174,8 @@ public abstract class AbstractBytesReference implements BytesReference {
 
     private static void advance(final BytesRef ref, final int length) {
         assert ref.length >= length : " ref.length: " + ref.length + " length: " + length;
-        assert ref.offset+length < ref.bytes.length || (ref.offset+length == ref.bytes.length && ref.length-length == 0)
-            : "offset: " + ref.offset + " ref.bytes.length: " + ref.bytes.length + " length: " + length + " ref.length: " + ref.length;
+        assert ref.offset + length < ref.bytes.length || (ref.offset + length == ref.bytes.length && ref.length - length == 0) : "offset: "
+                + ref.offset + " ref.bytes.length: " + ref.bytes.length + " length: " + length + " ref.length: " + ref.length;
         ref.length -= length;
         ref.offset += length;
     }
@@ -298,7 +298,7 @@ public abstract class AbstractBytesReference implements BytesReference {
                 return 0L;
             }
             assert offset() <= length() : offset() + " vs " + length();
-            final int numBytesSkipped = (int)Math.min(n, length() - offset()); // definitely >= 0 and <= Integer.MAX_VALUE so casting is ok
+            final int numBytesSkipped = (int) Math.min(n, length() - offset()); // definitely >= 0 and <= Integer.MAX_VALUE so casting is ok
             int remaining = numBytesSkipped;
             while (remaining > 0) {
                 maybeNextSlice();

@@ -96,26 +96,27 @@ public class Join implements Writeable {
 
     @Override
     public String toString() {
-        return "Join{" +
-            "term=" + term +
-            ", lastAcceptedTerm=" + lastAcceptedTerm +
-            ", lastAcceptedVersion=" + lastAcceptedVersion +
-            ", sourceNode=" + sourceNode +
-            ", targetNode=" + targetNode +
-            '}';
+        return "Join{" + "term=" + term + ", lastAcceptedTerm=" + lastAcceptedTerm + ", lastAcceptedVersion=" + lastAcceptedVersion
+                + ", sourceNode=" + sourceNode + ", targetNode=" + targetNode + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Join join = (Join) o;
 
-        if (sourceNode.equals(join.sourceNode) == false) return false;
-        if (targetNode.equals(join.targetNode) == false) return false;
-        if (lastAcceptedVersion != join.lastAcceptedVersion) return false;
-        if (term != join.term) return false;
+        if (sourceNode.equals(join.sourceNode) == false)
+            return false;
+        if (targetNode.equals(join.targetNode) == false)
+            return false;
+        if (lastAcceptedVersion != join.lastAcceptedVersion)
+            return false;
+        if (term != join.term)
+            return false;
         return lastAcceptedTerm == join.lastAcceptedTerm;
     }
 

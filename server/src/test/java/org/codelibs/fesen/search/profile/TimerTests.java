@@ -30,6 +30,7 @@ public class TimerTests extends ESTestCase {
         final AtomicLong nanoTimeCallCounter = new AtomicLong();
         Timer t = new Timer() {
             long time = 50;
+
             @Override
             long nanoTime() {
                 nanoTimeCallCounter.incrementAndGet();
@@ -52,6 +53,7 @@ public class TimerTests extends ESTestCase {
     public void testExtrapolate() {
         Timer t = new Timer() {
             long time = 50;
+
             @Override
             long nanoTime() {
                 return time += 42;

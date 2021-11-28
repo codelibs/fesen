@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 
 import org.codelibs.fesen.common.network.CloseableChannel;
 
-
 /**
  * This is a tcp channel representing a server channel listening for new connections. It is the server
  * channel abstraction used by the {@link TcpTransport} and {@link TransportService}. All tcp transport

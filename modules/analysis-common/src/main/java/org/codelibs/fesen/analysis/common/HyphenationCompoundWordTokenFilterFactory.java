@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.compound.HyphenationCompoundWordTokenFilter;
 import org.apache.lucene.analysis.compound.hyphenation.HyphenationTree;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.xml.sax.InputSource;
-
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Uses the {@link org.apache.lucene.analysis.compound.HyphenationCompoundWordTokenFilter} to decompound tokens based on hyphenation rules.
@@ -60,7 +60,7 @@ public class HyphenationCompoundWordTokenFilterFactory extends AbstractCompoundW
 
     @Override
     public TokenStream create(TokenStream tokenStream) {
-        return new HyphenationCompoundWordTokenFilter(tokenStream, hyphenationTree, wordList, minWordSize,
-                                                      minSubwordSize, maxSubwordSize, onlyLongestMatch);
+        return new HyphenationCompoundWordTokenFilter(tokenStream, hyphenationTree, wordList, minWordSize, minSubwordSize, maxSubwordSize,
+                onlyLongestMatch);
     }
 }

@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketMetricsPipelineAggregationBuilder<AF>>
         extends AbstractPipelineAggregationBuilder<AF> {
@@ -113,17 +113,16 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
         // metric name after them by using '.' so need to split on both to get
         // just the agg name
         final String firstAgg = bucketsPaths[0].split("[>\\.]")[0];
-        Optional<AggregationBuilder> aggBuilder = context.getSiblingAggregations().stream()
-                .filter(builder -> builder.getName().equals(firstAgg))
-                .findAny();
+        Optional<AggregationBuilder> aggBuilder =
+                context.getSiblingAggregations().stream().filter(builder -> builder.getName().equals(firstAgg)).findAny();
         if (false == aggBuilder.isPresent()) {
             context.addBucketPathValidationError("aggregation does not exist for aggregation [" + name + "]: " + bucketsPaths[0]);
             return;
         }
         if (aggBuilder.get().bucketCardinality() != AggregationBuilder.BucketCardinality.MANY) {
             context.addValidationError("The first aggregation in " + PipelineAggregator.Parser.BUCKETS_PATH.getPreferredName()
-                    + " must be a multi-bucket aggregation for aggregation [" + name + "] found :"
-                    + aggBuilder.get().getClass().getName() + " for buckets path: " + bucketsPaths[0]);
+                    + " must be a multi-bucket aggregation for aggregation [" + name + "] found :" + aggBuilder.get().getClass().getName()
+                    + " for buckets path: " + bucketsPaths[0]);
         }
     }
 
@@ -148,13 +147,15 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         @SuppressWarnings("unchecked")
         BucketMetricsPipelineAggregationBuilder<AF> other = (BucketMetricsPipelineAggregationBuilder<AF>) obj;
-        return Objects.equals(format, other.format)
-            && Objects.equals(gapPolicy, other.gapPolicy);
+        return Objects.equals(format, other.format) && Objects.equals(gapPolicy, other.gapPolicy);
     }
 
 }

@@ -37,12 +37,8 @@ class CardinalityAggregatorFactory extends ValuesSourceAggregatorFactory {
 
     private final Long precisionThreshold;
 
-    CardinalityAggregatorFactory(String name, ValuesSourceConfig config,
-                                    Long precisionThreshold,
-                                    QueryShardContext queryShardContext,
-                                    AggregatorFactory parent,
-                                    AggregatorFactories.Builder subFactoriesBuilder,
-                                    Map<String, Object> metadata) throws IOException {
+    CardinalityAggregatorFactory(String name, ValuesSourceConfig config, Long precisionThreshold, QueryShardContext queryShardContext,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.precisionThreshold = precisionThreshold;
     }
@@ -52,27 +48,19 @@ class CardinalityAggregatorFactory extends ValuesSourceAggregatorFactory {
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                            Aggregator parent,
-                                            Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
         return new CardinalityAggregator(name, config, precision(), searchContext, parent, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(
-        SearchContext searchContext,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(CardinalityAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, config, precision(), searchContext, parent, metadata);
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
+        return queryShardContext.getValuesSourceRegistry().getAggregator(CardinalityAggregationBuilder.REGISTRY_KEY, config).build(name,
+                config, precision(), searchContext, parent, metadata);
     }
 
     private int precision() {
-        return precisionThreshold == null
-                ? HyperLogLogPlusPlus.DEFAULT_PRECISION
+        return precisionThreshold == null ? HyperLogLogPlusPlus.DEFAULT_PRECISION
                 : HyperLogLogPlusPlus.precisionFromThreshold(precisionThreshold);
     }
 }

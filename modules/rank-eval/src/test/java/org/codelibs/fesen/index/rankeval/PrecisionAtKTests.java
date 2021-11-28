@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -31,23 +41,10 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
-import org.codelibs.fesen.index.rankeval.PrecisionAtK;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class PrecisionAtKTests extends ESTestCase {
 
@@ -136,8 +133,7 @@ public class PrecisionAtKTests extends ESTestCase {
     public void testNoRatedDocs() throws Exception {
         SearchHit[] hits = new SearchHit[5];
         for (int i = 0; i < 5; i++) {
-            hits[i] = new SearchHit(i, i + "", new Text(MapperService.SINGLE_MAPPING_NAME),
-                Collections.emptyMap(), Collections.emptyMap());
+            hits[i] = new SearchHit(i, i + "", new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(), Collections.emptyMap());
             hits[i].shard(new SearchShardTarget("testnode", new ShardId("index", "uuid", 0), null, OriginalIndices.NONE));
         }
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", hits, Collections.emptyList());
@@ -219,8 +215,8 @@ public class PrecisionAtKTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         PrecisionAtK original = createTestItem();
-        PrecisionAtK deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
-                PrecisionAtK::new);
+        PrecisionAtK deserialized =
+                ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), PrecisionAtK::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);
@@ -247,8 +243,8 @@ public class PrecisionAtKTests extends ESTestCase {
                     original.getIgnoreUnlabeled(), original.forcedSearchSize().getAsInt());
             break;
         case 2:
-            pAtK = new PrecisionAtK(original.getRelevantRatingThreshold(),
-                    original.getIgnoreUnlabeled(), original.forcedSearchSize().getAsInt() + 1);
+            pAtK = new PrecisionAtK(original.getRelevantRatingThreshold(), original.getIgnoreUnlabeled(),
+                    original.forcedSearchSize().getAsInt() + 1);
             break;
         default:
             throw new IllegalStateException("The test should only allow three parameters mutated");

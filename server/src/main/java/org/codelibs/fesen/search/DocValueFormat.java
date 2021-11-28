@@ -19,6 +19,20 @@
 
 package org.codelibs.fesen.search;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.function.LongSupplier;
+
 import org.apache.lucene.document.InetAddressPoint;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.Version;
@@ -35,20 +49,6 @@ import org.codelibs.fesen.common.time.DateUtils;
 import org.codelibs.fesen.geometry.utils.Geohash;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.search.aggregations.bucket.geogrid.GeoTileUtils;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.LongSupplier;
 
 /** A formatter for values as returned by the fielddata/doc-values APIs. */
 public interface DocValueFormat extends NamedWriteable {
@@ -166,8 +166,7 @@ public interface DocValueFormat extends NamedWriteable {
 
         @Override
         public String format(BytesRef value) {
-            return Base64.getEncoder()
-                    .withoutPadding()
+            return Base64.getEncoder().withoutPadding()
                     .encodeToString(Arrays.copyOfRange(value.bytes, value.offset, value.offset + value.length));
         }
 
@@ -220,7 +219,7 @@ public interface DocValueFormat extends NamedWriteable {
             } else {
                 /*
                  When received a stream from 6.0-6.latest Node it can be java if starts with 8 otherwise joda.
-
+                
                  If a stream is from [7.0 - 7.7) the boolean indicating that this is joda is not present.
                  This means that if an index was created in 6.x using joda pattern and then cluster was upgraded to
                  7.x but earlier then 7.0, there is no information that can tell that the index is using joda style pattern.

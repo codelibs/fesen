@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.MockBigArrays;
@@ -31,24 +40,9 @@ import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 import org.codelibs.fesen.search.aggregations.matrix.MatrixAggregationPlugin;
-import org.codelibs.fesen.search.aggregations.matrix.stats.InternalMatrixStats;
-import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStats;
-import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsAggregationBuilder;
-import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsResults;
-import org.codelibs.fesen.search.aggregations.matrix.stats.ParsedMatrixStats;
-import org.codelibs.fesen.search.aggregations.matrix.stats.RunningStats;
 import org.codelibs.fesen.search.aggregations.matrix.stats.InternalMatrixStats.Fields;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.test.InternalAggregationTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class InternalMatrixStatsTests extends InternalAggregationTestCase<InternalMatrixStats> {
 
@@ -152,7 +146,7 @@ public class InternalMatrixStatsTests extends InternalAggregationTestCase<Intern
             double valueB = randomDouble();
             bValues.add(valueB);
 
-            runningStats.add(new String[]{"a", "b"}, new double[]{valueA, valueB});
+            runningStats.add(new String[] { "a", "b" }, new double[] { valueA, valueB });
             if (++valuePerShardCounter == valuesPerShard) {
                 shardResults.add(new InternalMatrixStats("_name", 1L, runningStats, null, Collections.emptyMap()));
                 runningStats = new RunningStats();
@@ -168,8 +162,8 @@ public class InternalMatrixStatsTests extends InternalAggregationTestCase<Intern
 
         ScriptService mockScriptService = mockScriptService();
         MockBigArrays bigArrays = new MockBigArrays(new MockPageCacheRecycler(Settings.EMPTY), new NoneCircuitBreakerService());
-        InternalAggregation.ReduceContext context = InternalAggregation.ReduceContext.forFinalReduction(
-                bigArrays, mockScriptService, b -> {}, PipelineTree.EMPTY);
+        InternalAggregation.ReduceContext context =
+                InternalAggregation.ReduceContext.forFinalReduction(bigArrays, mockScriptService, b -> {}, PipelineTree.EMPTY);
         InternalMatrixStats reduced = (InternalMatrixStats) shardResults.get(0).reduce(shardResults, context);
         multiPassStats.assertNearlyEqual(reduced.getResults());
     }

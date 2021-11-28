@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.action.ingest;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Holds the result of what a pipeline did to a sample document via the simulate api, but instead of {@link SimulateDocumentBaseResult}
@@ -40,12 +40,8 @@ public final class SimulateDocumentVerboseResult implements SimulateDocumentResu
     private final List<SimulateProcessorResult> processorResults;
 
     @SuppressWarnings("unchecked")
-    public static final ConstructingObjectParser<SimulateDocumentVerboseResult, Void> PARSER =
-        new ConstructingObjectParser<>(
-            "simulate_document_verbose_result",
-            true,
-            a -> new SimulateDocumentVerboseResult((List<SimulateProcessorResult>)a[0])
-        );
+    public static final ConstructingObjectParser<SimulateDocumentVerboseResult, Void> PARSER = new ConstructingObjectParser<>(
+            "simulate_document_verbose_result", true, a -> new SimulateDocumentVerboseResult((List<SimulateProcessorResult>) a[0]));
     static {
         PARSER.declareObjectArray(constructorArg(), SimulateProcessorResult.PARSER, new ParseField(PROCESSOR_RESULT_FIELD));
     }

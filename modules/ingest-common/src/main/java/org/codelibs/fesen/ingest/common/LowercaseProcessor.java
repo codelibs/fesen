@@ -57,7 +57,7 @@ public final class LowercaseProcessor extends AbstractStringProcessor<String> {
 
         @Override
         protected LowercaseProcessor newProcessor(String tag, String description, Map<String, Object> config, String field,
-                                                  boolean ignoreMissing, String targetField) {
+                boolean ignoreMissing, String targetField) {
             return new LowercaseProcessor(tag, description, field, ignoreMissing, targetField);
         }
     }

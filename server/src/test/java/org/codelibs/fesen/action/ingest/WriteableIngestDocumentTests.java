@@ -147,7 +147,7 @@ public class WriteableIngestDocumentTests extends AbstractXContentTestCase<Write
         for (Map.Entry<IngestDocument.Metadata, Object> metadata : metadataMap.entrySet()) {
             String fieldName = metadata.getKey().getFieldName();
             if (metadata.getValue() == null) {
-               assertThat(toXContentDoc.containsKey(fieldName), is(false));
+                assertThat(toXContentDoc.containsKey(fieldName), is(false));
             } else {
                 assertThat(toXContentDoc.get(fieldName), equalTo(metadata.getValue().toString()));
             }
@@ -182,16 +182,9 @@ public class WriteableIngestDocumentTests extends AbstractXContentTestCase<Write
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
         // We cannot have random fields in the _source field and _ingest field
-        return field ->
-            field.startsWith(
-                new StringJoiner(".")
-                    .add(WriteableIngestDocument.DOC_FIELD)
-                    .add(WriteableIngestDocument.SOURCE_FIELD).toString()
-            ) ||
-            field.startsWith(
-                new StringJoiner(".")
-                    .add(WriteableIngestDocument.DOC_FIELD)
-                    .add(WriteableIngestDocument.INGEST_FIELD).toString()
-            );
+        return field -> field.startsWith(
+                new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.SOURCE_FIELD).toString())
+                || field.startsWith(
+                        new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.INGEST_FIELD).toString());
     }
 }

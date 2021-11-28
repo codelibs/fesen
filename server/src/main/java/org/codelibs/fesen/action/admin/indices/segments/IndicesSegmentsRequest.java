@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 public class IndicesSegmentsRequest extends BroadcastRequest<IndicesSegmentsRequest> {
 
     protected boolean verbose = false;
-    
+
     public IndicesSegmentsRequest() {
         this(Strings.EMPTY_ARRAY);
     }
@@ -63,6 +63,6 @@ public class IndicesSegmentsRequest extends BroadcastRequest<IndicesSegmentsRequ
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
         out.writeBoolean(verbose);
-        
+
     }
 }

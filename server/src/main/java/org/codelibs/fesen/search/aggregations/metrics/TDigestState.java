@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import com.tdunning.math.stats.AVLTreeDigest;
-import com.tdunning.math.stats.Centroid;
-
 import java.io.IOException;
 import java.util.Iterator;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+
+import com.tdunning.math.stats.AVLTreeDigest;
+import com.tdunning.math.stats.Centroid;
 
 /**
  * Extension of {@link com.tdunning.math.stats.TDigest} with custom serialization.

@@ -19,42 +19,37 @@
 
 package org.codelibs.fesen.index.analysis;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
-import org.codelibs.fesen.index.analysis.AnalysisRegistry;
 import org.codelibs.fesen.indices.analysis.AnalysisModule;
 import org.codelibs.fesen.plugins.AnalysisPlugin;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-
 public class AnalysisTestsHelper {
 
-    public static ESTestCase.TestAnalysis createTestAnalysisFromClassPath(final Path baseDir,
-                                                                          final String resource,
-                                                                          final AnalysisPlugin... plugins) throws IOException {
-        final Settings settings = Settings.builder()
-                .loadFromStream(resource, AnalysisTestsHelper.class.getResourceAsStream(resource), false)
-                .put(Environment.PATH_HOME_SETTING.getKey(), baseDir.toString())
-                .build();
+    public static ESTestCase.TestAnalysis createTestAnalysisFromClassPath(final Path baseDir, final String resource,
+            final AnalysisPlugin... plugins) throws IOException {
+        final Settings settings =
+                Settings.builder().loadFromStream(resource, AnalysisTestsHelper.class.getResourceAsStream(resource), false)
+                        .put(Environment.PATH_HOME_SETTING.getKey(), baseDir.toString()).build();
 
         return createTestAnalysisFromSettings(settings, plugins);
     }
 
-    public static ESTestCase.TestAnalysis createTestAnalysisFromSettings(
-            final Settings settings, final AnalysisPlugin... plugins) throws IOException {
+    public static ESTestCase.TestAnalysis createTestAnalysisFromSettings(final Settings settings, final AnalysisPlugin... plugins)
+            throws IOException {
         return createTestAnalysisFromSettings(settings, null, plugins);
     }
 
-    public static ESTestCase.TestAnalysis createTestAnalysisFromSettings(
-            final Settings settings,
-            final Path configPath,
+    public static ESTestCase.TestAnalysis createTestAnalysisFromSettings(final Settings settings, final Path configPath,
             final AnalysisPlugin... plugins) throws IOException {
         final Settings actualSettings;
         if (settings.get(IndexMetadata.SETTING_VERSION_CREATED) == null) {
@@ -65,10 +60,8 @@ public class AnalysisTestsHelper {
         final IndexSettings indexSettings = IndexSettingsModule.newIndexSettings("test", actualSettings);
         final AnalysisRegistry analysisRegistry =
                 new AnalysisModule(new Environment(actualSettings, configPath), Arrays.asList(plugins)).getAnalysisRegistry();
-        return new ESTestCase.TestAnalysis(analysisRegistry.build(indexSettings),
-                analysisRegistry.buildTokenFilterFactories(indexSettings),
-                analysisRegistry.buildTokenizerFactories(indexSettings),
-                analysisRegistry.buildCharFilterFactories(indexSettings));
+        return new ESTestCase.TestAnalysis(analysisRegistry.build(indexSettings), analysisRegistry.buildTokenFilterFactories(indexSettings),
+                analysisRegistry.buildTokenizerFactories(indexSettings), analysisRegistry.buildCharFilterFactories(indexSettings));
     }
 
 }

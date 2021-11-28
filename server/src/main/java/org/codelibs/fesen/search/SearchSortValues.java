@@ -19,8 +19,11 @@
 
 package org.codelibs.fesen.search;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -30,10 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.search.SearchHit.Fields;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class SearchSortValues implements ToXContentFragment, Writeable {
 
@@ -119,8 +118,7 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
             return false;
         }
         SearchSortValues that = (SearchSortValues) o;
-        return Arrays.equals(formattedSortValues, that.formattedSortValues) &&
-            Arrays.equals(rawSortValues, that.rawSortValues);
+        return Arrays.equals(formattedSortValues, that.formattedSortValues) && Arrays.equals(rawSortValues, that.rawSortValues);
     }
 
     @Override

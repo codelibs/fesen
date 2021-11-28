@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParserUtils;
-import org.codelibs.fesen.search.aggregations.Aggregation;
-import org.codelibs.fesen.search.aggregations.Aggregations;
-import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
@@ -34,6 +26,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentParserUtils;
+import org.codelibs.fesen.search.aggregations.Aggregation;
+import org.codelibs.fesen.search.aggregations.Aggregations;
+import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
 
 public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.ParsedBucket> implements Filters {
 
@@ -63,8 +63,7 @@ public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.Pa
     private static final ObjectParser<ParsedFilters, Void> PARSER =
             new ObjectParser<>(ParsedFilters.class.getSimpleName(), true, ParsedFilters::new);
     static {
-        declareMultiBucketAggregationFields(PARSER,
-                parser -> ParsedBucket.fromXContent(parser, false),
+        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 
@@ -109,7 +108,6 @@ public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.Pa
             builder.endObject();
             return builder;
         }
-
 
         static ParsedBucket fromXContent(XContentParser parser, boolean keyed) throws IOException {
             final ParsedBucket bucket = new ParsedBucket();

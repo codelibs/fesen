@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.http;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.node.ReportingService;
-
-import java.io.IOException;
 
 public class HttpInfo implements ReportingService.Info {
 
@@ -72,11 +72,9 @@ public class HttpInfo implements ReportingService.Info {
         String publishAddressString = publishAddress.toString();
         String hostString = publishAddress.address().getHostString();
         if (CNAME_IN_PUBLISH_HOST) {
-            deprecationLogger.deprecate(
-                "cname_in_publish_address",
-                "es.http.cname_in_publish_address system property is deprecated and no longer affects http.publish_address " +
-                    "formatting. Remove this property to get rid of this deprecation warning."
-            );
+            deprecationLogger.deprecate("cname_in_publish_address",
+                    "es.http.cname_in_publish_address system property is deprecated and no longer affects http.publish_address "
+                            + "formatting. Remove this property to get rid of this deprecation warning.");
         }
         if (InetAddresses.isInetAddress(hostString) == false) {
             publishAddressString = hostString + '/' + publishAddress.toString();

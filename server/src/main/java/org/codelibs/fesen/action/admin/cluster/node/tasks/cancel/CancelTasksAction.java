@@ -33,4 +33,3 @@ public class CancelTasksAction extends ActionType<CancelTasksResponse> {
         super(NAME, CancelTasksResponse::new);
     }
 }
-

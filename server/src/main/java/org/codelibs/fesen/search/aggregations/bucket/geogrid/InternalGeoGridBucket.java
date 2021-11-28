@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -26,11 +29,8 @@ import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
 
-import java.io.IOException;
-import java.util.Objects;
-
-public abstract class InternalGeoGridBucket<B extends InternalGeoGridBucket>
-        extends InternalMultiBucketAggregation.InternalBucket implements GeoGrid.Bucket, Comparable<InternalGeoGridBucket> {
+public abstract class InternalGeoGridBucket<B extends InternalGeoGridBucket> extends InternalMultiBucketAggregation.InternalBucket
+        implements GeoGrid.Bucket, Comparable<InternalGeoGridBucket> {
 
     protected long hashAsLong;
     protected long docCount;
@@ -97,12 +97,12 @@ public abstract class InternalGeoGridBucket<B extends InternalGeoGridBucket>
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         InternalGeoGridBucket bucket = (InternalGeoGridBucket) o;
-        return hashAsLong == bucket.hashAsLong &&
-            docCount == bucket.docCount &&
-            Objects.equals(aggregations, bucket.aggregations);
+        return hashAsLong == bucket.hashAsLong && docCount == bucket.docCount && Objects.equals(aggregations, bucket.aggregations);
     }
 
     @Override

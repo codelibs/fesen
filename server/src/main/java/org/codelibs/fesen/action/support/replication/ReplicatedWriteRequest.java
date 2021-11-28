@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.support.replication;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.bulk.BulkShardRequest;
 import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.action.index.IndexRequest;
@@ -27,8 +29,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
 
 /**
  * Requests that are both {@linkplain ReplicationRequest}s (run on a shard's primary first, then the replica) and {@linkplain WriteRequest}

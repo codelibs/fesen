@@ -62,24 +62,24 @@ public class TopHitsTests extends BaseAggregationTestCase<TopHitsAggregationBuil
             factory.trackScores(randomBoolean());
         }
         switch (randomInt(3)) {
-            case 0:
-                break;
-            case 1:
-                factory.storedField("_none_");
-                break;
-            case 2:
-                factory.storedFields(Collections.emptyList());
-                break;
-            case 3:
-                int fieldsSize = randomInt(25);
-                List<String> fields = new ArrayList<>(fieldsSize);
-                for (int i = 0; i < fieldsSize; i++) {
-                    fields.add(randomAlphaOfLengthBetween(5, 50));
-                }
-                factory.storedFields(fields);
-                break;
-            default:
-                throw new IllegalStateException();
+        case 0:
+            break;
+        case 1:
+            factory.storedField("_none_");
+            break;
+        case 2:
+            factory.storedFields(Collections.emptyList());
+            break;
+        case 3:
+            int fieldsSize = randomInt(25);
+            List<String> fields = new ArrayList<>(fieldsSize);
+            for (int i = 0; i < fieldsSize; i++) {
+                fields.add(randomAlphaOfLengthBetween(5, 50));
+            }
+            factory.storedFields(fields);
+            break;
+        default:
+            throw new IllegalStateException();
         }
         if (randomBoolean()) {
             int fieldDataFieldsSize = randomInt(25);
@@ -115,27 +115,27 @@ public class TopHitsTests extends BaseAggregationTestCase<TopHitsAggregationBuil
                 excludes[i] = randomAlphaOfLengthBetween(5, 20);
             }
             switch (branch) {
-                case 0:
-                    fetchSourceContext = new FetchSourceContext(randomBoolean());
-                    break;
-                case 1:
-                    fetchSourceContext = new FetchSourceContext(true, includes, excludes);
-                    break;
-                case 2:
-                    fetchSourceContext = new FetchSourceContext(true, new String[]{randomAlphaOfLengthBetween(5, 20)},
-                        new String[]{randomAlphaOfLengthBetween(5, 20)});
-                    break;
-                case 3:
-                    fetchSourceContext = new FetchSourceContext(true, includes, excludes);
-                    break;
-                case 4:
-                    fetchSourceContext = new FetchSourceContext(true, includes, null);
-                    break;
-                case 5:
-                    fetchSourceContext = new FetchSourceContext(true, new String[] {randomAlphaOfLengthBetween(5, 20)}, null);
-                    break;
-                default:
-                    throw new IllegalStateException();
+            case 0:
+                fetchSourceContext = new FetchSourceContext(randomBoolean());
+                break;
+            case 1:
+                fetchSourceContext = new FetchSourceContext(true, includes, excludes);
+                break;
+            case 2:
+                fetchSourceContext = new FetchSourceContext(true, new String[] { randomAlphaOfLengthBetween(5, 20) },
+                        new String[] { randomAlphaOfLengthBetween(5, 20) });
+                break;
+            case 3:
+                fetchSourceContext = new FetchSourceContext(true, includes, excludes);
+                break;
+            case 4:
+                fetchSourceContext = new FetchSourceContext(true, includes, null);
+                break;
+            case 5:
+                fetchSourceContext = new FetchSourceContext(true, new String[] { randomAlphaOfLengthBetween(5, 20) }, null);
+                break;
+            default:
+                throw new IllegalStateException();
             }
             factory.fetchSource(fetchSourceContext);
         }
@@ -168,33 +168,16 @@ public class TopHitsTests extends BaseAggregationTestCase<TopHitsAggregationBuil
         }
         if (randomBoolean()) {
             // parent test shuffles xContent, we need to make sure highlight fields are ordered
-            factory.highlighter(
-                    HighlightBuilderTests.randomHighlighterBuilder().useExplicitFieldOrder(true));
+            factory.highlighter(HighlightBuilderTests.randomHighlighterBuilder().useExplicitFieldOrder(true));
         }
         return factory;
     }
 
-
     public void testFailWithSubAgg() throws Exception {
-        String source = "{\n" +
-            "    \"top-tags\": {\n" +
-            "      \"terms\": {\n" +
-            "        \"field\": \"tags\"\n" +
-            "      },\n" +
-            "      \"aggs\": {\n" +
-            "        \"top_tags_hits\": {\n" +
-            "          \"top_hits\": {},\n" +
-            "          \"aggs\": {\n" +
-            "            \"max\": {\n" +
-            "              \"max\": {\n" +
-            "                \"field\": \"age\"\n" +
-            "              }\n" +
-            "            }\n" +
-            "          }\n" +
-            "        }\n" +
-            "      }\n" +
-            "    }\n" +
-            "}";
+        String source = "{\n" + "    \"top-tags\": {\n" + "      \"terms\": {\n" + "        \"field\": \"tags\"\n" + "      },\n"
+                + "      \"aggs\": {\n" + "        \"top_tags_hits\": {\n" + "          \"top_hits\": {},\n" + "          \"aggs\": {\n"
+                + "            \"max\": {\n" + "              \"max\": {\n" + "                \"field\": \"age\"\n" + "              }\n"
+                + "            }\n" + "          }\n" + "        }\n" + "      }\n" + "    }\n" + "}";
         XContentParser parser = createParser(JsonXContent.jsonXContent, source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(AggregationInitializationException.class, () -> AggregatorFactories.parseAggregators(parser));

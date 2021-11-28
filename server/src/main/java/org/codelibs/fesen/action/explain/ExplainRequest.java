@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.explain;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ValidateActions;
 import org.codelibs.fesen.action.support.single.shard.SingleShardRequest;
@@ -32,10 +36,6 @@ import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 import org.codelibs.fesen.search.internal.AliasFilter;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
 
 /**
  * Explain request encapsulating the explain query and document identifier to get an explanation for.
@@ -159,7 +159,6 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
     public FetchSourceContext fetchSourceContext() {
         return fetchSourceContext;
     }
-
 
     public String[] storedFields() {
         return storedFields;

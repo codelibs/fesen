@@ -51,8 +51,8 @@ public class ThreadPoolSerializationTests extends ESTestCase {
     }
 
     public void testThatQueueSizeSerializationWorks() throws Exception {
-        ThreadPool.Info info = new ThreadPool.Info("foo", threadPoolType, 1, 10,
-                TimeValue.timeValueMillis(3000), SizeValue.parseSizeValue("10k"));
+        ThreadPool.Info info =
+                new ThreadPool.Info("foo", threadPoolType, 1, 10, TimeValue.timeValueMillis(3000), SizeValue.parseSizeValue("10k"));
         output.setVersion(Version.CURRENT);
         info.writeTo(output);
 
@@ -95,8 +95,8 @@ public class ThreadPoolSerializationTests extends ESTestCase {
     }
 
     public void testThatToXContentWritesInteger() throws Exception {
-        ThreadPool.Info info = new ThreadPool.Info("foo", threadPoolType, 1, 10,
-                TimeValue.timeValueMillis(3000), SizeValue.parseSizeValue("1k"));
+        ThreadPool.Info info =
+                new ThreadPool.Info("foo", threadPoolType, 1, 10, TimeValue.timeValueMillis(3000), SizeValue.parseSizeValue("1k"));
         XContentBuilder builder = jsonBuilder();
         builder.startObject();
         info.toXContent(builder, ToXContent.EMPTY_PARAMS);

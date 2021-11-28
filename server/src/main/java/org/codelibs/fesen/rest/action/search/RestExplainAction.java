@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.search;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -33,27 +38,18 @@ import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 /**
  * Rest action for computing a score explanation for specific documents.
  */
 public class RestExplainAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestExplainAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] " +
-        "Specifying a type in explain requests is deprecated.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] " + "Specifying a type in explain requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/{index}/_explain/{id}"),
-            new Route(POST, "/{index}/_explain/{id}"),
-            // Deprecated typed endpoints.
-            new Route(GET, "/{index}/{type}/{id}/_explain"),
-            new Route(POST, "/{index}/{type}/{id}/_explain")));
+        return unmodifiableList(asList(new Route(GET, "/{index}/_explain/{id}"), new Route(POST, "/{index}/_explain/{id}"),
+                // Deprecated typed endpoints.
+                new Route(GET, "/{index}/{type}/{id}/_explain"), new Route(POST, "/{index}/{type}/{id}/_explain")));
     }
 
     @Override
@@ -66,9 +62,7 @@ public class RestExplainAction extends BaseRestHandler {
         ExplainRequest explainRequest;
         if (request.hasParam("type")) {
             deprecationLogger.deprecate("explain_with_types", TYPES_DEPRECATION_MESSAGE);
-            explainRequest = new ExplainRequest(request.param("index"),
-                request.param("type"),
-                request.param("id"));
+            explainRequest = new ExplainRequest(request.param("index"), request.param("type"), request.param("id"));
         } else {
             explainRequest = new ExplainRequest(request.param("index"), request.param("id"));
         }
@@ -87,8 +81,8 @@ public class RestExplainAction extends BaseRestHandler {
         });
 
         if (request.param("fields") != null) {
-            throw new IllegalArgumentException("The parameter [fields] is no longer supported, " +
-                "please use [stored_fields] to retrieve stored fields");
+            throw new IllegalArgumentException(
+                    "The parameter [fields] is no longer supported, " + "please use [stored_fields] to retrieve stored fields");
         }
         String sField = request.param("stored_fields");
         if (sField != null) {

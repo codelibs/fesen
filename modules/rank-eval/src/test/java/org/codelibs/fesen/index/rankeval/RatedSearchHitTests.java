@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.OptionalInt;
+
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.text.Text;
@@ -26,23 +32,15 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.rankeval.RatedSearchHit;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.test.ESTestCase;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.OptionalInt;
 
 public class RatedSearchHitTests extends ESTestCase {
 
     public static RatedSearchHit randomRatedSearchHit() {
-        OptionalInt rating = randomBoolean() ? OptionalInt.empty()
-                : OptionalInt.of(randomIntBetween(0, 5));
-        SearchHit searchHit = new SearchHit(randomIntBetween(0, 10), randomAlphaOfLength(10),
-                new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(), Collections.emptyMap());
+        OptionalInt rating = randomBoolean() ? OptionalInt.empty() : OptionalInt.of(randomIntBetween(0, 5));
+        SearchHit searchHit = new SearchHit(randomIntBetween(0, 10), randomAlphaOfLength(10), new Text(MapperService.SINGLE_MAPPING_NAME),
+                Collections.emptyMap(), Collections.emptyMap());
         RatedSearchHit ratedSearchHit = new RatedSearchHit(searchHit, rating);
         return ratedSearchHit;
     }
@@ -55,8 +53,8 @@ public class RatedSearchHitTests extends ESTestCase {
             rating = rating.isPresent() ? OptionalInt.of(rating.getAsInt() + 1) : OptionalInt.of(randomInt(5));
             break;
         case 1:
-            hit = new SearchHit(hit.docId(), hit.getId() + randomAlphaOfLength(10),
-                    new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(), Collections.emptyMap());
+            hit = new SearchHit(hit.docId(), hit.getId() + randomAlphaOfLength(10), new Text(MapperService.SINGLE_MAPPING_NAME),
+                    Collections.emptyMap(), Collections.emptyMap());
             break;
         default:
             throw new IllegalStateException("The test should only allow two parameters mutated");

@@ -79,5 +79,6 @@ abstract class ProgressInputStream extends FilterInputStream {
         }
     }
 
-    public void onProgress(int percent) {}
+    public void onProgress(int percent) {
+    }
 }

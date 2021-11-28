@@ -59,12 +59,10 @@ public interface LinkedBindingBuilder<T> extends ScopedBindingBuilder {
     /**
      * See the EDSL examples at {@link org.codelibs.fesen.common.inject.Binder}.
      */
-    ScopedBindingBuilder toProvider(
-            Class<? extends Provider<? extends T>> providerType);
+    ScopedBindingBuilder toProvider(Class<? extends Provider<? extends T>> providerType);
 
     /**
      * See the EDSL examples at {@link org.codelibs.fesen.common.inject.Binder}.
      */
-    ScopedBindingBuilder toProvider(
-            Key<? extends Provider<? extends T>> providerKey);
+    ScopedBindingBuilder toProvider(Key<? extends Provider<? extends T>> providerKey);
 }

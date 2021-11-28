@@ -17,7 +17,6 @@
 
 package org.codelibs.fesen.common.ssl;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,6 @@ final class DerParser {
     private static final int UNIVERSAL_STRING = 0x1C;
     private static final int BMP_STRING = 0x1E;
 
-
     private InputStream derInputStream;
     private int maxAsnObjectLength;
 
@@ -69,14 +67,14 @@ final class DerParser {
         // getLength() can return any 32 bit integer, so ensure that a corrupted encoding won't
         // force us into allocating a very large array
         if (length > maxAsnObjectLength) {
-            throw new IOException("Invalid DER: size of ASN.1 object to be parsed appears to be larger than the size of the key file " +
-                "itself.");
+            throw new IOException(
+                    "Invalid DER: size of ASN.1 object to be parsed appears to be larger than the size of the key file " + "itself.");
         }
         byte[] value = new byte[length];
         int n = derInputStream.read(value);
         if (n < length) {
-            throw new IOException("Invalid DER: stream too short, missing value. " +
-                    "Could only read " + n + " out of " + length + " bytes");
+            throw new IOException(
+                    "Invalid DER: stream too short, missing value. " + "Could only read " + n + " out of " + length + " bytes");
         }
         return new Asn1Object(tag, length, value);
 
@@ -115,8 +113,7 @@ final class DerParser {
 
         // We can't handle length longer than 4 bytes
         if (i >= 0xFF || num > 4)
-            throw new IOException("Invalid DER: length field too big ("
-                    + i + ")"); //$NON-NLS-1$
+            throw new IOException("Invalid DER: length field too big (" + i + ")"); //$NON-NLS-2$
 
         byte[] bytes = new byte[num];
         int n = derInputStream.read(bytes);
@@ -125,7 +122,6 @@ final class DerParser {
 
         return new BigInteger(1, bytes).intValue();
     }
-
 
     /**
      * An ASN.1 TLV. The object is not parsed. It can
@@ -217,32 +213,32 @@ final class DerParser {
             String encoding;
 
             switch (type) {
-                case DerParser.OCTET_STRING:
-                    // octet string is basically a byte array
-                    return toHexString(value);
-                case DerParser.NUMERIC_STRING:
-                case DerParser.PRINTABLE_STRING:
-                case DerParser.VIDEOTEX_STRING:
-                case DerParser.IA5_STRING:
-                case DerParser.GRAPHIC_STRING:
-                case DerParser.ISO646_STRING:
-                case DerParser.GENERAL_STRING:
-                    encoding = "ISO-8859-1"; //$NON-NLS-1$
-                    break;
+            case DerParser.OCTET_STRING:
+                // octet string is basically a byte array
+                return toHexString(value);
+            case DerParser.NUMERIC_STRING:
+            case DerParser.PRINTABLE_STRING:
+            case DerParser.VIDEOTEX_STRING:
+            case DerParser.IA5_STRING:
+            case DerParser.GRAPHIC_STRING:
+            case DerParser.ISO646_STRING:
+            case DerParser.GENERAL_STRING:
+                encoding = "ISO-8859-1"; //$NON-NLS-1$
+                break;
 
-                case DerParser.BMP_STRING:
-                    encoding = "UTF-16BE"; //$NON-NLS-1$
-                    break;
+            case DerParser.BMP_STRING:
+                encoding = "UTF-16BE"; //$NON-NLS-1$
+                break;
 
-                case DerParser.UTF8_STRING:
-                    encoding = "UTF-8"; //$NON-NLS-1$
-                    break;
+            case DerParser.UTF8_STRING:
+                encoding = "UTF-8"; //$NON-NLS-1$
+                break;
 
-                case DerParser.UNIVERSAL_STRING:
-                    throw new IOException("Invalid DER: can't handle UCS-4 string"); //$NON-NLS-1$
+            case DerParser.UNIVERSAL_STRING:
+                throw new IOException("Invalid DER: can't handle UCS-4 string"); //$NON-NLS-1$
 
-                default:
-                    throw new IOException("Invalid DER: object is not a string"); //$NON-NLS-1$
+            default:
+                throw new IOException("Invalid DER: object is not a string"); //$NON-NLS-1$
             }
 
             return new String(value, encoding);
@@ -255,17 +251,17 @@ final class DerParser {
             }
             StringBuilder sb = new StringBuilder(64);
             switch (value[0] / 40) {
-                case 0:
-                    sb.append('0');
-                    break;
-                case 1:
-                    sb.append('1');
-                    value[0] -= 40;
-                    break;
-                default:
-                    sb.append('2');
-                    value[0] -= 80;
-                    break;
+            case 0:
+                sb.append('0');
+                break;
+            case 1:
+                sb.append('1');
+                value[0] -= 40;
+                break;
+            default:
+                sb.append('2');
+                value[0] -= 80;
+                break;
             }
             int oidPart = 0;
             for (int i = 0; i < length; i++) {
@@ -282,6 +278,7 @@ final class DerParser {
     }
 
     private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
+
     private static String toHexString(byte[] bytes) {
         Objects.requireNonNull(bytes);
         StringBuilder sb = new StringBuilder(2 * bytes.length);

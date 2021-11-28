@@ -67,7 +67,7 @@ final class StartupException extends RuntimeException {
         Throwable originalCause = getCause();
         Throwable cause = originalCause;
         if (cause instanceof CreationException) {
-            cause = getFirstGuiceCause((CreationException)cause);
+            cause = getFirstGuiceCause((CreationException) cause);
         }
 
         String message = cause.toString();
@@ -115,10 +115,8 @@ final class StartupException extends RuntimeException {
             // It's possible to fail before logging has been configured, in which case there's no point
             // suggested that the user look in the log file.
             if (basePath != null) {
-                final String logPath = System.getProperty("es.logs.base_path")
-                    + System.getProperty("file.separator")
-                    + System.getProperty("es.logs.cluster_name")
-                    + ".log";
+                final String logPath = System.getProperty("es.logs.base_path") + System.getProperty("file.separator")
+                        + System.getProperty("es.logs.cluster_name") + ".log";
 
                 consumer.accept("For complete error details, refer to the log at " + logPath);
             }

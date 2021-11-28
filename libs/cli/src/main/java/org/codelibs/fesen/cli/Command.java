@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.cli;
 
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 /**
  * An action to execute within a cli.
@@ -46,7 +46,7 @@ public abstract class Command implements Closeable {
     private final OptionSpec<Void> helpOption = parser.acceptsAll(Arrays.asList("h", "help"), "Show help").forHelp();
     private final OptionSpec<Void> silentOption = parser.acceptsAll(Arrays.asList("s", "silent"), "Show minimal output");
     private final OptionSpec<Void> verboseOption =
-        parser.acceptsAll(Arrays.asList("v", "verbose"), "Show verbose output").availableUnless(silentOption);
+            parser.acceptsAll(Arrays.asList("v", "verbose"), "Show verbose output").availableUnless(silentOption);
 
     /**
      * Construct the command with the specified command description and runnable to execute before main is invoked.
@@ -69,9 +69,7 @@ public abstract class Command implements Closeable {
                 try {
                     this.close();
                 } catch (final IOException e) {
-                    try (
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw)) {
+                    try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                         e.printStackTrace(pw);
                         terminal.errorPrintln(sw.toString());
                     } catch (final IOException impossible) {
@@ -142,7 +140,8 @@ public abstract class Command implements Closeable {
     }
 
     /** Prints additional help information, specific to the command */
-    protected void printAdditionalHelp(Terminal terminal) {}
+    protected void printAdditionalHelp(Terminal terminal) {
+    }
 
     @SuppressForbidden(reason = "Allowed to exit explicitly from #main()")
     protected static void exit(int status) {

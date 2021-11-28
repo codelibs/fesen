@@ -90,8 +90,8 @@ public interface CharMatcher {
                 case Character.OTHER_SYMBOL:
                 case Character.MODIFIER_SYMBOL:
                     return true;
-                 default:
-                     return false;
+                default:
+                    return false;
                 }
             }
         }
@@ -99,13 +99,16 @@ public interface CharMatcher {
 
     final class Builder {
         private final Set<CharMatcher> matchers;
+
         Builder() {
             matchers = new HashSet<>();
         }
+
         public Builder or(CharMatcher matcher) {
             matchers.add(matcher);
             return this;
         }
+
         public CharMatcher build() {
             switch (matchers.size()) {
             case 0:

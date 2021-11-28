@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.time.ZoneId;
+import java.util.Map;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.geo.ShapeRelation;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.time.ZoneId;
-import java.util.Map;
 
 /**
  * {@link MappedFieldType} base impl for field types that are neither dates nor ranges.
@@ -33,16 +33,15 @@ import java.util.Map;
 public abstract class SimpleMappedFieldType extends MappedFieldType {
 
     protected SimpleMappedFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues,
-                                    TextSearchInfo textSearchInfo, Map<String, String> meta) {
+            TextSearchInfo textSearchInfo, Map<String, String> meta) {
         super(name, isSearchable, isStored, hasDocValues, textSearchInfo, meta);
     }
 
     @Override
-    public final Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper,
-                                  ShapeRelation relation, ZoneId timeZone, DateMathParser parser, QueryShardContext context) {
+    public final Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, ShapeRelation relation,
+            ZoneId timeZone, DateMathParser parser, QueryShardContext context) {
         if (relation == ShapeRelation.DISJOINT) {
-            throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName() +
-                    "] does not support DISJOINT ranges");
+            throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName() + "] does not support DISJOINT ranges");
         }
         // We do not fail on non-null time zones and date parsers
         // The reasoning is that on query parsers, you might want to set a time zone or format for date fields
@@ -54,8 +53,7 @@ public abstract class SimpleMappedFieldType extends MappedFieldType {
      * Same as {@link #rangeQuery(Object, Object, boolean, boolean, ShapeRelation, ZoneId, DateMathParser, QueryShardContext)}
      * but without the trouble of relations or date-specific options.
      */
-    protected Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper,
-            QueryShardContext context) {
+    protected Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, QueryShardContext context) {
         throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName() + "] does not support range queries");
     }
 

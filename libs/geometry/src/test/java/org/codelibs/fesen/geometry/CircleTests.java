@@ -22,7 +22,6 @@ package org.codelibs.fesen.geometry;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.codelibs.fesen.geometry.Circle;
 import org.codelibs.fesen.geometry.utils.GeographyValidator;
 import org.codelibs.fesen.geometry.utils.GeometryValidator;
 import org.codelibs.fesen.geometry.utils.StandardValidator;
@@ -33,8 +32,8 @@ public class CircleTests extends BaseGeometryTestCase<Circle> {
     protected Circle createTestInstance(boolean hasAlt) {
         if (hasAlt) {
             return new Circle(randomDoubleBetween(-180, 180, true), randomDoubleBetween(-90, 90, true), randomDouble(),
-                randomDoubleBetween(0, 100, false));
-            } else {
+                    randomDoubleBetween(0, 100, false));
+        } else {
             return new Circle(randomDoubleBetween(-180, 180, true), randomDoubleBetween(-90, 90, true), randomDoubleBetween(0, 100, false));
         }
     }

@@ -51,8 +51,8 @@ public class AutoCreateIndexTests extends ESTestCase {
             newAutoCreateIndex(settings);
             fail("initialization should have failed");
         } catch (IllegalArgumentException ex) {
-            assertEquals("Can't parse [,,,] for setting [action.auto_create_index] must be either [true, false, or a " +
-                    "comma separated list of index patterns]", ex.getMessage());
+            assertEquals("Can't parse [,,,] for setting [action.auto_create_index] must be either [true, false, or a "
+                    + "comma separated list of index patterns]", ex.getMessage());
         }
     }
 
@@ -62,16 +62,19 @@ public class AutoCreateIndexTests extends ESTestCase {
         try {
             newAutoCreateIndex(settings);
             fail("initialization should have failed");
-        } catch(IllegalArgumentException ex) {
-            assertEquals("Can't parse [" + prefix + "] for setting [action.auto_create_index] must contain an index name after ["
-                    + prefix + "]", ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            assertEquals(
+                    "Can't parse [" + prefix + "] for setting [action.auto_create_index] must contain an index name after [" + prefix + "]",
+                    ex.getMessage());
         }
     }
 
     public void testHandleSpaces() { // see #21449
-        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(),
-            randomFrom(".marvel-, .security, .watches, .triggered_watches, .watcher-history-",
-                ".marvel-,.security,.watches,.triggered_watches,.watcher-history-")).build();
+        Settings settings = Settings.builder()
+                .put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(),
+                        randomFrom(".marvel-, .security, .watches, .triggered_watches, .watcher-history-",
+                                ".marvel-,.security,.watches,.triggered_watches,.watcher-history-"))
+                .build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         List<Tuple<String, Boolean>> expressions = autoCreateIndex.getAutoCreate().getExpressions();
         Map<String, Boolean> map = new HashMap<>();
@@ -90,8 +93,8 @@ public class AutoCreateIndexTests extends ESTestCase {
         Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), false).build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         String randomIndex = randomAlphaOfLengthBetween(1, 10);
-        IndexNotFoundException e = expectThrows(IndexNotFoundException.class, () ->
-            autoCreateIndex.shouldAutoCreate(randomIndex, buildClusterState()));
+        IndexNotFoundException e =
+                expectThrows(IndexNotFoundException.class, () -> autoCreateIndex.shouldAutoCreate(randomIndex, buildClusterState()));
         assertEquals("no such index [" + randomIndex + "] and [action.auto_create_index] is [false]", e.getMessage());
     }
 
@@ -113,16 +116,17 @@ public class AutoCreateIndexTests extends ESTestCase {
     }
 
     public void testExistingIndex() {
-        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), randomFrom(true, false,
-                randomAlphaOfLengthBetween(7, 10)).toString()).build();
+        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(),
+                randomFrom(true, false, randomAlphaOfLengthBetween(7, 10)).toString()).build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
-        assertThat(autoCreateIndex.shouldAutoCreate(randomFrom("index1", "index2", "index3"),
-                buildClusterState("index1", "index2", "index3")), equalTo(false));
+        assertThat(
+                autoCreateIndex.shouldAutoCreate(randomFrom("index1", "index2", "index3"), buildClusterState("index1", "index2", "index3")),
+                equalTo(false));
     }
 
     public void testAutoCreationPatternEnabled() {
-        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), randomFrom("+index*", "index*"))
-                .build();
+        Settings settings =
+                Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), randomFrom("+index*", "index*")).build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         ClusterState clusterState = ClusterState.builder(new ClusterName("test")).metadata(Metadata.builder()).build();
         assertThat(autoCreateIndex.shouldAutoCreate("index" + randomAlphaOfLengthBetween(1, 5), clusterState), equalTo(true));
@@ -141,14 +145,14 @@ public class AutoCreateIndexTests extends ESTestCase {
 
     public void testAutoCreationSystemIndexPatternDisabled() {
         Settings settings =
-            Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), "-" + TEST_SYSTEM_INDEX_NAME + "*").build();
+                Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), "-" + TEST_SYSTEM_INDEX_NAME + "*").build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         assertThat(autoCreateIndex.shouldAutoCreate(TEST_SYSTEM_INDEX_NAME, buildClusterState()), equalTo(true));
     }
 
     public void testAutoCreationMultiplePatternsWithWildcards() {
-        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(),
-                randomFrom("+test*,-index*", "test*,-index*")).build();
+        Settings settings = Settings.builder()
+                .put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), randomFrom("+test*,-index*", "test*,-index*")).build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         ClusterState clusterState = ClusterState.builder(new ClusterName("test")).metadata(Metadata.builder()).build();
         expectForbidden(clusterState, autoCreateIndex, "index" + randomAlphaOfLengthBetween(1, 5), "-index*");
@@ -176,8 +180,8 @@ public class AutoCreateIndexTests extends ESTestCase {
     }
 
     public void testAutoCreationConflictingPatternsFirstWins() {
-        Settings settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(),
-                "+test1,-test1,-test2,+test2").build();
+        Settings settings =
+                Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), "+test1,-test1,-test2,+test2").build();
         AutoCreateIndex autoCreateIndex = newAutoCreateIndex(settings);
         ClusterState clusterState = ClusterState.builder(new ClusterName("test")).metadata(Metadata.builder()).build();
         assertThat(autoCreateIndex.shouldAutoCreate("test1", clusterState), equalTo(true));
@@ -194,11 +198,9 @@ public class AutoCreateIndexTests extends ESTestCase {
             settings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), value).build();
         }
 
-        ClusterSettings clusterSettings = new ClusterSettings(settings,
-                ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
+        ClusterSettings clusterSettings = new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
         AutoCreateIndex autoCreateIndex = new AutoCreateIndex(settings, clusterSettings,
-            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)),
-            new SystemIndices(org.codelibs.fesen.core.Map.of()));
+                new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)), new SystemIndices(org.codelibs.fesen.core.Map.of()));
         assertThat(autoCreateIndex.getAutoCreate().isAutoCreateIndex(), equalTo(value));
 
         Settings newSettings = Settings.builder().put(AutoCreateIndex.AUTO_CREATE_INDEX_SETTING.getKey(), !value).build();
@@ -223,22 +225,20 @@ public class AutoCreateIndexTests extends ESTestCase {
 
     private AutoCreateIndex newAutoCreateIndex(Settings settings) {
         SystemIndices systemIndices = new SystemIndices(org.codelibs.fesen.core.Map.of("plugin",
-            org.codelibs.fesen.core.List.of(new SystemIndexDescriptor(TEST_SYSTEM_INDEX_NAME, ""))));
-        return new AutoCreateIndex(settings, new ClusterSettings(settings,
-            ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)), systemIndices);
+                org.codelibs.fesen.core.List.of(new SystemIndexDescriptor(TEST_SYSTEM_INDEX_NAME, ""))));
+        return new AutoCreateIndex(settings, new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS),
+                new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)), systemIndices);
     }
 
     private void expectNotMatch(ClusterState clusterState, AutoCreateIndex autoCreateIndex, String index) {
-        IndexNotFoundException e = expectThrows(IndexNotFoundException.class, () ->
-            autoCreateIndex.shouldAutoCreate(index, clusterState));
+        IndexNotFoundException e = expectThrows(IndexNotFoundException.class, () -> autoCreateIndex.shouldAutoCreate(index, clusterState));
         assertEquals(
-            "no such index [" + index + "] and [action.auto_create_index] ([" + autoCreateIndex.getAutoCreate() + "]) doesn't match",
-            e.getMessage());
+                "no such index [" + index + "] and [action.auto_create_index] ([" + autoCreateIndex.getAutoCreate() + "]) doesn't match",
+                e.getMessage());
     }
 
     private void expectForbidden(ClusterState clusterState, AutoCreateIndex autoCreateIndex, String index, String forbiddingPattern) {
-        IndexNotFoundException e = expectThrows(IndexNotFoundException.class, () ->
-            autoCreateIndex.shouldAutoCreate(index, clusterState));
+        IndexNotFoundException e = expectThrows(IndexNotFoundException.class, () -> autoCreateIndex.shouldAutoCreate(index, clusterState));
         assertEquals("no such index [" + index + "] and [action.auto_create_index] contains [" + forbiddingPattern
                 + "] which forbids automatic creation of the index", e.getMessage());
     }

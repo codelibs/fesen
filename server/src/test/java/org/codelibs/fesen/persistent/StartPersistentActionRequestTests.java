@@ -51,8 +51,7 @@ public class StartPersistentActionRequestTests extends AbstractWireSerializingTe
 
     @Override
     protected NamedWriteableRegistry getNamedWriteableRegistry() {
-        return new NamedWriteableRegistry(Collections.singletonList(
-                new Entry(PersistentTaskParams.class, TestPersistentTasksExecutor.NAME, TestParams::new)
-        ));
+        return new NamedWriteableRegistry(
+                Collections.singletonList(new Entry(PersistentTaskParams.class, TestPersistentTasksExecutor.NAME, TestParams::new)));
     }
 }

@@ -37,7 +37,7 @@ public class SimulatePipelineRequestBuilder extends ActionRequestBuilder<Simulat
      * Create a new builder for {@link SimulatePipelineRequest}s
      */
     public SimulatePipelineRequestBuilder(FesenClient client, SimulatePipelineAction action, BytesReference source,
-                                          XContentType xContentType) {
+            XContentType xContentType) {
         super(client, action, new SimulatePipelineRequest(source, xContentType));
     }
 

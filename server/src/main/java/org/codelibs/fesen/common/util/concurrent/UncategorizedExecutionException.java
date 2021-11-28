@@ -30,7 +30,7 @@ public class UncategorizedExecutionException extends FesenException {
         super(msg, cause);
     }
 
-    public UncategorizedExecutionException(StreamInput in) throws IOException{
+    public UncategorizedExecutionException(StreamInput in) throws IOException {
         super(in);
     }
 }

@@ -19,26 +19,12 @@
 
 package org.codelibs.fesen.client.sniff;
 
-import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
-import com.carrotsearch.randomizedtesting.generators.RandomStrings;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import org.apache.http.Consts;
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.HttpGet;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.Response;
-import org.codelibs.fesen.client.ResponseException;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
-import org.elasticsearch.mocksocket.MockHttpServer;
-import org.junit.After;
-import org.junit.Before;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,12 +41,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import org.apache.http.Consts;
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.HttpGet;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.Response;
+import org.codelibs.fesen.client.ResponseException;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.elasticsearch.mocksocket.MockHttpServer;
+import org.junit.After;
+import org.junit.Before;
+
+import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import com.carrotsearch.randomizedtesting.generators.RandomStrings;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 public class FesenNodesSnifferTests extends RestClientTestCase {
 
@@ -91,7 +91,7 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
         try {
             new FesenNodesSniffer(null, 1, FesenNodesSniffer.Scheme.HTTP);
             fail("should have failed");
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             assertEquals("restClient cannot be null", e.getMessage());
         }
         HttpHost httpHost = new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort());
@@ -122,11 +122,11 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
                     fail("sniffNodes should have failed");
                 }
                 assertEquals(sniffResponse.result, sniffedNodes);
-            } catch(ResponseException e) {
+            } catch (ResponseException e) {
                 Response response = e.getResponse();
                 if (sniffResponse.isFailure) {
                     final String errorPrefix = "method [GET], host [" + httpHost + "], URI [/_nodes/http?timeout=" + sniffRequestTimeout
-                        + "ms], status line [HTTP/1.1";
+                            + "ms], status line [HTTP/1.1";
                     assertThat(e.getMessage(), startsWith(errorPrefix));
                     assertThat(e.getMessage(), containsString(Integer.toString(sniffResponse.nodesInfoResponseCode)));
                     assertThat(response.getHost(), equalTo(httpHost));
@@ -224,10 +224,8 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
                 nodeRoles.add("ingest");
             }
 
-            Node node = new Node(publishHost, boundHosts, randomAsciiAlphanumOfLength(5),
-                    randomAsciiAlphanumOfLength(5),
-                    new Node.Roles(nodeRoles),
-                    attributes);
+            Node node = new Node(publishHost, boundHosts, randomAsciiAlphanumOfLength(5), randomAsciiAlphanumOfLength(5),
+                    new Node.Roles(nodeRoles), attributes);
 
             generator.writeObjectFieldStart(nodeId);
             if (getRandom().nextBoolean()) {
@@ -260,7 +258,7 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
                 generator.writeEndObject();
             }
 
-            List<String> roles = Arrays.asList(new String[] {"master", "data", "ingest"});
+            List<String> roles = Arrays.asList(new String[] { "master", "data", "ingest" });
             Collections.shuffle(roles, getRandom());
             generator.writeArrayFieldStart("roles");
             for (String role : roles) {
@@ -320,7 +318,7 @@ public class FesenNodesSnifferTests extends RestClientTestCase {
         }
 
         static SniffResponse buildFailure() {
-            return new SniffResponse("", Collections.<Node>emptyList(), true);
+            return new SniffResponse("", Collections.<Node> emptyList(), true);
         }
 
         static SniffResponse buildResponse(String nodesInfoBody, List<Node> nodes) {

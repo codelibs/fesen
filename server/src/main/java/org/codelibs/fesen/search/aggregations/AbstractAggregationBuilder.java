@@ -18,21 +18,20 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.index.query.QueryShardContext;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.index.query.QueryShardContext;
+
 /**
  * Base implementation of a {@link AggregationBuilder}.
  */
-public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationBuilder<AB>>
-    extends AggregationBuilder {
+public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationBuilder<AB>> extends AggregationBuilder {
 
     protected Map<String, Object> metadata;
 
@@ -45,9 +44,8 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
         super(name);
     }
 
-    protected AbstractAggregationBuilder(AbstractAggregationBuilder<AB> clone,
-                                         AggregatorFactories.Builder factoriesBuilder,
-                                         Map<String, Object> metadata) {
+    protected AbstractAggregationBuilder(AbstractAggregationBuilder<AB> clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder);
         this.metadata = metadata;
     }
@@ -142,7 +140,7 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
     }
 
     protected abstract AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent,
-                                                 AggregatorFactories.Builder subfactoriesBuilder) throws IOException;
+            AggregatorFactories.Builder subfactoriesBuilder) throws IOException;
 
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -170,12 +168,13 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         AbstractAggregationBuilder<AB> other = (AbstractAggregationBuilder<AB>) obj;
 
-        return Objects.equals(name, other.name)
-            && Objects.equals(metadata, other.metadata)
-            && Objects.equals(factoriesBuilder, other.factoriesBuilder);
+        return Objects.equals(name, other.name) && Objects.equals(metadata, other.metadata)
+                && Objects.equals(factoriesBuilder, other.factoriesBuilder);
     }
 }

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.nested;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,12 +33,8 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 
 public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedAggregationBuilder> {
     public static final String NAME = "nested";
@@ -92,14 +92,12 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
     }
 
     @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext,
-                                            AggregatorFactory parent,
-                                            Builder subFactoriesBuilder) throws IOException {
+    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
+            throws IOException {
         ObjectMapper childObjectMapper = queryShardContext.getObjectMapper(path);
         if (childObjectMapper == null) {
             // in case the path has been unmapped:
-            return new NestedAggregatorFactory(name, null, null, queryShardContext,
-                parent, subFactoriesBuilder, metadata);
+            return new NestedAggregatorFactory(name, null, null, queryShardContext, parent, subFactoriesBuilder, metadata);
         }
 
         if (childObjectMapper.nested().isNested() == false) {
@@ -107,8 +105,8 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
         }
         try {
             ObjectMapper parentObjectMapper = queryShardContext.nestedScope().nextLevel(childObjectMapper);
-            return new NestedAggregatorFactory(name, parentObjectMapper, childObjectMapper, queryShardContext,
-                parent, subFactoriesBuilder, metadata);
+            return new NestedAggregatorFactory(name, parentObjectMapper, childObjectMapper, queryShardContext, parent, subFactoriesBuilder,
+                    metadata);
         } finally {
             queryShardContext.nestedScope().previousLevel();
         }
@@ -157,9 +155,12 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         NestedAggregationBuilder other = (NestedAggregationBuilder) obj;
         return Objects.equals(path, other.path);
     }

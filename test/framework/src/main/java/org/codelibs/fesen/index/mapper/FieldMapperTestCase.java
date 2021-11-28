@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -32,22 +43,7 @@ import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.analysis.AnalyzerScope;
 import org.codelibs.fesen.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.index.mapper.ContentPath;
-import org.codelibs.fesen.index.mapper.FieldMapper;
-import org.codelibs.fesen.index.mapper.Mapper;
-import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiConsumer;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Base class for testing {@link FieldMapper}s.
@@ -57,9 +53,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Deprecated
 public abstract class FieldMapperTestCase<T extends FieldMapper.Builder<?>> extends ESSingleNodeTestCase {
 
-    protected final Settings SETTINGS = Settings.builder()
-        .put("index.version.created", Version.CURRENT)
-        .build();
+    protected final Settings SETTINGS = Settings.builder().put("index.version.created", Version.CURRENT).build();
 
     private final class Modifier {
         final String property;
@@ -88,61 +82,49 @@ public abstract class FieldMapperTestCase<T extends FieldMapper.Builder<?>> exte
         return Collections.emptySet();
     }
 
-    private final List<Modifier> modifiers = new ArrayList<>(Arrays.asList(
-        new Modifier("analyzer", false, (a, b) -> {
-            a.indexAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
-            a.indexAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
-        }),
-        new Modifier("boost", true, (a, b) -> {
-           a.boost(1.1f);
-           b.boost(1.2f);
-        }),
-        new Modifier("doc_values", false, (a, b) -> {
-            a.docValues(true);
-            b.docValues(false);
-        }),
-        booleanModifier("eager_global_ordinals", true, (a, t) -> a.setEagerGlobalOrdinals(t)),
-        booleanModifier("index", false, (a, t) -> a.index(t)),
-        booleanModifier("norms", false, FieldMapper.Builder::omitNorms),
-        new Modifier("search_analyzer", true, (a, b) -> {
-            a.searchAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
-            a.searchAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
-        }),
-        new Modifier("search_quote_analyzer", true, (a, b) -> {
-            a.searchQuoteAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
-            a.searchQuoteAnalyzer(new NamedAnalyzer("whitespace", AnalyzerScope.INDEX, new WhitespaceAnalyzer()));
-        }),
-        new Modifier("store", false, (a, b) -> {
-            a.store(true);
-            b.store(false);
-        }),
-        new Modifier("term_vector", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(false);
-        }),
-        new Modifier("term_vector_positions", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(false);
-        }),
-        new Modifier("term_vector_payloads", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(true);
-            a.storeTermVectorPayloads(true);
-            b.storeTermVectorPayloads(false);
-        }),
-        new Modifier("term_vector_offsets", false, (a, b) -> {
-            a.storeTermVectors(true);
-            b.storeTermVectors(true);
-            a.storeTermVectorPositions(true);
-            b.storeTermVectorPositions(true);
-            a.storeTermVectorOffsets(true);
-            b.storeTermVectorOffsets(false);
-        })
-    ));
+    private final List<Modifier> modifiers = new ArrayList<>(Arrays.asList(new Modifier("analyzer", false, (a, b) -> {
+        a.indexAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
+        a.indexAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
+    }), new Modifier("boost", true, (a, b) -> {
+        a.boost(1.1f);
+        b.boost(1.2f);
+    }), new Modifier("doc_values", false, (a, b) -> {
+        a.docValues(true);
+        b.docValues(false);
+    }), booleanModifier("eager_global_ordinals", true, (a, t) -> a.setEagerGlobalOrdinals(t)),
+            booleanModifier("index", false, (a, t) -> a.index(t)), booleanModifier("norms", false, FieldMapper.Builder::omitNorms),
+            new Modifier("search_analyzer", true, (a, b) -> {
+                a.searchAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
+                a.searchAnalyzer(new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
+            }), new Modifier("search_quote_analyzer", true, (a, b) -> {
+                a.searchQuoteAnalyzer(new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer()));
+                a.searchQuoteAnalyzer(new NamedAnalyzer("whitespace", AnalyzerScope.INDEX, new WhitespaceAnalyzer()));
+            }), new Modifier("store", false, (a, b) -> {
+                a.store(true);
+                b.store(false);
+            }), new Modifier("term_vector", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(false);
+            }), new Modifier("term_vector_positions", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(false);
+            }), new Modifier("term_vector_payloads", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(true);
+                a.storeTermVectorPayloads(true);
+                b.storeTermVectorPayloads(false);
+            }), new Modifier("term_vector_offsets", false, (a, b) -> {
+                a.storeTermVectors(true);
+                b.storeTermVectors(true);
+                a.storeTermVectorPositions(true);
+                b.storeTermVectorPositions(true);
+                a.storeTermVectorOffsets(true);
+                b.storeTermVectorOffsets(false);
+            })));
 
     /**
      * Add type-specific modifiers for consistency checking.
@@ -174,7 +156,7 @@ public abstract class FieldMapperTestCase<T extends FieldMapper.Builder<?>> exte
         {
             FieldMapper mapper = (FieldMapper) builder1.build(context);
             FieldMapper toMerge = (FieldMapper) builder2.build(context);
-            mapper.merge(toMerge);  // identical mappers should merge with no issue
+            mapper.merge(toMerge); // identical mappers should merge with no issue
         }
         {
             FieldMapper mapper = (FieldMapper) newBuilder().build(context);
@@ -201,7 +183,7 @@ public abstract class FieldMapperTestCase<T extends FieldMapper.Builder<?>> exte
                 mapper.merge(toMerge);
             } else {
                 IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                    "Expected an error when merging property difference " + modifier.property, () -> mapper.merge(toMerge));
+                        "Expected an error when merging property difference " + modifier.property, () -> mapper.merge(toMerge));
                 assertThat(e.getMessage(), containsString(modifier.property));
             }
         }
@@ -246,8 +228,8 @@ public abstract class FieldMapperTestCase<T extends FieldMapper.Builder<?>> exte
     }
 
     private String mappingsToString(ToXContent builder, boolean includeDefaults) throws IOException {
-        ToXContent.Params params = includeDefaults ?
-            new ToXContent.MapParams(Collections.singletonMap("include_defaults", "true")) : ToXContent.EMPTY_PARAMS;
+        ToXContent.Params params =
+                includeDefaults ? new ToXContent.MapParams(Collections.singletonMap("include_defaults", "true")) : ToXContent.EMPTY_PARAMS;
         XContentBuilder x = JsonXContent.contentBuilder();
         x.startObject().startObject("properties");
         builder.toXContent(x, params);

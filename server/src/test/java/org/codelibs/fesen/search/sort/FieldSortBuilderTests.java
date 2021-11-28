@@ -92,14 +92,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
         return randomFieldSortBuilder();
     }
 
-    private List<Object> missingContent = Arrays.asList(
-            "_last",
-            "_first",
-            Integer.toString(randomInt()),
-            randomInt());
-
-
-
+    private List<Object> missingContent = Arrays.asList("_last", "_first", Integer.toString(randomInt()), randomInt());
 
     public FieldSortBuilder randomFieldSortBuilder() {
         String fieldName = rarely() ? FieldSortBuilder.DOC_FIELD_NAME : randomAlphaOfLengthBetween(1, 10);
@@ -159,9 +152,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
             mutated.sortMode(randomValueOtherThan(original.sortMode(), () -> randomFrom(SortMode.values())));
             break;
         case 2:
-            mutated.unmappedType(randomValueOtherThan(
-                    original.unmappedType(),
-                    () -> randomAlphaOfLengthBetween(1, 10)));
+            mutated.unmappedType(randomValueOtherThan(original.unmappedType(), () -> randomAlphaOfLengthBetween(1, 10)));
             break;
         case 3:
             mutated.missing(randomValueOtherThan(original.missing(), () -> randomFrom(missingContent)));
@@ -170,8 +161,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
             mutated.order(randomValueOtherThan(original.order(), () -> randomFrom(SortOrder.values())));
             break;
         case 5:
-            mutated.setNumericType(randomValueOtherThan(original.getNumericType(),
-                () -> randomFrom("long", "double")));
+            mutated.setNumericType(randomValueOtherThan(original.getNumericType(), () -> randomFrom("long", "double")));
             break;
         default:
             throw new IllegalStateException("Unsupported mutation.");
@@ -434,8 +424,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
             }
         };
         sortBuilder.setNestedPath("path").setNestedFilter(rangeQuery);
-        FieldSortBuilder rewritten = sortBuilder
-                .rewrite(createMockShardContext());
+        FieldSortBuilder rewritten = sortBuilder.rewrite(createMockShardContext());
         assertNotSame(rangeQuery, rewritten.getNestedFilter());
     }
 
@@ -451,8 +440,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
             }
         };
         sortBuilder.setNestedSort(new NestedSortBuilder("path").setFilter(rangeQuery));
-        FieldSortBuilder rewritten = sortBuilder
-                .rewrite(createMockShardContext());
+        FieldSortBuilder rewritten = sortBuilder.rewrite(createMockShardContext());
         assertNotSame(rangeQuery, rewritten.getNestedSort().getFilter());
     }
 
@@ -462,10 +450,9 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
         assertNull(getPrimaryFieldSortOrNull(new SearchSourceBuilder().sort(SortBuilders.scoreSort())));
         FieldSortBuilder sortBuilder = new FieldSortBuilder(MAPPED_STRING_FIELDNAME);
         assertEquals(sortBuilder, getPrimaryFieldSortOrNull(new SearchSourceBuilder().sort(sortBuilder)));
-        assertNull(getPrimaryFieldSortOrNull(new SearchSourceBuilder()
-            .sort(SortBuilders.scoreSort()).sort(sortBuilder)));
-        assertNull(getPrimaryFieldSortOrNull(new SearchSourceBuilder()
-            .sort(SortBuilders.geoDistanceSort("field", 0d, 0d)).sort(sortBuilder)));
+        assertNull(getPrimaryFieldSortOrNull(new SearchSourceBuilder().sort(SortBuilders.scoreSort()).sort(sortBuilder)));
+        assertNull(
+                getPrimaryFieldSortOrNull(new SearchSourceBuilder().sort(SortBuilders.geoDistanceSort("field", 0d, 0d)).sort(sortBuilder)));
     }
 
     public void testGetMaxNumericSortValue() throws IOException {
@@ -482,50 +469,50 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
                     for (int i = 0; i < numDocs; i++) {
                         Document doc = new Document();
                         switch (numberType) {
-                            case LONG:
-                                long v1 = randomLong();
-                                values[i] = v1;
-                                doc.add(new LongPoint(fieldName, v1));
-                                break;
+                        case LONG:
+                            long v1 = randomLong();
+                            values[i] = v1;
+                            doc.add(new LongPoint(fieldName, v1));
+                            break;
 
-                            case INTEGER:
-                                int v2 = randomInt();
-                                values[i] = (long) v2;
-                                doc.add(new IntPoint(fieldName, v2));
-                                break;
+                        case INTEGER:
+                            int v2 = randomInt();
+                            values[i] = (long) v2;
+                            doc.add(new IntPoint(fieldName, v2));
+                            break;
 
-                            case DOUBLE:
-                                double v3 = randomDouble();
-                                values[i] = v3;
-                                doc.add(new DoublePoint(fieldName, v3));
-                                break;
+                        case DOUBLE:
+                            double v3 = randomDouble();
+                            values[i] = v3;
+                            doc.add(new DoublePoint(fieldName, v3));
+                            break;
 
-                            case FLOAT:
-                                float v4 = randomFloat();
-                                values[i] = v4;
-                                doc.add(new FloatPoint(fieldName, v4));
-                                break;
+                        case FLOAT:
+                            float v4 = randomFloat();
+                            values[i] = v4;
+                            doc.add(new FloatPoint(fieldName, v4));
+                            break;
 
-                            case HALF_FLOAT:
-                                float v5 = randomFloat();
-                                values[i] = (double) v5;
-                                doc.add(new HalfFloatPoint(fieldName, v5));
-                                break;
+                        case HALF_FLOAT:
+                            float v5 = randomFloat();
+                            values[i] = (double) v5;
+                            doc.add(new HalfFloatPoint(fieldName, v5));
+                            break;
 
-                            case BYTE:
-                                byte v6 = randomByte();
-                                values[i] = (long) v6;
-                                doc.add(new IntPoint(fieldName, v6));
-                                break;
+                        case BYTE:
+                            byte v6 = randomByte();
+                            values[i] = (long) v6;
+                            doc.add(new IntPoint(fieldName, v6));
+                            break;
 
-                            case SHORT:
-                                short v7 = randomShort();
-                                values[i] = (long) v7;
-                                doc.add(new IntPoint(fieldName, v7));
-                                break;
+                        case SHORT:
+                            short v7 = randomShort();
+                            values[i] = (long) v7;
+                            doc.add(new IntPoint(fieldName, v7));
+                            break;
 
-                            default:
-                                throw new AssertionError("unknown type " + numberType);
+                        default:
+                            throw new AssertionError("unknown type " + numberType);
                         }
                         writer.addDocument(doc);
                     }
@@ -537,8 +524,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
                             assertNull(getMinMaxOrNull(newContext, SortBuilders.fieldSort(fieldName)));
                         } else {
                             assertNull(getMinMaxOrNull(newContext, SortBuilders.fieldSort(fieldName + "-ni")));
-                            assertEquals(values[numDocs - 1],
-                                getMinMaxOrNull(newContext, SortBuilders.fieldSort(fieldName)).getMax());
+                            assertEquals(values[numDocs - 1], getMinMaxOrNull(newContext, SortBuilders.fieldSort(fieldName)).getMax());
                             assertEquals(values[0], getMinMaxOrNull(newContext, SortBuilders.fieldSort(fieldName)).getMin());
                         }
                     }
@@ -607,7 +593,7 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
                 try (DirectoryReader reader = writer.getReader()) {
                     QueryShardContext context = createMockShardContext(new IndexSearcher(reader));
                     assertTrue(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { 0L }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { 0L }, new DocValueFormat[] { DocValueFormat.RAW })));
                 }
                 for (int i = 0; i < numDocs; i++) {
                     Document doc = new Document();
@@ -622,25 +608,25 @@ public class FieldSortBuilderTests extends AbstractSortTestCase<FieldSortBuilder
                     QueryShardContext context = createMockShardContext(new IndexSearcher(reader));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context, null));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { minValue }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { minValue }, new DocValueFormat[] { DocValueFormat.RAW })));
                     assertTrue(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { minValue-1 }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { minValue - 1 }, new DocValueFormat[] { DocValueFormat.RAW })));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { minValue+1 }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { minValue + 1 }, new DocValueFormat[] { DocValueFormat.RAW })));
                     fieldSort.order(SortOrder.DESC);
                     assertTrue(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { maxValue+1 }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { maxValue + 1 }, new DocValueFormat[] { DocValueFormat.RAW })));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { maxValue }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { maxValue }, new DocValueFormat[] { DocValueFormat.RAW })));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { minValue }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { minValue }, new DocValueFormat[] { DocValueFormat.RAW })));
                     fieldSort.setNestedSort(new NestedSortBuilder("empty"));
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { minValue-1 }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { minValue - 1 }, new DocValueFormat[] { DocValueFormat.RAW })));
                     fieldSort.setNestedSort(null);
                     fieldSort.missing("100");
                     assertFalse(fieldSort.isBottomSortShardDisjoint(context,
-                        new SearchSortValuesAndFormats(new Object[] { maxValue+1 }, new DocValueFormat[] { DocValueFormat.RAW })));
+                            new SearchSortValuesAndFormats(new Object[] { maxValue + 1 }, new DocValueFormat[] { DocValueFormat.RAW })));
                 }
             }
         }

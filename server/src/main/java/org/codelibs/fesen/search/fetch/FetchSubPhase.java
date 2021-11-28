@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.search.fetch;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.ReaderUtil;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
 
 /**
  * Sub phase within the fetch phase used to fetch things *about* the documents like highlighting or matched queries.
@@ -38,12 +38,7 @@ public interface FetchSubPhase {
         private final int docId;
         private final SourceLookup sourceLookup;
 
-        public HitContext(
-            SearchHit hit,
-            LeafReaderContext context,
-            int docId,
-            SourceLookup sourceLookup
-        ) {
+        public HitContext(SearchHit hit, LeafReaderContext context, int docId, SourceLookup sourceLookup) {
             this.hit = hit;
             this.readerContext = context;
             this.docId = docId;

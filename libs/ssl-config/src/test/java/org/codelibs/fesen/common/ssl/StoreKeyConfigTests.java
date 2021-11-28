@@ -19,13 +19,17 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import org.codelibs.fesen.common.ssl.SslConfigException;
-import org.codelibs.fesen.common.ssl.StoreKeyConfig;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeFalse;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.X509ExtendedKeyManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,14 +40,11 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.iterableWithSize;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.X509ExtendedKeyManager;
+
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 public class StoreKeyConfigTests extends ESTestCase {
 
@@ -72,8 +73,8 @@ public class StoreKeyConfigTests extends ESTestCase {
     public void testLoadMultipleKeyJksWithSeparateKeyPassword() throws Exception {
         assumeFalse("Can't use JKS/PKCS12 keystores in a FIPS JVM", inFipsJvm());
         final Path jks = getDataPath("/certs/cert-all/certs.jks");
-        final StoreKeyConfig keyConfig = new StoreKeyConfig(jks, JKS_PASS, "jks", "key-pass".toCharArray(),
-            KeyManagerFactory.getDefaultAlgorithm());
+        final StoreKeyConfig keyConfig =
+                new StoreKeyConfig(jks, JKS_PASS, "jks", "key-pass".toCharArray(), KeyManagerFactory.getDefaultAlgorithm());
         assertThat(keyConfig.getDependentFiles(), Matchers.containsInAnyOrder(jks));
         assertKeysLoaded(keyConfig, "cert1", "cert2");
     }
@@ -81,8 +82,8 @@ public class StoreKeyConfigTests extends ESTestCase {
     public void testKeyManagerFailsWithIncorrectStorePassword() throws Exception {
         assumeFalse("Can't use JKS/PKCS12 keystores in a FIPS JVM", inFipsJvm());
         final Path jks = getDataPath("/certs/cert-all/certs.jks");
-        final StoreKeyConfig keyConfig = new StoreKeyConfig(jks, P12_PASS, "jks", "key-pass".toCharArray(),
-            KeyManagerFactory.getDefaultAlgorithm());
+        final StoreKeyConfig keyConfig =
+                new StoreKeyConfig(jks, P12_PASS, "jks", "key-pass".toCharArray(), KeyManagerFactory.getDefaultAlgorithm());
         assertThat(keyConfig.getDependentFiles(), Matchers.containsInAnyOrder(jks));
         assertPasswordIsIncorrect(keyConfig, jks);
     }
@@ -164,10 +165,8 @@ public class StoreKeyConfigTests extends ESTestCase {
             assertThat(certificate.getIssuerDN().getName(), is("CN=Test CA 1"));
             assertThat(certificate.getSubjectDN().getName(), is("CN=" + name));
             assertThat(certificate.getSubjectAlternativeNames(), iterableWithSize(2));
-            assertThat(certificate.getSubjectAlternativeNames(), containsInAnyOrder(
-                Arrays.asList(DNS_NAME, "localhost"),
-                Arrays.asList(IP_NAME, "127.0.0.1")
-            ));
+            assertThat(certificate.getSubjectAlternativeNames(),
+                    containsInAnyOrder(Arrays.asList(DNS_NAME, "localhost"), Arrays.asList(IP_NAME, "127.0.0.1")));
         }
     }
 

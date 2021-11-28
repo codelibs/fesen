@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.io.Reader;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.FieldType;
@@ -26,21 +28,19 @@ import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexableFieldType;
 
-import java.io.Reader;
-
 // used for binary, geo and range fields
 public abstract class CustomDocValuesField implements IndexableField {
 
     public static final FieldType TYPE = new FieldType();
     static {
-      TYPE.setDocValuesType(DocValuesType.BINARY);
-      TYPE.setOmitNorms(true);
-      TYPE.freeze();
+        TYPE.setDocValuesType(DocValuesType.BINARY);
+        TYPE.setOmitNorms(true);
+        TYPE.freeze();
     }
 
     private final String name;
 
-    protected CustomDocValuesField(String  name) {
+    protected CustomDocValuesField(String name) {
         this.name = name;
     }
 

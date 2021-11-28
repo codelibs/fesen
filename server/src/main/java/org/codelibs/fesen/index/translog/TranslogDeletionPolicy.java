@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.index.translog;
 
-import org.apache.lucene.util.Counter;
-import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.index.seqno.SequenceNumbers;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.lucene.util.Counter;
+import org.codelibs.fesen.Assertions;
+import org.codelibs.fesen.common.lease.Releasable;
+import org.codelibs.fesen.index.seqno.SequenceNumbers;
 
 public class TranslogDeletionPolicy {
 
@@ -69,8 +69,8 @@ public class TranslogDeletionPolicy {
 
     public synchronized void setLocalCheckpointOfSafeCommit(long newCheckpoint) {
         if (newCheckpoint < this.localCheckpointOfSafeCommit) {
-            throw new IllegalArgumentException("local checkpoint of the safe commit can't go backwards: " +
-                "current [" + this.localCheckpointOfSafeCommit + "] new [" + newCheckpoint + "]");
+            throw new IllegalArgumentException("local checkpoint of the safe commit can't go backwards: " + "current ["
+                    + this.localCheckpointOfSafeCommit + "] new [" + newCheckpoint + "]");
         }
         this.localCheckpointOfSafeCommit = newCheckpoint;
     }
@@ -171,9 +171,9 @@ public class TranslogDeletionPolicy {
     }
 
     static long getMinTranslogGenByAge(List<TranslogReader> readers, TranslogWriter writer, long maxRetentionAgeInMillis, long now)
-        throws IOException {
+            throws IOException {
         if (maxRetentionAgeInMillis >= 0) {
-            for (TranslogReader reader: readers) {
+            for (TranslogReader reader : readers) {
                 if (now - reader.getLastModifiedTime() <= maxRetentionAgeInMillis) {
                     return reader.getGeneration();
                 }

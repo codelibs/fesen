@@ -44,17 +44,16 @@ public abstract class ChannelFactory<ServerSocket extends NioServerSocketChannel
      * This will create a {@link ChannelFactory}.
      */
     protected ChannelFactory(boolean tcpNoDelay, boolean tcpKeepAlive, int tcpKeepIdle, int tcpKeepInterval, int tcpKeepCount,
-                             boolean tcpReuseAddress, int tcpSendBufferSize, int tcpReceiveBufferSize) {
+            boolean tcpReuseAddress, int tcpSendBufferSize, int tcpReceiveBufferSize) {
         this(tcpNoDelay, tcpKeepAlive, tcpKeepIdle, tcpKeepInterval, tcpKeepCount, tcpReuseAddress, tcpSendBufferSize, tcpReceiveBufferSize,
-            new RawChannelFactory());
+                new RawChannelFactory());
     }
 
     /**
      * This will create a {@link ChannelFactory} using the raw channel factory passed to the constructor.
      */
     protected ChannelFactory(boolean tcpNoDelay, boolean tcpKeepAlive, int tcpKeepIdle, int tcpKeepInterval, int tcpKeepCount,
-                             boolean tcpReuseAddress, int tcpSendBufferSize, int tcpReceiveBufferSize,
-                             RawChannelFactory rawChannelFactory) {
+            boolean tcpReuseAddress, int tcpSendBufferSize, int tcpReceiveBufferSize, RawChannelFactory rawChannelFactory) {
         this.tcpNoDelay = tcpNoDelay;
         this.tcpKeepAlive = tcpKeepAlive;
         this.tcpKeepIdle = tcpKeepIdle;
@@ -118,7 +117,7 @@ public abstract class ChannelFactory<ServerSocket extends NioServerSocketChannel
      * @throws IOException related to the creation of the channel
      */
     public abstract ServerSocket createServerChannel(NioSelector selector, ServerSocketChannel channel, Config.ServerSocket socketConfig)
-        throws IOException;
+            throws IOException;
 
     protected InetSocketAddress getRemoteAddress(SocketChannel rawChannel) throws IOException {
         InetSocketAddress remoteAddress = (InetSocketAddress) rawChannel.socket().getRemoteSocketAddress();
@@ -145,7 +144,7 @@ public abstract class ChannelFactory<ServerSocket extends NioServerSocketChannel
     }
 
     private ServerSocket internalCreateServerChannel(NioSelector selector, ServerSocketChannel rawChannel, Config.ServerSocket config)
-        throws IOException {
+            throws IOException {
         try {
             return createServerChannel(selector, rawChannel, config);
         } catch (Exception e) {
@@ -191,7 +190,7 @@ public abstract class ChannelFactory<ServerSocket extends NioServerSocketChannel
 
     private Config.Socket createSocketConfig(InetSocketAddress remoteAddress, boolean isAccepted) {
         return new Config.Socket(tcpNoDelay, tcpKeepAlive, tcpKeepIdle, tcpKeepInterval, tcpKeepCount, tcpReuseAddress, tcpSendBufferSize,
-            tcpReceiveBufferSize, remoteAddress, isAccepted);
+                tcpReceiveBufferSize, remoteAddress, isAccepted);
     }
 
     public static class RawChannelFactory {

@@ -19,20 +19,18 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.action.search.SearchType;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.Writeable.Reader;
 import org.codelibs.fesen.common.util.ArrayUtils;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.index.rankeval.RankEvalPlugin;
-import org.codelibs.fesen.index.rankeval.RankEvalRequest;
 import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
 import org.junit.AfterClass;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RankEvalRequestTests extends AbstractWireSerializingTestCase<RankEvalRequest> {
 
@@ -57,13 +55,12 @@ public class RankEvalRequestTests extends AbstractWireSerializingTestCase<RankEv
     protected RankEvalRequest createTestInstance() {
         int numberOfIndices = randomInt(3);
         String[] indices = new String[numberOfIndices];
-        for (int i=0; i < numberOfIndices; i++) {
+        for (int i = 0; i < numberOfIndices; i++) {
             indices[i] = randomAlphaOfLengthBetween(5, 10);
         }
         RankEvalRequest rankEvalRequest = new RankEvalRequest(RankEvalSpecTests.createTestItem(), indices);
-        IndicesOptions indicesOptions = IndicesOptions.fromOptions(
-                randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(),
-            randomBoolean());
+        IndicesOptions indicesOptions = IndicesOptions.fromOptions(randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean(),
+                randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean());
         rankEvalRequest.indicesOptions(indicesOptions);
         rankEvalRequest.searchType(randomFrom(SearchType.DFS_QUERY_THEN_FETCH, SearchType.QUERY_THEN_FETCH));
         return rankEvalRequest;

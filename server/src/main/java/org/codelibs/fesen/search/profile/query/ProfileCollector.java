@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.profile.query;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FilterCollector;
@@ -26,8 +28,6 @@ import org.apache.lucene.search.FilterLeafCollector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreMode;
-
-import java.io.IOException;
 
 /** A collector that profiles how much time is spent calling it. */
 final class ProfileCollector extends FilterCollector {

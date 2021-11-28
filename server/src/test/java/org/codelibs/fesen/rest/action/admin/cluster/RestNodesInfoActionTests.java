@@ -54,7 +54,7 @@ public class RestNodesInfoActionTests extends ESTestCase {
         int metricsCount = randomIntBetween(1, ALLOWED_METRICS.size());
         List<String> metrics = new ArrayList<>();
 
-        for(int i = 0; i < metricsCount; i++) {
+        for (int i = 0; i < metricsCount; i++) {
             metrics.add(randomFrom(ALLOWED_METRICS));
         }
         params.put("nodeId", String.join(",", metrics));
@@ -83,7 +83,7 @@ public class RestNodesInfoActionTests extends ESTestCase {
         List<String> nodeIds = new ArrayList<>(5);
         List<String> metrics = new ArrayList<>(5);
 
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             nodeIds.add(randomValueOtherThanMany(ALLOWED_METRICS::contains, () -> randomAlphaOfLength(23)));
             metrics.add(randomFrom(ALLOWED_METRICS));
         }
@@ -101,7 +101,7 @@ public class RestNodesInfoActionTests extends ESTestCase {
         Map<String, String> params = new HashMap<>();
         List<String> nodeIds = new ArrayList<>(5);
 
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             nodeIds.add(randomValueOtherThanMany(ALLOWED_METRICS::contains, () -> randomAlphaOfLength(23)));
         }
 
@@ -123,7 +123,7 @@ public class RestNodesInfoActionTests extends ESTestCase {
         List<String> nodeIds = new ArrayList<>(5);
         List<String> metrics = new ArrayList<>(5);
 
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             nodeIds.add(randomValueOtherThanMany(ALLOWED_METRICS::contains, () -> randomAlphaOfLength(23)));
             metrics.add(randomFrom(ALLOWED_METRICS));
         }
@@ -141,10 +141,7 @@ public class RestNodesInfoActionTests extends ESTestCase {
     }
 
     private FakeRestRequest buildRestRequest(Map<String, String> params) {
-        return new FakeRestRequest.Builder(xContentRegistry())
-                .withMethod(RestRequest.Method.GET)
-                .withPath("/_nodes")
-                .withParams(params)
+        return new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET).withPath("/_nodes").withParams(params)
                 .build();
     }
 

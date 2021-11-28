@@ -27,10 +27,10 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 public class RetentionLeaseInvalidRetainingSeqNoException extends FesenException {
 
     RetentionLeaseInvalidRetainingSeqNoException(String retentionLeaseId, String source, long retainingSequenceNumber,
-                                                 RetentionLease existingRetentionLease) {
-        super("the current retention lease with [" + retentionLeaseId + "]" +
-            " is retaining a higher sequence number [" + existingRetentionLease.retainingSequenceNumber() + "]" +
-            " than the new retaining sequence number [" + retainingSequenceNumber + "] from [" + source + "]");
+            RetentionLease existingRetentionLease) {
+        super("the current retention lease with [" + retentionLeaseId + "]" + " is retaining a higher sequence number ["
+                + existingRetentionLease.retainingSequenceNumber() + "]" + " than the new retaining sequence number ["
+                + retainingSequenceNumber + "] from [" + source + "]");
     }
 
     public RetentionLeaseInvalidRetainingSeqNoException(StreamInput in) throws IOException {

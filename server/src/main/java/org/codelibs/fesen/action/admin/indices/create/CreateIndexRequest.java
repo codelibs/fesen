@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
@@ -46,19 +59,6 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A request to create an index. Best created with {@link org.codelibs.fesen.client.Requests#createIndexRequest(String)}.
@@ -137,7 +137,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     @Override
     public String[] indices() {
-        return new String[]{index};
+        return new String[] { index };
     }
 
     @Override
@@ -265,7 +265,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         }
         // wrap it in a type map if its not
         if (source.size() != 1 || !source.containsKey(type)) {
-            source = MapBuilder.<String, Object>newMapBuilder().put(type, source).map();
+            source = MapBuilder.<String, Object> newMapBuilder().put(type, source).map();
         }
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -318,15 +318,14 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      */
     public CreateIndexRequest aliases(BytesReference source) {
         // EMPTY is safe here because we never call namedObject
-        try (XContentParser parser = XContentHelper
-                .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
+        try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
             //move to the first alias
             parser.nextToken();
             while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                 alias(Alias.fromXContent(parser));
             }
             return this;
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new FesenParseException("Failed to parse aliases", e);
         }
     }

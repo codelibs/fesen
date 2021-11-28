@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.get;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -38,8 +40,6 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-
 public class TransportShardMultiGetAction extends TransportSingleShardAction<MultiGetShardRequest, MultiGetShardResponse> {
 
     private static final String ACTION_NAME = MultiGetAction.NAME + "[shard]";
@@ -47,9 +47,8 @@ public class TransportShardMultiGetAction extends TransportSingleShardAction<Mul
     private final IndicesService indicesService;
 
     @Inject
-    public TransportShardMultiGetAction(ClusterService clusterService, TransportService transportService,
-                                        IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportShardMultiGetAction(ClusterService clusterService, TransportService transportService, IndicesService indicesService,
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
                 MultiGetShardRequest::new, ThreadPool.Names.GET);
         this.indicesService = indicesService;
@@ -72,13 +71,13 @@ public class TransportShardMultiGetAction extends TransportSingleShardAction<Mul
 
     @Override
     protected ShardIterator shards(ClusterState state, InternalRequest request) {
-        return clusterService.operationRouting()
-                .getShards(state, request.request().index(), request.request().shardId(), request.request().preference());
+        return clusterService.operationRouting().getShards(state, request.request().index(), request.request().shardId(),
+                request.request().preference());
     }
 
     @Override
-    protected void asyncShardOperation(
-        MultiGetShardRequest request, ShardId shardId, ActionListener<MultiGetShardResponse> listener) throws IOException {
+    protected void asyncShardOperation(MultiGetShardRequest request, ShardId shardId, ActionListener<MultiGetShardResponse> listener)
+            throws IOException {
         IndexService indexService = indicesService.indexServiceSafe(shardId.getIndex());
         IndexShard indexShard = indexService.getShard(shardId.id());
         if (request.realtime()) { // we are not tied to a refresh cycle here anyway
@@ -108,14 +107,15 @@ public class TransportShardMultiGetAction extends TransportSingleShardAction<Mul
             MultiGetRequest.Item item = request.items.get(i);
             try {
                 GetResult getResult = indexShard.getService().get(item.type(), item.id(), item.storedFields(), request.realtime(),
-                    item.version(), item.versionType(), item.fetchSourceContext());
+                        item.version(), item.versionType(), item.fetchSourceContext());
                 response.add(request.locations.get(i), new GetResponse(getResult));
             } catch (RuntimeException e) {
                 if (TransportActions.isShardNotAvailableException(e)) {
                     throw e;
                 } else {
-                    logger.debug(() -> new ParameterizedMessage("{} failed to execute multi_get for [{}]/[{}]", shardId,
-                        item.type(), item.id()), e);
+                    logger.debug(
+                            () -> new ParameterizedMessage("{} failed to execute multi_get for [{}]/[{}]", shardId, item.type(), item.id()),
+                            e);
                     response.add(request.locations.get(i), new MultiGetResponse.Failure(request.index(), item.type(), item.id(), e));
                 }
             }

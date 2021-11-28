@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.common.settings;
 
-import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.HasPasswordKeyStoreCommand;
-import org.codelibs.fesen.env.Environment;
-
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.Map;
+
+import org.codelibs.fesen.cli.Command;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.env.Environment;
 
 public class HasPasswordKeyStoreCommandTests extends KeyStoreCommandTestCase {
     @Override

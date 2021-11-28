@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.rest.action.search;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -31,12 +37,6 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 import org.codelibs.fesen.search.Scroll;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public class RestSearchScrollAction extends BaseRestHandler {
     private static final Set<String> RESPONSE_PARAMS = Collections.singleton(RestSearchAction.TOTAL_HITS_AS_INT_PARAM);
 
@@ -47,11 +47,8 @@ public class RestSearchScrollAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_search/scroll"),
-            new Route(POST, "/_search/scroll"),
-            new Route(GET, "/_search/scroll/{scroll_id}"),
-            new Route(POST, "/_search/scroll/{scroll_id}")));
+        return unmodifiableList(asList(new Route(GET, "/_search/scroll"), new Route(POST, "/_search/scroll"),
+                new Route(GET, "/_search/scroll/{scroll_id}"), new Route(POST, "/_search/scroll/{scroll_id}")));
     }
 
     @Override
@@ -72,7 +69,8 @@ public class RestSearchScrollAction extends BaseRestHandler {
                 } catch (IOException e) {
                     throw new IllegalArgumentException("Failed to parse request body", e);
                 }
-            }});
+            }
+        });
         return channel -> client.searchScroll(searchScrollRequest, new RestStatusToXContentListener<>(channel));
     }
 

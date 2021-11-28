@@ -16,6 +16,9 @@
 
 package org.codelibs.fesen.common.inject.util;
 
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +41,6 @@ import org.codelibs.fesen.common.inject.spi.Element;
 import org.codelibs.fesen.common.inject.spi.Elements;
 import org.codelibs.fesen.common.inject.spi.PrivateElements;
 import org.codelibs.fesen.common.inject.spi.ScopeBinding;
-
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
 
 /**
  * Static utility methods for creating and working with instances of {@link Module}.
@@ -199,8 +199,7 @@ public final class Modules {
 
                         @Override
                         public Void visit(PrivateElements privateElements) {
-                            PrivateBinder privateBinder = binder.withSource(privateElements.getSource())
-                                    .newPrivateBinder();
+                            PrivateBinder privateBinder = binder.withSource(privateElements.getSource()).newPrivateBinder();
 
                             Set<Key<?>> skippedExposes = new HashSet<>();
 
@@ -215,8 +214,7 @@ public final class Modules {
                             // we're not skipping deep exposes, but that should be okay. If we ever need to, we
                             // have to search through this set of elements for PrivateElements, recursively
                             for (Element element : privateElements.getElements()) {
-                                if (element instanceof Binding
-                                        && skippedExposes.contains(((Binding) element).getKey())) {
+                                if (element instanceof Binding && skippedExposes.contains(((Binding) element).getKey())) {
                                     continue;
                                 }
                                 element.applyTo(privateBinder);
@@ -242,8 +240,7 @@ public final class Modules {
                             } else {
                                 Object source = scopeInstancesInUse.get(scopeBinding.getScope());
                                 if (source != null) {
-                                    binder().withSource(source).addError(
-                                            "The scope for @%s is bound directly and cannot be overridden.",
+                                    binder().withSource(source).addError("The scope for @%s is bound directly and cannot be overridden.",
                                             scopeBinding.getAnnotationType().getSimpleName());
                                 }
                             }

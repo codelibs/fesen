@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.support.single.shard;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
 
 public abstract class SingleShardRequest<Request extends SingleShardRequest<Request>> extends ActionRequest implements IndicesRequest {
 
@@ -94,7 +94,7 @@ public abstract class SingleShardRequest<Request extends SingleShardRequest<Requ
 
     @Override
     public String[] indices() {
-        return new String[]{index};
+        return new String[] { index };
     }
 
     @Override
@@ -109,4 +109,3 @@ public abstract class SingleShardRequest<Request extends SingleShardRequest<Requ
         out.writeOptionalString(index);
     }
 }
-

@@ -19,6 +19,22 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static org.codelibs.fesen.common.settings.Setting.listSetting;
+import static org.codelibs.fesen.common.settings.Setting.simpleString;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
@@ -35,22 +51,6 @@ import org.codelibs.fesen.watcher.FileChangesListener;
 import org.codelibs.fesen.watcher.FileWatcher;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-
-import static org.codelibs.fesen.common.settings.Setting.listSetting;
-import static org.codelibs.fesen.common.settings.Setting.simpleString;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * Loads "reindex.ssl.*" configuration from Settings, and makes the applicable configuration (trust manager / key manager / hostname
  * verification / cipher-suites) available for reindex-from-remote.
@@ -62,8 +62,8 @@ class ReindexSslConfig {
 
     static {
         Setting.Property[] defaultProperties = new Setting.Property[] { Setting.Property.NodeScope, Setting.Property.Filtered };
-        Setting.Property[] deprecatedProperties = new Setting.Property[] { Setting.Property.Deprecated, Setting.Property.NodeScope,
-            Setting.Property.Filtered };
+        Setting.Property[] deprecatedProperties =
+                new Setting.Property[] { Setting.Property.Deprecated, Setting.Property.NodeScope, Setting.Property.Filtered };
         for (String key : SslConfigurationKeys.getStringKeys()) {
             String settingName = "reindex.ssl." + key;
             final Setting.Property[] properties = SslConfigurationKeys.isDeprecated(key) ? deprecatedProperties : defaultProperties;
@@ -152,9 +152,9 @@ class ReindexSslConfig {
      * configurations if the underlying key/certificate files are modified.
      */
     SSLIOSessionStrategy getStrategy() {
-        final HostnameVerifier hostnameVerifier = configuration.getVerificationMode().isHostnameVerificationEnabled()
-            ? new DefaultHostnameVerifier()
-            : new NoopHostnameVerifier();
+        final HostnameVerifier hostnameVerifier =
+                configuration.getVerificationMode().isHostnameVerificationEnabled() ? new DefaultHostnameVerifier()
+                        : new NoopHostnameVerifier();
         final String[] protocols = configuration.getSupportedProtocols().toArray(Strings.EMPTY_ARRAY);
         final String[] cipherSuites = configuration.getCipherSuites().toArray(Strings.EMPTY_ARRAY);
         return new SSLIOSessionStrategy(context, protocols, cipherSuites, hostnameVerifier);

@@ -19,11 +19,22 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.common.xcontent.XContentHelper.createParser;
+import static org.codelibs.fesen.index.rankeval.RatedRequest.validateEvaluatedQuery;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.search.MultiSearchRequest;
 import org.codelibs.fesen.action.search.MultiSearchResponse;
-import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.search.MultiSearchResponse.Item;
+import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.HandledTransportAction;
 import org.codelibs.fesen.client.Client;
@@ -41,17 +52,6 @@ import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.codelibs.fesen.common.xcontent.XContentHelper.createParser;
-import static org.codelibs.fesen.index.rankeval.RatedRequest.validateEvaluatedQuery;
 
 /**
  * Instances of this class execute a collection of search intents (read: user
@@ -73,9 +73,8 @@ public class TransportRankEvalAction extends HandledTransportAction<RankEvalRequ
 
     @Inject
     public TransportRankEvalAction(ActionFilters actionFilters, Client client, TransportService transportService,
-                                   ScriptService scriptService, NamedXContentRegistry namedXContentRegistry) {
-        super(RankEvalAction.NAME, transportService, actionFilters,
-              (Writeable.Reader<RankEvalRequest>) RankEvalRequest::new);
+            ScriptService scriptService, NamedXContentRegistry namedXContentRegistry) {
+        super(RankEvalAction.NAME, transportService, actionFilters, (Writeable.Reader<RankEvalRequest>) RankEvalRequest::new);
         this.scriptService = scriptService;
         this.namedXContentRegistry = namedXContentRegistry;
         this.client = client;
@@ -104,8 +103,8 @@ public class TransportRankEvalAction extends HandledTransportAction<RankEvalRequ
                 String templateId = ratedRequest.getTemplateId();
                 TemplateScript.Factory templateScript = scriptsWithoutParams.get(templateId);
                 String resolvedRequest = templateScript.newInstance(params).execute();
-                try (XContentParser subParser = createParser(namedXContentRegistry,
-                    LoggingDeprecationHandler.INSTANCE, new BytesArray(resolvedRequest), XContentType.JSON)) {
+                try (XContentParser subParser = createParser(namedXContentRegistry, LoggingDeprecationHandler.INSTANCE,
+                        new BytesArray(resolvedRequest), XContentType.JSON)) {
                     evaluationRequest = SearchSourceBuilder.fromXContent(subParser, false);
                     // check for parts that should not be part of a ranking evaluation request
                     validateEvaluatedQuery(evaluationRequest);

@@ -29,7 +29,6 @@ import org.codelibs.fesen.rest.RestStatus;
  */
 public class RepositoryMissingException extends RepositoryException {
 
-
     public RepositoryMissingException(String repository) {
         super(repository, "missing");
     }
@@ -39,7 +38,7 @@ public class RepositoryMissingException extends RepositoryException {
         return RestStatus.NOT_FOUND;
     }
 
-    public RepositoryMissingException(StreamInput in) throws IOException{
+    public RepositoryMissingException(StreamInput in) throws IOException {
         super(in);
     }
 }

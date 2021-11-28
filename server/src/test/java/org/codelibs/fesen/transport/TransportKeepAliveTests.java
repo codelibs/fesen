@@ -77,9 +77,7 @@ public class TransportKeepAliveTests extends ESTestCase {
 
     public void testRegisterNodeConnectionSchedulesKeepAlive() {
         TimeValue pingInterval = TimeValue.timeValueSeconds(randomLongBetween(1, 60));
-        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile)
-            .setPingInterval(pingInterval)
-            .build();
+        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile).setPingInterval(pingInterval).build();
 
         assertEquals(0, threadPool.scheduledTasks.size());
 
@@ -107,14 +105,10 @@ public class TransportKeepAliveTests extends ESTestCase {
 
     public void testRegisterMultipleKeepAliveIntervals() {
         TimeValue pingInterval1 = TimeValue.timeValueSeconds(randomLongBetween(1, 30));
-        ConnectionProfile connectionProfile1 = new ConnectionProfile.Builder(defaultProfile)
-            .setPingInterval(pingInterval1)
-            .build();
+        ConnectionProfile connectionProfile1 = new ConnectionProfile.Builder(defaultProfile).setPingInterval(pingInterval1).build();
 
         TimeValue pingInterval2 = TimeValue.timeValueSeconds(randomLongBetween(31, 60));
-        ConnectionProfile connectionProfile2 = new ConnectionProfile.Builder(defaultProfile)
-            .setPingInterval(pingInterval2)
-            .build();
+        ConnectionProfile connectionProfile2 = new ConnectionProfile.Builder(defaultProfile).setPingInterval(pingInterval2).build();
 
         assertEquals(0, threadPool.scheduledTasks.size());
 
@@ -142,9 +136,7 @@ public class TransportKeepAliveTests extends ESTestCase {
 
     public void testClosingChannelUnregistersItFromKeepAlive() {
         TimeValue pingInterval1 = TimeValue.timeValueSeconds(randomLongBetween(1, 30));
-        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile)
-            .setPingInterval(pingInterval1)
-            .build();
+        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile).setPingInterval(pingInterval1).build();
 
         TcpChannel channel1 = new FakeTcpChannel();
         TcpChannel channel2 = new FakeTcpChannel();
@@ -182,9 +174,7 @@ public class TransportKeepAliveTests extends ESTestCase {
 
     public void testOnlySendPingIfWeHaveNotWrittenAndReadSinceLastPing() {
         TimeValue pingInterval = TimeValue.timeValueSeconds(15);
-        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile)
-            .setPingInterval(pingInterval)
-            .build();
+        ConnectionProfile connectionProfile = new ConnectionProfile.Builder(defaultProfile).setPingInterval(pingInterval).build();
 
         TcpChannel channel1 = new FakeTcpChannel();
         TcpChannel channel2 = new FakeTcpChannel();

@@ -60,27 +60,24 @@ import static org.hamcrest.object.HasToString.hasToString;
 
 public class OperationRoutingTests extends ESTestCase {
     public void testGenerateShardId() {
-        int[][] possibleValues = new int[][] {
-            {8,4,2}, {20, 10, 2}, {36, 12, 3}, {15,5,1}
-        };
+        int[][] possibleValues = new int[][] { { 8, 4, 2 }, { 20, 10, 2 }, { 36, 12, 3 }, { 15, 5, 1 } };
         for (int i = 0; i < 10; i++) {
             int[] shardSplits = randomFrom(possibleValues);
             assertEquals(shardSplits[0], (shardSplits[0] / shardSplits[1]) * shardSplits[1]);
             assertEquals(shardSplits[1], (shardSplits[1] / shardSplits[2]) * shardSplits[2]);
             IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[0])
-                .numberOfReplicas(1).build();
+                    .numberOfReplicas(1).build();
             String term = randomAlphaOfLength(10);
             final int shard = OperationRouting.generateShardId(metadata, term, null);
             IndexMetadata shrunk = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[1])
-                .numberOfReplicas(1)
-                .setRoutingNumShards(shardSplits[0]).build();
+                    .numberOfReplicas(1).setRoutingNumShards(shardSplits[0]).build();
             int shrunkShard = OperationRouting.generateShardId(shrunk, term, null);
 
             Set<ShardId> shardIds = IndexMetadata.selectShrinkShards(shrunkShard, metadata, shrunk.getNumberOfShards());
             assertEquals(1, shardIds.stream().filter((sid) -> sid.id() == shard).count());
 
             shrunk = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[2]).numberOfReplicas(1)
-                .setRoutingNumShards(shardSplits[0]).build();
+                    .setRoutingNumShards(shardSplits[0]).build();
             shrunkShard = OperationRouting.generateShardId(shrunk, term, null);
             shardIds = IndexMetadata.selectShrinkShards(shrunkShard, metadata, shrunk.getNumberOfShards());
             assertEquals(Arrays.toString(shardSplits), 1, shardIds.stream().filter((sid) -> sid.id() == shard).count());
@@ -88,20 +85,17 @@ public class OperationRoutingTests extends ESTestCase {
     }
 
     public void testGenerateShardIdSplit() {
-        int[][] possibleValues = new int[][] {
-            {2,4,8}, {2, 10, 20}, {3, 12, 36}, {1,5,15}
-        };
+        int[][] possibleValues = new int[][] { { 2, 4, 8 }, { 2, 10, 20 }, { 3, 12, 36 }, { 1, 5, 15 } };
         for (int i = 0; i < 10; i++) {
             int[] shardSplits = randomFrom(possibleValues);
             assertEquals(shardSplits[0], (shardSplits[0] * shardSplits[1]) / shardSplits[1]);
             assertEquals(shardSplits[1], (shardSplits[1] * shardSplits[2]) / shardSplits[2]);
             IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[0])
-                .numberOfReplicas(1).setRoutingNumShards(shardSplits[2]).build();
+                    .numberOfReplicas(1).setRoutingNumShards(shardSplits[2]).build();
             String term = randomAlphaOfLength(10);
             final int shard = OperationRouting.generateShardId(metadata, term, null);
             IndexMetadata split = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[1])
-                .numberOfReplicas(1)
-                .setRoutingNumShards(shardSplits[2]).build();
+                    .numberOfReplicas(1).setRoutingNumShards(shardSplits[2]).build();
             int shrunkShard = OperationRouting.generateShardId(split, term, null);
 
             ShardId shardId = IndexMetadata.selectSplitShard(shrunkShard, metadata, split.getNumberOfShards());
@@ -109,7 +103,7 @@ public class OperationRoutingTests extends ESTestCase {
             assertEquals(shard, shardId.getId());
 
             split = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shardSplits[2]).numberOfReplicas(1)
-                .setRoutingNumShards(shardSplits[2]).build();
+                    .setRoutingNumShards(shardSplits[2]).build();
             shrunkShard = OperationRouting.generateShardId(split, term, null);
             shardId = IndexMetadata.selectSplitShard(shrunkShard, metadata, split.getNumberOfShards());
             assertNotNull(shardId);
@@ -121,12 +115,8 @@ public class OperationRoutingTests extends ESTestCase {
         // make sure the same routing value always has each _id fall within the configured partition size
         for (int shards = 1; shards < 5; shards++) {
             for (int partitionSize = 1; partitionSize == 1 || partitionSize < shards; partitionSize++) {
-                IndexMetadata metadata = IndexMetadata.builder("test")
-                    .settings(settings(Version.CURRENT))
-                    .numberOfShards(shards)
-                    .routingPartitionSize(partitionSize)
-                    .numberOfReplicas(1)
-                    .build();
+                IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(shards)
+                        .routingPartitionSize(partitionSize).numberOfReplicas(1).build();
 
                 for (int i = 0; i < 20; i++) {
                     String routing = randomUnicodeOfLengthBetween(1, 50);
@@ -183,13 +173,8 @@ public class OperationRoutingTests extends ESTestCase {
         routingD.put("d_5", 3);
         routingIdToShard.put("d", routingD);
 
-        IndexMetadata metadata = IndexMetadata.builder("test")
-                .settings(settings(Version.CURRENT))
-                .setRoutingNumShards(8)
-                .numberOfShards(4)
-                .routingPartitionSize(3)
-                .numberOfReplicas(1)
-                .build();
+        IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).setRoutingNumShards(8).numberOfShards(4)
+                .routingPartitionSize(3).numberOfReplicas(1).build();
 
         for (Map.Entry<String, Map<String, Integer>> routingIdEntry : routingIdToShard.entrySet()) {
             String routing = routingIdEntry.getKey();
@@ -234,12 +219,8 @@ public class OperationRoutingTests extends ESTestCase {
         routingD.put("d_3", 4);
         routingIdToShard.put("d", routingD);
 
-        IndexMetadata metadata = IndexMetadata.builder("test")
-                .settings(settings(Version.CURRENT))
-                .numberOfShards(6)
-                .routingPartitionSize(2)
-                .numberOfReplicas(1)
-                .build();
+        IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(6).routingPartitionSize(2)
+                .numberOfReplicas(1).build();
 
         for (Map.Entry<String, Map<String, Integer>> routingIdEntry : routingIdToShard.entrySet()) {
             String routing = routingIdEntry.getKey();
@@ -357,12 +338,12 @@ public class OperationRoutingTests extends ESTestCase {
         termToShard.put("wRZXPSoEgd", 3);
         termToShard.put("nGzpgwsSBc", 4);
         termToShard.put("AITyyoyLLs", 4);
-        IndexMetadata metadata = IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(8)
-            .numberOfReplicas(1).build();
+        IndexMetadata metadata =
+                IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(8).numberOfReplicas(1).build();
         for (Map.Entry<String, Integer> entry : termToShard.entrySet()) {
             String key = entry.getKey();
-            int shard = randomBoolean() ?
-                OperationRouting.generateShardId(metadata, key, null) : OperationRouting.generateShardId(metadata, "foobar", key);
+            int shard = randomBoolean() ? OperationRouting.generateShardId(metadata, key, null)
+                    : OperationRouting.generateShardId(metadata, "foobar", key);
             assertEquals(shard, entry.getValue().intValue());
         }
     }
@@ -425,8 +406,8 @@ public class OperationRoutingTests extends ESTestCase {
         ClusterState state = ClusterStateCreationUtils.stateWithAssignedPrimariesAndReplicas(indexNames, numShards, numReplicas);
         final int numRepeatedSearches = 4;
         List<ShardRouting> sessionsfirstSearch = null;
-        OperationRouting opRouting = new OperationRouting(Settings.EMPTY,
-                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
+        OperationRouting opRouting =
+                new OperationRouting(Settings.EMPTY, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
         String sessionKey = randomAlphaOfLength(10);
         for (int i = 0; i < numRepeatedSearches; i++) {
             List<ShardRouting> searchedShards = new ArrayList<>(numShards);
@@ -494,8 +475,8 @@ public class OperationRoutingTests extends ESTestCase {
             }
             if (expected.size() > 0) {
                 final ShardIterator it =
-                    new OperationRouting(Settings.EMPTY, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS))
-                        .getShards(clusterService.state(), indexName, 0, "_only_nodes:" + String.join(",", nodes));
+                        new OperationRouting(Settings.EMPTY, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS))
+                                .getShards(clusterService.state(), indexName, 0, "_only_nodes:" + String.join(",", nodes));
                 final List<ShardRouting> only = new ArrayList<>();
                 ShardRouting shard;
                 while ((shard = it.nextOrNull()) != null) {
@@ -504,22 +485,16 @@ public class OperationRoutingTests extends ESTestCase {
                 assertThat(new HashSet<>(only), equalTo(new HashSet<>(expected)));
             } else {
                 final ClusterService cs = clusterService;
-                final IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
-                    () -> new OperationRouting(
-                            Settings.EMPTY,
-                            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS))
-                        .getShards(cs.state(), indexName, 0, "_only_nodes:" + String.join(",", nodes)));
+                final IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
+                        () -> new OperationRouting(Settings.EMPTY,
+                                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS)).getShards(cs.state(),
+                                        indexName, 0, "_only_nodes:" + String.join(",", nodes)));
                 if (nodes.size() == 1) {
-                    assertThat(
-                        e,
-                        hasToString(containsString(
-                            "no data nodes with criteria [" + String.join(",", nodes) + "] found for shard: [test][0]")));
+                    assertThat(e, hasToString(
+                            containsString("no data nodes with criteria [" + String.join(",", nodes) + "] found for shard: [test][0]")));
                 } else {
-                    assertThat(
-                        e,
-                        hasToString(containsString(
-                            "no data nodes with criterion [" + String.join(",", nodes) + "] found for shard: [test][0]")));
+                    assertThat(e, hasToString(
+                            containsString("no data nodes with criterion [" + String.join(",", nodes) + "] found for shard: [test][0]")));
                 }
             }
         } finally {
@@ -537,8 +512,8 @@ public class OperationRoutingTests extends ESTestCase {
             indexNames[i] = "test" + i;
         }
         ClusterState state = ClusterStateCreationUtils.stateWithAssignedPrimariesAndReplicas(indexNames, numShards, numReplicas);
-        OperationRouting opRouting = new OperationRouting(Settings.EMPTY,
-                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
+        OperationRouting opRouting =
+                new OperationRouting(Settings.EMPTY, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
         opRouting.setUseAdaptiveReplicaSelection(true);
         List<ShardRouting> searchedShards = new ArrayList<>(numShards);
         Set<String> selectedNodes = new HashSet<>(numShards);
@@ -546,8 +521,8 @@ public class OperationRoutingTests extends ESTestCase {
         ClusterService clusterService = ClusterServiceUtils.createClusterService(threadPool);
         ResponseCollectorService collector = new ResponseCollectorService(clusterService);
         Map<String, Long> outstandingRequests = new HashMap<>();
-        GroupShardsIterator<ShardIterator> groupIterator = opRouting.searchShards(state,
-                indexNames, null, null, collector, outstandingRequests);
+        GroupShardsIterator<ShardIterator> groupIterator =
+                opRouting.searchShards(state, indexNames, null, null, collector, outstandingRequests);
 
         assertThat("One group per index shard", groupIterator.size(), equalTo(numIndices * numShards));
 
@@ -614,12 +589,9 @@ public class OperationRoutingTests extends ESTestCase {
     }
 
     public void testAllocationAwarenessDeprecation() {
-        OperationRouting routing = new OperationRouting(
-            Settings.builder()
-                .put(AwarenessAllocationDecider.CLUSTER_ROUTING_ALLOCATION_AWARENESS_ATTRIBUTE_SETTING.getKey(), "foo")
-                .build(),
-            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS)
-        );
+        OperationRouting routing = new OperationRouting(Settings.builder()
+                .put(AwarenessAllocationDecider.CLUSTER_ROUTING_ALLOCATION_AWARENESS_ATTRIBUTE_SETTING.getKey(), "foo").build(),
+                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
         assertWarnings(IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE);
     }
 

@@ -18,6 +18,25 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -42,25 +61,6 @@ import org.codelibs.fesen.search.aggregations.support.AggregationPath.PathElemen
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.profile.Profilers;
 import org.codelibs.fesen.search.profile.aggregation.ProfilingAggregator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * An immutable collection of {@link AggregatorFactories}.
@@ -107,7 +107,7 @@ public class AggregatorFactories {
                 if (token != XContentParser.Token.FIELD_NAME) {
                     throw new ParsingException(
                             parser.getTokenLocation(), "Expected [" + XContentParser.Token.FIELD_NAME + "] under a ["
-                            + XContentParser.Token.START_OBJECT + "], but got a [" + token + "] in [" + aggregationName + "]",
+                                    + XContentParser.Token.START_OBJECT + "], but got a [" + token + "] in [" + aggregationName + "]",
                             parser.getTokenLocation());
                 }
                 final String fieldName = parser.currentName();
@@ -136,7 +136,7 @@ public class AggregatorFactories {
                             aggBuilder = parser.namedObject(BaseAggregationBuilder.class, fieldName, aggregationName);
                         } catch (NamedObjectNotFoundException ex) {
                             String message = String.format(Locale.ROOT, "Unknown aggregation type [%s]%s", fieldName,
-                                SuggestingErrorOnUnknown.suggest(fieldName, ex.getCandidates()));
+                                    SuggestingErrorOnUnknown.suggest(fieldName, ex.getCandidates()));
                             throw new ParsingException(new XContentLocation(ex.getLineNumber(), ex.getColumnNumber()), message, ex);
                         }
                     }
@@ -189,7 +189,7 @@ public class AggregatorFactories {
      *                    be asked to collect.
      */
     public Aggregator[] createSubAggregators(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality)
-                throws IOException {
+            throws IOException {
         Aggregator[] aggregators = new Aggregator[countAggregators()];
         for (int i = 0; i < factories.length; ++i) {
             Aggregator factory = factories[i].create(searchContext, parent, cardinality);
@@ -329,8 +329,7 @@ public class AggregatorFactories {
          */
         private ActionRequestValidationException validateChildren(ActionRequestValidationException e) {
             for (AggregationBuilder agg : aggregationBuilders) {
-                PipelineAggregationBuilder.ValidationContext context =
-                        PipelineAggregationBuilder.ValidationContext.forInsideTree(agg, e);
+                PipelineAggregationBuilder.ValidationContext context = PipelineAggregationBuilder.ValidationContext.forInsideTree(agg, e);
                 agg.factoriesBuilder.validatePipelines(context);
                 e = agg.factoriesBuilder.validateChildren(context.getValidationException());
             }
@@ -406,8 +405,8 @@ public class AggregatorFactories {
                                 }
                                 // Check the pipeline sub-aggregator factories
                                 if (!foundSubBuilder && (i == bucketsPathElements.size() - 1)) {
-                                    Collection<PipelineAggregationBuilder> subPipelineBuilders = aggBuilder.factoriesBuilder
-                                            .pipelineAggregatorBuilders;
+                                    Collection<PipelineAggregationBuilder> subPipelineBuilders =
+                                            aggBuilder.factoriesBuilder.pipelineAggregatorBuilders;
                                     for (PipelineAggregationBuilder subFactory : subPipelineBuilders) {
                                         if (aggName.equals(subFactory.getName())) {
                                             foundSubBuilder = true;
@@ -416,8 +415,8 @@ public class AggregatorFactories {
                                     }
                                 }
                                 if (!foundSubBuilder) {
-                                    throw new IllegalArgumentException("No aggregation [" + aggName + "] found for path [" + bucketsPath
-                                            + "]");
+                                    throw new IllegalArgumentException(
+                                            "No aggregation [" + aggName + "] found for path [" + bucketsPath + "]");
                                 }
                             }
                         }
@@ -523,12 +522,10 @@ public class AggregatorFactories {
             if (aggregationBuilders.isEmpty() && pipelineAggregatorBuilders.isEmpty()) {
                 return PipelineTree.EMPTY;
             }
-            Map<String, PipelineTree> subTrees = aggregationBuilders.stream()
-                    .collect(toMap(AggregationBuilder::getName, AggregationBuilder::buildPipelineTree));
-            List<PipelineAggregator> aggregators = resolvePipelineAggregatorOrder(pipelineAggregatorBuilders, aggregationBuilders)
-                    .stream()
-                    .map(PipelineAggregationBuilder::create)
-                    .collect(toList());
+            Map<String, PipelineTree> subTrees =
+                    aggregationBuilders.stream().collect(toMap(AggregationBuilder::getName, AggregationBuilder::buildPipelineTree));
+            List<PipelineAggregator> aggregators = resolvePipelineAggregatorOrder(pipelineAggregatorBuilders, aggregationBuilders).stream()
+                    .map(PipelineAggregationBuilder::create).collect(toList());
             return new PipelineTree(subTrees, aggregators);
         }
     }

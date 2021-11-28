@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.common.lucene.uid;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -26,16 +31,11 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.util.CloseableThreadLocal;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentMap;
-
 /** Utility class to resolve the Lucene doc ID, version, seqNo and primaryTerms for a given uid. */
 public final class VersionsAndSeqNoResolver {
 
     static final ConcurrentMap<IndexReader.CacheKey, CloseableThreadLocal<PerThreadIDVersionAndSeqNoLookup[]>> lookupStates =
-        ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency();
+            ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency();
 
     // Evict this reader from lookupStates once it's closed:
     private static final IndexReader.ClosedListener removeLookupState = key -> {
@@ -80,8 +80,8 @@ public final class VersionsAndSeqNoResolver {
         }
 
         if (lookupState.length > 0 && Objects.equals(lookupState[0].uidField, uidField) == false) {
-            throw new AssertionError("Index does not consistently use the same uid field: ["
-                    + uidField + "] != [" + lookupState[0].uidField + "]");
+            throw new AssertionError(
+                    "Index does not consistently use the same uid field: [" + uidField + "] != [" + lookupState[0].uidField + "]");
         }
 
         return lookupState;
@@ -121,7 +121,6 @@ public final class VersionsAndSeqNoResolver {
             this.context = context;
         }
     }
-
 
     /**
      * Load the internal doc ID and version for the uid from the reader, returning<ul>

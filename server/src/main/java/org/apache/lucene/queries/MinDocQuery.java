@@ -19,6 +19,9 @@
 
 package org.apache.lucene.queries;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ConstantScoreScorer;
@@ -29,9 +32,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /** A {@link Query} that only matches documents that are greater than or equal
  *  to a configured doc ID. */
@@ -147,9 +147,8 @@ public final class MinDocQuery extends Query {
         }
     }
 
-
     @Override
     public String toString(String field) {
-        return "MinDocQuery(minDoc=" + minDoc  + ")";
+        return "MinDocQuery(minDoc=" + minDoc + ")";
     }
 }

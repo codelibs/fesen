@@ -19,8 +19,10 @@
 
 package org.codelibs.fesen.cluster.routing;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.cluster.RestoreInProgress;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -30,9 +32,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.snapshots.Snapshot;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Represents the recovery source of a shard. Available recovery types are:
@@ -63,12 +62,18 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
     public static RecoverySource readFrom(StreamInput in) throws IOException {
         Type type = Type.values()[in.readByte()];
         switch (type) {
-            case EMPTY_STORE: return EmptyStoreRecoverySource.INSTANCE;
-            case EXISTING_STORE: return ExistingStoreRecoverySource.read(in);
-            case PEER: return PeerRecoverySource.INSTANCE;
-            case SNAPSHOT: return new SnapshotRecoverySource(in);
-            case LOCAL_SHARDS: return LocalShardsRecoverySource.INSTANCE;
-            default: throw new IllegalArgumentException("unknown recovery type: " + type.name());
+        case EMPTY_STORE:
+            return EmptyStoreRecoverySource.INSTANCE;
+        case EXISTING_STORE:
+            return ExistingStoreRecoverySource.read(in);
+        case PEER:
+            return PeerRecoverySource.INSTANCE;
+        case SNAPSHOT:
+            return new SnapshotRecoverySource(in);
+        case LOCAL_SHARDS:
+            return LocalShardsRecoverySource.INSTANCE;
+        default:
+            throw new IllegalArgumentException("unknown recovery type: " + type.name());
         }
     }
 
@@ -86,11 +91,7 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
     }
 
     public enum Type {
-        EMPTY_STORE,
-        EXISTING_STORE,
-        PEER,
-        SNAPSHOT,
-        LOCAL_SHARDS
+        EMPTY_STORE, EXISTING_STORE, PEER, SNAPSHOT, LOCAL_SHARDS
     }
 
     public abstract Type getType();
@@ -105,8 +106,10 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         RecoverySource that = (RecoverySource) o;
 
@@ -281,11 +284,8 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
         @Override
         public void addAdditionalFields(XContentBuilder builder, ToXContent.Params params) throws IOException {
-            builder.field("repository", snapshot.getRepository())
-                .field("snapshot", snapshot.getSnapshotId().getName())
-                .field("version", version.toString())
-                .field("index", index.getName())
-                .field("restoreUUID", restoreUUID);
+            builder.field("repository", snapshot.getRepository()).field("snapshot", snapshot.getSnapshotId().getName())
+                    .field("version", version.toString()).field("index", index.getName()).field("restoreUUID", restoreUUID);
         }
 
         @Override
@@ -303,8 +303,8 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
             }
 
             SnapshotRecoverySource that = (SnapshotRecoverySource) o;
-            return restoreUUID.equals(that.restoreUUID) && snapshot.equals(that.snapshot)
-                && index.equals(that.index) && version.equals(that.version);
+            return restoreUUID.equals(that.restoreUUID) && snapshot.equals(that.snapshot) && index.equals(that.index)
+                    && version.equals(that.version);
         }
 
         @Override

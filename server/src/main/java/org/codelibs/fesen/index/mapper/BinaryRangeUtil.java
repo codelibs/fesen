@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.apache.lucene.document.InetAddressPoint;
-import org.apache.lucene.store.ByteArrayDataInput;
-import org.apache.lucene.store.ByteArrayDataOutput;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.NumericUtils;
-import org.codelibs.fesen.common.TriFunction;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -33,6 +26,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.lucene.document.InetAddressPoint;
+import org.apache.lucene.store.ByteArrayDataInput;
+import org.apache.lucene.store.ByteArrayDataOutput;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.NumericUtils;
+import org.codelibs.fesen.common.TriFunction;
 
 enum BinaryRangeUtil {
 
@@ -83,8 +83,7 @@ enum BinaryRangeUtil {
     }
 
     static List<RangeFieldMapper.Range> decodeLongRanges(BytesRef encodedRanges) {
-        return decodeRanges(encodedRanges, RangeType.LONG,
-            BinaryRangeUtil::decodeLong);
+        return decodeRanges(encodedRanges, RangeType.LONG, BinaryRangeUtil::decodeLong);
     }
 
     static BytesRef encodeDoubleRanges(Set<RangeFieldMapper.Range> ranges) throws IOException {
@@ -106,17 +105,15 @@ enum BinaryRangeUtil {
     }
 
     static List<RangeFieldMapper.Range> decodeDoubleRanges(BytesRef encodedRanges) {
-        return decodeRanges(encodedRanges, RangeType.DOUBLE,
-            BinaryRangeUtil::decodeDouble);
+        return decodeRanges(encodedRanges, RangeType.DOUBLE, BinaryRangeUtil::decodeDouble);
     }
 
     static List<RangeFieldMapper.Range> decodeFloatRanges(BytesRef encodedRanges) {
-        return decodeRanges(encodedRanges, RangeType.FLOAT,
-            BinaryRangeUtil::decodeFloat);
+        return decodeRanges(encodedRanges, RangeType.FLOAT, BinaryRangeUtil::decodeFloat);
     }
 
     static List<RangeFieldMapper.Range> decodeRanges(BytesRef encodedRanges, RangeType rangeType,
-                                                     TriFunction<byte[], Integer, Integer, Object> decodeBytes) {
+            TriFunction<byte[], Integer, Integer, Object> decodeBytes) {
 
         RangeType.LengthType lengthType = rangeType.lengthType;
         ByteArrayDataInput in = new ByteArrayDataInput();
@@ -166,7 +163,7 @@ enum BinaryRangeUtil {
         return encoded;
     }
 
-    static double decodeDouble(byte[] bytes, int offset, int length){
+    static double decodeDouble(byte[] bytes, int offset, int length) {
         return NumericUtils.sortableLongToDouble(NumericUtils.sortableBytesToLong(bytes, offset));
     }
 
@@ -177,7 +174,7 @@ enum BinaryRangeUtil {
     }
 
     static float decodeFloat(byte[] bytes, int offset, int length) {
-       return NumericUtils.sortableIntToFloat(NumericUtils.sortableBytesToInt(bytes, offset));
+        return NumericUtils.sortableIntToFloat(NumericUtils.sortableBytesToInt(bytes, offset));
     }
 
     /**

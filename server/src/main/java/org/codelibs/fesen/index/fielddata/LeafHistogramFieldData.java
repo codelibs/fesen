@@ -18,7 +18,6 @@
  */
 package org.codelibs.fesen.index.fielddata;
 
-
 import java.io.IOException;
 
 /**

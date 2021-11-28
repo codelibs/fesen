@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
-import org.apache.lucene.search.Explanation;
-
 import java.io.IOException;
+
+import org.apache.lucene.search.Explanation;
 
 /** Per-leaf {@link ScoreFunction}. */
 public abstract class LeafScoreFunction {

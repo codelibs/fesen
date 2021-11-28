@@ -160,22 +160,22 @@ public abstract class AbstractSuggestionBuilderTestCase<SB extends SuggestionBui
         for (int runs = 0; runs < NUMBER_OF_TESTBUILDERS; runs++) {
             SB suggestionBuilder = randomTestBuilder();
             Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
-            IndexSettings idxSettings = IndexSettingsModule.newIndexSettings(new Index(randomAlphaOfLengthBetween(1, 10), "_na_"),
-                    indexSettings);
+            IndexSettings idxSettings =
+                    IndexSettingsModule.newIndexSettings(new Index(randomAlphaOfLengthBetween(1, 10), "_na_"), indexSettings);
             MapperService mapperService = mock(MapperService.class);
             ScriptService scriptService = mock(ScriptService.class);
             boolean fieldTypeSearchAnalyzerSet = randomBoolean();
             MappedFieldType fieldType = mockFieldType(suggestionBuilder.field(), fieldTypeSearchAnalyzerSet);
             when(mapperService.searchAnalyzer())
-                .thenReturn(new NamedAnalyzer("mapperServiceSearchAnalyzer", AnalyzerScope.INDEX, new SimpleAnalyzer()));
+                    .thenReturn(new NamedAnalyzer("mapperServiceSearchAnalyzer", AnalyzerScope.INDEX, new SimpleAnalyzer()));
             when(mapperService.fieldType(any(String.class))).thenReturn(fieldType);
             when(mapperService.getNamedAnalyzer(any(String.class))).then(
                     invocation -> new NamedAnalyzer((String) invocation.getArguments()[0], AnalyzerScope.INDEX, new SimpleAnalyzer()));
             when(scriptService.compile(any(Script.class), any())).then(invocation -> new TestTemplateService.MockTemplateScript.Factory(
                     ((Script) invocation.getArguments()[0]).getIdOrCode()));
-            QueryShardContext mockShardContext = new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE, null,
-                null, mapperService, null, scriptService, xContentRegistry(), namedWriteableRegistry, null, null,
-                    System::currentTimeMillis, null, null, () -> true, null);
+            QueryShardContext mockShardContext = new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE, null, null,
+                    mapperService, null, scriptService, xContentRegistry(), namedWriteableRegistry, null, null, System::currentTimeMillis,
+                    null, null, () -> true, null);
 
             SuggestionContext suggestionContext = suggestionBuilder.build(mockShardContext);
             assertEquals(toBytesRef(suggestionBuilder.text()), suggestionContext.getText());
@@ -210,8 +210,8 @@ public abstract class AbstractSuggestionBuilderTestCase<SB extends SuggestionBui
     protected MappedFieldType mockFieldType(String fieldName, boolean analyzerSet) {
         MappedFieldType fieldType = mock(MappedFieldType.class);
         when(fieldType.name()).thenReturn(fieldName);
-        NamedAnalyzer searchAnalyzer = analyzerSet ?
-            new NamedAnalyzer("fieldSearchAnalyzer", AnalyzerScope.INDEX, new SimpleAnalyzer()) : null;
+        NamedAnalyzer searchAnalyzer =
+                analyzerSet ? new NamedAnalyzer("fieldSearchAnalyzer", AnalyzerScope.INDEX, new SimpleAnalyzer()) : null;
         TextSearchInfo tsi = new TextSearchInfo(TextFieldMapper.Defaults.FIELD_TYPE, null, searchAnalyzer, searchAnalyzer);
         when(fieldType.getTextSearchInfo()).thenReturn(tsi);
         return fieldType;

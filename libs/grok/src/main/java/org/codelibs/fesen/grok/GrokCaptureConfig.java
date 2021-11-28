@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.grok;
 
-import org.joni.NameEntry;
-
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.LongConsumer;
+
+import org.joni.NameEntry;
 
 /**
  * Configuration for a value that {@link Grok} can capture.

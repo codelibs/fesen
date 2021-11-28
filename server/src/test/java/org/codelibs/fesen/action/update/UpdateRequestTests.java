@@ -81,62 +81,48 @@ public class UpdateRequestTests extends ESTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        final Settings baseSettings = Settings.builder()
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .build();
-        final Map<String, Function<Map<String, Object>, Object>> scripts =  new HashMap<>();
-        scripts.put(
-                "ctx._source.update_timestamp = ctx._now",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> source = (Map<String, Object>) ctx.get("_source");
-                    source.put("update_timestamp", ctx.get("_now"));
-                    return null;
-                });
-        scripts.put(
-                "ctx._source.body = \"foo\"",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> source = (Map<String, Object>) ctx.get("_source");
-                    source.put("body", "foo");
-                    return null;
-                });
-        scripts.put(
-                "ctx._timestamp = ctx._now",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    ctx.put("_timestamp", ctx.get("_now"));
-                    return null;
-                });
-        scripts.put(
-                "ctx.op = delete",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    ctx.put("op", "delete");
-                    return null;
-                });
-        scripts.put(
-                "ctx.op = bad",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    ctx.put("op", "bad");
-                    return null;
-                });
-        scripts.put(
-                "ctx.op = none",
-                vars -> {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
-                    ctx.put("op", "none");
-                    return null;
-                });
+        final Settings baseSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        final Map<String, Function<Map<String, Object>, Object>> scripts = new HashMap<>();
+        scripts.put("ctx._source.update_timestamp = ctx._now", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> source = (Map<String, Object>) ctx.get("_source");
+            source.put("update_timestamp", ctx.get("_now"));
+            return null;
+        });
+        scripts.put("ctx._source.body = \"foo\"", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> source = (Map<String, Object>) ctx.get("_source");
+            source.put("body", "foo");
+            return null;
+        });
+        scripts.put("ctx._timestamp = ctx._now", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            ctx.put("_timestamp", ctx.get("_now"));
+            return null;
+        });
+        scripts.put("ctx.op = delete", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            ctx.put("op", "delete");
+            return null;
+        });
+        scripts.put("ctx.op = bad", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            ctx.put("op", "bad");
+            return null;
+        });
+        scripts.put("ctx.op = none", vars -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> ctx = (Map<String, Object>) vars.get("ctx");
+            ctx.put("op", "none");
+            return null;
+        });
         scripts.put("return", vars -> null);
         final MockScriptEngine engine = new MockScriptEngine("mock", scripts, Collections.emptyMap());
         Map<String, ScriptEngine> engines = Collections.singletonMap(engine.getType(), engine);
@@ -148,10 +134,7 @@ public class UpdateRequestTests extends ESTestCase {
     public void testFromXContent() throws Exception {
         UpdateRequest request = new UpdateRequest("test", "type", "1");
         // simple script
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("script", "script1")
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().field("script", "script1").endObject()));
         Script script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -161,9 +144,8 @@ public class UpdateRequestTests extends ESTestCase {
         assertThat(params, equalTo(emptyMap()));
 
         // simple verbose script
-        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject()
-                    .startObject("script").field("source", "script1").endObject()
-                .endObject()));
+        request.fromXContent(createParser(
+                XContentFactory.jsonBuilder().startObject().startObject("script").field("source", "script1").endObject().endObject()));
         script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -174,13 +156,8 @@ public class UpdateRequestTests extends ESTestCase {
 
         // script with params
         request = new UpdateRequest("test", "type", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject()
-            .startObject("script")
-                .field("source", "script1")
-                .startObject("params")
-                    .field("param1", "value1")
-                .endObject()
-            .endObject().endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("script").field("source", "script1")
+                .startObject("params").field("param1", "value1").endObject().endObject().endObject()));
         script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -192,15 +169,8 @@ public class UpdateRequestTests extends ESTestCase {
         assertThat(params.get("param1").toString(), equalTo("value1"));
 
         request = new UpdateRequest("test", "type", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .startObject("script")
-                        .startObject("params")
-                            .field("param1", "value1")
-                        .endObject()
-                        .field("source", "script1")
-                    .endObject()
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("script").startObject("params")
+                .field("param1", "value1").endObject().field("source", "script1").endObject().endObject()));
         script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -213,19 +183,9 @@ public class UpdateRequestTests extends ESTestCase {
 
         // script with params and upsert
         request = new UpdateRequest("test", "type", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject()
-            .startObject("script")
-                .startObject("params")
-                    .field("param1", "value1")
-                .endObject()
-                .field("source", "script1")
-            .endObject()
-            .startObject("upsert")
-                .field("field1", "value1")
-                .startObject("compound")
-                    .field("field2", "value2")
-                .endObject()
-            .endObject().endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("script").startObject("params")
+                .field("param1", "value1").endObject().field("source", "script1").endObject().startObject("upsert")
+                .field("field1", "value1").startObject("compound").field("field2", "value2").endObject().endObject().endObject()));
         script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -236,24 +196,14 @@ public class UpdateRequestTests extends ESTestCase {
         assertThat(params.size(), equalTo(1));
         assertThat(params.get("param1").toString(), equalTo("value1"));
         Map<String, Object> upsertDoc =
-            XContentHelper.convertToMap(request.upsertRequest().source(), true, request.upsertRequest().getContentType()).v2();
+                XContentHelper.convertToMap(request.upsertRequest().source(), true, request.upsertRequest().getContentType()).v2();
         assertThat(upsertDoc.get("field1").toString(), equalTo("value1"));
         assertThat(((Map<String, Object>) upsertDoc.get("compound")).get("field2").toString(), equalTo("value2"));
 
         request = new UpdateRequest("test", "type", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject()
-            .startObject("upsert")
-                .field("field1", "value1")
-                .startObject("compound")
-                    .field("field2", "value2")
-                .endObject()
-            .endObject()
-            .startObject("script")
-                .startObject("params")
-                    .field("param1", "value1")
-                .endObject()
-                .field("source", "script1")
-            .endObject().endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("upsert").field("field1", "value1")
+                .startObject("compound").field("field2", "value2").endObject().endObject().startObject("script").startObject("params")
+                .field("param1", "value1").endObject().field("source", "script1").endObject().endObject()));
         script = request.script();
         assertThat(script, notNullValue());
         assertThat(script.getIdOrCode(), equalTo("script1"));
@@ -269,15 +219,8 @@ public class UpdateRequestTests extends ESTestCase {
 
         // script with doc
         request = new UpdateRequest("test", "type", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .startObject("doc")
-                        .field("field1", "value1")
-                        .startObject("compound")
-                            .field("field2", "value2")
-                        .endObject()
-                    .endObject()
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("doc").field("field1", "value1")
+                .startObject("compound").field("field2", "value2").endObject().endObject().endObject()));
         Map<String, Object> doc = request.doc().sourceAsMap();
         assertThat(doc.get("field1").toString(), equalTo("value1"));
         assertThat(((Map<String, Object>) doc.get("compound")).get("field2").toString(), equalTo("value2"));
@@ -285,63 +228,42 @@ public class UpdateRequestTests extends ESTestCase {
 
     public void testUnknownFieldParsing() throws Exception {
         UpdateRequest request = new UpdateRequest("test", "type", "1");
-        XContentParser contentParser = createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("unknown_field", "test")
-                .endObject());
+        XContentParser contentParser = createParser(XContentFactory.jsonBuilder().startObject().field("unknown_field", "test").endObject());
 
         XContentParseException ex = expectThrows(XContentParseException.class, () -> request.fromXContent(contentParser));
         assertEquals("[1:2] [UpdateRequest] unknown field [unknown_field]", ex.getMessage());
 
         UpdateRequest request2 = new UpdateRequest("test", "type", "1");
-        XContentParser unknownObject = createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("script", "ctx.op = ctx._source.views == params.count ? 'delete' : 'none'")
-                    .startObject("params")
-                        .field("count", 1)
-                    .endObject()
-                .endObject());
+        XContentParser unknownObject = createParser(XContentFactory.jsonBuilder().startObject()
+                .field("script", "ctx.op = ctx._source.views == params.count ? 'delete' : 'none'").startObject("params").field("count", 1)
+                .endObject().endObject());
         ex = expectThrows(XContentParseException.class, () -> request2.fromXContent(unknownObject));
         assertEquals("[1:76] [UpdateRequest] unknown field [params]", ex.getMessage());
     }
 
     public void testFetchSourceParsing() throws Exception {
         UpdateRequest request = new UpdateRequest("test", "type1", "1");
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("_source", true)
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().field("_source", true).endObject()));
         assertThat(request.fetchSource(), notNullValue());
         assertThat(request.fetchSource().includes().length, equalTo(0));
         assertThat(request.fetchSource().excludes().length, equalTo(0));
         assertThat(request.fetchSource().fetchSource(), equalTo(true));
 
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("_source", false)
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().field("_source", false).endObject()));
         assertThat(request.fetchSource(), notNullValue());
         assertThat(request.fetchSource().includes().length, equalTo(0));
         assertThat(request.fetchSource().excludes().length, equalTo(0));
         assertThat(request.fetchSource().fetchSource(), equalTo(false));
 
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .field("_source", "path.inner.*")
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().field("_source", "path.inner.*").endObject()));
         assertThat(request.fetchSource(), notNullValue());
         assertThat(request.fetchSource().fetchSource(), equalTo(true));
         assertThat(request.fetchSource().includes().length, equalTo(1));
         assertThat(request.fetchSource().excludes().length, equalTo(0));
         assertThat(request.fetchSource().includes()[0], equalTo("path.inner.*"));
 
-        request.fromXContent(createParser(XContentFactory.jsonBuilder()
-                .startObject()
-                    .startObject("_source")
-                        .field("includes", "path.inner.*")
-                        .field("excludes", "another.inner.*")
-                    .endObject()
-                .endObject()));
+        request.fromXContent(createParser(XContentFactory.jsonBuilder().startObject().startObject("_source")
+                .field("includes", "path.inner.*").field("excludes", "another.inner.*").endObject().endObject()));
         assertThat(request.fetchSource(), notNullValue());
         assertThat(request.fetchSource().fetchSource(), equalTo(true));
         assertThat(request.fetchSource().includes().length, equalTo(1));
@@ -352,14 +274,12 @@ public class UpdateRequestTests extends ESTestCase {
 
     public void testNowInScript() throws IOException {
         // We just upsert one document with now() using a script
-        IndexRequest indexRequest = new IndexRequest("test", "type1", "2")
-            .source(jsonBuilder().startObject().field("foo", "bar").endObject());
+        IndexRequest indexRequest =
+                new IndexRequest("test", "type1", "2").source(jsonBuilder().startObject().field("foo", "bar").endObject());
 
         {
-            UpdateRequest updateRequest = new UpdateRequest("test", "type1", "2")
-                .upsert(indexRequest)
-                .script(mockInlineScript("ctx._source.update_timestamp = ctx._now"))
-                .scriptedUpsert(true);
+            UpdateRequest updateRequest = new UpdateRequest("test", "type1", "2").upsert(indexRequest)
+                    .script(mockInlineScript("ctx._source.update_timestamp = ctx._now")).scriptedUpsert(true);
             long nowInMillis = randomNonNegativeLong();
             // We simulate that the document is not existing yet
             GetResult getResult = new GetResult("test", "type1", "2", UNASSIGNED_SEQ_NO, 0, 0, false, null, null, null);
@@ -370,10 +290,8 @@ public class UpdateRequestTests extends ESTestCase {
             assertEquals(nowInMillis, indexAction.sourceAsMap().get("update_timestamp"));
         }
         {
-            UpdateRequest updateRequest = new UpdateRequest("test", "type1", "2")
-                .upsert(indexRequest)
-                .script(mockInlineScript("ctx._timestamp = ctx._now"))
-                .scriptedUpsert(true);
+            UpdateRequest updateRequest = new UpdateRequest("test", "type1", "2").upsert(indexRequest)
+                    .script(mockInlineScript("ctx._timestamp = ctx._now")).scriptedUpsert(true);
             // We simulate that the document is not existing yet
             GetResult getResult = new GetResult("test", "type1", "2", 0, 1, 0, true, new BytesArray("{}"), null, null);
             UpdateHelper.Result result = updateHelper.prepare(new ShardId("test", "_na_", 0), updateRequest, getResult, () -> 42L);
@@ -383,22 +301,16 @@ public class UpdateRequestTests extends ESTestCase {
     }
 
     public void testIndexTimeout() {
-        final GetResult getResult =
-                new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"f\":\"v\"}"), null, null);
+        final GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"f\":\"v\"}"), null, null);
         final UpdateRequest updateRequest =
-                new UpdateRequest("test", "type", "1")
-                        .script(mockInlineScript("return"))
-                        .timeout(randomTimeValue());
+                new UpdateRequest("test", "type", "1").script(mockInlineScript("return")).timeout(randomTimeValue());
         runTimeoutTest(getResult, updateRequest);
     }
 
     public void testDeleteTimeout() {
-        final GetResult getResult =
-                new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"f\":\"v\"}"), null, null);
+        final GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"f\":\"v\"}"), null, null);
         final UpdateRequest updateRequest =
-                new UpdateRequest("test", "type", "1")
-                        .script(mockInlineScript("ctx.op = delete"))
-                        .timeout(randomTimeValue());
+                new UpdateRequest("test", "type", "1").script(mockInlineScript("ctx.op = delete")).timeout(randomTimeValue());
         runTimeoutTest(getResult, updateRequest);
     }
 
@@ -414,19 +326,13 @@ public class UpdateRequestTests extends ESTestCase {
         sourceBuilder.endObject();
         final IndexRequest upsert = new IndexRequest("test", "type", "1").source(sourceBuilder);
         final UpdateRequest updateRequest =
-                new UpdateRequest("test", "type", "1")
-                .upsert(upsert)
-                .script(mockInlineScript("return"))
-                .timeout(randomTimeValue());
+                new UpdateRequest("test", "type", "1").upsert(upsert).script(mockInlineScript("return")).timeout(randomTimeValue());
         runTimeoutTest(getResult, updateRequest);
     }
 
     private void runTimeoutTest(final GetResult getResult, final UpdateRequest updateRequest) {
-        final UpdateHelper.Result result = updateHelper.prepare(
-                new ShardId("test", "", 0),
-                updateRequest,
-                getResult,
-                ESTestCase::randomNonNegativeLong);
+        final UpdateHelper.Result result =
+                updateHelper.prepare(new ShardId("test", "", 0), updateRequest, getResult, ESTestCase::randomNonNegativeLong);
         final Writeable action = result.action();
         assertThat(action, instanceOf(ReplicationRequest.class));
         final ReplicationRequest<?> request = (ReplicationRequest<?>) action;
@@ -508,9 +414,9 @@ public class UpdateRequestTests extends ESTestCase {
         updateRequest.setIfSeqNo(1L);
         updateRequest.setIfPrimaryTerm(1L);
         updateRequest.doc("{}", XContentType.JSON);
-        updateRequest.upsert(new IndexRequest("index","type", "id"));
+        updateRequest.upsert(new IndexRequest("index", "type", "id"));
         assertThat(updateRequest.validate().validationErrors(),
-            contains("upsert requests don't support `if_seq_no` and `if_primary_term`"));
+                contains("upsert requests don't support `if_seq_no` and `if_primary_term`"));
     }
 
     public void testToValidateUpsertRequestWithVersion() {
@@ -576,12 +482,10 @@ public class UpdateRequestTests extends ESTestCase {
 
     public void testNoopDetection() throws Exception {
         ShardId shardId = new ShardId("test", "", 0);
-        GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true,
-                new BytesArray("{\"body\": \"foo\"}"),
-                null, null);
+        GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"body\": \"foo\"}"), null, null);
 
-        UpdateRequest request = new UpdateRequest("test", "type1", "1").fromXContent(
-                createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"foo\"}}")));
+        UpdateRequest request = new UpdateRequest("test", "type1", "1")
+                .fromXContent(createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"foo\"}}")));
 
         UpdateHelper.Result result = updateHelper.prepareUpdateIndexRequest(shardId, request, getResult, true);
 
@@ -595,8 +499,8 @@ public class UpdateRequestTests extends ESTestCase {
         assertThat(result.updatedSourceAsMap().get("body").toString(), equalTo("foo"));
 
         // Change the request to be a different doc
-        request = new UpdateRequest("test", "type1", "1").fromXContent(
-                createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"bar\"}}")));
+        request = new UpdateRequest("test", "type1", "1")
+                .fromXContent(createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"bar\"}}")));
         result = updateHelper.prepareUpdateIndexRequest(shardId, request, getResult, true);
 
         assertThat(result.action(), instanceOf(IndexRequest.class));
@@ -607,15 +511,12 @@ public class UpdateRequestTests extends ESTestCase {
 
     public void testUpdateScript() throws Exception {
         ShardId shardId = new ShardId("test", "", 0);
-        GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true,
-                new BytesArray("{\"body\": \"bar\"}"),
-                null, null);
+        GetResult getResult = new GetResult("test", "type", "1", 0, 1, 0, true, new BytesArray("{\"body\": \"bar\"}"), null, null);
 
-        UpdateRequest request = new UpdateRequest("test", "type1", "1")
-                .script(mockInlineScript("ctx._source.body = \"foo\""));
+        UpdateRequest request = new UpdateRequest("test", "type1", "1").script(mockInlineScript("ctx._source.body = \"foo\""));
 
-        UpdateHelper.Result result = updateHelper.prepareUpdateScriptRequest(shardId, request, getResult,
-                ESTestCase::randomNonNegativeLong);
+        UpdateHelper.Result result =
+                updateHelper.prepareUpdateScriptRequest(shardId, request, getResult, ESTestCase::randomNonNegativeLong);
 
         assertThat(result.action(), instanceOf(IndexRequest.class));
         assertThat(result.getResponseResult(), equalTo(DocWriteResponse.Result.UPDATED));
@@ -624,8 +525,7 @@ public class UpdateRequestTests extends ESTestCase {
         // Now where the script changes the op to "delete"
         request = new UpdateRequest("test", "type1", "1").script(mockInlineScript("ctx.op = delete"));
 
-        result = updateHelper.prepareUpdateScriptRequest(shardId, request, getResult,
-                ESTestCase::randomNonNegativeLong);
+        result = updateHelper.prepareUpdateScriptRequest(shardId, request, getResult, ESTestCase::randomNonNegativeLong);
 
         assertThat(result.action(), instanceOf(DeleteRequest.class));
         assertThat(result.getResponseResult(), equalTo(DocWriteResponse.Result.DELETED));
@@ -638,22 +538,21 @@ public class UpdateRequestTests extends ESTestCase {
             request = new UpdateRequest("test", "type1", "1").script(mockInlineScript("ctx.op = bad"));
         }
 
-        result = updateHelper.prepareUpdateScriptRequest(shardId, request, getResult,
-                ESTestCase::randomNonNegativeLong);
+        result = updateHelper.prepareUpdateScriptRequest(shardId, request, getResult, ESTestCase::randomNonNegativeLong);
 
         assertThat(result.action(), instanceOf(UpdateResponse.class));
         assertThat(result.getResponseResult(), equalTo(DocWriteResponse.Result.NOOP));
     }
 
     public void testToString() throws IOException {
-        UpdateRequest request = new UpdateRequest("test", "type1", "1")
-            .script(mockInlineScript("ctx._source.body = \"foo\""));
+        UpdateRequest request = new UpdateRequest("test", "type1", "1").script(mockInlineScript("ctx._source.body = \"foo\""));
+        assertThat(request.toString(),
+                equalTo("update {[test][type1][1], doc_as_upsert[false], "
+                        + "script[Script{type=inline, lang='mock', idOrCode='ctx._source.body = \"foo\"', options={}, params={}}], "
+                        + "scripted_upsert[false], detect_noop[true]}"));
+        request = new UpdateRequest("test", "type1", "1")
+                .fromXContent(createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"bar\"}}")));
         assertThat(request.toString(), equalTo("update {[test][type1][1], doc_as_upsert[false], "
-            + "script[Script{type=inline, lang='mock', idOrCode='ctx._source.body = \"foo\"', options={}, params={}}], "
-            + "scripted_upsert[false], detect_noop[true]}"));
-        request = new UpdateRequest("test", "type1", "1").fromXContent(
-            createParser(JsonXContent.jsonXContent, new BytesArray("{\"doc\": {\"body\": \"bar\"}}")));
-        assertThat(request.toString(), equalTo("update {[test][type1][1], doc_as_upsert[false], "
-            + "doc[index {[null][_doc][null], source[{\"body\":\"bar\"}]}], scripted_upsert[false], detect_noop[true]}"));
+                + "doc[index {[null][_doc][null], source[{\"body\":\"bar\"}]}], scripted_upsert[false], detect_noop[true]}"));
     }
 }

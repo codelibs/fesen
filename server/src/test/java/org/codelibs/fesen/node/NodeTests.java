@@ -94,7 +94,7 @@ public class NodeTests extends ESTestCase {
         try (Node node = new MockNode(settings.build(), plugins) {
             @Override
             protected void validateNodeBeforeAcceptingRequests(BootstrapContext context, BoundTransportAddress boundTransportAddress,
-                                                               List<BootstrapCheck> bootstrapChecks) throws NodeValidationException {
+                    List<BootstrapCheck> bootstrapChecks) throws NodeValidationException {
                 assertEquals(1, bootstrapChecks.size());
                 assertSame(CheckPlugin.CHECK, bootstrapChecks.get(0));
                 executed.set(true);
@@ -156,8 +156,7 @@ public class NodeTests extends ESTestCase {
         final Path tempDir = createTempDir();
         return Settings.builder()
                 .put(ClusterName.CLUSTER_NAME_SETTING.getKey(), InternalTestCluster.clusterName("single-node-cluster", randomLong()))
-                .put(Environment.PATH_HOME_SETTING.getKey(), tempDir)
-                .put(NetworkModule.TRANSPORT_TYPE_KEY, getTestTransportType())
+                .put(Environment.PATH_HOME_SETTING.getKey(), tempDir).put(NetworkModule.TRANSPORT_TYPE_KEY, getTestTransportType())
                 .put(dataNode());
     }
 
@@ -169,7 +168,8 @@ public class NodeTests extends ESTestCase {
         final CountDownLatch threadRunning = new CountDownLatch(1);
         threadpool.executor(ThreadPool.Names.SEARCH).execute(() -> {
             threadRunning.countDown();
-            while (shouldRun.get());
+            while (shouldRun.get())
+                ;
         });
         threadRunning.await();
         node.close();
@@ -192,7 +192,8 @@ public class NodeTests extends ESTestCase {
             }
             try {
                 threadpool.executor(ThreadPool.Names.SEARCH).execute(() -> {
-                    while (shouldRun.get());
+                    while (shouldRun.get())
+                        ;
                 });
             } catch (RejectedExecutionException e) {
                 assertThat(e.getMessage(), containsString("[Terminated,"));
@@ -231,7 +232,8 @@ public class NodeTests extends ESTestCase {
         final CountDownLatch threadRunning = new CountDownLatch(1);
         threadpool.executor(ThreadPool.Names.SEARCH).execute(() -> {
             threadRunning.countDown();
-            while (shouldRun.get());
+            while (shouldRun.get())
+                ;
         });
         threadRunning.await();
         node.close();
@@ -302,8 +304,7 @@ public class NodeTests extends ESTestCase {
     }
 
     public void testCreateWithCircuitBreakerPlugins() throws IOException {
-        Settings.Builder settings = baseSettings()
-            .put("breaker.test_breaker.limit", "50b");
+        Settings.Builder settings = baseSettings().put("breaker.test_breaker.limit", "50b");
         List<Class<? extends Plugin>> plugins = basePlugins();
         plugins.add(MockCircuitBreakerPlugin.class);
         try (Node node = new MockNode(settings.build(), plugins)) {
@@ -313,8 +314,7 @@ public class NodeTests extends ESTestCase {
             CircuitBreakerPlugin breakerPlugin = node.getPluginsService().filterPlugins(CircuitBreakerPlugin.class).get(0);
             assertTrue(breakerPlugin instanceof MockCircuitBreakerPlugin);
             assertSame("plugin circuit breaker instance is not the same as breaker service's instance",
-                ((MockCircuitBreakerPlugin)breakerPlugin).myCircuitBreaker.get(),
-                service.getBreaker("test_breaker"));
+                    ((MockCircuitBreakerPlugin) breakerPlugin).myCircuitBreaker.get(), service.getBreaker("test_breaker"));
         }
     }
 
@@ -322,17 +322,14 @@ public class NodeTests extends ESTestCase {
 
         private SetOnce<CircuitBreaker> myCircuitBreaker = new SetOnce<>();
 
-        public MockCircuitBreakerPlugin() {}
+        public MockCircuitBreakerPlugin() {
+        }
 
         @Override
         public BreakerSettings getCircuitBreaker(Settings settings) {
             return BreakerSettings.updateFromSettings(
-                new BreakerSettings("test_breaker",
-                    100L,
-                    1.0d,
-                    CircuitBreaker.Type.MEMORY,
-                    CircuitBreaker.Durability.TRANSIENT),
-                settings);
+                    new BreakerSettings("test_breaker", 100L, 1.0d, CircuitBreaker.Type.MEMORY, CircuitBreaker.Durability.TRANSIENT),
+                    settings);
         }
 
         @Override

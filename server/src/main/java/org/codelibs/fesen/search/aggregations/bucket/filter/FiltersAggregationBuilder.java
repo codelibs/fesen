@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,20 +42,9 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.Rewriteable;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.bucket.filter.FiltersAggregator.KeyedFilter;
-
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class FiltersAggregationBuilder extends AbstractAggregationBuilder<FiltersAggregationBuilder> {
     public static final String NAME = "filters";
@@ -224,9 +224,9 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
 
     @Override
     protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-        throws IOException {
+            throws IOException {
         return new FiltersAggregatorFactory(name, filters, keyed, otherBucket, otherBucketKey, queryShardContext, parent,
-            subFactoriesBuilder, metadata);
+                subFactoriesBuilder, metadata);
     }
 
     @Override
@@ -251,8 +251,7 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
         return builder;
     }
 
-    public static FiltersAggregationBuilder parse(String aggregationName, XContentParser parser)
-        throws IOException {
+    public static FiltersAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
 
         List<FiltersAggregator.KeyedFilter> filters = new ArrayList<>();
 
@@ -269,14 +268,14 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
                     otherBucket = parser.booleanValue();
                 } else {
                     throw new ParsingException(parser.getTokenLocation(),
-                        "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
+                            "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
                 }
             } else if (token == XContentParser.Token.VALUE_STRING) {
                 if (OTHER_BUCKET_KEY_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     otherBucketKey = parser.text();
                 } else {
                     throw new ParsingException(parser.getTokenLocation(),
-                        "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
+                            "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if (FILTERS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
@@ -292,7 +291,7 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
                     keyed = true;
                 } else {
                     throw new ParsingException(parser.getTokenLocation(),
-                        "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
+                            "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
                 }
             } else if (token == XContentParser.Token.START_ARRAY) {
                 if (FILTERS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
@@ -306,11 +305,11 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
                     }
                 } else {
                     throw new ParsingException(parser.getTokenLocation(),
-                        "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
+                            "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
                 }
             } else {
                 throw new ParsingException(parser.getTokenLocation(),
-                    "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
+                        "Unknown key for a " + token + " in [" + aggregationName + "]: [" + currentFieldName + "].");
             }
         }
 
@@ -340,14 +339,15 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         FiltersAggregationBuilder other = (FiltersAggregationBuilder) obj;
-        return Objects.equals(filters, other.filters)
-            && Objects.equals(keyed, other.keyed)
-            && Objects.equals(otherBucket, other.otherBucket)
-            && Objects.equals(otherBucketKey, other.otherBucketKey);
+        return Objects.equals(filters, other.filters) && Objects.equals(keyed, other.keyed)
+                && Objects.equals(otherBucket, other.otherBucket) && Objects.equals(otherBucketKey, other.otherBucketKey);
     }
 
     @Override

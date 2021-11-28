@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.synonym.SynonymFilter;
@@ -35,11 +40,6 @@ import org.codelibs.fesen.index.analysis.CustomAnalyzer;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenizerFactory;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.List;
-import java.util.function.Function;
-
 public class SynonymTokenFilterFactory extends AbstractTokenFilterFactory {
 
     private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(SynonymTokenFilterFactory.class);
@@ -51,15 +51,13 @@ public class SynonymTokenFilterFactory extends AbstractTokenFilterFactory {
     protected final Environment environment;
     protected final AnalysisMode analysisMode;
 
-    SynonymTokenFilterFactory(IndexSettings indexSettings, Environment env,
-                                      String name, Settings settings) {
+    SynonymTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, name, settings);
         this.settings = settings;
 
         if (settings.get("ignore_case") != null) {
-            DEPRECATION_LOGGER.deprecate("synonym_ignore_case_option",
-                "The ignore_case option on the synonym_graph filter is deprecated. " +
-                        "Instead, insert a lowercase filter in the filter chain before the synonym_graph filter.");
+            DEPRECATION_LOGGER.deprecate("synonym_ignore_case_option", "The ignore_case option on the synonym_graph filter is deprecated. "
+                    + "Instead, insert a lowercase filter in the filter chain before the synonym_graph filter.");
         }
 
         this.expand = settings.getAsBoolean("expand", true);
@@ -82,8 +80,7 @@ public class SynonymTokenFilterFactory extends AbstractTokenFilterFactory {
 
     @Override
     public TokenFilterFactory getChainAwareTokenFilterFactory(TokenizerFactory tokenizer, List<CharFilterFactory> charFilters,
-                                                              List<TokenFilterFactory> previousTokenFilters,
-                                                              Function<String, TokenFilterFactory> allFilters) {
+            List<TokenFilterFactory> previousTokenFilters, Function<String, TokenFilterFactory> allFilters) {
         final Analyzer analyzer = buildSynonymAnalyzer(tokenizer, charFilters, previousTokenFilters, allFilters);
         final SynonymMap synonyms = buildSynonyms(analyzer, getRulesFromSettings(environment));
         final String name = name();
@@ -113,12 +110,10 @@ public class SynonymTokenFilterFactory extends AbstractTokenFilterFactory {
         };
     }
 
-    Analyzer buildSynonymAnalyzer(TokenizerFactory tokenizer, List<CharFilterFactory> charFilters,
-                                  List<TokenFilterFactory> tokenFilters, Function<String, TokenFilterFactory> allFilters) {
+    Analyzer buildSynonymAnalyzer(TokenizerFactory tokenizer, List<CharFilterFactory> charFilters, List<TokenFilterFactory> tokenFilters,
+            Function<String, TokenFilterFactory> allFilters) {
         return new CustomAnalyzer(tokenizer, charFilters.toArray(new CharFilterFactory[0]),
-            tokenFilters.stream()
-                .map(TokenFilterFactory::getSynonymFilter)
-                .toArray(TokenFilterFactory[]::new));
+                tokenFilters.stream().map(TokenFilterFactory::getSynonymFilter).toArray(TokenFilterFactory[]::new));
     }
 
     SynonymMap buildSynonyms(Analyzer analyzer, Reader rules) {

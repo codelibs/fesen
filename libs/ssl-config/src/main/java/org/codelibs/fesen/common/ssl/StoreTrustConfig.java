@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.X509ExtendedTrustManager;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+
+import javax.net.ssl.X509ExtendedTrustManager;
 
 /**
  * A {@link SslTrustConfig} that builds a Trust Manager from a keystore file.
@@ -63,7 +64,7 @@ final class StoreTrustConfig implements SslTrustConfig {
             return KeyStoreUtil.createTrustManager(store, algorithm);
         } catch (GeneralSecurityException e) {
             throw new SslConfigException("cannot create trust manager for path=[" + (path == null ? null : path.toAbsolutePath())
-                + "] type=[" + type + "] password=[" + (password.length == 0 ? "<empty>" : "<non-empty>") + "]", e);
+                    + "] type=[" + type + "] password=[" + (password.length == 0 ? "<empty>" : "<non-empty>") + "]", e);
         }
     }
 

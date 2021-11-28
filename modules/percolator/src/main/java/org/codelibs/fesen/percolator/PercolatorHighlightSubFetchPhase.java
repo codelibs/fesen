@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.percolator;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -35,12 +41,6 @@ import org.codelibs.fesen.search.fetch.subphase.highlight.HighlightPhase;
 import org.codelibs.fesen.search.fetch.subphase.highlight.Highlighter;
 import org.codelibs.fesen.search.fetch.subphase.highlight.SearchHighlightContext;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Highlighting in the case of the percolate query is a bit different, because the PercolateQuery itself doesn't get highlighted,
@@ -75,8 +75,8 @@ final class PercolatorHighlightSubFetchPhase implements FetchSubPhase {
             public void process(HitContext hit) throws IOException {
                 boolean singlePercolateQuery = percolateQueries.size() == 1;
                 for (PercolateQuery percolateQuery : percolateQueries) {
-                    String fieldName = singlePercolateQuery ? PercolatorMatchedSlotSubFetchPhase.FIELD_NAME_PREFIX :
-                        PercolatorMatchedSlotSubFetchPhase.FIELD_NAME_PREFIX + "_" + percolateQuery.getName();
+                    String fieldName = singlePercolateQuery ? PercolatorMatchedSlotSubFetchPhase.FIELD_NAME_PREFIX
+                            : PercolatorMatchedSlotSubFetchPhase.FIELD_NAME_PREFIX + "_" + percolateQuery.getName();
                     IndexSearcher percolatorIndexSearcher = percolateQuery.getPercolatorIndexSearcher();
                     PercolateQuery.QueryStore queryStore = percolateQuery.getQueryStore();
 
@@ -93,17 +93,8 @@ final class PercolatorHighlightSubFetchPhase implements FetchSubPhase {
                         for (Object matchedSlot : field.getValues()) {
                             int slot = (int) matchedSlot;
                             BytesReference document = percolateQuery.getDocuments().get(slot);
-                            HitContext subContext = new HitContext(
-                                new SearchHit(
-                                    slot,
-                                    "unknown",
-                                    new Text(hit.hit().getType()),
-                                    Collections.emptyMap(),
-                                    Collections.emptyMap()
-                                ),
-                                percolatorLeafReaderContext,
-                                slot,
-                                new SourceLookup());
+                            HitContext subContext = new HitContext(new SearchHit(slot, "unknown", new Text(hit.hit().getType()),
+                                    Collections.emptyMap(), Collections.emptyMap()), percolatorLeafReaderContext, slot, new SourceLookup());
                             subContext.sourceLookup().setSource(document);
                             // force source because MemoryIndex does not store fields
                             SearchHighlightContext highlight = new SearchHighlightContext(fetchContext.highlight().fields(), true);
@@ -118,7 +109,7 @@ final class PercolatorHighlightSubFetchPhase implements FetchSubPhase {
                                         hlFieldName = percolateQuery.getName() + "_" + entry.getKey();
                                     }
                                     hit.hit().getHighlightFields().put(hlFieldName,
-                                        new HighlightField(hlFieldName, entry.getValue().fragments()));
+                                            new HighlightField(hlFieldName, entry.getValue().fragments()));
                                 } else {
                                     // In case multiple documents are being percolated we need to identify to which document
                                     // a highlight belongs to.
@@ -129,7 +120,7 @@ final class PercolatorHighlightSubFetchPhase implements FetchSubPhase {
                                         hlFieldName = percolateQuery.getName() + "_" + slot + "_" + entry.getKey();
                                     }
                                     hit.hit().getHighlightFields().put(hlFieldName,
-                                        new HighlightField(hlFieldName, entry.getValue().fragments()));
+                                            new HighlightField(hlFieldName, entry.getValue().fragments()));
                                 }
                             }
                         }
@@ -148,7 +139,7 @@ final class PercolatorHighlightSubFetchPhase implements FetchSubPhase {
             @Override
             public void visitLeaf(Query query) {
                 if (query instanceof PercolateQuery) {
-                    queries.add((PercolateQuery)query);
+                    queries.add((PercolateQuery) query);
                 }
             }
         });

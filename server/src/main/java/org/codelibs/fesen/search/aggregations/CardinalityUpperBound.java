@@ -112,16 +112,16 @@ public abstract class CardinalityUpperBound {
                 throw new IllegalArgumentException("bucketCount must be positive but was [" + bucketCount + "]");
             }
             switch (bucketCount) {
-                case 0:
-                    return NONE;
-                case 1:
-                    return this;
-                default:
-                    long newEstimate = (long) estimate * (long) bucketCount;
-                    if (newEstimate >= Integer.MAX_VALUE) {
-                        return MANY;
-                    }
-                    return new KnownCardinalityUpperBound((int) newEstimate);
+            case 0:
+                return NONE;
+            case 1:
+                return this;
+            default:
+                long newEstimate = (long) estimate * (long) bucketCount;
+                if (newEstimate >= Integer.MAX_VALUE) {
+                    return MANY;
+                }
+                return new KnownCardinalityUpperBound((int) newEstimate);
             }
         }
 
@@ -132,8 +132,10 @@ public abstract class CardinalityUpperBound {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             KnownCardinalityUpperBound that = (KnownCardinalityUpperBound) o;
             return estimate == that.estimate;
         }

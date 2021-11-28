@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.test.transport;
 
+import static org.apache.lucene.util.LuceneTestCase.rarely;
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+
 import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.Randomness;
@@ -44,14 +52,6 @@ import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
-
-import static org.apache.lucene.util.LuceneTestCase.rarely;
-
 /**
  * A basic transport implementation that allows to intercept requests that have been sent
  */
@@ -61,13 +61,13 @@ public class MockTransport extends StubbableTransport {
     private ConcurrentMap<Long, Tuple<DiscoveryNode, String>> requests = new ConcurrentHashMap<>();
 
     public TransportService createTransportService(Settings settings, ThreadPool threadPool, TransportInterceptor interceptor,
-                                                   Function<BoundTransportAddress, DiscoveryNode> localNodeFactory,
-                                                   @Nullable ClusterSettings clusterSettings, Set<String> taskHeaders) {
+            Function<BoundTransportAddress, DiscoveryNode> localNodeFactory, @Nullable ClusterSettings clusterSettings,
+            Set<String> taskHeaders) {
         StubbableConnectionManager connectionManager = new StubbableConnectionManager(new ClusterConnectionManager(settings, this));
         connectionManager.setDefaultNodeConnectedBehavior((cm, node) -> false);
         connectionManager.setDefaultGetConnectionBehavior((cm, discoveryNode) -> createConnection(discoveryNode));
         return new TransportService(settings, this, threadPool, interceptor, localNodeFactory, clusterSettings, taskHeaders,
-            connectionManager);
+                connectionManager);
     }
 
     public MockTransport() {
@@ -81,13 +81,13 @@ public class MockTransport extends StubbableTransport {
     @SuppressWarnings("unchecked")
     public <Response extends TransportResponse> void handleResponse(final long requestId, final Response response) {
         final TransportResponseHandler<Response> transportResponseHandler =
-            (TransportResponseHandler<Response>) getResponseHandlers().onResponseReceived(requestId, listener);
+                (TransportResponseHandler<Response>) getResponseHandlers().onResponseReceived(requestId, listener);
         if (transportResponseHandler != null) {
             final Response deliveredResponse;
             try (BytesStreamOutput output = new BytesStreamOutput()) {
                 response.writeTo(output);
-                deliveredResponse = transportResponseHandler.read(
-                    new NamedWriteableAwareStreamInput(output.bytes().streamInput(), writeableRegistry()));
+                deliveredResponse = transportResponseHandler
+                        .read(new NamedWriteableAwareStreamInput(output.bytes().streamInput(), writeableRegistry()));
             } catch (IOException | UnsupportedOperationException e) {
                 throw new AssertionError("failed to serialize/deserialize response " + response, e);
             }
@@ -159,7 +159,7 @@ public class MockTransport extends StubbableTransport {
 
             @Override
             public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-                throws TransportException {
+                    throws TransportException {
                 requests.put(requestId, Tuple.tuple(node, action));
                 onSendRequest(requestId, action, request, node);
             }

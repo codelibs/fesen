@@ -30,7 +30,7 @@ public class RefreshResponseTests extends AbstractBroadcastResponseTestCase<Refr
 
     @Override
     protected RefreshResponse createTestInstance(int totalShards, int successfulShards, int failedShards,
-                                                 List<DefaultShardOperationFailedException> failures) {
+            List<DefaultShardOperationFailedException> failures) {
         return new RefreshResponse(totalShards, successfulShards, failedShards, failures);
     }
 

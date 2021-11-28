@@ -19,24 +19,8 @@
 
 package org.codelibs.fesen.common.util;
 
-import com.carrotsearch.randomizedtesting.RandomizedContext;
-import com.carrotsearch.randomizedtesting.SeedUtils;
-import org.apache.lucene.util.Accountable;
-import org.apache.lucene.util.Accountables;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.common.breaker.CircuitBreaker;
-import org.codelibs.fesen.common.util.BigArray;
-import org.codelibs.fesen.common.util.BigArrays;
-import org.codelibs.fesen.common.util.ByteArray;
-import org.codelibs.fesen.common.util.DoubleArray;
-import org.codelibs.fesen.common.util.FloatArray;
-import org.codelibs.fesen.common.util.IntArray;
-import org.codelibs.fesen.common.util.LongArray;
-import org.codelibs.fesen.common.util.ObjectArray;
-import org.codelibs.fesen.common.util.PageCacheRecycler;
-import org.codelibs.fesen.common.util.set.Sets;
-import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
+import static org.codelibs.fesen.test.ESTestCase.assertBusy;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,8 +32,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.codelibs.fesen.test.ESTestCase.assertBusy;
-import static org.junit.Assert.assertTrue;
+import org.apache.lucene.util.Accountable;
+import org.apache.lucene.util.Accountables;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.LuceneTestCase;
+import org.codelibs.fesen.common.breaker.CircuitBreaker;
+import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
+
+import com.carrotsearch.randomizedtesting.RandomizedContext;
+import com.carrotsearch.randomizedtesting.SeedUtils;
 
 public class MockBigArrays extends BigArrays {
 
@@ -109,7 +101,6 @@ public class MockBigArrays extends BigArrays {
         }
         random = new Random(seed);
     }
-
 
     @Override
     public BigArrays withCircuitBreaking() {
@@ -248,7 +239,7 @@ public class MockBigArrays extends BigArrays {
 
     @Override
     public <T> ObjectArray<T> newObjectArray(long size) {
-        return new ObjectArrayWrapper<>(super.<T>newObjectArray(size));
+        return new ObjectArrayWrapper<>(super.<T> newObjectArray(size));
     }
 
     @Override

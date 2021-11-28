@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.client.sniff.documentation;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpHost;
 import org.codelibs.fesen.client.Node;
 import org.codelibs.fesen.client.RestClient;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
 import org.codelibs.fesen.client.sniff.NodesSniffer;
 import org.codelibs.fesen.client.sniff.SniffOnFailureListener;
 import org.codelibs.fesen.client.sniff.Sniffer;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class is used to generate the Java low-level REST client documentation.
@@ -55,9 +55,7 @@ public class SnifferDocumentation {
     public void usage() throws IOException {
         {
             //tag::sniffer-init
-            RestClient restClient = RestClient.builder(
-                new HttpHost("localhost", 9200, "http"))
-                .build();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
             Sniffer sniffer = Sniffer.builder(restClient).build();
             //end::sniffer-init
 
@@ -68,66 +66,45 @@ public class SnifferDocumentation {
         }
         {
             //tag::sniffer-interval
-            RestClient restClient = RestClient.builder(
-                new HttpHost("localhost", 9200, "http"))
-                .build();
-            Sniffer sniffer = Sniffer.builder(restClient)
-                .setSniffIntervalMillis(60000).build();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+            Sniffer sniffer = Sniffer.builder(restClient).setSniffIntervalMillis(60000).build();
             //end::sniffer-interval
         }
         {
             //tag::sniff-on-failure
-            SniffOnFailureListener sniffOnFailureListener =
-                new SniffOnFailureListener();
-            RestClient restClient = RestClient.builder(
-                new HttpHost("localhost", 9200))
-                .setFailureListener(sniffOnFailureListener) // <1>
-                .build();
-            Sniffer sniffer = Sniffer.builder(restClient)
-                .setSniffAfterFailureDelayMillis(30000) // <2>
-                .build();
+            SniffOnFailureListener sniffOnFailureListener = new SniffOnFailureListener();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).setFailureListener(sniffOnFailureListener) // <1>
+                    .build();
+            Sniffer sniffer = Sniffer.builder(restClient).setSniffAfterFailureDelayMillis(30000) // <2>
+                    .build();
             sniffOnFailureListener.setSniffer(sniffer); // <3>
             //end::sniff-on-failure
         }
         {
             //tag::sniffer-https
-            RestClient restClient = RestClient.builder(
-                    new HttpHost("localhost", 9200, "http"))
-                    .build();
-            NodesSniffer nodesSniffer = new FesenNodesSniffer(
-                    restClient,
-                    FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT,
-                    FesenNodesSniffer.Scheme.HTTPS);
-            Sniffer sniffer = Sniffer.builder(restClient)
-                    .setNodesSniffer(nodesSniffer).build();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+            NodesSniffer nodesSniffer =
+                    new FesenNodesSniffer(restClient, FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT, FesenNodesSniffer.Scheme.HTTPS);
+            Sniffer sniffer = Sniffer.builder(restClient).setNodesSniffer(nodesSniffer).build();
             //end::sniffer-https
         }
         {
             //tag::sniff-request-timeout
-            RestClient restClient = RestClient.builder(
-                new HttpHost("localhost", 9200, "http"))
-                .build();
-            NodesSniffer nodesSniffer = new FesenNodesSniffer(
-                restClient,
-                TimeUnit.SECONDS.toMillis(5),
-                FesenNodesSniffer.Scheme.HTTP);
-            Sniffer sniffer = Sniffer.builder(restClient)
-                .setNodesSniffer(nodesSniffer).build();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+            NodesSniffer nodesSniffer = new FesenNodesSniffer(restClient, TimeUnit.SECONDS.toMillis(5), FesenNodesSniffer.Scheme.HTTP);
+            Sniffer sniffer = Sniffer.builder(restClient).setNodesSniffer(nodesSniffer).build();
             //end::sniff-request-timeout
         }
         {
             //tag::custom-nodes-sniffer
-            RestClient restClient = RestClient.builder(
-                new HttpHost("localhost", 9200, "http"))
-                .build();
+            RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
             NodesSniffer nodesSniffer = new NodesSniffer() {
-                    @Override
-                    public List<Node> sniff() throws IOException {
-                        return null; // <1>
-                    }
-                };
-            Sniffer sniffer = Sniffer.builder(restClient)
-                .setNodesSniffer(nodesSniffer).build();
+                @Override
+                public List<Node> sniff() throws IOException {
+                    return null; // <1>
+                }
+            };
+            Sniffer sniffer = Sniffer.builder(restClient).setNodesSniffer(nodesSniffer).build();
             //end::custom-nodes-sniffer
         }
     }

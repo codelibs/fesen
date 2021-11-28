@@ -26,13 +26,13 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 /**
  * A generic exception that can be thrown by a task when it's cancelled by the task manager API
  */
-public class TaskCancelledException  extends FesenException {
+public class TaskCancelledException extends FesenException {
 
     public TaskCancelledException(String msg) {
         super(msg);
     }
 
-    public TaskCancelledException(StreamInput in) throws IOException{
+    public TaskCancelledException(StreamInput in) throws IOException {
         super(in);
     }
 }

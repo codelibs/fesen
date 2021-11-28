@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.test;
 
+import static java.util.Collections.emptyMap;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,8 +37,6 @@ import org.codelibs.fesen.search.aggregations.MultiBucketConsumerService;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
-
-import static java.util.Collections.emptyMap;
 
 public abstract class InternalMultiBucketAggregationTestCase<T extends InternalAggregation & MultiBucketsAggregation>
         extends InternalAggregationTestCase<T> {
@@ -90,8 +90,8 @@ public abstract class InternalMultiBucketAggregationTestCase<T extends InternalA
     @Override
     protected final T createTestInstance(String name, Map<String, Object> metadata) {
         T instance = createTestInstance(name, metadata, subAggregationsSupplier.get());
-        assert instance.getBuckets().size() <= maxNumberOfBuckets() :
-                "Maximum number of buckets exceeded for " + instance.getClass().getSimpleName() + " aggregation";
+        assert instance.getBuckets().size() <= maxNumberOfBuckets() : "Maximum number of buckets exceeded for "
+                + instance.getClass().getSimpleName() + " aggregation";
         return instance;
     }
 

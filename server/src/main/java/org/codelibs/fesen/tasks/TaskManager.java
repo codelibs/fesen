@@ -19,33 +19,8 @@
 
 package org.codelibs.fesen.tasks;
 
-import com.carrotsearch.hppc.ObjectIntHashMap;
-import com.carrotsearch.hppc.ObjectIntMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenTimeoutException;
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.ActionResponse;
-import org.codelibs.fesen.cluster.ClusterChangedEvent;
-import org.codelibs.fesen.cluster.ClusterStateApplier;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.cluster.node.DiscoveryNodes;
-import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.lease.Releasables;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
-import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
-import org.codelibs.fesen.common.util.concurrent.ConcurrentMapLong;
-import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.transport.TcpChannel;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_HEADER_SIZE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,8 +39,34 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_HEADER_SIZE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.apache.lucene.util.SetOnce;
+import org.codelibs.fesen.Assertions;
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenTimeoutException;
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.ActionResponse;
+import org.codelibs.fesen.cluster.ClusterChangedEvent;
+import org.codelibs.fesen.cluster.ClusterStateApplier;
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.cluster.node.DiscoveryNodes;
+import org.codelibs.fesen.common.lease.Releasable;
+import org.codelibs.fesen.common.lease.Releasables;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
+import org.codelibs.fesen.common.util.concurrent.ConcurrentMapLong;
+import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.TcpChannel;
+
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.ObjectIntMap;
 
 /**
  * Task Manager service for keeping track of currently running tasks on the nodes
@@ -82,8 +83,8 @@ public class TaskManager implements ClusterStateApplier {
 
     private final ConcurrentMapLong<Task> tasks = ConcurrentCollections.newConcurrentMapLongWithAggressiveConcurrency();
 
-    private final ConcurrentMapLong<CancellableTaskHolder> cancellableTasks = ConcurrentCollections
-        .newConcurrentMapLongWithAggressiveConcurrency();
+    private final ConcurrentMapLong<CancellableTaskHolder> cancellableTasks =
+            ConcurrentCollections.newConcurrentMapLongWithAggressiveConcurrency();
 
     private final AtomicLong taskIdGenerator = new AtomicLong();
 
@@ -300,7 +301,6 @@ public class TaskManager implements ClusterStateApplier {
         return Collections.unmodifiableMap(taskHashMap);
     }
 
-
     /**
      * Returns the list of currently running tasks on the node that can be cancelled
      */
@@ -361,10 +361,7 @@ public class TaskManager implements ClusterStateApplier {
                 banedParents.put(parentTaskId, reason);
             }
         }
-        return cancellableTasks.values().stream()
-            .filter(t -> t.hasParent(parentTaskId))
-            .map(t -> t.task)
-            .collect(Collectors.toList());
+        return cancellableTasks.values().stream().filter(t -> t.hasParent(parentTaskId)).map(t -> t.task).collect(Collectors.toList());
     }
 
     /**
@@ -411,7 +408,7 @@ public class TaskManager implements ClusterStateApplier {
                     TaskId taskId = banIterator.next();
                     if (lastDiscoveryNodes.nodeExists(taskId.getNodeId()) == false) {
                         logger.debug("Removing ban for the parent [{}] on the node [{}], reason: the parent node is gone", taskId,
-                            event.state().getNodes().getLocalNode());
+                                event.state().getNodes().getLocalNode());
                         banIterator.remove();
                     }
                 }
@@ -551,8 +548,8 @@ public class TaskManager implements ClusterStateApplier {
                 if (childTasksPerNode == null) {
                     pendingChildNodes = Collections.emptySet();
                 } else {
-                    pendingChildNodes = StreamSupport.stream(childTasksPerNode.spliterator(), false)
-                        .map(e -> e.key).collect(Collectors.toSet());
+                    pendingChildNodes =
+                            StreamSupport.stream(childTasksPerNode.spliterator(), false).map(e -> e.key).collect(Collectors.toSet());
                 }
                 if (pendingChildNodes.isEmpty()) {
                     assert childTaskCompletedListeners == null;
@@ -586,15 +583,13 @@ public class TaskManager implements ClusterStateApplier {
             return curr;
         });
         if (tracker.registered.compareAndSet(false, true)) {
-            channel.addCloseListener(ActionListener.wrap(
-                r -> {
-                    final ChannelPendingTaskTracker removedTracker = channelPendingTaskTrackers.remove(channel);
-                    assert removedTracker == tracker;
-                    cancelTasksOnChannelClosed(tracker.drainTasks());
-                },
-                e -> {
-                    assert false : new AssertionError("must not be here", e);
-                }));
+            channel.addCloseListener(ActionListener.wrap(r -> {
+                final ChannelPendingTaskTracker removedTracker = channelPendingTaskTrackers.remove(channel);
+                assert removedTracker == tracker;
+                cancelTasksOnChannelClosed(tracker.drainTasks());
+            }, e -> {
+                assert false : new AssertionError("must not be here", e);
+            }));
         }
         return () -> tracker.removeTask(task);
     }

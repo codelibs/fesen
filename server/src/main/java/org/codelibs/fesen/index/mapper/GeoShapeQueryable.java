@@ -35,7 +35,7 @@ public interface GeoShapeQueryable {
 
     @Deprecated
     default Query geoShapeQuery(Geometry shape, String fieldName, SpatialStrategy strategy, ShapeRelation relation,
-                          QueryShardContext context) {
+            QueryShardContext context) {
         return geoShapeQuery(shape, fieldName, relation, context);
     }
 }

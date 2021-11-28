@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
+import static java.util.Collections.unmodifiableMap;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,26 +48,21 @@ import org.codelibs.fesen.snapshots.SnapshotShardsService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import static java.util.Collections.unmodifiableMap;
-
 /**
  * Transport client that collects snapshot shard statuses from data nodes
  */
-public class TransportNodesSnapshotsStatus extends TransportNodesAction<TransportNodesSnapshotsStatus.Request,
-                                                                        TransportNodesSnapshotsStatus.NodesSnapshotStatus,
-                                                                        TransportNodesSnapshotsStatus.NodeRequest,
-                                                                        TransportNodesSnapshotsStatus.NodeSnapshotStatus> {
+public class TransportNodesSnapshotsStatus extends
+        TransportNodesAction<TransportNodesSnapshotsStatus.Request, TransportNodesSnapshotsStatus.NodesSnapshotStatus, TransportNodesSnapshotsStatus.NodeRequest, TransportNodesSnapshotsStatus.NodeSnapshotStatus> {
 
     public static final String ACTION_NAME = SnapshotsStatusAction.NAME + "[nodes]";
     public static final ActionType<NodesSnapshotStatus> TYPE = new ActionType<>(ACTION_NAME, NodesSnapshotStatus::new);
 
     private final SnapshotShardsService snapshotShardsService;
 
-    public TransportNodesSnapshotsStatus(ThreadPool threadPool, ClusterService clusterService,
-                                         TransportService transportService, SnapshotShardsService snapshotShardsService,
-                                         ActionFilters actionFilters) {
-        super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters,
-            Request::new, NodeRequest::new, ThreadPool.Names.GENERIC, NodeSnapshotStatus.class);
+    public TransportNodesSnapshotsStatus(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
+            SnapshotShardsService snapshotShardsService, ActionFilters actionFilters) {
+        super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, Request::new, NodeRequest::new,
+                ThreadPool.Names.GENERIC, NodeSnapshotStatus.class);
         this.snapshotShardsService = snapshotShardsService;
     }
 
@@ -162,7 +159,6 @@ public class TransportNodesSnapshotsStatus extends TransportNodesAction<Transpor
             out.writeList(nodes);
         }
     }
-
 
     public static class NodeRequest extends BaseNodeRequest {
 

@@ -18,14 +18,19 @@
  */
 package org.codelibs.fesen.analysis.common;
 
+import static com.carrotsearch.randomizedtesting.RandomizedTest.scaledRandomIntBetween;
+import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_VERSION_CREATED;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.io.StringReader;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
-import org.codelibs.fesen.analysis.common.StemmerTokenFilterFactory;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
@@ -36,13 +41,6 @@ import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.VersionUtils;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import static com.carrotsearch.randomizedtesting.RandomizedTest.scaledRandomIntBetween;
-import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_VERSION_CREATED;
-import static org.hamcrest.Matchers.instanceOf;
-
 public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
 
     private static final CommonAnalysisPlugin PLUGIN = new CommonAnalysisPlugin();
@@ -51,14 +49,11 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
         int iters = scaledRandomIntBetween(20, 100);
         for (int i = 0; i < iters; i++) {
             Version v = VersionUtils.randomVersion(random());
-            Settings settings = Settings.builder()
-                    .put("index.analysis.filter.my_english.type", "stemmer")
+            Settings settings = Settings.builder().put("index.analysis.filter.my_english.type", "stemmer")
                     .put("index.analysis.filter.my_english.language", "english")
-                    .put("index.analysis.analyzer.my_english.tokenizer","whitespace")
-                    .put("index.analysis.analyzer.my_english.filter","my_english")
-                    .put(SETTING_VERSION_CREATED,v)
-                    .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                    .build();
+                    .put("index.analysis.analyzer.my_english.tokenizer", "whitespace")
+                    .put("index.analysis.analyzer.my_english.filter", "my_english").put(SETTING_VERSION_CREATED, v)
+                    .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
 
             ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN);
             TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_english");
@@ -69,7 +64,7 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
             IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
             NamedAnalyzer analyzer = indexAnalyzers.get("my_english");
             assertThat(create, instanceOf(PorterStemFilter.class));
-            assertAnalyzesTo(analyzer, "consolingly", new String[]{"consolingli"});
+            assertAnalyzesTo(analyzer, "consolingly", new String[] { "consolingli" });
         }
     }
 
@@ -78,14 +73,11 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
         for (int i = 0; i < iters; i++) {
 
             Version v = VersionUtils.randomVersion(random());
-            Settings settings = Settings.builder()
-                    .put("index.analysis.filter.my_porter2.type", "stemmer")
+            Settings settings = Settings.builder().put("index.analysis.filter.my_porter2.type", "stemmer")
                     .put("index.analysis.filter.my_porter2.language", "porter2")
-                    .put("index.analysis.analyzer.my_porter2.tokenizer","whitespace")
-                    .put("index.analysis.analyzer.my_porter2.filter","my_porter2")
-                    .put(SETTING_VERSION_CREATED,v)
-                    .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                    .build();
+                    .put("index.analysis.analyzer.my_porter2.tokenizer", "whitespace")
+                    .put("index.analysis.analyzer.my_porter2.filter", "my_porter2").put(SETTING_VERSION_CREATED, v)
+                    .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
 
             ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN);
             TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_porter2");
@@ -96,7 +88,7 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
             IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
             NamedAnalyzer analyzer = indexAnalyzers.get("my_porter2");
             assertThat(create, instanceOf(SnowballFilter.class));
-            assertAnalyzesTo(analyzer, "possibly", new String[]{"possibl"});
+            assertAnalyzesTo(analyzer, "possibly", new String[] { "possibl" });
         }
     }
 
@@ -106,8 +98,8 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .putList("index.analysis.filter.my_english.language", "english", "light_english").put(SETTING_VERSION_CREATED, v)
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
 
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN));
+        IllegalArgumentException e =
+                expectThrows(IllegalArgumentException.class, () -> AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN));
         assertEquals("Invalid stemmer class specified: [english, light_english]", e.getMessage());
     }
 }

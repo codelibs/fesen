@@ -49,9 +49,7 @@ public class EnvironmentTests extends ESTestCase {
     }
 
     public Environment newEnvironment(Settings settings) {
-        Settings build = Settings.builder()
-                .put(settings)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toAbsolutePath())
+        Settings build = Settings.builder().put(settings).put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toAbsolutePath())
                 .putList(Environment.PATH_DATA_SETTING.getKey(), tmpPaths()).build();
         return new Environment(build, null);
     }
@@ -70,7 +68,6 @@ public class EnvironmentTests extends ESTestCase {
         assertThat(environment.resolveRepoFile("/somethingeles/repos/repo1"), nullValue());
         assertThat(environment.resolveRepoFile("/test/other/repo"), notNullValue());
 
-
         assertThat(environment.resolveRepoURL(new URL("file:///test/repos/repo1")), notNullValue());
         assertThat(environment.resolveRepoURL(new URL("file:/test/repos/repo1")), notNullValue());
         assertThat(environment.resolveRepoURL(new URL("file://test/repos/repo1")), nullValue());
@@ -88,7 +85,7 @@ public class EnvironmentTests extends ESTestCase {
         final Path pathHome = createTempDir().toAbsolutePath();
         final Settings settings = Settings.builder().put("path.home", pathHome).build();
         final Environment environment = new Environment(settings, null);
-        assertThat(environment.dataFiles(), equalTo(new Path[]{pathHome.resolve("data")}));
+        assertThat(environment.dataFiles(), equalTo(new Path[] { pathHome.resolve("data") }));
     }
 
     public void testPathDataNotSetInEnvironmentIfNotSet() {
@@ -128,12 +125,7 @@ public class EnvironmentTests extends ESTestCase {
 
     public void testNodeDoesNotRequireLocalStorage() {
         final Path pathHome = createTempDir().toAbsolutePath();
-        final Settings settings =
-                Settings.builder()
-                        .put("path.home", pathHome)
-                        .put("node.master", false)
-                        .put("node.data", false)
-                        .build();
+        final Settings settings = Settings.builder().put("path.home", pathHome).put("node.master", false).put("node.data", false).build();
         final Environment environment = new Environment(settings, null, false);
         assertThat(environment.dataFiles(), arrayWithSize(0));
     }
@@ -141,21 +133,14 @@ public class EnvironmentTests extends ESTestCase {
     public void testNodeDoesNotRequireLocalStorageButHasPathData() {
         final Path pathHome = createTempDir().toAbsolutePath();
         final Path pathData = pathHome.resolve("data");
-        final Settings settings =
-                Settings.builder()
-                        .put("path.home", pathHome)
-                        .put("path.data", pathData)
-                        .put("node.master", false)
-                        .put("node.data", false)
-                        .build();
+        final Settings settings = Settings.builder().put("path.home", pathHome).put("path.data", pathData).put("node.master", false)
+                .put("node.data", false).build();
         final IllegalStateException e = expectThrows(IllegalStateException.class, () -> new Environment(settings, null, false));
         assertThat(e, hasToString(containsString("node does not require local storage yet path.data is set to [" + pathData + "]")));
     }
 
     public void testNonExistentTempPathValidation() {
-        Settings build = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
-            .build();
+        Settings build = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
         Environment environment = new Environment(build, null, true, createTempDir().resolve("this_does_not_exist"));
         FileNotFoundException e = expectThrows(FileNotFoundException.class, environment::validateTmpFile);
         assertThat(e.getMessage(), startsWith("Temporary file directory ["));
@@ -163,9 +148,7 @@ public class EnvironmentTests extends ESTestCase {
     }
 
     public void testTempPathValidationWhenRegularFile() throws IOException {
-        Settings build = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
-            .build();
+        Settings build = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
         Environment environment = new Environment(build, null, true, createTempFile("something", ".test"));
         IOException e = expectThrows(IOException.class, environment::validateTmpFile);
         assertThat(e.getMessage(), startsWith("Configured temporary file directory ["));
@@ -181,14 +164,12 @@ public class EnvironmentTests extends ESTestCase {
             pidFileSetting = Environment.PIDFILE_SETTING;
         }
 
-        final Settings settings = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), "home")
-            .put(Environment.PATH_DATA_SETTING.getKey(), "./home/../home/data")
-            .put(Environment.PATH_LOGS_SETTING.getKey(), "./home/../home/logs")
-            .put(Environment.PATH_REPO_SETTING.getKey(), "./home/../home/repo")
-            .put(Environment.PATH_SHARED_DATA_SETTING.getKey(), "./home/../home/shared_data")
-            .put(pidFileSetting.getKey(), "./home/../home/pidfile")
-            .build();
+        final Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), "home")
+                .put(Environment.PATH_DATA_SETTING.getKey(), "./home/../home/data")
+                .put(Environment.PATH_LOGS_SETTING.getKey(), "./home/../home/logs")
+                .put(Environment.PATH_REPO_SETTING.getKey(), "./home/../home/repo")
+                .put(Environment.PATH_SHARED_DATA_SETTING.getKey(), "./home/../home/shared_data")
+                .put(pidFileSetting.getKey(), "./home/../home/pidfile").build();
 
         // the above paths will be treated as relative to the working directory
         final Path workingDirectory = PathUtils.get(System.getProperty("user.dir"));

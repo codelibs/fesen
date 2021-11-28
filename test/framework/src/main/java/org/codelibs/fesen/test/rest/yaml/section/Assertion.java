@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
-
 import java.io.IOException;
 import java.util.Map;
+
+import org.codelibs.fesen.common.xcontent.XContentLocation;
+import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
 
 /**
  * Base class for executable sections that hold assertions

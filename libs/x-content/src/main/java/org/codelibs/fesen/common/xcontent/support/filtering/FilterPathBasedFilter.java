@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common.xcontent.support.filtering;
 
-import com.fasterxml.jackson.core.filter.TokenFilter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.core.filter.TokenFilter;
 
 public class FilterPathBasedFilter extends TokenFilter {
 
@@ -87,7 +87,6 @@ public class FilterPathBasedFilter extends TokenFilter {
         }
         return NO_MATCHING;
     }
-
 
     @Override
     public TokenFilter includeProperty(String name) {

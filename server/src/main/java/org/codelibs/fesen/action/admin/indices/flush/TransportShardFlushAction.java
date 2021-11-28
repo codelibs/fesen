@@ -35,17 +35,15 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportShardFlushAction
-        extends TransportReplicationAction<ShardFlushRequest, ShardFlushRequest, ReplicationResponse> {
+public class TransportShardFlushAction extends TransportReplicationAction<ShardFlushRequest, ShardFlushRequest, ReplicationResponse> {
 
     public static final String NAME = FlushAction.NAME + "[s]";
 
     @Inject
     public TransportShardFlushAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                     IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
-                                     ActionFilters actionFilters) {
-        super(settings, NAME, transportService, clusterService, indicesService, threadPool, shardStateAction,
-            actionFilters, ShardFlushRequest::new, ShardFlushRequest::new, ThreadPool.Names.FLUSH);
+            IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction, ActionFilters actionFilters) {
+        super(settings, NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
+                ShardFlushRequest::new, ShardFlushRequest::new, ThreadPool.Names.FLUSH);
     }
 
     @Override

@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.upgrades;
 
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.client.Request;
 import org.codelibs.fesen.common.Strings;
@@ -27,12 +33,6 @@ import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.test.rest.ESRestTestCase;
 import org.junit.Before;
-
-import java.io.IOException;
-import java.util.Map;
-
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.hamcrest.Matchers.equalTo;
 
 public abstract class AbstractFullClusterRestartTestCase extends ESRestTestCase {
 

@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.script;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -33,24 +42,15 @@ import org.codelibs.fesen.common.xcontent.AbstractObjectParser;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiConsumer;
 
 /**
  * {@link Script} represents used-defined input that can be used to
@@ -192,10 +192,8 @@ public final class Script implements ToXContentObject, Writeable {
          * Helper method to throw an exception if more than one type of {@link Script} is specified.
          */
         private void throwOnlyOneOfType() {
-            throw new IllegalArgumentException("must only use one of [" +
-                ScriptType.INLINE.getParseField().getPreferredName() + ", " +
-                ScriptType.STORED.getParseField().getPreferredName() + "]" +
-                " when specifying a script");
+            throw new IllegalArgumentException("must only use one of [" + ScriptType.INLINE.getParseField().getPreferredName() + ", "
+                    + ScriptType.STORED.getParseField().getPreferredName() + "]" + " when specifying a script");
         }
 
         private void setLang(String lang) {
@@ -231,8 +229,7 @@ public final class Script implements ToXContentObject, Writeable {
                 }
 
                 if (idOrCode == null) {
-                    throw new IllegalArgumentException(
-                        "must specify <id> for an inline script");
+                    throw new IllegalArgumentException("must specify <id> for an inline script");
                 }
 
                 if (options.size() > 1 || options.size() == 1 && options.get(CONTENT_TYPE_OPTION) == null) {
@@ -242,20 +239,18 @@ public final class Script implements ToXContentObject, Writeable {
                 }
             } else if (type == ScriptType.STORED) {
                 if (lang != null) {
-                    throw new IllegalArgumentException(
-                        "illegally specified <lang> for a stored script");
+                    throw new IllegalArgumentException("illegally specified <lang> for a stored script");
                 }
 
                 if (idOrCode == null) {
-                    throw new IllegalArgumentException(
-                        "must specify <code> for a stored script");
+                    throw new IllegalArgumentException("must specify <code> for a stored script");
                 }
 
                 if (options.isEmpty()) {
                     options = null;
                 } else {
-                    throw new IllegalArgumentException("field [" + OPTIONS_PARSE_FIELD.getPreferredName() + "] " +
-                        "cannot be specified using a stored script");
+                    throw new IllegalArgumentException(
+                            "field [" + OPTIONS_PARSE_FIELD.getPreferredName() + "] " + "cannot be specified using a stored script");
                 }
             }
 
@@ -307,13 +302,13 @@ public final class Script implements ToXContentObject, Writeable {
      * Parse the script configured in the given settings.
      */
     public static Script parse(Settings settings) {
-        try (XContentBuilder builder = JsonXContent.contentBuilder()){
+        try (XContentBuilder builder = JsonXContent.contentBuilder()) {
             builder.startObject();
             settings.toXContent(builder, ToXContent.EMPTY_PARAMS);
             builder.endObject();
             try (InputStream stream = BytesReference.bytes(builder).streamInput();
-                 XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
-                     LoggingDeprecationHandler.INSTANCE, stream)) {
+                    XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
+                            LoggingDeprecationHandler.INSTANCE, stream)) {
                 return parse(parser);
             }
         } catch (IOException e) {
@@ -420,7 +415,7 @@ public final class Script implements ToXContentObject, Writeable {
         if (config instanceof String) {
             return new Script((String) config);
         } else if (config instanceof Map) {
-            Map<String,Object> configMap = (Map<String, Object>) config;
+            Map<String, Object> configMap = (Map<String, Object>) config;
             String script = null;
             ScriptType type = null;
             String lang = null;
@@ -462,20 +457,19 @@ public final class Script implements ToXContentObject, Writeable {
                         throw new FesenParseException("Value must be of type String: [" + parameterName + "]");
                     }
                 } else {
-                    deprecationLogger.deprecate("script_unsupported_fields", "script section does not support ["
-                        + parameterName + "]");
+                    deprecationLogger.deprecate("script_unsupported_fields", "script section does not support [" + parameterName + "]");
                 }
             }
             if (script == null) {
                 throw new FesenParseException("Expected one of [{}] or [{}] fields, but found none",
-                    ScriptType.INLINE.getParseField().getPreferredName(), ScriptType.STORED.getParseField().getPreferredName());
+                        ScriptType.INLINE.getParseField().getPreferredName(), ScriptType.STORED.getParseField().getPreferredName());
             }
             assert type != null : "if script is not null, type should definitely not be null";
 
             if (type == ScriptType.STORED) {
                 if (lang != null) {
-                    throw new IllegalArgumentException("[" + Script.LANG_PARSE_FIELD.getPreferredName() +
-                        "] cannot be specified for stored scripts");
+                    throw new IllegalArgumentException(
+                            "[" + Script.LANG_PARSE_FIELD.getPreferredName() + "] cannot be specified for stored scripts");
                 }
 
                 return new Script(type, null, script, null, params);
@@ -560,7 +554,7 @@ public final class Script implements ToXContentObject, Writeable {
         this.lang = in.readOptionalString();
         this.idOrCode = in.readString();
         @SuppressWarnings("unchecked")
-        Map<String, String> options = (Map<String, String>)(Map)in.readMap();
+        Map<String, String> options = (Map<String, String>) (Map) in.readMap();
         this.options = options;
         this.params = in.readMap();
     }
@@ -705,15 +699,21 @@ public final class Script implements ToXContentObject, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        Script script = (Script)o;
+        Script script = (Script) o;
 
-        if (type != script.type) return false;
-        if (lang != null ? !lang.equals(script.lang) : script.lang != null) return false;
-        if (!idOrCode.equals(script.idOrCode)) return false;
-        if (options != null ? !options.equals(script.options) : script.options != null) return false;
+        if (type != script.type)
+            return false;
+        if (lang != null ? !lang.equals(script.lang) : script.lang != null)
+            return false;
+        if (!idOrCode.equals(script.idOrCode))
+            return false;
+        if (options != null ? !options.equals(script.options) : script.options != null)
+            return false;
         return params.equals(script.params);
 
     }
@@ -730,12 +730,7 @@ public final class Script implements ToXContentObject, Writeable {
 
     @Override
     public String toString() {
-        return "Script{" +
-            "type=" + type +
-            ", lang='" + lang + '\'' +
-            ", idOrCode='" + idOrCode + '\'' +
-            ", options=" + options +
-            ", params=" + params +
-            '}';
+        return "Script{" + "type=" + type + ", lang='" + lang + '\'' + ", idOrCode='" + idOrCode + '\'' + ", options=" + options
+                + ", params=" + params + '}';
     }
 }

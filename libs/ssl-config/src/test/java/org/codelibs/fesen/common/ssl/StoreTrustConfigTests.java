@@ -19,13 +19,11 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import org.codelibs.fesen.common.ssl.SslConfigException;
-import org.codelibs.fesen.common.ssl.StoreTrustConfig;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeFalse;
 
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509ExtendedTrustManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,8 +35,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.nullValue;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
+
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 public class StoreTrustConfigTests extends ESTestCase {
 
@@ -130,10 +131,8 @@ public class StoreTrustConfigTests extends ESTestCase {
     private void assertCertificateChain(StoreTrustConfig trustConfig, String... caNames) {
         final X509ExtendedTrustManager trustManager = trustConfig.createTrustManager();
         final X509Certificate[] issuers = trustManager.getAcceptedIssuers();
-        final Set<String> issuerNames = Stream.of(issuers)
-            .map(X509Certificate::getSubjectDN)
-            .map(Principal::getName)
-            .collect(Collectors.toSet());
+        final Set<String> issuerNames =
+                Stream.of(issuers).map(X509Certificate::getSubjectDN).map(Principal::getName).collect(Collectors.toSet());
 
         assertThat(issuerNames, Matchers.containsInAnyOrder(caNames));
     }

@@ -28,28 +28,21 @@ import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
-import org.codelibs.fesen.search.aggregations.support.ValuesSource;
-import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-public abstract class ArrayValuesSourceAggregatorFactory
-    extends AggregatorFactory {
+public abstract class ArrayValuesSourceAggregatorFactory extends AggregatorFactory {
 
     protected Map<String, ValuesSourceConfig> configs;
 
-    public ArrayValuesSourceAggregatorFactory(String name, Map<String, ValuesSourceConfig> configs,
-                                              QueryShardContext queryShardContext, AggregatorFactory parent,
-                                              AggregatorFactories.Builder subFactoriesBuilder,
-                                              Map<String, Object> metadata) throws IOException {
+    public ArrayValuesSourceAggregatorFactory(String name, Map<String, ValuesSourceConfig> configs, QueryShardContext queryShardContext,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.configs = configs;
     }
 
     @Override
-    public Aggregator createInternal(SearchContext searchContext,
-                                        Aggregator parent,
-                                        CardinalityUpperBound cardinality,
-                                        Map<String, Object> metadata) throws IOException {
+    public Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         HashMap<String, ValuesSource> valuesSources = new HashMap<>();
 
         for (Map.Entry<String, ValuesSourceConfig> config : configs.entrySet()) {
@@ -68,9 +61,8 @@ public abstract class ArrayValuesSourceAggregatorFactory
      * Create the {@linkplain Aggregator} when none of the configured
      * fields can be resolved to a {@link ValuesSource}.
      */
-    protected abstract Aggregator createUnmapped(SearchContext searchContext,
-                                                    Aggregator parent,
-                                                    Map<String, Object> metadata) throws IOException;
+    protected abstract Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata)
+            throws IOException;
 
     /**
      * Create the {@linkplain Aggregator} when any of the configured
@@ -80,10 +72,7 @@ public abstract class ArrayValuesSourceAggregatorFactory
      *                    that the {@link Aggregator} created by this method
      *                    will be asked to collect.
      */
-    protected abstract Aggregator doCreateInternal(Map<String, ValuesSource> valuesSources,
-                                                    SearchContext searchContext,
-                                                    Aggregator parent,
-                                                    CardinalityUpperBound cardinality,
-                                                    Map<String, Object> metadata) throws IOException;
+    protected abstract Aggregator doCreateInternal(Map<String, ValuesSource> valuesSources, SearchContext searchContext, Aggregator parent,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
 
 }

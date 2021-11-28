@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.core;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.codelibs.fesen.core.Set;
 import org.codelibs.fesen.test.ESTestCase;
-
-import static org.hamcrest.CoreMatchers.equalTo;
 
 public class SetTests extends ESTestCase {
 
@@ -38,7 +39,7 @@ public class SetTests extends ESTestCase {
     }
 
     public void testStringSetOfOne() {
-        final String[] strings = {"foo"};
+        final String[] strings = { "foo" };
         final java.util.Set<String> stringsSet = Set.of(strings);
         assertThat(stringsSet.size(), equalTo(strings.length));
         assertTrue(stringsSet.containsAll(Arrays.asList(strings)));
@@ -46,7 +47,7 @@ public class SetTests extends ESTestCase {
     }
 
     public void testStringSetOfTwo() {
-        final String[] strings = {"foo", "bar"};
+        final String[] strings = { "foo", "bar" };
         final java.util.Set<String> stringsSet = Set.of(strings);
         assertThat(stringsSet.size(), equalTo(strings.length));
         assertTrue(stringsSet.containsAll(Arrays.asList(strings)));
@@ -54,7 +55,7 @@ public class SetTests extends ESTestCase {
     }
 
     public void testStringSetOfN() {
-        final String[] strings = {"foo", "bar", "baz"};
+        final String[] strings = { "foo", "bar", "baz" };
         final java.util.Set<String> stringsSet = Set.of(strings);
         assertThat(stringsSet.size(), equalTo(strings.length));
         assertTrue(stringsSet.containsAll(Arrays.asList(strings)));

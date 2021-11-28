@@ -16,6 +16,8 @@
 
 package org.codelibs.fesen.common.inject.internal;
 
+import static java.util.Collections.singleton;
+
 import java.util.Set;
 
 import org.codelibs.fesen.common.inject.Binder;
@@ -26,20 +28,16 @@ import org.codelibs.fesen.common.inject.spi.Dependency;
 import org.codelibs.fesen.common.inject.spi.ExposedBinding;
 import org.codelibs.fesen.common.inject.spi.PrivateElements;
 
-import static java.util.Collections.singleton;
-
 public class ExposedBindingImpl<T> extends BindingImpl<T> implements ExposedBinding<T> {
 
     private final PrivateElements privateElements;
 
-    public ExposedBindingImpl(Injector injector, Object source, Key<T> key,
-                              InternalFactory<T> factory, PrivateElements privateElements) {
+    public ExposedBindingImpl(Injector injector, Object source, Key<T> key, InternalFactory<T> factory, PrivateElements privateElements) {
         super(injector, key, source, factory, Scoping.UNSCOPED);
         this.privateElements = privateElements;
     }
 
-    public ExposedBindingImpl(Object source, Key<T> key, Scoping scoping,
-                              PrivateElements privateElements) {
+    public ExposedBindingImpl(Object source, Key<T> key, Scoping scoping, PrivateElements privateElements) {
         super(source, key, scoping);
         this.privateElements = privateElements;
     }
@@ -71,11 +69,8 @@ public class ExposedBindingImpl<T> extends BindingImpl<T> implements ExposedBind
 
     @Override
     public String toString() {
-        return new ToStringBuilder(ExposedBinding.class)
-                .add("key", getKey())
-                .add("source", getSource())
-                .add("privateElements", privateElements)
-                .toString();
+        return new ToStringBuilder(ExposedBinding.class).add("key", getKey()).add("source", getSource())
+                .add("privateElements", privateElements).toString();
     }
 
     @Override

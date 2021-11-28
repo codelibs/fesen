@@ -20,7 +20,5 @@
 package org.codelibs.fesen.index.analysis;
 
 public enum AnalyzerScope {
-    INDEX,
-    INDICES,
-    GLOBAL
+    INDEX, INDICES, GLOBAL
 }

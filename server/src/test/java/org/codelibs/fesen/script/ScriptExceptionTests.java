@@ -39,8 +39,8 @@ public class ScriptExceptionTests extends ESTestCase {
 
     /** ensure we can round trip in serialization */
     public void testRoundTrip() throws IOException {
-        ScriptException e = new ScriptException("messageData", new Exception("causeData"), Arrays.asList("stack1", "stack2"),
-                                                "sourceData", "langData");
+        ScriptException e =
+                new ScriptException("messageData", new Exception("causeData"), Arrays.asList("stack1", "stack2"), "sourceData", "langData");
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         StreamOutput output = new DataOutputStreamOutput(new DataOutputStream(bytes));
@@ -59,7 +59,7 @@ public class ScriptExceptionTests extends ESTestCase {
 
         // Ensure non-null position also works
         e = new ScriptException(e.getMessage(), e.getCause(), e.getScriptStack(), e.getScript(), e.getLang(),
-            new ScriptException.Position(1, 0, 2));
+                new ScriptException.Position(1, 0, 2));
         bytes = new ByteArrayOutputStream();
         output = new DataOutputStreamOutput(new DataOutputStream(bytes));
         e.writeTo(output);
@@ -73,8 +73,8 @@ public class ScriptExceptionTests extends ESTestCase {
 
     /** Test that our elements are present in the json output */
     public void testJsonOutput() {
-        ScriptException e = new ScriptException("messageData", new Exception("causeData"), Arrays.asList("stack1", "stack2"),
-                                                "sourceData", "langData", new ScriptException.Position(2, 1, 3));
+        ScriptException e = new ScriptException("messageData", new Exception("causeData"), Arrays.asList("stack1", "stack2"), "sourceData",
+                "langData", new ScriptException.Position(2, 1, 3));
         String json = e.toJsonString();
         assertTrue(json.contains(e.getMessage()));
         assertTrue(json.contains(e.getCause().getMessage()));
@@ -99,7 +99,7 @@ public class ScriptExceptionTests extends ESTestCase {
     /** ensure no parameters can be null except pos*/
     public void testNoLeniency() {
         expectThrows(NullPointerException.class, () -> {
-           new ScriptException(null, new Exception(), Collections.emptyList(), "a", "b");
+            new ScriptException(null, new Exception(), Collections.emptyList(), "a", "b");
         });
         expectThrows(NullPointerException.class, () -> {
             new ScriptException("test", null, Collections.emptyList(), "a", "b");

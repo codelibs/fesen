@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.index.shard;
 
+import java.io.IOException;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.Predicate;
+
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.IndexReaderContext;
 import org.apache.lucene.index.LeafReader;
@@ -49,11 +54,6 @@ import org.codelibs.fesen.index.mapper.IdFieldMapper;
 import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
 import org.codelibs.fesen.index.mapper.Uid;
 
-import java.io.IOException;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
-import java.util.function.Predicate;
-
 /**
  * A query that selects all docs that do NOT belong in the current shards this query is executed on.
  * It can be used to split a shard into N shards marking every document that doesn't belong into the shard
@@ -67,8 +67,9 @@ final class ShardSplittingQuery extends Query {
     ShardSplittingQuery(IndexMetadata indexMetadata, int shardId, boolean hasNested) {
         this.indexMetadata = indexMetadata;
         this.shardId = shardId;
-        this.nestedParentBitSetProducer =  hasNested ? newParentDocBitSetProducer(indexMetadata.getCreationVersion()) : null;
+        this.nestedParentBitSetProducer = hasNested ? newParentDocBitSetProducer(indexMetadata.getCreationVersion()) : null;
     }
+
     @Override
     public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
         return new ConstantScoreWeight(this, boost) {
@@ -83,8 +84,8 @@ final class ShardSplittingQuery extends Query {
                 FixedBitSet bitSet = new FixedBitSet(leafReader.maxDoc());
                 Terms terms = leafReader.terms(RoutingFieldMapper.NAME);
                 Predicate<BytesRef> includeInShard = ref -> {
-                    int targetShardId = OperationRouting.generateShardId(indexMetadata,
-                        Uid.decodeId(ref.bytes, ref.offset, ref.length), null);
+                    int targetShardId =
+                            OperationRouting.generateShardId(indexMetadata, Uid.decodeId(ref.bytes, ref.offset, ref.length), null);
                     return shardId == targetShardId;
                 };
                 if (terms == null) {
@@ -107,9 +108,8 @@ final class ShardSplittingQuery extends Query {
                         // this is the heaviest invariant. Here we have to visit all docs stored fields do extract _id and _routing
                         // this this index is routing partitioned.
                         Visitor visitor = new Visitor(leafReader);
-                        TwoPhaseIterator twoPhaseIterator =
-                            parentBitSet == null ? new RoutingPartitionedDocIdSetIterator(visitor) :
-                                new NestedRoutingPartitionedDocIdSetIterator(visitor, parentBitSet);
+                        TwoPhaseIterator twoPhaseIterator = parentBitSet == null ? new RoutingPartitionedDocIdSetIterator(visitor)
+                                : new NestedRoutingPartitionedDocIdSetIterator(visitor, parentBitSet);
                         return new ConstantScoreScorer(this, score(), scoreMode, twoPhaseIterator);
                     } else {
                         // here we potentially guard the docID consumers with our parent bitset if we have one.
@@ -165,9 +165,9 @@ final class ShardSplittingQuery extends Query {
 
     private void markChildDocs(BitSet parentDocs, BitSet matchingDocs) {
         int currentDeleted = 0;
-        while (currentDeleted < matchingDocs.length() &&
-            (currentDeleted = matchingDocs.nextSetBit(currentDeleted)) != DocIdSetIterator.NO_MORE_DOCS) {
-            int previousParent = parentDocs.prevSetBit(Math.max(0, currentDeleted-1));
+        while (currentDeleted < matchingDocs.length()
+                && (currentDeleted = matchingDocs.nextSetBit(currentDeleted)) != DocIdSetIterator.NO_MORE_DOCS) {
+            int previousParent = parentDocs.prevSetBit(Math.max(0, currentDeleted - 1));
             for (int i = previousParent + 1; i < currentDeleted; i++) {
                 matchingDocs.set(i);
             }
@@ -182,12 +182,15 @@ final class ShardSplittingQuery extends Query {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ShardSplittingQuery that = (ShardSplittingQuery) o;
 
-        if (shardId != that.shardId) return false;
+        if (shardId != that.shardId)
+            return false;
         return indexMetadata.equals(that.indexMetadata);
     }
 
@@ -198,8 +201,8 @@ final class ShardSplittingQuery extends Query {
         return classHash() ^ result;
     }
 
-    private static void findSplitDocs(String idField, Predicate<BytesRef> includeInShard, LeafReader leafReader,
-                                      IntConsumer consumer) throws IOException {
+    private static void findSplitDocs(String idField, Predicate<BytesRef> includeInShard, LeafReader leafReader, IntConsumer consumer)
+            throws IOException {
         Terms terms = leafReader.terms(idField);
         TermsEnum iterator = terms.iterator();
         BytesRef idTerm;
@@ -231,11 +234,11 @@ final class ShardSplittingQuery extends Query {
         @Override
         public void binaryField(FieldInfo fieldInfo, byte[] value) throws IOException {
             switch (fieldInfo.name) {
-                case IdFieldMapper.NAME:
-                    id = Uid.decodeId(value);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected field: " + fieldInfo.name);
+            case IdFieldMapper.NAME:
+                id = Uid.decodeId(value);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected field: " + fieldInfo.name);
             }
         }
 
@@ -245,11 +248,11 @@ final class ShardSplittingQuery extends Query {
             spare.offset = 0;
             spare.length = value.length;
             switch (fieldInfo.name) {
-                case RoutingFieldMapper.NAME:
-                    routing = spare.utf8ToString();
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected field: " + fieldInfo.name);
+            case RoutingFieldMapper.NAME:
+                routing = spare.utf8ToString();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected field: " + fieldInfo.name);
             }
         }
 
@@ -257,12 +260,12 @@ final class ShardSplittingQuery extends Query {
         public Status needsField(FieldInfo fieldInfo) throws IOException {
             // we don't support 5.x so no need for the uid field
             switch (fieldInfo.name) {
-                case IdFieldMapper.NAME:
-                case RoutingFieldMapper.NAME:
-                    leftToVisit--;
-                    return Status.YES;
-                default:
-                    return leftToVisit == 0 ? Status.STOP : Status.NO;
+            case IdFieldMapper.NAME:
+            case RoutingFieldMapper.NAME:
+                leftToVisit--;
+                return Status.YES;
+            default:
+                return leftToVisit == 0 ? Status.STOP : Status.NO;
             }
         }
 
@@ -341,15 +344,13 @@ final class ShardSplittingQuery extends Query {
      */
     private static BitSetProducer newParentDocBitSetProducer(Version indexVersionCreated) {
         return context -> {
-                Query query = Queries.newNonNestedFilter(indexVersionCreated);
-                final IndexReaderContext topLevelContext = ReaderUtil.getTopLevelContext(context);
-                final IndexSearcher searcher = new IndexSearcher(topLevelContext);
-                searcher.setQueryCache(null);
-                final Weight weight = searcher.createWeight(searcher.rewrite(query), ScoreMode.COMPLETE_NO_SCORES, 1f);
-                Scorer s = weight.scorer(context);
-                return s == null ? null : BitSet.of(s.iterator(), context.reader().maxDoc());
-            };
+            Query query = Queries.newNonNestedFilter(indexVersionCreated);
+            final IndexReaderContext topLevelContext = ReaderUtil.getTopLevelContext(context);
+            final IndexSearcher searcher = new IndexSearcher(topLevelContext);
+            searcher.setQueryCache(null);
+            final Weight weight = searcher.createWeight(searcher.rewrite(query), ScoreMode.COMPLETE_NO_SCORES, 1f);
+            Scorer s = weight.scorer(context);
+            return s == null ? null : BitSet.of(s.iterator(), context.reader().maxDoc());
+        };
     }
 }
-
-

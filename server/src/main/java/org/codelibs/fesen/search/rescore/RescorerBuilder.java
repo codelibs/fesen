@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.rescore;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -30,9 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.Rewriteable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * The abstract base builder for instances of {@link RescorerBuilder}.

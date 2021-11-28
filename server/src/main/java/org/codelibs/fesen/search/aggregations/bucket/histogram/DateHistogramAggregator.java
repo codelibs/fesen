@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.ScoreMode;
@@ -38,11 +43,6 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.LongKeyedBucketOrds;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * An aggregator for date values. Every date is rounded down using a configured
@@ -68,22 +68,10 @@ class DateHistogramAggregator extends BucketsAggregator implements SizedBucketAg
 
     private final LongKeyedBucketOrds bucketOrds;
 
-    DateHistogramAggregator(
-        String name,
-        AggregatorFactories factories,
-        Rounding rounding,
-        Rounding.Prepared preparedRounding,
-        BucketOrder order,
-        boolean keyed,
-        long minDocCount,
-        @Nullable LongBounds extendedBounds,
-        @Nullable LongBounds hardBounds,
-        ValuesSourceConfig valuesSourceConfig,
-        SearchContext aggregationContext,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
+    DateHistogramAggregator(String name, AggregatorFactories factories, Rounding rounding, Rounding.Prepared preparedRounding,
+            BucketOrder order, boolean keyed, long minDocCount, @Nullable LongBounds extendedBounds, @Nullable LongBounds hardBounds,
+            ValuesSourceConfig valuesSourceConfig, SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
 
         super(name, factories, aggregationContext, parent, CardinalityUpperBound.MANY, metadata);
         this.rounding = rounding;
@@ -147,28 +135,26 @@ class DateHistogramAggregator extends BucketsAggregator implements SizedBucketAg
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForVariableBuckets(owningBucketOrds, bucketOrds,
-            (bucketValue, docCount, subAggregationResults) -> {
-                return new InternalDateHistogram.Bucket(bucketValue, docCount, keyed, formatter, subAggregationResults);
-            }, (owningBucketOrd, buckets) -> {
-                // the contract of the histogram aggregation is that shards must return buckets ordered by key in ascending order
-                CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
+        return buildAggregationsForVariableBuckets(owningBucketOrds, bucketOrds, (bucketValue, docCount, subAggregationResults) -> {
+            return new InternalDateHistogram.Bucket(bucketValue, docCount, keyed, formatter, subAggregationResults);
+        }, (owningBucketOrd, buckets) -> {
+            // the contract of the histogram aggregation is that shards must return buckets ordered by key in ascending order
+            CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
 
-                // value source will be null for unmapped fields
-                // Important: use `rounding` here, not `shardRounding`
-                InternalDateHistogram.EmptyBucketInfo emptyBucketInfo = minDocCount == 0
-                        ? new InternalDateHistogram.EmptyBucketInfo(rounding.withoutOffset(), buildEmptySubAggregations(), extendedBounds)
-                        : null;
-                return new InternalDateHistogram(name, buckets, order, minDocCount, rounding.offset(), emptyBucketInfo, formatter,
-                        keyed, metadata());
-            });
+            // value source will be null for unmapped fields
+            // Important: use `rounding` here, not `shardRounding`
+            InternalDateHistogram.EmptyBucketInfo emptyBucketInfo = minDocCount == 0
+                    ? new InternalDateHistogram.EmptyBucketInfo(rounding.withoutOffset(), buildEmptySubAggregations(), extendedBounds)
+                    : null;
+            return new InternalDateHistogram(name, buckets, order, minDocCount, rounding.offset(), emptyBucketInfo, formatter, keyed,
+                    metadata());
+        });
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        InternalDateHistogram.EmptyBucketInfo emptyBucketInfo = minDocCount == 0
-                ? new InternalDateHistogram.EmptyBucketInfo(rounding, buildEmptySubAggregations(), extendedBounds)
-                : null;
+        InternalDateHistogram.EmptyBucketInfo emptyBucketInfo =
+                minDocCount == 0 ? new InternalDateHistogram.EmptyBucketInfo(rounding, buildEmptySubAggregations(), extendedBounds) : null;
         return new InternalDateHistogram(name, Collections.emptyList(), order, minDocCount, rounding.offset(), emptyBucketInfo, formatter,
                 keyed, metadata());
     }

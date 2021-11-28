@@ -62,23 +62,24 @@ public class CreateIndexRequestBuilderTests extends ESTestCase {
      */
     public void testSetSource() throws IOException {
         CreateIndexRequestBuilder builder = new CreateIndexRequestBuilder(this.testClient, CreateIndexAction.INSTANCE);
-        
-        FesenParseException e = expectThrows(FesenParseException.class, 
-                () -> {builder.setSource("{\""+KEY+"\" : \""+VALUE+"\"}", XContentType.JSON);});
+
+        FesenParseException e = expectThrows(FesenParseException.class, () -> {
+            builder.setSource("{\"" + KEY + "\" : \"" + VALUE + "\"}", XContentType.JSON);
+        });
         assertEquals(String.format(Locale.ROOT, "unknown key [%s] for create index", KEY), e.getMessage());
-        
-        builder.setSource("{\"settings\" : {\""+KEY+"\" : \""+VALUE+"\"}}", XContentType.JSON);
+
+        builder.setSource("{\"settings\" : {\"" + KEY + "\" : \"" + VALUE + "\"}}", XContentType.JSON);
         assertEquals(VALUE, builder.request().settings().get(KEY));
 
-        XContentBuilder xContent = XContentFactory.jsonBuilder().startObject()
-                .startObject("settings").field(KEY, VALUE).endObject().endObject();
+        XContentBuilder xContent =
+                XContentFactory.jsonBuilder().startObject().startObject("settings").field(KEY, VALUE).endObject().endObject();
         xContent.close();
         builder.setSource(xContent);
         assertEquals(VALUE, builder.request().settings().get(KEY));
 
         ByteArrayOutputStream docOut = new ByteArrayOutputStream();
-        XContentBuilder doc = XContentFactory.jsonBuilder(docOut).startObject()
-                .startObject("settings").field(KEY, VALUE).endObject().endObject();
+        XContentBuilder doc =
+                XContentFactory.jsonBuilder(docOut).startObject().startObject("settings").field(KEY, VALUE).endObject().endObject();
         doc.close();
         builder.setSource(docOut.toByteArray(), XContentType.JSON);
         assertEquals(VALUE, builder.request().settings().get(KEY));
@@ -97,7 +98,7 @@ public class CreateIndexRequestBuilderTests extends ESTestCase {
         builder.setSettings(Settings.builder().put(KEY, VALUE));
         assertEquals(VALUE, builder.request().settings().get(KEY));
 
-        builder.setSettings("{\""+KEY+"\" : \""+VALUE+"\"}", XContentType.JSON);
+        builder.setSettings("{\"" + KEY + "\" : \"" + VALUE + "\"}", XContentType.JSON);
         assertEquals(VALUE, builder.request().settings().get(KEY));
 
         builder.setSettings(Settings.builder().put(KEY, VALUE));

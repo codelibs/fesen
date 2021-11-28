@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.common.lucene.index;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReader;
 import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
 
 /**
  * A {@link org.apache.lucene.index.FilterDirectoryReader} that exposes
@@ -36,8 +36,7 @@ public class FesenDirectoryReader extends FilterDirectoryReader {
     private final ShardId shardId;
     private final FilterDirectoryReader.SubReaderWrapper wrapper;
 
-    FesenDirectoryReader(DirectoryReader in, FilterDirectoryReader.SubReaderWrapper wrapper,
-            ShardId shardId) throws IOException {
+    FesenDirectoryReader(DirectoryReader in, FilterDirectoryReader.SubReaderWrapper wrapper, ShardId shardId) throws IOException {
         super(in, wrapper);
         this.wrapper = wrapper;
         this.shardId = shardId;
@@ -75,9 +74,11 @@ public class FesenDirectoryReader extends FilterDirectoryReader {
 
     private static final class SubReaderWrapper extends FilterDirectoryReader.SubReaderWrapper {
         private final ShardId shardId;
+
         SubReaderWrapper(ShardId shardId) {
             this.shardId = shardId;
         }
+
         @Override
         public LeafReader wrap(LeafReader reader) {
             return new FesenLeafReader(reader, shardId);
@@ -96,8 +97,7 @@ public class FesenDirectoryReader extends FilterDirectoryReader {
     public static void addReaderCloseListener(DirectoryReader reader, IndexReader.ClosedListener listener) {
         FesenDirectoryReader fesenDirectoryReader = getFesenDirectoryReader(reader);
         if (fesenDirectoryReader == null) {
-            throw new IllegalArgumentException(
-                    "Can't install close listener reader is not an FesenDirectoryReader/FesenLeafReader");
+            throw new IllegalArgumentException("Can't install close listener reader is not an FesenDirectoryReader/FesenLeafReader");
         }
         IndexReader.CacheHelper cacheHelper = fesenDirectoryReader.getReaderCacheHelper();
         if (cacheHelper == null) {

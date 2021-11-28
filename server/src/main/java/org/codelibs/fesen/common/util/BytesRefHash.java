@@ -19,10 +19,11 @@
 
 package org.codelibs.fesen.common.util;
 
-import com.carrotsearch.hppc.BitMixer;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
+
+import com.carrotsearch.hppc.BitMixer;
 
 /**
  *  Specialized hash table implementation similar to Lucene's BytesRefHash that maps
@@ -75,7 +76,7 @@ public final class BytesRefHash extends AbstractHash {
      */
     public long find(BytesRef key, int code) {
         final long slot = slot(rehash(code), mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long id = id(index);
             if (id == -1L || key.bytesEquals(get(id, spare))) {
                 return id;
@@ -92,7 +93,7 @@ public final class BytesRefHash extends AbstractHash {
         assert rehash(key.hashCode()) == code;
         assert size < maxSize;
         final long slot = slot(code, mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long curId = id(index);
             if (curId == -1) { // means unset
                 id(index, id);
@@ -124,7 +125,7 @@ public final class BytesRefHash extends AbstractHash {
     private void reset(int code, long id) {
         assert assertConsistent(id, code);
         final long slot = slot(code, mask);
-        for (long index = slot; ; index = nextSlot(index, mask)) {
+        for (long index = slot;; index = nextSlot(index, mask)) {
             final long curId = id(index);
             if (curId == -1) { // means unset
                 id(index, id);

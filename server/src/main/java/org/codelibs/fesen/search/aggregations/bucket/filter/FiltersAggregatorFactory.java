@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
@@ -32,10 +36,6 @@ import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.aggregations.bucket.filter.FiltersAggregator.KeyedFilter;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 public class FiltersAggregatorFactory extends AggregatorFactory {
 
     private final String[] keys;
@@ -45,9 +45,9 @@ public class FiltersAggregatorFactory extends AggregatorFactory {
     private final boolean otherBucket;
     private final String otherBucketKey;
 
-    public FiltersAggregatorFactory(String name, List<KeyedFilter> filters, boolean keyed, boolean otherBucket,
-                                    String otherBucketKey, QueryShardContext queryShardContext, AggregatorFactory parent,
-                                    AggregatorFactories.Builder subFactories, Map<String, Object> metadata) throws IOException {
+    public FiltersAggregatorFactory(String name, List<KeyedFilter> filters, boolean keyed, boolean otherBucket, String otherBucketKey,
+            QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactories,
+            Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactories, metadata);
         this.keyed = keyed;
         this.otherBucket = otherBucket;
@@ -86,13 +86,10 @@ public class FiltersAggregatorFactory extends AggregatorFactory {
     }
 
     @Override
-    public Aggregator createInternal(SearchContext searchContext,
-                                        Aggregator parent,
-                                        CardinalityUpperBound cardinality,
-                                        Map<String, Object> metadata) throws IOException {
-        return new FiltersAggregator(name, factories, keys, () -> getWeights(searchContext), keyed,
-            otherBucket ? otherBucketKey : null, searchContext, parent, cardinality, metadata);
+    public Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
+        return new FiltersAggregator(name, factories, keys, () -> getWeights(searchContext), keyed, otherBucket ? otherBucketKey : null,
+                searchContext, parent, cardinality, metadata);
     }
-
 
 }

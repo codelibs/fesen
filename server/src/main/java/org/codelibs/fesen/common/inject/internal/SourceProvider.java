@@ -16,11 +16,11 @@
 
 package org.codelibs.fesen.common.inject.internal;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Provides access to the calling line of code.

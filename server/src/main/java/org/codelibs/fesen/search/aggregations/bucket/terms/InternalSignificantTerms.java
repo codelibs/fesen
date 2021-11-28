@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -27,14 +35,6 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Result of the significant terms aggregation.
@@ -65,8 +65,8 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         protected InternalAggregations aggregations;
         final transient DocValueFormat format;
 
-        protected Bucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize,
-                InternalAggregations aggregations, DocValueFormat format) {
+        protected Bucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
+                DocValueFormat format) {
             this.subsetSize = subsetSize;
             this.supersetSize = supersetSize;
             this.subsetDf = subsetDf;
@@ -136,10 +136,8 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
             }
 
             Bucket<?> that = (Bucket<?>) o;
-            return bucketOrd == that.bucketOrd &&
-                    Double.compare(that.score, score) == 0 &&
-                    Objects.equals(aggregations, that.aggregations) &&
-                    Objects.equals(format, that.format);
+            return bucketOrd == that.bucketOrd && Double.compare(that.score, score) == 0 && Objects.equals(aggregations, that.aggregations)
+                    && Objects.equals(format, that.format);
         }
 
         @Override
@@ -259,8 +257,8 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         return createBucket(subsetDf, buckets.get(0).subsetSize, supersetDf, buckets.get(0).supersetSize, aggs, buckets.get(0));
     }
 
-    abstract B createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize,
-                            InternalAggregations aggregations, B prototype);
+    abstract B createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
+            B prototype);
 
     protected abstract A create(long subsetSize, long supersetSize, List<B> buckets);
 
@@ -282,12 +280,14 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalSignificantTerms<?, ?> that = (InternalSignificantTerms<?, ?>) obj;
-        return Objects.equals(minDocCount, that.minDocCount)
-                && Objects.equals(requiredSize, that.requiredSize);
+        return Objects.equals(minDocCount, that.minDocCount) && Objects.equals(requiredSize, that.requiredSize);
     }
 }

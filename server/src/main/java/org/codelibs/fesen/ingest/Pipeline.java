@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.script.ScriptService;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +26,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
+
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.script.ScriptService;
 
 /**
  * A pipeline is a list of {@link Processor} instances grouped under a unique id.
@@ -56,7 +56,7 @@ public final class Pipeline {
 
     //package private for testing
     Pipeline(String id, @Nullable String description, @Nullable Integer version, CompoundProcessor compoundProcessor,
-             LongSupplier relativeTimeProvider) {
+            LongSupplier relativeTimeProvider) {
         this.id = id;
         this.description = description;
         this.compoundProcessor = compoundProcessor;
@@ -65,25 +65,24 @@ public final class Pipeline {
         this.relativeTimeProvider = relativeTimeProvider;
     }
 
-    public static Pipeline create(String id, Map<String, Object> config,
-        Map<String, Processor.Factory> processorFactories, ScriptService scriptService) throws Exception {
+    public static Pipeline create(String id, Map<String, Object> config, Map<String, Processor.Factory> processorFactories,
+            ScriptService scriptService) throws Exception {
         String description = ConfigurationUtils.readOptionalStringProperty(null, null, config, DESCRIPTION_KEY);
         Integer version = ConfigurationUtils.readIntProperty(null, null, config, VERSION_KEY, null);
         List<Map<String, Object>> processorConfigs = ConfigurationUtils.readList(null, null, config, PROCESSORS_KEY);
         List<Processor> processors = ConfigurationUtils.readProcessorConfigs(processorConfigs, scriptService, processorFactories);
-        List<Map<String, Object>> onFailureProcessorConfigs =
-                ConfigurationUtils.readOptionalList(null, null, config, ON_FAILURE_KEY);
+        List<Map<String, Object>> onFailureProcessorConfigs = ConfigurationUtils.readOptionalList(null, null, config, ON_FAILURE_KEY);
         List<Processor> onFailureProcessors =
-            ConfigurationUtils.readProcessorConfigs(onFailureProcessorConfigs, scriptService, processorFactories);
+                ConfigurationUtils.readProcessorConfigs(onFailureProcessorConfigs, scriptService, processorFactories);
         if (config.isEmpty() == false) {
-            throw new FesenParseException("pipeline [" + id +
-                    "] doesn't support one or more provided configuration parameters " + Arrays.toString(config.keySet().toArray()));
+            throw new FesenParseException("pipeline [" + id + "] doesn't support one or more provided configuration parameters "
+                    + Arrays.toString(config.keySet().toArray()));
         }
         if (onFailureProcessorConfigs != null && onFailureProcessors.isEmpty()) {
             throw new FesenParseException("pipeline [" + id + "] cannot have an empty on_failure option defined");
         }
-        CompoundProcessor compoundProcessor = new CompoundProcessor(false, Collections.unmodifiableList(processors),
-                Collections.unmodifiableList(onFailureProcessors));
+        CompoundProcessor compoundProcessor =
+                new CompoundProcessor(false, Collections.unmodifiableList(processors), Collections.unmodifiableList(onFailureProcessors));
         return new Pipeline(id, description, version, compoundProcessor);
     }
 

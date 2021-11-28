@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.core.Tuple;
-
 import java.io.IOException;
 import java.util.Map;
+
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * Utility methods used for parsing test sections.
@@ -44,7 +44,7 @@ class ParserUtils {
     public static Tuple<String, Object> parseTuple(XContentParser parser) throws IOException {
         parser.nextToken();
         advanceToFieldName(parser);
-        Map<String,Object> map = parser.map();
+        Map<String, Object> map = parser.map();
         assert parser.currentToken() == XContentParser.Token.END_OBJECT;
         parser.nextToken();
 
@@ -69,8 +69,8 @@ class ParserUtils {
             token = parser.nextToken();
         }
         if (token != XContentParser.Token.FIELD_NAME) {
-            throw new IllegalArgumentException("malformed test section: field name expected but found " + token + " at "
-                    + parser.getTokenLocation());
+            throw new IllegalArgumentException(
+                    "malformed test section: field name expected but found " + token + " at " + parser.getTokenLocation());
         }
-    } 
+    }
 }

@@ -18,7 +18,9 @@
  */
 package org.codelibs.fesen.index.query.functionscore;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -30,9 +32,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.IdFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A function that computes a random score for the matched documents
@@ -162,7 +161,7 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
                 fieldType = context.getMapperService().fieldType(field);
             } else {
                 deprecationLogger.deprecate("seed_requires_field",
-                    "As of version 7.0 Elasticsearch will require that a [field] parameter is provided when a [seed] is set");
+                        "As of version 7.0 Elasticsearch will require that a [field] parameter is provided when a [seed] is set");
                 fieldType = context.getMapperService().fieldType(IdFieldMapper.NAME);
             }
             if (fieldType == null) {
@@ -170,8 +169,8 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
                     // no mappings: the index is empty anyway
                     return new RandomScoreFunction(hash(context.nowInMillis()), salt, null);
                 }
-                throw new IllegalArgumentException("Field [" + field + "] is not mapped on [" + context.index() +
-                        "] and cannot be used as a source of random numbers.");
+                throw new IllegalArgumentException("Field [" + field + "] is not mapped on [" + context.index()
+                        + "] and cannot be used as a source of random numbers.");
             }
             int seed;
             if (this.seed != null) {
@@ -187,8 +186,7 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
         return Long.hashCode(value);
     }
 
-    public static RandomScoreFunctionBuilder fromXContent(XContentParser parser)
-            throws IOException, ParsingException {
+    public static RandomScoreFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
         RandomScoreFunctionBuilder randomScoreFunctionBuilder = new RandomScoreFunctionBuilder();
         String currentFieldName = null;
         XContentParser.Token token;
@@ -203,14 +201,14 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
                         } else if (parser.numberType() == XContentParser.NumberType.LONG) {
                             randomScoreFunctionBuilder.seed(parser.longValue());
                         } else {
-                            throw new ParsingException(parser.getTokenLocation(), "random_score seed must be an int, long or string, not '"
-                                    + token.toString() + "'");
+                            throw new ParsingException(parser.getTokenLocation(),
+                                    "random_score seed must be an int, long or string, not '" + token.toString() + "'");
                         }
                     } else if (token == XContentParser.Token.VALUE_STRING) {
                         randomScoreFunctionBuilder.seed(parser.text());
                     } else {
-                        throw new ParsingException(parser.getTokenLocation(), "random_score seed must be an int/long or string, not '"
-                                + token.toString() + "'");
+                        throw new ParsingException(parser.getTokenLocation(),
+                                "random_score seed must be an int/long or string, not '" + token.toString() + "'");
                     }
                 } else if ("field".equals(currentFieldName)) {
                     randomScoreFunctionBuilder.setField(parser.text());

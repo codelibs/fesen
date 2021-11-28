@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.common.util;
 
-import org.apache.lucene.util.BytesRef;
-
 import java.nio.ByteBuffer;
+
+import org.apache.lucene.util.BytesRef;
 
 /**
  * Abstraction of an array of byte values.

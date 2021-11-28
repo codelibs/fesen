@@ -65,7 +65,7 @@ public class BulkRequestTests extends ESTestCase {
         assertThat(bulkRequest.requests().get(1), instanceOf(DeleteRequest.class));
         assertThat(((IndexRequest) bulkRequest.requests().get(2)).source(), equalTo(new BytesArray("{ \"field1\" : \"value3\" }")));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testSimpleBulkWithCarriageReturn() throws Exception {
@@ -74,11 +74,11 @@ public class BulkRequestTests extends ESTestCase {
         bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON);
         assertThat(bulkRequest.numberOfActions(), equalTo(1));
         assertThat(((IndexRequest) bulkRequest.requests().get(0)).source(), equalTo(new BytesArray("{ \"field1\" : \"value1\" }")));
-        Map<String, Object> sourceMap = XContentHelper.convertToMap(((IndexRequest) bulkRequest.requests().get(0)).source(),
-            false, XContentType.JSON).v2();
+        Map<String, Object> sourceMap =
+                XContentHelper.convertToMap(((IndexRequest) bulkRequest.requests().get(0)).source(), false, XContentType.JSON).v2();
         assertEquals("value1", sourceMap.get("field1"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testSimpleBulk2() throws Exception {
@@ -116,20 +116,19 @@ public class BulkRequestTests extends ESTestCase {
         assertThat(scriptParams.get("param1"), equalTo(1));
         assertThat(((UpdateRequest) bulkRequest.requests().get(1)).upsertRequest().source().utf8ToString(), equalTo("{\"counter\":1}"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testBulkAllowExplicitIndex() throws Exception {
         String bulkAction1 = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk.json");
-        Exception ex = expectThrows(Exception.class,
-            () -> new BulkRequest().add(
-                new BytesArray(bulkAction1.getBytes(StandardCharsets.UTF_8)), null, null, false, XContentType.JSON));
+        Exception ex = expectThrows(Exception.class, () -> new BulkRequest()
+                .add(new BytesArray(bulkAction1.getBytes(StandardCharsets.UTF_8)), null, null, false, XContentType.JSON));
         assertEquals("explicit index in bulk is not allowed", ex.getMessage());
 
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk5.json");
         new BulkRequest().add(new BytesArray(bulkAction.getBytes(StandardCharsets.UTF_8)), "test", null, false, XContentType.JSON);
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testBulkAddIterable() {
@@ -149,40 +148,40 @@ public class BulkRequestTests extends ESTestCase {
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk6.json");
         BulkRequest bulkRequest = new BulkRequest();
         ParsingException exc = expectThrows(ParsingException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
         assertThat(exc.getMessage(), containsString("Unknown key for a VALUE_STRING in [hello]"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testSimpleBulk7() throws Exception {
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk7.json");
         BulkRequest bulkRequest = new BulkRequest();
         IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
         assertThat(exc.getMessage(),
-            containsString("Malformed action/metadata line [5], expected a simple value for field [_unknown] but found [START_ARRAY]"));
+                containsString("Malformed action/metadata line [5], expected a simple value for field [_unknown] but found [START_ARRAY]"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testSimpleBulk8() throws Exception {
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk8.json");
         BulkRequest bulkRequest = new BulkRequest();
         IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
         assertThat(exc.getMessage(), containsString("Action/metadata line [3] contains an unknown parameter [_foo]"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testSimpleBulk9() throws Exception {
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk9.json");
         BulkRequest bulkRequest = new BulkRequest();
         IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
         assertThat(exc.getMessage(),
-            containsString("Malformed action/metadata line [3], expected START_OBJECT or END_OBJECT but found [START_ARRAY]"));
+                containsString("Malformed action/metadata line [3], expected START_OBJECT or END_OBJECT but found [START_ARRAY]"));
     }
 
     public void testSimpleBulk10() throws Exception {
@@ -191,17 +190,17 @@ public class BulkRequestTests extends ESTestCase {
         bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON);
         assertThat(bulkRequest.numberOfActions(), equalTo(9));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testBulkActionShouldNotContainArray() throws Exception {
         String bulkAction = "{ \"index\":{\"_index\":[\"index1\", \"index2\"],\"_type\":\"type1\",\"_id\":\"1\"} }\r\n"
-            + "{ \"field1\" : \"value1\" }\r\n";
+                + "{ \"field1\" : \"value1\" }\r\n";
         BulkRequest bulkRequest = new BulkRequest();
         IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
-        assertEquals(exc.getMessage(), "Malformed action/metadata line [1]" +
-            ", expected a simple value for field [_index] but found [START_ARRAY]");
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+        assertEquals(exc.getMessage(),
+                "Malformed action/metadata line [1]" + ", expected a simple value for field [_index] but found [START_ARRAY]");
     }
 
     public void testBulkEmptyObject() throws Exception {
@@ -225,9 +224,9 @@ public class BulkRequestTests extends ESTestCase {
         String bulkAction = bulk.toString();
         BulkRequest bulkRequest = new BulkRequest();
         IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
-            () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
-        assertThat(exc.getMessage(), containsString("Malformed action/metadata line ["
-            + emptyLine + "], expected FIELD_NAME but found [END_OBJECT]"));
+                () -> bulkRequest.add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+        assertThat(exc.getMessage(),
+                containsString("Malformed action/metadata line [" + emptyLine + "], expected FIELD_NAME but found [END_OBJECT]"));
     }
 
     // issue 7361
@@ -243,13 +242,11 @@ public class BulkRequestTests extends ESTestCase {
         ActionRequestValidationException validate = bulkRequest.validate();
         assertThat(validate, notNullValue());
         assertThat(validate.validationErrors(), not(empty()));
-        assertThat(validate.validationErrors(), contains(
-                "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.",
-                "id is missing",
-                "type is missing",
-                "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.",
-                "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.",
-                "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead."));
+        assertThat(validate.validationErrors(),
+                contains("RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.", "id is missing",
+                        "type is missing", "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.",
+                        "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead.",
+                        "RefreshPolicy is not supported on an item request. Set it on the BulkRequest instead."));
     }
 
     // issue 15120
@@ -260,10 +257,7 @@ public class BulkRequestTests extends ESTestCase {
         ActionRequestValidationException validate = bulkRequest.validate();
         assertThat(validate, notNullValue());
         assertThat(validate.validationErrors(), not(empty()));
-        assertThat(validate.validationErrors(), contains(
-                "script or doc is missing",
-                "source is missing",
-                "content type is missing"));
+        assertThat(validate.validationErrors(), contains("script or doc is missing", "source is missing", "content type is missing"));
     }
 
     public void testCannotAddNullRequests() throws Exception {
@@ -277,7 +271,7 @@ public class BulkRequestTests extends ESTestCase {
         XContentType xContentType = XContentType.SMILE;
         BytesReference data;
         try (BytesStreamOutput out = new BytesStreamOutput()) {
-            try(XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
+            try (XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
                 builder.startObject();
                 builder.startObject("index");
                 builder.field("_index", "index");
@@ -287,7 +281,7 @@ public class BulkRequestTests extends ESTestCase {
                 builder.endObject();
             }
             out.write(xContentType.xContent().streamSeparator());
-            try(XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
+            try (XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
                 builder.startObject();
                 builder.field("field", "value");
                 builder.endObject();
@@ -309,7 +303,7 @@ public class BulkRequestTests extends ESTestCase {
         assertEquals(1, request.sourceAsMap().size());
         assertEquals("value", request.sourceAsMap().get("field"));
         //This test's content contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);                
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testToValidateUpsertRequestAndCASInBulkRequest() throws IOException {
@@ -328,10 +322,10 @@ public class BulkRequestTests extends ESTestCase {
                 builder.endObject();
             }
             out.write(xContentType.xContent().streamSeparator());
-            try(XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
+            try (XContentBuilder builder = XContentFactory.contentBuilder(xContentType, out)) {
                 builder.startObject();
                 builder.startObject("doc").endObject();
-                Map<String,Object> values = new HashMap<>();
+                Map<String, Object> values = new HashMap<>();
                 values.put("if_seq_no", 1L);
                 values.put("if_primary_term", 100L);
                 values.put("_index", "index");
@@ -346,13 +340,13 @@ public class BulkRequestTests extends ESTestCase {
         bulkRequest.add(data, null, null, xContentType);
         assertThat(bulkRequest.validate().validationErrors(), contains("upsert requests don't support `if_seq_no` and `if_primary_term`"));
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 
     public void testBulkTerminatedByNewline() throws Exception {
         String bulkAction = copyToStringFromClasspath("/org/codelibs/fesen/action/bulk/simple-bulk11.json");
-        IllegalArgumentException expectThrows = expectThrows(IllegalArgumentException.class, () -> new BulkRequest()
-                .add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
+        IllegalArgumentException expectThrows = expectThrows(IllegalArgumentException.class,
+                () -> new BulkRequest().add(bulkAction.getBytes(StandardCharsets.UTF_8), 0, bulkAction.length(), null, XContentType.JSON));
         assertEquals("The bulk request must be terminated by a newline [\\n]", expectThrows.getMessage());
 
         String bulkActionWithNewLine = bulkAction + "\n";
@@ -361,6 +355,6 @@ public class BulkRequestTests extends ESTestCase {
                 XContentType.JSON);
         assertEquals(3, bulkRequestWithNewLine.numberOfActions());
         //This test's JSON contains outdated references to types
-        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);        
+        assertWarnings(RestBulkAction.TYPES_DEPRECATION_MESSAGE);
     }
 }

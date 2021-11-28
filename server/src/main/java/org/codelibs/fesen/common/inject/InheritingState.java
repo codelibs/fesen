@@ -16,6 +16,8 @@
 
 package org.codelibs.fesen.common.inject;
 
+import static java.util.Collections.emptySet;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +35,6 @@ import org.codelibs.fesen.common.inject.internal.MatcherAndConverter;
 import org.codelibs.fesen.common.inject.internal.SourceProvider;
 import org.codelibs.fesen.common.inject.spi.TypeListenerBinding;
 
-import static java.util.Collections.emptySet;
-
 /**
  * @author jessewilson@google.com (Jesse Wilson)
  */
@@ -44,8 +44,7 @@ class InheritingState implements State {
 
     // Must be a linked hashmap in order to preserve order of bindings in Modules.
     private final Map<Key<?>, Binding<?>> explicitBindingsMutable = new LinkedHashMap<>();
-    private final Map<Key<?>, Binding<?>> explicitBindings
-            = Collections.unmodifiableMap(explicitBindingsMutable);
+    private final Map<Key<?>, Binding<?>> explicitBindings = Collections.unmodifiableMap(explicitBindingsMutable);
     private final Map<Class<? extends Annotation>, Scope> scopes = new HashMap<>();
     private final List<MatcherAndConverter> converters = new ArrayList<>();
     private final List<TypeListenerBinding> listenerBindings = new ArrayList<>();
@@ -101,8 +100,7 @@ class InheritingState implements State {
     }
 
     @Override
-    public MatcherAndConverter getConverter(
-            String stringValue, TypeLiteral<?> type, Errors errors, Object source) {
+    public MatcherAndConverter getConverter(String stringValue, TypeLiteral<?> type, Errors errors, Object source) {
         MatcherAndConverter matchingConverter = null;
         for (State s = this; s != State.NONE; s = s.parent()) {
             for (MatcherAndConverter converter : s.getConvertersThisLevel()) {
@@ -125,8 +123,7 @@ class InheritingState implements State {
     @Override
     public List<TypeListenerBinding> getTypeListenerBindings() {
         List<TypeListenerBinding> parentBindings = parent.getTypeListenerBindings();
-        List<TypeListenerBinding> result
-                = new ArrayList<>(parentBindings.size() + 1);
+        List<TypeListenerBinding> result = new ArrayList<>(parentBindings.size() + 1);
         result.addAll(parentBindings);
         result.addAll(listenerBindings);
         return result;

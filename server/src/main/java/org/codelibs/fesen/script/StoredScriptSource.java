@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.script;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.Diff;
@@ -33,21 +41,13 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import org.codelibs.fesen.common.xcontent.XContentType;
 
 /**
  * {@link StoredScriptSource} represents user-defined parameters for a script
@@ -245,8 +245,8 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
      */
     public static StoredScriptSource parse(BytesReference content, XContentType xContentType) {
         try (InputStream stream = content.streamInput();
-             XContentParser parser = xContentType.xContent()
-                 .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, stream)) {
+                XContentParser parser =
+                        xContentType.xContent().createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, stream)) {
             Token token = parser.nextToken();
 
             if (token != Token.START_OBJECT) {
@@ -262,8 +262,8 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
             }
 
             if (token != Token.FIELD_NAME) {
-                throw new ParsingException(parser.getTokenLocation(), "unexpected token [" + token + ", expected [" +
-                    SCRIPT_PARSE_FIELD.getPreferredName() + "]");
+                throw new ParsingException(parser.getTokenLocation(),
+                        "unexpected token [" + token + ", expected [" + SCRIPT_PARSE_FIELD.getPreferredName() + "]");
             }
 
             String name = parser.currentName();
@@ -277,8 +277,8 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
                     throw new ParsingException(parser.getTokenLocation(), "unexpected token [" + token + "], expected [{, <source>]");
                 }
             } else {
-                throw new ParsingException(parser.getTokenLocation(), "unexpected field [" + name + "], expected [" +
-                    SCRIPT_PARSE_FIELD.getPreferredName() + "]");
+                throw new ParsingException(parser.getTokenLocation(),
+                        "unexpected field [" + name + "], expected [" + SCRIPT_PARSE_FIELD.getPreferredName() + "]");
             }
         } catch (IOException ioe) {
             throw new UncheckedIOException(ioe);
@@ -347,7 +347,7 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
         this.lang = in.readString();
         this.source = in.readString();
         @SuppressWarnings("unchecked")
-        Map<String, String> options = (Map<String, String>)(Map)in.readMap();
+        Map<String, String> options = (Map<String, String>) (Map) in.readMap();
         this.options = options;
     }
 
@@ -360,7 +360,7 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
         out.writeString(lang);
         out.writeString(source);
         @SuppressWarnings("unchecked")
-        Map<String, Object> options = (Map<String, Object>)(Map)this.options;
+        Map<String, Object> options = (Map<String, Object>) (Map) this.options;
         out.writeMap(options);
     }
 
@@ -419,13 +419,17 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        StoredScriptSource that = (StoredScriptSource)o;
+        StoredScriptSource that = (StoredScriptSource) o;
 
-        if (lang != null ? !lang.equals(that.lang) : that.lang != null) return false;
-        if (source != null ? !source.equals(that.source) : that.source != null) return false;
+        if (lang != null ? !lang.equals(that.lang) : that.lang != null)
+            return false;
+        if (source != null ? !source.equals(that.source) : that.source != null)
+            return false;
         return options != null ? options.equals(that.options) : that.options == null;
 
     }
@@ -440,10 +444,6 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
 
     @Override
     public String toString() {
-        return "StoredScriptSource{" +
-            "lang='" + lang + '\'' +
-            ", source='" + source + '\'' +
-            ", options=" + options +
-            '}';
+        return "StoredScriptSource{" + "lang='" + lang + '\'' + ", source='" + source + '\'' + ", options=" + options + '}';
     }
 }

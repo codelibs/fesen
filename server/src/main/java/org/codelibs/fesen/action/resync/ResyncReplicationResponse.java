@@ -26,7 +26,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 
 public final class ResyncReplicationResponse extends ReplicationResponse implements WriteResponse {
 
-    public ResyncReplicationResponse() {}
+    public ResyncReplicationResponse() {
+    }
 
     public ResyncReplicationResponse(StreamInput in) throws IOException {
         super(in);

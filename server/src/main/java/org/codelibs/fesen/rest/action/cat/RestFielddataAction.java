@@ -19,7 +19,9 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import com.carrotsearch.hppc.cursors.ObjectLongCursor;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 import java.util.List;
 
@@ -33,9 +35,7 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import com.carrotsearch.hppc.cursors.ObjectLongCursor;
 
 /**
  * Cat API class to display information about the size of fielddata fields per node
@@ -44,9 +44,7 @@ public class RestFielddataAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_cat/fielddata"),
-            new Route(GET, "/_cat/fielddata/{fields}")));
+        return unmodifiableList(asList(new Route(GET, "/_cat/fielddata"), new Route(GET, "/_cat/fielddata/{fields}")));
     }
 
     @Override
@@ -60,7 +58,7 @@ public class RestFielddataAction extends AbstractCatAction {
         nodesStatsRequest.clear();
         nodesStatsRequest.indices(true);
         String[] fields = request.paramAsStringArray("fields", null);
-        nodesStatsRequest.indices().fieldDataFields(fields == null ? new String[] {"*"} : fields);
+        nodesStatsRequest.indices().fieldDataFields(fields == null ? new String[] { "*" } : fields);
 
         return channel -> client.admin().cluster().nodesStats(nodesStatsRequest, new RestResponseListener<NodesStatsResponse>(channel) {
             @Override
@@ -79,21 +77,16 @@ public class RestFielddataAction extends AbstractCatAction {
     @Override
     protected Table getTableWithHeader(RestRequest request) {
         Table table = new Table();
-        table.startHeaders()
-                .addCell("id", "desc:node id")
-                .addCell("host", "alias:h;desc:host name")
-                .addCell("ip", "desc:ip address")
-                .addCell("node", "alias:n;desc:node name")
-                .addCell("field", "alias:f;desc:field name")
-                .addCell("size", "text-align:right;alias:s;desc:field data usage")
-                .endHeaders();
+        table.startHeaders().addCell("id", "desc:node id").addCell("host", "alias:h;desc:host name").addCell("ip", "desc:ip address")
+                .addCell("node", "alias:n;desc:node name").addCell("field", "alias:f;desc:field name")
+                .addCell("size", "text-align:right;alias:s;desc:field data usage").endHeaders();
         return table;
     }
 
     private Table buildTable(final RestRequest request, final NodesStatsResponse nodeStatses) {
         Table table = getTableWithHeader(request);
 
-        for (NodeStats nodeStats: nodeStatses.getNodes()) {
+        for (NodeStats nodeStats : nodeStatses.getNodes()) {
             if (nodeStats.getIndices().getFieldData().getFields() != null) {
                 for (ObjectLongCursor<String> cursor : nodeStats.getIndices().getFieldData().getFields()) {
                     table.startRow();

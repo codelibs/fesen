@@ -19,23 +19,23 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.node.ReportingService;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.node.ReportingService;
+
 public class IngestInfo implements ReportingService.Info {
 
     private final Set<ProcessorInfo> processors;
 
     public IngestInfo(List<ProcessorInfo> processors) {
-        this.processors = new TreeSet<>(processors);  // we use a treeset here to have a test-able / predictable order
+        this.processors = new TreeSet<>(processors); // we use a treeset here to have a test-able / predictable order
     }
 
     /**
@@ -79,8 +79,10 @@ public class IngestInfo implements ReportingService.Info {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         IngestInfo that = (IngestInfo) o;
         return Objects.equals(processors, that.processors);
     }

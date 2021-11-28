@@ -19,35 +19,26 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.codelibs.fesen.common.settings.MockSecureSettings;
-import org.codelibs.fesen.common.settings.SecureString;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.ssl.PemKeyConfig;
-import org.codelibs.fesen.common.ssl.PemTrustConfig;
-import org.codelibs.fesen.common.ssl.SslClientAuthenticationMode;
-import org.codelibs.fesen.common.ssl.SslConfiguration;
-import org.codelibs.fesen.common.ssl.SslConfigurationLoader;
-import org.codelibs.fesen.common.ssl.SslKeyConfig;
-import org.codelibs.fesen.common.ssl.SslTrustConfig;
-import org.codelibs.fesen.common.ssl.SslVerificationMode;
-import org.codelibs.fesen.common.ssl.StoreKeyConfig;
-import org.codelibs.fesen.common.ssl.StoreTrustConfig;
-import org.codelibs.fesen.common.ssl.TrustEverythingConfig;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeFalse;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.codelibs.fesen.common.settings.MockSecureSettings;
+import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class SslConfigurationLoaderTests extends ESTestCase {
 
@@ -82,12 +73,9 @@ public class SslConfigurationLoaderTests extends ESTestCase {
         final SslClientAuthenticationMode clientAuth = randomFrom(SslClientAuthenticationMode.values());
         final String[] ciphers = generateRandomStringArray(8, 12, false, false);
         final String[] protocols = generateRandomStringArray(4, 5, false, false);
-        settings = Settings.builder()
-            .put("test.ssl.verification_mode", verificationMode.name().toLowerCase(Locale.ROOT))
-            .put("test.ssl.client_authentication", clientAuth.name().toLowerCase(Locale.ROOT))
-            .putList("test.ssl.cipher_suites", ciphers)
-            .putList("test.ssl.supported_protocols", protocols)
-            .build();
+        settings = Settings.builder().put("test.ssl.verification_mode", verificationMode.name().toLowerCase(Locale.ROOT))
+                .put("test.ssl.client_authentication", clientAuth.name().toLowerCase(Locale.ROOT))
+                .putList("test.ssl.cipher_suites", ciphers).putList("test.ssl.supported_protocols", protocols).build();
         final SslConfiguration configuration = loader.load(certRoot);
         assertThat(configuration.getClientAuth(), is(clientAuth));
         assertThat(configuration.getVerificationMode(), is(verificationMode));
@@ -100,14 +88,12 @@ public class SslConfigurationLoaderTests extends ESTestCase {
     }
 
     public void testLoadTrustFromPemCAs() {
-        settings = Settings.builder()
-            .putList("test.ssl.certificate_authorities", "ca1/ca.crt", "ca2/ca.crt", "ca3/ca.crt")
-            .build();
+        settings = Settings.builder().putList("test.ssl.certificate_authorities", "ca1/ca.crt", "ca2/ca.crt", "ca3/ca.crt").build();
         final SslConfiguration configuration = loader.load(certRoot);
         final SslTrustConfig trustConfig = configuration.getTrustConfig();
         assertThat(trustConfig, instanceOf(PemTrustConfig.class));
         assertThat(trustConfig.getDependentFiles(),
-            containsInAnyOrder(getDataPath("/certs/ca1/ca.crt"), getDataPath("/certs/ca2/ca.crt"), getDataPath("/certs/ca3/ca.crt")));
+                containsInAnyOrder(getDataPath("/certs/ca1/ca.crt"), getDataPath("/certs/ca2/ca.crt"), getDataPath("/certs/ca3/ca.crt")));
         assertThat(trustConfig.createTrustManager(), notNullValue());
     }
 
@@ -159,9 +145,8 @@ public class SslConfigurationLoaderTests extends ESTestCase {
         final boolean usePassword = randomBoolean();
         final boolean useLegacyPassword = usePassword && randomBoolean();
         final String certName = usePassword ? "cert2" : "cert1";
-        final Settings.Builder builder = Settings.builder()
-            .put("test.ssl.certificate", certName + "/" + certName + ".crt")
-            .put("test.ssl.key", certName + "/" + certName + ".key");
+        final Settings.Builder builder = Settings.builder().put("test.ssl.certificate", certName + "/" + certName + ".crt")
+                .put("test.ssl.key", certName + "/" + certName + ".key");
         if (usePassword) {
             if (useLegacyPassword) {
                 builder.put("test.ssl.key_passphrase", "c2-pass");
@@ -173,14 +158,13 @@ public class SslConfigurationLoaderTests extends ESTestCase {
         final SslConfiguration configuration = loader.load(certRoot);
         final SslKeyConfig keyConfig = configuration.getKeyConfig();
         assertThat(keyConfig, instanceOf(PemKeyConfig.class));
-        assertThat(keyConfig.getDependentFiles(), containsInAnyOrder(
-            getDataPath("/certs/" + certName + "/" + certName + ".crt"), getDataPath("/certs/" + certName + "/" + certName + ".key")));
+        assertThat(keyConfig.getDependentFiles(), containsInAnyOrder(getDataPath("/certs/" + certName + "/" + certName + ".crt"),
+                getDataPath("/certs/" + certName + "/" + certName + ".key")));
         assertThat(keyConfig.createKeyManager(), notNullValue());
     }
 
     public void testLoadKeysFromPKCS12() {
-        final Settings.Builder builder = Settings.builder()
-            .put("test.ssl.keystore.path", "cert-all/certs.p12");
+        final Settings.Builder builder = Settings.builder().put("test.ssl.keystore.path", "cert-all/certs.p12");
         if (randomBoolean()) {
             builder.put("test.ssl.keystore.password", "p12-pass");
         } else {
@@ -203,8 +187,7 @@ public class SslConfigurationLoaderTests extends ESTestCase {
 
     public void testLoadKeysFromJKS() {
         assumeFalse("Can't use JKS/PKCS12 keystores in a FIPS JVM", inFipsJvm());
-        final Settings.Builder builder = Settings.builder()
-            .put("test.ssl.keystore.path", "cert-all/certs.jks");
+        final Settings.Builder builder = Settings.builder().put("test.ssl.keystore.path", "cert-all/certs.jks");
         if (randomBoolean()) {
             builder.put("test.ssl.keystore.password", "jks-pass");
         } else {

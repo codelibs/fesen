@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.logging;
 
+import java.util.WeakHashMap;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -26,8 +28,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.spi.ExtendedLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
-
-import java.util.WeakHashMap;
 
 /**
  * A logger that prefixes all messages with a fixed prefix specified during construction. The prefix mechanism uses the marker construct, so

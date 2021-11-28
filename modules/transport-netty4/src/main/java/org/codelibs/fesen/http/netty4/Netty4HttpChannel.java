@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import io.netty.channel.Channel;
+import java.net.InetSocketAddress;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.core.CompletableContext;
@@ -27,7 +27,7 @@ import org.codelibs.fesen.http.HttpChannel;
 import org.codelibs.fesen.http.HttpResponse;
 import org.codelibs.fesen.transport.netty4.Netty4TcpChannel;
 
-import java.net.InetSocketAddress;
+import io.netty.channel.Channel;
 
 public class Netty4HttpChannel implements HttpChannel {
 
@@ -75,9 +75,6 @@ public class Netty4HttpChannel implements HttpChannel {
 
     @Override
     public String toString() {
-        return "Netty4HttpChannel{" +
-            "localAddress=" + getLocalAddress() +
-            ", remoteAddress=" + getRemoteAddress() +
-            '}';
+        return "Netty4HttpChannel{" + "localAddress=" + getLocalAddress() + ", remoteAddress=" + getRemoteAddress() + '}';
     }
 }

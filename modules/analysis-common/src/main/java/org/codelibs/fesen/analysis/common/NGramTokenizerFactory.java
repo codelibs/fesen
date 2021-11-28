@@ -19,13 +19,7 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.ngram.NGramTokenizer;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.index.IndexSettings;
-import org.codelibs.fesen.index.analysis.AbstractTokenizerFactory;
+import static java.util.Collections.unmodifiableMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -38,7 +32,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.unmodifiableMap;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.ngram.NGramTokenizer;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.index.IndexSettings;
+import org.codelibs.fesen.index.analysis.AbstractTokenizerFactory;
 
 public class NGramTokenizerFactory extends AbstractTokenizerFactory {
 
@@ -57,10 +57,8 @@ public class NGramTokenizerFactory extends AbstractTokenizerFactory {
         matchers.put("symbol", CharMatcher.Basic.SYMBOL);
         // Populate with unicode categories from java.lang.Character
         for (Field field : Character.class.getFields()) {
-            if (!field.getName().startsWith("DIRECTIONALITY")
-                    && Modifier.isPublic(field.getModifiers())
-                    && Modifier.isStatic(field.getModifiers())
-                    && field.getType() == byte.class) {
+            if (!field.getName().startsWith("DIRECTIONALITY") && Modifier.isPublic(field.getModifiers())
+                    && Modifier.isStatic(field.getModifiers()) && field.getType() == byte.class) {
                 try {
                     matchers.put(field.getName().toLowerCase(Locale.ROOT), CharMatcher.ByUnicodeCategory.of(field.getByte(null)));
                 } catch (Exception e) {
@@ -114,13 +112,13 @@ public class NGramTokenizerFactory extends AbstractTokenizerFactory {
         if (ngramDiff > maxAllowedNgramDiff) {
             if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
                 throw new IllegalArgumentException(
-                    "The difference between max_gram and min_gram in NGram Tokenizer must be less than or equal to: ["
-                        + maxAllowedNgramDiff + "] but was [" + ngramDiff + "]. This limit can be set by changing the ["
-                        + IndexSettings.MAX_NGRAM_DIFF_SETTING.getKey() + "] index level setting.");
+                        "The difference between max_gram and min_gram in NGram Tokenizer must be less than or equal to: ["
+                                + maxAllowedNgramDiff + "] but was [" + ngramDiff + "]. This limit can be set by changing the ["
+                                + IndexSettings.MAX_NGRAM_DIFF_SETTING.getKey() + "] index level setting.");
             } else {
                 deprecationLogger.deprecate("ngram_big_difference",
-                    "Deprecated big difference between max_gram and min_gram in NGram Tokenizer,"
-                    + "expected difference must be less than or equal to: [" + maxAllowedNgramDiff + "]");
+                        "Deprecated big difference between max_gram and min_gram in NGram Tokenizer,"
+                                + "expected difference must be less than or equal to: [" + maxAllowedNgramDiff + "]");
             }
         }
         this.matcher = parseTokenChars(settings);

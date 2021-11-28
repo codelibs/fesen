@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.restore;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,11 +36,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.snapshots.RestoreInfo;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Contains information about restores snapshot
@@ -88,21 +88,19 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
         return builder;
     }
 
-    public static final ConstructingObjectParser<RestoreSnapshotResponse, Void> PARSER = new ConstructingObjectParser<>(
-        "restore_snapshot", true, v -> {
-            RestoreInfo restoreInfo = (RestoreInfo) v[0];
-            Boolean accepted = (Boolean) v[1];
-            assert (accepted == null && restoreInfo != null) ||
-                   (accepted != null && accepted && restoreInfo == null) :
-                "accepted: [" + accepted + "], restoreInfo: [" + restoreInfo + "]";
-            return new RestoreSnapshotResponse(restoreInfo);
-    });
+    public static final ConstructingObjectParser<RestoreSnapshotResponse, Void> PARSER =
+            new ConstructingObjectParser<>("restore_snapshot", true, v -> {
+                RestoreInfo restoreInfo = (RestoreInfo) v[0];
+                Boolean accepted = (Boolean) v[1];
+                assert (accepted == null && restoreInfo != null) || (accepted != null && accepted && restoreInfo == null) : "accepted: ["
+                        + accepted + "], restoreInfo: [" + restoreInfo + "]";
+                return new RestoreSnapshotResponse(restoreInfo);
+            });
 
     static {
         PARSER.declareObject(optionalConstructorArg(), (parser, context) -> RestoreInfo.fromXContent(parser), new ParseField("snapshot"));
         PARSER.declareBoolean(optionalConstructorArg(), new ParseField("accepted"));
     }
-
 
     public static RestoreSnapshotResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
@@ -110,8 +108,10 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RestoreSnapshotResponse that = (RestoreSnapshotResponse) o;
         return Objects.equals(restoreInfo, that.restoreInfo);
     }

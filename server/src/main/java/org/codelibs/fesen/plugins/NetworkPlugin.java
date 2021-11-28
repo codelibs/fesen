@@ -51,7 +51,7 @@ public interface NetworkPlugin {
      *                      headers in the interceptors
      */
     default List<TransportInterceptor> getTransportInterceptors(NamedWriteableRegistry namedWriteableRegistry,
-                                                                ThreadContext threadContext) {
+            ThreadContext threadContext) {
         return Collections.emptyList();
     }
 
@@ -60,8 +60,7 @@ public interface NetworkPlugin {
      * See {@link org.codelibs.fesen.common.network.NetworkModule#TRANSPORT_TYPE_KEY} to configure a specific implementation.
      */
     default Map<String, Supplier<Transport>> getTransports(Settings settings, ThreadPool threadPool, PageCacheRecycler pageCacheRecycler,
-                                                           CircuitBreakerService circuitBreakerService,
-                                                           NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
+            CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
         return Collections.emptyMap();
     }
 
@@ -70,12 +69,8 @@ public interface NetworkPlugin {
      * See {@link org.codelibs.fesen.common.network.NetworkModule#HTTP_TYPE_SETTING} to configure a specific implementation.
      */
     default Map<String, Supplier<HttpServerTransport>> getHttpTransports(Settings settings, ThreadPool threadPool, BigArrays bigArrays,
-                                                                         PageCacheRecycler pageCacheRecycler,
-                                                                         CircuitBreakerService circuitBreakerService,
-                                                                         NamedXContentRegistry xContentRegistry,
-                                                                         NetworkService networkService,
-                                                                         HttpServerTransport.Dispatcher dispatcher,
-                                                                         ClusterSettings clusterSettings) {
+            PageCacheRecycler pageCacheRecycler, CircuitBreakerService circuitBreakerService, NamedXContentRegistry xContentRegistry,
+            NetworkService networkService, HttpServerTransport.Dispatcher dispatcher, ClusterSettings clusterSettings) {
         return Collections.emptyMap();
     }
 }

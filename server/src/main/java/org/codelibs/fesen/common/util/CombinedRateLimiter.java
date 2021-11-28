@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common.util;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.lucene.store.RateLimiter;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A rate limiter designed for multiple concurrent users.

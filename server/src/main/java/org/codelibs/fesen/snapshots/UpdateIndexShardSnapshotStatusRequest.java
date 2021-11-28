@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.snapshots;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.MasterNodeRequest;
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
@@ -25,9 +28,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Internal request that is used to send changes in snapshot status to master

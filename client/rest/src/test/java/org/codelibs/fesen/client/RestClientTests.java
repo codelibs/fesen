@@ -19,21 +19,18 @@
 
 package org.codelibs.fesen.client;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.client.AuthCache;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.codelibs.fesen.client.DeadHostState;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.NodeSelector;
-import org.codelibs.fesen.client.Request;
-import org.codelibs.fesen.client.Response;
-import org.codelibs.fesen.client.ResponseListener;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.RestClient.NodeTuple;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,18 +47,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.client.AuthCache;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.codelibs.fesen.client.RestClient.NodeTuple;
 
 public class RestClientTests extends RestClientTestCase {
 
@@ -168,7 +160,7 @@ public class RestClientTests extends RestClientTestCase {
             assertEquals("nodes must not be null or empty", e.getMessage());
         }
         try (RestClient restClient = createRestClient()) {
-            restClient.setNodes(Collections.<Node>emptyList());
+            restClient.setNodes(Collections.<Node> emptyList());
             fail("setNodes should have failed");
         } catch (IllegalArgumentException e) {
             assertEquals("nodes must not be null or empty", e.getMessage());
@@ -180,10 +172,7 @@ public class RestClientTests extends RestClientTestCase {
             assertEquals("node cannot be null", e.getMessage());
         }
         try (RestClient restClient = createRestClient()) {
-            restClient.setNodes(Arrays.asList(
-                new Node(new HttpHost("localhost", 9200)),
-                null,
-                new Node(new HttpHost("localhost", 9201))));
+            restClient.setNodes(Arrays.asList(new Node(new HttpHost("localhost", 9200)), null, new Node(new HttpHost("localhost", 9201))));
             fail("setNodes should have failed");
         } catch (NullPointerException e) {
             assertEquals("node cannot be null", e.getMessage());
@@ -269,8 +258,7 @@ public class RestClientTests extends RestClientTestCase {
          * throw an exception
          */
         {
-            String message = "NodeSelector [NONE] rejected all nodes, living ["
-                    + "[host=http://1, version=1], [host=http://2, version=2], "
+            String message = "NodeSelector [NONE] rejected all nodes, living [" + "[host=http://1, version=1], [host=http://2, version=2], "
                     + "[host=http://3, version=3]] and dead []";
             assertEquals(message, assertSelectAllRejected(nodeTuple, emptyBlacklist, noNodes));
         }
@@ -308,8 +296,7 @@ public class RestClientTests extends RestClientTestCase {
              * their nodes are blacklisted AND blocked.
              */
             String message = "NodeSelector [NONE] rejected all nodes, living [] and dead ["
-                    + "[host=http://1, version=1], [host=http://2, version=2], "
-                    + "[host=http://3, version=3]]";
+                    + "[host=http://1, version=1], [host=http://2, version=2], " + "[host=http://3, version=3]]";
             assertEquals(message, assertSelectAllRejected(nodeTuple, blacklist, noNodes));
 
             /*
@@ -336,16 +323,15 @@ public class RestClientTests extends RestClientTestCase {
         }
     }
 
-    private void assertSelectLivingHosts(List<Node> expectedNodes, NodeTuple<List<Node>> nodeTuple,
-            Map<HttpHost, DeadHostState> blacklist, NodeSelector nodeSelector) throws IOException {
+    private void assertSelectLivingHosts(List<Node> expectedNodes, NodeTuple<List<Node>> nodeTuple, Map<HttpHost, DeadHostState> blacklist,
+            NodeSelector nodeSelector) throws IOException {
         int iterations = 1000;
         AtomicInteger lastNodeIndex = new AtomicInteger(0);
         assertEquals(expectedNodes, RestClient.selectNodes(nodeTuple, blacklist, lastNodeIndex, nodeSelector));
         // Calling it again rotates the set of results
         for (int i = 1; i < iterations; i++) {
             Collections.rotate(expectedNodes, 1);
-            assertEquals("iteration " + i, expectedNodes,
-                    RestClient.selectNodes(nodeTuple, blacklist, lastNodeIndex, nodeSelector));
+            assertEquals("iteration " + i, expectedNodes, RestClient.selectNodes(nodeTuple, blacklist, lastNodeIndex, nodeSelector));
         }
     }
 
@@ -353,8 +339,8 @@ public class RestClientTests extends RestClientTestCase {
      * Assert that {@link RestClient#selectNodes} fails on the provided arguments.
      * @return the message in the exception thrown by the failure
      */
-    private static String assertSelectAllRejected( NodeTuple<List<Node>> nodeTuple,
-            Map<HttpHost, DeadHostState> blacklist, NodeSelector nodeSelector) {
+    private static String assertSelectAllRejected(NodeTuple<List<Node>> nodeTuple, Map<HttpHost, DeadHostState> blacklist,
+            NodeSelector nodeSelector) {
         try {
             RestClient.selectNodes(nodeTuple, blacklist, new AtomicInteger(0), nodeSelector);
             throw new AssertionError("expected selectHosts to fail");
@@ -397,7 +383,7 @@ public class RestClientTests extends RestClientTestCase {
         assertEquals(Integer.MIN_VALUE + 50, lastNodeIndex.get());
     }
 
-    public void testIsRunning(){
+    public void testIsRunning() {
         List<Node> nodes = Collections.singletonList(new Node(new HttpHost("localhost", 9200)));
         CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
         RestClient restClient = new RestClient(client, new Header[] {}, nodes, null, null, null, false, false);
@@ -417,8 +403,8 @@ public class RestClientTests extends RestClientTestCase {
          */
         int expectedOffset = distance > 0 ? nodeTuple.nodes.size() - distance : Math.abs(distance);
         for (int i = 0; i < runs; i++) {
-            Iterable<Node> selectedNodes = RestClient.selectNodes(nodeTuple, Collections.<HttpHost, DeadHostState>emptyMap(),
-                    lastNodeIndex, NodeSelector.ANY);
+            Iterable<Node> selectedNodes =
+                    RestClient.selectNodes(nodeTuple, Collections.<HttpHost, DeadHostState> emptyMap(), lastNodeIndex, NodeSelector.ANY);
             List<Node> expectedNodes = nodeTuple.nodes;
             int index = 0;
             for (Node actualNode : selectedNodes) {

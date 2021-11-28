@@ -211,9 +211,8 @@ public class CorsHandler {
 
     private static boolean isPreflightRequest(final HttpRequest request) {
         final Map<String, List<String>> headers = request.getHeaders();
-        return request.method().equals(RestRequest.Method.OPTIONS) &&
-            headers.containsKey(ORIGIN) &&
-            headers.containsKey(ACCESS_CONTROL_REQUEST_METHOD);
+        return request.method().equals(RestRequest.Method.OPTIONS) && headers.containsKey(ORIGIN)
+                && headers.containsKey(ACCESS_CONTROL_REQUEST_METHOD);
     }
 
     private static void setVaryHeader(final HttpResponse response) {
@@ -307,16 +306,9 @@ public class CorsHandler {
 
         @Override
         public String toString() {
-            return "Config{" +
-                "enabled=" + enabled +
-                ", origins=" + origins +
-                ", pattern=" + pattern +
-                ", anyOrigin=" + anyOrigin +
-                ", credentialsAllowed=" + credentialsAllowed +
-                ", allowedRequestMethods=" + allowedRequestMethods +
-                ", allowedRequestHeaders=" + allowedRequestHeaders +
-                ", maxAge=" + maxAge +
-                '}';
+            return "Config{" + "enabled=" + enabled + ", origins=" + origins + ", pattern=" + pattern + ", anyOrigin=" + anyOrigin
+                    + ", credentialsAllowed=" + credentialsAllowed + ", allowedRequestMethods=" + allowedRequestMethods
+                    + ", allowedRequestHeaders=" + allowedRequestHeaders + ", maxAge=" + maxAge + '}';
         }
 
         private static class Builder {
@@ -364,7 +356,6 @@ public class CorsHandler {
                 this.allowCredentials = true;
                 return this;
             }
-
 
             public Builder allowedRequestMethods(RestRequest.Method[] methods) {
                 requestMethods.addAll(Arrays.asList(methods));
@@ -421,14 +412,10 @@ public class CorsHandler {
             builder.allowCredentials();
         }
         String[] strMethods = Strings.tokenizeToStringArray(SETTING_CORS_ALLOW_METHODS.get(settings), ",");
-        RestRequest.Method[] methods = Arrays.stream(strMethods)
-            .map(s -> s.toUpperCase(Locale.ENGLISH))
-            .map(RestRequest.Method::valueOf)
-            .toArray(RestRequest.Method[]::new);
-        Config config = builder.allowedRequestMethods(methods)
-            .maxAge(SETTING_CORS_MAX_AGE.get(settings))
-            .allowedRequestHeaders(Strings.tokenizeToStringArray(SETTING_CORS_ALLOW_HEADERS.get(settings), ","))
-            .build();
+        RestRequest.Method[] methods = Arrays.stream(strMethods).map(s -> s.toUpperCase(Locale.ENGLISH)).map(RestRequest.Method::valueOf)
+                .toArray(RestRequest.Method[]::new);
+        Config config = builder.allowedRequestMethods(methods).maxAge(SETTING_CORS_MAX_AGE.get(settings))
+                .allowedRequestHeaders(Strings.tokenizeToStringArray(SETTING_CORS_ALLOW_HEADERS.get(settings), ",")).build();
         return config;
     }
 

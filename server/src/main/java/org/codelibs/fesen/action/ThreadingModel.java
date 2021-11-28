@@ -19,12 +19,8 @@
 
 package org.codelibs.fesen.action;
 
-
 public enum ThreadingModel {
-    NONE((byte) 0),
-    OPERATION((byte) 1),
-    LISTENER((byte) 2),
-    OPERATION_LISTENER((byte) 3);
+    NONE((byte) 0), OPERATION((byte) 1), LISTENER((byte) 2), OPERATION_LISTENER((byte) 3);
 
     private byte id;
 

@@ -18,8 +18,8 @@
  */
 package org.codelibs.fesen.index.engine;
 
-import com.carrotsearch.hppc.ObjectLongHashMap;
-import com.carrotsearch.hppc.cursors.ObjectLongCursor;
+import java.util.function.Supplier;
+
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -34,7 +34,8 @@ import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.suggest.completion.CompletionStats;
 
-import java.util.function.Supplier;
+import com.carrotsearch.hppc.ObjectLongHashMap;
+import com.carrotsearch.hppc.cursors.ObjectLongCursor;
 
 class CompletionStatsCache implements ReferenceManager.RefreshListener {
 

@@ -19,24 +19,6 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.compress.Compressor;
-import org.codelibs.fesen.common.compress.CompressorFactory;
-import org.codelibs.fesen.common.xcontent.DeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParseException;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.ToXContent.Params;
-import org.codelibs.fesen.core.Tuple;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +28,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.compress.Compressor;
+import org.codelibs.fesen.common.compress.CompressorFactory;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+import org.codelibs.fesen.core.Tuple;
 
 @SuppressWarnings("unchecked")
 public class XContentHelper {
@@ -57,7 +48,7 @@ public class XContentHelper {
      */
     @Deprecated
     public static XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler,
-                                              BytesReference bytes) throws IOException {
+            BytesReference bytes) throws IOException {
         Compressor compressor = CompressorFactory.compressor(bytes);
         if (compressor != null) {
             InputStream compressedInput = compressor.threadLocalInputStream(bytes.streamInput());
@@ -75,7 +66,7 @@ public class XContentHelper {
      * Creates a parser for the bytes using the supplied content-type
      */
     public static XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler,
-                                              BytesReference bytes, XContentType xContentType) throws IOException {
+            BytesReference bytes, XContentType xContentType) throws IOException {
         Objects.requireNonNull(xContentType);
         Compressor compressor = CompressorFactory.compressor(bytes);
         if (compressor != null) {
@@ -87,8 +78,8 @@ public class XContentHelper {
         } else {
             if (bytes instanceof BytesArray) {
                 final BytesArray array = (BytesArray) bytes;
-                return xContentType.xContent().createParser(
-                        xContentRegistry, deprecationHandler, array.array(), array.offset(), array.length());
+                return xContentType.xContent().createParser(xContentRegistry, deprecationHandler, array.array(), array.offset(),
+                        array.length());
             }
             return xContentType.xContent().createParser(xContentRegistry, deprecationHandler, bytes.streamInput());
         }
@@ -100,8 +91,7 @@ public class XContentHelper {
      *             instead with the proper {@link XContentType}
      */
     @Deprecated
-    public static Tuple<XContentType, Map<String, Object>> convertToMap(BytesReference bytes, boolean ordered)
-            throws FesenParseException {
+    public static Tuple<XContentType, Map<String, Object>> convertToMap(BytesReference bytes, boolean ordered) throws FesenParseException {
         return convertToMap(bytes, ordered, null);
     }
 
@@ -109,7 +99,7 @@ public class XContentHelper {
      * Converts the given bytes into a map that is optionally ordered. The provided {@link XContentType} must be non-null.
      */
     public static Tuple<XContentType, Map<String, Object>> convertToMap(BytesReference bytes, boolean ordered, XContentType xContentType)
-        throws FesenParseException {
+            throws FesenParseException {
         try {
             final XContentType contentType;
             InputStream input;
@@ -135,7 +125,7 @@ public class XContentHelper {
             }
             try (InputStream stream = input) {
                 return new Tuple<>(Objects.requireNonNull(contentType),
-                    convertToMap(XContentFactory.xContent(contentType), stream, ordered));
+                        convertToMap(XContentFactory.xContent(contentType), stream, ordered));
             }
         } catch (IOException e) {
             throw new FesenParseException("Failed to parse content to map", e);
@@ -148,8 +138,8 @@ public class XContentHelper {
      */
     public static Map<String, Object> convertToMap(XContent xContent, String string, boolean ordered) throws FesenParseException {
         // It is safe to use EMPTY here because this never uses namedObject
-        try (XContentParser parser = xContent.createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, string)) {
+        try (XContentParser parser =
+                xContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, string)) {
             return ordered ? parser.mapOrdered() : parser.map();
         } catch (IOException e) {
             throw new FesenParseException("Failed to parse content to map", e);
@@ -160,11 +150,10 @@ public class XContentHelper {
      * Convert a string in some {@link XContent} format to a {@link Map}. Throws an {@link FesenParseException} if there is any
      * error. Note that unlike {@link #convertToMap(BytesReference, boolean)}, this doesn't automatically uncompress the input.
      */
-    public static Map<String, Object> convertToMap(XContent xContent, InputStream input, boolean ordered)
-            throws FesenParseException {
+    public static Map<String, Object> convertToMap(XContent xContent, InputStream input, boolean ordered) throws FesenParseException {
         // It is safe to use EMPTY here because this never uses namedObject
-        try (XContentParser parser = xContent.createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input)) {
+        try (XContentParser parser =
+                xContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input)) {
             return ordered ? parser.mapOrdered() : parser.map();
         } catch (IOException e) {
             throw new FesenParseException("Failed to parse content to map", e);
@@ -178,8 +167,8 @@ public class XContentHelper {
     public static Map<String, Object> convertToMap(XContent xContent, byte[] bytes, int offset, int length, boolean ordered)
             throws FesenParseException {
         // It is safe to use EMPTY here because this never uses namedObject
-        try (XContentParser parser = xContent.createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes, offset, length)) {
+        try (XContentParser parser =
+                xContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes, offset, length)) {
             return ordered ? parser.mapOrdered() : parser.map();
         } catch (IOException e) {
             throw new FesenParseException("Failed to parse content to map", e);
@@ -214,7 +203,7 @@ public class XContentHelper {
     }
 
     public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint, XContentType xContentType)
-        throws IOException {
+            throws IOException {
         Objects.requireNonNull(xContentType);
         if (xContentType == XContentType.JSON && !reformatJson) {
             return bytes.utf8ToString();
@@ -224,13 +213,13 @@ public class XContentHelper {
         if (bytes instanceof BytesArray) {
             final BytesArray array = (BytesArray) bytes;
             try (XContentParser parser = XContentFactory.xContent(xContentType).createParser(NamedXContentRegistry.EMPTY,
-                         DeprecationHandler.THROW_UNSUPPORTED_OPERATION, array.array(), array.offset(), array.length())) {
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, array.array(), array.offset(), array.length())) {
                 return toJsonString(prettyPrint, parser);
             }
         } else {
             try (InputStream stream = bytes.streamInput();
-                 XContentParser parser = XContentFactory.xContent(xContentType).createParser(NamedXContentRegistry.EMPTY,
-                         DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream)) {
+                    XContentParser parser = XContentFactory.xContent(xContentType).createParser(NamedXContentRegistry.EMPTY,
+                            DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream)) {
                 return toJsonString(prettyPrint, parser);
             }
         }
@@ -268,8 +257,8 @@ public class XContentHelper {
             Object old = source.get(changesEntry.getKey());
             if (old instanceof Map && changesEntry.getValue() instanceof Map) {
                 // recursive merge maps
-                modified |= update((Map<String, Object>) source.get(changesEntry.getKey()),
-                        (Map<String, Object>) changesEntry.getValue(), checkUpdatesAreUnequal && !modified);
+                modified |= update((Map<String, Object>) source.get(changesEntry.getKey()), (Map<String, Object>) changesEntry.getValue(),
+                        checkUpdatesAreUnequal && !modified);
                 continue;
             }
             // update the field
@@ -360,8 +349,8 @@ public class XContentHelper {
      * auto-detection
      */
     @Deprecated
-    public static void writeRawField(String field, BytesReference source, XContentBuilder builder,
-                                     ToXContent.Params params) throws IOException {
+    public static void writeRawField(String field, BytesReference source, XContentBuilder builder, ToXContent.Params params)
+            throws IOException {
         Compressor compressor = CompressorFactory.compressor(source);
         if (compressor != null) {
             try (InputStream compressedStreamInput = compressor.threadLocalInputStream(source.streamInput())) {
@@ -379,7 +368,7 @@ public class XContentHelper {
      * {@link XContentBuilder#rawField(String, InputStream, XContentType)}.
      */
     public static void writeRawField(String field, BytesReference source, XContentType xContentType, XContentBuilder builder,
-                                     ToXContent.Params params) throws IOException {
+            ToXContent.Params params) throws IOException {
         Objects.requireNonNull(xContentType);
         Compressor compressor = CompressorFactory.compressor(source);
         if (compressor != null) {
@@ -407,8 +396,8 @@ public class XContentHelper {
      * {@link XContentType}. Wraps the output into a new anonymous object according to the value returned
      * by the {@link ToXContent#isFragment()} method returns.
      */
-    public static BytesReference toXContent(ToXContent toXContent, XContentType xContentType, Params params,
-                                            boolean humanReadable) throws IOException {
+    public static BytesReference toXContent(ToXContent toXContent, XContentType xContentType, Params params, boolean humanReadable)
+            throws IOException {
         try (XContentBuilder builder = XContentBuilder.builder(xContentType.xContent())) {
             builder.humanReadable(humanReadable);
             if (toXContent.isFragment()) {
@@ -456,7 +445,7 @@ public class XContentHelper {
         if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
             if (parser.nextToken() != XContentParser.Token.START_OBJECT) {
                 throw new XContentParseException(parser.getTokenLocation(),
-                    "Expected [START_OBJECT] but got [" + parser.currentToken() + "]");
+                        "Expected [START_OBJECT] but got [" + parser.currentToken() + "]");
             }
         }
         XContentBuilder builder = XContentBuilder.builder(parser.contentType().xContent());

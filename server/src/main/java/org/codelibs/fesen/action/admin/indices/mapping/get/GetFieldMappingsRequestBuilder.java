@@ -25,8 +25,7 @@ import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
 /** A helper class to build {@link GetFieldMappingsRequest} objects */
-public class GetFieldMappingsRequestBuilder
-        extends ActionRequestBuilder<GetFieldMappingsRequest, GetFieldMappingsResponse> {
+public class GetFieldMappingsRequestBuilder extends ActionRequestBuilder<GetFieldMappingsRequest, GetFieldMappingsResponse> {
 
     public GetFieldMappingsRequestBuilder(FesenClient client, GetFieldMappingsAction action, String... indices) {
         super(client, action, new GetFieldMappingsRequest().indices(indices));
@@ -56,7 +55,6 @@ public class GetFieldMappingsRequestBuilder
         request.indicesOptions(indicesOptions);
         return this;
     }
-
 
     /** Sets the fields to retrieve. */
     public GetFieldMappingsRequestBuilder setFields(String... fields) {

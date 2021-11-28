@@ -29,14 +29,14 @@ public class ElasticsearchStatusException extends FesenStatusException {
 
     public ElasticsearchStatusException(String msg, RestStatus status, Throwable cause, Object... args) {
         super(msg, status, cause, args);
-     }
+    }
 
     public ElasticsearchStatusException(String msg, RestStatus status, Object... args) {
         super(msg, status, args);
-     }
+    }
 
     public ElasticsearchStatusException(StreamInput in) throws IOException {
         super(in);
-     }
+    }
 
 }

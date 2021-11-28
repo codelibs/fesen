@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.client;
 
+import java.io.IOException;
+
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -32,8 +34,6 @@ import org.apache.http.nio.util.ByteBufferAllocator;
 import org.apache.http.nio.util.HeapByteBufferAllocator;
 import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.protocol.HttpContext;
-
-import java.io.IOException;
 
 /**
  * Default implementation of {@link org.apache.http.nio.protocol.HttpAsyncResponseConsumer}. Buffers the whole
@@ -73,8 +73,8 @@ public class HeapBufferedAsyncResponseConsumer extends AbstractAsyncResponseCons
     protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
         long len = entity.getContentLength();
         if (len > bufferLimitBytes) {
-            throw new ContentTooLongException("entity content is too long [" + len +
-                    "] for the configured buffer limit [" + bufferLimitBytes + "]");
+            throw new ContentTooLongException(
+                    "entity content is too long [" + len + "] for the configured buffer limit [" + bufferLimitBytes + "]");
         }
         if (len < 0) {
             len = 4096;

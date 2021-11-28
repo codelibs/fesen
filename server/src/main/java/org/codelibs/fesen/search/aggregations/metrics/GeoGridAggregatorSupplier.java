@@ -32,17 +32,7 @@ import org.codelibs.fesen.search.internal.SearchContext;
 
 @FunctionalInterface
 public interface GeoGridAggregatorSupplier {
-    GeoGridAggregator build(
-        String name,
-        AggregatorFactories factories,
-        ValuesSource valuesSource,
-        int precision,
-        GeoBoundingBox geoBoundingBox,
-        int requiredSize,
-        int shardSize,
-        SearchContext aggregationContext,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException;
+    GeoGridAggregator build(String name, AggregatorFactories factories, ValuesSource valuesSource, int precision,
+            GeoBoundingBox geoBoundingBox, int requiredSize, int shardSize, SearchContext aggregationContext, Aggregator parent,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
 }

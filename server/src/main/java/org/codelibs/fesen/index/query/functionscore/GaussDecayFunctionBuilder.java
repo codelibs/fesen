@@ -19,13 +19,12 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
+import java.io.IOException;
 
 import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-
-import java.io.IOException;
 
 public class GaussDecayFunctionBuilder extends DecayFunctionBuilder<GaussDecayFunctionBuilder> {
     public static final String NAME = "gauss";
@@ -73,9 +72,7 @@ public class GaussDecayFunctionBuilder extends DecayFunctionBuilder<GaussDecayFu
 
         @Override
         public Explanation explainFunction(String valueExpl, double value, double scale) {
-            return Explanation.match(
-                    (float) evaluate(value, scale),
-                    "exp(-0.5*pow(" + valueExpl + ",2.0)/" + -1 * scale + ")");
+            return Explanation.match((float) evaluate(value, scale), "exp(-0.5*pow(" + valueExpl + ",2.0)/" + -1 * scale + ")");
         }
 
         @Override

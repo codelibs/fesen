@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.action.admin.indices.stats;
 
+import static java.util.Collections.unmodifiableMap;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.action.admin.indices.stats.IndexStats.IndexStatsBuilder;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
@@ -28,14 +36,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.Index;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.unmodifiableMap;
 
 public class IndicesStatsResponse extends BroadcastResponse {
 
@@ -49,7 +49,7 @@ public class IndicesStatsResponse extends BroadcastResponse {
     }
 
     IndicesStatsResponse(ShardStats[] shards, int totalShards, int successfulShards, int failedShards,
-                         List<DefaultShardOperationFailedException> shardFailures) {
+            List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.shards = shards;
     }
@@ -87,8 +87,8 @@ public class IndicesStatsResponse extends BroadcastResponse {
         final Map<String, IndexStatsBuilder> indexToIndexStatsBuilder = new HashMap<>();
         for (ShardStats shard : shards) {
             Index index = shard.getShardRouting().index();
-            IndexStatsBuilder indexStatsBuilder = indexToIndexStatsBuilder.computeIfAbsent(index.getName(),
-                    k -> new IndexStatsBuilder(k, index.getUUID()));
+            IndexStatsBuilder indexStatsBuilder =
+                    indexToIndexStatsBuilder.computeIfAbsent(index.getName(), k -> new IndexStatsBuilder(k, index.getUUID()));
             indexStatsBuilder.add(shard);
         }
 
@@ -137,7 +137,7 @@ public class IndicesStatsResponse extends BroadcastResponse {
     protected void addCustomXContentFields(XContentBuilder builder, Params params) throws IOException {
         final String level = params.param("level", "indices");
         final boolean isLevelValid =
-            "cluster".equalsIgnoreCase(level) || "indices".equalsIgnoreCase(level) || "shards".equalsIgnoreCase(level);
+                "cluster".equalsIgnoreCase(level) || "indices".equalsIgnoreCase(level) || "shards".equalsIgnoreCase(level);
         if (!isLevelValid) {
             throw new IllegalArgumentException("level parameter must be one of [cluster] or [indices] or [shards] but was [" + level + "]");
         }

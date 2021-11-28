@@ -43,8 +43,7 @@ public class UpdatePersistentTaskRequestTests extends AbstractWireSerializingTes
 
     @Override
     protected NamedWriteableRegistry getNamedWriteableRegistry() {
-        return new NamedWriteableRegistry(Collections.singletonList(
-                new NamedWriteableRegistry.Entry(PersistentTaskState.class, TestPersistentTasksExecutor.NAME, State::new)
-        ));
+        return new NamedWriteableRegistry(Collections
+                .singletonList(new NamedWriteableRegistry.Entry(PersistentTaskState.class, TestPersistentTasksExecutor.NAME, State::new)));
     }
 }

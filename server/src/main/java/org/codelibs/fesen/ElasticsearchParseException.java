@@ -28,14 +28,14 @@ public class ElasticsearchParseException extends FesenParseException {
 
     public ElasticsearchParseException(String msg, Object... args) {
         super(msg, args);
-     }
+    }
 
     public ElasticsearchParseException(String msg, Throwable cause, Object... args) {
         super(msg, cause, args);
-     }
+    }
 
     public ElasticsearchParseException(StreamInput in) throws IOException {
         super(in);
-     }
+    }
 
 }

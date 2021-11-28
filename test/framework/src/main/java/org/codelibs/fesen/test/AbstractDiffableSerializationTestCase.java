@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.test;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.Diffable;
 import org.codelibs.fesen.common.io.stream.Writeable.Reader;
 import org.codelibs.fesen.common.xcontent.ToXContent;
-
-import java.io.IOException;
 
 /**
  * An abstract test case to ensure correct behavior of Diffable.
@@ -43,6 +43,6 @@ public abstract class AbstractDiffableSerializationTestCase<T extends Diffable<T
 
     public final void testDiffableSerialization() throws IOException {
         DiffableTestUtils.testDiffableSerialization(this::createTestInstance, this::makeTestChanges, getNamedWriteableRegistry(),
-            instanceReader(), diffReader());
+                instanceReader(), diffReader());
     }
 }

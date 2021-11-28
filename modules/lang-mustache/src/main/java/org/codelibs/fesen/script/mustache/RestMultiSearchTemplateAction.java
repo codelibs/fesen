@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,25 +39,18 @@ import org.codelibs.fesen.rest.action.RestToXContentListener;
 import org.codelibs.fesen.rest.action.search.RestMultiSearchAction;
 import org.codelibs.fesen.rest.action.search.RestSearchAction;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public class RestMultiSearchTemplateAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestMultiSearchTemplateAction.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
-        " Specifying types in multi search template requests is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE =
+            "[types removal]" + " Specifying types in multi search template requests is deprecated.";
 
     private static final Set<String> RESPONSE_PARAMS;
 
     static {
-        final Set<String> responseParams = new HashSet<>(
-            asList(RestSearchAction.TYPED_KEYS_PARAM, RestSearchAction.TOTAL_HITS_AS_INT_PARAM)
-        );
+        final Set<String> responseParams =
+                new HashSet<>(asList(RestSearchAction.TYPED_KEYS_PARAM, RestSearchAction.TOTAL_HITS_AS_INT_PARAM));
         RESPONSE_PARAMS = Collections.unmodifiableSet(responseParams);
     }
-
 
     private final boolean allowExplicitIndex;
 
@@ -62,14 +60,10 @@ public class RestMultiSearchTemplateAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_msearch/template"),
-            new Route(POST, "/_msearch/template"),
-            new Route(GET, "/{index}/_msearch/template"),
-            new Route(POST, "/{index}/_msearch/template"),
-            // Deprecated typed endpoints.
-            new Route(GET, "/{index}/{type}/_msearch/template"),
-            new Route(POST, "/{index}/{type}/_msearch/template")));
+        return unmodifiableList(asList(new Route(GET, "/_msearch/template"), new Route(POST, "/_msearch/template"),
+                new Route(GET, "/{index}/_msearch/template"), new Route(POST, "/{index}/_msearch/template"),
+                // Deprecated typed endpoints.
+                new Route(GET, "/{index}/{type}/_msearch/template"), new Route(POST, "/{index}/{type}/_msearch/template")));
     }
 
     @Override

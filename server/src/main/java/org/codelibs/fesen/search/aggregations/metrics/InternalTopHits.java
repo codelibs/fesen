@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
@@ -32,11 +37,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchHits;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Results of the {@link TopHitsAggregator}.
@@ -157,9 +157,8 @@ public class InternalTopHits extends InternalAggregation implements TopHits {
             hits[i] = shardHits[scoreDoc.shardIndex].getAt(position);
         }
         assert reducedTopDocs.totalHits.relation == Relation.EQUAL_TO;
-        return new InternalTopHits(name, this.from, this.size,
-            new TopDocsAndMaxScore(reducedTopDocs, maxScore),
-            new SearchHits(hits, reducedTopDocs.totalHits, maxScore), getMetadata());
+        return new InternalTopHits(name, this.from, this.size, new TopDocsAndMaxScore(reducedTopDocs, maxScore),
+                new SearchHits(hits, reducedTopDocs.totalHits, maxScore), getMetadata());
     }
 
     @Override
@@ -185,29 +184,43 @@ public class InternalTopHits extends InternalAggregation implements TopHits {
     // Equals and hashcode implemented for testing round trips
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalTopHits other = (InternalTopHits) obj;
-        if (from != other.from) return false;
-        if (size != other.size) return false;
-        if (topDocs.topDocs.totalHits.value != other.topDocs.topDocs.totalHits.value) return false;
-        if (topDocs.topDocs.totalHits.relation != other.topDocs.topDocs.totalHits.relation) return false;
-        if (topDocs.topDocs.scoreDocs.length != other.topDocs.topDocs.scoreDocs.length) return false;
+        if (from != other.from)
+            return false;
+        if (size != other.size)
+            return false;
+        if (topDocs.topDocs.totalHits.value != other.topDocs.topDocs.totalHits.value)
+            return false;
+        if (topDocs.topDocs.totalHits.relation != other.topDocs.topDocs.totalHits.relation)
+            return false;
+        if (topDocs.topDocs.scoreDocs.length != other.topDocs.topDocs.scoreDocs.length)
+            return false;
         for (int d = 0; d < topDocs.topDocs.scoreDocs.length; d++) {
             ScoreDoc thisDoc = topDocs.topDocs.scoreDocs[d];
             ScoreDoc otherDoc = other.topDocs.topDocs.scoreDocs[d];
-            if (thisDoc.doc != otherDoc.doc) return false;
-            if (Double.compare(thisDoc.score, otherDoc.score) != 0) return false;
-            if (thisDoc.shardIndex != otherDoc.shardIndex) return false;
+            if (thisDoc.doc != otherDoc.doc)
+                return false;
+            if (Double.compare(thisDoc.score, otherDoc.score) != 0)
+                return false;
+            if (thisDoc.shardIndex != otherDoc.shardIndex)
+                return false;
             if (thisDoc instanceof FieldDoc) {
-                if (false == (otherDoc instanceof FieldDoc)) return false;
+                if (false == (otherDoc instanceof FieldDoc))
+                    return false;
                 FieldDoc thisFieldDoc = (FieldDoc) thisDoc;
                 FieldDoc otherFieldDoc = (FieldDoc) otherDoc;
-                if (thisFieldDoc.fields.length != otherFieldDoc.fields.length) return false;
+                if (thisFieldDoc.fields.length != otherFieldDoc.fields.length)
+                    return false;
                 for (int f = 0; f < thisFieldDoc.fields.length; f++) {
-                    if (false == thisFieldDoc.fields[f].equals(otherFieldDoc.fields[f])) return false;
+                    if (false == thisFieldDoc.fields[f].equals(otherFieldDoc.fields[f]))
+                        return false;
                 }
             }
         }

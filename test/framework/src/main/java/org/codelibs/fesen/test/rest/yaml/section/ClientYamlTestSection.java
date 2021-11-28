@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.XContentLocation;
+import org.codelibs.fesen.common.xcontent.XContentParser;
 
 /**
  * Represents a test section, which is composed of a skip section and multiple executable sections.
@@ -45,8 +45,8 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
                 executableSections.add(ExecutableSection.parse(parser));
             }
             if (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                throw new IllegalArgumentException("malformed section [" + sectionName + "] expected ["
-                        + XContentParser.Token.END_OBJECT + "] but was [" + parser.currentToken() + "]");
+                throw new IllegalArgumentException("malformed section [" + sectionName + "] expected [" + XContentParser.Token.END_OBJECT
+                        + "] but was [" + parser.currentToken() + "]");
             }
             parser.nextToken();
             return new ClientYamlTestSection(sectionLocation, sectionName, skipSection, executableSections);
@@ -60,12 +60,8 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
     private final SkipSection skipSection;
     private final List<ExecutableSection> executableSections;
 
-    public ClientYamlTestSection(
-        XContentLocation location,
-        String name,
-        SkipSection skipSection,
-        List<ExecutableSection> executableSections
-    ) {
+    public ClientYamlTestSection(XContentLocation location, String name, SkipSection skipSection,
+            List<ExecutableSection> executableSections) {
         this.location = location;
         this.name = name;
         this.skipSection = Objects.requireNonNull(skipSection, "skip section cannot be null");
@@ -90,12 +86,15 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ClientYamlTestSection that = (ClientYamlTestSection) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
 
         return true;
     }

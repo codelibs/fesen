@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.get;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -30,12 +36,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.get.GetResult;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 public class MultiGetResponse extends ActionResponse implements Iterable<MultiGetItemResponse>, ToXContentObject {
 
@@ -164,22 +164,22 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         List<MultiGetItemResponse> items = new ArrayList<>();
         for (Token token = parser.nextToken(); token != Token.END_OBJECT; token = parser.nextToken()) {
             switch (token) {
-                case FIELD_NAME:
-                    currentFieldName = parser.currentName();
-                    break;
-                case START_ARRAY:
-                    if (DOCS.getPreferredName().equals(currentFieldName)) {
-                        for (token = parser.nextToken(); token != Token.END_ARRAY; token = parser.nextToken()) {
-                            if (token == Token.START_OBJECT) {
-                                items.add(parseItem(parser));
-                            }
+            case FIELD_NAME:
+                currentFieldName = parser.currentName();
+                break;
+            case START_ARRAY:
+                if (DOCS.getPreferredName().equals(currentFieldName)) {
+                    for (token = parser.nextToken(); token != Token.END_ARRAY; token = parser.nextToken()) {
+                        if (token == Token.START_OBJECT) {
+                            items.add(parseItem(parser));
                         }
                     }
-                    break;
-                default:
-                    // If unknown tokens are encounter then these should be ignored, because
-                    // this is parsing logic on the client side.
-                    break;
+                }
+                break;
+            default:
+                // If unknown tokens are encounter then these should be ignored, because
+                // this is parsing logic on the client side.
+                break;
             }
         }
         return new MultiGetResponse(items.toArray(new MultiGetItemResponse[0]));
@@ -194,33 +194,33 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         GetResult getResult = null;
         for (Token token = parser.nextToken(); token != Token.END_OBJECT; token = parser.nextToken()) {
             switch (token) {
-                case FIELD_NAME:
-                    currentFieldName = parser.currentName();
-                    if (INDEX.match(currentFieldName, parser.getDeprecationHandler()) == false
-                            && TYPE.match(currentFieldName, parser.getDeprecationHandler()) == false
-                            && ID.match(currentFieldName, parser.getDeprecationHandler()) == false
-                            && ERROR.match(currentFieldName, parser.getDeprecationHandler()) == false) {
-                        getResult = GetResult.fromXContentEmbedded(parser, index, type, id);
-                    }
-                    break;
-                case VALUE_STRING:
-                    if (INDEX.match(currentFieldName, parser.getDeprecationHandler())) {
-                        index = parser.text();
-                    } else if (TYPE.match(currentFieldName, parser.getDeprecationHandler())) {
-                        type = parser.text();
-                    } else if (ID.match(currentFieldName, parser.getDeprecationHandler())) {
-                        id = parser.text();
-                    }
-                    break;
-                case START_OBJECT:
-                    if (ERROR.match(currentFieldName, parser.getDeprecationHandler())) {
-                        exception = FesenException.fromXContent(parser);
-                    }
-                    break;
-                default:
-                    // If unknown tokens are encounter then these should be ignored, because
-                    // this is parsing logic on the client side.
-                    break;
+            case FIELD_NAME:
+                currentFieldName = parser.currentName();
+                if (INDEX.match(currentFieldName, parser.getDeprecationHandler()) == false
+                        && TYPE.match(currentFieldName, parser.getDeprecationHandler()) == false
+                        && ID.match(currentFieldName, parser.getDeprecationHandler()) == false
+                        && ERROR.match(currentFieldName, parser.getDeprecationHandler()) == false) {
+                    getResult = GetResult.fromXContentEmbedded(parser, index, type, id);
+                }
+                break;
+            case VALUE_STRING:
+                if (INDEX.match(currentFieldName, parser.getDeprecationHandler())) {
+                    index = parser.text();
+                } else if (TYPE.match(currentFieldName, parser.getDeprecationHandler())) {
+                    type = parser.text();
+                } else if (ID.match(currentFieldName, parser.getDeprecationHandler())) {
+                    id = parser.text();
+                }
+                break;
+            case START_OBJECT:
+                if (ERROR.match(currentFieldName, parser.getDeprecationHandler())) {
+                    exception = FesenException.fromXContent(parser);
+                }
+                break;
+            default:
+                // If unknown tokens are encounter then these should be ignored, because
+                // this is parsing logic on the client side.
+                break;
             }
             if (getResult != null) {
                 break;

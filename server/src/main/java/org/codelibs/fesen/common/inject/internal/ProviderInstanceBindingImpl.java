@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.codelibs.fesen.common.inject.internal;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,25 +31,20 @@ import org.codelibs.fesen.common.inject.spi.HasDependencies;
 import org.codelibs.fesen.common.inject.spi.InjectionPoint;
 import org.codelibs.fesen.common.inject.spi.ProviderInstanceBinding;
 
-import static java.util.Collections.unmodifiableSet;
-
-public final class ProviderInstanceBindingImpl<T> extends BindingImpl<T>
-        implements ProviderInstanceBinding<T> {
+public final class ProviderInstanceBindingImpl<T> extends BindingImpl<T> implements ProviderInstanceBinding<T> {
 
     final Provider<? extends T> providerInstance;
     final Set<InjectionPoint> injectionPoints;
 
-    public ProviderInstanceBindingImpl(Injector injector, Key<T> key,
-                                       Object source, InternalFactory<? extends T> internalFactory, Scoping scoping,
-                                       Provider<? extends T> providerInstance,
-                                       Set<InjectionPoint> injectionPoints) {
+    public ProviderInstanceBindingImpl(Injector injector, Key<T> key, Object source, InternalFactory<? extends T> internalFactory,
+            Scoping scoping, Provider<? extends T> providerInstance, Set<InjectionPoint> injectionPoints) {
         super(injector, key, source, internalFactory, scoping);
         this.providerInstance = providerInstance;
         this.injectionPoints = injectionPoints;
     }
 
-    public ProviderInstanceBindingImpl(Object source, Key<T> key, Scoping scoping,
-                                       Set<InjectionPoint> injectionPoints, Provider<? extends T> providerInstance) {
+    public ProviderInstanceBindingImpl(Object source, Key<T> key, Scoping scoping, Set<InjectionPoint> injectionPoints,
+            Provider<? extends T> providerInstance) {
         super(source, key, scoping);
         this.injectionPoints = injectionPoints;
         this.providerInstance = providerInstance;
@@ -77,29 +74,22 @@ public final class ProviderInstanceBindingImpl<T> extends BindingImpl<T>
 
     @Override
     public BindingImpl<T> withScoping(Scoping scoping) {
-        return new ProviderInstanceBindingImpl<>(
-                getSource(), getKey(), scoping, injectionPoints, providerInstance);
+        return new ProviderInstanceBindingImpl<>(getSource(), getKey(), scoping, injectionPoints, providerInstance);
     }
 
     @Override
     public BindingImpl<T> withKey(Key<T> key) {
-        return new ProviderInstanceBindingImpl<>(
-                getSource(), key, getScoping(), injectionPoints, providerInstance);
+        return new ProviderInstanceBindingImpl<>(getSource(), key, getScoping(), injectionPoints, providerInstance);
     }
 
     @Override
     public void applyTo(Binder binder) {
-        getScoping().applyTo(
-                binder.withSource(getSource()).bind(getKey()).toProvider(getProviderInstance()));
+        getScoping().applyTo(binder.withSource(getSource()).bind(getKey()).toProvider(getProviderInstance()));
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(ProviderInstanceBinding.class)
-                .add("key", getKey())
-                .add("source", getSource())
-                .add("scope", getScoping())
-                .add("provider", providerInstance)
-                .toString();
+        return new ToStringBuilder(ProviderInstanceBinding.class).add("key", getKey()).add("source", getSource()).add("scope", getScoping())
+                .add("provider", providerInstance).toString();
     }
 }

@@ -16,6 +16,10 @@
 
 package org.codelibs.fesen.common.inject.multibindings;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableSet;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,10 +45,6 @@ import org.codelibs.fesen.common.inject.spi.Dependency;
 import org.codelibs.fesen.common.inject.spi.HasDependencies;
 import org.codelibs.fesen.common.inject.spi.Message;
 import org.codelibs.fesen.common.inject.util.Types;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * An API to bind multiple values separately, only to later inject them as a
@@ -100,8 +100,7 @@ public abstract class Multibinder<T> {
      */
     public static <T> Multibinder<T> newSetBinder(Binder binder, TypeLiteral<T> type) {
         binder = binder.skipSources(RealMultibinder.class, Multibinder.class);
-        RealMultibinder<T> result = new RealMultibinder<>(binder, type, "",
-                Key.get(Multibinder.<T>setOf(type)));
+        RealMultibinder<T> result = new RealMultibinder<>(binder, type, "", Key.get(Multibinder.<T> setOf(type)));
         binder.install(result);
         return result;
     }
@@ -118,11 +117,10 @@ public abstract class Multibinder<T> {
      * Returns a new multibinder that collects instances of {@code type} in a {@link Set} that is
      * itself bound with {@code annotation}.
      */
-    public static <T> Multibinder<T> newSetBinder(
-            Binder binder, TypeLiteral<T> type, Annotation annotation) {
+    public static <T> Multibinder<T> newSetBinder(Binder binder, TypeLiteral<T> type, Annotation annotation) {
         binder = binder.skipSources(RealMultibinder.class, Multibinder.class);
-        RealMultibinder<T> result = new RealMultibinder<>(binder, type, annotation.toString(),
-                Key.get(Multibinder.<T>setOf(type), annotation));
+        RealMultibinder<T> result =
+                new RealMultibinder<>(binder, type, annotation.toString(), Key.get(Multibinder.<T> setOf(type), annotation));
         binder.install(result);
         return result;
     }
@@ -131,8 +129,7 @@ public abstract class Multibinder<T> {
      * Returns a new multibinder that collects instances of {@code type} in a {@link Set} that is
      * itself bound with {@code annotation}.
      */
-    public static <T> Multibinder<T> newSetBinder(
-            Binder binder, Class<T> type, Annotation annotation) {
+    public static <T> Multibinder<T> newSetBinder(Binder binder, Class<T> type, Annotation annotation) {
         return newSetBinder(binder, TypeLiteral.get(type), annotation);
     }
 
@@ -140,11 +137,10 @@ public abstract class Multibinder<T> {
      * Returns a new multibinder that collects instances of {@code type} in a {@link Set} that is
      * itself bound with {@code annotationType}.
      */
-    public static <T> Multibinder<T> newSetBinder(Binder binder, TypeLiteral<T> type,
-                                                  Class<? extends Annotation> annotationType) {
+    public static <T> Multibinder<T> newSetBinder(Binder binder, TypeLiteral<T> type, Class<? extends Annotation> annotationType) {
         binder = binder.skipSources(RealMultibinder.class, Multibinder.class);
-        RealMultibinder<T> result = new RealMultibinder<>(binder, type, "@" + annotationType.getName(),
-                Key.get(Multibinder.<T>setOf(type), annotationType));
+        RealMultibinder<T> result =
+                new RealMultibinder<>(binder, type, "@" + annotationType.getName(), Key.get(Multibinder.<T> setOf(type), annotationType));
         binder.install(result);
         return result;
     }
@@ -153,8 +149,7 @@ public abstract class Multibinder<T> {
      * Returns a new multibinder that collects instances of {@code type} in a {@link Set} that is
      * itself bound with {@code annotationType}.
      */
-    public static <T> Multibinder<T> newSetBinder(Binder binder, Class<T> type,
-                                                  Class<? extends Annotation> annotationType) {
+    public static <T> Multibinder<T> newSetBinder(Binder binder, Class<T> type, Class<? extends Annotation> annotationType) {
         return newSetBinder(binder, TypeLiteral.get(type), annotationType);
     }
 
@@ -197,8 +192,7 @@ public abstract class Multibinder<T> {
      * We use a subclass to hide 'implements Module, Provider' from the public
      * API.
      */
-    public static final class RealMultibinder<T> extends Multibinder<T>
-            implements Module, Provider<Set<T>>, HasDependencies {
+    public static final class RealMultibinder<T> extends Multibinder<T> implements Module, Provider<Set<T>>, HasDependencies {
 
         private final TypeLiteral<T> elementType;
         private final String setName;
@@ -211,8 +205,7 @@ public abstract class Multibinder<T> {
         private List<Provider<T>> providers;
         private Set<Dependency<?>> dependencies;
 
-        private RealMultibinder(Binder binder, TypeLiteral<T> elementType,
-                                String setName, Key<Set<T>> setKey) {
+        private RealMultibinder(Binder binder, TypeLiteral<T> elementType, String setName, Key<Set<T>> setKey) {
             this.binder = Objects.requireNonNull(binder, "binder");
             this.elementType = Objects.requireNonNull(elementType, "elementType");
             this.setName = Objects.requireNonNull(setName, "setName");
@@ -245,7 +238,7 @@ public abstract class Multibinder<T> {
             for (Binding<?> entry : injector.findBindingsByType(elementType)) {
                 if (keyMatches(entry.getKey())) {
                     @SuppressWarnings("unchecked") // protected by findBindingsByType()
-                            Binding<T> binding = (Binding<T>) entry;
+                    Binding<T> binding = (Binding<T>) entry;
                     providers.add(binding.getProvider());
                     dependencies.add(Dependency.get(binding.getKey()));
                 }
@@ -256,8 +249,7 @@ public abstract class Multibinder<T> {
         }
 
         private boolean keyMatches(Key<?> key) {
-            return key.getTypeLiteral().equals(elementType)
-                    && key.getAnnotation() instanceof Element
+            return key.getTypeLiteral().equals(elementType) && key.getAnnotation() instanceof Element
                     && ((Element) key.getAnnotation()).setName().equals(setName);
         }
 
@@ -273,8 +265,7 @@ public abstract class Multibinder<T> {
             for (Provider<T> provider : providers) {
                 final T newValue = provider.get();
                 checkConfiguration(newValue != null, "Set injection failed due to null element");
-                checkConfiguration(result.add(newValue),
-                        "Set injection failed due to duplicated element \"%s\"", newValue);
+                checkConfiguration(result.add(newValue), "Set injection failed due to duplicated element \"%s\"", newValue);
             }
             return Collections.unmodifiableSet(result);
         }
@@ -294,8 +285,7 @@ public abstract class Multibinder<T> {
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof RealMultibinder
-                    && ((RealMultibinder<?>) o).setKey.equals(setKey);
+            return o instanceof RealMultibinder && ((RealMultibinder<?>) o).setKey.equals(setKey);
         }
 
         @Override
@@ -305,13 +295,8 @@ public abstract class Multibinder<T> {
 
         @Override
         public String toString() {
-            return new StringBuilder()
-                    .append(setName)
-                    .append(setName.length() > 0 ? " " : "")
-                    .append("Multibinder<")
-                    .append(elementType)
-                    .append(">")
-                    .toString();
+            return new StringBuilder().append(setName).append(setName.length() > 0 ? " " : "").append("Multibinder<").append(elementType)
+                    .append(">").toString();
         }
     }
 
@@ -329,7 +314,6 @@ public abstract class Multibinder<T> {
         }
 
         NullPointerException npe = new NullPointerException(name);
-        throw new ConfigurationException(singleton(
-                new Message(emptyList(), npe)));
+        throw new ConfigurationException(singleton(new Message(emptyList(), npe)));
     }
 }

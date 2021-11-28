@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.common.geo.parsers;
 
-import org.locationtech.jts.geom.Coordinate;
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.List;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * Node used to represent a tree of coordinates.

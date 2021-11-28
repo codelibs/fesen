@@ -65,31 +65,31 @@ public class SearchSortValuesAndFormatsTests extends AbstractWireSerializingTest
         Object[] sortValues = instance.getRawSortValues();
         Object[] newValues = Arrays.copyOf(sortValues, sortValues.length + 1);
         DocValueFormat[] newFormats = Arrays.copyOf(instance.getSortValueFormats(), sortValues.length + 1);
-        newValues[sortValues.length] =  randomSortValue();
+        newValues[sortValues.length] = randomSortValue();
         newFormats[sortValues.length] = DocValueFormat.RAW;
         return new SearchSortValuesAndFormats(newValues, newFormats);
     }
 
     private static Object randomSortValue() {
-        switch(randomIntBetween(0, 5)) {
-            case 0:
-                return null;
-            case 1:
-                return new BytesRef(randomAlphaOfLengthBetween(3, 10));
-            case 2:
-                return randomInt();
-            case 3:
-                return randomLong();
-            case 4:
-                return randomFloat();
-            case 5:
-                return randomDouble();
-            default:
-                throw new UnsupportedOperationException();
+        switch (randomIntBetween(0, 5)) {
+        case 0:
+            return null;
+        case 1:
+            return new BytesRef(randomAlphaOfLengthBetween(3, 10));
+        case 2:
+            return randomInt();
+        case 3:
+            return randomLong();
+        case 4:
+            return randomFloat();
+        case 5:
+            return randomDouble();
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
-    public static SearchSortValuesAndFormats randomInstance()  {
+    public static SearchSortValuesAndFormats randomInstance() {
         int size = randomIntBetween(1, 20);
         Object[] values = new Object[size];
         DocValueFormat[] sortValueFormats = new DocValueFormat[size];

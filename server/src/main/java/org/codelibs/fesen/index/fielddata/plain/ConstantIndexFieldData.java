@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReaderContext;
@@ -31,10 +34,10 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.AbstractSortedDocValues;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.IndexOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
@@ -42,9 +45,6 @@ import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class ConstantIndexFieldData extends AbstractIndexOrdinalsFieldData {
 
@@ -74,7 +74,6 @@ public class ConstantIndexFieldData extends AbstractIndexOrdinalsFieldData {
             super(DEFAULT_SCRIPT_FUNCTION);
             this.value = value;
         }
-
 
         @Override
         public long ramBytesUsed() {

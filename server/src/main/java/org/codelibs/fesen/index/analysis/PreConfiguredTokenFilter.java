@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.analysis;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.codelibs.fesen.Version;
@@ -26,15 +29,12 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory.CachingStrategy;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 /**
  * Provides pre-configured, shared {@link TokenFilter}s.
  */
 public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisComponent<TokenFilterFactory> {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(PreConfiguredTokenFilter.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(PreConfiguredTokenFilter.class);
 
     /**
      * Create a pre-configured token filter that may not vary at all.
@@ -48,11 +48,10 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
     /**
      * Create a pre-configured token filter that may not vary at all.
      */
-    public static PreConfiguredTokenFilter singleton(String name, boolean useFilterForMultitermQueries,
-                                                     boolean allowForSynonymParsing,
-                                                     Function<TokenStream, TokenStream> create) {
+    public static PreConfiguredTokenFilter singleton(String name, boolean useFilterForMultitermQueries, boolean allowForSynonymParsing,
+            Function<TokenStream, TokenStream> create) {
         return new PreConfiguredTokenFilter(name, useFilterForMultitermQueries, allowForSynonymParsing, CachingStrategy.ONE,
-            (tokenStream, version) -> create.apply(tokenStream));
+                (tokenStream, version) -> create.apply(tokenStream));
     }
 
     /**
@@ -76,10 +75,9 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
      * Create a pre-configured token filter that may vary based on the Fesen version.
      */
     public static PreConfiguredTokenFilter fesenVersion(String name, boolean useFilterForMultitermQueries,
-                                                                boolean useFilterForParsingSynonyms,
-                                                                BiFunction<TokenStream, Version, TokenStream> create) {
-        return new PreConfiguredTokenFilter(name, useFilterForMultitermQueries, useFilterForParsingSynonyms,
-                CachingStrategy.ELASTICSEARCH, create);
+            boolean useFilterForParsingSynonyms, BiFunction<TokenStream, Version, TokenStream> create) {
+        return new PreConfiguredTokenFilter(name, useFilterForMultitermQueries, useFilterForParsingSynonyms, CachingStrategy.ELASTICSEARCH,
+                create);
     }
 
     private final boolean useFilterForMultitermQueries;
@@ -128,10 +126,9 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
                     }
                     if (version.onOrAfter(Version.V_7_0_0)) {
                         throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-                    }
-                    else {
-                        DEPRECATION_LOGGER.deprecate(name(), "Token filter [" + name()
-                            + "] will not be usable to parse synonyms after v7.0");
+                    } else {
+                        DEPRECATION_LOGGER.deprecate(name(),
+                                "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
                         return this;
                     }
                 }
@@ -155,10 +152,8 @@ public final class PreConfiguredTokenFilter extends PreConfiguredAnalysisCompone
                 }
                 if (version.onOrAfter(Version.V_7_0_0)) {
                     throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-                }
-                else {
-                    DEPRECATION_LOGGER.deprecate(name(), "Token filter [" + name()
-                        + "] will not be usable to parse synonyms after v7.0");
+                } else {
+                    DEPRECATION_LOGGER.deprecate(name(), "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
                     return this;
                 }
             }

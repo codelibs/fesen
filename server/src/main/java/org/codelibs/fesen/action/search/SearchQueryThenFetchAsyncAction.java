@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.action.search;
 
+import static org.codelibs.fesen.action.search.SearchPhaseController.getTopDocsSize;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.TopFieldDocs;
 import org.codelibs.fesen.action.ActionListener;
@@ -32,13 +39,6 @@ import org.codelibs.fesen.search.internal.ShardSearchRequest;
 import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.transport.Transport;
 
-import static org.codelibs.fesen.action.search.SearchPhaseController.getTopDocsSize;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-
 class SearchQueryThenFetchAsyncAction extends AbstractSearchAsyncAction<SearchPhaseResult> {
 
     private final SearchPhaseController searchPhaseController;
@@ -50,18 +50,15 @@ class SearchQueryThenFetchAsyncAction extends AbstractSearchAsyncAction<SearchPh
     private volatile BottomSortValuesCollector bottomSortCollector;
 
     SearchQueryThenFetchAsyncAction(final Logger logger, final SearchTransportService searchTransportService,
-                                    final BiFunction<String, String, Transport.Connection> nodeIdToConnection,
-                                    final Map<String, AliasFilter> aliasFilter,
-                                    final Map<String, Float> concreteIndexBoosts, final Map<String, Set<String>> indexRoutings,
-                                    final SearchPhaseController searchPhaseController, final Executor executor,
-                                    final QueryPhaseResultConsumer resultConsumer, final SearchRequest request,
-                                    final ActionListener<SearchResponse> listener,
-                                    final GroupShardsIterator<SearchShardIterator> shardsIts,
-                                    final TransportSearchAction.SearchTimeProvider timeProvider,
-                                    ClusterState clusterState, SearchTask task, SearchResponse.Clusters clusters) {
-        super("query", logger, searchTransportService, nodeIdToConnection, aliasFilter, concreteIndexBoosts, indexRoutings,
-                executor, request, listener, shardsIts, timeProvider, clusterState, task,
-                resultConsumer, request.getMaxConcurrentShardRequests(), clusters);
+            final BiFunction<String, String, Transport.Connection> nodeIdToConnection, final Map<String, AliasFilter> aliasFilter,
+            final Map<String, Float> concreteIndexBoosts, final Map<String, Set<String>> indexRoutings,
+            final SearchPhaseController searchPhaseController, final Executor executor, final QueryPhaseResultConsumer resultConsumer,
+            final SearchRequest request, final ActionListener<SearchResponse> listener,
+            final GroupShardsIterator<SearchShardIterator> shardsIts, final TransportSearchAction.SearchTimeProvider timeProvider,
+            ClusterState clusterState, SearchTask task, SearchResponse.Clusters clusters) {
+        super("query", logger, searchTransportService, nodeIdToConnection, aliasFilter, concreteIndexBoosts, indexRoutings, executor,
+                request, listener, shardsIts, timeProvider, clusterState, task, resultConsumer, request.getMaxConcurrentShardRequests(),
+                clusters);
         this.topDocsSize = getTopDocsSize(request);
         this.trackTotalHitsUpTo = request.resolveTrackTotalHitsUpTo();
         this.searchPhaseController = searchPhaseController;
@@ -73,12 +70,11 @@ class SearchQueryThenFetchAsyncAction extends AbstractSearchAsyncAction<SearchPh
 
         boolean hasFetchPhase = request.source() == null ? true : request.source().size() > 0;
         progressListener.notifyListShards(SearchProgressListener.buildSearchShards(this.shardsIts),
-            SearchProgressListener.buildSearchShards(toSkipShardsIts), clusters, hasFetchPhase);
+                SearchProgressListener.buildSearchShards(toSkipShardsIts), clusters, hasFetchPhase);
     }
 
-    protected void executePhaseOnShard(final SearchShardIterator shardIt,
-                                       final SearchShardTarget shard,
-                                       final SearchActionListener<SearchPhaseResult> listener) {
+    protected void executePhaseOnShard(final SearchShardIterator shardIt, final SearchShardTarget shard,
+            final SearchActionListener<SearchPhaseResult> listener) {
         ShardSearchRequest request = rewriteShardSearchRequest(super.buildShardSearchRequest(shardIt));
         getSearchTransport().sendExecuteQuery(getConnection(shard.getClusterAlias(), shard.getNodeId()), request, getTask(), listener);
     }
@@ -93,8 +89,7 @@ class SearchQueryThenFetchAsyncAction extends AbstractSearchAsyncAction<SearchPh
         QuerySearchResult queryResult = result.queryResult();
         if (queryResult.isNull() == false
                 // disable sort optims for scroll requests because they keep track of the last bottom doc locally (per shard)
-                && getRequest().scroll() == null
-                && queryResult.topDocs() != null
+                && getRequest().scroll() == null && queryResult.topDocs() != null
                 && queryResult.topDocs().topDocs.getClass() == TopFieldDocs.class) {
             TopFieldDocs topDocs = (TopFieldDocs) queryResult.topDocs().topDocs;
             if (bottomSortCollector == null) {
@@ -120,8 +115,7 @@ class SearchQueryThenFetchAsyncAction extends AbstractSearchAsyncAction<SearchPh
         }
 
         // disable tracking total hits if we already reached the required estimation.
-        if (trackTotalHitsUpTo != SearchContext.TRACK_TOTAL_HITS_ACCURATE
-                && bottomSortCollector.getTotalHits() > trackTotalHitsUpTo) {
+        if (trackTotalHitsUpTo != SearchContext.TRACK_TOTAL_HITS_ACCURATE && bottomSortCollector.getTotalHits() > trackTotalHitsUpTo) {
             request.source(request.source().shallowCopy().trackTotalHits(false));
         }
 

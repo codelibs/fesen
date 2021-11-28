@@ -36,26 +36,17 @@ import org.codelibs.fesen.search.internal.SearchContext;
 public class VariableWidthHistogramAggregatorFactory extends ValuesSourceAggregatorFactory {
 
     public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        builder.register(
-            VariableWidthHistogramAggregationBuilder.REGISTRY_KEY,
-            CoreValuesSourceType.NUMERIC,
-            VariableWidthHistogramAggregator::new,
-                true);
+        builder.register(VariableWidthHistogramAggregationBuilder.REGISTRY_KEY, CoreValuesSourceType.NUMERIC,
+                VariableWidthHistogramAggregator::new, true);
     }
 
     private final int numBuckets;
     private final int shardSize;
     private final int initialBuffer;
 
-    VariableWidthHistogramAggregatorFactory(String name,
-                                            ValuesSourceConfig config,
-                                            int numBuckets,
-                                            int shardSize,
-                                            int initialBuffer,
-                                            QueryShardContext queryShardContext,
-                                            AggregatorFactory parent,
-                                            AggregatorFactories.Builder subFactoriesBuilder,
-                                            Map<String, Object> metadata) throws IOException{
+    VariableWidthHistogramAggregatorFactory(String name, ValuesSourceConfig config, int numBuckets, int shardSize, int initialBuffer,
+            QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+            Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.numBuckets = numBuckets;
         this.shardSize = shardSize;
@@ -63,27 +54,19 @@ public class VariableWidthHistogramAggregatorFactory extends ValuesSourceAggrega
     }
 
     @Override
-    protected Aggregator doCreateInternal(SearchContext searchContext,
-                                          Aggregator parent,
-                                          CardinalityUpperBound cardinality,
-                                          Map<String, Object> metadata) throws IOException{
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         if (cardinality != CardinalityUpperBound.ONE) {
-            throw new IllegalArgumentException(
-                "["
-                    + VariableWidthHistogramAggregationBuilder.NAME
-                    + "] cannot be nested inside an aggregation that collects more than a single bucket."
-            );
+            throw new IllegalArgumentException("[" + VariableWidthHistogramAggregationBuilder.NAME
+                    + "] cannot be nested inside an aggregation that collects more than a single bucket.");
         }
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(VariableWidthHistogramAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, factories, numBuckets, shardSize, initialBuffer, config, searchContext, parent, metadata);
+        return queryShardContext.getValuesSourceRegistry().getAggregator(VariableWidthHistogramAggregationBuilder.REGISTRY_KEY, config)
+                .build(name, factories, numBuckets, shardSize, initialBuffer, config, searchContext, parent, metadata);
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                        Aggregator parent,
-                                        Map<String, Object> metadata) throws IOException {
-        return new VariableWidthHistogramAggregator(name, factories, numBuckets, shardSize, initialBuffer, config,
-            searchContext, parent, metadata);
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
+        return new VariableWidthHistogramAggregator(name, factories, numBuckets, shardSize, initialBuffer, config, searchContext, parent,
+                metadata);
     }
 }

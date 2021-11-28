@@ -17,7 +17,6 @@
  * under the License.
  */
 
-
 package org.codelibs.fesen.index.mapper;
 
 import static org.hamcrest.core.IsEqual.equalTo;

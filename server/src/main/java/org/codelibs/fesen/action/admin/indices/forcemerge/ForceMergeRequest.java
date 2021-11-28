@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.action.admin.indices.forcemerge;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A request to force merging the segments of one or more indices. In order to
@@ -48,7 +48,7 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
         public static final boolean ONLY_EXPUNGE_DELETES = false;
         public static final boolean FLUSH = true;
     }
-    
+
     private int maxNumSegments = Defaults.MAX_NUM_SEGMENTS;
     private boolean onlyExpungeDeletes = Defaults.ONLY_EXPUNGE_DELETES;
     private boolean flush = Defaults.FLUSH;
@@ -144,10 +144,8 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     @Override
     public String getDescription() {
-        return "Force-merge indices " + Arrays.toString(indices()) +
-            ", maxSegments[" + maxNumSegments +
-            "], onlyExpungeDeletes[" + onlyExpungeDeletes +
-            "], flush[" + flush + "]";
+        return "Force-merge indices " + Arrays.toString(indices()) + ", maxSegments[" + maxNumSegments + "], onlyExpungeDeletes["
+                + onlyExpungeDeletes + "], flush[" + flush + "]";
     }
 
     @Override
@@ -163,10 +161,7 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     @Override
     public String toString() {
-        return "ForceMergeRequest{" +
-                "maxNumSegments=" + maxNumSegments +
-                ", onlyExpungeDeletes=" + onlyExpungeDeletes +
-                ", flush=" + flush +
-                '}';
+        return "ForceMergeRequest{" + "maxNumSegments=" + maxNumSegments + ", onlyExpungeDeletes=" + onlyExpungeDeletes + ", flush=" + flush
+                + '}';
     }
 }

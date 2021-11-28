@@ -55,17 +55,14 @@ import static org.hamcrest.Matchers.hasSize;
 public class NumericHistogramAggregatorTests extends AggregatorTestCase {
 
     public void testLongs() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (long value : new long[] {7, 3, -10, -6, 5, 15}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (long value : new long[] { 7, 3, -10, -6, 5, 15 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", value));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(5);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, longField("field"));
@@ -88,17 +85,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testDoubles() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (double value : new double[] {9.3, 3.2, -10, -6.5, 5.3, 15.1}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (double value : new double[] { 9.3, 3.2, -10, -6.5, 5.3, 15.1 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", NumericUtils.doubleToSortableLong(value)));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(5);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, doubleField("field"));
@@ -122,23 +116,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testDates() throws Exception {
-        List<String> dataset = Arrays.asList(
-            "2019-11-01T01:07:45",
-            "2019-11-02T03:43:34",
-            "2019-11-03T04:11:00",
-            "2019-11-04T05:11:31",
-            "2019-11-05T08:24:05",
-            "2019-11-06T13:09:32",
-            "2019-11-07T13:47:43",
-            "2019-11-08T16:14:34",
-            "2019-11-09T17:09:50",
-            "2019-11-10T22:55:46");
+        List<String> dataset = Arrays.asList("2019-11-01T01:07:45", "2019-11-02T03:43:34", "2019-11-03T04:11:00", "2019-11-04T05:11:31",
+                "2019-11-05T08:24:05", "2019-11-06T13:09:32", "2019-11-07T13:47:43", "2019-11-08T16:14:34", "2019-11-09T17:09:50",
+                "2019-11-10T22:55:46");
 
         String fieldName = "date_field";
         DateFieldMapper.DateFieldType fieldType = dateField(fieldName, DateFieldMapper.Resolution.MILLISECONDS);
 
-        try (Directory dir = newDirectory();
-             RandomIndexWriter indexWriter = new RandomIndexWriter(random(), dir)) {
+        try (Directory dir = newDirectory(); RandomIndexWriter indexWriter = new RandomIndexWriter(random(), dir)) {
             Document document = new Document();
             for (String date : dataset) {
                 long instant = fieldType.parse(date);
@@ -147,9 +132,8 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
                 document.clear();
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                .field(fieldName)
-                .interval(1000 * 60 * 60 * 24);
+            HistogramAggregationBuilder aggBuilder =
+                    new HistogramAggregationBuilder("my_agg").field(fieldName).interval(1000 * 60 * 60 * 24);
             try (IndexReader reader = indexWriter.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, fieldType);
@@ -159,17 +143,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testIrrationalInterval() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (long value : new long[] {3, 2, -10, 5, -9}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (long value : new long[] { 3, 2, -10, 5, -9 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", value));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(Math.PI);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(Math.PI);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, longField("field"));
@@ -192,18 +173,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testMinDocCount() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (long value : new long[] {7, 3, -10, -6, 5, 50}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (long value : new long[] { 7, 3, -10, -6, 5, 50 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", value));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(10)
-                    .minDocCount(2);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(10).minDocCount(2);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, longField("field"));
@@ -218,19 +195,15 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testMissing() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (long value : new long[] {7, 3, -10, -6, 5, 15}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (long value : new long[] { 7, 3, -10, -6, 5, 15 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", value));
                 w.addDocument(doc);
                 w.addDocument(new Document());
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(5)
-                    .missing(2d);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5).missing(2d);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, longField("field"));
@@ -253,17 +226,13 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testMissingUnmappedField() throws Exception {
-        try (Directory dir = newDirectory();
-             RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (int i = 0; i < 7; i ++) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (int i = 0; i < 7; i++) {
                 Document doc = new Document();
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                .field("field")
-                .interval(5)
-                .missing(2d);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5).missing(2d);
             MappedFieldType type = null;
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
@@ -280,17 +249,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testMissingUnmappedFieldBadType() throws Exception {
-        try (Directory dir = newDirectory();
-             RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (int i = 0; i < 7; i ++) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (int i = 0; i < 7; i++) {
                 w.addDocument(new Document());
             }
 
             String missingValue = "🍌🍌🍌";
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                .field("field")
-                .interval(5)
-                .missing(missingValue);
+            HistogramAggregationBuilder aggBuilder =
+                    new HistogramAggregationBuilder("my_agg").field("field").interval(5).missing(missingValue);
             MappedFieldType type = null;
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
@@ -304,17 +270,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testIncorrectFieldType() throws Exception {
-        try (Directory dir = newDirectory();
-             RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (String value : new String[] {"foo", "bar", "baz", "quux"}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (String value : new String[] { "foo", "bar", "baz", "quux" }) {
                 Document doc = new Document();
                 doc.add(new SortedSetDocValuesField("field", new BytesRef(value)));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                .field("field")
-                .interval(5);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -327,18 +290,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testOffset() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (double value : new double[] {9.3, 3.2, -5, -6.5, 5.3}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (double value : new double[] { 9.3, 3.2, -5, -6.5, 5.3 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", NumericUtils.doubleToSortableLong(value)));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(5)
-                    .offset(Math.PI);
+            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg").field("field").interval(5).offset(Math.PI);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, doubleField("field"));
@@ -357,10 +316,9 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testRandomOffset() throws Exception {
-        try (Directory dir = newDirectory();
-             RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
             // Note, these values are carefully chosen to ensure that no matter what offset we pick, no two can end up in the same bucket
-            for (double value : new double[] {9.3, 3.2, -5}) {
+            for (double value : new double[] { 9.3, 3.2, -5 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", NumericUtils.doubleToSortableLong(value)));
                 w.addDocument(doc);
@@ -369,10 +327,8 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
             final double offset = randomDouble();
             final double interval = 5;
             final double expectedOffset = offset % interval;
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                .field("field")
-                .interval(interval)
-                .offset(offset);
+            HistogramAggregationBuilder aggBuilder =
+                    new HistogramAggregationBuilder("my_agg").field("field").interval(interval).offset(offset);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
                 InternalHistogram histogram = searchAndReduce(searcher, new MatchAllDocsQuery(), aggBuilder, doubleField("field"));
@@ -396,18 +352,15 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testExtendedBounds() throws Exception {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
-            for (double value : new double[] {3.2, -5, -4.5, 4.3}) {
+        try (Directory dir = newDirectory(); RandomIndexWriter w = new RandomIndexWriter(random(), dir)) {
+            for (double value : new double[] { 3.2, -5, -4.5, 4.3 }) {
                 Document doc = new Document();
                 doc.add(new SortedNumericDocValuesField("field", NumericUtils.doubleToSortableLong(value)));
                 w.addDocument(doc);
             }
 
-            HistogramAggregationBuilder aggBuilder = new HistogramAggregationBuilder("my_agg")
-                    .field("field")
-                    .interval(5)
-                    .extendedBounds(-12, 13);
+            HistogramAggregationBuilder aggBuilder =
+                    new HistogramAggregationBuilder("my_agg").field("field").interval(5).extendedBounds(-12, 13);
             MappedFieldType fieldType = new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.DOUBLE);
             try (IndexReader reader = w.getReader()) {
                 IndexSearcher searcher = new IndexSearcher(reader);
@@ -431,17 +384,14 @@ public class NumericHistogramAggregatorTests extends AggregatorTestCase {
     }
 
     public void testAsSubAgg() throws IOException {
-        AggregationBuilder request = new HistogramAggregationBuilder("outer").field("outer").interval(5).subAggregation(
-            new HistogramAggregationBuilder("inner").field("inner").interval(5).subAggregation(
-                new MinAggregationBuilder("min").field("n")));
+        AggregationBuilder request =
+                new HistogramAggregationBuilder("outer").field("outer").interval(5).subAggregation(new HistogramAggregationBuilder("inner")
+                        .field("inner").interval(5).subAggregation(new MinAggregationBuilder("min").field("n")));
         CheckedConsumer<RandomIndexWriter, IOException> buildIndex = iw -> {
             List<List<IndexableField>> docs = new ArrayList<>();
             for (int n = 0; n < 10000; n++) {
-                docs.add(org.codelibs.fesen.core.List.of(
-                    new SortedNumericDocValuesField("outer", n % 100),
-                    new SortedNumericDocValuesField("inner", n / 100),
-                    new SortedNumericDocValuesField("n", n)
-                ));
+                docs.add(org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField("outer", n % 100),
+                        new SortedNumericDocValuesField("inner", n / 100), new SortedNumericDocValuesField("n", n)));
             }
             iw.addDocuments(docs);
         };

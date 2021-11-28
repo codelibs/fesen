@@ -37,7 +37,7 @@ public class StringsTests extends ESTestCase {
         assertThat(Strings.isAllOrWildcard("*"), is(true));
         assertThat(Strings.isAllOrWildcard("foo"), is(false));
         assertThat(Strings.isAllOrWildcard(""), is(false));
-        assertThat(Strings.isAllOrWildcard((String)null), is(false));
+        assertThat(Strings.isAllOrWildcard((String) null), is(false));
     }
 
     public void testSubstring() {
@@ -74,17 +74,16 @@ public class StringsTests extends ESTestCase {
         if (randomBoolean()) {
             if (randomBoolean()) {
                 error = false;
-                toXContent  = (builder, params) -> builder.field("ok", "here").field("catastrophe", "");
+                toXContent = (builder, params) -> builder.field("ok", "here").field("catastrophe", "");
             } else {
                 error = true;
-                toXContent  = (builder, params) ->
-                        builder.startObject().field("ok", "here").field("catastrophe", "").endObject();
+                toXContent = (builder, params) -> builder.startObject().field("ok", "here").field("catastrophe", "").endObject();
             }
         } else {
             if (randomBoolean()) {
                 error = false;
-                toXContent = (ToXContentObject) (builder, params) ->
-                        builder.startObject().field("ok", "here").field("catastrophe", "").endObject();
+                toXContent = (ToXContentObject) (builder, params) -> builder.startObject().field("ok", "here").field("catastrophe", "")
+                        .endObject();
             } else {
                 error = true;
                 toXContent = (ToXContentObject) (builder, params) -> builder.field("ok", "here").field("catastrophe", "");
@@ -106,18 +105,17 @@ public class StringsTests extends ESTestCase {
         // Rely on the default value of "color" param when params are not passed
         assertThat(Strings.toString(toXContent), containsString("\"color_from_param\":\"red\""));
         // Pass "color" param explicitly
-        assertThat(
-            Strings.toString(toXContent, new ToXContent.MapParams(Collections.singletonMap("color", "blue"))),
-            containsString("\"color_from_param\":\"blue\""));
+        assertThat(Strings.toString(toXContent, new ToXContent.MapParams(Collections.singletonMap("color", "blue"))),
+                containsString("\"color_from_param\":\"blue\""));
     }
 
     public void testSplitStringToSet() {
         assertEquals(Strings.tokenizeByCommaToSet(null), Sets.newHashSet());
         assertEquals(Strings.tokenizeByCommaToSet(""), Sets.newHashSet());
-        assertEquals(Strings.tokenizeByCommaToSet("a,b,c"), Sets.newHashSet("a","b","c"));
-        assertEquals(Strings.tokenizeByCommaToSet("a, b, c"), Sets.newHashSet("a","b","c"));
-        assertEquals(Strings.tokenizeByCommaToSet(" a ,  b, c  "), Sets.newHashSet("a","b","c"));
-        assertEquals(Strings.tokenizeByCommaToSet("aa, bb, cc"), Sets.newHashSet("aa","bb","cc"));
+        assertEquals(Strings.tokenizeByCommaToSet("a,b,c"), Sets.newHashSet("a", "b", "c"));
+        assertEquals(Strings.tokenizeByCommaToSet("a, b, c"), Sets.newHashSet("a", "b", "c"));
+        assertEquals(Strings.tokenizeByCommaToSet(" a ,  b, c  "), Sets.newHashSet("a", "b", "c"));
+        assertEquals(Strings.tokenizeByCommaToSet("aa, bb, cc"), Sets.newHashSet("aa", "bb", "cc"));
         assertEquals(Strings.tokenizeByCommaToSet(" a "), Sets.newHashSet("a"));
         assertEquals(Strings.tokenizeByCommaToSet("   a   "), Sets.newHashSet("a"));
         assertEquals(Strings.tokenizeByCommaToSet("   aa   "), Sets.newHashSet("aa"));

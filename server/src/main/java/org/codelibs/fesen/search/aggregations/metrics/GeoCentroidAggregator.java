@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -34,9 +37,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * A geo metric aggregator that computes a geo-centroid from a {@code geo_point} type field
  */
@@ -45,13 +45,8 @@ final class GeoCentroidAggregator extends MetricsAggregator {
     private DoubleArray lonSum, lonCompensations, latSum, latCompensations;
     private LongArray counts;
 
-    GeoCentroidAggregator(
-        String name,
-        ValuesSourceConfig valuesSourceConfig,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata
-    ) throws IOException {
+    GeoCentroidAggregator(String name, ValuesSourceConfig valuesSourceConfig, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         // TODO: Stop expecting nulls here
         this.valuesSource = valuesSourceConfig.hasValues() ? (ValuesSource.GeoPoint) valuesSourceConfig.getValuesSource() : null;
@@ -121,10 +116,9 @@ final class GeoCentroidAggregator extends MetricsAggregator {
             return buildEmptyAggregation();
         }
         final long bucketCount = counts.get(bucket);
-        final GeoPoint bucketCentroid = (bucketCount > 0)
-                ? new GeoPoint(latSum.get(bucket) / bucketCount, lonSum.get(bucket) / bucketCount)
-                : null;
-        return new InternalGeoCentroid(name, bucketCentroid , bucketCount, metadata());
+        final GeoPoint bucketCentroid =
+                (bucketCount > 0) ? new GeoPoint(latSum.get(bucket) / bucketCount, lonSum.get(bucket) / bucketCount) : null;
+        return new InternalGeoCentroid(name, bucketCentroid, bucketCount, metadata());
     }
 
     @Override

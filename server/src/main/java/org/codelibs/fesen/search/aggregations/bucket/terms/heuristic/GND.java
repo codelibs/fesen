@@ -17,18 +17,16 @@
  * under the License.
  */
 
-
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
 
 public class GND extends NXYSignificanceHeuristic {
     public static final String NAME = "gnd";
@@ -91,8 +89,7 @@ public class GND extends NXYSignificanceHeuristic {
             // perfect co-occurrence
             return 1.0;
         }
-        double score = (Math.max(Math.log(fx), Math.log(fy)) - Math.log(fxy)) /
-                (Math.log(N) - Math.min(Math.log(fx), Math.log(fy)));
+        double score = (Math.max(Math.log(fx), Math.log(fy)) - Math.log(fxy)) / (Math.log(N) - Math.min(Math.log(fx), Math.log(fy)));
 
         //we must invert the order of terms because GND scores relevant terms low
         score = Math.exp(-1.0d * score);
@@ -126,4 +123,3 @@ public class GND extends NXYSignificanceHeuristic {
         }
     }
 }
-

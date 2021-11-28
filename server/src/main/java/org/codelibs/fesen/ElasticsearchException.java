@@ -28,18 +28,18 @@ public class ElasticsearchException extends FesenException {
 
     public ElasticsearchException(Throwable cause) {
         super(cause);
-     }
+    }
 
     public ElasticsearchException(String msg, Object... args) {
         super(msg, args);
-     }
+    }
 
     public ElasticsearchException(String msg, Throwable cause, Object... args) {
         super(msg, cause, args);
-     }
+    }
 
     public ElasticsearchException(StreamInput in) throws IOException {
         super(in);
-     }
+    }
 
 }

@@ -19,19 +19,18 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
+import java.util.concurrent.locks.Lock;
+
 import org.codelibs.fesen.Assertions;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.engine.EngineException;
-
-import java.util.concurrent.locks.Lock;
 
 /**
  * Releasable lock used inside of Engine implementations
  */
 public class ReleasableLock implements Releasable {
     private final Lock lock;
-
 
     // a per-thread count indicating how many times the thread has entered the lock; only works if assertions are enabled
     private final ThreadLocal<Integer> holdingThreads;
@@ -50,7 +49,6 @@ public class ReleasableLock implements Releasable {
         lock.unlock();
         assert removeCurrentThread();
     }
-
 
     public ReleasableLock acquire() throws EngineException {
         lock.lock();

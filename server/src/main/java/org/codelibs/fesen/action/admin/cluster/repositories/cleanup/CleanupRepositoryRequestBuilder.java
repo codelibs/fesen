@@ -22,12 +22,10 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 
-public class CleanupRepositoryRequestBuilder extends MasterNodeOperationRequestBuilder<CleanupRepositoryRequest,
-                                                                                       CleanupRepositoryResponse,
-                                                                                       CleanupRepositoryRequestBuilder> {
+public class CleanupRepositoryRequestBuilder
+        extends MasterNodeOperationRequestBuilder<CleanupRepositoryRequest, CleanupRepositoryResponse, CleanupRepositoryRequestBuilder> {
 
-    public CleanupRepositoryRequestBuilder(FesenClient client, ActionType<CleanupRepositoryResponse> action,
-        String repository) {
+    public CleanupRepositoryRequestBuilder(FesenClient client, ActionType<CleanupRepositoryResponse> action, String repository) {
         super(client, action, new CleanupRepositoryRequest(repository));
     }
 

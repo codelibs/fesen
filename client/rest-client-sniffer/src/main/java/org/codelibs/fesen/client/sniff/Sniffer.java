@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.client.sniff;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientBuilder;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.security.AccessController;
@@ -40,6 +34,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientBuilder;
 
 /**
  * Class responsible for sniffing nodes from some source (default is fesen itself) and setting them to a provided instance of
@@ -145,9 +145,8 @@ public class Sniffer implements Closeable {
                 //tasks are run by a single threaded executor, so swapping is safe with a simple volatile variable
                 ScheduledTask previousTask = nextScheduledTask;
                 nextScheduledTask = new ScheduledTask(task, future);
-                assert initialized.get() == false ||
-                        previousTask.task.isSkipped() || previousTask.task.hasStarted() : "task that we are replacing is neither " +
-                        "cancelled nor has it ever started";
+                assert initialized.get() == false || previousTask.task.isSkipped()
+                        || previousTask.task.hasStarted() : "task that we are replacing is neither " + "cancelled nor has it ever started";
             }
         }
 

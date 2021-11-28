@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ack.ClusterStateUpdateRequest;
 import org.codelibs.fesen.core.Tuple;
-
-import java.util.Map;
 
 /**
  * Cluster state update request that allows to change minimum compatibility settings for some indices

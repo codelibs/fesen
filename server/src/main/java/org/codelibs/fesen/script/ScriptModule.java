@@ -40,30 +40,15 @@ public class ScriptModule {
 
     public static final Map<String, ScriptContext<?>> CORE_CONTEXTS;
     static {
-        CORE_CONTEXTS = Stream.of(
-            FieldScript.CONTEXT,
-            AggregationScript.CONTEXT,
-            ScoreScript.CONTEXT,
-            NumberSortScript.CONTEXT,
-            StringSortScript.CONTEXT,
-            TermsSetQueryScript.CONTEXT,
-            UpdateScript.CONTEXT,
-            BucketAggregationScript.CONTEXT,
-            BucketAggregationSelectorScript.CONTEXT,
-            SignificantTermsHeuristicScoreScript.CONTEXT,
-            IngestScript.CONTEXT,
-            IngestConditionalScript.CONTEXT,
-            FilterScript.CONTEXT,
-            SimilarityScript.CONTEXT,
-            SimilarityWeightScript.CONTEXT,
-            TemplateScript.CONTEXT,
-            MovingFunctionScript.CONTEXT,
-            ScriptedMetricAggContexts.InitScript.CONTEXT,
-            ScriptedMetricAggContexts.MapScript.CONTEXT,
-            ScriptedMetricAggContexts.CombineScript.CONTEXT,
-            ScriptedMetricAggContexts.ReduceScript.CONTEXT,
-            IntervalFilterScript.CONTEXT
-        ).collect(Collectors.toMap(c -> c.name, Function.identity()));
+        CORE_CONTEXTS = Stream
+                .of(FieldScript.CONTEXT, AggregationScript.CONTEXT, ScoreScript.CONTEXT, NumberSortScript.CONTEXT, StringSortScript.CONTEXT,
+                        TermsSetQueryScript.CONTEXT, UpdateScript.CONTEXT, BucketAggregationScript.CONTEXT,
+                        BucketAggregationSelectorScript.CONTEXT, SignificantTermsHeuristicScoreScript.CONTEXT, IngestScript.CONTEXT,
+                        IngestConditionalScript.CONTEXT, FilterScript.CONTEXT, SimilarityScript.CONTEXT, SimilarityWeightScript.CONTEXT,
+                        TemplateScript.CONTEXT, MovingFunctionScript.CONTEXT, ScriptedMetricAggContexts.InitScript.CONTEXT,
+                        ScriptedMetricAggContexts.MapScript.CONTEXT, ScriptedMetricAggContexts.CombineScript.CONTEXT,
+                        ScriptedMetricAggContexts.ReduceScript.CONTEXT, IntervalFilterScript.CONTEXT)
+                .collect(Collectors.toMap(c -> c.name, Function.identity()));
     }
 
     public final Map<String, ScriptEngine> engines;
@@ -85,8 +70,8 @@ public class ScriptModule {
             if (engine != null) {
                 ScriptEngine existing = engines.put(engine.getType(), engine);
                 if (existing != null) {
-                    throw new IllegalArgumentException("scripting language [" + engine.getType() + "] defined for engine [" +
-                        existing.getClass().getName() + "] and [" + engine.getClass().getName());
+                    throw new IllegalArgumentException("scripting language [" + engine.getType() + "] defined for engine ["
+                            + existing.getClass().getName() + "] and [" + engine.getClass().getName());
                 }
             }
         }

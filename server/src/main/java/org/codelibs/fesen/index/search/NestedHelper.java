@@ -21,6 +21,7 @@ package org.codelibs.fesen.index.search;
 
 import org.apache.lucene.index.PrefixCodedTerms;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.ConstantScoreQuery;
@@ -31,7 +32,6 @@ import org.apache.lucene.search.PointRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermInSetQuery;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.ObjectMapper;
 
@@ -59,7 +59,7 @@ public final class NestedHelper {
             // We only handle term(s) queries and range queries, which should already
             // cover a high majority of use-cases
             return mightMatchNestedDocs(((TermQuery) query).getTerm().field());
-        }  else if (query instanceof TermInSetQuery) {
+        } else if (query instanceof TermInSetQuery) {
             PrefixCodedTerms terms = ((TermInSetQuery) query).getTermData();
             if (terms.size() > 0) {
                 PrefixCodedTerms.TermIterator it = terms.iterator();
@@ -76,14 +76,10 @@ public final class NestedHelper {
             final BooleanQuery bq = (BooleanQuery) query;
             final boolean hasRequiredClauses = bq.clauses().stream().anyMatch(BooleanClause::isRequired);
             if (hasRequiredClauses) {
-                return bq.clauses().stream()
-                        .filter(BooleanClause::isRequired)
-                        .map(BooleanClause::getQuery)
+                return bq.clauses().stream().filter(BooleanClause::isRequired).map(BooleanClause::getQuery)
                         .allMatch(this::mightMatchNestedDocs);
             } else {
-                return bq.clauses().stream()
-                        .filter(c -> c.getOccur() == Occur.SHOULD)
-                        .map(BooleanClause::getQuery)
+                return bq.clauses().stream().filter(c -> c.getOccur() == Occur.SHOULD).map(BooleanClause::getQuery)
                         .anyMatch(this::mightMatchNestedDocs);
             }
         } else if (query instanceof ESToParentBlockJoinQuery) {
@@ -146,14 +142,10 @@ public final class NestedHelper {
             final BooleanQuery bq = (BooleanQuery) query;
             final boolean hasRequiredClauses = bq.clauses().stream().anyMatch(BooleanClause::isRequired);
             if (hasRequiredClauses) {
-                return bq.clauses().stream()
-                        .filter(BooleanClause::isRequired)
-                        .map(BooleanClause::getQuery)
+                return bq.clauses().stream().filter(BooleanClause::isRequired).map(BooleanClause::getQuery)
                         .allMatch(q -> mightMatchNonNestedDocs(q, nestedPath));
             } else {
-                return bq.clauses().stream()
-                        .filter(c -> c.getOccur() == Occur.SHOULD)
-                        .map(BooleanClause::getQuery)
+                return bq.clauses().stream().filter(c -> c.getOccur() == Occur.SHOULD).map(BooleanClause::getQuery)
                         .anyMatch(q -> mightMatchNonNestedDocs(q, nestedPath));
             }
         } else {
@@ -177,7 +169,7 @@ public final class NestedHelper {
         }
         for (String parent = parentObject(field); parent != null; parent = parentObject(parent)) {
             ObjectMapper mapper = mapperService.getObjectMapper(parent);
-            if (mapper!= null && mapper.nested().isNested()) {
+            if (mapper != null && mapper.nested().isNested()) {
                 if (mapper.fullPath().equals(nestedPath)) {
                     // If the mapper does not include in its parent or in the root object then
                     // the query might only match nested documents with the given path

@@ -27,20 +27,13 @@ import org.codelibs.fesen.index.search.SimpleQueryStringQueryParser;
  * Flags for the XSimpleQueryString parser
  */
 public enum SimpleQueryStringFlag {
-    ALL(-1),
-    NONE(0),
-    AND(SimpleQueryStringQueryParser.AND_OPERATOR),
-    NOT(SimpleQueryStringQueryParser.NOT_OPERATOR),
-    OR(SimpleQueryStringQueryParser.OR_OPERATOR),
-    PREFIX(SimpleQueryStringQueryParser.PREFIX_OPERATOR),
-    PHRASE(SimpleQueryStringQueryParser.PHRASE_OPERATOR),
-    PRECEDENCE(SimpleQueryStringQueryParser.PRECEDENCE_OPERATORS),
-    ESCAPE(SimpleQueryStringQueryParser.ESCAPE_OPERATOR),
-    WHITESPACE(SimpleQueryStringQueryParser.WHITESPACE_OPERATOR),
-    FUZZY(SimpleQueryStringQueryParser.FUZZY_OPERATOR),
+    ALL(-1), NONE(0), AND(SimpleQueryStringQueryParser.AND_OPERATOR), NOT(SimpleQueryStringQueryParser.NOT_OPERATOR), OR(
+            SimpleQueryStringQueryParser.OR_OPERATOR), PREFIX(SimpleQueryStringQueryParser.PREFIX_OPERATOR), PHRASE(
+                    SimpleQueryStringQueryParser.PHRASE_OPERATOR), PRECEDENCE(SimpleQueryStringQueryParser.PRECEDENCE_OPERATORS), ESCAPE(
+                            SimpleQueryStringQueryParser.ESCAPE_OPERATOR), WHITESPACE(
+                                    SimpleQueryStringQueryParser.WHITESPACE_OPERATOR), FUZZY(SimpleQueryStringQueryParser.FUZZY_OPERATOR),
     // NEAR and SLOP are synonymous, since "slop" is a more familiar term than "near"
-    NEAR(SimpleQueryStringQueryParser.NEAR_OPERATOR),
-    SLOP(SimpleQueryStringQueryParser.NEAR_OPERATOR);
+    NEAR(SimpleQueryStringQueryParser.NEAR_OPERATOR), SLOP(SimpleQueryStringQueryParser.NEAR_OPERATOR);
 
     final int value;
 
@@ -64,12 +57,12 @@ public enum SimpleQueryStringFlag {
             try {
                 SimpleQueryStringFlag flag = SimpleQueryStringFlag.valueOf(s.toUpperCase(Locale.ROOT));
                 switch (flag) {
-                    case NONE:
-                        return 0;
-                    case ALL:
-                        return -1;
-                    default:
-                        magic |= flag.value();
+                case NONE:
+                    return 0;
+                case ALL:
+                    return -1;
+                default:
+                    magic |= flag.value();
                 }
             } catch (IllegalArgumentException iae) {
                 throw new IllegalArgumentException("Unknown " + SimpleQueryStringBuilder.NAME + " flag [" + s + "]");

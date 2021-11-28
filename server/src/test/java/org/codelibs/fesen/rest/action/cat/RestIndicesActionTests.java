@@ -61,11 +61,9 @@ public class RestIndicesActionTests extends ESTestCase {
         for (int i = 0; i < numIndices; i++) {
             String indexName = "index-" + i;
 
-            Settings indexSettings = Settings.builder()
-                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID())
-                .put(IndexSettings.INDEX_SEARCH_THROTTLED.getKey(), randomBoolean())
-                .build();
+            Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                    .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID())
+                    .put(IndexSettings.INDEX_SEARCH_THROTTLED.getKey(), randomBoolean()).build();
             indicesSettings.put(indexName, indexSettings);
 
             IndexMetadata.State indexState = randomBoolean() ? IndexMetadata.State.OPEN : IndexMetadata.State.CLOSE;
@@ -73,45 +71,37 @@ public class RestIndicesActionTests extends ESTestCase {
                 ClusterHealthStatus healthStatus = randomFrom(ClusterHealthStatus.values());
                 int numberOfShards = randomIntBetween(1, 3);
                 int numberOfReplicas = healthStatus == ClusterHealthStatus.YELLOW ? 1 : randomInt(1);
-                IndexMetadata indexMetadata = IndexMetadata.builder(indexName)
-                    .settings(indexSettings)
-                    .creationDate(System.currentTimeMillis())
-                    .numberOfShards(numberOfShards)
-                    .numberOfReplicas(numberOfReplicas)
-                    .state(indexState)
-                    .build();
+                IndexMetadata indexMetadata =
+                        IndexMetadata.builder(indexName).settings(indexSettings).creationDate(System.currentTimeMillis())
+                                .numberOfShards(numberOfShards).numberOfReplicas(numberOfReplicas).state(indexState).build();
                 indicesMetadatas.put(indexName, indexMetadata);
 
                 if (frequently()) {
                     Index index = indexMetadata.getIndex();
                     IndexRoutingTable.Builder indexRoutingTable = IndexRoutingTable.builder(index);
                     switch (randomFrom(ClusterHealthStatus.values())) {
-                        case GREEN:
-                            IntStream.range(0, numberOfShards)
-                                .mapToObj(n -> new ShardId(index, n))
+                    case GREEN:
+                        IntStream.range(0, numberOfShards).mapToObj(n -> new ShardId(index, n))
                                 .map(shardId -> TestShardRouting.newShardRouting(shardId, "nodeA", true, ShardRoutingState.STARTED))
                                 .forEach(indexRoutingTable::addShard);
-                            if (numberOfReplicas > 0) {
-                                IntStream.range(0, numberOfShards)
-                                    .mapToObj(n -> new ShardId(index, n))
+                        if (numberOfReplicas > 0) {
+                            IntStream.range(0, numberOfShards).mapToObj(n -> new ShardId(index, n))
                                     .map(shardId -> TestShardRouting.newShardRouting(shardId, "nodeB", false, ShardRoutingState.STARTED))
                                     .forEach(indexRoutingTable::addShard);
-                            }
-                            break;
-                        case YELLOW:
-                            IntStream.range(0, numberOfShards)
-                                .mapToObj(n -> new ShardId(index, n))
+                        }
+                        break;
+                    case YELLOW:
+                        IntStream.range(0, numberOfShards).mapToObj(n -> new ShardId(index, n))
                                 .map(shardId -> TestShardRouting.newShardRouting(shardId, "nodeA", true, ShardRoutingState.STARTED))
                                 .forEach(indexRoutingTable::addShard);
-                            if (numberOfReplicas > 0) {
-                                IntStream.range(0, numberOfShards)
-                                    .mapToObj(n -> new ShardId(index, n))
+                        if (numberOfReplicas > 0) {
+                            IntStream.range(0, numberOfShards).mapToObj(n -> new ShardId(index, n))
                                     .map(shardId -> TestShardRouting.newShardRouting(shardId, null, false, ShardRoutingState.UNASSIGNED))
                                     .forEach(indexRoutingTable::addShard);
-                            }
-                            break;
-                        case RED:
-                            break;
+                        }
+                        break;
+                    case RED:
+                        break;
                     }
                     indicesHealths.put(indexName, new ClusterIndexHealth(indexMetadata, indexRoutingTable.build()));
 

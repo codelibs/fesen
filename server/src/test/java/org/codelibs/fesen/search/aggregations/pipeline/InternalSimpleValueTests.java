@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InternalSimpleValueTests extends InternalAggregationTestCase<InternalSimpleValue>{
+public class InternalSimpleValueTests extends InternalAggregationTestCase<InternalSimpleValue> {
 
     @Override
     protected InternalSimpleValue createTestInstance(String name, Map<String, Object> metadata) {

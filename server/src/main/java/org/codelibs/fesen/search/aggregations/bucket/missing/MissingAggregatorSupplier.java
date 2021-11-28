@@ -31,11 +31,7 @@ import org.codelibs.fesen.search.internal.SearchContext;
 @FunctionalInterface
 public interface MissingAggregatorSupplier {
 
-    MissingAggregator build(String name,
-                     AggregatorFactories factories,
-                     ValuesSourceConfig valuesSourceConfig,
-                     SearchContext aggregationContext,
-                     Aggregator parent,
-                     CardinalityUpperBound cardinality,
-                     Map<String, Object> metadata) throws IOException;
+    MissingAggregator build(String name, AggregatorFactories factories, ValuesSourceConfig valuesSourceConfig,
+            SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata)
+            throws IOException;
 }

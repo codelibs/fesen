@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.common.lucene.search;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FilterLeafCollector;
@@ -27,8 +29,6 @@ import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.Bits;
 import org.codelibs.fesen.common.lucene.Lucene;
-
-import java.io.IOException;
 
 public class FilteredCollector implements Collector {
 

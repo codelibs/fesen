@@ -49,7 +49,6 @@ public class StatsTracker {
         return messagesReceived.sum();
     }
 
-
     public MeanMetric getWriteBytes() {
         return writeBytesMetric;
     }

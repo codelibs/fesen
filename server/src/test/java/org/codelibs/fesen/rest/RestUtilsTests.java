@@ -143,13 +143,9 @@ public class RestUtilsTests extends ESTestCase {
         Map<String, String> params = new HashMap<>();
 
         // This is a valid URL
-        String uri = String.format(
-                Locale.ROOT,
+        String uri = String.format(Locale.ROOT,
                 host + "/:@-._~!$%c'()*+,=;:@-._~!$%c'()*+,=:@-._~!$%c'()*+,==?/?:@-._~!$'()*+,=/?:@-._~!$'()*+,==#/?:@-._~!$%c'()*+,;=",
-                randomDelimiter(),
-                randomDelimiter(),
-                randomDelimiter(),
-                randomDelimiter());
+                randomDelimiter(), randomDelimiter(), randomDelimiter(), randomDelimiter());
         RestUtils.decodeQueryString(uri, uri.indexOf('?') + 1, params);
         assertThat(params.get("/?:@-._~!$'()* ,"), equalTo("/?:@-._~!$'()* ,=="));
         assertThat(params.size(), equalTo(1));
@@ -163,7 +159,7 @@ public class RestUtilsTests extends ESTestCase {
         assertThat(RestUtils.checkCorsSettingForRegex(settingsValue).toString(), is(pattern.toString()));
     }
 
-    private void assertCorsSettingRegexMatches(String settingsValue, boolean expectMatch, String ... candidates) {
+    private void assertCorsSettingRegexMatches(String settingsValue, boolean expectMatch, String... candidates) {
         Pattern pattern = RestUtils.checkCorsSettingForRegex(settingsValue);
         for (String candidate : candidates) {
             assertThat(String.format(Locale.ROOT, "Expected pattern %s to match against %s: %s", settingsValue, candidate, expectMatch),

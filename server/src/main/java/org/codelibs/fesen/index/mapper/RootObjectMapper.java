@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Explicit;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.mapper.DynamicTemplate.XContentFieldType;
-import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
-
 import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
 import static org.codelibs.fesen.index.mapper.TypeParsers.parseDateTimeFormatter;
 
@@ -44,15 +32,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.Explicit;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.mapper.DynamicTemplate.XContentFieldType;
+import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
+
 public class RootObjectMapper extends ObjectMapper {
     private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(RootObjectMapper.class);
 
     public static class Defaults {
-        public static final DateFormatter[] DYNAMIC_DATE_TIME_FORMATTERS =
-                new DateFormatter[]{
-                        DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER,
-                        DateFormatter.forPattern("yyyy/MM/dd HH:mm:ss||yyyy/MM/dd||epoch_millis")
-                };
+        public static final DateFormatter[] DYNAMIC_DATE_TIME_FORMATTERS = new DateFormatter[] {
+                DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER, DateFormatter.forPattern("yyyy/MM/dd HH:mm:ss||yyyy/MM/dd||epoch_millis") };
         public static final boolean DATE_DETECTION = true;
         public static final boolean NUMERIC_DETECTION = false;
     }
@@ -88,10 +85,8 @@ public class RootObjectMapper extends ObjectMapper {
         protected ObjectMapper createMapper(String name, String fullPath, Explicit<Boolean> enabled, Nested nested, Dynamic dynamic,
                 Map<String, Mapper> mappers, @Nullable Settings settings) {
             assert !nested.isNested();
-            return new RootObjectMapper(name, enabled, dynamic, mappers,
-                    dynamicDateTimeFormatters,
-                    dynamicTemplates,
-                    dateDetection, numericDetection, settings);
+            return new RootObjectMapper(name, enabled, dynamic, mappers, dynamicDateTimeFormatters, dynamicTemplates, dateDetection,
+                    numericDetection, settings);
         }
     }
 
@@ -103,7 +98,7 @@ public class RootObjectMapper extends ObjectMapper {
      * {@code isIncludeInParent} returning {@code true}.
      */
     public void fixRedundantIncludes() {
-       fixRedundantIncludes(this, true);
+        fixRedundantIncludes(this, true);
     }
 
     private static void fixRedundantIncludes(ObjectMapper objectMapper, boolean parentIncluded) {
@@ -142,14 +137,13 @@ public class RootObjectMapper extends ObjectMapper {
             return builder;
         }
 
-        protected boolean processField(RootObjectMapper.Builder builder, String fieldName, Object fieldNode,
-                ParserContext parserContext) {
+        protected boolean processField(RootObjectMapper.Builder builder, String fieldName, Object fieldNode, ParserContext parserContext) {
             if (fieldName.equals("date_formats") || fieldName.equals("dynamic_date_formats")) {
                 if (fieldNode instanceof List) {
                     List<DateFormatter> formatters = new ArrayList<>();
                     for (Object formatter : (List<?>) fieldNode) {
                         if (formatter.toString().startsWith("epoch_")) {
-                            throw new MapperParsingException("Epoch ["+ formatter +"] is not supported as dynamic date format");
+                            throw new MapperParsingException("Epoch [" + formatter + "] is not supported as dynamic date format");
                         }
                         formatters.add(parseDateTimeFormatter(formatter));
                     }
@@ -208,8 +202,8 @@ public class RootObjectMapper extends ObjectMapper {
     private Explicit<DynamicTemplate[]> dynamicTemplates;
 
     RootObjectMapper(String name, Explicit<Boolean> enabled, Dynamic dynamic, Map<String, Mapper> mappers,
-                     Explicit<DateFormatter[]> dynamicDateTimeFormatters, Explicit<DynamicTemplate[]> dynamicTemplates,
-                     Explicit<Boolean> dateDetection, Explicit<Boolean> numericDetection, Settings settings) {
+            Explicit<DateFormatter[]> dynamicDateTimeFormatters, Explicit<DynamicTemplate[]> dynamicTemplates,
+            Explicit<Boolean> dateDetection, Explicit<Boolean> numericDetection, Settings settings) {
         super(name, name, enabled, Nested.NO, dynamic, mappers, settings);
         this.dynamicTemplates = dynamicTemplates;
         this.dynamicDateTimeFormatters = dynamicDateTimeFormatters;
@@ -357,8 +351,7 @@ public class RootObjectMapper extends ObjectMapper {
         }
     }
 
-    private static void validateDynamicTemplate(Mapper.TypeParser.ParserContext parserContext,
-                                                DynamicTemplate dynamicTemplate) {
+    private static void validateDynamicTemplate(Mapper.TypeParser.ParserContext parserContext, DynamicTemplate dynamicTemplate) {
 
         if (containsSnippet(dynamicTemplate.getMapping(), "{name}")) {
             // Can't validate template, because field names can't be guessed up front.
@@ -367,7 +360,7 @@ public class RootObjectMapper extends ObjectMapper {
 
         final XContentFieldType[] types;
         if (dynamicTemplate.getXContentFieldType() != null) {
-            types = new XContentFieldType[]{dynamicTemplate.getXContentFieldType()};
+            types = new XContentFieldType[] { dynamicTemplate.getXContentFieldType() };
         } else {
             types = XContentFieldType.values();
         }
@@ -405,8 +398,8 @@ public class RootObjectMapper extends ObjectMapper {
 
         final boolean shouldEmitDeprecationWarning = parserContext.indexVersionCreated().onOrAfter(Version.V_7_7_0);
         if (dynamicTemplateInvalid && shouldEmitDeprecationWarning) {
-            String message = String.format(Locale.ROOT, "dynamic template [%s] has invalid content [%s]",
-                dynamicTemplate.getName(), Strings.toString(dynamicTemplate));
+            String message = String.format(Locale.ROOT, "dynamic template [%s] has invalid content [%s]", dynamicTemplate.getName(),
+                    Strings.toString(dynamicTemplate));
 
             final String deprecationMessage;
             if (lastError != null) {
@@ -414,7 +407,7 @@ public class RootObjectMapper extends ObjectMapper {
             } else {
                 deprecationMessage = message;
             }
-                DEPRECATION_LOGGER.deprecate("invalid_dynamic_template", deprecationMessage);
+            DEPRECATION_LOGGER.deprecate("invalid_dynamic_template", deprecationMessage);
         }
     }
 

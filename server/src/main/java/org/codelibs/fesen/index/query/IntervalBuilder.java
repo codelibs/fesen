@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CachingTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -26,21 +33,14 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
 import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
 import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.queries.intervals.IntervalMatchesIterator;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.queries.intervals.IntervalIterator;
+import org.apache.lucene.queries.intervals.IntervalMatchesIterator;
 import org.apache.lucene.queries.intervals.Intervals;
 import org.apache.lucene.queries.intervals.IntervalsSource;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.graph.GraphTokenStreamFiniteStrings;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Constructs an IntervalsSource based on analyzed text
@@ -56,8 +56,7 @@ public class IntervalBuilder {
     }
 
     public IntervalsSource analyzeText(String query, int maxGaps, boolean ordered) throws IOException {
-        try (TokenStream ts = analyzer.tokenStream(field, query);
-             CachingTokenFilter stream = new CachingTokenFilter(ts)) {
+        try (TokenStream ts = analyzer.tokenStream(field, query); CachingTokenFilter stream = new CachingTokenFilter(ts)) {
             return analyzeText(stream, maxGaps, ordered);
         }
     }
@@ -174,8 +173,7 @@ public class IntervalBuilder {
             if (posInc > 0) {
                 if (synonyms.size() == 1) {
                     terms.add(extend(synonyms.get(0), spaces));
-                }
-                else if (synonyms.size() > 1) {
+                } else if (synonyms.size() > 1) {
                     terms.add(extend(Intervals.or(synonyms.toArray(new IntervalsSource[0])), spaces));
                 }
                 synonyms.clear();
@@ -185,8 +183,7 @@ public class IntervalBuilder {
         }
         if (synonyms.size() == 1) {
             terms.add(extend(synonyms.get(0), spaces));
-        }
-        else {
+        } else {
             terms.add(extend(Intervals.or(synonyms.toArray(new IntervalsSource[0])), spaces));
         }
         return combineSources(terms, maxGaps, ordered);
@@ -289,7 +286,8 @@ public class IntervalBuilder {
         }
 
         @Override
-        public void visit(String field, QueryVisitor visitor) {}
+        public void visit(String field, QueryVisitor visitor) {
+        }
 
         @Override
         public int minExtent() {

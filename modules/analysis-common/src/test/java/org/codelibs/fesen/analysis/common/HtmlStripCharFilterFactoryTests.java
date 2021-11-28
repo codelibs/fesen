@@ -19,8 +19,11 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -29,11 +32,6 @@ import org.codelibs.fesen.index.analysis.CharFilterFactory;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 import org.codelibs.fesen.test.VersionUtils;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-
 
 public class HtmlStripCharFilterFactoryTests extends ESTestCase {
 

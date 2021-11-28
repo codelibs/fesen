@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.http;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -30,8 +32,6 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.util.List;
 
 /**
  * Http request trace logger. See {@link #maybeTraceRequest(RestRequest, Exception)} for details.
@@ -65,8 +65,10 @@ class HttpTracer {
     @Nullable
     HttpTracer maybeTraceRequest(RestRequest restRequest, @Nullable Exception e) {
         if (logger.isTraceEnabled() && TransportService.shouldTraceAction(restRequest.uri(), tracerLogInclude, tracerLogExclude)) {
-            logger.trace(new ParameterizedMessage("[{}][{}][{}][{}] received request from [{}]", restRequest.getRequestId(),
-                restRequest.header(Task.X_OPAQUE_ID), restRequest.method(), restRequest.uri(), restRequest.getHttpChannel()), e);
+            logger.trace(
+                    new ParameterizedMessage("[{}][{}][{}][{}] received request from [{}]", restRequest.getRequestId(),
+                            restRequest.header(Task.X_OPAQUE_ID), restRequest.method(), restRequest.uri(), restRequest.getHttpChannel()),
+                    e);
             return this;
         }
         return null;
@@ -83,9 +85,9 @@ class HttpTracer {
      * @param success       Whether the response was successfully sent
      */
     void traceResponse(RestResponse restResponse, HttpChannel httpChannel, String contentLength, String opaqueHeader, long requestId,
-                       boolean success) {
-        logger.trace(new ParameterizedMessage("[{}][{}][{}][{}][{}] sent response to [{}] success [{}]", requestId,
-            opaqueHeader, restResponse.status(), restResponse.contentType(), contentLength, httpChannel, success));
+            boolean success) {
+        logger.trace(new ParameterizedMessage("[{}][{}][{}][{}][{}] sent response to [{}] success [{}]", requestId, opaqueHeader,
+                restResponse.status(), restResponse.contentType(), contentLength, httpChannel, success));
     }
 
     private void setTracerLogInclude(List<String> tracerLogInclude) {

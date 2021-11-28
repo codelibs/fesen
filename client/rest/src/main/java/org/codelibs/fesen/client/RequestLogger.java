@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -31,12 +37,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Helper class that exposes static methods to unify the way requests are logged.
@@ -56,8 +56,8 @@ final class RequestLogger {
      */
     static void logResponse(Log logger, HttpUriRequest request, HttpHost host, HttpResponse httpResponse) {
         if (logger.isDebugEnabled()) {
-            logger.debug("request [" + request.getMethod() + " " + host + getUri(request.getRequestLine()) +
-                    "] returned [" + httpResponse.getStatusLine() + "]");
+            logger.debug("request [" + request.getMethod() + " " + host + getUri(request.getRequestLine()) + "] returned ["
+                    + httpResponse.getStatusLine() + "]");
         }
         if (logger.isWarnEnabled()) {
             Header[] warnings = httpResponse.getHeaders("Warning");
@@ -69,14 +69,14 @@ final class RequestLogger {
             String requestLine;
             try {
                 requestLine = buildTraceRequest(request, host);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 requestLine = "";
                 tracer.trace("error while reading request for trace purposes", e);
             }
             String responseLine;
             try {
                 responseLine = buildTraceResponse(httpResponse);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 responseLine = "";
                 tracer.trace("error while reading response for trace purposes", e);
             }
@@ -120,7 +120,7 @@ final class RequestLogger {
      */
     static String buildTraceRequest(HttpUriRequest request, HttpHost host) throws IOException {
         String requestLine = "curl -iX " + request.getMethod() + " '" + host + getUri(request.getRequestLine()) + "'";
-        if (request instanceof  HttpEntityEnclosingRequest) {
+        if (request instanceof HttpEntityEnclosingRequest) {
             HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
             if (enclosingRequest.getEntity() != null) {
                 requestLine += " -d '";
@@ -158,7 +158,7 @@ final class RequestLogger {
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), charset))) {
                 String line;
-                while( (line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     responseLine.append("\n# ").append(line);
                 }
             }

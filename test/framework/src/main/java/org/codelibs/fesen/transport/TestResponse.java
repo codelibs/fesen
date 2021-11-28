@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.transport.TransportResponse;
 
 public class TestResponse extends TransportResponse {
 

@@ -51,10 +51,9 @@ public class IndexSettingsTests extends ESTestCase {
     public void testRunListener() {
         Version version = VersionUtils.getPreviousVersion();
         Settings theSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version)
-            .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build();
+                .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build();
         final AtomicInteger integer = new AtomicInteger(0);
-        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1,
-            Property.Dynamic, Property.IndexScope);
+        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1, Property.Dynamic, Property.IndexScope);
         IndexMetadata metadata = newIndexMeta("index", theSettings);
         IndexSettings settings = newIndexSettings(newIndexMeta("index", theSettings), Settings.EMPTY, integerSetting);
         settings.getScopedSettings().addSettingsUpdateConsumer(integerSetting, integer::set);
@@ -65,22 +64,23 @@ public class IndexSettingsTests extends ESTestCase {
         assertFalse(settings.updateIndexMetadata(metadata));
         assertEquals(metadata.getSettings(), settings.getSettings());
         assertEquals(0, integer.get());
-        assertTrue(settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(theSettings).put("index.test.setting.int", 42)
-            .build())));
+        assertTrue(settings
+                .updateIndexMetadata(newIndexMeta("index", Settings.builder().put(theSettings).put("index.test.setting.int", 42).build())));
         assertEquals(42, integer.get());
     }
 
     public void testSettingsUpdateValidator() {
         Version version = VersionUtils.getPreviousVersion();
         Settings theSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version)
-            .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build();
+                .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build();
         final AtomicInteger integer = new AtomicInteger(0);
-        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1,
-            Property.Dynamic, Property.IndexScope);
+        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1, Property.Dynamic, Property.IndexScope);
         IndexMetadata metadata = newIndexMeta("index", theSettings);
         IndexSettings settings = newIndexSettings(newIndexMeta("index", theSettings), Settings.EMPTY, integerSetting);
-        settings.getScopedSettings().addSettingsUpdateConsumer(integerSetting, integer::set,
-            (i) -> {if (i == 42) throw new AssertionError("boom");});
+        settings.getScopedSettings().addSettingsUpdateConsumer(integerSetting, integer::set, (i) -> {
+            if (i == 42)
+                throw new AssertionError("boom");
+        });
 
         assertEquals(version, settings.getIndexVersionCreated());
         assertEquals("0xdeadbeef", settings.getUUID());
@@ -88,10 +88,10 @@ public class IndexSettingsTests extends ESTestCase {
         assertFalse(settings.updateIndexMetadata(metadata));
         assertEquals(metadata.getSettings(), settings.getSettings());
         assertEquals(0, integer.get());
-        expectThrows(IllegalArgumentException.class, () -> settings.updateIndexMetadata(newIndexMeta("index",
-            Settings.builder().put(theSettings).put("index.test.setting.int", 42).build())));
-        assertTrue(settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(theSettings).put("index.test.setting.int", 41)
-            .build())));
+        expectThrows(IllegalArgumentException.class, () -> settings
+                .updateIndexMetadata(newIndexMeta("index", Settings.builder().put(theSettings).put("index.test.setting.int", 42).build())));
+        assertTrue(settings
+                .updateIndexMetadata(newIndexMeta("index", Settings.builder().put(theSettings).put("index.test.setting.int", 41).build())));
         assertEquals(41, integer.get());
     }
 
@@ -101,25 +101,23 @@ public class IndexSettingsTests extends ESTestCase {
                 .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build();
         final AtomicInteger integer = new AtomicInteger(0);
         final StringBuilder builder = new StringBuilder();
-        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1,
-            Property.Dynamic, Property.IndexScope);
-        Setting<String> notUpdated = new Setting<>("index.not.updated", "", Function.identity(),
-            Property.Dynamic, Property.IndexScope);
+        Setting<Integer> integerSetting = Setting.intSetting("index.test.setting.int", -1, Property.Dynamic, Property.IndexScope);
+        Setting<String> notUpdated = new Setting<>("index.not.updated", "", Function.identity(), Property.Dynamic, Property.IndexScope);
 
         IndexSettings settings = newIndexSettings(newIndexMeta("index", theSettings), Settings.EMPTY, integerSetting, notUpdated);
         settings.getScopedSettings().addSettingsUpdateConsumer(integerSetting, integer::set);
         settings.getScopedSettings().addSettingsUpdateConsumer(notUpdated, builder::append);
         assertEquals(0, integer.get());
         assertEquals("", builder.toString());
-        IndexMetadata newMetadata = newIndexMeta("index", Settings.builder().put(settings.getIndexMetadata().getSettings())
-            .put("index.test.setting.int", 42).build());
+        IndexMetadata newMetadata = newIndexMeta("index",
+                Settings.builder().put(settings.getIndexMetadata().getSettings()).put("index.test.setting.int", 42).build());
         assertTrue(settings.updateIndexMetadata(newMetadata));
         assertSame(settings.getIndexMetadata(), newMetadata);
         assertEquals(42, integer.get());
         assertEquals("", builder.toString());
         integer.set(0);
-        assertTrue(settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(settings.getIndexMetadata().getSettings())
-            .put("index.not.updated", "boom").build())));
+        assertTrue(settings.updateIndexMetadata(newIndexMeta("index",
+                Settings.builder().put(settings.getIndexMetadata().getSettings()).put("index.not.updated", "boom").build())));
         assertEquals("boom", builder.toString());
         assertEquals("not updated - we preserve the old settings", 0, integer.get());
 
@@ -127,34 +125,32 @@ public class IndexSettingsTests extends ESTestCase {
 
     public void testSettingsConsistency() {
         Version version = VersionUtils.getPreviousVersion();
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(version, settings.getIndexVersionCreated());
         assertEquals("_na_", settings.getUUID());
         try {
-            settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED,
-                Version.CURRENT).put("index.test.setting.int", 42).build()));
+            settings.updateIndexMetadata(newIndexMeta("index", Settings.builder()
+                    .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).put("index.test.setting.int", 42).build()));
             fail("version has changed");
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage(), ex.getMessage().startsWith("version mismatch on settings update expected: "));
         }
 
         // use version number that is unknown
-        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.fromId(999999))
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.fromId(999999)).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(Version.fromId(999999), settings.getIndexVersionCreated());
         assertEquals("_na_", settings.getUUID());
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED,
-            Version.fromId(999999)).put("index.test.setting.int", 42).build()));
+        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.fromId(999999)).put("index.test.setting.int", 42).build()));
 
         metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build());
+                .put(IndexMetadata.SETTING_INDEX_UUID, "0xdeadbeef").build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         try {
-            settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED,
-                Version.CURRENT).put("index.test.setting.int", 42).build()));
+            settings.updateIndexMetadata(newIndexMeta("index", Settings.builder()
+                    .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).put("index.test.setting.int", 42).build()));
             fail("uuid missing/change");
         } catch (IllegalArgumentException ex) {
             assertEquals("uuid mismatch on settings update expected: 0xdeadbeef but was: _na_", ex.getMessage());
@@ -170,13 +166,10 @@ public class IndexSettingsTests extends ESTestCase {
         return new IndexSettings(metadata, nodeSettings, new IndexScopedSettings(Settings.EMPTY, settingSet));
     }
 
-
     public void testNodeSettingsAreContained() {
         final int numShards = randomIntBetween(1, 10);
         final int numReplicas = randomIntBetween(0, 10);
-        Settings theSettings = Settings.builder().
-                put("index.foo.bar", 0)
-                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas)
+        Settings theSettings = Settings.builder().put("index.foo.bar", 0).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas)
                 .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, numShards).build();
 
         Settings nodeSettings = Settings.builder().put("index.foo.bar", 43).build();
@@ -188,85 +181,70 @@ public class IndexSettingsTests extends ESTestCase {
         assertEquals(numShards, settings.getNumberOfShards());
         assertEquals(0, indexValue.get());
 
-        assertTrue(settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().
-                put("index.foo.bar", 42)
-                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas + 1)
-                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, numShards).build())));
+        assertTrue(settings.updateIndexMetadata(newIndexMeta("index",
+                Settings.builder().put("index.foo.bar", 42).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas + 1)
+                        .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, numShards).build())));
 
         assertEquals(42, indexValue.get());
         assertSame(nodeSettings, settings.getNodeSettings());
 
-        assertTrue(settings.updateIndexMetadata(newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas + 1)
-            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, numShards).build())));
+        assertTrue(settings
+                .updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, numReplicas + 1)
+                        .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, numShards).build())));
         assertEquals(43, indexValue.get());
 
     }
 
     public static IndexMetadata newIndexMeta(String name, Settings indexSettings) {
         Settings build = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)
-                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
-                .put(indexSettings)
-                .build();
+                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1).put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1).put(indexSettings).build();
         return IndexMetadata.builder(name).settings(build).build();
     }
 
-
     public void testUpdateDurability() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.INDEX_TRANSLOG_DURABILITY_SETTING.getKey(), "async")
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.INDEX_TRANSLOG_DURABILITY_SETTING.getKey(), "async").build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(Translog.Durability.ASYNC, settings.getTranslogDurability());
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_TRANSLOG_DURABILITY_SETTING.getKey(),
-            "request").build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_TRANSLOG_DURABILITY_SETTING.getKey(), "request").build()));
         assertEquals(Translog.Durability.REQUEST, settings.getTranslogDurability());
 
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(Translog.Durability.REQUEST, settings.getTranslogDurability()); // test default
     }
 
     public void testIsWarmerEnabled() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.INDEX_WARMER_ENABLED_SETTING.getKey(), false)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.INDEX_WARMER_ENABLED_SETTING.getKey(), false).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertFalse(settings.isWarmerEnabled());
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_WARMER_ENABLED_SETTING.getKey(),
-            "true").build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_WARMER_ENABLED_SETTING.getKey(), "true").build()));
         assertTrue(settings.isWarmerEnabled());
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertTrue(settings.isWarmerEnabled());
     }
 
     public void testRefreshInterval() {
         String refreshInterval = getRandomTimeString();
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey(), refreshInterval)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey(), refreshInterval).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(TimeValue.parseTimeValue(refreshInterval, new TimeValue(1, TimeUnit.DAYS),
-            IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey()), settings.getRefreshInterval());
+                IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey()), settings.getRefreshInterval());
         String newRefreshInterval = getRandomTimeString();
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey(),
-            newRefreshInterval).build()));
+        settings.updateIndexMetadata(newIndexMeta("index",
+                Settings.builder().put(IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey(), newRefreshInterval).build()));
         assertEquals(TimeValue.parseTimeValue(newRefreshInterval, new TimeValue(1, TimeUnit.DAYS),
-            IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey()), settings.getRefreshInterval());
+                IndexSettings.INDEX_REFRESH_INTERVAL_SETTING.getKey()), settings.getRefreshInterval());
     }
 
     private String getRandomTimeString() {
-        int refreshIntervalInt= randomFrom(-1, Math.abs(randomInt()));
-        String refreshInterval =  Integer.toString(refreshIntervalInt);
+        int refreshIntervalInt = randomFrom(-1, Math.abs(randomInt()));
+        String refreshInterval = Integer.toString(refreshIntervalInt);
         if (refreshIntervalInt >= 0) {
             refreshInterval += randomFrom("s", "ms", "h");
         }
@@ -274,41 +252,33 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testMaxResultWindow() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey(), 15)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey(), 15).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(15, settings.getMaxResultWindow());
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey(),
-            42).build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey(), 42).build()));
         assertEquals(42, settings.getMaxResultWindow());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.EMPTY));
         assertEquals(IndexSettings.MAX_RESULT_WINDOW_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxResultWindow());
 
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(IndexSettings.MAX_RESULT_WINDOW_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxResultWindow());
     }
 
     public void testMaxInnerResultWindow() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey(), 200)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey(), 200).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(200, settings.getMaxInnerResultWindow());
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey(),
-            50).build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey(), 50).build()));
         assertEquals(50, settings.getMaxInnerResultWindow());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.EMPTY));
         assertEquals(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxInnerResultWindow());
 
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxInnerResultWindow());
     }
@@ -346,23 +316,18 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testMaxAdjacencyMatrixFiltersSetting() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey(), 15)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey(), 15).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(15, settings.getMaxAdjacencyMatrixFilters());
-        settings.updateIndexMetadata(newIndexMeta("index",
-            Settings.builder().put(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey(),
-            42).build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey(), 42).build()));
         assertEquals(42, settings.getMaxAdjacencyMatrixFilters());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.EMPTY));
         assertEquals(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.get(Settings.EMPTY).intValue(),
                 settings.getMaxAdjacencyMatrixFilters());
 
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.get(Settings.EMPTY).intValue(),
                 settings.getMaxAdjacencyMatrixFilters());
@@ -371,58 +336,50 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testMaxRegexLengthSetting() {
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey(), 99)
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey(), 99).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(99, settings.getMaxRegexLength());
-        settings.updateIndexMetadata(newIndexMeta("index",
-            Settings.builder().put(IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey(), 101).build()));
+        settings.updateIndexMetadata(
+                newIndexMeta("index", Settings.builder().put(IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey(), 101).build()));
         assertEquals(101, settings.getMaxRegexLength());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.EMPTY));
         assertEquals(IndexSettings.MAX_REGEX_LENGTH_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxRegexLength());
 
-        metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .build());
+        metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(IndexSettings.MAX_REGEX_LENGTH_SETTING.get(Settings.EMPTY).intValue(), settings.getMaxRegexLength());
     }
 
     public void testGCDeletesSetting() {
         TimeValue gcDeleteSetting = new TimeValue(Math.abs(randomInt()), TimeUnit.MILLISECONDS);
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put(IndexSettings.INDEX_GC_DELETES_SETTING.getKey(), gcDeleteSetting.getStringRep())
-            .build());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexSettings.INDEX_GC_DELETES_SETTING.getKey(), gcDeleteSetting.getStringRep()).build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(TimeValue.parseTimeValue(gcDeleteSetting.getStringRep(), new TimeValue(1, TimeUnit.DAYS),
-            IndexSettings.INDEX_GC_DELETES_SETTING.getKey()).getMillis(), settings.getGcDeletesInMillis());
+                IndexSettings.INDEX_GC_DELETES_SETTING.getKey()).getMillis(), settings.getGcDeletesInMillis());
         TimeValue newGCDeleteSetting = new TimeValue(Math.abs(randomInt()), TimeUnit.MILLISECONDS);
-        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_GC_DELETES_SETTING.getKey(),
-            newGCDeleteSetting.getStringRep()).build()));
+        settings.updateIndexMetadata(newIndexMeta("index",
+                Settings.builder().put(IndexSettings.INDEX_GC_DELETES_SETTING.getKey(), newGCDeleteSetting.getStringRep()).build()));
         assertEquals(TimeValue.parseTimeValue(newGCDeleteSetting.getStringRep(), new TimeValue(1, TimeUnit.DAYS),
-            IndexSettings.INDEX_GC_DELETES_SETTING.getKey()).getMillis(), settings.getGcDeletesInMillis());
+                IndexSettings.INDEX_GC_DELETES_SETTING.getKey()).getMillis(), settings.getGcDeletesInMillis());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(IndexSettings.INDEX_GC_DELETES_SETTING.getKey(),
-            (randomBoolean() ? -1 : new TimeValue(-1, TimeUnit.MILLISECONDS)).toString()).build()));
+                (randomBoolean() ? -1 : new TimeValue(-1, TimeUnit.MILLISECONDS)).toString()).build()));
         assertEquals(-1, settings.getGcDeletesInMillis());
     }
 
     public void testTranslogFlushSizeThreshold() {
         ByteSizeValue translogFlushThresholdSize = new ByteSizeValue(Math.abs(randomInt()));
         ByteSizeValue actualValue = ByteSizeValue.parseBytesSizeValue(translogFlushThresholdSize.getBytes() + "B",
-            IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey());
-        IndexMetadata metadata = newIndexMeta("index", Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey());
+        IndexMetadata metadata = newIndexMeta("index", Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
                 .put(IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey(), translogFlushThresholdSize.getBytes() + "B")
-            .build());
+                .build());
         IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(actualValue, settings.getFlushThresholdSize());
         ByteSizeValue newTranslogFlushThresholdSize = new ByteSizeValue(Math.abs(randomInt()));
         ByteSizeValue actualNewTranslogFlushThresholdSize = ByteSizeValue.parseBytesSizeValue(
-                newTranslogFlushThresholdSize.getBytes() + "B",
-            IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey());
+                newTranslogFlushThresholdSize.getBytes() + "B", IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey());
         settings.updateIndexMetadata(newIndexMeta("index", Settings.builder()
                 .put(IndexSettings.INDEX_TRANSLOG_FLUSH_THRESHOLD_SIZE_SETTING.getKey(), newTranslogFlushThresholdSize.getBytes() + "B")
                 .build()));
@@ -432,21 +389,14 @@ public class IndexSettingsTests extends ESTestCase {
     public void testTranslogGenerationSizeThreshold() {
         final ByteSizeValue size = new ByteSizeValue(Math.abs(randomInt()));
         final String key = IndexSettings.INDEX_TRANSLOG_GENERATION_THRESHOLD_SIZE_SETTING.getKey();
-        final ByteSizeValue actualValue =
-                ByteSizeValue.parseBytesSizeValue(size.getBytes() + "B", key);
-        final IndexMetadata metadata =
-                newIndexMeta(
-                        "index",
-                        Settings.builder()
-                                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                                .put(key, size.getBytes() + "B")
-                                .build());
+        final ByteSizeValue actualValue = ByteSizeValue.parseBytesSizeValue(size.getBytes() + "B", key);
+        final IndexMetadata metadata = newIndexMeta("index",
+                Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).put(key, size.getBytes() + "B").build());
         final IndexSettings settings = new IndexSettings(metadata, Settings.EMPTY);
         assertEquals(actualValue, settings.getGenerationThresholdSize());
         final ByteSizeValue newSize = new ByteSizeValue(Math.abs(randomInt()));
         final ByteSizeValue actual = ByteSizeValue.parseBytesSizeValue(newSize.getBytes() + "B", key);
-        settings.updateIndexMetadata(
-                newIndexMeta("index", Settings.builder().put(key, newSize.getBytes() + "B").build()));
+        settings.updateIndexMetadata(newIndexMeta("index", Settings.builder().put(key, newSize.getBytes() + "B").build()));
         assertEquals(actual, settings.getGenerationThresholdSize());
     }
 
@@ -456,16 +406,14 @@ public class IndexSettingsTests extends ESTestCase {
 
         {
             // validation should fail since we are not ignoring private settings
-            final IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
-                    () -> indexScopedSettings.validate(settings, randomBoolean()));
+            final IllegalArgumentException e =
+                    expectThrows(IllegalArgumentException.class, () -> indexScopedSettings.validate(settings, randomBoolean()));
             assertThat(e, hasToString(containsString("unknown setting [index.creation_date]")));
         }
 
         {
             // validation should fail since we are not ignoring private settings
-            final IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
+            final IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
                     () -> indexScopedSettings.validate(settings, randomBoolean(), false, randomBoolean()));
             assertThat(e, hasToString(containsString("unknown setting [index.creation_date]")));
         }
@@ -481,16 +429,14 @@ public class IndexSettingsTests extends ESTestCase {
 
         {
             // validation should fail since we are not ignoring archived settings
-            final IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
-                    () -> indexScopedSettings.validate(settings, randomBoolean()));
+            final IllegalArgumentException e =
+                    expectThrows(IllegalArgumentException.class, () -> indexScopedSettings.validate(settings, randomBoolean()));
             assertThat(e, hasToString(containsString("unknown setting [archived.foo]")));
         }
 
         {
             // validation should fail since we are not ignoring archived settings
-            final IllegalArgumentException e = expectThrows(
-                    IllegalArgumentException.class,
+            final IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
                     () -> indexScopedSettings.validate(settings, randomBoolean(), randomBoolean(), false));
             assertThat(e, hasToString(containsString("unknown setting [archived.foo]")));
         }
@@ -500,17 +446,16 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testArchiveBrokenIndexSettings() {
-        Settings settings =
-            IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(
-                Settings.EMPTY,
-                e -> { assert false : "should not have been invoked, no unknown settings"; },
-                (e, ex) -> { assert false : "should not have been invoked, no invalid settings"; });
+        Settings settings = IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(Settings.EMPTY, e -> {
+            assert false : "should not have been invoked, no unknown settings";
+        }, (e, ex) -> {
+            assert false : "should not have been invoked, no invalid settings";
+        });
         assertSame(settings, Settings.EMPTY);
-        settings =
-            IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(
-                Settings.builder().put("index.refresh_interval", "-200").build(),
-                e -> { assert false : "should not have been invoked, no invalid settings"; },
-                (e, ex) -> {
+        settings = IndexScopedSettings.DEFAULT_SCOPED_SETTINGS
+                .archiveUnknownOrInvalidSettings(Settings.builder().put("index.refresh_interval", "-200").build(), e -> {
+                    assert false : "should not have been invoked, no invalid settings";
+                }, (e, ex) -> {
                     assertThat(e.getKey(), equalTo("index.refresh_interval"));
                     assertThat(e.getValue(), equalTo("-200"));
                     assertThat(ex, hasToString(containsString("failed to parse setting [index.refresh_interval] with value [-200]")));
@@ -519,24 +464,21 @@ public class IndexSettingsTests extends ESTestCase {
         assertNull(settings.get("index.refresh_interval"));
 
         Settings prevSettings = settings; // no double archive
-        settings =
-            IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(
-                prevSettings,
-                e -> { assert false : "should not have been invoked, no unknown settings"; },
-                (e, ex) -> { assert false : "should not have been invoked, no invalid settings"; });
+        settings = IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(prevSettings, e -> {
+            assert false : "should not have been invoked, no unknown settings";
+        }, (e, ex) -> {
+            assert false : "should not have been invoked, no invalid settings";
+        });
         assertSame(prevSettings, settings);
 
-        settings =
-            IndexScopedSettings.DEFAULT_SCOPED_SETTINGS.archiveUnknownOrInvalidSettings(
-                Settings.builder()
-                    .put("index.version.created", Version.CURRENT.id) // private setting
-                    .put("index.unknown", "foo")
-                    .put("index.refresh_interval", "2s").build(),
-                e -> {
-                    assertThat(e.getKey(), equalTo("index.unknown"));
-                    assertThat(e.getValue(), equalTo("foo"));
-                },
-                (e, ex) -> { assert false : "should not have been invoked, no invalid settings"; });
+        settings = IndexScopedSettings.DEFAULT_SCOPED_SETTINGS
+                .archiveUnknownOrInvalidSettings(Settings.builder().put("index.version.created", Version.CURRENT.id) // private setting
+                        .put("index.unknown", "foo").put("index.refresh_interval", "2s").build(), e -> {
+                            assertThat(e.getKey(), equalTo("index.unknown"));
+                            assertThat(e.getValue(), equalTo("foo"));
+                        }, (e, ex) -> {
+                            assert false : "should not have been invoked, no invalid settings";
+                        });
 
         assertEquals("foo", settings.get("archived.index.unknown"));
         assertEquals(Integer.toString(Version.CURRENT.id), settings.get("index.version.created"));
@@ -544,25 +486,20 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testQueryDefaultField() {
-        IndexSettings index = newIndexSettings(
-            newIndexMeta("index", Settings.EMPTY), Settings.EMPTY
-        );
+        IndexSettings index = newIndexSettings(newIndexMeta("index", Settings.EMPTY), Settings.EMPTY);
         assertThat(index.getDefaultFields(), equalTo(Collections.singletonList("*")));
-        index = newIndexSettings(
-            newIndexMeta("index", Settings.EMPTY), Settings.builder().put("index.query.default_field", "body").build()
-        );
+        index = newIndexSettings(newIndexMeta("index", Settings.EMPTY),
+                Settings.builder().put("index.query.default_field", "body").build());
         assertThat(index.getDefaultFields(), equalTo(Collections.singletonList("body")));
-        index.updateIndexMetadata(
-            newIndexMeta("index", Settings.builder().putList("index.query.default_field", "body", "title").build())
-        );
+        index.updateIndexMetadata(newIndexMeta("index", Settings.builder().putList("index.query.default_field", "body", "title").build()));
         assertThat(index.getDefaultFields(), equalTo(Arrays.asList("body", "title")));
     }
 
     public void testUpdateSoftDeletesFails() {
         IndexScopedSettings settings = new IndexScopedSettings(Settings.EMPTY, IndexScopedSettings.BUILT_IN_INDEX_SETTINGS);
-        IllegalArgumentException error = expectThrows(IllegalArgumentException.class, () ->
-            settings.updateSettings(Settings.builder().put("index.soft_deletes.enabled", randomBoolean()).build(),
-                Settings.builder(), Settings.builder(), "index"));
+        IllegalArgumentException error = expectThrows(IllegalArgumentException.class,
+                () -> settings.updateSettings(Settings.builder().put("index.soft_deletes.enabled", randomBoolean()).build(),
+                        Settings.builder(), Settings.builder(), "index"));
         assertThat(error.getMessage(), equalTo("final index setting [index.soft_deletes.enabled], not updateable"));
     }
 
@@ -576,8 +513,8 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testIgnoreTranslogRetentionSettingsIfSoftDeletesEnabled() {
-        Settings.Builder settings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, VersionUtils.randomVersionBetween(random(), Version.V_7_4_0, Version.CURRENT));
+        Settings.Builder settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED,
+                VersionUtils.randomVersionBetween(random(), Version.V_7_4_0, Version.CURRENT));
         if (randomBoolean()) {
             settings.put(IndexSettings.INDEX_TRANSLOG_RETENTION_AGE_SETTING.getKey(), randomPositiveTimeValue());
         }
@@ -602,9 +539,8 @@ public class IndexSettingsTests extends ESTestCase {
     }
 
     public void testUpdateTranslogRetentionSettingsWithSoftDeletesDisabled() {
-        Settings.Builder settings = Settings.builder()
-            .put(IndexSettings.INDEX_SOFT_DELETES_SETTING.getKey(), false)
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT);
+        Settings.Builder settings = Settings.builder().put(IndexSettings.INDEX_SOFT_DELETES_SETTING.getKey(), false)
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT);
 
         TimeValue ageSetting = TimeValue.timeValueHours(12);
         if (randomBoolean()) {

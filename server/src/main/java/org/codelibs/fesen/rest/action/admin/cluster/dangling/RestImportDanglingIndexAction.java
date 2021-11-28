@@ -47,21 +47,18 @@ public class RestImportDanglingIndexAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, NodeClient client) throws IOException {
-        final ImportDanglingIndexRequest importRequest = new ImportDanglingIndexRequest(
-            request.param("index_uuid"),
-            request.paramAsBoolean("accept_data_loss", false)
-        );
+        final ImportDanglingIndexRequest importRequest =
+                new ImportDanglingIndexRequest(request.param("index_uuid"), request.paramAsBoolean("accept_data_loss", false));
 
         importRequest.timeout(request.paramAsTime("timeout", importRequest.timeout()));
         importRequest.masterNodeTimeout(request.paramAsTime("master_timeout", importRequest.masterNodeTimeout()));
 
-        return channel -> client.admin()
-            .cluster()
-            .importDanglingIndex(importRequest, new RestToXContentListener<AcknowledgedResponse>(channel) {
-                @Override
-                protected RestStatus getStatus(AcknowledgedResponse acknowledgedResponse) {
-                    return ACCEPTED;
-                }
-            });
+        return channel -> client.admin().cluster().importDanglingIndex(importRequest,
+                new RestToXContentListener<AcknowledgedResponse>(channel) {
+                    @Override
+                    protected RestStatus getStatus(AcknowledgedResponse acknowledgedResponse) {
+                        return ACCEPTED;
+                    }
+                });
     }
 }

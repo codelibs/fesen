@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class InternalGeoBounds extends InternalAggregation implements GeoBounds {
     public final double top;
@@ -40,8 +40,8 @@ public class InternalGeoBounds extends InternalAggregation implements GeoBounds 
     public final double negRight;
     public final boolean wrapLongitude;
 
-    public InternalGeoBounds(String name, double top, double bottom, double posLeft, double posRight,
-                             double negLeft, double negRight, boolean wrapLongitude, Map<String, Object> metadata) {
+    public InternalGeoBounds(String name, double top, double bottom, double posLeft, double posRight, double negLeft, double negRight,
+            boolean wrapLongitude, Map<String, Object> metadata) {
         super(name, metadata);
         this.top = top;
         this.bottom = bottom;
@@ -219,18 +219,16 @@ public class InternalGeoBounds extends InternalAggregation implements GeoBounds 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalGeoBounds other = (InternalGeoBounds) obj;
-        return top == other.top &&
-            bottom == other.bottom &&
-            posLeft == other.posLeft &&
-            posRight == other.posRight &&
-            negLeft == other.negLeft &&
-            negRight == other.negRight &&
-            wrapLongitude == other.wrapLongitude;
+        return top == other.top && bottom == other.bottom && posLeft == other.posLeft && posRight == other.posRight
+                && negLeft == other.negLeft && negRight == other.negRight && wrapLongitude == other.wrapLongitude;
     }
 
     @Override

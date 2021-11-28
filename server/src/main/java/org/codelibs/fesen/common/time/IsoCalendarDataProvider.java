@@ -43,6 +43,6 @@ public class IsoCalendarDataProvider extends CalendarDataProvider {
 
     @Override
     public Locale[] getAvailableLocales() {
-        return new Locale[]{Locale.ROOT};
+        return new Locale[] { Locale.ROOT };
     }
 }

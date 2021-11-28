@@ -58,11 +58,11 @@ public class ByteSizeValueTests extends AbstractWireSerializingTestCase<ByteSize
         assertThat(ByteSizeUnit.BYTES.toIntBytes(4), equalTo(4));
         assertThat(ByteSizeUnit.KB.toIntBytes(4), equalTo(4096));
         assertThat(expectThrows(AssertionError.class, () -> ByteSizeUnit.GB.toIntBytes(4)).getMessage(),
-            containsString("could not convert [4 GB] to an int"));
+                containsString("could not convert [4 GB] to an int"));
     }
 
     public void testEquality() {
-        String[] equalValues = new String[]{"1GB", "1024MB", "1048576KB", "1073741824B"};
+        String[] equalValues = new String[] { "1GB", "1024MB", "1048576KB", "1073741824B" };
         ByteSizeValue value1 = ByteSizeValue.parseBytesSizeValue(randomFrom(equalValues), "equalTest");
         ByteSizeValue value2 = ByteSizeValue.parseBytesSizeValue(randomFrom(equalValues), "equalTest");
         assertThat(value1, equalTo(value2));
@@ -176,8 +176,8 @@ public class ByteSizeValueTests extends AbstractWireSerializingTestCase<ByteSize
     }
 
     public void testCompareUnits() {
-        long number = randomLongBetween(1, Long.MAX_VALUE/ ByteSizeUnit.PB.toBytes(1));
-        ByteSizeUnit randomUnit = randomValueOtherThan(ByteSizeUnit.PB, ()->randomFrom(ByteSizeUnit.values()));
+        long number = randomLongBetween(1, Long.MAX_VALUE / ByteSizeUnit.PB.toBytes(1));
+        ByteSizeUnit randomUnit = randomValueOtherThan(ByteSizeUnit.PB, () -> randomFrom(ByteSizeUnit.values()));
         ByteSizeValue firstByteValue = new ByteSizeValue(number, randomUnit);
         ByteSizeValue secondByteValue = new ByteSizeValue(number, ByteSizeUnit.PB);
         assertTrue(firstByteValue.compareTo(secondByteValue) < 0);
@@ -251,8 +251,8 @@ public class ByteSizeValueTests extends AbstractWireSerializingTestCase<ByteSize
              * number of represented bytes would exceed Long.Max_VALUE, we have to randomize a new size too.
              */
             if (instanceSize == 0 || instanceSize >= Long.MAX_VALUE / newUnitBytes) {
-                mutateSize = randomValueOtherThanMany(
-                        v -> v == instanceSize && v >= Long.MAX_VALUE / newUnitBytes, () -> randomNonNegativeLong() / newUnitBytes);
+                mutateSize = randomValueOtherThanMany(v -> v == instanceSize && v >= Long.MAX_VALUE / newUnitBytes,
+                        () -> randomNonNegativeLong() / newUnitBytes);
             } else {
                 mutateSize = instanceSize;
             }
@@ -274,8 +274,8 @@ public class ByteSizeValueTests extends AbstractWireSerializingTestCase<ByteSize
     }
 
     public void testParseInvalidValue() {
-        FesenParseException exception = expectThrows(FesenParseException.class,
-                () -> ByteSizeValue.parseBytesSizeValue("-6mb", "test_setting"));
+        FesenParseException exception =
+                expectThrows(FesenParseException.class, () -> ByteSizeValue.parseBytesSizeValue("-6mb", "test_setting"));
         assertEquals("failed to parse setting [test_setting] with value [-6mb] as a size in bytes", exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
@@ -297,8 +297,8 @@ public class ByteSizeValueTests extends AbstractWireSerializingTestCase<ByteSize
     }
 
     public void testParseInvalidNumber() throws IOException {
-        FesenParseException exception = expectThrows(FesenParseException.class,
-                () -> ByteSizeValue.parseBytesSizeValue("notANumber", "test"));
+        FesenParseException exception =
+                expectThrows(FesenParseException.class, () -> ByteSizeValue.parseBytesSizeValue("notANumber", "test"));
         assertEquals("failed to parse setting [test] with value [notANumber] as a size in bytes: unit is missing or unrecognized",
                 exception.getMessage());
 

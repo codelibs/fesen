@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.search.stats;
 
+import static java.util.Collections.emptyMap;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +34,6 @@ import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.index.shard.SearchOperationListener;
 import org.codelibs.fesen.search.internal.ReaderContext;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import static java.util.Collections.emptyMap;
 
 public final class ShardSearchStats implements SearchOperationListener {
 
@@ -187,12 +187,10 @@ public final class ShardSearchStats implements SearchOperationListener {
         final CounterMetric suggestCurrent = new CounterMetric();
 
         SearchStats.Stats stats() {
-            return new SearchStats.Stats(
-                    queryMetric.count(), TimeUnit.NANOSECONDS.toMillis(queryMetric.sum()), queryCurrent.count(),
-                    fetchMetric.count(), TimeUnit.NANOSECONDS.toMillis(fetchMetric.sum()), fetchCurrent.count(),
-                    scrollMetric.count(), TimeUnit.MICROSECONDS.toMillis(scrollMetric.sum()), scrollCurrent.count(),
-                    suggestMetric.count(), TimeUnit.NANOSECONDS.toMillis(suggestMetric.sum()), suggestCurrent.count()
-            );
+            return new SearchStats.Stats(queryMetric.count(), TimeUnit.NANOSECONDS.toMillis(queryMetric.sum()), queryCurrent.count(),
+                    fetchMetric.count(), TimeUnit.NANOSECONDS.toMillis(fetchMetric.sum()), fetchCurrent.count(), scrollMetric.count(),
+                    TimeUnit.MICROSECONDS.toMillis(scrollMetric.sum()), scrollCurrent.count(), suggestMetric.count(),
+                    TimeUnit.NANOSECONDS.toMillis(suggestMetric.sum()), suggestCurrent.count());
         }
     }
 }

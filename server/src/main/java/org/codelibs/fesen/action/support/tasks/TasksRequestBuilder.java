@@ -27,11 +27,8 @@ import org.codelibs.fesen.tasks.TaskId;
 /**
  * Builder for task-based requests
  */
-public class TasksRequestBuilder<
-            Request extends BaseTasksRequest<Request>,
-            Response extends BaseTasksResponse,
-            RequestBuilder extends TasksRequestBuilder<Request, Response, RequestBuilder>
-        > extends ActionRequestBuilder<Request, Response> {
+public class TasksRequestBuilder<Request extends BaseTasksRequest<Request>, Response extends BaseTasksResponse, RequestBuilder extends TasksRequestBuilder<Request, Response, RequestBuilder>>
+        extends ActionRequestBuilder<Request, Response> {
 
     protected TasksRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
@@ -73,4 +70,3 @@ public class TasksRequestBuilder<
         return (RequestBuilder) this;
     }
 }
-

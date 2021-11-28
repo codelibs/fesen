@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-
 import java.io.IOException;
 
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -33,7 +32,7 @@ public class ParsedLongRareTerms extends ParsedRareTerms {
     }
 
     private static final ObjectParser<ParsedLongRareTerms, Void> PARSER =
-        new ObjectParser<>(ParsedLongRareTerms.class.getSimpleName(), true, ParsedLongRareTerms::new);
+            new ObjectParser<>(ParsedLongRareTerms.class.getSimpleName(), true, ParsedLongRareTerms::new);
 
     static {
         declareParsedTermsFields(PARSER, ParsedBucket::fromXContent);

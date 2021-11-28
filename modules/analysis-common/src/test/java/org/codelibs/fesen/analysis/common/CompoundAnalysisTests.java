@@ -19,12 +19,21 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
-import org.codelibs.fesen.analysis.common.DictionaryCompoundWordTokenFilterFactory;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -40,17 +49,6 @@ import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 import org.hamcrest.MatcherAssert;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-
 public class CompoundAnalysisTests extends ESTestCase {
     public void testDefaultsCompoundAnalysis() throws Exception {
         Settings settings = getJsonSettings();
@@ -61,7 +59,7 @@ public class CompoundAnalysisTests extends ESTestCase {
     }
 
     public void testDictionaryDecompounder() throws Exception {
-        Settings[] settingsArr = new Settings[]{getJsonSettings(), getYamlSettings()};
+        Settings[] settingsArr = new Settings[] { getJsonSettings(), getYamlSettings() };
         for (Settings settings : settingsArr) {
             List<String> terms = analyze(settings, "decompoundingAnalyzer", "donaudampfschiff spargelcremesuppe");
             MatcherAssert.assertThat(terms.size(), equalTo(8));
@@ -76,7 +74,7 @@ public class CompoundAnalysisTests extends ESTestCase {
         IndexAnalyzers indexAnalyzers = analysisModule.getAnalysisRegistry().build(idxSettings);
         Analyzer analyzer = indexAnalyzers.get(analyzerName).analyzer();
 
-        TokenStream stream = analyzer.tokenStream("" , text);
+        TokenStream stream = analyzer.tokenStream("", text);
         stream.reset();
         CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
 
@@ -100,19 +98,15 @@ public class CompoundAnalysisTests extends ESTestCase {
 
     private Settings getJsonSettings() throws IOException {
         String json = "/org/codelibs/fesen/analysis/common/test1.json";
-        return Settings.builder()
-                .loadFromStream(json, getClass().getResourceAsStream(json), false)
+        return Settings.builder().loadFromStream(json, getClass().getResourceAsStream(json), false)
                 .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .build();
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
     }
 
     private Settings getYamlSettings() throws IOException {
         String yaml = "/org/codelibs/fesen/analysis/common/test1.yml";
-        return Settings.builder()
-                .loadFromStream(yaml, getClass().getResourceAsStream(yaml), false)
+        return Settings.builder().loadFromStream(yaml, getClass().getResourceAsStream(yaml), false)
                 .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .build();
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
     }
 }

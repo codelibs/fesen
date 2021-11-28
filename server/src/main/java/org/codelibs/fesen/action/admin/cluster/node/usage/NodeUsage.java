@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.usage;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Map;
 
 public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
 
@@ -63,7 +63,7 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
      *            endpoint has been called
      */
     public NodeUsage(DiscoveryNode node, long timestamp, long sinceTime, Map<String, Long> restUsage,
-                     Map<String, Object> aggregationUsage) {
+            Map<String, Object> aggregationUsage) {
         super(node);
         this.timestamp = timestamp;
         this.sinceTime = sinceTime;

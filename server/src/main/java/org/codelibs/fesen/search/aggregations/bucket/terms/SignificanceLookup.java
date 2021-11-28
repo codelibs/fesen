@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Term;
@@ -42,8 +44,6 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
-
-import java.io.IOException;
 
 /**
  * Looks up values used for {@link SignificanceHeuristic}s.
@@ -71,7 +71,7 @@ class SignificanceLookup {
     private TermsEnum termsEnum;
 
     SignificanceLookup(QueryShardContext context, MappedFieldType fieldType, DocValueFormat format, QueryBuilder backgroundFilter)
-        throws IOException {
+            throws IOException {
         this.context = context;
         this.fieldType = fieldType;
         this.format = format;
@@ -104,7 +104,8 @@ class SignificanceLookup {
                 }
 
                 @Override
-                public void close() {}
+                public void close() {
+                }
             };
         }
         return new BackgroundFrequencyForBytes() {
@@ -149,7 +150,8 @@ class SignificanceLookup {
                 }
 
                 @Override
-                public void close() {}
+                public void close() {
+                }
             };
         }
         return new BackgroundFrequencyForLong() {

@@ -19,14 +19,7 @@
 
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.TimeValue;
+import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -36,7 +29,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.transport.TransportAddress;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * This class encapsulates all remote cluster information to be rendered on
@@ -70,10 +70,8 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
             } else {
                 // versions prior to 7.0.0 sent the resolved transport address of the seed nodes
                 final List<TransportAddress> transportAddresses = input.readList(TransportAddress::new);
-                seedNodes = transportAddresses
-                    .stream()
-                    .map(a -> a.address().getHostString() + ":" + a.address().getPort())
-                    .collect(Collectors.toList());
+                seedNodes = transportAddresses.stream().map(a -> a.address().getHostString() + ":" + a.address().getPort())
+                        .collect(Collectors.toList());
                 /*
                  * Versions before 7.0 sent the HTTP addresses of all nodes in the
                  * remote cluster here but it was expensive to fetch and we
@@ -127,20 +125,15 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
                     out.writeStringArray(sniffInfo.seedNodes.toArray(new String[0]));
                 } else {
                     // versions prior to 7.0.0 received the resolved transport address of the seed nodes
-                    out.writeList(sniffInfo.seedNodes
-                        .stream()
-                        .map(
-                            s -> {
-                                final String host = RemoteConnectionStrategy.parseHost(s);
-                                final int port = RemoteConnectionStrategy.parsePort(s);
-                                try {
-                                    return new TransportAddress(
-                                        InetAddress.getByAddress(host, TransportAddress.META_ADDRESS.getAddress()), port);
-                                } catch (final UnknownHostException e) {
-                                    throw new AssertionError(e);
-                                }
-                            })
-                        .collect(Collectors.toList()));
+                    out.writeList(sniffInfo.seedNodes.stream().map(s -> {
+                        final String host = RemoteConnectionStrategy.parseHost(s);
+                        final int port = RemoteConnectionStrategy.parsePort(s);
+                        try {
+                            return new TransportAddress(InetAddress.getByAddress(host, TransportAddress.META_ADDRESS.getAddress()), port);
+                        } catch (final UnknownHostException e) {
+                            throw new AssertionError(e);
+                        }
+                    }).collect(Collectors.toList()));
                     /*
                      * Versions before 7.0 sent the HTTP addresses of all nodes in the
                      * remote cluster here but it was expensive to fetch and we
@@ -199,13 +192,14 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RemoteConnectionInfo that = (RemoteConnectionInfo) o;
-        return skipUnavailable == that.skipUnavailable &&
-            Objects.equals(modeInfo, that.modeInfo) &&
-            Objects.equals(initialConnectionTimeout, that.initialConnectionTimeout) &&
-            Objects.equals(clusterAlias, that.clusterAlias);
+        return skipUnavailable == that.skipUnavailable && Objects.equals(modeInfo, that.modeInfo)
+                && Objects.equals(initialConnectionTimeout, that.initialConnectionTimeout)
+                && Objects.equals(clusterAlias, that.clusterAlias);
     }
 
     @Override

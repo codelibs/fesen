@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.script.expression;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collections;
+
 import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
@@ -26,19 +36,8 @@ import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.script.FieldScript;
 import org.codelibs.fesen.script.ScriptException;
-import org.codelibs.fesen.script.expression.ExpressionScriptEngine;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Collections;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ExpressionFieldScriptTests extends ESTestCase {
     private ExpressionScriptEngine service;

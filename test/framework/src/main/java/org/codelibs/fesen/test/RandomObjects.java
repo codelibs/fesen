@@ -19,10 +19,21 @@
 
 package org.codelibs.fesen.test;
 
-import com.carrotsearch.randomizedtesting.RandomizedTest;
-import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
-import com.carrotsearch.randomizedtesting.generators.RandomStrings;
+import static com.carrotsearch.randomizedtesting.generators.RandomNumbers.randomIntBetween;
+import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomAsciiLettersOfLength;
+import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomUnicodeOfLengthBetween;
+import static java.util.Collections.singleton;
+import static org.codelibs.fesen.cluster.metadata.IndexMetadata.INDEX_UUID_NA_VALUE;
+import static org.codelibs.fesen.test.ESTestCase.randomFrom;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction;
@@ -44,21 +55,10 @@ import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.shard.ShardNotFoundException;
 import org.codelibs.fesen.rest.RestStatus;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import static com.carrotsearch.randomizedtesting.generators.RandomNumbers.randomIntBetween;
-import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomAsciiLettersOfLength;
-import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomUnicodeOfLengthBetween;
-import static java.util.Collections.singleton;
-import static org.codelibs.fesen.cluster.metadata.IndexMetadata.INDEX_UUID_NA_VALUE;
-import static org.codelibs.fesen.test.ESTestCase.randomFrom;
+import com.carrotsearch.randomizedtesting.RandomizedTest;
+import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import com.carrotsearch.randomizedtesting.generators.RandomStrings;
 
 public final class RandomObjects {
 
@@ -90,38 +90,38 @@ public final class RandomObjects {
         List<Object> values = new ArrayList<>(numValues);
         int dataType = randomIntBetween(random, 0, 8);
         for (int i = 0; i < numValues; i++) {
-            switch(dataType) {
-                case 0:
-                    values.add(random.nextLong());
-                    break;
-                case 1:
-                    values.add(random.nextInt());
-                    break;
-                case 2:
-                    values.add((short) random.nextInt());
-                    break;
-                case 3:
-                    values.add((byte) random.nextInt());
-                    break;
-                case 4:
-                    values.add(random.nextDouble());
-                    break;
-                case 5:
-                    values.add(random.nextFloat());
-                    break;
-                case 6:
-                    values.add(random.nextBoolean());
-                    break;
-                case 7:
-                    values.add(random.nextBoolean() ? RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10) :
-                        randomUnicodeOfLengthBetween(random, 3, 10));
-                    break;
-                case 8:
-                    byte[] randomBytes = RandomStrings.randomUnicodeOfLengthBetween(random, 10, 50).getBytes(StandardCharsets.UTF_8);
-                    values.add(new BytesArray(randomBytes));
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
+            switch (dataType) {
+            case 0:
+                values.add(random.nextLong());
+                break;
+            case 1:
+                values.add(random.nextInt());
+                break;
+            case 2:
+                values.add((short) random.nextInt());
+                break;
+            case 3:
+                values.add((byte) random.nextInt());
+                break;
+            case 4:
+                values.add(random.nextDouble());
+                break;
+            case 5:
+                values.add(random.nextFloat());
+                break;
+            case 6:
+                values.add(random.nextBoolean());
+                break;
+            case 7:
+                values.add(random.nextBoolean() ? RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10)
+                        : randomUnicodeOfLengthBetween(random, 3, 10));
+                break;
+            case 8:
+                byte[] randomBytes = RandomStrings.randomUnicodeOfLengthBetween(random, 10, 50).getBytes(StandardCharsets.UTF_8);
+                values.add(new BytesArray(randomBytes));
+                break;
+            default:
+                throw new UnsupportedOperationException();
             }
         }
         return values;
@@ -138,7 +138,7 @@ public final class RandomObjects {
         if (value instanceof BytesArray) {
             if (xContentType == XContentType.JSON) {
                 //JSON writes base64 format
-                return Base64.getEncoder().encodeToString(((BytesArray)value).toBytesRef().bytes);
+                return Base64.getEncoder().encodeToString(((BytesArray) value).toBytesRef().bytes);
             }
         }
         if (value instanceof Float) {
@@ -150,10 +150,10 @@ public final class RandomObjects {
             return Double.parseDouble(value.toString());
         }
         if (value instanceof Byte) {
-            return ((Byte)value).intValue();
+            return ((Byte) value).intValue();
         }
         if (value instanceof Short) {
-            return ((Short)value).intValue();
+            return ((Short) value).intValue();
         }
         return value;
     }
@@ -190,7 +190,7 @@ public final class RandomObjects {
             addFields(random, builder, minNumFields, 0);
             builder.endObject();
             return BytesReference.bytes(builder);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -237,17 +237,17 @@ public final class RandomObjects {
     }
 
     private static Object randomFieldValue(Random random, int dataType) {
-        switch(dataType) {
-            case 0:
-                return RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10);
-            case 1:
-                return RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10);
-            case 2:
-                return random.nextLong();
-            case 3:
-                return random.nextDouble();
-            default:
-                throw new UnsupportedOperationException();
+        switch (dataType) {
+        case 0:
+            return RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10);
+        case 1:
+            return RandomStrings.randomAsciiLettersOfLengthBetween(random, 3, 10);
+        case 2:
+            return random.nextLong();
+        case 3:
+            return random.nextDouble();
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -312,31 +312,29 @@ public final class RandomObjects {
 
         int type = randomIntBetween(random, 0, 3);
         switch (type) {
-            case 0:
-                actualException = new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES));
-                expectedException = new FesenException("Fesen exception [type=cluster_block_exception, " +
-                        "reason=blocked by: [SERVICE_UNAVAILABLE/2/no master];]");
-                break;
-            case 1:
-                actualException = new ShardNotFoundException(shard);
-                expectedException = new FesenException("Fesen exception [type=shard_not_found_exception, " +
-                        "reason=no such shard]");
-                expectedException.setShard(shard);
-                break;
-            case 2:
-                actualException = new IllegalArgumentException("Closed resource", new RuntimeException("Resource"));
-                expectedException = new FesenException("Fesen exception [type=illegal_argument_exception, " +
-                        "reason=Closed resource]",
-                        new FesenException("Fesen exception [type=runtime_exception, reason=Resource]"));
-                break;
-            case 3:
-                actualException = new IndexShardRecoveringException(shard);
-                expectedException = new FesenException("Fesen exception [type=index_shard_recovering_exception, " +
-                        "reason=CurrentState[RECOVERING] Already recovering]");
-                expectedException.setShard(shard);
-                break;
-            default:
-                throw new UnsupportedOperationException("No randomized exceptions generated for type [" + type + "]");
+        case 0:
+            actualException = new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES));
+            expectedException = new FesenException(
+                    "Fesen exception [type=cluster_block_exception, " + "reason=blocked by: [SERVICE_UNAVAILABLE/2/no master];]");
+            break;
+        case 1:
+            actualException = new ShardNotFoundException(shard);
+            expectedException = new FesenException("Fesen exception [type=shard_not_found_exception, " + "reason=no such shard]");
+            expectedException.setShard(shard);
+            break;
+        case 2:
+            actualException = new IllegalArgumentException("Closed resource", new RuntimeException("Resource"));
+            expectedException = new FesenException("Fesen exception [type=illegal_argument_exception, " + "reason=Closed resource]",
+                    new FesenException("Fesen exception [type=runtime_exception, reason=Resource]"));
+            break;
+        case 3:
+            actualException = new IndexShardRecoveringException(shard);
+            expectedException = new FesenException(
+                    "Fesen exception [type=index_shard_recovering_exception, " + "reason=CurrentState[RECOVERING] Already recovering]");
+            expectedException.setShard(shard);
+            break;
+        default:
+            throw new UnsupportedOperationException("No randomized exceptions generated for type [" + type + "]");
         }
 
         Failure actual = new Failure(shard, nodeId, actualException, status, primary);
@@ -351,33 +349,33 @@ public final class RandomObjects {
         int startOffset = RandomizedTest.randomIntBetween(0, 1000);
         int endOffset = RandomizedTest.randomIntBetween(0, 1000);
         int posLength = RandomizedTest.randomIntBetween(1, 5);
-        String type =  RandomStrings.randomAsciiLettersOfLengthBetween(random, 1, 20);
+        String type = RandomStrings.randomAsciiLettersOfLengthBetween(random, 1, 20);
         Map<String, Object> extras = new HashMap<>();
         if (random.nextBoolean()) {
             int entryCount = RandomNumbers.randomIntBetween(random, 0, 6);
             for (int i = 0; i < entryCount; i++) {
                 switch (RandomNumbers.randomIntBetween(random, 0, 6)) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        String key = RandomStrings.randomAsciiLettersOfLength(random, 5);
-                        String value = RandomStrings.randomAsciiLettersOfLength(random, 10);
-                        extras.put(key, value);
-                        break;
-                    case 4:
-                        String objkey = RandomStrings.randomAsciiLettersOfLength(random, 5);
-                        Map<String, String> obj = new HashMap<>();
-                        obj.put(RandomStrings.randomAsciiLettersOfLength(random, 5), RandomStrings.randomAsciiLettersOfLength(random, 10));
-                        extras.put(objkey, obj);
-                        break;
-                    case 5:
-                        String listkey = RandomStrings.randomAsciiLettersOfLength(random, 5);
-                        List<String> list = new ArrayList<>();
-                        list.add(RandomStrings.randomAsciiLettersOfLength(random, 4));
-                        list.add(RandomStrings.randomAsciiLettersOfLength(random, 6));
-                        extras.put(listkey, list);
-                        break;
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    String key = RandomStrings.randomAsciiLettersOfLength(random, 5);
+                    String value = RandomStrings.randomAsciiLettersOfLength(random, 10);
+                    extras.put(key, value);
+                    break;
+                case 4:
+                    String objkey = RandomStrings.randomAsciiLettersOfLength(random, 5);
+                    Map<String, String> obj = new HashMap<>();
+                    obj.put(RandomStrings.randomAsciiLettersOfLength(random, 5), RandomStrings.randomAsciiLettersOfLength(random, 10));
+                    extras.put(objkey, obj);
+                    break;
+                case 5:
+                    String listkey = RandomStrings.randomAsciiLettersOfLength(random, 5);
+                    List<String> list = new ArrayList<>();
+                    list.add(RandomStrings.randomAsciiLettersOfLength(random, 4));
+                    list.add(RandomStrings.randomAsciiLettersOfLength(random, 6));
+                    extras.put(listkey, list);
+                    break;
                 }
             }
         }

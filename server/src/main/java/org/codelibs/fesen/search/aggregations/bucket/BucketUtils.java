@@ -23,7 +23,8 @@ package org.codelibs.fesen.search.aggregations.bucket;
  */
 public final class BucketUtils {
 
-    private BucketUtils() {}
+    private BucketUtils() {
+    }
 
     /**
      * Heuristic used to determine the size of shard-side PriorityQueues when

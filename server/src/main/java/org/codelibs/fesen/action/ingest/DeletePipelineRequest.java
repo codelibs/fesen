@@ -27,7 +27,6 @@ import org.codelibs.fesen.action.support.master.AcknowledgedRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 
-
 public class DeletePipelineRequest extends AcknowledgedRequest<DeletePipelineRequest> {
 
     private String id;

@@ -18,20 +18,6 @@
  */
 package org.codelibs.fesen.indices.analysis;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.apache.lucene.analysis.hunspell.Dictionary;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.io.FileSystemUtils;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.env.Environment;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -44,6 +30,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.apache.lucene.analysis.hunspell.Dictionary;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.common.io.FileSystemUtils;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.env.Environment;
 
 /**
  * Serves as a node level registry for hunspell dictionaries. This services expects all dictionaries to be located under
@@ -80,11 +80,11 @@ public class HunspellService {
     private static final Logger logger = LogManager.getLogger(HunspellService.class);
 
     public static final Setting<Boolean> HUNSPELL_LAZY_LOAD =
-        Setting.boolSetting("indices.analysis.hunspell.dictionary.lazy", Boolean.FALSE, Property.NodeScope);
+            Setting.boolSetting("indices.analysis.hunspell.dictionary.lazy", Boolean.FALSE, Property.NodeScope);
     public static final Setting<Boolean> HUNSPELL_IGNORE_CASE =
-        Setting.boolSetting("indices.analysis.hunspell.dictionary.ignore_case", Boolean.FALSE, Property.NodeScope);
+            Setting.boolSetting("indices.analysis.hunspell.dictionary.ignore_case", Boolean.FALSE, Property.NodeScope);
     public static final Setting<Settings> HUNSPELL_DICTIONARY_OPTIONS =
-        Setting.groupSetting("indices.analysis.hunspell.dictionary.", Property.NodeScope);
+            Setting.groupSetting("indices.analysis.hunspell.dictionary.", Property.NodeScope);
     private final ConcurrentHashMap<String, Dictionary> dictionaries = new ConcurrentHashMap<>();
     private final Map<String, Dictionary> knownDictionaries;
     private final boolean defaultIgnoreCase;
@@ -141,8 +141,8 @@ public class HunspellService {
                                 } catch (Exception e) {
                                     // The cache loader throws unchecked exception (see #loadDictionary()),
                                     // here we simply report the exception and continue loading the dictionaries
-                                    logger.error(() -> new ParameterizedMessage(
-                                            "exception while loading dictionary {}", file.getFileName()), e);
+                                    logger.error(
+                                            () -> new ParameterizedMessage("exception while loading dictionary {}", file.getFileName()), e);
                                 }
                             }
                         }
@@ -230,4 +230,3 @@ public class HunspellService {
         return defaults;
     }
 }
-

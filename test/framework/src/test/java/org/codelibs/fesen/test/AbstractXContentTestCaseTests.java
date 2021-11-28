@@ -19,20 +19,18 @@
 
 package org.codelibs.fesen.test;
 
-import com.carrotsearch.randomizedtesting.RandomizedContext;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+
+import java.util.Map;
 
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.test.AbstractXContentTestCase;
-import org.codelibs.fesen.test.ESTestCase;
 
-import java.util.Map;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import com.carrotsearch.randomizedtesting.RandomizedContext;
 
 public class AbstractXContentTestCaseTests extends ESTestCase {
 
@@ -44,13 +42,8 @@ public class AbstractXContentTestCaseTests extends ESTestCase {
         }
         builder.endObject();
         BytesReference insertRandomFieldsAndShuffle = RandomizedContext.current().runWithPrivateRandomness(1,
-                () -> AbstractXContentTestCase.insertRandomFieldsAndShuffle(
-                        BytesReference.bytes(builder),
-                        XContentType.JSON,
-                        true,
-                        new String[] {},
-                        null,
-                        this::createParser));
+                () -> AbstractXContentTestCase.insertRandomFieldsAndShuffle(BytesReference.bytes(builder), XContentType.JSON, true,
+                        new String[] {}, null, this::createParser));
         try (XContentParser parser = createParser(XContentType.JSON.xContent(), insertRandomFieldsAndShuffle)) {
             Map<String, Object> mapOrdered = parser.mapOrdered();
             assertThat(mapOrdered.size(), equalTo(2));

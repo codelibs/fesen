@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,20 +36,12 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public class RestClusterSearchShardsAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_search_shards"),
-            new Route(POST, "/_search_shards"),
-            new Route(GET, "/{index}/_search_shards"),
-            new Route(POST, "/{index}/_search_shards")));
+        return unmodifiableList(asList(new Route(GET, "/_search_shards"), new Route(POST, "/_search_shards"),
+                new Route(GET, "/{index}/_search_shards"), new Route(POST, "/{index}/_search_shards")));
     }
 
     @Override

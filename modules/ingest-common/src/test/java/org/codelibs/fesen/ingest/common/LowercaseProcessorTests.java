@@ -21,9 +21,6 @@ package org.codelibs.fesen.ingest.common;
 
 import java.util.Locale;
 
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.LowercaseProcessor;
-
 public class LowercaseProcessorTests extends AbstractStringProcessorTestCase<String> {
     @Override
     protected AbstractStringProcessor<String> newProcessor(String field, boolean ignoreMissing, String targetField) {

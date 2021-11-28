@@ -38,7 +38,7 @@ public class FesenGenerationException extends FesenException {
         super(msg, cause);
     }
 
-    public FesenGenerationException(StreamInput in) throws IOException{
+    public FesenGenerationException(StreamInput in) throws IOException {
         super(in);
     }
 }

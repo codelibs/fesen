@@ -58,8 +58,8 @@ public class XContentParserUtilsTests extends ESTestCase {
         try (XContentParser parser = createParser(JsonXContent.jsonXContent, "{}")) {
             // Parser current token is null
             assertNull(parser.currentToken());
-            ParsingException e = expectThrows(ParsingException.class,
-                    () -> ensureExpectedToken(randomToken, parser.currentToken(), parser));
+            ParsingException e =
+                    expectThrows(ParsingException.class, () -> ensureExpectedToken(randomToken, parser.currentToken(), parser));
             assertEquals("Failed to parse object: expecting token of type [" + randomToken + "] but found [null]", e.getMessage());
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
             ensureExpectedToken(XContentParser.Token.END_OBJECT, parser.nextToken(), parser);
@@ -124,8 +124,8 @@ public class XContentParserUtilsTests extends ESTestCase {
     }
 
     public void testParseFieldsValueUnknown() {
-        ParsingException e = expectThrows(ParsingException.class, () ->
-                assertParseFieldsValue((builder) -> {}, (x, r) -> fail("Should have thrown a parsing exception")));
+        ParsingException e = expectThrows(ParsingException.class,
+                () -> assertParseFieldsValue((builder) -> {}, (x, r) -> fail("Should have thrown a parsing exception")));
         assertThat(e.getMessage(), containsString("unexpected token"));
     }
 
@@ -135,7 +135,7 @@ public class XContentParserUtilsTests extends ESTestCase {
     }
 
     private void assertParseFieldsValue(final CheckedConsumer<XContentBuilder, IOException> fieldBuilder,
-                                        final CheckedBiConsumer<XContentType, Object, IOException> assertConsumer) throws IOException {
+            final CheckedBiConsumer<XContentType, Object, IOException> assertConsumer) throws IOException {
         final XContentType xContentType = randomFrom(XContentType.values());
         try (XContentBuilder builder = XContentBuilder.builder(xContentType.xContent())) {
             final String fieldName = randomAlphaOfLengthBetween(0, 10);
@@ -173,10 +173,10 @@ public class XContentParserUtilsTests extends ESTestCase {
         namedXContents.add(new NamedXContentRegistry.Entry(Long.class, new ParseField("long"), p -> LONGPARSER.parse(p, null).get()));
         final NamedXContentRegistry namedXContentRegistry = new NamedXContentRegistry(namedXContents);
 
-        BytesReference bytes = toXContent((builder, params) -> builder.startObject("name").field("field", 0).endObject(), xContentType,
-                randomBoolean());
-        try (XContentParser parser = xContentType.xContent()
-                .createParser(namedXContentRegistry, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+        BytesReference bytes =
+                toXContent((builder, params) -> builder.startObject("name").field("field", 0).endObject(), xContentType, randomBoolean());
+        try (XContentParser parser = xContentType.xContent().createParser(namedXContentRegistry,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
             ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.nextToken(), parser);
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
@@ -191,13 +191,13 @@ public class XContentParserUtilsTests extends ESTestCase {
 
         bytes = toXContent((builder, params) -> builder.startObject("type" + delimiter + "name").field("bool", true).endObject(),
                 xContentType, randomBoolean());
-        try (XContentParser parser = xContentType.xContent()
-                .createParser(namedXContentRegistry, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+        try (XContentParser parser = xContentType.xContent().createParser(namedXContentRegistry,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
             ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.nextToken(), parser);
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-            NamedObjectNotFoundException e = expectThrows(NamedObjectNotFoundException.class,
-                    () -> parseTypedKeysObject(parser, delimiter, Boolean.class, a -> {}));
+            NamedObjectNotFoundException e =
+                    expectThrows(NamedObjectNotFoundException.class, () -> parseTypedKeysObject(parser, delimiter, Boolean.class, a -> {}));
             assertThat(e.getMessage(), endsWith("unknown field [type]"));
         }
 
@@ -209,8 +209,8 @@ public class XContentParserUtilsTests extends ESTestCase {
             return builder;
         }, xContentType, randomBoolean());
 
-        try (XContentParser parser = xContentType.xContent()
-                .createParser(namedXContentRegistry, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+        try (XContentParser parser = xContentType.xContent().createParser(namedXContentRegistry,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
             ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
 
             ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.nextToken(), parser);
@@ -236,27 +236,25 @@ public class XContentParserUtilsTests extends ESTestCase {
         {
             BytesReference bytes = toXContent((builder, params) -> builder.startObject("name").field("field", 0).endObject(), xContentType,
                     randomBoolean());
-            try (XContentParser parser = xContentType.xContent()
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+            try (XContentParser parser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
                 ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
                 ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.nextToken(), parser);
-                ParsingException exception = expectThrows(ParsingException.class,
-                        () -> parseTypedKeysObject(parser, "#", Boolean.class, o -> {
-                        }));
+                ParsingException exception =
+                        expectThrows(ParsingException.class, () -> parseTypedKeysObject(parser, "#", Boolean.class, o -> {}));
                 assertEquals("Failed to parse object: unexpected token [FIELD_NAME] found", exception.getMessage());
             }
         }
         {
-            BytesReference bytes = toXContent((builder, params) -> builder.startObject("").field("field", 0).endObject(), xContentType,
-                    randomBoolean());
-            try (XContentParser parser = xContentType.xContent()
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+            BytesReference bytes =
+                    toXContent((builder, params) -> builder.startObject("").field("field", 0).endObject(), xContentType, randomBoolean());
+            try (XContentParser parser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
                 ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
                 ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.nextToken(), parser);
                 ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-                ParsingException exception = expectThrows(ParsingException.class,
-                        () -> parseTypedKeysObject(parser, "#", Boolean.class, o -> {
-                        }));
+                ParsingException exception =
+                        expectThrows(ParsingException.class, () -> parseTypedKeysObject(parser, "#", Boolean.class, o -> {}));
                 assertEquals("Failed to parse object: empty key", exception.getMessage());
             }
         }

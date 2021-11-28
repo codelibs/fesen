@@ -52,7 +52,7 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
     }
 
     private static SearchHit[] createSearchHitArray(int size, XContentType xContentType, boolean withOptionalInnerHits,
-                                                    boolean transportSerialization) {
+            boolean transportSerialization) {
         SearchHit[] hits = new SearchHit[size];
         for (int i = 0; i < hits.length; i++) {
             hits[i] = SearchHitTests.createTestItem(xContentType, withOptionalInnerHits, transportSerialization);
@@ -70,7 +70,7 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
     }
 
     private static SearchHits createTestItem(XContentType xContentType, boolean withOptionalInnerHits, boolean transportSerialization,
-                                             TotalHits.Relation totalHitsRelation) {
+            TotalHits.Relation totalHitsRelation) {
         int searchHits = randomIntBetween(0, 5);
         SearchHit[] hits = createSearchHitArray(searchHits, xContentType, withOptionalInnerHits, transportSerialization);
         TotalHits totalHits = frequently() ? randomTotalHits(totalHitsRelation) : null;
@@ -107,67 +107,67 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
     @Override
     protected SearchHits mutateInstance(SearchHits instance) {
         switch (randomIntBetween(0, 5)) {
-            case 0:
-                return new SearchHits(createSearchHitArray(instance.getHits().length + 1,
-                    randomFrom(XContentType.values()), false, randomBoolean()),
+        case 0:
+            return new SearchHits(
+                    createSearchHitArray(instance.getHits().length + 1, randomFrom(XContentType.values()), false, randomBoolean()),
                     instance.getTotalHits(), instance.getMaxScore());
-            case 1:
-                final TotalHits totalHits;
-                if (instance.getTotalHits() == null) {
-                    totalHits = randomTotalHits(randomFrom(TotalHits.Relation.values()));
-                } else {
-                    totalHits = null;
-                }
-                return new SearchHits(instance.getHits(), totalHits, instance.getMaxScore());
-            case 2:
-                final float maxScore;
-                if (Float.isNaN(instance.getMaxScore())) {
-                    maxScore = randomFloat();
-                } else {
-                    maxScore = Float.NaN;
-                }
-                return new SearchHits(instance.getHits(), instance.getTotalHits(), maxScore);
-            case 3:
-                SortField[] sortFields;
-                if (instance.getSortFields() == null) {
-                    sortFields = createSortFields(randomIntBetween(1, 5));
-                } else {
-                    sortFields = randomBoolean() ? createSortFields(instance.getSortFields().length + 1) : null;
-                }
-                return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(),
-                    sortFields, instance.getCollapseField(), instance.getCollapseValues());
-            case 4:
-                String collapseField;
-                if (instance.getCollapseField() == null) {
-                    collapseField = randomAlphaOfLengthBetween(5, 10);
-                } else {
-                    collapseField = randomBoolean() ? instance.getCollapseField() + randomAlphaOfLengthBetween(2, 5) : null;
-                }
-                return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(),
-                    instance.getSortFields(), collapseField, instance.getCollapseValues());
-            case 5:
-                Object[] collapseValues;
-                if (instance.getCollapseValues() == null) {
-                    collapseValues = createCollapseValues(randomIntBetween(1, 5));
-                } else {
-                    collapseValues = randomBoolean() ? createCollapseValues(instance.getCollapseValues().length + 1) : null;
-                }
-                return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(),
-                    instance.getSortFields(), instance.getCollapseField(), collapseValues);
-            default:
-                throw new UnsupportedOperationException();
+        case 1:
+            final TotalHits totalHits;
+            if (instance.getTotalHits() == null) {
+                totalHits = randomTotalHits(randomFrom(TotalHits.Relation.values()));
+            } else {
+                totalHits = null;
+            }
+            return new SearchHits(instance.getHits(), totalHits, instance.getMaxScore());
+        case 2:
+            final float maxScore;
+            if (Float.isNaN(instance.getMaxScore())) {
+                maxScore = randomFloat();
+            } else {
+                maxScore = Float.NaN;
+            }
+            return new SearchHits(instance.getHits(), instance.getTotalHits(), maxScore);
+        case 3:
+            SortField[] sortFields;
+            if (instance.getSortFields() == null) {
+                sortFields = createSortFields(randomIntBetween(1, 5));
+            } else {
+                sortFields = randomBoolean() ? createSortFields(instance.getSortFields().length + 1) : null;
+            }
+            return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(), sortFields,
+                    instance.getCollapseField(), instance.getCollapseValues());
+        case 4:
+            String collapseField;
+            if (instance.getCollapseField() == null) {
+                collapseField = randomAlphaOfLengthBetween(5, 10);
+            } else {
+                collapseField = randomBoolean() ? instance.getCollapseField() + randomAlphaOfLengthBetween(2, 5) : null;
+            }
+            return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(), instance.getSortFields(),
+                    collapseField, instance.getCollapseValues());
+        case 5:
+            Object[] collapseValues;
+            if (instance.getCollapseValues() == null) {
+                collapseValues = createCollapseValues(randomIntBetween(1, 5));
+            } else {
+                collapseValues = randomBoolean() ? createCollapseValues(instance.getCollapseValues().length + 1) : null;
+            }
+            return new SearchHits(instance.getHits(), instance.getTotalHits(), instance.getMaxScore(), instance.getSortFields(),
+                    instance.getCollapseField(), collapseValues);
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
-        return path -> (path.isEmpty() ||
-            path.contains("inner_hits") || path.contains("highlight") || path.contains("fields") || path.contains("_source"));
+        return path -> (path.isEmpty() || path.contains("inner_hits") || path.contains("highlight") || path.contains("fields")
+                || path.contains("_source"));
     }
 
     @Override
     protected String[] getShuffleFieldsExceptions() {
-        return new String[] {"_source"};
+        return new String[] { "_source" };
     }
 
     @Override
@@ -206,9 +206,8 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
     }
 
     public void testToXContent() throws IOException {
-        SearchHit[] hits = new SearchHit[] {
-            new SearchHit(1, "id1", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
-            new SearchHit(2, "id2", new Text("type"), Collections.emptyMap(), Collections.emptyMap()) };
+        SearchHit[] hits = new SearchHit[] { new SearchHit(1, "id1", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
+                new SearchHit(2, "id2", new Text("type"), Collections.emptyMap(), Collections.emptyMap()) };
 
         long totalHits = 1000;
         float maxScore = 1.5f;
@@ -217,24 +216,23 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
         builder.startObject();
         searchHits.toXContent(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
-        assertEquals("{\"hits\":{\"total\":{\"value\":1000,\"relation\":\"eq\"},\"max_score\":1.5," +
-            "\"hits\":[{\"_type\":\"type\",\"_id\":\"id1\",\"_score\":null},"+
-            "{\"_type\":\"type\",\"_id\":\"id2\",\"_score\":null}]}}", Strings.toString(builder));
+        assertEquals("{\"hits\":{\"total\":{\"value\":1000,\"relation\":\"eq\"},\"max_score\":1.5,"
+                + "\"hits\":[{\"_type\":\"type\",\"_id\":\"id1\",\"_score\":null},"
+                + "{\"_type\":\"type\",\"_id\":\"id2\",\"_score\":null}]}}", Strings.toString(builder));
     }
 
     public void testFromXContentWithShards() throws IOException {
-        for (boolean withExplanation : new boolean[] {true, false}) {
-            final SearchHit[] hits = new SearchHit[]{
-                new SearchHit(1, "id1", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
-                new SearchHit(2, "id2", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
-                new SearchHit(10, "id10", new Text("type"), Collections.emptyMap(), Collections.emptyMap())
-            };
+        for (boolean withExplanation : new boolean[] { true, false }) {
+            final SearchHit[] hits =
+                    new SearchHit[] { new SearchHit(1, "id1", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
+                            new SearchHit(2, "id2", new Text("type"), Collections.emptyMap(), Collections.emptyMap()),
+                            new SearchHit(10, "id10", new Text("type"), Collections.emptyMap(), Collections.emptyMap()) };
 
             for (SearchHit hit : hits) {
                 String index = randomAlphaOfLengthBetween(5, 10);
                 String clusterAlias = randomBoolean() ? null : randomAlphaOfLengthBetween(5, 10);
                 final SearchShardTarget shardTarget = new SearchShardTarget(randomAlphaOfLengthBetween(5, 10),
-                    new ShardId(new Index(index, randomAlphaOfLengthBetween(5, 10)), randomInt()), clusterAlias, OriginalIndices.NONE);
+                        new ShardId(new Index(index, randomAlphaOfLengthBetween(5, 10)), randomInt()), clusterAlias, OriginalIndices.NONE);
                 if (withExplanation) {
                     hit.explanation(SearchHitTests.createExplanation(randomIntBetween(0, 5)));
                 }
@@ -246,8 +244,8 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
             SearchHits searchHits = new SearchHits(hits, new TotalHits(totalHits, TotalHits.Relation.EQUAL_TO), maxScore);
             XContentType xContentType = randomFrom(XContentType.values());
             BytesReference bytes = toShuffledXContent(searchHits, xContentType, ToXContent.EMPTY_PARAMS, false);
-            try (XContentParser parser = xContentType.xContent()
-                    .createParser(xContentRegistry(), LoggingDeprecationHandler.INSTANCE, bytes.streamInput())) {
+            try (XContentParser parser =
+                    xContentType.xContent().createParser(xContentRegistry(), LoggingDeprecationHandler.INSTANCE, bytes.streamInput())) {
                 SearchHits newSearchHits = doParseInstance(parser);
                 assertEquals(3, newSearchHits.getHits().length);
                 assertEquals("id1", newSearchHits.getAt(0).getId());
@@ -257,11 +255,11 @@ public class SearchHitsTests extends AbstractSerializingTestCase<SearchHits> {
                         assertEquals(hits[i].getShard().getIndex(), newSearchHits.getAt(i).getShard().getIndex());
                         assertEquals(hits[i].getShard().getShardId().getId(), newSearchHits.getAt(i).getShard().getShardId().getId());
                         assertEquals(hits[i].getShard().getShardId().getIndexName(),
-                            newSearchHits.getAt(i).getShard().getShardId().getIndexName());
+                                newSearchHits.getAt(i).getShard().getShardId().getIndexName());
                         assertEquals(hits[i].getShard().getNodeId(), newSearchHits.getAt(i).getShard().getNodeId());
                         // The index uuid is not serialized in the rest layer
                         assertNotEquals(hits[i].getShard().getShardId().getIndex().getUUID(),
-                            newSearchHits.getAt(i).getShard().getShardId().getIndex().getUUID());
+                                newSearchHits.getAt(i).getShard().getShardId().getIndex().getUUID());
                     } else {
                         assertNull(newSearchHits.getAt(i).getShard());
                     }

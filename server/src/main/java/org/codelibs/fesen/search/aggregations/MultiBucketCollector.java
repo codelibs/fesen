@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.search.Collector;
@@ -27,11 +32,6 @@ import org.apache.lucene.search.MultiCollector;
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreCachingWrappingScorer;
 import org.apache.lucene.search.ScoreMode;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A {@link BucketCollector} which allows running a bucket collection with several
@@ -152,12 +152,12 @@ public class MultiBucketCollector extends BucketCollector {
             leafCollectors.add(leafCollector);
         }
         switch (leafCollectors.size()) {
-            case 0:
-                throw new CollectionTerminatedException();
-            case 1:
-                return leafCollectors.get(0);
-            default:
-                return new MultiLeafBucketCollector(leafCollectors, cacheScores);
+        case 0:
+            throw new CollectionTerminatedException();
+        case 1:
+            return leafCollectors.get(0);
+        default:
+            return new MultiLeafBucketCollector(leafCollectors, cacheScores);
         }
     }
 
@@ -194,7 +194,7 @@ public class MultiBucketCollector extends BucketCollector {
         public void collect(int doc, long bucket) throws IOException {
             final LeafBucketCollector[] collectors = this.collectors;
             int numCollectors = this.numCollectors;
-            for (int i = 0; i < numCollectors; ) {
+            for (int i = 0; i < numCollectors;) {
                 final LeafBucketCollector collector = collectors[i];
                 try {
                     collector.collect(doc, bucket);

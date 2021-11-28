@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.ActionRunnable;
-import org.codelibs.fesen.action.support.ContextPreservingActionListener;
-import org.codelibs.fesen.core.Tuple;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.ActionRunnable;
+import org.codelibs.fesen.action.support.ContextPreservingActionListener;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * A future implementation that allows for the result to be passed to listeners waiting for
@@ -42,7 +42,6 @@ public final class ListenableFuture<V> extends BaseFuture<V> implements ActionLi
 
     private volatile boolean done = false;
     private final List<Tuple<ActionListener<V>, ExecutorService>> listeners = new ArrayList<>();
-
 
     /**
      * Adds a listener to this future. If the future has not yet completed, the listener will be

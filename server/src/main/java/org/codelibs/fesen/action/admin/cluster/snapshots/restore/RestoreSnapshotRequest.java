@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.restore;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -32,19 +45,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Restore snapshot request
@@ -490,7 +490,7 @@ public class RestoreSnapshotRequest extends MasterNodeRequest<RestoreSnapshotReq
                     throw new IllegalArgumentException("malformed settings section");
                 }
                 DEPRECATION_LOGGER.deprecate("RestoreSnapshotRequest#settings",
-                    "specifying [settings] when restoring a snapshot has no effect and will not be supported in a future version");
+                        "specifying [settings] when restoring a snapshot has no effect and will not be supported in a future version");
             } else if (name.equals("include_global_state")) {
                 includeGlobalState = nodeBooleanValue(entry.getValue(), "include_global_state");
             } else if (name.equals("include_aliases")) {
@@ -513,13 +513,13 @@ public class RestoreSnapshotRequest extends MasterNodeRequest<RestoreSnapshotReq
                 }
                 indexSettings((Map<String, Object>) entry.getValue());
             } else if (name.equals("ignore_index_settings")) {
-                    if (entry.getValue() instanceof String) {
-                        ignoreIndexSettings(Strings.splitStringByCommaToArray((String) entry.getValue()));
-                    } else if (entry.getValue() instanceof List) {
-                        ignoreIndexSettings((List<String>) entry.getValue());
-                    } else {
-                        throw new IllegalArgumentException("malformed ignore_index_settings section, should be an array of strings");
-                    }
+                if (entry.getValue() instanceof String) {
+                    ignoreIndexSettings(Strings.splitStringByCommaToArray((String) entry.getValue()));
+                } else if (entry.getValue() instanceof List) {
+                    ignoreIndexSettings((List<String>) entry.getValue());
+                } else {
+                    throw new IllegalArgumentException("malformed ignore_index_settings section, should be an array of strings");
+                }
             } else {
                 if (IndicesOptions.isIndicesOptions(name) == false) {
                     throw new IllegalArgumentException("Unknown parameter " + name);
@@ -573,28 +573,23 @@ public class RestoreSnapshotRequest extends MasterNodeRequest<RestoreSnapshotReq
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RestoreSnapshotRequest that = (RestoreSnapshotRequest) o;
-        return waitForCompletion == that.waitForCompletion &&
-            includeGlobalState == that.includeGlobalState &&
-            partial == that.partial &&
-            includeAliases == that.includeAliases &&
-            Objects.equals(snapshot, that.snapshot) &&
-            Objects.equals(repository, that.repository) &&
-            Arrays.equals(indices, that.indices) &&
-            Objects.equals(indicesOptions, that.indicesOptions) &&
-            Objects.equals(renamePattern, that.renamePattern) &&
-            Objects.equals(renameReplacement, that.renameReplacement) &&
-            Objects.equals(indexSettings, that.indexSettings) &&
-            Arrays.equals(ignoreIndexSettings, that.ignoreIndexSettings) &&
-            Objects.equals(snapshotUuid, that.snapshotUuid);
+        return waitForCompletion == that.waitForCompletion && includeGlobalState == that.includeGlobalState && partial == that.partial
+                && includeAliases == that.includeAliases && Objects.equals(snapshot, that.snapshot)
+                && Objects.equals(repository, that.repository) && Arrays.equals(indices, that.indices)
+                && Objects.equals(indicesOptions, that.indicesOptions) && Objects.equals(renamePattern, that.renamePattern)
+                && Objects.equals(renameReplacement, that.renameReplacement) && Objects.equals(indexSettings, that.indexSettings)
+                && Arrays.equals(ignoreIndexSettings, that.ignoreIndexSettings) && Objects.equals(snapshotUuid, that.snapshotUuid);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(snapshot, repository, indicesOptions, renamePattern, renameReplacement, waitForCompletion,
-            includeGlobalState, partial, includeAliases, indexSettings, snapshotUuid);
+                includeGlobalState, partial, includeAliases, indexSettings, snapshotUuid);
         result = 31 * result + Arrays.hashCode(indices);
         result = 31 * result + Arrays.hashCode(ignoreIndexSettings);
         return result;

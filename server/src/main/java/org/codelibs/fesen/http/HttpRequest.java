@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.http;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A basic http request abstraction. Http modules needs to implement this interface to integrate with the
@@ -35,8 +35,7 @@ import java.util.Map;
 public interface HttpRequest {
 
     enum HttpVersion {
-        HTTP_1_0,
-        HTTP_1_1
+        HTTP_1_0, HTTP_1_1
     }
 
     /**

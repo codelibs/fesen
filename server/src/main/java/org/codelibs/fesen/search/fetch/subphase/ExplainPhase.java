@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.rescore.RescoreContext;
-
-import java.io.IOException;
 
 /**
  * Explains the scoring calculations for the top hits.

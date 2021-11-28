@@ -26,7 +26,6 @@ import org.codelibs.fesen.index.mapper.ContentPath;
 import org.codelibs.fesen.index.mapper.Mapper;
 import org.codelibs.fesen.test.ESTestCase;
 
-
 public class MapperTests extends ESTestCase {
 
     public void testSuccessfulBuilderContext() {

@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.action.admin.indices.segments;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
@@ -32,16 +42,6 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.engine.Segment;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 public class IndicesSegmentResponse extends BroadcastResponse {
 
     private final ShardSegments[] shards;
@@ -54,7 +54,7 @@ public class IndicesSegmentResponse extends BroadcastResponse {
     }
 
     IndicesSegmentResponse(ShardSegments[] shards, int totalShards, int successfulShards, int failedShards,
-                           List<DefaultShardOperationFailedException> shardFailures) {
+            List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.shards = shards;
     }
@@ -168,11 +168,9 @@ public class IndicesSegmentResponse extends BroadcastResponse {
             builder.startObject();
             builder.field("field", field.getField());
             if (field instanceof SortedNumericSortField) {
-                builder.field("mode", ((SortedNumericSortField) field).getSelector()
-                    .toString().toLowerCase(Locale.ROOT));
+                builder.field("mode", ((SortedNumericSortField) field).getSelector().toString().toLowerCase(Locale.ROOT));
             } else if (field instanceof SortedSetSortField) {
-                builder.field("mode", ((SortedSetSortField) field).getSelector()
-                    .toString().toLowerCase(Locale.ROOT));
+                builder.field("mode", ((SortedSetSortField) field).getSelector().toString().toLowerCase(Locale.ROOT));
             }
             if (field.getMissingValue() != null) {
                 builder.field("missing", field.getMissingValue().toString());

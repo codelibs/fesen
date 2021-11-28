@@ -234,8 +234,8 @@ public class CopyToMapperTests extends MapperServiceTestCase {
             b.endObject();
         }));
 
-        MapperParsingException e = expectThrows(MapperParsingException.class,
-            () -> docMapper.parse(source(b -> b.field("copy_test", "foo"))));
+        MapperParsingException e =
+                expectThrows(MapperParsingException.class, () -> docMapper.parse(source(b -> b.field("copy_test", "foo"))));
 
         assertThat(e.getMessage(), startsWith("mapping set to strict, dynamic introduction of [very] within [_doc] is not allowed"));
     }
@@ -266,11 +266,10 @@ public class CopyToMapperTests extends MapperServiceTestCase {
             b.endObject();
         }));
 
-        MapperParsingException e = expectThrows(MapperParsingException.class,
-            () -> docMapper.parse(source(b -> b.field("copy_test", "foo"))));
+        MapperParsingException e =
+                expectThrows(MapperParsingException.class, () -> docMapper.parse(source(b -> b.field("copy_test", "foo"))));
 
-        assertThat(e.getMessage(),
-            startsWith("mapping set to strict, dynamic introduction of [field] within [very.far] is not allowed"));
+        assertThat(e.getMessage(), startsWith("mapping set to strict, dynamic introduction of [field] within [very.far] is not allowed"));
     }
 
     public void testCopyToFieldMerge() throws Exception {
@@ -305,48 +304,46 @@ public class CopyToMapperTests extends MapperServiceTestCase {
     }
 
     public void testCopyToNestedField() throws Exception {
-            DocumentMapper mapper = createDocumentMapper(mapping(b -> {
-                b.startObject("target");
+        DocumentMapper mapper = createDocumentMapper(mapping(b -> {
+            b.startObject("target");
+            {
+                b.field("type", "long");
+                b.field("doc_values", false);
+            }
+            b.endObject();
+            b.startObject("n1");
+            {
+                b.field("type", "nested");
+                b.startObject("properties");
                 {
-                    b.field("type", "long");
-                    b.field("doc_values", false);
-                }
-                b.endObject();
-                b.startObject("n1");
-                {
-                    b.field("type", "nested");
-                    b.startObject("properties");
+                    b.startObject("target");
                     {
-                        b.startObject("target");
+                        b.field("type", "long");
+                        b.field("doc_values", false);
+                    }
+                    b.endObject();
+                    b.startObject("n2");
+                    {
+                        b.field("type", "nested");
+                        b.startObject("properties");
                         {
-                            b.field("type", "long");
-                            b.field("doc_values", false);
-                        }
-                        b.endObject();
-                        b.startObject("n2");
-                        {
-                            b.field("type", "nested");
-                            b.startObject("properties");
+                            b.startObject("target");
                             {
-                                b.startObject("target");
+                                b.field("type", "long");
+                                b.field("doc_values", false);
+                            }
+                            b.endObject();
+                            b.startObject("source");
+                            {
+                                b.field("type", "long");
+                                b.field("doc_values", false);
+                                b.startArray("copy_to");
                                 {
-                                    b.field("type", "long");
-                                    b.field("doc_values", false);
+                                    b.value("target"); // should go to the root doc
+                                    b.value("n1.target"); // should go to the parent doc
+                                    b.value("n1.n2.target"); // should go to the current doc
                                 }
-                                b.endObject();
-                                b.startObject("source");
-                                {
-                                    b.field("type", "long");
-                                    b.field("doc_values", false);
-                                    b.startArray("copy_to");
-                                    {
-                                        b.value("target"); // should go to the root doc
-                                        b.value("n1.target"); // should go to the parent doc
-                                        b.value("n1.n2.target"); // should go to the current doc
-                                    }
-                                    b.endArray();
-                                }
-                                b.endObject();
+                                b.endArray();
                             }
                             b.endObject();
                         }
@@ -355,7 +352,9 @@ public class CopyToMapperTests extends MapperServiceTestCase {
                     b.endObject();
                 }
                 b.endObject();
-            }));
+            }
+            b.endObject();
+        }));
 
         ParsedDocument doc = mapper.parse(source(b -> {
             b.startArray("n1");
@@ -633,7 +632,6 @@ public class CopyToMapperTests extends MapperServiceTestCase {
             }
             b.endObject();
         })));
-        assertThat(e.getMessage(),
-            Matchers.containsString("[copy_to] may not be used to copy from a multi-field: [field.bar]"));
+        assertThat(e.getMessage(), Matchers.containsString("[copy_to] may not be used to copy from a multi-field: [field.bar]"));
     }
 }

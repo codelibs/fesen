@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.action.bulk;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.threadpool.Scheduler;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 
 /**
  * Implements the low-level details of bulk request handling
@@ -41,7 +41,7 @@ public final class BulkRequestHandler {
     private final int concurrentRequests;
 
     BulkRequestHandler(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, BackoffPolicy backoffPolicy,
-                       BulkProcessor.Listener listener, Scheduler scheduler, int concurrentRequests) {
+            BulkProcessor.Listener listener, Scheduler scheduler, int concurrentRequests) {
         assert concurrentRequests >= 0;
         this.logger = LogManager.getLogger(getClass());
         this.consumer = consumer;
@@ -85,7 +85,7 @@ public final class BulkRequestHandler {
             logger.warn(() -> new ParameterizedMessage("Failed to execute bulk request {}.", executionId), e);
             listener.afterBulk(executionId, bulkRequest, e);
         } finally {
-            if (bulkRequestSetupSuccessful == false) {  // if we fail on client.bulk() release the semaphore
+            if (bulkRequestSetupSuccessful == false) { // if we fail on client.bulk() release the semaphore
                 toRelease.run();
             }
         }

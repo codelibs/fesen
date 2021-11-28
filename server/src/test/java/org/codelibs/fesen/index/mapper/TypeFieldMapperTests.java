@@ -93,6 +93,6 @@ public class TypeFieldMapperTests extends ESSingleNodeTestCase {
         MapperService mapperService = createIndex("test", indexSettings).mapperService();
         DocumentMapper mapper = mapperService.merge("type", new CompressedXContent("{\"type\":{}}"), MergeReason.MAPPING_UPDATE);
         ParsedDocument document = mapper.parse(new SourceToParse("index", "type", "id", new BytesArray("{}"), XContentType.JSON));
-        assertEquals(Collections.<IndexableField>emptyList(), Arrays.asList(document.rootDoc().getFields(TypeFieldMapper.NAME)));
+        assertEquals(Collections.<IndexableField> emptyList(), Arrays.asList(document.rootDoc().getFields(TypeFieldMapper.NAME)));
     }
 }

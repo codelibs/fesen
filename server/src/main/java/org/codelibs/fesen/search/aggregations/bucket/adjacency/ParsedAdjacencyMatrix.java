@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.adjacency;
 
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
 
 public class ParsedAdjacencyMatrix extends ParsedMultiBucketAggregation<ParsedAdjacencyMatrix.ParsedBucket> implements AdjacencyMatrix {
 
@@ -56,8 +56,7 @@ public class ParsedAdjacencyMatrix extends ParsedMultiBucketAggregation<ParsedAd
     private static final ObjectParser<ParsedAdjacencyMatrix, Void> PARSER =
             new ObjectParser<>(ParsedAdjacencyMatrix.class.getSimpleName(), true, ParsedAdjacencyMatrix::new);
     static {
-        declareMultiBucketAggregationFields(PARSER,
-                parser -> ParsedBucket.fromXContent(parser),
+        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser),
                 parser -> ParsedBucket.fromXContent(parser));
     }
 

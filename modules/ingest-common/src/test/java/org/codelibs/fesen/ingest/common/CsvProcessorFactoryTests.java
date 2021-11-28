@@ -19,16 +19,15 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import java.util.Collections;
-import java.util.HashMap;
-
-import org.codelibs.fesen.ingest.common.CsvProcessor;
-import org.codelibs.fesen.test.ESTestCase;
-
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+
+import java.util.Collections;
+import java.util.HashMap;
+
+import org.codelibs.fesen.test.ESTestCase;
 
 public class CsvProcessorFactoryTests extends ESTestCase {
 
@@ -45,7 +44,7 @@ public class CsvProcessorFactoryTests extends ESTestCase {
         CsvProcessor csv = factory.create(null, "csv", null, properties);
         assertThat(csv, notNullValue());
         assertThat(csv.field, equalTo("field"));
-        assertThat(csv.headers, equalTo(new String[]{"target"}));
+        assertThat(csv.headers, equalTo(new String[] { "target" }));
         assertThat(csv.quote, equalTo('|'));
         assertThat(csv.separator, equalTo('/'));
         assertThat(csv.emptyValue, equalTo("empty"));

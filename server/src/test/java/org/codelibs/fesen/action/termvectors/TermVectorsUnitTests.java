@@ -171,8 +171,8 @@ public class TermVectorsUnitTests extends ESTestCase {
     }
 
     public void testRestRequestParsing() throws Exception {
-        BytesReference inputBytes = new BytesArray(
-                " {\"fields\" : [\"a\",  \"b\",\"c\"], \"offsets\":false, \"positions\":false, \"payloads\":true}");
+        BytesReference inputBytes =
+                new BytesArray(" {\"fields\" : [\"a\",  \"b\",\"c\"], \"offsets\":false, \"positions\":false, \"payloads\":true}");
 
         TermVectorsRequest tvr = new TermVectorsRequest(null, null, null);
         XContentParser parser = createParser(JsonXContent.jsonXContent, inputBytes);
@@ -288,7 +288,7 @@ public class TermVectorsUnitTests extends ESTestCase {
             assertThat(singleRequest.offsets(), equalTo(false));
             assertThat(singleRequest.termStatistics(), equalTo(true));
             assertThat(singleRequest.fieldStatistics(), equalTo(false));
-            assertThat(singleRequest.id(),Matchers.anyOf(Matchers.equalTo("1"), Matchers.equalTo("2")));
+            assertThat(singleRequest.id(), Matchers.anyOf(Matchers.equalTo("1"), Matchers.equalTo("2")));
             assertThat(singleRequest.selectedFields(), equalTo(fields));
         }
     }

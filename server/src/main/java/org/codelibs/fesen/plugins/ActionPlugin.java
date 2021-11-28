@@ -82,12 +82,13 @@ public interface ActionPlugin {
     default List<ActionFilter> getActionFilters() {
         return Collections.emptyList();
     }
+
     /**
      * Rest handlers added by this plugin.
      */
     default List<RestHandler> getRestHandlers(Settings settings, RestController restController, ClusterSettings clusterSettings,
-            IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter,
-            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<DiscoveryNodes> nodesInCluster) {
+            IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver,
+            Supplier<DiscoveryNodes> nodesInCluster) {
         return Collections.emptyList();
     }
 
@@ -140,7 +141,7 @@ public interface ActionPlugin {
          * that are needed by that {@linkplain TransportAction}.
          */
         public ActionHandler(ActionType<Response> action, Class<? extends TransportAction<Request, Response>> transportAction,
-                             Class<?>... supportTransportActions) {
+                Class<?>... supportTransportActions) {
             this.action = action;
             this.transportAction = transportAction;
             this.supportTransportActions = supportTransportActions;
@@ -173,8 +174,7 @@ public interface ActionPlugin {
                 return false;
             }
             ActionHandler<?, ?> other = (ActionHandler<?, ?>) obj;
-            return Objects.equals(action, other.action)
-                    && Objects.equals(transportAction, other.transportAction)
+            return Objects.equals(action, other.action) && Objects.equals(transportAction, other.transportAction)
                     && Objects.deepEquals(supportTransportActions, other.supportTransportActions);
         }
 

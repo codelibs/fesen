@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.repositories.blobstore;
 
+import java.util.Map;
+
 import org.codelibs.fesen.cluster.metadata.RepositoryMetadata;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.UUIDs;
@@ -28,24 +30,15 @@ import org.codelibs.fesen.repositories.RepositoryInfo;
 import org.codelibs.fesen.repositories.RepositoryStatsSnapshot;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.util.Map;
-
 public abstract class MeteredBlobStoreRepository extends BlobStoreRepository {
     private final RepositoryInfo repositoryInfo;
 
-    public MeteredBlobStoreRepository(RepositoryMetadata metadata,
-                                      boolean compress,
-                                      NamedXContentRegistry namedXContentRegistry,
-                                      ClusterService clusterService,
-                                      RecoverySettings recoverySettings,
-                                      Map<String, String> location) {
+    public MeteredBlobStoreRepository(RepositoryMetadata metadata, boolean compress, NamedXContentRegistry namedXContentRegistry,
+            ClusterService clusterService, RecoverySettings recoverySettings, Map<String, String> location) {
         super(metadata, compress, namedXContentRegistry, clusterService, recoverySettings);
         ThreadPool threadPool = clusterService.getClusterApplierService().threadPool();
-        this.repositoryInfo = new RepositoryInfo(UUIDs.randomBase64UUID(),
-            metadata.name(),
-            metadata.type(),
-            location,
-            threadPool.absoluteTimeInMillis());
+        this.repositoryInfo =
+                new RepositoryInfo(UUIDs.randomBase64UUID(), metadata.name(), metadata.type(), location, threadPool.absoluteTimeInMillis());
     }
 
     public RepositoryStatsSnapshot statsSnapshot() {

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.cluster.routing;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,9 +32,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Uniquely identifies an allocation. An allocation is a shard moving from unassigned to initializing,
@@ -46,8 +46,7 @@ public class AllocationId implements ToXContentObject, Writeable {
     private static final String ID_KEY = "id";
     private static final String RELOCATION_ID_KEY = "relocation_id";
 
-    private static final ObjectParser<AllocationId.Builder, Void> ALLOCATION_ID_PARSER = new ObjectParser<>(
-            "allocationId");
+    private static final ObjectParser<AllocationId.Builder, Void> ALLOCATION_ID_PARSER = new ObjectParser<>("allocationId");
 
     static {
         ALLOCATION_ID_PARSER.declareString(AllocationId.Builder::setId, new ParseField(ID_KEY));

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
+
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.document.LatLonPoint;
 import org.apache.lucene.search.IndexOrDocValuesQuery;
@@ -35,12 +39,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.unit.DistanceUnit;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
 
 /**
  * Filter results of a query to include only those within a specific distance to some
@@ -340,8 +340,8 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
                         point.resetFromString(parser.text());
                         fieldName = currentFieldName;
                     } else {
-                        throw new ParsingException(parser.getTokenLocation(), "failed to parse [{}] query. unexpected field [{}]",
-                            NAME, currentFieldName);
+                        throw new ParsingException(parser.getTokenLocation(), "failed to parse [{}] query. unexpected field [{}]", NAME,
+                                currentFieldName);
                     }
                 }
             }
@@ -375,12 +375,9 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
 
     @Override
     protected boolean doEquals(GeoDistanceQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) &&
-                (distance == other.distance) &&
-                Objects.equals(validationMethod, other.validationMethod) &&
-                Objects.equals(center, other.center) &&
-                Objects.equals(geoDistance, other.geoDistance) &&
-                Objects.equals(ignoreUnmapped, other.ignoreUnmapped);
+        return Objects.equals(fieldName, other.fieldName) && (distance == other.distance)
+                && Objects.equals(validationMethod, other.validationMethod) && Objects.equals(center, other.center)
+                && Objects.equals(geoDistance, other.geoDistance) && Objects.equals(ignoreUnmapped, other.ignoreUnmapped);
     }
 
     private QueryValidationException checkLatLon() {

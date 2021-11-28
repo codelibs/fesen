@@ -18,6 +18,18 @@
  */
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
+import static org.apache.lucene.search.uhighlight.CustomUnifiedHighlighter.MULTIVAL_SEP_CHAR;
+
+import java.io.IOException;
+import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.highlight.Encoder;
@@ -41,18 +53,6 @@ import org.codelibs.fesen.index.mapper.TextSearchInfo;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhase.HitContext;
 
-import java.io.IOException;
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static org.apache.lucene.search.uhighlight.CustomUnifiedHighlighter.MULTIVAL_SEP_CHAR;
-
 public class UnifiedHighlighter implements Highlighter {
     @Override
     public boolean canHighlight(MappedFieldType fieldType) {
@@ -63,7 +63,7 @@ public class UnifiedHighlighter implements Highlighter {
     public HighlightField highlight(FieldHighlightContext fieldContext) throws IOException {
         @SuppressWarnings("unchecked")
         Map<String, CustomUnifiedHighlighter> cache = (Map<String, CustomUnifiedHighlighter>) fieldContext.cache
-            .computeIfAbsent(UnifiedHighlighter.class.getName(), k -> new HashMap<>());
+                .computeIfAbsent(UnifiedHighlighter.class.getName(), k -> new HashMap<>());
         if (cache.containsKey(fieldContext.fieldName) == false) {
             cache.put(fieldContext.fieldName, buildHighlighter(fieldContext));
         }
@@ -108,14 +108,13 @@ public class UnifiedHighlighter implements Highlighter {
     }
 
     CustomUnifiedHighlighter buildHighlighter(FieldHighlightContext fieldContext) throws IOException {
-        Encoder encoder = fieldContext.field.fieldOptions().encoder().equals("html")
-            ? HighlightUtils.Encoders.HTML
-            : HighlightUtils.Encoders.DEFAULT;
+        Encoder encoder =
+                fieldContext.field.fieldOptions().encoder().equals("html") ? HighlightUtils.Encoders.HTML : HighlightUtils.Encoders.DEFAULT;
         int maxAnalyzedOffset = fieldContext.context.getIndexSettings().getHighlightMaxAnalyzedOffset();
         int keywordIgnoreAbove = Integer.MAX_VALUE;
         if (fieldContext.fieldType instanceof KeywordFieldMapper.KeywordFieldType) {
-            KeywordFieldMapper mapper = (KeywordFieldMapper) fieldContext.context.mapperService().documentMapper()
-                .mappers().getMapper(fieldContext.fieldName);
+            KeywordFieldMapper mapper =
+                    (KeywordFieldMapper) fieldContext.context.mapperService().documentMapper().mappers().getMapper(fieldContext.fieldName);
             keywordIgnoreAbove = mapper.ignoreAbove();
         }
         int numberOfFragments = fieldContext.field.fieldOptions().numberOfFragments();
@@ -126,8 +125,8 @@ public class UnifiedHighlighter implements Highlighter {
         BreakIterator breakIterator;
         int higlighterNumberOfFragments;
         if (numberOfFragments == 0
-            // non-tokenized fields should not use any break iterator (ignore boundaryScannerType)
-            || fieldContext.fieldType.getTextSearchInfo().isTokenized() == false) {
+                // non-tokenized fields should not use any break iterator (ignore boundaryScannerType)
+                || fieldContext.fieldType.getTextSearchInfo().isTokenized() == false) {
             /*
              * We use a control char to separate values, which is the
              * only char that the custom break iterator breaks the text
@@ -141,68 +140,44 @@ public class UnifiedHighlighter implements Highlighter {
             breakIterator = getBreakIterator(fieldContext.field);
             higlighterNumberOfFragments = numberOfFragments;
         }
-        return new CustomUnifiedHighlighter(
-            searcher,
-            analyzer,
-            offsetSource,
-            passageFormatter,
-            fieldContext.field.fieldOptions().boundaryScannerLocale(),
-            breakIterator,
-            fieldContext.context.getIndexName(),
-            fieldContext.fieldName,
-            fieldContext.query,
-            fieldContext.field.fieldOptions().noMatchSize(),
-            higlighterNumberOfFragments,
-            fieldMatcher(fieldContext),
-            keywordIgnoreAbove,
-            maxAnalyzedOffset
-        );
+        return new CustomUnifiedHighlighter(searcher, analyzer, offsetSource, passageFormatter,
+                fieldContext.field.fieldOptions().boundaryScannerLocale(), breakIterator, fieldContext.context.getIndexName(),
+                fieldContext.fieldName, fieldContext.query, fieldContext.field.fieldOptions().noMatchSize(), higlighterNumberOfFragments,
+                fieldMatcher(fieldContext), keywordIgnoreAbove, maxAnalyzedOffset);
     }
 
     protected PassageFormatter getPassageFormatter(HitContext hitContext, SearchHighlightContext.Field field, Encoder encoder) {
-        return new CustomPassageFormatter(field.fieldOptions().preTags()[0],
-            field.fieldOptions().postTags()[0], encoder);
+        return new CustomPassageFormatter(field.fieldOptions().preTags()[0], field.fieldOptions().postTags()[0], encoder);
     }
-
 
     protected Analyzer getAnalyzer(DocumentMapper docMapper) {
         return docMapper.mappers().indexAnalyzer();
     }
 
-    protected List<Object> loadFieldValues(
-        CustomUnifiedHighlighter highlighter,
-        MappedFieldType fieldType,
-        SearchHighlightContext.Field field,
-        FetchSubPhase.HitContext hitContext,
-        boolean forceSource
-    ) throws IOException {
+    protected List<Object> loadFieldValues(CustomUnifiedHighlighter highlighter, MappedFieldType fieldType,
+            SearchHighlightContext.Field field, FetchSubPhase.HitContext hitContext, boolean forceSource) throws IOException {
         List<Object> fieldValues = HighlightUtils.loadFieldValues(fieldType, hitContext, forceSource);
-        fieldValues = fieldValues.stream()
-            .map((s) -> convertFieldValue(fieldType, s))
-            .collect(Collectors.toList());
+        fieldValues = fieldValues.stream().map((s) -> convertFieldValue(fieldType, s)).collect(Collectors.toList());
         return fieldValues;
     }
 
     protected BreakIterator getBreakIterator(SearchHighlightContext.Field field) {
         final SearchHighlightContext.FieldOptions fieldOptions = field.fieldOptions();
-        final Locale locale =
-            fieldOptions.boundaryScannerLocale() != null ? fieldOptions.boundaryScannerLocale() :
-                Locale.ROOT;
-        final HighlightBuilder.BoundaryScannerType type =
-            fieldOptions.boundaryScannerType()  != null ? fieldOptions.boundaryScannerType() :
-                HighlightBuilder.BoundaryScannerType.SENTENCE;
+        final Locale locale = fieldOptions.boundaryScannerLocale() != null ? fieldOptions.boundaryScannerLocale() : Locale.ROOT;
+        final HighlightBuilder.BoundaryScannerType type = fieldOptions.boundaryScannerType() != null ? fieldOptions.boundaryScannerType()
+                : HighlightBuilder.BoundaryScannerType.SENTENCE;
         int maxLen = fieldOptions.fragmentCharSize();
         switch (type) {
-            case SENTENCE:
-                if (maxLen > 0) {
-                    return BoundedBreakIteratorScanner.getSentence(locale, maxLen);
-                }
-                return BreakIterator.getSentenceInstance(locale);
-            case WORD:
-                // ignore maxLen
-                return BreakIterator.getWordInstance(locale);
-            default:
-                throw new IllegalArgumentException("Invalid boundary scanner type: " + type.toString());
+        case SENTENCE:
+            if (maxLen > 0) {
+                return BoundedBreakIteratorScanner.getSentence(locale, maxLen);
+            }
+            return BreakIterator.getSentenceInstance(locale);
+        case WORD:
+            // ignore maxLen
+            return BreakIterator.getWordInstance(locale);
+        default:
+            throw new IllegalArgumentException("Invalid boundary scanner type: " + type.toString());
         }
     }
 
@@ -224,8 +199,7 @@ public class UnifiedHighlighter implements Highlighter {
     protected OffsetSource getOffsetSource(MappedFieldType fieldType) {
         TextSearchInfo tsi = fieldType.getTextSearchInfo();
         if (tsi.hasOffsets()) {
-            return tsi.termVectors() != TextSearchInfo.TermVector.NONE
-                ? OffsetSource.POSTINGS_WITH_TERM_VECTORS : OffsetSource.POSTINGS;
+            return tsi.termVectors() != TextSearchInfo.TermVector.NONE ? OffsetSource.POSTINGS_WITH_TERM_VECTORS : OffsetSource.POSTINGS;
         }
         if (tsi.termVectors() == TextSearchInfo.TermVector.OFFSETS) {
             return OffsetSource.TERM_VECTORS;

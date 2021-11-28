@@ -19,22 +19,19 @@
 
 package org.codelibs.fesen.join.aggregations;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry.Entry;
 import org.codelibs.fesen.join.ParentJoinPlugin;
-import org.codelibs.fesen.join.aggregations.ChildrenAggregationBuilder;
-import org.codelibs.fesen.join.aggregations.InternalChildren;
-import org.codelibs.fesen.join.aggregations.ParsedChildren;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalSingleBucketAggregationTestCase;
 import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class InternalChildrenTests extends InternalSingleBucketAggregationTestCase<InternalChildren> {
 
@@ -48,7 +45,7 @@ public class InternalChildrenTests extends InternalSingleBucketAggregationTestCa
         List<Entry> extendedNamedXContents = new ArrayList<>(super.getNamedXContents());
         extendedNamedXContents.add(new NamedXContentRegistry.Entry(Aggregation.class, new ParseField(ChildrenAggregationBuilder.NAME),
                 (p, c) -> ParsedChildren.fromXContent(p, (String) c)));
-        return extendedNamedXContents ;
+        return extendedNamedXContents;
     }
 
     @Override

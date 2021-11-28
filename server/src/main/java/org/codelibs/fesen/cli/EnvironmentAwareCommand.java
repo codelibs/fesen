@@ -19,24 +19,20 @@
 
 package org.codelibs.fesen.cli;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.util.KeyValuePair;
-
-import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.node.InternalSettingsPreparer;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.node.InternalSettingsPreparer;
+
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.util.KeyValuePair;
 
 /** A cli command which requires an {@link org.codelibs.fesen.env.Environment} to use current paths and settings. */
 public abstract class EnvironmentAwareCommand extends Command {
@@ -73,12 +69,8 @@ public abstract class EnvironmentAwareCommand extends Command {
                 throw new UserException(ExitCodes.USAGE, "setting [" + kvp.key + "] must not be empty");
             }
             if (settings.containsKey(kvp.key)) {
-                final String message = String.format(
-                        Locale.ROOT,
-                        "setting [%s] already set, saw [%s] and [%s]",
-                        kvp.key,
-                        settings.get(kvp.key),
-                        kvp.value);
+                final String message = String.format(Locale.ROOT, "setting [%s] already set, saw [%s] and [%s]", kvp.key,
+                        settings.get(kvp.key), kvp.value);
                 throw new UserException(ExitCodes.USAGE, message);
             }
             settings.put(kvp.key, kvp.value);
@@ -102,10 +94,9 @@ public abstract class EnvironmentAwareCommand extends Command {
         if (esPathConf == null) {
             throw new UserException(ExitCodes.CONFIG, "the system property [es.path.conf] must be set");
         }
-        return InternalSettingsPreparer.prepareEnvironment(baseSettings, settings,
-            getConfigPath(esPathConf),
-            // HOSTNAME is set by fesen-env and fesen-env.bat so it is always available
-            () -> System.getenv("HOSTNAME"));
+        return InternalSettingsPreparer.prepareEnvironment(baseSettings, settings, getConfigPath(esPathConf),
+                // HOSTNAME is set by fesen-env and fesen-env.bat so it is always available
+                () -> System.getenv("HOSTNAME"));
     }
 
     @SuppressForbidden(reason = "need path to construct environment")
@@ -119,12 +110,8 @@ public abstract class EnvironmentAwareCommand extends Command {
         if (value != null) {
             if (settings.containsKey(setting)) {
                 final String message =
-                        String.format(
-                                Locale.ROOT,
-                                "duplicate setting [%s] found via command-line [%s] and system property [%s]",
-                                setting,
-                                settings.get(setting),
-                                value);
+                        String.format(Locale.ROOT, "duplicate setting [%s] found via command-line [%s] and system property [%s]", setting,
+                                settings.get(setting), value);
                 throw new IllegalArgumentException(message);
             } else {
                 settings.put(setting, value);

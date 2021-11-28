@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.ingest;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.common.ParseField;
@@ -32,10 +36,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Encapsulates a pipeline's id and configuration as a blob
@@ -56,6 +56,7 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
     public static ContextParser<Void, PipelineConfiguration> getParser() {
         return (parser, context) -> PARSER.apply(parser, null).build();
     }
+
     private static class Builder {
 
         private String id;
@@ -138,12 +139,15 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         PipelineConfiguration that = (PipelineConfiguration) o;
 
-        if (!id.equals(that.id)) return false;
+        if (!id.equals(that.id))
+            return false;
         return getConfigAsMap().equals(that.getConfigAsMap());
 
     }

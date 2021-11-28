@@ -19,15 +19,14 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.common.DotExpanderProcessor;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class DotExpanderProcessorFactoryTests extends ESTestCase {
 
@@ -51,7 +50,7 @@ public class DotExpanderProcessorFactoryTests extends ESTestCase {
     public void testValidFields() throws Exception {
         DotExpanderProcessor.Factory factory = new DotExpanderProcessor.Factory();
 
-        String[] fields = new String[] {"a.b", "a.b.c", "a.b.c.d", "ab.cd"};
+        String[] fields = new String[] { "a.b", "a.b.c", "a.b.c.d", "ab.cd" };
         for (String field : fields) {
             Map<String, Object> config = new HashMap<>();
             config.put("field", field);
@@ -73,7 +72,7 @@ public class DotExpanderProcessorFactoryTests extends ESTestCase {
 
     public void testCreate_invalidFields() throws Exception {
         DotExpanderProcessor.Factory factory = new DotExpanderProcessor.Factory();
-        String[] fields = new String[] {"a", "abc"};
+        String[] fields = new String[] { "a", "abc" };
         for (String field : fields) {
             Map<String, Object> config = new HashMap<>();
             config.put("field", field);
@@ -81,7 +80,7 @@ public class DotExpanderProcessorFactoryTests extends ESTestCase {
             assertThat(e.getMessage(), equalTo("[field] field does not contain a dot"));
         }
 
-        fields = new String[] {".a", "a.", "."};
+        fields = new String[] { ".a", "a.", "." };
         for (String field : fields) {
             Map<String, Object> config = new HashMap<>();
             config.put("field", field);
@@ -89,7 +88,7 @@ public class DotExpanderProcessorFactoryTests extends ESTestCase {
             assertThat(e.getMessage(), equalTo("[field] Field can't start or end with a dot"));
         }
 
-        fields = new String[] {"a..b", "a...b", "a.b..c", "abc.def..hij"};
+        fields = new String[] { "a..b", "a...b", "a.b..c", "abc.def..hij" };
         for (String field : fields) {
             Map<String, Object> config = new HashMap<>();
             config.put("field", field);

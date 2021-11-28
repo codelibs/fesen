@@ -130,12 +130,12 @@ public class FsHealthServiceTests extends ESTestCase {
     @TestLogging(value = "org.codelibs.fesen.monitor.fs:WARN", reason = "to ensure that we log on hung IO at WARN level")
     public void testLoggingOnHungIO() throws Exception {
         long slowLogThreshold = randomLongBetween(100, 200);
-        final Settings settings = Settings.builder().put(FsHealthService.SLOW_PATH_LOGGING_THRESHOLD_SETTING.getKey(),
-            slowLogThreshold + "ms").build();
+        final Settings settings =
+                Settings.builder().put(FsHealthService.SLOW_PATH_LOGGING_THRESHOLD_SETTING.getKey(), slowLogThreshold + "ms").build();
         FileSystem fileSystem = PathUtils.getDefaultFileSystem();
         TestThreadPool testThreadPool = new TestThreadPool(getClass().getName(), settings);
-        FileSystemFsyncHungProvider disruptFileSystemProvider = new FileSystemFsyncHungProvider(fileSystem,
-            randomLongBetween(slowLogThreshold + 1 , 400), testThreadPool);
+        FileSystemFsyncHungProvider disruptFileSystemProvider =
+                new FileSystemFsyncHungProvider(fileSystem, randomLongBetween(slowLogThreshold + 1, 400), testThreadPool);
         fileSystem = disruptFileSystemProvider.getFileSystem(null);
         PathUtilsForTesting.installMock(fileSystem);
         final ClusterSettings clusterSettings = new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
@@ -148,13 +148,10 @@ public class FsHealthServiceTests extends ESTestCase {
         try (NodeEnvironment env = newNodeEnvironment()) {
             FsHealthService fsHealthService = new FsHealthService(settings, clusterSettings, testThreadPool, env);
             int counter = 0;
-            for(Path path : env.nodeDataPaths()){
+            for (Path path : env.nodeDataPaths()) {
                 mockAppender.addExpectation(
-                    new MockLogAppender.SeenEventExpectation(
-                        "test" + ++counter,
-                        FsHealthService.class.getCanonicalName(),
-                        Level.WARN,
-                        "health check of [" + path + "] took [*ms] which is above the warn threshold*"));
+                        new MockLogAppender.SeenEventExpectation("test" + ++counter, FsHealthService.class.getCanonicalName(), Level.WARN,
+                                "health check of [" + path + "] took [*ms] which is above the warn threshold*"));
             }
 
             //disrupt file system
@@ -236,8 +233,8 @@ public class FsHealthServiceTests extends ESTestCase {
         FileSystem fileSystem = PathUtils.getDefaultFileSystem();
         final Settings settings = Settings.EMPTY;
         TestThreadPool testThreadPool = new TestThreadPool(getClass().getName(), settings);
-        FileSystemUnexpectedLockFileSizeProvider unexpectedLockFileSizeFileSystemProvider = new FileSystemUnexpectedLockFileSizeProvider(
-            fileSystem, 1, testThreadPool);
+        FileSystemUnexpectedLockFileSizeProvider unexpectedLockFileSizeFileSystemProvider =
+                new FileSystemUnexpectedLockFileSizeProvider(fileSystem, 1, testThreadPool);
         fileSystem = unexpectedLockFileSizeFileSystemProvider.getFileSystem(null);
         PathUtilsForTesting.installMock(fileSystem);
         final ClusterSettings clusterSettings = new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS);
@@ -273,20 +270,19 @@ public class FsHealthServiceTests extends ESTestCase {
             super("disrupt_fs_health://", inner);
         }
 
-        public void restrictPathPrefix(String pathPrefix){
+        public void restrictPathPrefix(String pathPrefix) {
             this.pathPrefix = pathPrefix;
         }
 
-        public int getInjectedPathCount(){
+        public int getInjectedPathCount() {
             return injectedPaths.get();
         }
 
         @Override
         public OutputStream newOutputStream(Path path, OpenOption... options) throws IOException {
-            if (injectIOException.get()){
+            if (injectIOException.get()) {
                 assert pathPrefix != null : "must set pathPrefix before starting disruptions";
-                if (path.toString().startsWith(pathPrefix) && path.toString().
-                    endsWith(FsHealthService.FsHealthMonitor.TEMP_FILE_NAME)) {
+                if (path.toString().startsWith(pathPrefix) && path.toString().endsWith(FsHealthService.FsHealthMonitor.TEMP_FILE_NAME)) {
                     injectedPaths.incrementAndGet();
                     throw new IOException("fake IOException");
                 }
@@ -306,11 +302,11 @@ public class FsHealthServiceTests extends ESTestCase {
             super("disrupt_fs_health://", inner);
         }
 
-        public void restrictPathPrefix(String pathPrefix){
+        public void restrictPathPrefix(String pathPrefix) {
             this.pathPrefix = pathPrefix;
         }
 
-        public int getInjectedPathCount(){
+        public int getInjectedPathCount() {
             return injectedPaths.get();
         }
 
@@ -321,8 +317,8 @@ public class FsHealthServiceTests extends ESTestCase {
                 public void force(boolean metaData) throws IOException {
                     if (injectIOException.get()) {
                         assert pathPrefix != null : "must set pathPrefix before starting disruptions";
-                        if (path.toString().startsWith(pathPrefix) && path.toString().
-                            endsWith(FsHealthService.FsHealthMonitor.TEMP_FILE_NAME)) {
+                        if (path.toString().startsWith(pathPrefix)
+                                && path.toString().endsWith(FsHealthService.FsHealthMonitor.TEMP_FILE_NAME)) {
                             injectedPaths.incrementAndGet();
                             throw new IOException("fake IOException");
                         }
@@ -347,7 +343,7 @@ public class FsHealthServiceTests extends ESTestCase {
             this.threadPool = threadPool;
         }
 
-        public int getInjectedPathCount(){
+        public int getInjectedPathCount() {
             return injectedPaths.get();
         }
 
@@ -389,7 +385,7 @@ public class FsHealthServiceTests extends ESTestCase {
             this.threadPool = threadPool;
         }
 
-        public int getInjectedPathCount(){
+        public int getInjectedPathCount() {
             return injectedPaths.get();
         }
 

@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
-import org.codelibs.fesen.search.aggregations.ParsedAggregation;
-import org.codelibs.fesen.search.aggregations.metrics.InternalStats.Fields;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+import org.codelibs.fesen.search.aggregations.metrics.InternalStats.Fields;
 
 public class ParsedStats extends ParsedAggregation implements Stats {
 
@@ -115,8 +115,8 @@ public class ParsedStats extends ParsedAggregation implements Stats {
         return builder;
     }
 
-    private static final ObjectParser<ParsedStats, Void> PARSER = new ObjectParser<>(ParsedStats.class.getSimpleName(), true,
-            ParsedStats::new);
+    private static final ObjectParser<ParsedStats, Void> PARSER =
+            new ObjectParser<>(ParsedStats.class.getSimpleName(), true, ParsedStats::new);
 
     static {
         declareStatsFields(PARSER);

@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import java.util.List;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
-
-import java.util.List;
 
 /**
  * A {@code histogram} aggregation. Defines multiple buckets, each representing an interval in a histogram.

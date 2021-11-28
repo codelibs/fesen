@@ -36,15 +36,14 @@ import org.codelibs.fesen.test.ESIntegTestCase;
  * {@link ESIntegTestCase} then this information is the node name.
  */
 @Plugin(category = PatternConverter.CATEGORY, name = "TestInfoPatternConverter")
-@ConverterKeys({"test_thread_info"})
+@ConverterKeys({ "test_thread_info" })
 public class TestThreadInfoPatternConverter extends LogEventPatternConverter {
     /**
      * Called by log4j2 to initialize this converter.
      */
     public static TestThreadInfoPatternConverter newInstance(final String[] options) {
         if (options.length > 0) {
-            throw new IllegalArgumentException("no options supported but options provided: "
-                    + Arrays.toString(options));
+            throw new IllegalArgumentException("no options supported but options provided: " + Arrays.toString(options));
         }
         return new TestThreadInfoPatternConverter();
     }
@@ -61,14 +60,10 @@ public class TestThreadInfoPatternConverter extends LogEventPatternConverter {
         }
     }
 
-    private static final Pattern ELASTICSEARCH_THREAD_NAME_PATTERN =
-            Pattern.compile("fesen\\[(.+)\\]\\[.+\\].+");
-    private static final Pattern TEST_THREAD_NAME_PATTERN =
-            Pattern.compile("TEST-.+\\.(.+)-seed#\\[.+\\]");
-    private static final Pattern TEST_SUITE_INIT_THREAD_NAME_PATTERN =
-            Pattern.compile("SUITE-.+-worker");
-    private static final Pattern NOT_YET_NAMED_NODE_THREAD_NAME_PATTERN =
-            Pattern.compile("test_SUITE-CHILD_VM.+cluster\\[T#(.+)\\]");
+    private static final Pattern ELASTICSEARCH_THREAD_NAME_PATTERN = Pattern.compile("fesen\\[(.+)\\]\\[.+\\].+");
+    private static final Pattern TEST_THREAD_NAME_PATTERN = Pattern.compile("TEST-.+\\.(.+)-seed#\\[.+\\]");
+    private static final Pattern TEST_SUITE_INIT_THREAD_NAME_PATTERN = Pattern.compile("SUITE-.+-worker");
+    private static final Pattern NOT_YET_NAMED_NODE_THREAD_NAME_PATTERN = Pattern.compile("test_SUITE-CHILD_VM.+cluster\\[T#(.+)\\]");
 
     static String threadInfo(String threadName) {
         Matcher m = ELASTICSEARCH_THREAD_NAME_PATTERN.matcher(threadName);

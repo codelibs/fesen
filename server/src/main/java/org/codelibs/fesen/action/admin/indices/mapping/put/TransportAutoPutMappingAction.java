@@ -44,15 +44,11 @@ public class TransportAutoPutMappingAction extends TransportMasterNodeAction<Put
     private final MetadataMappingService metadataMappingService;
 
     @Inject
-    public TransportAutoPutMappingAction(
-            final TransportService transportService,
-            final ClusterService clusterService,
-            final ThreadPool threadPool,
-            final MetadataMappingService metadataMappingService,
-            final ActionFilters actionFilters,
+    public TransportAutoPutMappingAction(final TransportService transportService, final ClusterService clusterService,
+            final ThreadPool threadPool, final MetadataMappingService metadataMappingService, final ActionFilters actionFilters,
             final IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(AutoPutMappingAction.NAME, transportService, clusterService, threadPool, actionFilters,
-            PutMappingRequest::new, indexNameExpressionResolver);
+        super(AutoPutMappingAction.NAME, transportService, clusterService, threadPool, actionFilters, PutMappingRequest::new,
+                indexNameExpressionResolver);
         this.metadataMappingService = metadataMappingService;
     }
 
@@ -78,14 +74,14 @@ public class TransportAutoPutMappingAction extends TransportMasterNodeAction<Put
 
     @Override
     protected ClusterBlockException checkBlock(PutMappingRequest request, ClusterState state) {
-        String[] indices = new String[] {request.getConcreteIndex().getName()};
+        String[] indices = new String[] { request.getConcreteIndex().getName() };
         return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_WRITE, indices);
     }
 
     @Override
     protected void masterOperation(final PutMappingRequest request, final ClusterState state,
-                                   final ActionListener<AcknowledgedResponse> listener) {
-        final Index[] concreteIndices = new Index[] {request.getConcreteIndex()};
+            final ActionListener<AcknowledgedResponse> listener) {
+        final Index[] concreteIndices = new Index[] { request.getConcreteIndex() };
         performMappingUpdate(concreteIndices, request, listener, metadataMappingService);
     }
 

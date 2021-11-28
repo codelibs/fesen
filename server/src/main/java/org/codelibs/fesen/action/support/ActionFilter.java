@@ -40,6 +40,7 @@ public interface ActionFilter {
      */
     <Request extends ActionRequest, Response extends ActionResponse> void apply(Task task, String action, Request request,
             ActionListener<Response> listener, ActionFilterChain<Request, Response> chain);
+
     /**
      * A simple base class for injectable action filters that spares the implementation from handling the
      * filter chain. This base class should serve any action filter implementations that doesn't require

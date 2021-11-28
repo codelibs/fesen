@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.cluster.service;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.text.Text;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
 
 public class PendingClusterTask implements Writeable {
 

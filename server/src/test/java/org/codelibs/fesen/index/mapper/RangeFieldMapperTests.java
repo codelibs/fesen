@@ -47,7 +47,6 @@ import static org.codelibs.fesen.index.query.RangeQueryBuilder.LT_FIELD;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 
-
 public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     private static final String FROM_DATE = "2016-10-31";
     private static final String TO_DATE = "2016-11-01 20:00:00";
@@ -61,14 +60,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
 
     @Override
     protected Set<String> types() {
-        return org.codelibs.fesen.core.Set.of(
-            "date_range",
-            "ip_range",
-            "float_range",
-            "double_range",
-            "integer_range",
-            "long_range"
-        );
+        return org.codelibs.fesen.core.Set.of("date_range", "ip_range", "float_range", "double_range", "integer_range", "long_range");
     }
 
     @Override
@@ -104,8 +96,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         checker.registerConflictCheck("doc_values", b -> b.field("doc_values", false));
         checker.registerConflictCheck("index", b -> b.field("index", false));
         checker.registerConflictCheck("store", b -> b.field("store", true));
-        checker.registerUpdateCheck(b -> b.field("coerce", false),
-            m -> assertFalse(((RangeFieldMapper)m).coerce()));
+        checker.registerUpdateCheck(b -> b.field("coerce", false), m -> assertFalse(((RangeFieldMapper) m).coerce()));
         checker.registerUpdateCheck(b -> b.field("boost", 2.0), m -> assertEquals(m.fieldType().boost(), 2.0, 0));
     }
 
@@ -165,8 +156,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         assertEquals(Strings.toString(mapping), mapper.mappingSource().toString());
 
         ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject())
-        );
+                source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject()));
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(2, fields.length);
         IndexableField dvField = fields[0];
@@ -181,8 +171,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     protected void doTestNotIndexed(String type) throws Exception {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> b.field("index", false)));
         ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject())
-        );
+                source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject()));
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(1, fields.length);
     }
@@ -191,8 +180,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     protected void doTestNoDocValues(String type) throws Exception {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> b.field("doc_values", false)));
         ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject())
-        );
+                source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject()));
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(1, fields.length);
         IndexableField pointField = fields[0];
@@ -203,8 +191,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     protected void doTestStore(String type) throws Exception {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> b.field("store", true)));
         ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject())
-        );
+                source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject()));
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(3, fields.length);
         IndexableField dvField = fields[0];
@@ -218,7 +205,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
             strVal = "1477872000000";
         } else if (type.equals("ip_range")) {
             strVal = InetAddresses.toAddrString(InetAddresses.forString("192.168.1.7")) + " : "
-                + InetAddresses.toAddrString(InetAddresses.forString("2001:db8:0:0:0:0:0:0"));
+                    + InetAddresses.toAddrString(InetAddresses.forString("2001:db8:0:0:0:0:0:0"));
         }
         assertThat(storedField.stringValue(), containsString(strVal));
     }
@@ -227,8 +214,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     public void doTestCoerce(String type) throws IOException {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> {}));
         ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject())
-        );
+                source(b -> b.startObject("field").field(getFromField(), getFrom(type)).field(getToField(), getTo(type)).endObject()));
 
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(2, fields.length);
@@ -241,10 +227,8 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         if (type.equals("date_range") == false) {
             DocumentMapper mapper2 = createDocumentMapper(rangeFieldMapping(type, b -> b.field("coerce", false)));
 
-            MapperParsingException e = expectThrows(
-                MapperParsingException.class,
-                () -> mapper2.parse(source(b -> b.startObject("field").field(getFromField(), "5.2").field(getToField(), "10").endObject()))
-            );
+            MapperParsingException e = expectThrows(MapperParsingException.class, () -> mapper2
+                    .parse(source(b -> b.startObject("field").field(getFromField(), "5.2").field(getToField(), "10").endObject())));
             assertThat(e.getCause().getMessage(), anyOf(containsString("passed as String"), containsString("failed to parse date"),
                     containsString("is not an IP string literal")));
         }
@@ -254,18 +238,11 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     protected void doTestDecimalCoerce(String type) throws IOException {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> {}));
 
-        ParsedDocument doc1 = mapper.parse(
-            source(
-                b -> b.startObject("field")
-                    .field(GT_FIELD.getPreferredName(), "2.34")
-                    .field(LT_FIELD.getPreferredName(), "5.67")
-                    .endObject()
-            )
-        );
+        ParsedDocument doc1 = mapper.parse(source(b -> b.startObject("field").field(GT_FIELD.getPreferredName(), "2.34")
+                .field(LT_FIELD.getPreferredName(), "5.67").endObject()));
 
-        ParsedDocument doc2 = mapper.parse(
-            source(b -> b.startObject("field").field(GT_FIELD.getPreferredName(), "2").field(LT_FIELD.getPreferredName(), "5").endObject())
-        );
+        ParsedDocument doc2 = mapper.parse(source(
+                b -> b.startObject("field").field(GT_FIELD.getPreferredName(), "2").field(LT_FIELD.getPreferredName(), "5").endObject()));
 
         IndexableField[] fields1 = doc1.rootDoc().getFields("field");
         IndexableField[] fields2 = doc2.rootDoc().getFields("field");
@@ -278,13 +255,12 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         DocumentMapper mapper = createDocumentMapper(rangeFieldMapping(type, b -> b.field("store", true)));
 
         // test null value for min and max
-        ParsedDocument doc = mapper.parse(
-            source(b -> b.startObject("field").nullField(getFromField()).nullField(getToField()).endObject())
-        );
+        ParsedDocument doc =
+                mapper.parse(source(b -> b.startObject("field").nullField(getFromField()).nullField(getToField()).endObject()));
         assertEquals(3, doc.rootDoc().getFields("field").length);
         IndexableField[] fields = doc.rootDoc().getFields("field");
         IndexableField storedField = fields[2];
-        String expected = type.equals("ip_range") ? InetAddresses.toAddrString((InetAddress)getMax(type)) : getMax(type) +"";
+        String expected = type.equals("ip_range") ? InetAddresses.toAddrString((InetAddress) getMax(type)) : getMax(type) + "";
         assertThat(storedField.stringValue(), containsString(expected));
 
         // test null max value
@@ -303,7 +279,7 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
             strVal = "1477872000000";
         } else if (type.equals("ip_range")) {
             strVal = InetAddresses.toAddrString(InetAddresses.forString("192.168.1.7")) + " : "
-                + InetAddresses.toAddrString(InetAddresses.forString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
+                    + InetAddresses.toAddrString(InetAddresses.forString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
         }
         assertThat(storedField.stringValue(), containsString(strVal));
 
@@ -333,15 +309,13 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         assertFalse(pointField.fieldType().stored());
         IndexableField storedField = fields[2];
         assertTrue(storedField.fieldType().stored());
-        String expected = type.equals("ip_range") ? InetAddresses.toAddrString((InetAddress)getMax(type)) : getMax(type) +"";
+        String expected = type.equals("ip_range") ? InetAddresses.toAddrString((InetAddress) getMax(type)) : getMax(type) + "";
         assertThat(storedField.stringValue(), containsString(expected));
     }
 
     public void testIllegalArguments() throws Exception {
-        Exception e = expectThrows(
-            MapperParsingException.class,
-            () -> createDocumentMapper(fieldMapping(b -> b.field("type", RangeType.INTEGER.name).field("format", DATE_FORMAT)))
-        );
+        Exception e = expectThrows(MapperParsingException.class,
+                () -> createDocumentMapper(fieldMapping(b -> b.field("type", RangeType.INTEGER.name).field("format", DATE_FORMAT))));
         assertThat(e.getMessage(), containsString("should not define a dateTimeFormatter"));
     }
 
@@ -361,10 +335,8 @@ public class RangeFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     }
 
     public void testIllegalFormatField() throws Exception {
-        Exception e = expectThrows(
-            MapperParsingException.class,
-            () -> createMapperService(fieldMapping(b -> b.field("type", "date_range").array("format", "test_format")))
-        );
+        Exception e = expectThrows(MapperParsingException.class,
+                () -> createMapperService(fieldMapping(b -> b.field("type", "date_range").array("format", "test_format"))));
         assertThat(e.getMessage(), containsString("Invalid format: [[test_format]]: Unknown pattern letter: t"));
     }
 

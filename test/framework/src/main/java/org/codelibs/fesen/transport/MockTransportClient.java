@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.transport;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.codelibs.fesen.client.transport.TransportClient;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.network.NetworkModule;
@@ -25,15 +29,11 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.transport.nio.MockNioTransportPlugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
-@SuppressWarnings({"unchecked","varargs"})
+@SuppressWarnings({ "unchecked", "varargs" })
 @Deprecated
 public class MockTransportClient extends TransportClient {
-    private static final Settings DEFAULT_SETTINGS = Settings.builder().put("transport.type.default",
-        MockNioTransportPlugin.MOCK_NIO_TRANSPORT_NAME).build();
+    private static final Settings DEFAULT_SETTINGS =
+            Settings.builder().put("transport.type.default", MockNioTransportPlugin.MOCK_NIO_TRANSPORT_NAME).build();
 
     public MockTransportClient(Settings settings, Class<? extends Plugin>... plugins) {
         this(settings, Arrays.asList(plugins));
@@ -48,7 +48,7 @@ public class MockTransportClient extends TransportClient {
     }
 
     private static Collection<Class<? extends Plugin>> addMockTransportIfMissing(Settings settings,
-                                                                                 Collection<Class<? extends Plugin>> plugins) {
+            Collection<Class<? extends Plugin>> plugins) {
         boolean settingExists = NetworkModule.TRANSPORT_TYPE_SETTING.exists(settings);
         String transportType = NetworkModule.TRANSPORT_TYPE_SETTING.get(settings);
         if (settingExists == false || MockNioTransportPlugin.MOCK_NIO_TRANSPORT_NAME.equals(transportType)) {

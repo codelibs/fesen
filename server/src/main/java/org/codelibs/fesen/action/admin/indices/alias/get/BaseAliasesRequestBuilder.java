@@ -26,9 +26,8 @@ import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBu
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
-public abstract class BaseAliasesRequestBuilder<Response extends ActionResponse,
-                                                Builder extends BaseAliasesRequestBuilder<Response, Builder>>
-    extends MasterNodeReadOperationRequestBuilder<GetAliasesRequest, Response, Builder> {
+public abstract class BaseAliasesRequestBuilder<Response extends ActionResponse, Builder extends BaseAliasesRequestBuilder<Response, Builder>>
+        extends MasterNodeReadOperationRequestBuilder<GetAliasesRequest, Response, Builder> {
 
     public BaseAliasesRequestBuilder(FesenClient client, ActionType<Response> action, String... aliases) {
         super(client, action, new GetAliasesRequest(aliases));

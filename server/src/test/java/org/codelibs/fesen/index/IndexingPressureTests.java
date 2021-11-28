@@ -33,11 +33,11 @@ public class IndexingPressureTests extends ESTestCase {
     public void testMemoryBytesMarkedAndReleased() {
         IndexingPressure indexingPressure = new IndexingPressure(settings);
         try (Releasable coordinating = indexingPressure.markCoordinatingOperationStarted(10, false);
-             Releasable coordinating2 = indexingPressure.markCoordinatingOperationStarted(50, false);
-             Releasable primary = indexingPressure.markPrimaryOperationStarted(15, true);
-             Releasable primary2 = indexingPressure.markPrimaryOperationStarted(5, false);
-             Releasable replica = indexingPressure.markReplicaOperationStarted(25, true);
-             Releasable replica2 = indexingPressure.markReplicaOperationStarted(10, false)) {
+                Releasable coordinating2 = indexingPressure.markCoordinatingOperationStarted(50, false);
+                Releasable primary = indexingPressure.markPrimaryOperationStarted(15, true);
+                Releasable primary2 = indexingPressure.markPrimaryOperationStarted(5, false);
+                Releasable replica = indexingPressure.markReplicaOperationStarted(25, true);
+                Releasable replica2 = indexingPressure.markReplicaOperationStarted(10, false)) {
             IndexingPressureStats stats = indexingPressure.stats();
             assertEquals(60, stats.getCurrentCoordinatingBytes());
             assertEquals(20, stats.getCurrentPrimaryBytes());
@@ -58,7 +58,7 @@ public class IndexingPressureTests extends ESTestCase {
     public void testAvoidDoubleAccounting() {
         IndexingPressure indexingPressure = new IndexingPressure(settings);
         try (Releasable coordinating = indexingPressure.markCoordinatingOperationStarted(10, false);
-             Releasable primary = indexingPressure.markPrimaryOperationLocalToCoordinatingNodeStarted(15)) {
+                Releasable primary = indexingPressure.markPrimaryOperationLocalToCoordinatingNodeStarted(15)) {
             IndexingPressureStats stats = indexingPressure.stats();
             assertEquals(10, stats.getCurrentCoordinatingBytes());
             assertEquals(15, stats.getCurrentPrimaryBytes());
@@ -76,8 +76,8 @@ public class IndexingPressureTests extends ESTestCase {
     public void testCoordinatingPrimaryRejections() {
         IndexingPressure indexingPressure = new IndexingPressure(settings);
         try (Releasable coordinating = indexingPressure.markCoordinatingOperationStarted(1024 * 3, false);
-             Releasable primary = indexingPressure.markPrimaryOperationStarted(1024 * 3, false);
-             Releasable replica = indexingPressure.markReplicaOperationStarted(1024 * 3, false)) {
+                Releasable primary = indexingPressure.markPrimaryOperationStarted(1024 * 3, false);
+                Releasable replica = indexingPressure.markReplicaOperationStarted(1024 * 3, false)) {
             if (randomBoolean()) {
                 expectThrows(EsRejectedExecutionException.class, () -> indexingPressure.markCoordinatingOperationStarted(1024 * 2, false));
                 IndexingPressureStats stats = indexingPressure.stats();
@@ -111,8 +111,8 @@ public class IndexingPressureTests extends ESTestCase {
     public void testReplicaRejections() {
         IndexingPressure indexingPressure = new IndexingPressure(settings);
         try (Releasable coordinating = indexingPressure.markCoordinatingOperationStarted(1024 * 3, false);
-             Releasable primary = indexingPressure.markPrimaryOperationStarted(1024 * 3, false);
-             Releasable replica = indexingPressure.markReplicaOperationStarted(1024 * 3, false)) {
+                Releasable primary = indexingPressure.markPrimaryOperationStarted(1024 * 3, false);
+                Releasable replica = indexingPressure.markReplicaOperationStarted(1024 * 3, false)) {
             // Replica will not be rejected until replica bytes > 15KB
             Releasable replica2 = indexingPressure.markReplicaOperationStarted(1024 * 11, false);
             assertEquals(1024 * 14, indexingPressure.stats().getCurrentReplicaBytes());

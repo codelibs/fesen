@@ -163,18 +163,9 @@ public class CreateIndexClusterStateUpdateRequest extends ClusterStateUpdateRequ
 
     @Override
     public String toString() {
-        return "CreateIndexClusterStateUpdateRequest{" +
-            "cause='" + cause + '\'' +
-            ", index='" + index + '\'' +
-            ", dataStreamName='" + dataStreamName + '\'' +
-            ", providedName='" + providedName + '\'' +
-            ", recoverFrom=" + recoverFrom +
-            ", resizeType=" + resizeType +
-            ", copySettings=" + copySettings +
-            ", settings=" + settings +
-            ", aliases=" + aliases +
-            ", blocks=" + blocks +
-            ", waitForActiveShards=" + waitForActiveShards +
-            '}';
+        return "CreateIndexClusterStateUpdateRequest{" + "cause='" + cause + '\'' + ", index='" + index + '\'' + ", dataStreamName='"
+                + dataStreamName + '\'' + ", providedName='" + providedName + '\'' + ", recoverFrom=" + recoverFrom + ", resizeType="
+                + resizeType + ", copySettings=" + copySettings + ", settings=" + settings + ", aliases=" + aliases + ", blocks=" + blocks
+                + ", waitForActiveShards=" + waitForActiveShards + '}';
     }
 }

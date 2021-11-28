@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.snapshots;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -28,11 +33,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Information about successfully completed restore operation.
@@ -49,7 +49,8 @@ public class RestoreInfo implements ToXContentObject, Writeable {
 
     private int successfulShards;
 
-    RestoreInfo() {}
+    RestoreInfo() {
+    }
 
     public RestoreInfo(String name, List<String> indices, int totalShards, int successfulShards) {
         this.name = name;
@@ -98,7 +99,7 @@ public class RestoreInfo implements ToXContentObject, Writeable {
      * @return number of failed shards
      */
     public int failedShards() {
-        return totalShards -  successfulShards;
+        return totalShards - successfulShards;
     }
 
     /**
@@ -146,8 +147,7 @@ public class RestoreInfo implements ToXContentObject, Writeable {
         return builder;
     }
 
-    private static final ObjectParser<RestoreInfo, Void> PARSER = new ObjectParser<>(RestoreInfo.class.getName(),
-        true, RestoreInfo::new);
+    private static final ObjectParser<RestoreInfo, Void> PARSER = new ObjectParser<>(RestoreInfo.class.getName(), true, RestoreInfo::new);
 
     static {
         ObjectParser<RestoreInfo, Void> shardsParser = new ObjectParser<>("shards", true, null);
@@ -184,13 +184,13 @@ public class RestoreInfo implements ToXContentObject, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RestoreInfo that = (RestoreInfo) o;
-        return totalShards == that.totalShards &&
-            successfulShards == that.successfulShards &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(indices, that.indices);
+        return totalShards == that.totalShards && successfulShards == that.successfulShards && Objects.equals(name, that.name)
+                && Objects.equals(indices, that.indices);
     }
 
     @Override

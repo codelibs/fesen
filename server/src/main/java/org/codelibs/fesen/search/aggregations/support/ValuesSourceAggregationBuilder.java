@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.support;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,56 +37,45 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationInitializationException;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Map;
-import java.util.Objects;
+public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggregationBuilder<AB>> extends AbstractAggregationBuilder<AB> {
 
-public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggregationBuilder<AB>>
-        extends AbstractAggregationBuilder<AB> {
-
-    public static <T> void declareFields(
-        AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
-        boolean scriptable, boolean formattable, boolean timezoneAware) {
+    public static <T> void declareFields(AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
+            boolean scriptable, boolean formattable, boolean timezoneAware) {
         declareFields(objectParser, scriptable, formattable, timezoneAware, true);
 
     }
-    public static <T> void declareFields(
-        AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
-        boolean scriptable, boolean formattable, boolean timezoneAware, boolean fieldRequired) {
 
+    public static <T> void declareFields(AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
+            boolean scriptable, boolean formattable, boolean timezoneAware, boolean fieldRequired) {
 
-        objectParser.declareField(ValuesSourceAggregationBuilder::field, XContentParser::text,
-            ParseField.CommonFields.FIELD, ObjectParser.ValueType.STRING);
+        objectParser.declareField(ValuesSourceAggregationBuilder::field, XContentParser::text, ParseField.CommonFields.FIELD,
+                ObjectParser.ValueType.STRING);
 
-        objectParser.declareField(ValuesSourceAggregationBuilder::missing, XContentParser::objectText,
-            ParseField.CommonFields.MISSING, ObjectParser.ValueType.VALUE);
+        objectParser.declareField(ValuesSourceAggregationBuilder::missing, XContentParser::objectText, ParseField.CommonFields.MISSING,
+                ObjectParser.ValueType.VALUE);
 
         objectParser.declareField(ValuesSourceAggregationBuilder::userValueTypeHint, p -> {
-                ValueType type = ValueType.lenientParse(p.text());
-                if (type == null) {
-                    throw new IllegalArgumentException("Unknown value type [" + p.text() + "]");
-                }
-                return type;
-            },
-            ValueType.VALUE_TYPE, ObjectParser.ValueType.STRING);
+            ValueType type = ValueType.lenientParse(p.text());
+            if (type == null) {
+                throw new IllegalArgumentException("Unknown value type [" + p.text() + "]");
+            }
+            return type;
+        }, ValueType.VALUE_TYPE, ObjectParser.ValueType.STRING);
 
         if (formattable) {
-            objectParser.declareField(ValuesSourceAggregationBuilder::format, XContentParser::text,
-                ParseField.CommonFields.FORMAT, ObjectParser.ValueType.STRING);
+            objectParser.declareField(ValuesSourceAggregationBuilder::format, XContentParser::text, ParseField.CommonFields.FORMAT,
+                    ObjectParser.ValueType.STRING);
         }
 
         if (scriptable) {
-            objectParser.declareField(ValuesSourceAggregationBuilder::script,
-                    (parser, context) -> Script.parse(parser),
+            objectParser.declareField(ValuesSourceAggregationBuilder::script, (parser, context) -> Script.parse(parser),
                     Script.SCRIPT_PARSE_FIELD, ObjectParser.ValueType.OBJECT_OR_STRING);
             if (fieldRequired) {
-                String[] fields = new String[]{ParseField.CommonFields.FIELD.getPreferredName(),
-                    Script.SCRIPT_PARSE_FIELD.getPreferredName()};
+                String[] fields =
+                        new String[] { ParseField.CommonFields.FIELD.getPreferredName(), Script.SCRIPT_PARSE_FIELD.getPreferredName() };
                 objectParser.declareRequiredFieldSet(fields);
             }
         } else {
@@ -110,8 +105,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         protected LeafOnly(LeafOnly<VS, AB> clone, Builder factoriesBuilder, Map<String, Object> metadata) {
             super(clone, factoriesBuilder, metadata);
             if (factoriesBuilder.count() > 0) {
-                throw new AggregationInitializationException("Aggregator [" + name + "] of type ["
-                    + getType() + "] cannot accept sub-aggregations");
+                throw new AggregationInitializationException(
+                        "Aggregator [" + name + "] of type [" + getType() + "] cannot accept sub-aggregations");
             }
         }
 
@@ -124,8 +119,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
         @Override
         public final AB subAggregations(Builder subFactories) {
-            throw new AggregationInitializationException("Aggregator [" + name + "] of type ["
-                    + getType() + "] cannot accept sub-aggregations");
+            throw new AggregationInitializationException(
+                    "Aggregator [" + name + "] of type [" + getType() + "] cannot accept sub-aggregations");
         }
 
         @Override
@@ -146,8 +141,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         super(name);
     }
 
-    protected ValuesSourceAggregationBuilder(ValuesSourceAggregationBuilder<AB> clone,
-                                             Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected ValuesSourceAggregationBuilder(ValuesSourceAggregationBuilder<AB> clone, Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.field = clone.field;
         this.userValueTypeHint = clone.userValueTypeHint;
@@ -161,8 +156,7 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     /**
      * Read from a stream.
      */
-    protected ValuesSourceAggregationBuilder(StreamInput in)
-            throws IOException {
+    protected ValuesSourceAggregationBuilder(StreamInput in) throws IOException {
         super(in);
         if (serializeTargetValueType(in.getVersion())) {
             ValueType valueType = in.readOptionalWriteable(ValueType::readFromStream);
@@ -355,7 +349,7 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     @Override
     protected final ValuesSourceAggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent,
-                                                          Builder subFactoriesBuilder) throws IOException {
+            Builder subFactoriesBuilder) throws IOException {
         ValuesSourceConfig config = resolveConfig(queryShardContext);
         if (queryShardContext.getValuesSourceRegistry().isRegistered(getRegistryKey())) {
             /*
@@ -381,14 +375,12 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     protected abstract ValuesSourceType defaultValueSourceType();
 
     protected ValuesSourceConfig resolveConfig(QueryShardContext queryShardContext) {
-        return ValuesSourceConfig.resolve(queryShardContext,
-                this.userValueTypeHint, field, script, missing, timeZone, format, this.defaultValueSourceType());
+        return ValuesSourceConfig.resolve(queryShardContext, this.userValueTypeHint, field, script, missing, timeZone, format,
+                this.defaultValueSourceType());
     }
 
-    protected abstract ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
-                                                                ValuesSourceConfig config,
-                                                                AggregatorFactory parent,
-                                                                Builder subFactoriesBuilder) throws IOException;
+    protected abstract ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+            AggregatorFactory parent, Builder subFactoriesBuilder) throws IOException;
 
     @Override
     public final XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {
@@ -425,15 +417,15 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         ValuesSourceAggregationBuilder<?> other = (ValuesSourceAggregationBuilder<?>) obj;
-        return Objects.equals(field, other.field)
-            && Objects.equals(format, other.format)
-            && Objects.equals(missing, other.missing)
-            && Objects.equals(script, other.script)
-            && Objects.equals(timeZone, other.timeZone)
-            && Objects.equals(userValueTypeHint, other.userValueTypeHint);
+        return Objects.equals(field, other.field) && Objects.equals(format, other.format) && Objects.equals(missing, other.missing)
+                && Objects.equals(script, other.script) && Objects.equals(timeZone, other.timeZone)
+                && Objects.equals(userValueTypeHint, other.userValueTypeHint);
     }
 }

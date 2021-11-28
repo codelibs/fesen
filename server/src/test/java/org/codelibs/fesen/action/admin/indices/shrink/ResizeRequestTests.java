@@ -80,8 +80,8 @@ public class ResizeRequestTests extends ESTestCase {
             target.settings(settings);
             request.setTargetIndex(target);
             String actualRequestBody = Strings.toString(request);
-            String expectedRequestBody = "{\"settings\":{\"index\":{\"number_of_shards\":\"10\"}}," +
-                    "\"aliases\":{\"test_alias\":{\"filter\":{\"term\":{\"year\":2016}},\"routing\":\"1\",\"is_write_index\":true}}}";
+            String expectedRequestBody = "{\"settings\":{\"index\":{\"number_of_shards\":\"10\"}},"
+                    + "\"aliases\":{\"test_alias\":{\"filter\":{\"term\":{\"year\":2016}},\"routing\":\"1\",\"is_write_index\":true}}}";
             assertEquals(expectedRequestBody, actualRequestBody);
         }
     }
@@ -93,8 +93,8 @@ public class ResizeRequestTests extends ESTestCase {
         final XContentType xContentType = randomFrom(XContentType.values());
         BytesReference originalBytes = toShuffledXContent(resizeRequest, xContentType, EMPTY_PARAMS, humanReadable);
 
-        ResizeRequest parsedResizeRequest = new ResizeRequest(resizeRequest.getTargetIndexRequest().index(),
-                resizeRequest.getSourceIndex());
+        ResizeRequest parsedResizeRequest =
+                new ResizeRequest(resizeRequest.getTargetIndexRequest().index(), resizeRequest.getSourceIndex());
         try (XContentParser xParser = createParser(xContentType.xContent(), originalBytes)) {
             parsedResizeRequest.fromXContent(xParser);
         }

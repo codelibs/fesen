@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.join.aggregations;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,18 +34,14 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.join.mapper.ParentIdFieldMapper;
 import org.codelibs.fesen.join.mapper.ParentJoinFieldMapper;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 public class ChildrenAggregationBuilder extends ValuesSourceAggregationBuilder<ChildrenAggregationBuilder> {
 
@@ -65,8 +65,7 @@ public class ChildrenAggregationBuilder extends ValuesSourceAggregationBuilder<C
         this.childType = childType;
     }
 
-    protected ChildrenAggregationBuilder(ChildrenAggregationBuilder clone,
-                                         Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected ChildrenAggregationBuilder(ChildrenAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.childType = clone.childType;
         this.childFilter = clone.childFilter;
@@ -102,12 +101,10 @@ public class ChildrenAggregationBuilder extends ValuesSourceAggregationBuilder<C
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
-                                                       ValuesSourceConfig config,
-                                                       AggregatorFactory parent,
-                                                       Builder subFactoriesBuilder) throws IOException {
-        return new ChildrenAggregatorFactory(name, config, childFilter, parentFilter, queryShardContext, parent,
-                subFactoriesBuilder, metadata);
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+            AggregatorFactory parent, Builder subFactoriesBuilder) throws IOException {
+        return new ChildrenAggregatorFactory(name, config, childFilter, parentFilter, queryShardContext, parent, subFactoriesBuilder,
+                metadata);
     }
 
     @Override
@@ -176,9 +173,12 @@ public class ChildrenAggregationBuilder extends ValuesSourceAggregationBuilder<C
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         ChildrenAggregationBuilder other = (ChildrenAggregationBuilder) obj;
         return Objects.equals(childType, other.childType);
     }

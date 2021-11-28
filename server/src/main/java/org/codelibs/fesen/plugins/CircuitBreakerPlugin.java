@@ -24,7 +24,6 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.indices.breaker.BreakerSettings;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 
-
 /**
  * An extension point for {@link Plugin} implementations to add custom circuit breakers
  */

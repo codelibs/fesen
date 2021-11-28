@@ -24,7 +24,6 @@ import java.util.List;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 
-
 /**
  * Represents a single log line in a json format.
  * Parsing log lines with this class confirms the json format of logs

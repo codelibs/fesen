@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
@@ -30,44 +34,30 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 final class MatrixStatsAggregatorFactory extends ArrayValuesSourceAggregatorFactory {
 
     private final MultiValueMode multiValueMode;
 
-    MatrixStatsAggregatorFactory(String name,
-                                    Map<String, ValuesSourceConfig> configs,
-                                    MultiValueMode multiValueMode,
-                                    QueryShardContext queryShardContext,
-                                    AggregatorFactory parent,
-                                    AggregatorFactories.Builder subFactoriesBuilder,
-                                    Map<String, Object> metadata) throws IOException {
+    MatrixStatsAggregatorFactory(String name, Map<String, ValuesSourceConfig> configs, MultiValueMode multiValueMode,
+            QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+            Map<String, Object> metadata) throws IOException {
         super(name, configs, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.multiValueMode = multiValueMode;
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                            Aggregator parent,
-                                            Map<String, Object> metadata)
-        throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
         return new MatrixStatsAggregator(name, null, searchContext, parent, multiValueMode, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(Map<String, ValuesSource> valuesSources,
-                                            SearchContext searchContext,
-                                            Aggregator parent,
-                                            CardinalityUpperBound cardinality,
-                                            Map<String, Object> metadata) throws IOException {
+    protected Aggregator doCreateInternal(Map<String, ValuesSource> valuesSources, SearchContext searchContext, Aggregator parent,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
         Map<String, ValuesSource.Numeric> typedValuesSources = new HashMap<>(valuesSources.size());
         for (Map.Entry<String, ValuesSource> entry : valuesSources.entrySet()) {
             if (entry.getValue() instanceof ValuesSource.Numeric == false) {
-                throw new AggregationExecutionException("ValuesSource type " + entry.getValue().toString() +
-                    "is not supported for aggregation " + this.name());
+                throw new AggregationExecutionException(
+                        "ValuesSource type " + entry.getValue().toString() + "is not supported for aggregation " + this.name());
             }
             // TODO: There must be a better option than this.
             typedValuesSources.put(entry.getKey(), (ValuesSource.Numeric) entry.getValue());

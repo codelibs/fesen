@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.script.expression;
 
+import java.io.IOException;
+
 import org.apache.lucene.expressions.Expression;
 import org.apache.lucene.expressions.SimpleBindings;
 import org.apache.lucene.index.LeafReaderContext;
@@ -26,8 +28,6 @@ import org.apache.lucene.search.DoubleValues;
 import org.apache.lucene.search.DoubleValuesSource;
 import org.codelibs.fesen.script.FieldScript;
 import org.codelibs.fesen.script.GeneralScriptException;
-
-import java.io.IOException;
 
 public class ExpressionFieldScript implements FieldScript.LeafFactory {
     private final Expression exprScript;

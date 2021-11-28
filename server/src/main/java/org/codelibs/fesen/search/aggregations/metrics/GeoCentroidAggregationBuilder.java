@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -34,19 +37,14 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class GeoCentroidAggregationBuilder
         extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.GeoPoint, GeoCentroidAggregationBuilder> {
     public static final String NAME = "geo_centroid";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        MetricAggregatorSupplier.class
-    );
+    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY =
+            new ValuesSourceRegistry.RegistryKey<>(NAME, MetricAggregatorSupplier.class);
 
     public static final ObjectParser<GeoCentroidAggregationBuilder, String> PARSER =
-        ObjectParser.fromBuilder(NAME, GeoCentroidAggregationBuilder::new);
+            ObjectParser.fromBuilder(NAME, GeoCentroidAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, false, false);
     }
@@ -59,9 +57,8 @@ public class GeoCentroidAggregationBuilder
         super(name);
     }
 
-    protected GeoCentroidAggregationBuilder(GeoCentroidAggregationBuilder clone,
-                                            AggregatorFactories.Builder factoriesBuilder,
-                                            Map<String, Object> metadata) {
+    protected GeoCentroidAggregationBuilder(GeoCentroidAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -89,8 +86,7 @@ public class GeoCentroidAggregationBuilder
 
     @Override
     protected GeoCentroidAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-                                                      AggregatorFactory parent,
-                                                      AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new GeoCentroidAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

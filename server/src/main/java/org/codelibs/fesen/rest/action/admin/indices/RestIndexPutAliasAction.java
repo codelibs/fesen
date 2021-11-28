@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesRequest;
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -27,31 +36,14 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 public class RestIndexPutAliasAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/{index}/_alias/{name}"),
-            new Route(PUT, "/{index}/_alias/{name}"),
-            new Route(POST, "/_alias/{name}"),
-            new Route(PUT, "/_alias/{name}"),
-            new Route(POST, "/{index}/_aliases/{name}"),
-            new Route(PUT, "/{index}/_aliases/{name}"),
-            new Route(POST, "/_aliases/{name}"),
-            new Route(PUT, "/_aliases/{name}"),
-            new Route(PUT, "/{index}/_alias"),
-            new Route(PUT, "/{index}/_aliases"),
-            new Route(PUT, "/_alias")));
+        return unmodifiableList(asList(new Route(POST, "/{index}/_alias/{name}"), new Route(PUT, "/{index}/_alias/{name}"),
+                new Route(POST, "/_alias/{name}"), new Route(PUT, "/_alias/{name}"), new Route(POST, "/{index}/_aliases/{name}"),
+                new Route(PUT, "/{index}/_aliases/{name}"), new Route(POST, "/_aliases/{name}"), new Route(PUT, "/_aliases/{name}"),
+                new Route(PUT, "/{index}/_alias"), new Route(PUT, "/{index}/_aliases"), new Route(PUT, "/_alias")));
     }
 
     @Override
@@ -86,11 +78,11 @@ public class RestIndexPutAliasAction extends BaseRestHandler {
                             alias = parser.text();
                         } else if ("routing".equals(currentFieldName)) {
                             routing = parser.textOrNull();
-                        } else if ("indexRouting".equals(currentFieldName)
-                                || "index-routing".equals(currentFieldName) || "index_routing".equals(currentFieldName)) {
+                        } else if ("indexRouting".equals(currentFieldName) || "index-routing".equals(currentFieldName)
+                                || "index_routing".equals(currentFieldName)) {
                             indexRouting = parser.textOrNull();
-                        } else if ("searchRouting".equals(currentFieldName)
-                                || "search-routing".equals(currentFieldName) || "search_routing".equals(currentFieldName)) {
+                        } else if ("searchRouting".equals(currentFieldName) || "search-routing".equals(currentFieldName)
+                                || "search_routing".equals(currentFieldName)) {
                             searchRouting = parser.textOrNull();
                         } else if ("is_write_index".equals(currentFieldName)) {
                             writeIndex = parser.booleanValue();

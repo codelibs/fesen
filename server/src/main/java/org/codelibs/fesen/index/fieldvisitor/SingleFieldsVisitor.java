@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.index.fieldvisitor;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.StoredFieldVisitor;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.index.mapper.IdFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.Uid;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * {@linkplain StoredFieldVisitor} that loads a single field value.

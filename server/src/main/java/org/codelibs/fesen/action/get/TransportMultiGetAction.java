@@ -45,8 +45,7 @@ public class TransportMultiGetAction extends HandledTransportAction<MultiGetRequ
 
     @Inject
     public TransportMultiGetAction(TransportService transportService, ClusterService clusterService,
-                                   TransportShardMultiGetAction shardAction, ActionFilters actionFilters,
-                                   IndexNameExpressionResolver resolver) {
+            TransportShardMultiGetAction shardAction, ActionFilters actionFilters, IndexNameExpressionResolver resolver) {
         super(MultiGetAction.NAME, transportService, actionFilters, MultiGetRequest::new);
         this.clusterService = clusterService;
         this.shardAction = shardAction;
@@ -71,7 +70,7 @@ public class TransportMultiGetAction extends HandledTransportAction<MultiGetRequ
                 item.routing(clusterState.metadata().resolveIndexRouting(item.routing(), item.index()));
                 if ((item.routing() == null) && (clusterState.getMetadata().routingRequired(concreteSingleIndex))) {
                     responses.set(i, newItemFailure(concreteSingleIndex, item.type(), item.id(),
-                        new RoutingMissingException(concreteSingleIndex, item.type(), item.id())));
+                            new RoutingMissingException(concreteSingleIndex, item.type(), item.id())));
                     continue;
                 }
             } catch (Exception e) {
@@ -80,8 +79,7 @@ public class TransportMultiGetAction extends HandledTransportAction<MultiGetRequ
             }
 
             ShardId shardId = clusterService.operationRouting()
-                    .getShards(clusterState, concreteSingleIndex, item.id(), item.routing(), null)
-                    .shardId();
+                    .getShards(clusterState, concreteSingleIndex, item.id(), item.routing(), null).shardId();
 
             MultiGetShardRequest shardRequest = shardRequests.get(shardId);
             if (shardRequest == null) {
@@ -99,9 +97,8 @@ public class TransportMultiGetAction extends HandledTransportAction<MultiGetRequ
         executeShardAction(listener, responses, shardRequests);
     }
 
-    protected void executeShardAction(ActionListener<MultiGetResponse> listener,
-                                      AtomicArray<MultiGetItemResponse> responses,
-                                      Map<ShardId, MultiGetShardRequest> shardRequests) {
+    protected void executeShardAction(ActionListener<MultiGetResponse> listener, AtomicArray<MultiGetItemResponse> responses,
+            Map<ShardId, MultiGetShardRequest> shardRequests) {
         final AtomicInteger counter = new AtomicInteger(shardRequests.size());
 
         for (final MultiGetShardRequest shardRequest : shardRequests.values()) {

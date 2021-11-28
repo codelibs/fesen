@@ -19,21 +19,20 @@
 
 package org.codelibs.fesen.node;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.util.set.Sets;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.ToXContent.Params;
-import org.codelibs.fesen.core.TimeValue;
-
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Class representing statistics about adaptive replica selection. This includes
@@ -46,7 +45,7 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
     private final Map<String, ResponseCollectorService.ComputedNodeStats> nodeComputedStats;
 
     public AdaptiveSelectionStats(Map<String, Long> clientConnections,
-                                  Map<String, ResponseCollectorService.ComputedNodeStats> nodeComputedStats) {
+            Map<String, ResponseCollectorService.ComputedNodeStats> nodeComputedStats) {
         this.clientOutgoingConnections = clientConnections;
         this.nodeComputedStats = nodeComputedStats;
     }
@@ -107,8 +106,7 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
      * Returns a map of node id to the ranking of the nodes based on the adaptive replica formula
      */
     public Map<String, Double> getRanks() {
-        return nodeComputedStats.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                                e -> e.getValue().rank(clientOutgoingConnections.getOrDefault(e.getKey(), 0L))));
+        return nodeComputedStats.entrySet().stream().collect(
+                Collectors.toMap(Map.Entry::getKey, e -> e.getValue().rank(clientOutgoingConnections.getOrDefault(e.getKey(), 0L))));
     }
 }

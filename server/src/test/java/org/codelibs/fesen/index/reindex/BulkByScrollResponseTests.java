@@ -64,8 +64,8 @@ public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkBySc
 
     private List<Failure> randomIndexingFailures() {
         return usually() ? emptyList()
-                : singletonList(new Failure(randomSimpleString(random()), randomSimpleString(random()),
-                        randomSimpleString(random()), new IllegalArgumentException("test")));
+                : singletonList(new Failure(randomSimpleString(random()), randomSimpleString(random()), randomSimpleString(random()),
+                        new IllegalArgumentException("test")));
     }
 
     private List<ScrollableHitSource.SearchFailure> randomSearchFailures() {
@@ -80,8 +80,8 @@ public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkBySc
             shardId = randomInt();
             nodeId = usually() ? randomAlphaOfLength(5) : null;
         }
-        FesenException exception = randomFrom(new ResourceNotFoundException("bar"), new FesenException("foo"),
-            new NoNodeAvailableException("baz"));
+        FesenException exception =
+                randomFrom(new ResourceNotFoundException("bar"), new FesenException("foo"), new NoNodeAvailableException("baz"));
         return singletonList(new ScrollableHitSource.SearchFailure(exception, index, shardId, nodeId));
     }
 
@@ -112,7 +112,7 @@ public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkBySc
     }
 
     public static void assertEqualBulkResponse(BulkByScrollResponse expected, BulkByScrollResponse actual, boolean includeUpdated,
-                                               boolean includeCreated) {
+            boolean includeCreated) {
         assertEquals(expected.getTook(), actual.getTook());
         BulkByScrollTaskStatusTests.assertEqualStatus(expected.getStatus(), actual.getStatus(), includeUpdated, includeCreated);
         assertEquals(expected.getBulkFailures().size(), actual.getBulkFailures().size());
@@ -144,10 +144,10 @@ public class BulkByScrollResponseTests extends AbstractXContentTestCase<BulkBySc
     protected BulkByScrollResponse createTestInstance() {
         if (testExceptions) {
             return new BulkByScrollResponse(timeValueMillis(randomNonNegativeLong()), BulkByScrollTaskStatusTests.randomStatus(),
-                randomIndexingFailures(), randomSearchFailures(), randomBoolean());
+                    randomIndexingFailures(), randomSearchFailures(), randomBoolean());
         } else {
             return new BulkByScrollResponse(timeValueMillis(randomNonNegativeLong()),
-                BulkByScrollTaskStatusTests.randomStatusWithoutException(), emptyList(), emptyList(), randomBoolean());
+                    BulkByScrollTaskStatusTests.randomStatusWithoutException(), emptyList(), emptyList(), randomBoolean());
         }
     }
 

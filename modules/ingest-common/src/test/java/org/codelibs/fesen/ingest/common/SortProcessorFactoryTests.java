@@ -19,15 +19,14 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.ingest.common.SortProcessor;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class SortProcessorFactoryTests extends ESTestCase {
 
@@ -102,7 +101,7 @@ public class SortProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }

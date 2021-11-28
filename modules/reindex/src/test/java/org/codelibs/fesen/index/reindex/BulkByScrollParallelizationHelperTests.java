@@ -19,26 +19,22 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.search.builder.SearchSourceBuilder;
-import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-
 import static java.util.Collections.emptyList;
 import static org.codelibs.fesen.index.reindex.BulkByScrollParallelizationHelper.sliceIntoSubRequests;
 import static org.codelibs.fesen.search.RandomSearchRequestGenerator.randomSearchRequest;
 import static org.codelibs.fesen.search.RandomSearchRequestGenerator.randomSearchSourceBuilder;
 
+import java.io.IOException;
+
+import org.codelibs.fesen.action.search.SearchRequest;
+import org.codelibs.fesen.index.mapper.IdFieldMapper;
+import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.test.ESTestCase;
+
 public class BulkByScrollParallelizationHelperTests extends ESTestCase {
     public void testSliceIntoSubRequests() throws IOException {
-        SearchRequest searchRequest = randomSearchRequest(() -> randomSearchSourceBuilder(
-                () -> null,
-                () -> null,
-                () -> null,
-                () -> emptyList(),
-                () -> null));
+        SearchRequest searchRequest =
+                randomSearchRequest(() -> randomSearchSourceBuilder(() -> null, () -> null, () -> null, () -> emptyList(), () -> null));
         if (searchRequest.source() != null) {
             // Clear the slice builder if there is one set. We can't call sliceIntoSubRequests if it is.
             searchRequest.source().slice(null);

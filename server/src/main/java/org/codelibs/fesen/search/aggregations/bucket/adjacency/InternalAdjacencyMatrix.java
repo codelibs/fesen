@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.adjacency;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregations;
-import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,9 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class InternalAdjacencyMatrix
-    extends InternalMultiBucketAggregation<InternalAdjacencyMatrix,InternalAdjacencyMatrix.InternalBucket>
-    implements AdjacencyMatrix {
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregations;
+import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+
+public class InternalAdjacencyMatrix extends InternalMultiBucketAggregation<InternalAdjacencyMatrix, InternalAdjacencyMatrix.InternalBucket>
+        implements AdjacencyMatrix {
     public static class InternalBucket extends InternalMultiBucketAggregation.InternalBucket implements AdjacencyMatrix.Bucket {
 
         private final String key;
@@ -105,8 +104,7 @@ public class InternalAdjacencyMatrix
                 return false;
             }
             InternalBucket that = (InternalBucket) other;
-            return Objects.equals(key, that.key)
-                    && Objects.equals(docCount, that.docCount)
+            return Objects.equals(key, that.key) && Objects.equals(docCount, that.docCount)
                     && Objects.equals(aggregations, that.aggregations);
         }
 
@@ -184,7 +182,7 @@ public class InternalAdjacencyMatrix
             InternalAdjacencyMatrix filters = (InternalAdjacencyMatrix) aggregation;
             for (InternalBucket bucket : filters.buckets) {
                 List<InternalBucket> sameRangeList = bucketsMap.get(bucket.key);
-                if(sameRangeList == null){
+                if (sameRangeList == null) {
                     sameRangeList = new ArrayList<>(aggregations.size());
                     bucketsMap.put(bucket.key, sameRangeList);
                 }
@@ -195,7 +193,7 @@ public class InternalAdjacencyMatrix
         ArrayList<InternalBucket> reducedBuckets = new ArrayList<>(bucketsMap.size());
         for (List<InternalBucket> sameRangeList : bucketsMap.values()) {
             InternalBucket reducedBucket = reduceBucket(sameRangeList, reduceContext);
-            if(reducedBucket.docCount >= 1){
+            if (reducedBucket.docCount >= 1) {
                 reducedBuckets.add(reducedBucket);
             }
         }
@@ -241,9 +239,12 @@ public class InternalAdjacencyMatrix
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalAdjacencyMatrix that = (InternalAdjacencyMatrix) obj;
         return Objects.equals(buckets, that.buckets);

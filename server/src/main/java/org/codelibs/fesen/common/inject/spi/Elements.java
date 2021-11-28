@@ -16,6 +16,15 @@
 
 package org.codelibs.fesen.common.inject.spi;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.inject.AbstractModule;
@@ -41,15 +50,6 @@ import org.codelibs.fesen.common.inject.internal.PrivateElementsImpl;
 import org.codelibs.fesen.common.inject.internal.ProviderMethodsModule;
 import org.codelibs.fesen.common.inject.internal.SourceProvider;
 import org.codelibs.fesen.common.inject.matcher.Matcher;
-
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Exposes elements of a module so they can be inspected, validated or {@link
@@ -117,8 +117,7 @@ public final class Elements {
             this.modules = new HashSet<>();
             this.elements = new ArrayList<>();
             this.source = null;
-            this.sourceProvider = new SourceProvider().plusSkippedClasses(
-                    Elements.class, RecordingBinder.class, AbstractModule.class,
+            this.sourceProvider = new SourceProvider().plusSkippedClasses(Elements.class, RecordingBinder.class, AbstractModule.class,
                     ConstantBindingBuilderImpl.class, AbstractBindingBuilder.class, BindingBuilder.class);
             this.parent = null;
             this.privateElements = null;
@@ -127,8 +126,7 @@ public final class Elements {
         /**
          * Creates a recording binder that's backed by {@code prototype}.
          */
-        private RecordingBinder(
-                RecordingBinder prototype, Object source, SourceProvider sourceProvider) {
+        private RecordingBinder(RecordingBinder prototype, Object source, SourceProvider sourceProvider) {
             if (!(source == null ^ sourceProvider == null)) {
                 throw new IllegalArgumentException();
             }
@@ -173,8 +171,7 @@ public final class Elements {
 
         @Override
         public <T> MembersInjector<T> getMembersInjector(final TypeLiteral<T> typeLiteral) {
-            final MembersInjectorLookup<T> element
-                    = new MembersInjectorLookup<>(getSource(), typeLiteral);
+            final MembersInjectorLookup<T> element = new MembersInjectorLookup<>(getSource(), typeLiteral);
             elements.add(element);
             return element.getMembersInjector();
         }
@@ -275,8 +272,7 @@ public final class Elements {
         }
 
         @Override
-        public void convertToTypes(Matcher<? super TypeLiteral<?>> typeMatcher,
-                                   TypeConverter converter) {
+        public void convertToTypes(Matcher<? super TypeLiteral<?>> typeMatcher, TypeConverter converter) {
             elements.add(new TypeConverterBinding(getSource(), typeMatcher, converter));
         }
 
@@ -320,8 +316,7 @@ public final class Elements {
 
         private <T> AnnotatedElementBuilder exposeInternal(Key<T> key) {
             if (privateElements == null) {
-                addError("Cannot expose %s on a standard binder. "
-                        + "Exposed bindings are only applicable to private binders.", key);
+                addError("Cannot expose %s on a standard binder. " + "Exposed bindings are only applicable to private binders.", key);
                 return new AnnotatedElementBuilder() {
                     @Override
                     public void annotatedWith(Class<? extends Annotation> annotationType) {
@@ -343,9 +338,7 @@ public final class Elements {
         protected Object getSource() {
             Object ret;
             if (logger.isDebugEnabled()) {
-                ret = sourceProvider != null
-                        ? sourceProvider.get()
-                        : source;
+                ret = sourceProvider != null ? sourceProvider.get() : source;
             } else {
                 ret = source;
             }

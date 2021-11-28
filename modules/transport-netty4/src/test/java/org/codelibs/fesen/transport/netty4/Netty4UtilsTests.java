@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
+import java.io.IOException;
+
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.bytes.AbstractBytesReferenceTestCase;
@@ -32,9 +31,10 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.indices.breaker.NoneCircuitBreakerService;
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.transport.netty4.Netty4Utils;
 
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class Netty4UtilsTests extends ESTestCase {
 
@@ -63,7 +63,7 @@ public class Netty4UtilsTests extends ESTestCase {
         ByteBuf buffer = Netty4Utils.toByteBuf(ref);
         BytesReference bytesReference = Netty4Utils.toBytesReference(buffer);
         assertArrayEquals(BytesReference.toBytes(ref.slice(sliceOffset, sliceLength)),
-            BytesReference.toBytes(bytesReference.slice(sliceOffset, sliceLength)));
+                BytesReference.toBytes(bytesReference.slice(sliceOffset, sliceLength)));
     }
 
     public void testToChannelBuffer() throws IOException {
@@ -89,8 +89,7 @@ public class Netty4UtilsTests extends ESTestCase {
             return new BytesArray(ref.toBytesRef());
         } else if (randomBoolean()) {
             BytesRef bytesRef = ref.toBytesRef();
-            return Netty4Utils.toBytesReference(Unpooled.wrappedBuffer(bytesRef.bytes, bytesRef.offset,
-                bytesRef.length));
+            return Netty4Utils.toBytesReference(Unpooled.wrappedBuffer(bytesRef.bytes, bytesRef.offset, bytesRef.length));
         } else {
             return ref;
         }

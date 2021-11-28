@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.hamcrest.Matchers.hasSize;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.io.stream.NamedWriteableAwareStreamInput;
@@ -28,20 +37,8 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.test.AbstractBuilderTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.hamcrest.Matchers.hasSize;
 
 public abstract class BaseAggregationTestCase<AB extends AbstractAggregationBuilder<AB>> extends AbstractBuilderTestCase {
 
@@ -192,13 +189,13 @@ public abstract class BaseAggregationTestCase<AB extends AbstractAggregationBuil
     public String randomNumericField() {
         int randomInt = randomInt(3);
         switch (randomInt) {
-            case 0:
-                return DATE_FIELD_NAME;
-            case 1:
-                return DOUBLE_FIELD_NAME;
-            case 2:
-            default:
-                return INT_FIELD_NAME;
+        case 0:
+            return DATE_FIELD_NAME;
+        case 1:
+            return DOUBLE_FIELD_NAME;
+        case 2:
+        default:
+            return INT_FIELD_NAME;
         }
     }
 

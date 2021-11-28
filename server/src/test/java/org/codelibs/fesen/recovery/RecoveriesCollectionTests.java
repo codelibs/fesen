@@ -74,18 +74,18 @@ public class RecoveriesCollectionTests extends ESIndexLevelReplicationTestCase {
             final AtomicBoolean failed = new AtomicBoolean();
             final CountDownLatch latch = new CountDownLatch(1);
             final long recoveryId = startRecovery(collection, shards.getPrimaryNode(), shards.addReplica(),
-                new PeerRecoveryTargetService.RecoveryListener() {
-                    @Override
-                    public void onRecoveryDone(RecoveryState state) {
-                        latch.countDown();
-                    }
+                    new PeerRecoveryTargetService.RecoveryListener() {
+                        @Override
+                        public void onRecoveryDone(RecoveryState state) {
+                            latch.countDown();
+                        }
 
-                    @Override
-                    public void onRecoveryFailure(RecoveryState state, RecoveryFailedException e, boolean sendShardFailure) {
-                        failed.set(true);
-                        latch.countDown();
-                    }
-                }, TimeValue.timeValueMillis(100));
+                        @Override
+                        public void onRecoveryFailure(RecoveryState state, RecoveryFailedException e, boolean sendShardFailure) {
+                            failed.set(true);
+                            latch.countDown();
+                        }
+                    }, TimeValue.timeValueMillis(100));
             try {
                 latch.await(30, TimeUnit.SECONDS);
                 assertTrue("recovery failed to timeout", failed.get());
@@ -152,11 +152,11 @@ public class RecoveriesCollectionTests extends ESIndexLevelReplicationTestCase {
     }
 
     long startRecovery(RecoveriesCollection collection, DiscoveryNode sourceNode, IndexShard shard) {
-        return startRecovery(collection,sourceNode, shard, listener, TimeValue.timeValueMinutes(60));
+        return startRecovery(collection, sourceNode, shard, listener, TimeValue.timeValueMinutes(60));
     }
 
     long startRecovery(RecoveriesCollection collection, DiscoveryNode sourceNode, IndexShard indexShard,
-                       PeerRecoveryTargetService.RecoveryListener listener, TimeValue timeValue) {
+            PeerRecoveryTargetService.RecoveryListener listener, TimeValue timeValue) {
         final DiscoveryNode rNode = getDiscoveryNode(indexShard.routingEntry().currentNodeId());
         indexShard.markAsRecovering("remote", new RecoveryState(indexShard.routingEntry(), sourceNode, rNode));
         indexShard.prepareForIndexRecovery();

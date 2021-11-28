@@ -19,18 +19,17 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.ingest.common.SetProcessor;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 public class SetProcessorFactoryTests extends ESTestCase {
 
@@ -73,7 +72,7 @@ public class SetProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }
@@ -84,7 +83,7 @@ public class SetProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[value] required property is missing"));
         }
     }
@@ -96,7 +95,7 @@ public class SetProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[value] required property is missing"));
         }
     }
@@ -107,8 +106,7 @@ public class SetProcessorFactoryTests extends ESTestCase {
         config.put("field", "{{field1}}");
         config.put("value", "value1");
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenException.class,
-            () -> factory.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenException.class, () -> factory.create(null, processorTag, null, config));
         assertThat(exception.getMessage(), equalTo("java.lang.RuntimeException: could not compile script"));
         assertThat(exception.getMetadata("es.processor_tag").get(0), equalTo(processorTag));
     }

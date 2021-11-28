@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations.support;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -35,11 +40,6 @@ import org.codelibs.fesen.index.query.AbstractQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.script.Script;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Objects;
-
 public class MultiValuesSourceFieldConfig implements Writeable, ToXContentObject {
     private final String fieldName;
     private final Object missing;
@@ -50,39 +50,37 @@ public class MultiValuesSourceFieldConfig implements Writeable, ToXContentObject
     private static final String NAME = "field_config";
     public static final ParseField FILTER = new ParseField("filter");
 
-    public static final TriFunction<Boolean, Boolean, Boolean, ObjectParser<Builder, Void>> PARSER
-        = (scriptable, timezoneAware, filtered) -> {
+    public static final TriFunction<Boolean, Boolean, Boolean, ObjectParser<Builder, Void>> PARSER =
+            (scriptable, timezoneAware, filtered) -> {
 
-        ObjectParser<MultiValuesSourceFieldConfig.Builder, Void> parser
-            = new ObjectParser<>(MultiValuesSourceFieldConfig.NAME, MultiValuesSourceFieldConfig.Builder::new);
+                ObjectParser<MultiValuesSourceFieldConfig.Builder, Void> parser =
+                        new ObjectParser<>(MultiValuesSourceFieldConfig.NAME, MultiValuesSourceFieldConfig.Builder::new);
 
-        parser.declareString(MultiValuesSourceFieldConfig.Builder::setFieldName, ParseField.CommonFields.FIELD);
-        parser.declareField(MultiValuesSourceFieldConfig.Builder::setMissing, XContentParser::objectText,
-            ParseField.CommonFields.MISSING, ObjectParser.ValueType.VALUE);
+                parser.declareString(MultiValuesSourceFieldConfig.Builder::setFieldName, ParseField.CommonFields.FIELD);
+                parser.declareField(MultiValuesSourceFieldConfig.Builder::setMissing, XContentParser::objectText,
+                        ParseField.CommonFields.MISSING, ObjectParser.ValueType.VALUE);
 
-        if (scriptable) {
-            parser.declareField(MultiValuesSourceFieldConfig.Builder::setScript,
-                (p, context) -> Script.parse(p),
-                Script.SCRIPT_PARSE_FIELD, ObjectParser.ValueType.OBJECT_OR_STRING);
-        }
-
-        if (timezoneAware) {
-            parser.declareField(MultiValuesSourceFieldConfig.Builder::setTimeZone, p -> {
-                if (p.currentToken() == XContentParser.Token.VALUE_STRING) {
-                    return ZoneId.of(p.text());
-                } else {
-                    return ZoneOffset.ofHours(p.intValue());
+                if (scriptable) {
+                    parser.declareField(MultiValuesSourceFieldConfig.Builder::setScript, (p, context) -> Script.parse(p),
+                            Script.SCRIPT_PARSE_FIELD, ObjectParser.ValueType.OBJECT_OR_STRING);
                 }
-            }, ParseField.CommonFields.TIME_ZONE, ObjectParser.ValueType.LONG);
-        }
 
-        if (filtered) {
-            parser.declareField(MultiValuesSourceFieldConfig.Builder::setFilter,
-                (p, context) -> AbstractQueryBuilder.parseInnerQueryBuilder(p),
-                FILTER, ObjectParser.ValueType.OBJECT);
-        }
-        return parser;
-    };
+                if (timezoneAware) {
+                    parser.declareField(MultiValuesSourceFieldConfig.Builder::setTimeZone, p -> {
+                        if (p.currentToken() == XContentParser.Token.VALUE_STRING) {
+                            return ZoneId.of(p.text());
+                        } else {
+                            return ZoneOffset.ofHours(p.intValue());
+                        }
+                    }, ParseField.CommonFields.TIME_ZONE, ObjectParser.ValueType.LONG);
+                }
+
+                if (filtered) {
+                    parser.declareField(MultiValuesSourceFieldConfig.Builder::setFilter,
+                            (p, context) -> AbstractQueryBuilder.parseInnerQueryBuilder(p), FILTER, ObjectParser.ValueType.OBJECT);
+                }
+                return parser;
+            };
 
     protected MultiValuesSourceFieldConfig(String fieldName, Object missing, Script script, ZoneId timeZone, QueryBuilder filter) {
         this.fieldName = fieldName;
@@ -176,14 +174,13 @@ public class MultiValuesSourceFieldConfig implements Writeable, ToXContentObject
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MultiValuesSourceFieldConfig that = (MultiValuesSourceFieldConfig) o;
-        return Objects.equals(fieldName, that.fieldName)
-            && Objects.equals(missing, that.missing)
-            && Objects.equals(script, that.script)
-            && Objects.equals(timeZone, that.timeZone)
-            && Objects.equals(filter, that.filter);
+        return Objects.equals(fieldName, that.fieldName) && Objects.equals(missing, that.missing) && Objects.equals(script, that.script)
+                && Objects.equals(timeZone, that.timeZone) && Objects.equals(filter, that.filter);
     }
 
     @Override
@@ -246,15 +243,14 @@ public class MultiValuesSourceFieldConfig implements Writeable, ToXContentObject
 
         public MultiValuesSourceFieldConfig build() {
             if (Strings.isNullOrEmpty(fieldName) && script == null) {
-                throw new IllegalArgumentException("[" +  ParseField.CommonFields.FIELD.getPreferredName()
-                    + "] and [" + Script.SCRIPT_PARSE_FIELD.getPreferredName() + "] cannot both be null.  " +
-                    "Please specify one or the other.");
+                throw new IllegalArgumentException("[" + ParseField.CommonFields.FIELD.getPreferredName() + "] and ["
+                        + Script.SCRIPT_PARSE_FIELD.getPreferredName() + "] cannot both be null.  " + "Please specify one or the other.");
             }
 
             if (Strings.isNullOrEmpty(fieldName) == false && script != null) {
-                throw new IllegalArgumentException("[" +  ParseField.CommonFields.FIELD.getPreferredName()
-                    + "] and [" + Script.SCRIPT_PARSE_FIELD.getPreferredName() + "] cannot both be configured.  " +
-                    "Please specify one or the other.");
+                throw new IllegalArgumentException(
+                        "[" + ParseField.CommonFields.FIELD.getPreferredName() + "] and [" + Script.SCRIPT_PARSE_FIELD.getPreferredName()
+                                + "] cannot both be configured.  " + "Please specify one or the other.");
             }
 
             return new MultiValuesSourceFieldConfig(fieldName, missing, script, timeZone, filter);

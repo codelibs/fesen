@@ -19,22 +19,15 @@
 
 package org.codelibs.fesen.common.settings;
 
-import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.KeyStoreWrapper;
-import org.codelibs.fesen.common.settings.UpgradeKeyStoreCommand;
-import org.codelibs.fesen.env.Environment;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
+import static org.junit.Assert.assertThat;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasToString;
+import org.codelibs.fesen.cli.Command;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.env.Environment;
 
 public class UpgradeKeyStoreCommandTests extends KeyStoreCommandTestCase {
 

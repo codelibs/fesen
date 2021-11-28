@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +40,6 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestActionListener;
 import org.codelibs.fesen.rest.action.RestResponseListener;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestNodeAttrsAction extends AbstractCatAction {
 
@@ -69,8 +69,7 @@ public class RestNodeAttrsAction extends AbstractCatAction {
             @Override
             public void processResponse(final ClusterStateResponse clusterStateResponse) {
                 NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
-                nodesInfoRequest.clear()
-                    .addMetric(NodesInfoRequest.Metric.PROCESS.metricName());
+                nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.PROCESS.metricName());
                 client.admin().cluster().nodesInfo(nodesInfoRequest, new RestResponseListener<NodesInfoResponse>(channel) {
                     @Override
                     public RestResponse buildResponse(NodesInfoResponse nodesInfoResponse) throws Exception {
@@ -86,13 +85,13 @@ public class RestNodeAttrsAction extends AbstractCatAction {
         Table table = new Table();
         table.startHeaders();
         table.addCell("node", "default:true;alias:name;desc:node name");
-        table.addCell("id",   "default:false;alias:id,nodeId;desc:unique node id");
-        table.addCell("pid",  "default:false;alias:p;desc:process id");
+        table.addCell("id", "default:false;alias:id,nodeId;desc:unique node id");
+        table.addCell("pid", "default:false;alias:p;desc:process id");
         table.addCell("host", "alias:h;desc:host name");
-        table.addCell("ip",   "alias:i;desc:ip address");
+        table.addCell("ip", "alias:i;desc:ip address");
         table.addCell("port", "default:false;alias:po;desc:bound transport port");
         table.addCell("attr", "default:true;alias:attr.name;desc:attribute description");
-        table.addCell("value","default:true;alias:attr.value;desc:attribute value");
+        table.addCell("value", "default:true;alias:attr.value;desc:attribute value");
         table.endHeaders();
         return table;
     }

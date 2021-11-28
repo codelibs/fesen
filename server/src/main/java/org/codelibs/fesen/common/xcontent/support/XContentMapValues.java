@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.common.xcontent.support;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.apache.lucene.util.automaton.Automata;
 import org.apache.lucene.util.automaton.Automaton;
 import org.apache.lucene.util.automaton.CharacterRunAutomaton;
@@ -29,13 +36,6 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 public class XContentMapValues {
 
@@ -53,7 +53,7 @@ public class XContentMapValues {
         return values;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private static void extractRawValues(List values, Map<String, Object> part, String[] pathElements, int index) {
         if (index == pathElements.length) {
             return;
@@ -81,7 +81,7 @@ public class XContentMapValues {
         }
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private static void extractRawValues(List values, List<Object> part, String[] pathElements, int index) {
         for (Object value : part) {
             if (value == null) {
@@ -138,10 +138,7 @@ public class XContentMapValues {
         return extractValue(pathElements, 0, map, nullValue);
     }
 
-    private static Object extractValue(String[] pathElements,
-                                       int index,
-                                       Object currentValue,
-                                       Object nullValue) {
+    private static Object extractValue(String[] pathElements, int index, Object currentValue, Object nullValue) {
         if (currentValue instanceof List) {
             List<?> valueList = (List<?>) currentValue;
             List<Object> newList = new ArrayList<>(valueList.size());
@@ -225,18 +222,14 @@ public class XContentMapValues {
         // NOTE: We cannot use Operations.minus because of the special case that
         // we want all sub properties to match as soon as an object matches
 
-        return (map) -> filter(map,
-            include, 0,
-            exclude, 0,
-            matchAllAutomaton);
+        return (map) -> filter(map, include, 0, exclude, 0, matchAllAutomaton);
     }
 
     /** Make matches on objects also match dots in field names.
      *  For instance, if the original simple regex is `foo`, this will translate
      *  it into `foo` OR `foo.*`. */
     private static Automaton makeMatchDotsInFieldNames(Automaton automaton) {
-        return Operations.union(
-                automaton,
+        return Operations.union(automaton,
                 Operations.concatenate(Arrays.asList(automaton, Automata.makeChar('.'), Automata.makeAnyString())));
     }
 
@@ -247,10 +240,8 @@ public class XContentMapValues {
         return state;
     }
 
-    private static Map<String, Object> filter(Map<String, ?> map,
-            CharacterRunAutomaton includeAutomaton, int initialIncludeState,
-            CharacterRunAutomaton excludeAutomaton, int initialExcludeState,
-            CharacterRunAutomaton matchAllAutomaton) {
+    private static Map<String, Object> filter(Map<String, ?> map, CharacterRunAutomaton includeAutomaton, int initialIncludeState,
+            CharacterRunAutomaton excludeAutomaton, int initialExcludeState, CharacterRunAutomaton matchAllAutomaton) {
         Map<String, Object> filtered = new HashMap<>();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
@@ -293,16 +284,16 @@ public class XContentMapValues {
                 }
 
                 Map<String, Object> valueAsMap = (Map<String, Object>) value;
-                Map<String, Object> filteredValue = filter(valueAsMap,
-                        subIncludeAutomaton, subIncludeState, excludeAutomaton, excludeState, matchAllAutomaton);
+                Map<String, Object> filteredValue =
+                        filter(valueAsMap, subIncludeAutomaton, subIncludeState, excludeAutomaton, excludeState, matchAllAutomaton);
                 if (includeAutomaton.isAccept(includeState) || filteredValue.isEmpty() == false) {
                     filtered.put(key, filteredValue);
                 }
 
             } else if (value instanceof Iterable) {
 
-                List<Object> filteredValue = filter((Iterable<?>) value,
-                        subIncludeAutomaton, subIncludeState, excludeAutomaton, excludeState, matchAllAutomaton);
+                List<Object> filteredValue = filter((Iterable<?>) value, subIncludeAutomaton, subIncludeState, excludeAutomaton,
+                        excludeState, matchAllAutomaton);
                 if (includeAutomaton.isAccept(includeState) || filteredValue.isEmpty() == false) {
                     filtered.put(key, filteredValue);
                 }
@@ -310,8 +301,7 @@ public class XContentMapValues {
             } else {
 
                 // leaf property
-                if (includeAutomaton.isAccept(includeState)
-                        && (excludeState == -1 || excludeAutomaton.isAccept(excludeState) == false)) {
+                if (includeAutomaton.isAccept(includeState) && (excludeState == -1 || excludeAutomaton.isAccept(excludeState) == false)) {
                     filtered.put(key, value);
                 }
 
@@ -321,10 +311,8 @@ public class XContentMapValues {
         return filtered;
     }
 
-    private static List<Object> filter(Iterable<?> iterable,
-            CharacterRunAutomaton includeAutomaton, int initialIncludeState,
-            CharacterRunAutomaton excludeAutomaton, int initialExcludeState,
-            CharacterRunAutomaton matchAllAutomaton) {
+    private static List<Object> filter(Iterable<?> iterable, CharacterRunAutomaton includeAutomaton, int initialIncludeState,
+            CharacterRunAutomaton excludeAutomaton, int initialExcludeState, CharacterRunAutomaton matchAllAutomaton) {
         List<Object> filtered = new ArrayList<>();
         boolean isInclude = includeAutomaton.isAccept(initialIncludeState);
         for (Object value : iterable) {
@@ -334,14 +322,14 @@ public class XContentMapValues {
                 if (excludeState != -1) {
                     excludeState = excludeAutomaton.step(excludeState, '.');
                 }
-                Map<String, Object> filteredValue = filter((Map<String, ?>)value,
-                        includeAutomaton, includeState, excludeAutomaton, excludeState, matchAllAutomaton);
+                Map<String, Object> filteredValue =
+                        filter((Map<String, ?>) value, includeAutomaton, includeState, excludeAutomaton, excludeState, matchAllAutomaton);
                 if (filteredValue.isEmpty() == false) {
                     filtered.add(filteredValue);
                 }
             } else if (value instanceof Iterable) {
-                List<Object> filteredValue = filter((Iterable<?>) value,
-                        includeAutomaton, initialIncludeState, excludeAutomaton, initialExcludeState, matchAllAutomaton);
+                List<Object> filteredValue = filter((Iterable<?>) value, includeAutomaton, initialIncludeState, excludeAutomaton,
+                        initialExcludeState, matchAllAutomaton);
                 if (filteredValue.isEmpty() == false) {
                     filtered.add(filteredValue);
                 }

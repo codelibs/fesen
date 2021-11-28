@@ -209,20 +209,9 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
      * from the nodes stats endpoint. Eventually this list will be pluggable.
      */
     public enum Metric {
-        OS("os"),
-        PROCESS("process"),
-        JVM("jvm"),
-        THREAD_POOL("thread_pool"),
-        FS("fs"),
-        TRANSPORT("transport"),
-        HTTP("http"),
-        BREAKER("breaker"),
-        SCRIPT("script"),
-        DISCOVERY("discovery"),
-        INGEST("ingest"),
-        ADAPTIVE_SELECTION("adaptive_selection"),
-        SCRIPT_CACHE("script_cache"),
-        INDEXING_PRESSURE("indexing_pressure"),;
+        OS("os"), PROCESS("process"), JVM("jvm"), THREAD_POOL("thread_pool"), FS("fs"), TRANSPORT("transport"), HTTP("http"), BREAKER(
+                "breaker"), SCRIPT("script"), DISCOVERY("discovery"), INGEST("ingest"), ADAPTIVE_SELECTION(
+                        "adaptive_selection"), SCRIPT_CACHE("script_cache"), INDEXING_PRESSURE("indexing_pressure"),;
 
         private String metricName;
 

@@ -26,8 +26,7 @@ import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.script.ScriptType;
 
-public class SearchTemplateRequestBuilder
-        extends ActionRequestBuilder<SearchTemplateRequest, SearchTemplateResponse> {
+public class SearchTemplateRequestBuilder extends ActionRequestBuilder<SearchTemplateRequest, SearchTemplateResponse> {
 
     SearchTemplateRequestBuilder(FesenClient client, SearchTemplateAction action) {
         super(client, action, new SearchTemplateRequest());

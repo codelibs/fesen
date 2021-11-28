@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
+import static java.util.Collections.emptySet;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
@@ -36,14 +44,6 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.Collections.emptySet;
 
 public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements ToXContentFragment {
 
@@ -64,7 +64,7 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
     private final Boolean isHidden;
 
     private AliasMetadata(String alias, CompressedXContent filter, String indexRouting, String searchRouting, Boolean writeIndex,
-                          @Nullable Boolean isHidden) {
+            @Nullable Boolean isHidden) {
         this.alias = alias;
         this.filter = filter;
         this.indexRouting = indexRouting;
@@ -80,7 +80,7 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
 
     private AliasMetadata(AliasMetadata aliasMetadata, String alias) {
         this(alias, aliasMetadata.filter(), aliasMetadata.indexRouting(), aliasMetadata.searchRouting(), aliasMetadata.writeIndex(),
-            aliasMetadata.isHidden);
+                aliasMetadata.isHidden);
     }
 
     public String alias() {
@@ -149,17 +149,25 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final AliasMetadata that = (AliasMetadata) o;
 
-        if (Objects.equals(alias, that.alias) == false) return false;
-        if (Objects.equals(filter, that.filter) == false) return false;
-        if (Objects.equals(indexRouting, that.indexRouting) == false) return false;
-        if (Objects.equals(searchRouting, that.searchRouting) == false) return false;
-        if (Objects.equals(writeIndex, that.writeIndex) == false) return false;
-        if (Objects.equals(isHidden, that.isHidden) == false) return false;
+        if (Objects.equals(alias, that.alias) == false)
+            return false;
+        if (Objects.equals(filter, that.filter) == false)
+            return false;
+        if (Objects.equals(indexRouting, that.indexRouting) == false)
+            return false;
+        if (Objects.equals(searchRouting, that.searchRouting) == false)
+            return false;
+        if (Objects.equals(writeIndex, that.writeIndex) == false)
+            return false;
+        if (Objects.equals(isHidden, that.isHidden) == false)
+            return false;
 
         return true;
     }

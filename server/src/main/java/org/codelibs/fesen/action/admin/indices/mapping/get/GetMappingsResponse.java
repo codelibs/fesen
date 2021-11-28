@@ -19,7 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
+
+import java.io.IOException;
+import java.util.Map;
 
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.MappingMetadata;
@@ -33,10 +36,7 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.BaseRestHandler;
 
-import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
-
-import java.io.IOException;
-import java.util.Map;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 public class GetMappingsResponse extends ActionResponse implements ToXContentFragment {
 
@@ -101,8 +101,8 @@ public class GetMappingsResponse extends ActionResponse implements ToXContentFra
             ImmutableOpenMap.Builder<String, MappingMetadata> typeBuilder = new ImmutableOpenMap.Builder<>();
             for (Map.Entry<String, Object> typeEntry : mapping.entrySet()) {
                 final String typeName = typeEntry.getKey();
-                assert typeEntry.getValue() instanceof Map : "expected a map as inner type mapping, but got: " +
-                    typeEntry.getValue().getClass();
+                assert typeEntry.getValue() instanceof Map : "expected a map as inner type mapping, but got: "
+                        + typeEntry.getValue().getClass();
                 final Map<String, Object> fieldMappings = (Map<String, Object>) typeEntry.getValue();
                 MappingMetadata mmd = new MappingMetadata(typeName, fieldMappings);
                 typeBuilder.put(typeName, mmd);
@@ -115,8 +115,7 @@ public class GetMappingsResponse extends ActionResponse implements ToXContentFra
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        boolean includeTypeName = params.paramAsBoolean(BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER,
-            DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+        boolean includeTypeName = params.paramAsBoolean(BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
 
         for (final ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetadata>> indexEntry : getMappings()) {
             builder.startObject(indexEntry.key);

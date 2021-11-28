@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.search.sort;
 
-
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -74,25 +73,25 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         GeoDistanceSortBuilder result = null;
 
         int id = randomIntBetween(0, 2);
-        switch(id) {
-            case 0:
-                int count = randomIntBetween(1, 10);
-                String[] geohashes = new String[count];
-                for (int i = 0; i < count; i++) {
-                    geohashes[i] = RandomGeoGenerator.randomPoint(random()).geohash();
-                }
+        switch (id) {
+        case 0:
+            int count = randomIntBetween(1, 10);
+            String[] geohashes = new String[count];
+            for (int i = 0; i < count; i++) {
+                geohashes[i] = RandomGeoGenerator.randomPoint(random()).geohash();
+            }
 
-                result = new GeoDistanceSortBuilder(fieldName, geohashes);
-                break;
-            case 1:
-                GeoPoint pt = RandomGeoGenerator.randomPoint(random());
-                result = new GeoDistanceSortBuilder(fieldName, pt.getLat(), pt.getLon());
-                break;
-            case 2:
-                result = new GeoDistanceSortBuilder(fieldName, points(new GeoPoint[0]));
-                break;
-            default:
-                throw new IllegalStateException("one of three geo initialisation strategies must be used");
+            result = new GeoDistanceSortBuilder(fieldName, geohashes);
+            break;
+        case 1:
+            GeoPoint pt = RandomGeoGenerator.randomPoint(random());
+            result = new GeoDistanceSortBuilder(fieldName, pt.getLat(), pt.getLon());
+            break;
+        case 2:
+            result = new GeoDistanceSortBuilder(fieldName, points(new GeoPoint[0]));
+            break;
+        default:
+            throw new IllegalStateException("one of three geo initialisation strategies must be used");
 
         }
         if (randomBoolean()) {
@@ -181,8 +180,7 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
             result.order(randomValueOtherThan(original.order(), () -> randomFrom(SortOrder.values())));
             break;
         case 5:
-            result.sortMode(randomValueOtherThanMany(
-                    Arrays.asList(SortMode.SUM, result.sortMode())::contains,
+            result.sortMode(randomValueOtherThanMany(Arrays.asList(SortMode.SUM, result.sortMode())::contains,
                     () -> randomFrom(SortMode.values())));
             break;
         case 6:
@@ -220,58 +218,39 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         try {
             builder.sortMode(SortMode.SUM);
             fail("sort mode sum should not be supported");
-          } catch (IllegalArgumentException e) {
-              // all good
-          }
+        } catch (IllegalArgumentException e) {
+            // all good
+        }
     }
 
     public void testSortModeSumIsRejectedInJSON() throws IOException {
-        String json = "{\n" +
-                "  \"testname\" : [ {\n" +
-                "    \"lat\" : -6.046997540714173,\n" +
-                "    \"lon\" : -51.94128329747579\n" +
-                "  } ],\n" +
-                "  \"unit\" : \"m\",\n" +
-                "  \"distance_type\" : \"arc\",\n" +
-                "  \"mode\" : \"SUM\"\n" +
-                "}";
+        String json = "{\n" + "  \"testname\" : [ {\n" + "    \"lat\" : -6.046997540714173,\n" + "    \"lon\" : -51.94128329747579\n"
+                + "  } ],\n" + "  \"unit\" : \"m\",\n" + "  \"distance_type\" : \"arc\",\n" + "  \"mode\" : \"SUM\"\n" + "}";
         try (XContentParser itemParser = createParser(JsonXContent.jsonXContent, json)) {
             itemParser.nextToken();
 
-            IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> GeoDistanceSortBuilder.fromXContent(itemParser, ""));
+            IllegalArgumentException e =
+                    expectThrows(IllegalArgumentException.class, () -> GeoDistanceSortBuilder.fromXContent(itemParser, ""));
             assertEquals("sort_mode [sum] isn't supported for sorting by geo distance", e.getMessage());
         }
     }
 
     public void testGeoDistanceSortCanBeParsedFromGeoHash() throws IOException {
-        String json = "{\n" +
-                "    \"VDcvDuFjE\" : [ \"7umzzv8eychg\", \"dmdgmt5z13uw\", " +
-                "    \"ezu09wxw6v4c\", \"kc7s3515p6k6\", \"jgeuvjwrmfzn\", \"kcpcfj7ruyf8\" ],\n" +
-                "    \"unit\" : \"m\",\n" +
-                "    \"distance_type\" : \"arc\",\n" +
-                "    \"mode\" : \"MAX\",\n" +
-                "    \"nested\" : {\n" +
-                "      \"filter\" : {\n" +
-                "        \"ids\" : {\n" +
-                "          \"type\" : [ ],\n" +
-                "          \"values\" : [ ],\n" +
-                "          \"boost\" : 5.711116\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"validation_method\" : \"STRICT\"\n" +
-                "  }";
+        String json = "{\n" + "    \"VDcvDuFjE\" : [ \"7umzzv8eychg\", \"dmdgmt5z13uw\", "
+                + "    \"ezu09wxw6v4c\", \"kc7s3515p6k6\", \"jgeuvjwrmfzn\", \"kcpcfj7ruyf8\" ],\n" + "    \"unit\" : \"m\",\n"
+                + "    \"distance_type\" : \"arc\",\n" + "    \"mode\" : \"MAX\",\n" + "    \"nested\" : {\n" + "      \"filter\" : {\n"
+                + "        \"ids\" : {\n" + "          \"type\" : [ ],\n" + "          \"values\" : [ ],\n"
+                + "          \"boost\" : 5.711116\n" + "        }\n" + "      }\n" + "    },\n" + "    \"validation_method\" : \"STRICT\"\n"
+                + "  }";
         try (XContentParser itemParser = createParser(JsonXContent.jsonXContent, json)) {
             itemParser.nextToken();
 
             GeoDistanceSortBuilder result = GeoDistanceSortBuilder.fromXContent(itemParser, json);
-            assertEquals("[-19.700583312660456, -2.8225036337971687, "
-                + "31.537466906011105, -74.63590376079082, "
-                + "43.71844606474042, -5.548660643398762, "
-                + "-37.20467280596495, 38.71751043945551, "
-                + "-69.44606635719538, 84.25200328230858, "
-                + "-39.03717711567879, 44.74099852144718]", Arrays.toString(result.points()));
+            assertEquals(
+                    "[-19.700583312660456, -2.8225036337971687, " + "31.537466906011105, -74.63590376079082, "
+                            + "43.71844606474042, -5.548660643398762, " + "-37.20467280596495, 38.71751043945551, "
+                            + "-69.44606635719538, 84.25200328230858, " + "-39.03717711567879, 44.74099852144718]",
+                    Arrays.toString(result.points()));
         }
     }
 
@@ -405,7 +384,6 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         }
     }
 
-
     @Override
     protected GeoDistanceSortBuilder fromXContent(XContentParser parser, String fieldName) throws IOException {
         return GeoDistanceSortBuilder.fromXContent(parser, fieldName);
@@ -510,7 +488,7 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         assertThat(sortField.getComparatorSource(), instanceOf(XFieldComparatorSource.class));
         comparatorSource = (XFieldComparatorSource) sortField.getComparatorSource();
         assertEquals(MultiValueMode.MEDIAN, comparatorSource.sortMode());
-      }
+    }
 
     /**
      * Test that the sort builder nested object gets created in the SortField
@@ -535,8 +513,8 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
         assertNotNull(nested);
         assertEquals(new TermQuery(new Term(TypeFieldMapper.NAME, "__path")), nested.getInnerQuery());
 
-        sortBuilder = new GeoDistanceSortBuilder("fieldName", 1.0, 1.0).setNestedPath("path")
-                .setNestedFilter(QueryBuilders.matchAllQuery());
+        sortBuilder =
+                new GeoDistanceSortBuilder("fieldName", 1.0, 1.0).setNestedPath("path").setNestedFilter(QueryBuilders.matchAllQuery());
         sortField = sortBuilder.build(shardContextMock).field;
         assertThat(sortField.getComparatorSource(), instanceOf(XFieldComparatorSource.class));
         comparatorSource = (XFieldComparatorSource) sortField.getComparatorSource();
@@ -611,8 +589,7 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
             }
         };
         sortBuilder.setNestedPath("path").setNestedFilter(rangeQuery);
-        GeoDistanceSortBuilder rewritten = (GeoDistanceSortBuilder) sortBuilder
-                .rewrite(createMockShardContext());
+        GeoDistanceSortBuilder rewritten = (GeoDistanceSortBuilder) sortBuilder.rewrite(createMockShardContext());
         assertNotSame(rangeQuery, rewritten.getNestedFilter());
     }
 
@@ -628,8 +605,7 @@ public class GeoDistanceSortBuilderTests extends AbstractSortTestCase<GeoDistanc
             }
         };
         sortBuilder.setNestedSort(new NestedSortBuilder("path").setFilter(rangeQuery));
-        GeoDistanceSortBuilder rewritten = (GeoDistanceSortBuilder) sortBuilder
-                .rewrite(createMockShardContext());
+        GeoDistanceSortBuilder rewritten = (GeoDistanceSortBuilder) sortBuilder.rewrite(createMockShardContext());
         assertNotSame(rangeQuery, rewritten.getNestedSort().getFilter());
     }
 

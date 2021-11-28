@@ -21,7 +21,6 @@ package org.codelibs.fesen.indices.recovery;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -68,14 +67,9 @@ public class StartRecoveryRequest extends TransportRequest {
      * @param recoveryId         the recovery ID
      * @param startingSeqNo      the starting sequence number
      */
-    public StartRecoveryRequest(final ShardId shardId,
-                                final String targetAllocationId,
-                                final DiscoveryNode sourceNode,
-                                final DiscoveryNode targetNode,
-                                final Store.MetadataSnapshot metadataSnapshot,
-                                final boolean primaryRelocation,
-                                final long recoveryId,
-                                final long startingSeqNo) {
+    public StartRecoveryRequest(final ShardId shardId, final String targetAllocationId, final DiscoveryNode sourceNode,
+            final DiscoveryNode targetNode, final Store.MetadataSnapshot metadataSnapshot, final boolean primaryRelocation,
+            final long recoveryId, final long startingSeqNo) {
         this.recoveryId = recoveryId;
         this.shardId = shardId;
         this.targetAllocationId = targetAllocationId;
@@ -84,8 +78,8 @@ public class StartRecoveryRequest extends TransportRequest {
         this.metadataSnapshot = metadataSnapshot;
         this.primaryRelocation = primaryRelocation;
         this.startingSeqNo = startingSeqNo;
-        assert startingSeqNo == SequenceNumbers.UNASSIGNED_SEQ_NO || metadataSnapshot.getHistoryUUID() != null :
-                        "starting seq no is set but not history uuid";
+        assert startingSeqNo == SequenceNumbers.UNASSIGNED_SEQ_NO
+                || metadataSnapshot.getHistoryUUID() != null : "starting seq no is set but not history uuid";
     }
 
     public long recoveryId() {

@@ -19,9 +19,10 @@
 
 package org.codelibs.fesen.search.slice;
 
-import com.carrotsearch.hppc.BitMixer;
-import org.apache.lucene.index.LeafReaderContext;
+import java.io.IOException;
+
 import org.apache.lucene.index.DocValues;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.ConstantScoreWeight;
@@ -32,7 +33,7 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
 
-import java.io.IOException;
+import com.carrotsearch.hppc.BitMixer;
 
 /**
  * A {@link SliceQuery} that uses the numeric doc values of a field to do the slicing.

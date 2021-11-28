@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParseField;
@@ -40,14 +48,6 @@ import org.codelibs.fesen.index.query.MatchNoneQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryRewriteContext;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A query that uses a filters with a script associated with them to compute the
@@ -107,7 +107,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
      * @param scoreFunctionBuilder score function that is executed
      */
     public FunctionScoreQueryBuilder(ScoreFunctionBuilder<?> scoreFunctionBuilder) {
-        this(new MatchAllQueryBuilder(), new FilterFunctionBuilder[]{new FilterFunctionBuilder(scoreFunctionBuilder)});
+        this(new MatchAllQueryBuilder(), new FilterFunctionBuilder[] { new FilterFunctionBuilder(scoreFunctionBuilder) });
     }
 
     /**
@@ -117,7 +117,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
      * @param scoreFunctionBuilder score function that is executed
      */
     public FunctionScoreQueryBuilder(QueryBuilder query, ScoreFunctionBuilder<?> scoreFunctionBuilder) {
-        this(query, new FilterFunctionBuilder[]{new FilterFunctionBuilder(scoreFunctionBuilder)});
+        this(query, new FilterFunctionBuilder[] { new FilterFunctionBuilder(scoreFunctionBuilder) });
     }
 
     /**
@@ -277,12 +277,9 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     @Override
     protected boolean doEquals(FunctionScoreQueryBuilder other) {
-        return Objects.equals(this.query, other.query) &&
-                Arrays.equals(this.filterFunctionBuilders, other.filterFunctionBuilders) &&
-                Objects.equals(this.boostMode, other.boostMode) &&
-                Objects.equals(this.scoreMode, other.scoreMode) &&
-                Objects.equals(this.minScore, other.minScore) &&
-                Objects.equals(this.maxBoost, other.maxBoost);
+        return Objects.equals(this.query, other.query) && Arrays.equals(this.filterFunctionBuilders, other.filterFunctionBuilders)
+                && Objects.equals(this.boostMode, other.boostMode) && Objects.equals(this.scoreMode, other.scoreMode)
+                && Objects.equals(this.minScore, other.minScore) && Objects.equals(this.maxBoost, other.maxBoost);
     }
 
     @Override
@@ -390,8 +387,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
                 return false;
             }
             FilterFunctionBuilder that = (FilterFunctionBuilder) obj;
-            return Objects.equals(this.filter, that.filter) &&
-                    Objects.equals(this.scoreFunction, that.scoreFunction);
+            return Objects.equals(this.filter, that.filter) && Objects.equals(this.scoreFunction, that.scoreFunction);
         }
 
         public FilterFunctionBuilder rewrite(QueryRewriteContext context) throws IOException {
@@ -475,8 +471,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
                     singleFunctionFound = true;
                     singleFunctionName = currentFieldName;
 
-                        ScoreFunctionBuilder<?> scoreFunction = parser.namedObject(ScoreFunctionBuilder.class, currentFieldName,
-                                null);
+                    ScoreFunctionBuilder<?> scoreFunction = parser.namedObject(ScoreFunctionBuilder.class, currentFieldName, null);
                     filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(scoreFunction));
                 }
             } else if (token == XContentParser.Token.START_ARRAY) {
@@ -488,8 +483,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
                     functionArrayFound = true;
                     currentFieldName = parseFiltersAndFunctions(parser, filterFunctionBuilders);
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(), "failed to parse [{}] query. array [{}] is not supported",
-                            NAME, currentFieldName);
+                    throw new ParsingException(parser.getTokenLocation(), "failed to parse [{}] query. array [{}] is not supported", NAME,
+                            currentFieldName);
                 }
 
             } else if (token.isValue()) {

@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.join.aggregations;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedSetDocValues;
@@ -43,9 +46,6 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.LongKeyedBucketOrds;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * An aggregator that joins documents based on global ordinals.
  * Global ordinals that match the main query and the <code>inFilter</code> query are replayed
@@ -61,16 +61,9 @@ public abstract class ParentJoinAggregator extends BucketsAggregator implements 
      */
     private final CollectionStrategy collectionStrategy;
 
-    public ParentJoinAggregator(String name,
-                                    AggregatorFactories factories,
-                                    SearchContext context,
-                                    Aggregator parent,
-                                    Query inFilter,
-                                    Query outFilter,
-                                    ValuesSource.Bytes.WithOrdinals valuesSource,
-                                    long maxOrd,
-                                    CardinalityUpperBound cardinality,
-                                    Map<String, Object> metadata) throws IOException {
+    public ParentJoinAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent, Query inFilter,
+            Query outFilter, ValuesSource.Bytes.WithOrdinals valuesSource, long maxOrd, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         /*
          * We have to use MANY to work around
          * https://github.com/elastic/elasticsearch/issues/59097
@@ -78,8 +71,8 @@ public abstract class ParentJoinAggregator extends BucketsAggregator implements 
         super(name, factories, context, parent, CardinalityUpperBound.MANY, metadata);
 
         if (maxOrd > Integer.MAX_VALUE) {
-            throw new IllegalStateException("the number of parent [" + maxOrd + "] + is greater than the allowed limit " +
-                "for this aggregation: " + Integer.MAX_VALUE);
+            throw new IllegalStateException("the number of parent [" + maxOrd + "] + is greater than the allowed limit "
+                    + "for this aggregation: " + Integer.MAX_VALUE);
         }
 
         // these two filters are cached in the parser
@@ -87,14 +80,13 @@ public abstract class ParentJoinAggregator extends BucketsAggregator implements 
         this.outFilter = context.searcher().createWeight(context.searcher().rewrite(outFilter), ScoreMode.COMPLETE_NO_SCORES, 1f);
         this.valuesSource = valuesSource;
         boolean singleAggregator = parent == null;
-        collectionStrategy = singleAggregator && cardinality == CardinalityUpperBound.ONE
-            ? new DenseCollectionStrategy(maxOrd, context.bigArrays())
-            : new SparseCollectionStrategy(context.bigArrays(), cardinality);
+        collectionStrategy =
+                singleAggregator && cardinality == CardinalityUpperBound.ONE ? new DenseCollectionStrategy(maxOrd, context.bigArrays())
+                        : new SparseCollectionStrategy(context.bigArrays(), cardinality);
     }
 
     @Override
-    public final LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            final LeafBucketCollector sub) throws IOException {
+    public final LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         if (valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }
@@ -160,7 +152,7 @@ public abstract class ParentJoinAggregator extends BucketsAggregator implements 
                  * structure that maps a primitive long to a list of primitive
                  * longs. 
                  */
-                for (long owningBucketOrd: ordsToCollect) {
+                for (long owningBucketOrd : ordsToCollect) {
                     if (collectionStrategy.exists(owningBucketOrd, globalOrdinal)) {
                         collectBucket(sub, docId, owningBucketOrd);
                     }
@@ -183,6 +175,7 @@ public abstract class ParentJoinAggregator extends BucketsAggregator implements 
      */
     protected interface CollectionStrategy extends Releasable {
         void add(long owningBucketOrd, int globalOrdinal);
+
         boolean exists(long owningBucketOrd, int globalOrdinal);
     }
 

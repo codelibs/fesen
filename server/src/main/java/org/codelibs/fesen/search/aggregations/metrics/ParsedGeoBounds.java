@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import static org.codelibs.fesen.common.geo.GeoBoundingBox.BOTTOM_RIGHT_FIELD;
+import static org.codelibs.fesen.common.geo.GeoBoundingBox.BOUNDS_FIELD;
+import static org.codelibs.fesen.common.geo.GeoBoundingBox.LAT_FIELD;
+import static org.codelibs.fesen.common.geo.GeoBoundingBox.LON_FIELD;
+import static org.codelibs.fesen.common.geo.GeoBoundingBox.TOP_LEFT_FIELD;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
@@ -28,15 +37,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
-
-import java.io.IOException;
-
-import static org.codelibs.fesen.common.geo.GeoBoundingBox.BOTTOM_RIGHT_FIELD;
-import static org.codelibs.fesen.common.geo.GeoBoundingBox.BOUNDS_FIELD;
-import static org.codelibs.fesen.common.geo.GeoBoundingBox.LAT_FIELD;
-import static org.codelibs.fesen.common.geo.GeoBoundingBox.LON_FIELD;
-import static org.codelibs.fesen.common.geo.GeoBoundingBox.TOP_LEFT_FIELD;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 
 public class ParsedGeoBounds extends ParsedAggregation implements GeoBounds {
 
@@ -69,15 +69,14 @@ public class ParsedGeoBounds extends ParsedAggregation implements GeoBounds {
         return geoBoundingBox != null ? geoBoundingBox.bottomRight() : null;
     }
 
-    private static final ObjectParser<ParsedGeoBounds, Void> PARSER = new ObjectParser<>(ParsedGeoBounds.class.getSimpleName(), true,
-            ParsedGeoBounds::new);
+    private static final ObjectParser<ParsedGeoBounds, Void> PARSER =
+            new ObjectParser<>(ParsedGeoBounds.class.getSimpleName(), true, ParsedGeoBounds::new);
 
-    private static final ConstructingObjectParser<Tuple<GeoPoint, GeoPoint>, Void> BOUNDS_PARSER =
-            new ConstructingObjectParser<>(ParsedGeoBounds.class.getSimpleName() + "_BOUNDS", true,
-                    args -> new Tuple<>((GeoPoint) args[0], (GeoPoint) args[1]));
+    private static final ConstructingObjectParser<Tuple<GeoPoint, GeoPoint>, Void> BOUNDS_PARSER = new ConstructingObjectParser<>(
+            ParsedGeoBounds.class.getSimpleName() + "_BOUNDS", true, args -> new Tuple<>((GeoPoint) args[0], (GeoPoint) args[1]));
 
-    private static final ObjectParser<GeoPoint, Void> GEO_POINT_PARSER = new ObjectParser<>(
-            ParsedGeoBounds.class.getSimpleName() + "_POINT", true, GeoPoint::new);
+    private static final ObjectParser<GeoPoint, Void> GEO_POINT_PARSER =
+            new ObjectParser<>(ParsedGeoBounds.class.getSimpleName() + "_POINT", true, GeoPoint::new);
 
     static {
         declareAggregationFields(PARSER);

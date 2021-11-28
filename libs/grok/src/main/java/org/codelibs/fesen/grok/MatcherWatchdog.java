@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.grok;
 
-import org.joni.Matcher;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
+
+import org.joni.Matcher;
 
 /**
  * Protects against long running operations that happen between the register and unregister invocations.
@@ -70,10 +70,8 @@ public interface MatcherWatchdog {
      * @param relativeTimeSupplier  A supplier that returns relative time
      * @param scheduler             A scheduler that is able to execute a command for each fixed interval
      */
-    static MatcherWatchdog newInstance(long interval,
-                                      long maxExecutionTime,
-                                      LongSupplier relativeTimeSupplier,
-                                      BiConsumer<Long, Runnable> scheduler) {
+    static MatcherWatchdog newInstance(long interval, long maxExecutionTime, LongSupplier relativeTimeSupplier,
+            BiConsumer<Long, Runnable> scheduler) {
         return new Default(interval, maxExecutionTime, relativeTimeSupplier, scheduler);
     }
 
@@ -115,10 +113,7 @@ public interface MatcherWatchdog {
         private final AtomicBoolean running = new AtomicBoolean(false);
         final ConcurrentHashMap<Matcher, Long> registry = new ConcurrentHashMap<>();
 
-        private Default(long interval,
-                        long maxExecutionTime,
-                        LongSupplier relativeTimeSupplier,
-                        BiConsumer<Long, Runnable> scheduler) {
+        private Default(long interval, long maxExecutionTime, LongSupplier relativeTimeSupplier, BiConsumer<Long, Runnable> scheduler) {
             this.interval = interval;
             this.maxExecutionTime = maxExecutionTime;
             this.relativeTimeSupplier = relativeTimeSupplier;

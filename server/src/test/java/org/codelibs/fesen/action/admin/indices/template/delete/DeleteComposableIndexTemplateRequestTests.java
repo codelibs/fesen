@@ -26,7 +26,7 @@ import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
 import java.io.IOException;
 
 public class DeleteComposableIndexTemplateRequestTests
-    extends AbstractWireSerializingTestCase<DeleteComposableIndexTemplateAction.Request> {
+        extends AbstractWireSerializingTestCase<DeleteComposableIndexTemplateAction.Request> {
     @Override
     protected Writeable.Reader<DeleteComposableIndexTemplateAction.Request> instanceReader() {
         return DeleteComposableIndexTemplateAction.Request::new;
@@ -39,7 +39,7 @@ public class DeleteComposableIndexTemplateRequestTests
 
     @Override
     protected DeleteComposableIndexTemplateAction.Request mutateInstance(DeleteComposableIndexTemplateAction.Request instance)
-        throws IOException {
+            throws IOException {
         return randomValueOtherThan(instance, this::createTestInstance);
     }
 }

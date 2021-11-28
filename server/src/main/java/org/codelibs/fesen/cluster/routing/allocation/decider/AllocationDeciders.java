@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.decider;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.RoutingNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * A composite {@link AllocationDecider} combining the "decision" of multiple
@@ -74,8 +74,8 @@ public class AllocationDeciders extends AllocationDecider {
             // short track if a NO is returned.
             if (decision == Decision.NO) {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Can not allocate [{}] on node [{}] due to [{}]",
-                        shardRouting, node.node(), allocationDecider.getClass().getSimpleName());
+                    logger.trace("Can not allocate [{}] on node [{}] due to [{}]", shardRouting, node.node(),
+                            allocationDecider.getClass().getSimpleName());
                 }
                 // short circuit only if debugging is not enabled
                 if (!allocation.debugDecision()) {
@@ -104,8 +104,8 @@ public class AllocationDeciders extends AllocationDecider {
             // short track if a NO is returned.
             if (decision == Decision.NO) {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Shard [{}] can not remain on node [{}] due to [{}]",
-                        shardRouting, node.nodeId(), allocationDecider.getClass().getSimpleName());
+                    logger.trace("Shard [{}] can not remain on node [{}] due to [{}]", shardRouting, node.nodeId(),
+                            allocationDecider.getClass().getSimpleName());
                 }
                 if (!allocation.debugDecision()) {
                     return decision;
@@ -208,8 +208,8 @@ public class AllocationDeciders extends AllocationDecider {
             // short track if a NO is returned.
             if (decision == Decision.NO) {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Shard [{}] can not be forcefully allocated to node [{}] due to [{}].",
-                        shardRouting.shardId(), node.nodeId(), decider.getClass().getSimpleName());
+                    logger.trace("Shard [{}] can not be forcefully allocated to node [{}] due to [{}].", shardRouting.shardId(),
+                            node.nodeId(), decider.getClass().getSimpleName());
                 }
                 if (!allocation.debugDecision()) {
                     return decision;
@@ -226,7 +226,7 @@ public class AllocationDeciders extends AllocationDecider {
     private void addDecision(Decision.Multi ret, Decision decision, RoutingAllocation allocation) {
         // We never add ALWAYS decisions and only add YES decisions when requested by debug mode (since Multi default is YES).
         if (decision != Decision.ALWAYS
-            && (allocation.getDebugMode() == RoutingAllocation.DebugMode.ON || decision.type() != Decision.Type.YES)) {
+                && (allocation.getDebugMode() == RoutingAllocation.DebugMode.ON || decision.type() != Decision.Type.YES)) {
             ret.add(decision);
         }
     }

@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -35,14 +39,10 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<RareTermsAggregationBuilder> {
     public static final String NAME = "rare_terms";
     public static final ValuesSourceRegistry.RegistryKey<RareTermsAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, RareTermsAggregatorSupplier.class);
+            new ValuesSourceRegistry.RegistryKey<>(NAME, RareTermsAggregatorSupplier.class);
 
     private static final ParseField MAX_DOC_COUNT_FIELD_NAME = new ParseField("max_doc_count");
     private static final ParseField PRECISION = new ParseField("precision");
@@ -54,11 +54,11 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
         PARSER.declareLong(RareTermsAggregationBuilder::maxDocCount, MAX_DOC_COUNT_FIELD_NAME);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())),
-            IncludeExclude::parseInclude, IncludeExclude.INCLUDE_FIELD, ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())), IncludeExclude::parseInclude,
+                IncludeExclude.INCLUDE_FIELD, ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)),
-            IncludeExclude::parseExclude, IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)), IncludeExclude::parseExclude,
+                IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
 
         PARSER.declareDouble(RareTermsAggregationBuilder::setPrecision, PRECISION);
     }
@@ -75,9 +75,8 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
         super(name);
     }
 
-    private RareTermsAggregationBuilder(RareTermsAggregationBuilder clone,
-                                        AggregatorFactories.Builder factoriesBuilder,
-                                        Map<String, Object> metadata) {
+    private RareTermsAggregationBuilder(RareTermsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.includeExclude = clone.includeExclude;
     }
@@ -118,14 +117,13 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
      */
     public RareTermsAggregationBuilder maxDocCount(long maxDocCount) {
         if (maxDocCount <= 0) {
-            throw new IllegalArgumentException(
-                "[" + MAX_DOC_COUNT_FIELD_NAME.getPreferredName() + "] must be greater than 0. Found ["
+            throw new IllegalArgumentException("[" + MAX_DOC_COUNT_FIELD_NAME.getPreferredName() + "] must be greater than 0. Found ["
                     + maxDocCount + "] in [" + name + "]");
         }
         //TODO review: what size cap should we put on this?
         if (maxDocCount > MAX_MAX_DOC_COUNT) {
-            throw new IllegalArgumentException("[" + MAX_DOC_COUNT_FIELD_NAME.getPreferredName() + "] must be smaller" +
-                "than " + MAX_MAX_DOC_COUNT + "in [" + name + "]");
+            throw new IllegalArgumentException("[" + MAX_DOC_COUNT_FIELD_NAME.getPreferredName() + "] must be smaller" + "than "
+                    + MAX_MAX_DOC_COUNT + "in [" + name + "]");
         }
         this.maxDocCount = (int) maxDocCount;
         return this;
@@ -174,12 +172,10 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
-                                                       ValuesSourceConfig config,
-                                                       AggregatorFactory parent,
-                                                       AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
-        return new RareTermsAggregatorFactory(name, config, includeExclude,
-            queryShardContext, parent, subFactoriesBuilder, metadata, maxDocCount, precision);
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        return new RareTermsAggregatorFactory(name, config, includeExclude, queryShardContext, parent, subFactoriesBuilder, metadata,
+                maxDocCount, precision);
     }
 
     @Override
@@ -199,13 +195,15 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         RareTermsAggregationBuilder other = (RareTermsAggregationBuilder) obj;
-        return Objects.equals(includeExclude, other.includeExclude)
-            && Objects.equals(maxDocCount, other.maxDocCount)
-            && Objects.equals(precision, other.precision);
+        return Objects.equals(includeExclude, other.includeExclude) && Objects.equals(maxDocCount, other.maxDocCount)
+                && Objects.equals(precision, other.precision);
     }
 
     @Override

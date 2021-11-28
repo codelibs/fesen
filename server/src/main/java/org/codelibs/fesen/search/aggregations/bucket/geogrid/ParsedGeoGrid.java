@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class ParsedGeoGrid extends ParsedMultiBucketAggregation<ParsedGeoGridBucket> implements GeoGrid {
 
@@ -38,7 +38,7 @@ public abstract class ParsedGeoGrid extends ParsedMultiBucketAggregation<ParsedG
     public static ObjectParser<ParsedGeoGrid, Void> createParser(Supplier<ParsedGeoGrid> supplier,
             CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
             CheckedFunction<XContentParser, ParsedBucket, IOException> keyedBucketParser) {
-        ObjectParser<ParsedGeoGrid, Void> parser =  new ObjectParser<>(ParsedGeoGrid.class.getSimpleName(), true, supplier);
+        ObjectParser<ParsedGeoGrid, Void> parser = new ObjectParser<>(ParsedGeoGrid.class.getSimpleName(), true, supplier);
         declareMultiBucketAggregationFields(parser, bucketParser, keyedBucketParser);
         return parser;
     }

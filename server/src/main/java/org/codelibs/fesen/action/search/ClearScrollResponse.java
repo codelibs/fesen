@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.search;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,19 +36,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
 
-import java.io.IOException;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
 public class ClearScrollResponse extends ActionResponse implements StatusToXContentObject {
 
     private static final ParseField SUCCEEDED = new ParseField("succeeded");
     private static final ParseField NUMFREED = new ParseField("num_freed");
 
-    private static final ConstructingObjectParser<ClearScrollResponse, Void> PARSER = new ConstructingObjectParser<>("clear_scroll",
-            true, a -> new ClearScrollResponse((boolean)a[0], (int)a[1]));
+    private static final ConstructingObjectParser<ClearScrollResponse, Void> PARSER =
+            new ConstructingObjectParser<>("clear_scroll", true, a -> new ClearScrollResponse((boolean) a[0], (int) a[1]));
     static {
         PARSER.declareField(constructorArg(), (parser, context) -> parser.booleanValue(), SUCCEEDED, ObjectParser.ValueType.BOOLEAN);
         PARSER.declareField(constructorArg(), (parser, context) -> parser.intValue(), NUMFREED, ObjectParser.ValueType.INT);

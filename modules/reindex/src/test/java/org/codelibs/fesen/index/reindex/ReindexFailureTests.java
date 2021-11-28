@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static org.codelibs.fesen.action.DocWriteRequest.OpType.CREATE;
+import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.either;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -26,15 +33,6 @@ import java.util.concurrent.Future;
 
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.action.index.IndexRequestBuilder;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
-
-import static org.codelibs.fesen.action.DocWriteRequest.OpType.CREATE;
-import static org.hamcrest.Matchers.both;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 /**
  * Tests failure capturing and abort-on-failure behavior of reindex.
@@ -45,8 +43,7 @@ public class ReindexFailureTests extends ReindexTestCase {
          * Create the destination index such that the copy will cause a mapping
          * conflict on every request.
          */
-        indexRandom(true,
-                client().prepareIndex("dest", "_doc", "test").setSource("test", 10) /* Its a string in the source! */);
+        indexRandom(true, client().prepareIndex("dest", "_doc", "test").setSource("test", 10) /* Its a string in the source! */);
 
         indexDocs(100);
 
@@ -59,18 +56,15 @@ public class ReindexFailureTests extends ReindexTestCase {
         copy.source().setSize(1);
 
         BulkByScrollResponse response = copy.get();
-        assertThat(response, matcher()
-                .batches(1)
-                .failures(both(greaterThan(0)).and(lessThanOrEqualTo(maximumNumberOfShards()))));
-        for (Failure failure: response.getBulkFailures()) {
+        assertThat(response, matcher().batches(1).failures(both(greaterThan(0)).and(lessThanOrEqualTo(maximumNumberOfShards()))));
+        for (Failure failure : response.getBulkFailures()) {
             assertThat(failure.getMessage(), containsString("IllegalArgumentException[For input string: \"words words\"]"));
         }
     }
 
     public void testAbortOnVersionConflict() throws Exception {
         // Just put something in the way of the copy.
-        indexRandom(true,
-                client().prepareIndex("dest", "_doc", "1").setSource("test", "test"));
+        indexRandom(true, client().prepareIndex("dest", "_doc", "1").setSource("test", "test"));
 
         indexDocs(100);
 
@@ -80,7 +74,7 @@ public class ReindexFailureTests extends ReindexTestCase {
 
         BulkByScrollResponse response = copy.get();
         assertThat(response, matcher().batches(1).versionConflicts(1).failures(1).created(99));
-        for (Failure failure: response.getBulkFailures()) {
+        for (Failure failure : response.getBulkFailures()) {
             assertThat(failure.getMessage(), containsString("VersionConflictEngineException[["));
         }
     }
@@ -117,12 +111,8 @@ public class ReindexFailureTests extends ReindexTestCase {
                 assertBusy(() -> assertFalse(client().admin().indices().prepareExists("source").get().isExists()));
             } catch (ExecutionException e) {
                 logger.info("Triggered a reindex failure on the {} attempt: {}", attempt, e.getMessage());
-                assertThat(e.getMessage(),
-                        either(containsString("all shards failed"))
-                        .or(containsString("No search context found"))
-                        .or(containsString("no such index [source]"))
-                        .or(containsString("Partial shards failure"))
-                );
+                assertThat(e.getMessage(), either(containsString("all shards failed")).or(containsString("No search context found"))
+                        .or(containsString("no such index [source]")).or(containsString("Partial shards failure")));
                 return;
             }
         }

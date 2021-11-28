@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.codelibs.fesen.common.hash.MessageDigests;
-import org.codelibs.fesen.common.settings.SecureSettings;
-import org.codelibs.fesen.common.settings.SecureString;
 
 /**
  * A mock implementation of secure settings for tests to use.

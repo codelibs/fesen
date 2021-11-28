@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.index.query;
 
+import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanFirstQuery;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -28,11 +33,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBuilder> implements SpanQueryBuilder {
     public static final String NAME = "span_first";
@@ -161,8 +161,7 @@ public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBu
 
     @Override
     protected boolean doEquals(SpanFirstQueryBuilder other) {
-        return Objects.equals(matchBuilder, other.matchBuilder) &&
-               Objects.equals(end, other.end);
+        return Objects.equals(matchBuilder, other.matchBuilder) && Objects.equals(end, other.end);
     }
 
     @Override

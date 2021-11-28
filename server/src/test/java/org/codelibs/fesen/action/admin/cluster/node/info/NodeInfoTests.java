@@ -45,21 +45,10 @@ public class NodeInfoTests extends ESTestCase {
      * objects.
      */
     public void testGetInfo() {
-        NodeInfo nodeInfo = new NodeInfo(
-            Version.CURRENT,
-            Build.CURRENT,
-            new DiscoveryNode("test_node", buildNewFakeTransportAddress(), emptyMap(), emptySet(), VersionUtils.randomVersion(random())),
-            null,
-            null,
-            null,
-            JvmInfo.jvmInfo(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        NodeInfo nodeInfo = new NodeInfo(Version.CURRENT, Build.CURRENT,
+                new DiscoveryNode("test_node", buildNewFakeTransportAddress(), emptyMap(), emptySet(),
+                        VersionUtils.randomVersion(random())),
+                null, null, null, JvmInfo.jvmInfo(), null, null, null, null, null, null, null);
 
         // OsInfo is absent
         assertThat(nodeInfo.getInfo(OsInfo.class), nullValue());

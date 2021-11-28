@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.Nullable;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * Calculate a exponentially weighted moving average
@@ -172,4 +172,3 @@ public class EwmaModel extends MovAvgModel {
         }
     }
 }
-

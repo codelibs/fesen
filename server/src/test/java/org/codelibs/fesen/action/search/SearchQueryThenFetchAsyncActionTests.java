@@ -89,7 +89,7 @@ public class SearchQueryThenFetchAsyncActionTests extends ESTestCase {
 
     private void testCase(boolean withScroll, boolean withCollapse) throws Exception {
         final TransportSearchAction.SearchTimeProvider timeProvider =
-            new TransportSearchAction.SearchTimeProvider(0, System.nanoTime(), System::nanoTime);
+                new TransportSearchAction.SearchTimeProvider(0, System.nanoTime(), System::nanoTime);
 
         Map<String, Transport.Connection> lookup = new ConcurrentHashMap<>();
         DiscoveryNode primaryNode = new DiscoveryNode("node_1", buildNewFakeTransportAddress(), Version.CURRENT);
@@ -104,8 +104,8 @@ public class SearchQueryThenFetchAsyncActionTests extends ESTestCase {
         AtomicBoolean canReturnNullResponse = new AtomicBoolean(false);
         SearchTransportService searchTransportService = new SearchTransportService(null, null) {
             @Override
-            public void sendExecuteQuery(Transport.Connection connection, ShardSearchRequest request,
-                                         SearchTask task, SearchActionListener<SearchPhaseResult> listener) {
+            public void sendExecuteQuery(Transport.Connection connection, ShardSearchRequest request, SearchTask task,
+                    SearchActionListener<SearchPhaseResult> listener) {
                 int shardId = request.shardId().id();
                 if (request.canReturnNullResponseIfMatchNoDocs()) {
                     canReturnNullResponse.set(true);
@@ -115,25 +115,21 @@ public class SearchQueryThenFetchAsyncActionTests extends ESTestCase {
                     numWithTopDocs.incrementAndGet();
                 }
                 QuerySearchResult queryResult = new QuerySearchResult(new ShardSearchContextId("N/A", 123),
-                    new SearchShardTarget("node1", new ShardId("idx", "na", shardId), null, OriginalIndices.NONE), null);
+                        new SearchShardTarget("node1", new ShardId("idx", "na", shardId), null, OriginalIndices.NONE), null);
                 SortField sortField = new SortField("timestamp", SortField.Type.LONG);
                 if (withCollapse) {
-                    queryResult.topDocs(new TopDocsAndMaxScore(
-                            new CollapseTopFieldDocs(
-                                "collapse_field",
-                                new TotalHits(1, withScroll ? TotalHits.Relation.EQUAL_TO : TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO),
-                                new FieldDoc[]{
-                                    new FieldDoc(randomInt(1000), Float.NaN, new Object[]{request.shardId().id()})
-                                },
-                                new SortField[]{sortField}, new Object[] { 0L }), Float.NaN),
-                        new DocValueFormat[]{DocValueFormat.RAW});
+                    queryResult.topDocs(
+                            new TopDocsAndMaxScore(new CollapseTopFieldDocs("collapse_field",
+                                    new TotalHits(1,
+                                            withScroll ? TotalHits.Relation.EQUAL_TO : TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO),
+                                    new FieldDoc[] { new FieldDoc(randomInt(1000), Float.NaN, new Object[] { request.shardId().id() }) },
+                                    new SortField[] { sortField }, new Object[] { 0L }), Float.NaN),
+                            new DocValueFormat[] { DocValueFormat.RAW });
                 } else {
                     queryResult.topDocs(new TopDocsAndMaxScore(new TopFieldDocs(
                             new TotalHits(1, withScroll ? TotalHits.Relation.EQUAL_TO : TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO),
-                            new FieldDoc[]{
-                                new FieldDoc(randomInt(1000), Float.NaN, new Object[]{request.shardId().id()})
-                            }, new SortField[]{sortField}), Float.NaN),
-                        new DocValueFormat[]{DocValueFormat.RAW});
+                            new FieldDoc[] { new FieldDoc(randomInt(1000), Float.NaN, new Object[] { request.shardId().id() }) },
+                            new SortField[] { sortField }), Float.NaN), new DocValueFormat[] { DocValueFormat.RAW });
                 }
                 queryResult.from(0);
                 queryResult.size(1);
@@ -143,14 +139,12 @@ public class SearchQueryThenFetchAsyncActionTests extends ESTestCase {
         };
         CountDownLatch latch = new CountDownLatch(1);
         GroupShardsIterator<SearchShardIterator> shardsIter = SearchAsyncActionTests.getShardsIter("idx",
-            new OriginalIndices(new String[]{"idx"}, SearchRequest.DEFAULT_INDICES_OPTIONS),
-            numShards, randomBoolean(), primaryNode, replicaNode);
+                new OriginalIndices(new String[] { "idx" }, SearchRequest.DEFAULT_INDICES_OPTIONS), numShards, randomBoolean(), primaryNode,
+                replicaNode);
         final SearchRequest searchRequest = new SearchRequest();
         searchRequest.setMaxConcurrentShardRequests(numConcurrent);
         searchRequest.setBatchedReduceSize(2);
-        searchRequest.source(new SearchSourceBuilder()
-            .size(1)
-            .sort(SortBuilders.fieldSort("timestamp")));
+        searchRequest.source(new SearchSourceBuilder().size(1).sort(SortBuilders.fieldSort("timestamp")));
         if (withScroll) {
             searchRequest.scroll(TimeValue.timeValueMillis(100));
         } else {
@@ -161,18 +155,16 @@ public class SearchQueryThenFetchAsyncActionTests extends ESTestCase {
         }
         searchRequest.allowPartialSearchResults(false);
         Executor executor = EsExecutors.newDirectExecutorService();
-        SearchPhaseController controller = new SearchPhaseController(
-            writableRegistry(), r -> InternalAggregationTestCase.emptyReduceContextBuilder());
+        SearchPhaseController controller =
+                new SearchPhaseController(writableRegistry(), r -> InternalAggregationTestCase.emptyReduceContextBuilder());
         SearchTask task = new SearchTask(0, "n/a", "n/a", () -> "test", null, Collections.emptyMap());
-        QueryPhaseResultConsumer resultConsumer = new QueryPhaseResultConsumer(searchRequest, executor,
-            new NoopCircuitBreaker(CircuitBreaker.REQUEST), controller, task.getProgressListener(), writableRegistry(),
-            shardsIter.size(), exc -> {});
-        SearchQueryThenFetchAsyncAction action = new SearchQueryThenFetchAsyncAction(logger,
-            searchTransportService, (clusterAlias, node) -> lookup.get(node),
-            Collections.singletonMap("_na_", new AliasFilter(null, Strings.EMPTY_ARRAY)),
-            Collections.emptyMap(), Collections.emptyMap(), controller, executor,
-            resultConsumer, searchRequest, null, shardsIter, timeProvider, null,
-            task, SearchResponse.Clusters.EMPTY) {
+        QueryPhaseResultConsumer resultConsumer =
+                new QueryPhaseResultConsumer(searchRequest, executor, new NoopCircuitBreaker(CircuitBreaker.REQUEST), controller,
+                        task.getProgressListener(), writableRegistry(), shardsIter.size(), exc -> {});
+        SearchQueryThenFetchAsyncAction action = new SearchQueryThenFetchAsyncAction(logger, searchTransportService,
+                (clusterAlias, node) -> lookup.get(node), Collections.singletonMap("_na_", new AliasFilter(null, Strings.EMPTY_ARRAY)),
+                Collections.emptyMap(), Collections.emptyMap(), controller, executor, resultConsumer, searchRequest, null, shardsIter,
+                timeProvider, null, task, SearchResponse.Clusters.EMPTY) {
             @Override
             protected SearchPhase getNextPhase(SearchPhaseResults<SearchPhaseResult> results, SearchPhaseContext context) {
                 return new SearchPhase("test") {

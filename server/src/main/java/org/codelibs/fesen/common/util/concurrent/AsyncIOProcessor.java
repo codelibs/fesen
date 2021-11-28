@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.common.util.concurrent;
 
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.core.Tuple;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +26,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * This async IO processor allows to batch IO operations and have a single writer processing the write operations.

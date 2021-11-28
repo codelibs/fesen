@@ -27,7 +27,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 
 public class MainRequest extends ActionRequest {
 
-    public MainRequest() {}
+    public MainRequest() {
+    }
 
     MainRequest(StreamInput in) throws IOException {
         super(in);

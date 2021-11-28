@@ -19,7 +19,17 @@
 
 package org.codelibs.fesen.gateway;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -35,16 +45,7 @@ import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.index.Index;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 /**
  * The dangling indices state is responsible for finding new dangling indices (indices that have
@@ -62,12 +63,8 @@ public class DanglingIndicesState implements ClusterStateListener {
      *
      * @see org.codelibs.fesen.action.admin.indices.dangling
      */
-    public static final Setting<Boolean> AUTO_IMPORT_DANGLING_INDICES_SETTING = Setting.boolSetting(
-        "gateway.auto_import_dangling_indices",
-        false,
-        Setting.Property.NodeScope,
-        Setting.Property.Deprecated
-    );
+    public static final Setting<Boolean> AUTO_IMPORT_DANGLING_INDICES_SETTING =
+            Setting.boolSetting("gateway.auto_import_dangling_indices", false, Setting.Property.NodeScope, Setting.Property.Deprecated);
 
     private final NodeEnvironment nodeEnv;
     private final MetaStateService metaStateService;
@@ -79,7 +76,7 @@ public class DanglingIndicesState implements ClusterStateListener {
 
     @Inject
     public DanglingIndicesState(NodeEnvironment nodeEnv, MetaStateService metaStateService,
-                                LocalAllocateDangledIndices danglingIndicesAllocator, ClusterService clusterService) {
+            LocalAllocateDangledIndices danglingIndicesAllocator, ClusterService clusterService) {
         this.nodeEnv = nodeEnv;
         this.metaStateService = metaStateService;
         this.danglingIndicesAllocator = danglingIndicesAllocator;
@@ -90,10 +87,8 @@ public class DanglingIndicesState implements ClusterStateListener {
         if (this.isAutoImportDanglingIndicesEnabled) {
             clusterService.addListener(this);
         } else {
-            logger.warn(
-                AUTO_IMPORT_DANGLING_INDICES_SETTING.getKey()
-                    + " is disabled, dangling indices will not be automatically detected or imported and must be managed manually"
-            );
+            logger.warn(AUTO_IMPORT_DANGLING_INDICES_SETTING.getKey()
+                    + " is disabled, dangling indices will not be automatically detected or imported and must be managed manually");
         }
     }
 
@@ -138,8 +133,8 @@ public class DanglingIndicesState implements ClusterStateListener {
             final IndexMetadata indexMetadata = metadata.index(index);
             if (indexMetadata != null && indexMetadata.getIndex().getName().equals(index.getName())) {
                 if (indexMetadata.getIndex().getUUID().equals(index.getUUID()) == false) {
-                    logger.warn("[{}] can not be imported as a dangling index, as there is already another index " +
-                        "with the same name but a different uuid. local index will be ignored (but not deleted)", index);
+                    logger.warn("[{}] can not be imported as a dangling index, as there is already another index "
+                            + "with the same name but a different uuid. local index will be ignored (but not deleted)", index);
                 } else {
                     logger.debug("[{}] no longer dangling (created), removing from dangling list", index);
                 }
@@ -206,12 +201,10 @@ public class DanglingIndicesState implements ClusterStateListener {
         allIndices.forEach((index, indexMetadata) -> {
             if (metadata.hasIndex(indexMetadata.getIndex().getName())) {
                 logger.warn("[{}] can not be imported as a dangling index, as index with same name already exists in cluster metadata",
-                    indexMetadata.getIndex());
+                        indexMetadata.getIndex());
             } else {
-                logger.info(
-                    "[{}] dangling index exists on local file system, but not in cluster metadata, auto import to cluster state",
-                    indexMetadata.getIndex()
-                );
+                logger.info("[{}] dangling index exists on local file system, but not in cluster metadata, auto import to cluster state",
+                        indexMetadata.getIndex());
                 filteredIndices.add(stripAliases(indexMetadata));
             }
         });
@@ -229,8 +222,8 @@ public class DanglingIndicesState implements ClusterStateListener {
         if (indexMetadata.getAliases().isEmpty()) {
             return indexMetadata;
         } else {
-            logger.info("[{}] stripping aliases: {} from index before importing",
-                indexMetadata.getIndex(), indexMetadata.getAliases().keys());
+            logger.info("[{}] stripping aliases: {} from index before importing", indexMetadata.getIndex(),
+                    indexMetadata.getAliases().keys());
             return IndexMetadata.builder(indexMetadata).removeAllAliases().build();
         }
     }
@@ -255,18 +248,17 @@ public class DanglingIndicesState implements ClusterStateListener {
 
         try {
             danglingIndicesAllocator.allocateDangled(filteredIndices,
-                new ActionListener<LocalAllocateDangledIndices.AllocateDangledResponse>() {
-                    @Override
-                    public void onResponse(LocalAllocateDangledIndices.AllocateDangledResponse response) {
-                        logger.trace("allocated dangled");
-                    }
+                    new ActionListener<LocalAllocateDangledIndices.AllocateDangledResponse>() {
+                        @Override
+                        public void onResponse(LocalAllocateDangledIndices.AllocateDangledResponse response) {
+                            logger.trace("allocated dangled");
+                        }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        logger.info("failed to send allocated dangled", e);
-                    }
-                }
-            );
+                        @Override
+                        public void onFailure(Exception e) {
+                            logger.info("failed to send allocated dangled", e);
+                        }
+                    });
         } catch (Exception e) {
             logger.warn("failed to send allocate dangled", e);
         }

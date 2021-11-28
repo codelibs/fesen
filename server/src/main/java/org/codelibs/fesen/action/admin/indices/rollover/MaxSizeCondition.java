@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.admin.indices.rollover;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,8 +28,6 @@ import org.codelibs.fesen.common.unit.ByteSizeUnit;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
 
 /**
  * A size-based condition for an index size.

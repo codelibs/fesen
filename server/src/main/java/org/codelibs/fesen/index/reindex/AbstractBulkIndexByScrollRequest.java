@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.tasks.TaskId;
-
-import java.io.IOException;
 
 public abstract class AbstractBulkIndexByScrollRequest<Self extends AbstractBulkIndexByScrollRequest<Self>>
         extends AbstractBulkByScrollRequest<Self> {

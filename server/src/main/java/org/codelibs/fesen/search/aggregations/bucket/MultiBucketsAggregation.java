@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.bucket;
 
+import java.util.List;
+
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.HasAggregations;
-
-import java.util.List;
 
 /**
  * An aggregation that returns multiple buckets

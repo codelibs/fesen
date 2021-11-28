@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.client;
 
+import java.security.AccessController;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivilegedAction;
+import java.util.List;
+import java.util.Objects;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,13 +34,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.conn.SchemeIOSessionStrategy;
-
-import javax.net.ssl.SSLContext;
-import java.security.AccessController;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivilegedAction;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Helps creating a new {@link RestClient}. Allows to set the most common http client configuration options when internally
@@ -198,29 +199,28 @@ public final class RestClientBuilder {
         if (failureListener == null) {
             failureListener = new RestClient.FailureListener();
         }
-        CloseableHttpAsyncClient httpClient = AccessController.doPrivileged(
-            (PrivilegedAction<CloseableHttpAsyncClient>) this::createHttpClient);
-        RestClient restClient = new RestClient(httpClient, defaultHeaders, nodes,
-                pathPrefix, failureListener, nodeSelector, strictDeprecationMode, compressionEnabled);
+        CloseableHttpAsyncClient httpClient =
+                AccessController.doPrivileged((PrivilegedAction<CloseableHttpAsyncClient>) this::createHttpClient);
+        RestClient restClient = new RestClient(httpClient, defaultHeaders, nodes, pathPrefix, failureListener, nodeSelector,
+                strictDeprecationMode, compressionEnabled);
         httpClient.start();
         return restClient;
     }
 
     private CloseableHttpAsyncClient createHttpClient() {
         //default timeouts are all infinite
-        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
-                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT_MILLIS);
+        RequestConfig.Builder requestConfigBuilder =
+                RequestConfig.custom().setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_MILLIS).setSocketTimeout(DEFAULT_SOCKET_TIMEOUT_MILLIS);
         if (requestConfigCallback != null) {
             requestConfigBuilder = requestConfigCallback.customizeRequestConfig(requestConfigBuilder);
         }
 
         try {
             HttpAsyncClientBuilder httpClientBuilder = HttpAsyncClientBuilder.create().setDefaultRequestConfig(requestConfigBuilder.build())
-                //default settings for connection pooling may be too constraining
-                .setMaxConnPerRoute(DEFAULT_MAX_CONN_PER_ROUTE).setMaxConnTotal(DEFAULT_MAX_CONN_TOTAL)
-                .setSSLContext(SSLContext.getDefault())
-                .setTargetAuthenticationStrategy(new PersistentCredentialsAuthenticationStrategy());
+                    //default settings for connection pooling may be too constraining
+                    .setMaxConnPerRoute(DEFAULT_MAX_CONN_PER_ROUTE).setMaxConnTotal(DEFAULT_MAX_CONN_TOTAL)
+                    .setSSLContext(SSLContext.getDefault())
+                    .setTargetAuthenticationStrategy(new PersistentCredentialsAuthenticationStrategy());
             if (httpClientConfigCallback != null) {
                 httpClientBuilder = httpClientConfigCallback.customizeHttpClient(httpClientBuilder);
             }

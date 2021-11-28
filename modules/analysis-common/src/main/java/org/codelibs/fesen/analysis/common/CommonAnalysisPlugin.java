@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import static org.codelibs.fesen.plugins.AnalysisPlugin.requiresAnalysisSettings;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Supplier;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
@@ -144,16 +154,6 @@ import org.codelibs.fesen.watcher.ResourceWatcherService;
 import org.tartarus.snowball.ext.DutchStemmer;
 import org.tartarus.snowball.ext.FrenchStemmer;
 
-import static org.codelibs.fesen.plugins.AnalysisPlugin.requiresAnalysisSettings;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Supplier;
-
 public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, ScriptPlugin {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(CommonAnalysisPlugin.class);
@@ -162,11 +162,9 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
 
     @Override
     public Collection<Object> createComponents(Client client, ClusterService clusterService, ThreadPool threadPool,
-                                               ResourceWatcherService resourceWatcherService, ScriptService scriptService,
-                                               NamedXContentRegistry xContentRegistry, Environment environment,
-                                               NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
-                                               IndexNameExpressionResolver expressionResolver,
-                                               Supplier<RepositoriesService> repositoriesServiceSupplier) {
+            ResourceWatcherService resourceWatcherService, ScriptService scriptService, NamedXContentRegistry xContentRegistry,
+            Environment environment, NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
+            IndexNameExpressionResolver expressionResolver, Supplier<RepositoriesService> repositoriesServiceSupplier) {
         this.scriptService.set(scriptService);
         return Collections.emptyList();
     }
@@ -241,7 +239,7 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         filters.put("czech_stem", CzechStemTokenFilterFactory::new);
         filters.put("common_grams", requiresAnalysisSettings(CommonGramsTokenFilterFactory::new));
         filters.put("condition",
-            requiresAnalysisSettings((i, e, n, s) -> new ScriptedConditionTokenFilterFactory(i, n, s, scriptService.get())));
+                requiresAnalysisSettings((i, e, n, s) -> new ScriptedConditionTokenFilterFactory(i, n, s, scriptService.get())));
         filters.put("decimal_digit", DecimalDigitFilterFactory::new);
         filters.put("delimited_payload_filter", LegacyDelimitedPayloadTokenFilterFactory::new);
         filters.put("delimited_payload", DelimitedPayloadTokenFilterFactory::new);
@@ -284,7 +282,7 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         filters.put("persian_normalization", PersianNormalizationFilterFactory::new);
         filters.put("porter_stem", PorterStemTokenFilterFactory::new);
         filters.put("predicate_token_filter",
-            requiresAnalysisSettings((i, e, n, s) -> new PredicateTokenFilterScriptFactory(i, n, s, scriptService.get())));
+                requiresAnalysisSettings((i, e, n, s) -> new PredicateTokenFilterScriptFactory(i, n, s, scriptService.get())));
         filters.put("remove_duplicates", RemoveDuplicatesTokenFilterFactory::new);
         filters.put("reverse", ReverseTokenFilterFactory::new);
         filters.put("russian_stem", RussianStemTokenFilterFactory::new);
@@ -358,12 +356,11 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         List<PreBuiltAnalyzerProviderFactory> analyzers = new ArrayList<>();
         // TODO remove in 8.0
         analyzers.add(new PreBuiltAnalyzerProviderFactory("standard_html_strip", CachingStrategy.ELASTICSEARCH,
-            () -> new StandardHtmlStripAnalyzer(CharArraySet.EMPTY_SET)));
+                () -> new StandardHtmlStripAnalyzer(CharArraySet.EMPTY_SET)));
         analyzers.add(new PreBuiltAnalyzerProviderFactory("pattern", CachingStrategy.ELASTICSEARCH,
-            () -> new PatternAnalyzer(Regex.compile("\\W+" /*PatternAnalyzer.NON_WORD_PATTERN*/, null), true,
-            CharArraySet.EMPTY_SET)));
+                () -> new PatternAnalyzer(Regex.compile("\\W+" /*PatternAnalyzer.NON_WORD_PATTERN*/, null), true, CharArraySet.EMPTY_SET)));
         analyzers.add(new PreBuiltAnalyzerProviderFactory("snowball", CachingStrategy.LUCENE,
-            () -> new SnowballAnalyzer("English", EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
+                () -> new SnowballAnalyzer("English", EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
 
         // Language analyzers:
         analyzers.add(new PreBuiltAnalyzerProviderFactory("arabic", CachingStrategy.LUCENE, ArabicAnalyzer::new));
@@ -375,7 +372,7 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         analyzers.add(new PreBuiltAnalyzerProviderFactory("catalan", CachingStrategy.LUCENE, CatalanAnalyzer::new));
         // chinese analyzer: only for old indices, best effort
         analyzers.add(new PreBuiltAnalyzerProviderFactory("chinese", CachingStrategy.ONE,
-            () -> new StandardAnalyzer(EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
+                () -> new StandardAnalyzer(EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
         analyzers.add(new PreBuiltAnalyzerProviderFactory("cjk", CachingStrategy.LUCENE, CJKAnalyzer::new));
         analyzers.add(new PreBuiltAnalyzerProviderFactory("czech", CachingStrategy.LUCENE, CzechAnalyzer::new));
         analyzers.add(new PreBuiltAnalyzerProviderFactory("danish", CachingStrategy.LUCENE, DanishAnalyzer::new));
@@ -439,21 +436,17 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         filters.add(PreConfiguredTokenFilter.fesenVersion("delimited_payload_filter", false, (input, version) -> {
             if (version.onOrAfter(Version.V_7_0_0)) {
                 throw new IllegalArgumentException(
-                    "[delimited_payload_filter] is not supported for new indices, use [delimited_payload] instead");
+                        "[delimited_payload_filter] is not supported for new indices, use [delimited_payload] instead");
             }
             deprecationLogger.deprecate("analysis_delimited_payload_filter",
-                "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
-            return new DelimitedPayloadTokenFilter(input,
-                DelimitedPayloadTokenFilterFactory.DEFAULT_DELIMITER,
-                DelimitedPayloadTokenFilterFactory.DEFAULT_ENCODER);
+                    "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
+            return new DelimitedPayloadTokenFilter(input, DelimitedPayloadTokenFilterFactory.DEFAULT_DELIMITER,
+                    DelimitedPayloadTokenFilterFactory.DEFAULT_ENCODER);
         }));
-        filters.add(PreConfiguredTokenFilter.singleton("delimited_payload", false, input ->
-                new DelimitedPayloadTokenFilter(input,
-                        DelimitedPayloadTokenFilterFactory.DEFAULT_DELIMITER,
-                        DelimitedPayloadTokenFilterFactory.DEFAULT_ENCODER)));
+        filters.add(PreConfiguredTokenFilter.singleton("delimited_payload", false, input -> new DelimitedPayloadTokenFilter(input,
+                DelimitedPayloadTokenFilterFactory.DEFAULT_DELIMITER, DelimitedPayloadTokenFilterFactory.DEFAULT_ENCODER)));
         filters.add(PreConfiguredTokenFilter.singleton("dutch_stem", false, input -> new SnowballFilter(input, new DutchStemmer())));
-        filters.add(PreConfiguredTokenFilter.singleton("edge_ngram", false, false, input ->
-                new EdgeNGramTokenFilter(input, 1)));
+        filters.add(PreConfiguredTokenFilter.singleton("edge_ngram", false, false, input -> new EdgeNGramTokenFilter(input, 1)));
         filters.add(PreConfiguredTokenFilter.fesenVersion("edgeNGram", false, false, (reader, version) -> {
             if (version.onOrAfter(org.codelibs.fesen.Version.V_7_0_0)) {
                 throw new IllegalArgumentException(
@@ -465,9 +458,9 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
                                 + "Please change the filter name to [edge_ngram] instead.");
             }
             return new EdgeNGramTokenFilter(reader, 1);
-            }));
-        filters.add(PreConfiguredTokenFilter.singleton("elision", true,
-                input -> new ElisionFilter(input, FrenchAnalyzer.DEFAULT_ARTICLES)));
+        }));
+        filters.add(
+                PreConfiguredTokenFilter.singleton("elision", true, input -> new ElisionFilter(input, FrenchAnalyzer.DEFAULT_ARTICLES)));
         filters.add(PreConfiguredTokenFilter.singleton("french_stem", false, input -> new SnowballFilter(input, new FrenchStemmer())));
         filters.add(PreConfiguredTokenFilter.singleton("german_normalization", true, GermanNormalizationFilter::new));
         filters.add(PreConfiguredTokenFilter.singleton("german_stem", false, GermanStemFilter::new));
@@ -477,10 +470,8 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         filters.add(PreConfiguredTokenFilter.singleton("kstem", false, KStemFilter::new));
         // TODO this one seems useless
         filters.add(PreConfiguredTokenFilter.singleton("length", false, input -> new LengthFilter(input, 0, Integer.MAX_VALUE)));
-        filters.add(PreConfiguredTokenFilter.singleton("limit", false, input ->
-                new LimitTokenCountFilter(input,
-                        LimitTokenCountFilterFactory.DEFAULT_MAX_TOKEN_COUNT,
-                        LimitTokenCountFilterFactory.DEFAULT_CONSUME_ALL_TOKENS)));
+        filters.add(PreConfiguredTokenFilter.singleton("limit", false, input -> new LimitTokenCountFilter(input,
+                LimitTokenCountFilterFactory.DEFAULT_MAX_TOKEN_COUNT, LimitTokenCountFilterFactory.DEFAULT_CONSUME_ALL_TOKENS)));
         filters.add(PreConfiguredTokenFilter.singleton("ngram", false, false, reader -> new NGramTokenFilter(reader, 1, 2, false)));
         filters.add(PreConfiguredTokenFilter.fesenVersion("nGram", false, false, (reader, version) -> {
             if (version.onOrAfter(org.codelibs.fesen.Version.V_7_0_0)) {
@@ -514,28 +505,26 @@ public class CommonAnalysisPlugin extends Plugin implements AnalysisPlugin, Scri
         filters.add(PreConfiguredTokenFilter.singleton("sorani_normalization", true, SoraniNormalizationFilter::new));
         filters.add(PreConfiguredTokenFilter.singleton("stemmer", false, PorterStemFilter::new));
         // The stop filter is in lucene-core but the English stop words set is in lucene-analyzers-common
-        filters.add(PreConfiguredTokenFilter.singleton("stop", false,
-            input -> new StopFilter(input, EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
+        filters.add(
+                PreConfiguredTokenFilter.singleton("stop", false, input -> new StopFilter(input, EnglishAnalyzer.ENGLISH_STOP_WORDS_SET)));
         filters.add(PreConfiguredTokenFilter.singleton("trim", true, TrimFilter::new));
         filters.add(PreConfiguredTokenFilter.singleton("truncate", false, input -> new TruncateTokenFilter(input, 10)));
         filters.add(PreConfiguredTokenFilter.singleton("type_as_payload", false, TypeAsPayloadTokenFilter::new));
         filters.add(PreConfiguredTokenFilter.singleton("unique", false, UniqueTokenFilter::new));
         filters.add(PreConfiguredTokenFilter.singleton("uppercase", true, UpperCaseFilter::new));
-        filters.add(PreConfiguredTokenFilter.singleton("word_delimiter", false, false, input ->
-                new WordDelimiterFilter(input,
-                        WordDelimiterFilter.GENERATE_WORD_PARTS
-                      | WordDelimiterFilter.GENERATE_NUMBER_PARTS
-                      | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE
-                      | WordDelimiterFilter.SPLIT_ON_NUMERICS
-                      | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null)));
+        filters.add(PreConfiguredTokenFilter.singleton("word_delimiter", false, false,
+                input -> new WordDelimiterFilter(input,
+                        WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS
+                                | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS
+                                | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE,
+                        null)));
         filters.add(PreConfiguredTokenFilter.fesenVersion("word_delimiter_graph", false, false, (input, version) -> {
             boolean adjustOffsets = version.onOrAfter(Version.V_7_3_0);
             return new WordDelimiterGraphFilter(input, adjustOffsets, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE,
-                        WordDelimiterGraphFilter.GENERATE_WORD_PARTS
-                      | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS
-                      | WordDelimiterGraphFilter.SPLIT_ON_CASE_CHANGE
-                      | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
-                      | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE, null);
+                    WordDelimiterGraphFilter.GENERATE_WORD_PARTS | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS
+                            | WordDelimiterGraphFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
+                            | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE,
+                    null);
         }));
         return filters;
     }

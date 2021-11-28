@@ -20,12 +20,11 @@
 package org.codelibs.fesen.transport;
 
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.transport.ConnectionProfile;
-import org.codelibs.fesen.transport.TransportRequestOptions;
 
 public final class TestProfiles {
 
-    private TestProfiles() {}
+    private TestProfiles() {
+    }
 
     /**
      * A pre-built light connection profile that shares a single connection across all
@@ -40,12 +39,8 @@ public final class TestProfiles {
         builder.setHandshakeTimeout(source.getHandshakeTimeout());
         builder.setCompressionEnabled(source.getCompressionEnabled());
         builder.setPingInterval(source.getPingInterval());
-        builder.addConnections(1,
-            TransportRequestOptions.Type.BULK,
-            TransportRequestOptions.Type.PING,
-            TransportRequestOptions.Type.RECOVERY,
-            TransportRequestOptions.Type.REG,
-            TransportRequestOptions.Type.STATE);
+        builder.addConnections(1, TransportRequestOptions.Type.BULK, TransportRequestOptions.Type.PING,
+                TransportRequestOptions.Type.RECOVERY, TransportRequestOptions.Type.REG, TransportRequestOptions.Type.STATE);
         LIGHT_PROFILE = builder.build();
     }
 }

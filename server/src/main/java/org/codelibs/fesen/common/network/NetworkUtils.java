@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.common.network;
 
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.Constants;
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -36,6 +33,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.Constants;
+
 /**
  * Utilities for network interfaces / addresses binding and publishing.
  * Its only intended for that purpose, not general purpose usage!!!!
@@ -43,8 +43,9 @@ import java.util.function.Predicate;
 public abstract class NetworkUtils {
 
     /** no instantiation */
-    private NetworkUtils() {}
-    
+    private NetworkUtils() {
+    }
+
     /**
      * By default we bind to any addresses on an interface/name, unless restricted by :ipv4 etc.
      * This property is unrelated to that, this is about what we *publish*. Today the code pretty much
@@ -78,14 +79,14 @@ public abstract class NetworkUtils {
         }
         SUPPORTS_V6 = v;
     }
-    
+
     /** Sorts an address by preference. This way code like publishing can just pick the first one */
     static int sortKey(InetAddress address, boolean prefer_v6) {
         int key = address.getAddress().length;
         if (prefer_v6) {
             key = -key;
         }
-        
+
         if (address.isAnyLocalAddress()) {
             key += 5;
         }
@@ -123,7 +124,7 @@ public abstract class NetworkUtils {
             }
         });
     }
-    
+
     /** Return all interfaces (and subinterfaces) on the system */
     static List<NetworkInterface> getInterfaces() throws SocketException {
         List<NetworkInterface> all = new ArrayList<>();
@@ -136,7 +137,7 @@ public abstract class NetworkUtils {
         });
         return all;
     }
-    
+
     /** Helper for getInterfaces, recursively adds subinterfaces to {@code target} */
     private static void addAllInterfaces(List<NetworkInterface> target, List<NetworkInterface> level) {
         if (!level.isEmpty()) {
@@ -146,7 +147,7 @@ public abstract class NetworkUtils {
             }
         }
     }
-    
+
     /** Returns system default for SO_REUSEADDR */
     public static boolean defaultReuseAddress() {
         return Constants.WINDOWS ? false : true;
@@ -184,21 +185,18 @@ public abstract class NetworkUtils {
     static InetAddress[] getLoopbackAddresses() throws IOException {
         return filterAllAddresses(InetAddress::isLoopbackAddress, "no up-and-running loopback addresses found");
     }
-    
+
     /** Returns all site-local scope (private) addresses for interfaces that are up. */
     static InetAddress[] getSiteLocalAddresses() throws IOException {
         return filterAllAddresses(InetAddress::isSiteLocalAddress, "No up-and-running site-local (private) addresses found");
     }
-    
+
     /** Returns all global scope addresses for interfaces that are up. */
     static InetAddress[] getGlobalAddresses() throws IOException {
-        return filterAllAddresses(
-                address -> address.isLoopbackAddress() == false
-                        && address.isSiteLocalAddress() == false
-                        && address.isLinkLocalAddress() == false,
-                "no up-and-running global-scope (public) addresses found");
+        return filterAllAddresses(address -> address.isLoopbackAddress() == false && address.isSiteLocalAddress() == false
+                && address.isLinkLocalAddress() == false, "no up-and-running global-scope (public) addresses found");
     }
-    
+
     /** Returns all addresses (any scope) for interfaces that are up. 
      *  This is only used to pick a publish address, when the user set network.host to a wildcard */
     static InetAddress[] getAllAddresses() throws IOException {
@@ -225,7 +223,7 @@ public abstract class NetworkUtils {
         }
         return list.toArray(new InetAddress[list.size()]);
     }
-    
+
     /** Returns only the IPV4 addresses in {@code addresses} */
     static InetAddress[] filterIPV4(InetAddress addresses[]) {
         List<InetAddress> list = new ArrayList<>();
@@ -239,7 +237,7 @@ public abstract class NetworkUtils {
         }
         return list.toArray(new InetAddress[list.size()]);
     }
-    
+
     /** Returns only the IPV6 addresses in {@code addresses} */
     static InetAddress[] filterIPV6(InetAddress addresses[]) {
         List<InetAddress> list = new ArrayList<>();

@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -28,11 +33,6 @@ import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class ParsedRareTerms extends ParsedMultiBucketAggregation<ParsedRareTerms.ParsedBucket> implements RareTerms {
     @Override
@@ -61,7 +61,7 @@ public abstract class ParsedRareTerms extends ParsedMultiBucketAggregation<Parse
     }
 
     static void declareParsedTermsFields(final ObjectParser<? extends ParsedRareTerms, Void> objectParser,
-                                         final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser) {
+            final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser) {
         declareMultiBucketAggregationFields(objectParser, bucketParser::apply, bucketParser::apply);
     }
 
@@ -77,10 +77,8 @@ public abstract class ParsedRareTerms extends ParsedMultiBucketAggregation<Parse
             return builder;
         }
 
-
         static <B extends ParsedBucket> B parseRareTermsBucketXContent(final XContentParser parser, final Supplier<B> bucketSupplier,
-                                                                       final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer)
-            throws IOException {
+                final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer) throws IOException {
 
             final B bucket = bucketSupplier.get();
             final List<Aggregation> aggregations = new ArrayList<>();
@@ -100,7 +98,7 @@ public abstract class ParsedRareTerms extends ParsedMultiBucketAggregation<Parse
                     }
                 } else if (token == XContentParser.Token.START_OBJECT) {
                     XContentParserUtils.parseTypedKeysObject(parser, Aggregation.TYPED_KEYS_DELIMITER, Aggregation.class,
-                        aggregations::add);
+                            aggregations::add);
                 }
             }
             bucket.setAggregations(new Aggregations(aggregations));

@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.cluster;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
 
 /**
  * Abstract diffable object with simple diffs implementation that sends the entire object if object has changed or
@@ -90,4 +90,3 @@ public abstract class AbstractDiffable<T extends Diffable<T>> implements Diffabl
         }
     }
 }
-

@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.index.fielddata.ordinals;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.Accountable;
@@ -29,12 +35,6 @@ import org.apache.lucene.util.packed.PackedInts;
 import org.apache.lucene.util.packed.PackedLongValues;
 import org.codelibs.fesen.index.fielddata.AbstractSortedDocValues;
 import org.codelibs.fesen.index.fielddata.AbstractSortedSetDocValues;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * {@link Ordinals} implementation which is efficient at storing field data ordinals for multi-valued or sparse fields.

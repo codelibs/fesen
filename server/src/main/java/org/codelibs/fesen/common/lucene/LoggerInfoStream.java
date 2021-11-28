@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.lucene;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.InfoStream;
 import org.codelibs.fesen.common.logging.Loggers;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /** An InfoStream (for Lucene's IndexWriter) that redirects
  *  messages to "lucene.iw.ifd" and "lucene.iw" Logger.trace. */

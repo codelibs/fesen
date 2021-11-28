@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ar.ArabicStemFilter;
 import org.apache.lucene.analysis.bg.BulgarianStemFilter;
@@ -83,8 +85,6 @@ import org.tartarus.snowball.ext.RussianStemmer;
 import org.tartarus.snowball.ext.SpanishStemmer;
 import org.tartarus.snowball.ext.SwedishStemmer;
 import org.tartarus.snowball.ext.TurkishStemmer;
-
-import java.io.IOException;
 
 public class StemmerTokenFilterFactory extends AbstractTokenFilterFactory {
 

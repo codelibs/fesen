@@ -18,18 +18,6 @@
  */
 package org.codelibs.fesen.action.search;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.StepListener;
-import org.codelibs.fesen.action.support.GroupedActionListener;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.cluster.node.DiscoveryNodes;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.util.concurrent.CountDown;
-import org.codelibs.fesen.transport.Transport;
-import org.codelibs.fesen.transport.TransportResponse;
-
 import static org.codelibs.fesen.action.search.TransportSearchHelper.parseScrollId;
 
 import java.util.ArrayList;
@@ -42,6 +30,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.StepListener;
+import org.codelibs.fesen.action.support.GroupedActionListener;
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.cluster.node.DiscoveryNodes;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.util.concurrent.CountDown;
+import org.codelibs.fesen.transport.Transport;
+import org.codelibs.fesen.transport.TransportResponse;
+
 public final class ClearScrollController implements Runnable {
     private final DiscoveryNodes nodes;
     private final SearchTransportService searchTransportService;
@@ -53,7 +53,7 @@ public final class ClearScrollController implements Runnable {
     private final Runnable runner;
 
     ClearScrollController(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener, DiscoveryNodes nodes, Logger logger,
-                          SearchTransportService searchTransportService) {
+            SearchTransportService searchTransportService) {
         this.nodes = nodes;
         this.logger = logger;
         this.searchTransportService = searchTransportService;
@@ -109,23 +109,22 @@ public final class ClearScrollController implements Runnable {
     }
 
     void cleanScrollIds(List<SearchContextIdForNode> contextIds) {
-        SearchScrollAsyncAction.collectNodesAndRun(contextIds, nodes, searchTransportService, ActionListener.wrap(
-            lookup -> {
-                for (SearchContextIdForNode target : contextIds) {
-                    final DiscoveryNode node = lookup.apply(target.getClusterAlias(), target.getNode());
-                    if (node == null) {
-                        onFreedContext(false);
-                    } else {
-                        try {
-                            Transport.Connection connection = searchTransportService.getConnection(target.getClusterAlias(), node);
-                            searchTransportService.sendFreeContext(connection, target.getSearchContextId(),
+        SearchScrollAsyncAction.collectNodesAndRun(contextIds, nodes, searchTransportService, ActionListener.wrap(lookup -> {
+            for (SearchContextIdForNode target : contextIds) {
+                final DiscoveryNode node = lookup.apply(target.getClusterAlias(), target.getNode());
+                if (node == null) {
+                    onFreedContext(false);
+                } else {
+                    try {
+                        Transport.Connection connection = searchTransportService.getConnection(target.getClusterAlias(), node);
+                        searchTransportService.sendFreeContext(connection, target.getSearchContextId(),
                                 ActionListener.wrap(freed -> onFreedContext(freed.isFreed()), e -> onFailedFreedContext(e, node)));
-                        } catch (Exception e) {
-                            onFailedFreedContext(e, node);
-                        }
+                    } catch (Exception e) {
+                        onFailedFreedContext(e, node);
                     }
                 }
-            }, listener::onFailure));
+            }
+        }, listener::onFailure));
     }
 
     private void onFreedContext(boolean freed) {
@@ -154,15 +153,13 @@ public final class ClearScrollController implements Runnable {
      * Closes the given context id and reports the number of freed contexts via the listener
      */
     public static void closeContexts(DiscoveryNodes nodes, SearchTransportService searchTransportService,
-                                     Collection<SearchContextIdForNode> contextIds,
-                                     ActionListener<Integer> listener) {
+            Collection<SearchContextIdForNode> contextIds, ActionListener<Integer> listener) {
         if (contextIds.isEmpty()) {
             listener.onResponse(0);
             return;
         }
-        final Set<String> clusters = contextIds.stream()
-            .filter(ctx -> Strings.isEmpty(ctx.getClusterAlias()) == false)
-            .map(SearchContextIdForNode::getClusterAlias).collect(Collectors.toSet());
+        final Set<String> clusters = contextIds.stream().filter(ctx -> Strings.isEmpty(ctx.getClusterAlias()) == false)
+                .map(SearchContextIdForNode::getClusterAlias).collect(Collectors.toSet());
         final StepListener<BiFunction<String, String, DiscoveryNode>> lookupListener = new StepListener<>();
         if (clusters.isEmpty() == false) {
             searchTransportService.getRemoteClusterService().collectNodes(clusters, lookupListener);
@@ -171,9 +168,8 @@ public final class ClearScrollController implements Runnable {
         }
         lookupListener.whenComplete(nodeLookup -> {
             final GroupedActionListener<Boolean> groupedListener = new GroupedActionListener<>(
-                ActionListener.delegateFailure(listener, (l, rs) -> l.onResponse(Math.toIntExact(rs.stream().filter(r -> r).count()))),
-                contextIds.size()
-            );
+                    ActionListener.delegateFailure(listener, (l, rs) -> l.onResponse(Math.toIntExact(rs.stream().filter(r -> r).count()))),
+                    contextIds.size());
             for (SearchContextIdForNode contextId : contextIds) {
                 final DiscoveryNode node = nodeLookup.apply(contextId.getClusterAlias(), contextId.getNode());
                 if (node == null) {
@@ -182,7 +178,7 @@ public final class ClearScrollController implements Runnable {
                     try {
                         final Transport.Connection connection = searchTransportService.getConnection(contextId.getClusterAlias(), node);
                         searchTransportService.sendFreeContext(connection, contextId.getSearchContextId(),
-                            ActionListener.wrap(r -> groupedListener.onResponse(r.isFreed()), e -> groupedListener.onResponse(false)));
+                                ActionListener.wrap(r -> groupedListener.onResponse(r.isFreed()), e -> groupedListener.onResponse(false)));
                     } catch (Exception e) {
                         groupedListener.onResponse(false);
                     }

@@ -57,11 +57,8 @@ import static org.hamcrest.Matchers.nullValue;
 public class CorsHandlerTests extends ESTestCase {
 
     public void testCorsConfigWithBadRegex() {
-        final Settings settings = Settings.builder()
-            .put(SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "/[*/")
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
-            .build();
+        final Settings settings = Settings.builder().put(SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "/[*/").put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true).build();
         SettingsException e = expectThrows(SettingsException.class, () -> CorsHandler.buildConfig(settings));
         assertThat(e.getMessage(), containsString("Bad regex in [http.cors.allow-origin]: [/[*/]"));
         assertThat(e.getCause(), instanceOf(PatternSyntaxException.class));
@@ -71,18 +68,15 @@ public class CorsHandlerTests extends ESTestCase {
         final Set<String> methods = new HashSet<>(Arrays.asList("get", "options", "post"));
         final Set<String> headers = new HashSet<>(Arrays.asList("Content-Type", "Content-Length"));
         final String prefix = randomBoolean() ? " " : ""; // sometimes have a leading whitespace between comma delimited elements
-        final Settings settings = Settings.builder()
-            .put(SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .put(SETTING_CORS_ALLOW_METHODS.getKey(), collectionToDelimitedString(methods, ",", prefix, ""))
-            .put(SETTING_CORS_ALLOW_HEADERS.getKey(), collectionToDelimitedString(headers, ",", prefix, ""))
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
-            .build();
+        final Settings settings = Settings.builder().put(SETTING_CORS_ENABLED.getKey(), true).put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
+                .put(SETTING_CORS_ALLOW_METHODS.getKey(), collectionToDelimitedString(methods, ",", prefix, ""))
+                .put(SETTING_CORS_ALLOW_HEADERS.getKey(), collectionToDelimitedString(headers, ",", prefix, ""))
+                .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true).build();
         final CorsHandler.Config corsConfig = CorsHandler.buildConfig(settings);
         assertTrue(corsConfig.isAnyOriginSupported());
         assertEquals(headers, corsConfig.allowedRequestHeaders());
         assertEquals(methods.stream().map(s -> s.toUpperCase(Locale.ENGLISH)).collect(Collectors.toSet()),
-            corsConfig.allowedRequestMethods().stream().map(RestRequest.Method::name).collect(Collectors.toSet()));
+                corsConfig.allowedRequestMethods().stream().map(RestRequest.Method::name).collect(Collectors.toSet()));
     }
 
     public void testCorsConfigWithDefaults() {
@@ -100,9 +94,7 @@ public class CorsHandlerTests extends ESTestCase {
     }
 
     public void testHandleInboundNonCorsRequest() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.GET, "/");
         HttpResponse httpResponse = corsHandler.handleInbound(request);
@@ -122,10 +114,8 @@ public class CorsHandlerTests extends ESTestCase {
                 originSetting = "*";
             }
         }
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.POST, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList(validOriginLiteral));
@@ -142,10 +132,8 @@ public class CorsHandlerTests extends ESTestCase {
         } else {
             originSetting = "/valid-.+/";
         }
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.POST, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList("invalid-origin"));
@@ -162,10 +150,8 @@ public class CorsHandlerTests extends ESTestCase {
         } else {
             originSetting = "/valid-.+/";
         }
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), originSetting).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.POST, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList("https://same-host"));
@@ -176,12 +162,9 @@ public class CorsHandlerTests extends ESTestCase {
     }
 
     public void testHandleInboundPreflightWithWildcardNoCredentials() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE")
-            .put(SETTING_CORS_ALLOW_HEADERS.getKey(), "Content-Type,Content-Length")
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*").put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE")
+                .put(SETTING_CORS_ALLOW_HEADERS.getKey(), "Content-Type,Content-Length").build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.OPTIONS, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList("valid-origin"));
@@ -191,22 +174,17 @@ public class CorsHandlerTests extends ESTestCase {
         assertThat(httpResponse.status(), equalTo(RestStatus.OK));
         Map<String, List<String>> headers = httpResponse.headers();
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_ORIGIN), containsInAnyOrder("*"));
-        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS),
-            containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE"));
-        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_HEADERS),
-            containsInAnyOrder("Content-Type", "Content-Length"));
+        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS), containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE"));
+        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_HEADERS), containsInAnyOrder("Content-Type", "Content-Length"));
         assertNull(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_CREDENTIALS));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_MAX_AGE), containsInAnyOrder("1728000"));
         assertNotNull(headers.get(CorsHandler.DATE));
     }
 
     public void testHandleInboundPreflightWithWildcardAllowCredentials() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE,POST")
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*").put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE,POST")
+                .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.OPTIONS, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList("valid-origin"));
@@ -218,22 +196,19 @@ public class CorsHandlerTests extends ESTestCase {
         // Since credentials are allowed, we echo the origin
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_ORIGIN), containsInAnyOrder("valid-origin"));
         assertThat(headers.get(CorsHandler.VARY), containsInAnyOrder(CorsHandler.ORIGIN));
-        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS),
-            containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE", "POST"));
+        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS), containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE", "POST"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_HEADERS),
-            containsInAnyOrder("X-Requested-With", "Content-Type", "Content-Length"));
+                containsInAnyOrder("X-Requested-With", "Content-Type", "Content-Length"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_CREDENTIALS), containsInAnyOrder("true"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_MAX_AGE), containsInAnyOrder("1728000"));
         assertNotNull(headers.get(CorsHandler.DATE));
     }
 
     public void testHandleInboundPreflightWithValidOriginAllowCredentials() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "valid-origin")
-            .put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE,POST")
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "valid-origin")
+                .put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE,POST").put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
+                .build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.OPTIONS, "/");
         request.getHeaders().put(CorsHandler.ORIGIN, Collections.singletonList("valid-origin"));
@@ -245,22 +220,18 @@ public class CorsHandlerTests extends ESTestCase {
         // Since credentials are allowed, we echo the origin
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_ORIGIN), containsInAnyOrder("valid-origin"));
         assertThat(headers.get(CorsHandler.VARY), containsInAnyOrder(CorsHandler.ORIGIN));
-        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS),
-            containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE", "POST"));
+        assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_METHODS), containsInAnyOrder("HEAD", "OPTIONS", "GET", "DELETE", "POST"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_HEADERS),
-            containsInAnyOrder("X-Requested-With", "Content-Type", "Content-Length"));
+                containsInAnyOrder("X-Requested-With", "Content-Type", "Content-Length"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_ALLOW_CREDENTIALS), containsInAnyOrder("true"));
         assertThat(headers.get(CorsHandler.ACCESS_CONTROL_MAX_AGE), containsInAnyOrder("1728000"));
         assertNotNull(headers.get(CorsHandler.DATE));
     }
 
     public void testSetResponseNonCorsRequest() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE")
-            .put(SETTING_CORS_ALLOW_HEADERS.getKey(), "Content-Type,Content-Length")
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*").put(SETTING_CORS_ALLOW_METHODS.getKey(), "OPTIONS,HEAD,GET,DELETE")
+                .put(SETTING_CORS_ALLOW_HEADERS.getKey(), "Content-Type,Content-Length").build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
 
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.GET, "/");
@@ -272,10 +243,8 @@ public class CorsHandlerTests extends ESTestCase {
     }
 
     public void testSetResponseHeadersWithWildcardOrigin() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*").build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
 
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.GET, "/");
@@ -289,11 +258,8 @@ public class CorsHandlerTests extends ESTestCase {
     }
 
     public void testSetResponseHeadersWithCredentialsWithWildcard() {
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*")
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "*").put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), true).build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
 
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.GET, "/");
@@ -309,11 +275,9 @@ public class CorsHandlerTests extends ESTestCase {
 
     public void testSetResponseHeadersWithNonWildcardOrigin() {
         boolean allowCredentials = randomBoolean();
-        Settings settings = Settings.builder()
-            .put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
-            .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "valid-origin")
-            .put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), allowCredentials)
-            .build();
+        Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_CORS_ENABLED.getKey(), true)
+                .put(SETTING_CORS_ALLOW_ORIGIN.getKey(), "valid-origin").put(SETTING_CORS_ALLOW_CREDENTIALS.getKey(), allowCredentials)
+                .build();
         CorsHandler corsHandler = CorsHandler.fromSettings(settings);
 
         TestHttpRequest request = new TestHttpRequest(HttpRequest.HttpVersion.HTTP_1_1, RestRequest.Method.GET, "/");

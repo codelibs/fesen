@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.node.Node;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.AbstractExecutorService;
@@ -44,6 +35,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.node.Node;
+
 public class EsExecutors {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(EsExecutors.class);
@@ -51,35 +51,26 @@ public class EsExecutors {
     /**
      * Setting to manually set the number of available processors. This setting is used to adjust thread pool sizes per node.
      */
-    public static final Setting<Integer> PROCESSORS_SETTING = new Setting<>(
-        "processors",
-        s -> Integer.toString(Runtime.getRuntime().availableProcessors()),
-        processorsParser("processors"),
-        Property.Deprecated,
-        Property.NodeScope);
+    public static final Setting<Integer> PROCESSORS_SETTING =
+            new Setting<>("processors", s -> Integer.toString(Runtime.getRuntime().availableProcessors()), processorsParser("processors"),
+                    Property.Deprecated, Property.NodeScope);
 
     /**
      * Setting to manually control the number of allocated processors. This setting is used to adjust thread pool sizes per node. The
      * default value is {@link Runtime#availableProcessors()} but should be manually controlled if not all processors on the machine are
      * available to Fesen (e.g., because of CPU limits).
      */
-    public static final Setting<Integer> NODE_PROCESSORS_SETTING = new Setting<>(
-        "node.processors",
-        PROCESSORS_SETTING,
-        processorsParser("node.processors"),
-        Property.NodeScope);
+    public static final Setting<Integer> NODE_PROCESSORS_SETTING =
+            new Setting<>("node.processors", PROCESSORS_SETTING, processorsParser("node.processors"), Property.NodeScope);
 
     private static Function<String, Integer> processorsParser(final String name) {
         return s -> {
             final int value = Setting.parseInt(s, 1, name);
             final int availableProcessors = Runtime.getRuntime().availableProcessors();
             if (value > availableProcessors) {
-                deprecationLogger.deprecate(
-                    "processors",
-                    "setting [{}] to value [{}] which is more than available processors [{}] is deprecated",
-                    name,
-                    value,
-                    availableProcessors);
+                deprecationLogger.deprecate("processors",
+                        "setting [{}] to value [{}] which is more than available processors [{}] is deprecated", name, value,
+                        availableProcessors);
             }
             return value;
         };
@@ -97,29 +88,29 @@ public class EsExecutors {
     }
 
     public static PrioritizedEsThreadPoolExecutor newSinglePrioritizing(String name, ThreadFactory threadFactory,
-                                                                        ThreadContext contextHolder, ScheduledExecutorService timer) {
+            ThreadContext contextHolder, ScheduledExecutorService timer) {
         return new PrioritizedEsThreadPoolExecutor(name, 1, 1, 0L, TimeUnit.MILLISECONDS, threadFactory, contextHolder, timer);
     }
 
     public static EsThreadPoolExecutor newScaling(String name, int min, int max, long keepAliveTime, TimeUnit unit,
-                                                  ThreadFactory threadFactory, ThreadContext contextHolder) {
+            ThreadFactory threadFactory, ThreadContext contextHolder) {
         ExecutorScalingQueue<Runnable> queue = new ExecutorScalingQueue<>();
         EsThreadPoolExecutor executor =
-            new EsThreadPoolExecutor(name, min, max, keepAliveTime, unit, queue, threadFactory, new ForceQueuePolicy(), contextHolder);
+                new EsThreadPoolExecutor(name, min, max, keepAliveTime, unit, queue, threadFactory, new ForceQueuePolicy(), contextHolder);
         queue.executor = executor;
         return executor;
     }
 
-    public static EsThreadPoolExecutor newFixed(String name, int size, int queueCapacity,
-                                                ThreadFactory threadFactory, ThreadContext contextHolder) {
+    public static EsThreadPoolExecutor newFixed(String name, int size, int queueCapacity, ThreadFactory threadFactory,
+            ThreadContext contextHolder) {
         BlockingQueue<Runnable> queue;
         if (queueCapacity < 0) {
             queue = ConcurrentCollections.newBlockingQueue();
         } else {
-            queue = new SizeBlockingQueue<>(ConcurrentCollections.<Runnable>newBlockingQueue(), queueCapacity);
+            queue = new SizeBlockingQueue<>(ConcurrentCollections.<Runnable> newBlockingQueue(), queueCapacity);
         }
-        return new EsThreadPoolExecutor(name, size, size, 0, TimeUnit.MILLISECONDS,
-            queue, threadFactory, new EsAbortPolicy(), contextHolder);
+        return new EsThreadPoolExecutor(name, size, size, 0, TimeUnit.MILLISECONDS, queue, threadFactory, new EsAbortPolicy(),
+                contextHolder);
     }
 
     /**
@@ -132,17 +123,15 @@ public class EsExecutors {
      * @param frameSize number of tasks during which stats are collected before adjusting queue size
      */
     public static EsThreadPoolExecutor newAutoQueueFixed(String name, int size, int initialQueueCapacity, int minQueueSize,
-                                                         int maxQueueSize, int frameSize, TimeValue targetedResponseTime,
-                                                         ThreadFactory threadFactory, ThreadContext contextHolder) {
+            int maxQueueSize, int frameSize, TimeValue targetedResponseTime, ThreadFactory threadFactory, ThreadContext contextHolder) {
         if (initialQueueCapacity <= 0) {
-            throw new IllegalArgumentException("initial queue capacity for [" + name + "] executor must be positive, got: " +
-                            initialQueueCapacity);
+            throw new IllegalArgumentException(
+                    "initial queue capacity for [" + name + "] executor must be positive, got: " + initialQueueCapacity);
         }
         ResizableBlockingQueue<Runnable> queue =
-                new ResizableBlockingQueue<>(ConcurrentCollections.<Runnable>newBlockingQueue(), initialQueueCapacity);
-        return new QueueResizingEsThreadPoolExecutor(name, size, size, 0, TimeUnit.MILLISECONDS,
-                queue, minQueueSize, maxQueueSize, TimedRunnable::new, frameSize, targetedResponseTime, threadFactory,
-                new EsAbortPolicy(), contextHolder);
+                new ResizableBlockingQueue<>(ConcurrentCollections.<Runnable> newBlockingQueue(), initialQueueCapacity);
+        return new QueueResizingEsThreadPoolExecutor(name, size, size, 0, TimeUnit.MILLISECONDS, queue, minQueueSize, maxQueueSize,
+                TimedRunnable::new, frameSize, targetedResponseTime, threadFactory, new EsAbortPolicy(), contextHolder);
     }
 
     /**
@@ -166,9 +155,7 @@ public class EsExecutors {
                  * exception to ensure that there is not a buried error anywhere. We assume that a general exception has been
                  * handled by the executed task or the task submitter.
                  */
-                assert e instanceof CancellationException
-                    || e instanceof InterruptedException
-                    || e instanceof ExecutionException : e;
+                assert e instanceof CancellationException || e instanceof InterruptedException || e instanceof ExecutionException : e;
                 final Optional<Error> maybeError = ExceptionsHelper.maybeError(e);
                 if (maybeError.isPresent()) {
                     // throw this error where it will propagate to the uncaught exception handler
@@ -274,15 +261,12 @@ public class EsExecutors {
         EsThreadFactory(String namePrefix) {
             this.namePrefix = namePrefix;
             SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + "[T#" + threadNumber.getAndIncrement() + "]",
-                    0);
+            Thread t = new Thread(group, r, namePrefix + "[T#" + threadNumber.getAndIncrement() + "]", 0);
             t.setDaemon(true);
             return t;
         }

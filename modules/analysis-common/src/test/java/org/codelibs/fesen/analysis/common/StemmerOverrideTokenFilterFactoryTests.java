@@ -19,9 +19,13 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Locale;
+
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
@@ -31,51 +35,40 @@ import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Locale;
-
 public class StemmerOverrideTokenFilterFactoryTests extends ESTokenStreamTestCase {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     public static TokenFilterFactory create(String... rules) throws IOException {
-        ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(
-            Settings.builder()
-                .put("index.analysis.filter.my_stemmer_override.type", "stemmer_override")
-                .putList("index.analysis.filter.my_stemmer_override.rules", rules)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .build(),
-            new CommonAnalysisPlugin());
+        ESTestCase.TestAnalysis analysis =
+                AnalysisTestsHelper.createTestAnalysisFromSettings(
+                        Settings.builder().put("index.analysis.filter.my_stemmer_override.type", "stemmer_override")
+                                .putList("index.analysis.filter.my_stemmer_override.rules", rules)
+                                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build(),
+                        new CommonAnalysisPlugin());
 
         return analysis.tokenFilter.get("my_stemmer_override");
     }
 
     public void testRuleError() {
-        for (String rule : Arrays.asList(
-            "",        // empty
-            "a",       // no arrow
-            "a=>b=>c", // multiple arrows
-            "=>a=>b",  // multiple arrows
-            "a=>",     // no override
-            "a=>b,c",  // multiple overrides
-            "=>a",     // no keys
-            "a,=>b"    // empty key
+        for (String rule : Arrays.asList("", // empty
+                "a", // no arrow
+                "a=>b=>c", // multiple arrows
+                "=>a=>b", // multiple arrows
+                "a=>", // no override
+                "a=>b,c", // multiple overrides
+                "=>a", // no keys
+                "a,=>b" // empty key
         )) {
-            expectThrows(RuntimeException.class, String.format(
-                Locale.ROOT, "Should fail for invalid rule: '%s'", rule
-            ), () -> create(rule));
+            expectThrows(RuntimeException.class, String.format(Locale.ROOT, "Should fail for invalid rule: '%s'", rule),
+                    () -> create(rule));
         }
     }
 
     public void testRulesOk() throws IOException {
-        TokenFilterFactory tokenFilterFactory = create(
-            "a => 1",
-            "b,c => 2"
-        );
+        TokenFilterFactory tokenFilterFactory = create("a => 1", "b,c => 2");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("a b c"));
-        assertTokenStreamContents(tokenFilterFactory.create(tokenizer), new String[]{"1", "2", "2"});
+        assertTokenStreamContents(tokenFilterFactory.create(tokenizer), new String[] { "1", "2", "2" });
     }
 }

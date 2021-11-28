@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.fielddata.fieldcomparator;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.search.DocIdSetIterator;
@@ -39,8 +41,6 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
 
 /**
  * Comparator source for double values.
@@ -76,7 +76,8 @@ public class DoubleValuesComparatorSource extends IndexFieldData.XFieldComparato
         }
     }
 
-    protected void setScorer(Scorable scorer) {}
+    protected void setScorer(Scorable scorer) {
+    }
 
     @Override
     public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) {
@@ -104,8 +105,8 @@ public class DoubleValuesComparatorSource extends IndexFieldData.XFieldComparato
     }
 
     @Override
-    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
-            int bucketSize, BucketedSort.ExtraData extra) {
+    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
+            BucketedSort.ExtraData extra) {
         return new BucketedSort.ForDoubles(bigArrays, sortOrder, format, bucketSize, extra) {
             private final double dMissingValue = (Double) missingObject(missingValue, sortOrder == SortOrder.DESC);
 

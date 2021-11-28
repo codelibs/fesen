@@ -18,9 +18,9 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.disruption.LongGCDisruption;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
@@ -33,9 +33,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class LongGCDisruptionTests extends ESTestCase {
 
@@ -57,9 +56,7 @@ public class LongGCDisruptionTests extends ESTestCase {
         LongGCDisruption disruption = new LongGCDisruption(random(), nodeName) {
             @Override
             protected Pattern[] getUnsafeClasses() {
-                return new Pattern[]{
-                    Pattern.compile(LockedExecutor.class.getSimpleName())
-                };
+                return new Pattern[] { Pattern.compile(LockedExecutor.class.getSimpleName()) };
             }
 
             @Override
@@ -119,9 +116,7 @@ public class LongGCDisruptionTests extends ESTestCase {
         LongGCDisruption disruption = new LongGCDisruption(random(), nodeName) {
             @Override
             protected Pattern[] getUnsafeClasses() {
-                return new Pattern[]{
-                    Pattern.compile(LockedExecutor.class.getSimpleName())
-                };
+                return new Pattern[] { Pattern.compile(LockedExecutor.class.getSimpleName()) };
             }
         };
         final AtomicBoolean stop = new AtomicBoolean();

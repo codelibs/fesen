@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryVisitor;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A simple wrapper class that indicates that the wrapped query has made use of NOW
@@ -61,8 +61,10 @@ public class DateRangeIncludingNowQuery extends Query {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DateRangeIncludingNowQuery that = (DateRangeIncludingNowQuery) o;
         return Objects.equals(in, that.in);
     }

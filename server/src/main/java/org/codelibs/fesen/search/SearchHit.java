@@ -19,6 +19,26 @@
 
 package org.codelibs.fesen.search;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.common.lucene.Lucene.readExplanation;
+import static org.codelibs.fesen.common.lucene.Lucene.writeExplanation;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureFieldName;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
@@ -35,12 +55,12 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.text.Text;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.IgnoredFieldMapper;
@@ -51,26 +71,6 @@ import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.fetch.subphase.highlight.HighlightField;
 import org.codelibs.fesen.search.lookup.SourceLookup;
 import org.codelibs.fesen.transport.RemoteClusterAware;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.common.lucene.Lucene.readExplanation;
-import static org.codelibs.fesen.common.lucene.Lucene.writeExplanation;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureFieldName;
 
 /**
  * A single search hit.
@@ -128,8 +128,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         this(docId, id, type, null, documentFields, metaFields);
     }
 
-    public SearchHit(int nestedTopDocId, String id, Text type, NestedIdentity nestedIdentity,
-            Map<String, DocumentField> documentFields, Map<String, DocumentField> metaFields) {
+    public SearchHit(int nestedTopDocId, String id, Text type, NestedIdentity nestedIdentity, Map<String, DocumentField> documentFields,
+            Map<String, DocumentField> metaFields) {
         this.docId = nestedTopDocId;
         if (id != null) {
             this.id = new Text(id);
@@ -165,8 +165,9 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             Map<String, DocumentField> fields = readFields(in);
             documentFields = new HashMap<>();
             metaFields = new HashMap<>();
-            fields.forEach((fieldName, docField) ->
-                (MapperService.META_FIELDS_BEFORE_7DOT8.contains(fieldName) ? metaFields : documentFields).put(fieldName, docField));
+            fields.forEach(
+                    (fieldName, docField) -> (MapperService.META_FIELDS_BEFORE_7DOT8.contains(fieldName) ? metaFields : documentFields)
+                            .put(fieldName, docField));
         }
 
         int size = in.readVInt();
@@ -216,7 +217,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         } else if (size == 1) {
             DocumentField hitField = new DocumentField(in);
             fields = singletonMap(hitField.getName(), hitField);
-        }  else {
+        } else {
             fields = new HashMap<>(size);
             for (int i = 0; i < size; i++) {
                 DocumentField field = new DocumentField(in);
@@ -227,7 +228,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         return fields;
     }
 
-    private void writeFields(StreamOutput out,  Map<String, DocumentField> fields) throws IOException {
+    private void writeFields(StreamOutput out, Map<String, DocumentField> fields) throws IOException {
         if (fields == null) {
             out.writeVInt(0);
         } else {
@@ -315,7 +316,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     public long getVersion() {
         return this.version;
     }
-
 
     public void setSeqNo(long seqNo) {
         this.seqNo = seqNo;
@@ -419,7 +419,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
     }
 
-
     /**
      * The source of the document as a map (can be {@code null}).
      */
@@ -458,8 +457,10 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     * Adds a new DocumentField to the map in case both parameters are not null.
     * */
     public void setDocumentField(String fieldName, DocumentField field) {
-        if (fieldName == null || field == null) return;
-        if (documentFields.size() == 0) this.documentFields = new HashMap<>();
+        if (fieldName == null || field == null)
+            return;
+        if (documentFields.size() == 0)
+            this.documentFields = new HashMap<>();
         this.documentFields.put(fieldName, field);
     }
 
@@ -654,16 +655,15 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             if (field.getName().equals(IgnoredFieldMapper.NAME)) {
                 builder.field(field.getName(), field.getValues());
             } else {
-                builder.field(field.getName(), field.<Object>getValue());
+                builder.field(field.getName(), field.<Object> getValue());
             }
         }
         if (source != null) {
             XContentHelper.writeRawField(SourceFieldMapper.NAME, source, builder, params);
         }
         if (documentFields.isEmpty() == false &&
-                // ignore fields all together if they are all empty
-                documentFields.values().stream()
-                    .anyMatch(df -> df.getValues().size() > 0)) {
+        // ignore fields all together if they are all empty
+                documentFields.values().stream().anyMatch(df -> df.getValues().size() > 0)) {
             builder.startObject(Fields.FIELDS);
             for (DocumentField field : documentFields.values()) {
                 if (field.getValues().size() > 0) {
@@ -706,8 +706,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     // All fields on the root level of the parsed SearhHit are interpreted as metadata fields
     // public because we use it in a completion suggestion option
     public static final ObjectParser.UnknownFieldConsumer<Map<String, Object>> unknownMetaFieldConsumer = (map, fieldName, fieldValue) -> {
-        Map<String, DocumentField> fieldMap = (Map<String, DocumentField>) map.computeIfAbsent(
-            METADATA_FIELDS, v -> new HashMap<String, DocumentField>());
+        Map<String, DocumentField> fieldMap =
+                (Map<String, DocumentField>) map.computeIfAbsent(METADATA_FIELDS, v -> new HashMap<String, DocumentField>());
         if (fieldName.equals(IgnoredFieldMapper.NAME)) {
             fieldMap.put(fieldName, new DocumentField(fieldName, (List<Object>) fieldValue));
         } else {
@@ -725,8 +725,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      * of the included search hit. The output of the map is used to create the
      * actual SearchHit instance via {@link #createFromMap(Map)}
      */
-    private static final ObjectParser<Map<String, Object>, Void> MAP_PARSER = new ObjectParser<>("innerHitParser",
-        unknownMetaFieldConsumer, HashMap::new);
+    private static final ObjectParser<Map<String, Object>, Void> MAP_PARSER =
+            new ObjectParser<>("innerHitParser", unknownMetaFieldConsumer, HashMap::new);
 
     static {
         declareInnerHitsParseFields(MAP_PARSER);
@@ -761,7 +761,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
                 new ParseField(Fields._EXPLANATION));
         parser.declareObject((map, value) -> map.put(NestedIdentity._NESTED, value), NestedIdentity::fromXContent,
                 new ParseField(NestedIdentity._NESTED));
-        parser.declareObject((map, value) -> map.put(Fields.INNER_HITS, value), (p,c) -> parseInnerHits(p),
+        parser.declareObject((map, value) -> map.put(Fields.INNER_HITS, value), (p, c) -> parseInnerHits(p),
                 new ParseField(Fields.INNER_HITS));
         parser.declareStringArray((map, list) -> map.put(Fields.MATCHED_QUERIES, list), new ParseField(Fields.MATCHED_QUERIES));
         parser.declareField((map, list) -> map.put(Fields.SORT, list), SearchSortValues::fromXContent, new ParseField(Fields.SORT),
@@ -859,7 +859,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     private static Map<String, HighlightField> parseHighlightFields(XContentParser parser) throws IOException {
         Map<String, HighlightField> highlightFields = new HashMap<>();
-        while((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+        while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             HighlightField highlightField = HighlightField.fromXContent(parser);
             highlightFields.put(highlightField.getName(), highlightField);
         }
@@ -919,28 +919,20 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             return false;
         }
         SearchHit other = (SearchHit) obj;
-        return Objects.equals(id, other.id)
-                && Objects.equals(type, other.type)
-                && Objects.equals(nestedIdentity, other.nestedIdentity)
-                && Objects.equals(version, other.version)
-                && Objects.equals(seqNo, other.seqNo)
-                && Objects.equals(primaryTerm, other.primaryTerm)
-                && Objects.equals(source, other.source)
-                && Objects.equals(documentFields, other.documentFields)
-                && Objects.equals(metaFields, other.metaFields)
-                && Objects.equals(getHighlightFields(), other.getHighlightFields())
-                && Arrays.equals(matchedQueries, other.matchedQueries)
-                && Objects.equals(explanation, other.explanation)
-                && Objects.equals(shard, other.shard)
-                && Objects.equals(innerHits, other.innerHits)
-                && Objects.equals(index, other.index)
+        return Objects.equals(id, other.id) && Objects.equals(type, other.type) && Objects.equals(nestedIdentity, other.nestedIdentity)
+                && Objects.equals(version, other.version) && Objects.equals(seqNo, other.seqNo)
+                && Objects.equals(primaryTerm, other.primaryTerm) && Objects.equals(source, other.source)
+                && Objects.equals(documentFields, other.documentFields) && Objects.equals(metaFields, other.metaFields)
+                && Objects.equals(getHighlightFields(), other.getHighlightFields()) && Arrays.equals(matchedQueries, other.matchedQueries)
+                && Objects.equals(explanation, other.explanation) && Objects.equals(shard, other.shard)
+                && Objects.equals(innerHits, other.innerHits) && Objects.equals(index, other.index)
                 && Objects.equals(clusterAlias, other.clusterAlias);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, nestedIdentity, version, seqNo, primaryTerm, source, documentFields, metaFields, getHighlightFields(),
-            Arrays.hashCode(matchedQueries), explanation, shard, innerHits, index, clusterAlias);
+                Arrays.hashCode(matchedQueries), explanation, shard, innerHits, index, clusterAlias);
     }
 
     /**
@@ -1048,9 +1040,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
                 return false;
             }
             NestedIdentity other = (NestedIdentity) obj;
-            return Objects.equals(field, other.field) &&
-                    Objects.equals(offset, other.offset) &&
-                    Objects.equals(child, other.child);
+            return Objects.equals(field, other.field) && Objects.equals(offset, other.offset) && Objects.equals(child, other.child);
         }
 
         @Override

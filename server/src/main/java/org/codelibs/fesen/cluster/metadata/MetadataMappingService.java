@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
+import static org.codelibs.fesen.index.mapper.MapperService.isMappingSourceTyped;
+import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.NO_LONGER_ASSIGNED;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -46,17 +57,6 @@ import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
 import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.indices.InvalidTypeNameException;
 
-import static org.codelibs.fesen.index.mapper.MapperService.isMappingSourceTyped;
-import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.NO_LONGER_ASSIGNED;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Service responsible for submitting mapping changes
  */
@@ -69,7 +69,6 @@ public class MetadataMappingService {
 
     final RefreshTaskExecutor refreshExecutor = new RefreshTaskExecutor();
     final PutMappingExecutor putMappingExecutor = new PutMappingExecutor();
-
 
     @Inject
     public MetadataMappingService(ClusterService clusterService, IndicesService indicesService) {
@@ -96,7 +95,7 @@ public class MetadataMappingService {
         @Override
         public ClusterTasksResult<RefreshTask> execute(ClusterState currentState, List<RefreshTask> tasks) throws Exception {
             ClusterState newClusterState = executeRefresh(currentState, tasks);
-            return ClusterTasksResult.<RefreshTask>builder().successes(tasks).build(newClusterState);
+            return ClusterTasksResult.<RefreshTask> builder().successes(tasks).build(newClusterState);
         }
     }
 
@@ -179,7 +178,7 @@ public class MetadataMappingService {
             List<String> updatedTypes = new ArrayList<>();
             MapperService mapperService = indexService.mapperService();
             for (DocumentMapper mapper : Arrays.asList(mapperService.documentMapper(),
-                                                       mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
+                    mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
                 if (mapper != null) {
                     final String type = mapper.type();
                     if (!mapper.mappingSource().equals(builder.mapping(type).source())) {
@@ -193,7 +192,7 @@ public class MetadataMappingService {
                 logger.warn("[{}] re-syncing mappings with cluster state because of types [{}]", index, updatedTypes);
                 dirty = true;
                 for (DocumentMapper mapper : Arrays.asList(mapperService.documentMapper(),
-                                                           mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
+                        mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
                     if (mapper != null) {
                         builder.putMapping(new MappingMetadata(mapper));
                     }
@@ -210,18 +209,14 @@ public class MetadataMappingService {
      */
     public void refreshMapping(final String index, final String indexUUID) {
         final RefreshTask refreshTask = new RefreshTask(index, indexUUID);
-        clusterService.submitStateUpdateTask("refresh-mapping [" + index + "]",
-            refreshTask,
-            ClusterStateTaskConfig.build(Priority.HIGH),
-            refreshExecutor,
-                (source, e) -> logger.warn(() -> new ParameterizedMessage("failure during [{}]", source), e)
-        );
+        clusterService.submitStateUpdateTask("refresh-mapping [" + index + "]", refreshTask, ClusterStateTaskConfig.build(Priority.HIGH),
+                refreshExecutor, (source, e) -> logger.warn(() -> new ParameterizedMessage("failure during [{}]", source), e));
     }
 
     class PutMappingExecutor implements ClusterStateTaskExecutor<PutMappingClusterStateUpdateRequest> {
         @Override
-        public ClusterTasksResult<PutMappingClusterStateUpdateRequest>
-        execute(ClusterState currentState, List<PutMappingClusterStateUpdateRequest> tasks) throws Exception {
+        public ClusterTasksResult<PutMappingClusterStateUpdateRequest> execute(ClusterState currentState,
+                List<PutMappingClusterStateUpdateRequest> tasks) throws Exception {
             Map<Index, MapperService> indexMapperServices = new HashMap<>();
             ClusterTasksResult.Builder<PutMappingClusterStateUpdateRequest> builder = ClusterTasksResult.builder();
             try {
@@ -249,7 +244,7 @@ public class MetadataMappingService {
         }
 
         private ClusterState applyRequest(ClusterState currentState, PutMappingClusterStateUpdateRequest request,
-                                          Map<Index, MapperService> indexMapperServices) throws IOException {
+                Map<Index, MapperService> indexMapperServices) throws IOException {
             String mappingType = request.type();
             CompressedXContent mappingUpdateSource = new CompressedXContent(request.source());
             final Metadata metadata = currentState.metadata();
@@ -269,8 +264,8 @@ public class MetadataMappingService {
 
                 String typeForUpdate = mapperService.getTypeForUpdate(mappingType, mappingUpdateSource);
                 if (existingMapper != null && existingMapper.type().equals(typeForUpdate) == false) {
-                    throw new IllegalArgumentException("Rejecting mapping update to [" + mapperService.index().getName() +
-                        "] as the final mapping would have more than 1 type: " + Arrays.asList(existingMapper.type(), typeForUpdate));
+                    throw new IllegalArgumentException("Rejecting mapping update to [" + mapperService.index().getName()
+                            + "] as the final mapping would have more than 1 type: " + Arrays.asList(existingMapper.type(), typeForUpdate));
                 }
 
                 if (MapperService.DEFAULT_MAPPING.equals(request.type())) {
@@ -285,16 +280,14 @@ public class MetadataMappingService {
                 }
                 if (mappingType == null) {
                     mappingType = newMapper.type();
-                } else if (mappingType.equals(newMapper.type()) == false
-                        && (isMappingSourceTyped(request.type(), mappingUpdateSource)
-                                || mapperService.resolveDocumentType(mappingType).equals(newMapper.type()) == false)) {
+                } else if (mappingType.equals(newMapper.type()) == false && (isMappingSourceTyped(request.type(), mappingUpdateSource)
+                        || mapperService.resolveDocumentType(mappingType).equals(newMapper.type()) == false)) {
                     throw new InvalidTypeNameException("Type name provided does not match type name within mapping definition.");
                 }
             }
             assert mappingType != null;
 
-            if (MapperService.DEFAULT_MAPPING.equals(mappingType) == false
-                    && MapperService.SINGLE_MAPPING_NAME.equals(mappingType) == false
+            if (MapperService.DEFAULT_MAPPING.equals(mappingType) == false && MapperService.SINGLE_MAPPING_NAME.equals(mappingType) == false
                     && mappingType.charAt(0) == '_') {
                 throw new InvalidTypeNameException("Document mapping type name can't start with '_', found: [" + mappingType + "]");
             }
@@ -342,7 +335,7 @@ public class MetadataMappingService {
                 // Mapping updates on a single type may have side-effects on other types so we need to
                 // update mapping metadata on all types
                 for (DocumentMapper mapper : Arrays.asList(mapperService.documentMapper(),
-                                                           mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
+                        mapperService.documentMapper(MapperService.DEFAULT_MAPPING))) {
                     if (mapper != null) {
                         indexMetadataBuilder.putMapping(new MappingMetadata(mapper.mappingSource()));
                     }
@@ -367,15 +360,13 @@ public class MetadataMappingService {
 
         @Override
         public String describeTasks(List<PutMappingClusterStateUpdateRequest> tasks) {
-            return String.join(", ", tasks.stream().map(t -> (CharSequence)t.type())::iterator);
+            return String.join(", ", tasks.stream().map(t -> (CharSequence) t.type())::iterator);
         }
     }
 
     public void putMapping(final PutMappingClusterStateUpdateRequest request, final ActionListener<ClusterStateUpdateResponse> listener) {
-        clusterService.submitStateUpdateTask("put-mapping " + Strings.arrayToCommaDelimitedString(request.indices()),
-                request,
-                ClusterStateTaskConfig.build(Priority.HIGH, request.masterNodeTimeout()),
-                putMappingExecutor,
+        clusterService.submitStateUpdateTask("put-mapping " + Strings.arrayToCommaDelimitedString(request.indices()), request,
+                ClusterStateTaskConfig.build(Priority.HIGH, request.masterNodeTimeout()), putMappingExecutor,
                 new AckedClusterStateTaskListener() {
 
                     @Override

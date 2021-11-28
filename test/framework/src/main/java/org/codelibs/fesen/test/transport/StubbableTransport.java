@@ -53,7 +53,6 @@ public class StubbableTransport implements Transport {
     private volatile OpenConnectionBehavior defaultConnectBehavior = null;
     private final Transport delegate;
 
-
     public StubbableTransport(Transport transport) {
         this.delegate = transport;
     }
@@ -86,8 +85,8 @@ public class StubbableTransport implements Transport {
         }
         replacedRequestRegistries.put(actionName, realRegistry);
         final TransportRequestHandler<Request> realHandler = realRegistry.getHandler();
-        final RequestHandlerRegistry<Request> newRegistry = RequestHandlerRegistry.replaceHandler(realRegistry, (request, channel, task) ->
-            behavior.messageReceived(realHandler, request, channel, task));
+        final RequestHandlerRegistry<Request> newRegistry = RequestHandlerRegistry.replaceHandler(realRegistry,
+                (request, channel, task) -> behavior.messageReceived(realHandler, request, channel, task));
         requestHandlers.forceRegister(newRegistry);
     }
 
@@ -150,8 +149,7 @@ public class StubbableTransport implements Transport {
         TransportAddress address = node.getAddress();
         OpenConnectionBehavior behavior = connectBehaviors.getOrDefault(address, defaultConnectBehavior);
 
-        ActionListener<Connection> wrappedListener =
-            ActionListener.delegateFailure(listener,
+        ActionListener<Connection> wrappedListener = ActionListener.delegateFailure(listener,
                 (delegatedListener, connection) -> delegatedListener.onResponse(new WrappedConnection(connection)));
 
         if (behavior == null) {
@@ -226,7 +224,7 @@ public class StubbableTransport implements Transport {
 
         @Override
         public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-            throws IOException, TransportException {
+                throws IOException, TransportException {
             TransportAddress address = connection.getNode().getAddress();
             SendRequestBehavior behavior = sendBehaviors.getOrDefault(address, defaultSendRequest);
             if (behavior == null) {
@@ -240,7 +238,6 @@ public class StubbableTransport implements Transport {
         public void addCloseListener(ActionListener<Void> listener) {
             connection.addCloseListener(listener);
         }
-
 
         @Override
         public boolean isClosed() {
@@ -271,25 +268,28 @@ public class StubbableTransport implements Transport {
     public interface OpenConnectionBehavior {
 
         void openConnection(Transport transport, DiscoveryNode discoveryNode, ConnectionProfile profile,
-                            ActionListener<Connection> listener);
+                ActionListener<Connection> listener);
 
-        default void clearCallback() {}
+        default void clearCallback() {
+        }
     }
 
     @FunctionalInterface
     public interface SendRequestBehavior {
-        void sendRequest(Connection connection, long requestId, String action, TransportRequest request,
-                         TransportRequestOptions options) throws IOException;
+        void sendRequest(Connection connection, long requestId, String action, TransportRequest request, TransportRequestOptions options)
+                throws IOException;
 
-        default void clearCallback() {}
+        default void clearCallback() {
+        }
     }
 
     @FunctionalInterface
     public interface RequestHandlingBehavior<Request extends TransportRequest> {
 
         void messageReceived(TransportRequestHandler<Request> handler, Request request, TransportChannel channel, Task task)
-            throws Exception;
+                throws Exception;
 
-        default void clearCallback() {}
+        default void clearCallback() {
+        }
     }
 }

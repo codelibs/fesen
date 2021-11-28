@@ -62,18 +62,18 @@ public enum SortMode implements Writeable {
     public static SortMode fromString(final String str) {
         Objects.requireNonNull(str, "input string is null");
         switch (str.toLowerCase(Locale.ROOT)) {
-            case ("min"):
-                return MIN;
-            case ("max"):
-                return MAX;
-            case ("sum"):
-                return SUM;
-            case ("avg"):
-                return AVG;
-            case ("median"):
-                return MEDIAN;
-            default:
-                throw new IllegalArgumentException("Unknown SortMode [" + str + "]");
+        case ("min"):
+            return MIN;
+        case ("max"):
+            return MAX;
+        case ("sum"):
+            return SUM;
+        case ("avg"):
+            return AVG;
+        case ("median"):
+            return MEDIAN;
+        default:
+            throw new IllegalArgumentException("Unknown SortMode [" + str + "]");
         }
     }
 

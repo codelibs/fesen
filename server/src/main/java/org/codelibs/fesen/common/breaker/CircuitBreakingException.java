@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.common.breaker;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.io.IOException;
 
 /**
  * Exception thrown when the circuit breaker trips

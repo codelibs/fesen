@@ -65,16 +65,8 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
     }
 
     public void testFromJson() throws IOException {
-        String json =
-            "{\n" +
-                "  \"script_score\" : {\n" +
-                "    \"query\" : { \"match_all\" : {} },\n" +
-                "    \"script\" : {\n" +
-                "      \"source\" : \"doc['field'].value\" \n" +
-                "    },\n" +
-                "    \"min_score\" : 2.0\n" +
-                "  }\n" +
-                "}";
+        String json = "{\n" + "  \"script_score\" : {\n" + "    \"query\" : { \"match_all\" : {} },\n" + "    \"script\" : {\n"
+                + "      \"source\" : \"doc['field'].value\" \n" + "    },\n" + "    \"min_score\" : 2.0\n" + "  }\n" + "}";
 
         ScriptScoreQueryBuilder parsed = (ScriptScoreQueryBuilder) parseQuery(json);
         assertEquals(json, 2, parsed.getMinScore(), 0.0001);
@@ -84,17 +76,11 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
         String scriptStr = "1";
         Script script = new Script(ScriptType.INLINE, MockScriptEngine.NAME, scriptStr, Collections.emptyMap());
 
-        IllegalArgumentException e = expectThrows(
-            IllegalArgumentException.class,
-            () -> new ScriptScoreQueryBuilder(matchAllQuery(), null)
-        );
-        assertEquals("script_score: script must not be null" , e.getMessage());
+        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> new ScriptScoreQueryBuilder(matchAllQuery(), null));
+        assertEquals("script_score: script must not be null", e.getMessage());
 
-        e = expectThrows(
-            IllegalArgumentException.class,
-            () -> new ScriptScoreQueryBuilder(null, script)
-        );
-        assertEquals("script_score: query must not be null" , e.getMessage());
+        e = expectThrows(IllegalArgumentException.class, () -> new ScriptScoreQueryBuilder(null, script));
+        assertEquals("script_score: query must not be null", e.getMessage());
     }
 
     /**
@@ -103,8 +89,7 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
     @Override
     public void testCacheability() throws IOException {
         Script script = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "1", Collections.emptyMap());
-        ScriptScoreQueryBuilder queryBuilder = new ScriptScoreQueryBuilder(
-            new TermQueryBuilder(KEYWORD_FIELD_NAME, "value"), script);
+        ScriptScoreQueryBuilder queryBuilder = new ScriptScoreQueryBuilder(new TermQueryBuilder(KEYWORD_FIELD_NAME, "value"), script);
 
         QueryShardContext context = createShardContext();
         QueryBuilder rewriteQuery = rewriteQuery(queryBuilder, new QueryShardContext(context));
@@ -120,8 +105,7 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
         String scriptStr = "1";
         Script script = new Script(ScriptType.INLINE, MockScriptEngine.NAME, scriptStr, Collections.emptyMap());
         ScriptScoreQueryBuilder scriptScoreQueryBuilder = new ScriptScoreQueryBuilder(termQueryBuilder, script);
-        IllegalStateException e = expectThrows(IllegalStateException.class,
-                () -> scriptScoreQueryBuilder.toQuery(context));
+        IllegalStateException e = expectThrows(IllegalStateException.class, () -> scriptScoreQueryBuilder.toQuery(context));
         assertEquals("Rewrite first", e.getMessage());
     }
 
@@ -137,9 +121,7 @@ public class ScriptScoreQueryBuilderTests extends AbstractQueryTestCase<ScriptSc
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         ScriptScoreQueryBuilder queryBuilder = doCreateTestQueryBuilder();
-        FesenException e = expectThrows(FesenException.class,
-                () -> queryBuilder.toQuery(queryShardContext));
-        assertEquals("[script score] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
-                e.getMessage());
+        FesenException e = expectThrows(FesenException.class, () -> queryBuilder.toQuery(queryShardContext));
+        assertEquals("[script score] queries cannot be executed when 'search.allow_expensive_queries' is set to false.", e.getMessage());
     }
 }

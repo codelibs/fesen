@@ -19,12 +19,16 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import org.codelibs.fesen.common.ssl.PemKeyConfig;
-import org.codelibs.fesen.common.ssl.SslConfigException;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeFalse;
 
-import javax.net.ssl.X509ExtendedKeyManager;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -35,13 +39,10 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.iterableWithSize;
-import static org.hamcrest.Matchers.notNullValue;
+import javax.net.ssl.X509ExtendedKeyManager;
+
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 public class PemKeyConfigTests extends ESTestCase {
     private static final int IP_NAME = 7;
@@ -144,10 +145,8 @@ public class PemKeyConfigTests extends ESTestCase {
         assertThat(certificate.getIssuerDN().getName(), is("CN=Test CA 1"));
         assertThat(certificate.getSubjectDN().getName(), is(expectedDN));
         assertThat(certificate.getSubjectAlternativeNames(), iterableWithSize(2));
-        assertThat(certificate.getSubjectAlternativeNames(), containsInAnyOrder(
-            Arrays.asList(DNS_NAME, "localhost"),
-            Arrays.asList(IP_NAME, "127.0.0.1")
-        ));
+        assertThat(certificate.getSubjectAlternativeNames(),
+                containsInAnyOrder(Arrays.asList(DNS_NAME, "localhost"), Arrays.asList(IP_NAME, "127.0.0.1")));
     }
 
     private void assertPasswordIsIncorrect(PemKeyConfig keyConfig, Path key) {

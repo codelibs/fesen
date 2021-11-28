@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.IndexReader;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -28,17 +33,12 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.Significanc
 import org.codelibs.fesen.search.internal.ContextIndexSearcher;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-
 abstract class AbstractStringTermsAggregator extends TermsAggregator {
 
     protected final boolean showTermDocCountError;
 
-    AbstractStringTermsAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent,
-            BucketOrder order, DocValueFormat format, BucketCountThresholds bucketCountThresholds, SubAggCollectionMode subAggCollectMode,
+    AbstractStringTermsAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent, BucketOrder order,
+            DocValueFormat format, BucketCountThresholds bucketCountThresholds, SubAggCollectionMode subAggCollectMode,
             boolean showTermDocCountError, Map<String, Object> metadata) throws IOException {
         super(name, factories, context, parent, bucketCountThresholds, order, format, subAggCollectMode, metadata);
         this.showTermDocCountError = showTermDocCountError;
@@ -54,7 +54,7 @@ abstract class AbstractStringTermsAggregator extends TermsAggregator {
         ContextIndexSearcher searcher = context.searcher();
         IndexReader topReader = searcher.getIndexReader();
         int supersetSize = topReader.numDocs();
-        return new SignificantStringTerms(name, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
-                metadata(), format, subsetSize, supersetSize, significanceHeuristic, emptyList());
+        return new SignificantStringTerms(name, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(), metadata(),
+                format, subsetSize, supersetSize, significanceHeuristic, emptyList());
     }
 }

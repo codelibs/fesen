@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.index.query;
 
+import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanOrQuery;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -28,14 +36,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Span query that matches the union of its clauses. Maps to {@link SpanOrQuery}.
@@ -59,7 +59,7 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
      */
     public SpanOrQueryBuilder(StreamInput in) throws IOException {
         super(in);
-        for (QueryBuilder clause: readQueries(in)) {
+        for (QueryBuilder clause : readQueries(in)) {
             clauses.add((SpanQueryBuilder) clause);
         }
     }

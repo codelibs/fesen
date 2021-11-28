@@ -115,8 +115,8 @@ public class LocalTimeOffsetTests extends ESTestCase {
         assertTransitions(zone, min, max, time("2020-06-01", zone), min + hours(1), 3, hours(-5), hours(-4));
     }
 
-    private void assertTransitions(ZoneId zone, long min, long max, long between, long sameOffsetAsMin,
-            int size, long minMaxOffset, long betweenOffset) {
+    private void assertTransitions(ZoneId zone, long min, long max, long between, long sameOffsetAsMin, int size, long minMaxOffset,
+            long betweenOffset) {
         LocalTimeOffset.Lookup lookup = LocalTimeOffset.lookup(zone, min, max);
         assertThat(lookup.size(), equalTo(size));
         assertRoundingAtOffset(lookup.lookup(min), min, minMaxOffset);
@@ -264,10 +264,8 @@ public class LocalTimeOffsetTests extends ESTestCase {
 
     private void assertKnownMovesBacktoPreviousDay(String zone, String time) {
         long utc = utcTime(time);
-        assertTrue(
-            zone + " just after " + time + " should move back",
-            LocalTimeOffset.lookup(ZoneId.of(zone), utc, utc + 1).anyMoveBackToPreviousDay()
-        );
+        assertTrue(zone + " just after " + time + " should move back",
+                LocalTimeOffset.lookup(ZoneId.of(zone), utc, utc + 1).anyMoveBackToPreviousDay());
     }
 
     private static long utcTime(String time) {
@@ -283,7 +281,7 @@ public class LocalTimeOffsetTests extends ESTestCase {
      */
     private static ZoneOffsetTransition lastTransitionIn(ZoneId zone) {
         List<ZoneOffsetTransition> transitions = zone.getRules().getTransitions();
-        return transitions.get(transitions.size() -1);
+        return transitions.get(transitions.size() - 1);
     }
 
     private static LocalTimeOffset.Strategy unusedStrategy() {
@@ -394,7 +392,6 @@ public class LocalTimeOffsetTests extends ESTestCase {
             }
         };
     }
-
 
     private static LocalTimeOffset.Strategy useValueForBeforeOverlap(long beforeOverlapValue) {
         return new LocalTimeOffset.Strategy() {

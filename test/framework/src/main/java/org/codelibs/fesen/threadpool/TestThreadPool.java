@@ -27,8 +27,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.node.Node;
-import org.codelibs.fesen.threadpool.ExecutorBuilder;
-import org.codelibs.fesen.threadpool.ThreadPool;
 
 public class TestThreadPool extends ThreadPool {
 

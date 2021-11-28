@@ -44,7 +44,6 @@ import org.codelibs.fesen.nio.utils.ExceptionsHelper;
  */
 public class NioSelectorGroup implements NioGroup {
 
-
     private final List<NioSelector> dedicatedAcceptors;
     private final RoundRobinSupplier<NioSelector> acceptorSupplier;
 
@@ -63,7 +62,7 @@ public class NioSelectorGroup implements NioGroup {
      * @throws IOException occurs if there is a problem while opening a java.nio.Selector
      */
     public NioSelectorGroup(ThreadFactory threadFactory, int selectorCount,
-                            Function<Supplier<NioSelector>, EventHandler> eventHandlerFunction) throws IOException {
+            Function<Supplier<NioSelector>, EventHandler> eventHandlerFunction) throws IOException {
         this(null, 0, threadFactory, selectorCount, eventHandlerFunction);
     }
 
@@ -80,7 +79,7 @@ public class NioSelectorGroup implements NioGroup {
      * @throws IOException occurs if there is a problem while opening a java.nio.Selector
      */
     public NioSelectorGroup(ThreadFactory acceptorThreadFactory, int dedicatedAcceptorCount, ThreadFactory selectorThreadFactory,
-                            int selectorCount, Function<Supplier<NioSelector>, EventHandler> eventHandlerFunction) throws IOException {
+            int selectorCount, Function<Supplier<NioSelector>, EventHandler> eventHandlerFunction) throws IOException {
         dedicatedAcceptors = new ArrayList<>(dedicatedAcceptorCount);
         selectors = new ArrayList<>(selectorCount);
 
@@ -126,7 +125,7 @@ public class NioSelectorGroup implements NioGroup {
 
     @Override
     public <S extends NioServerSocketChannel> S bindServerChannel(InetSocketAddress address, ChannelFactory<S, ?> factory)
-        throws IOException {
+            throws IOException {
         ensureOpen();
         return factory.openNioServerSocketChannel(address, acceptorSupplier);
     }

@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+
 import org.apache.lucene.util.InPlaceMergeSorter;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -28,13 +35,6 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.bucket.range.RangeAggregator.Range;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 
 public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R>, R extends Range>
         extends ValuesSourceAggregationBuilder<AB> {
@@ -48,8 +48,8 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
         this.rangeFactory = rangeFactory;
     }
 
-    protected AbstractRangeBuilder(AbstractRangeBuilder<AB, R> clone,
-                                   AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected AbstractRangeBuilder(AbstractRangeBuilder<AB, R> clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.rangeFactory = clone.rangeFactory;
         this.ranges = new ArrayList<>(clone.ranges);
@@ -156,11 +156,13 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         AbstractRangeBuilder<AB, R> other = (AbstractRangeBuilder<AB, R>) obj;
-        return Objects.equals(ranges, other.ranges)
-                && Objects.equals(keyed, other.keyed);
+        return Objects.equals(ranges, other.ranges) && Objects.equals(keyed, other.keyed);
     }
 }

@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public final class InternalCardinality extends InternalNumericMetricsAggregation.SingleValue implements Cardinality {
     private final AbstractHyperLogLogPlusPlus counts;
@@ -89,8 +89,7 @@ public final class InternalCardinality extends InternalNumericMetricsAggregation
             final InternalCardinality cardinality = (InternalCardinality) aggregation;
             if (cardinality.counts != null) {
                 if (reduced == null) {
-                    reduced = new HyperLogLogPlusPlus(cardinality.counts.precision(),
-                        BigArrays.NON_RECYCLING_INSTANCE, 1);
+                    reduced = new HyperLogLogPlusPlus(cardinality.counts.precision(), BigArrays.NON_RECYCLING_INSTANCE, 1);
                 }
                 reduced.merge(0, cardinality.counts, 0);
             }
@@ -118,9 +117,12 @@ public final class InternalCardinality extends InternalNumericMetricsAggregation
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalCardinality other = (InternalCardinality) obj;
         return counts.equals(0, other.counts, 0);
@@ -130,4 +132,3 @@ public final class InternalCardinality extends InternalNumericMetricsAggregation
         return counts;
     }
 }
-

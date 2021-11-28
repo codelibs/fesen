@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.common.ParseField;
@@ -30,10 +34,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A component template is a re-usable {@link Template} as well as metadata about the template. Each
@@ -47,9 +47,8 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
     private static final ParseField METADATA = new ParseField("_meta");
 
     @SuppressWarnings("unchecked")
-    public static final ConstructingObjectParser<ComponentTemplate, Void> PARSER =
-        new ConstructingObjectParser<>("component_template", false,
-            a -> new ComponentTemplate((Template) a[0], (Long) a[1], (Map<String, Object>) a[2]));
+    public static final ConstructingObjectParser<ComponentTemplate, Void> PARSER = new ConstructingObjectParser<>("component_template",
+            false, a -> new ComponentTemplate((Template) a[0], (Long) a[1], (Map<String, Object>) a[2]));
 
     static {
         PARSER.declareObject(ConstructingObjectParser.constructorArg(), Template.PARSER, TEMPLATE);
@@ -127,9 +126,8 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
             return false;
         }
         ComponentTemplate other = (ComponentTemplate) obj;
-        return Objects.equals(template, other.template) &&
-            Objects.equals(version, other.version) &&
-            Objects.equals(metadata, other.metadata);
+        return Objects.equals(template, other.template) && Objects.equals(version, other.version)
+                && Objects.equals(metadata, other.metadata);
     }
 
     @Override

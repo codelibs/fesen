@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.common.lucene;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -94,16 +104,6 @@ import org.codelibs.fesen.index.analysis.AnalyzerScope;
 import org.codelibs.fesen.index.analysis.NamedAnalyzer;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class Lucene {
     public static final String LATEST_CODEC = "Lucene87";
 
@@ -111,8 +111,8 @@ public class Lucene {
 
     public static final NamedAnalyzer STANDARD_ANALYZER = new NamedAnalyzer("_standard", AnalyzerScope.GLOBAL, new StandardAnalyzer());
     public static final NamedAnalyzer KEYWORD_ANALYZER = new NamedAnalyzer("_keyword", AnalyzerScope.GLOBAL, new KeywordAnalyzer());
-    public static final NamedAnalyzer WHITESPACE_ANALYZER
-        = new NamedAnalyzer("_whitespace", AnalyzerScope.GLOBAL, new WhitespaceAnalyzer());
+    public static final NamedAnalyzer WHITESPACE_ANALYZER =
+            new NamedAnalyzer("_whitespace", AnalyzerScope.GLOBAL, new WhitespaceAnalyzer());
 
     public static final ScoreDoc[] EMPTY_SCORE_DOCS = new ScoreDoc[0];
 
@@ -214,12 +214,9 @@ public class Lucene {
             }
         }
         final IndexCommit cp = getIndexCommit(si, directory);
-        try (IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(Lucene.STANDARD_ANALYZER)
-                .setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
-                .setIndexCommit(cp)
-                .setCommitOnClose(false)
-                .setMergePolicy(NoMergePolicy.INSTANCE)
-                .setOpenMode(IndexWriterConfig.OpenMode.APPEND))) {
+        try (IndexWriter writer = new IndexWriter(directory,
+                new IndexWriterConfig(Lucene.STANDARD_ANALYZER).setSoftDeletesField(Lucene.SOFT_DELETES_FIELD).setIndexCommit(cp)
+                        .setCommitOnClose(false).setMergePolicy(NoMergePolicy.INSTANCE).setOpenMode(IndexWriterConfig.OpenMode.APPEND))) {
             // do nothing and close this will kick off IndexFileDeleter which will remove all pending files
         }
         return si;
@@ -245,13 +242,12 @@ public class Lucene {
                 }
             }
         }
-        try (IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(Lucene.STANDARD_ANALYZER)
-                .setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
-                .setMergePolicy(NoMergePolicy.INSTANCE) // no merges
-                .setCommitOnClose(false) // no commits
-                .setOpenMode(IndexWriterConfig.OpenMode.CREATE) // force creation - don't append...
-        ))
-        {
+        try (IndexWriter writer = new IndexWriter(directory,
+                new IndexWriterConfig(Lucene.STANDARD_ANALYZER).setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
+                        .setMergePolicy(NoMergePolicy.INSTANCE) // no merges
+                        .setCommitOnClose(false) // no commits
+                        .setOpenMode(IndexWriterConfig.OpenMode.CREATE) // force creation - don't append...
+        )) {
             // do nothing and close this will kick of IndexFileDeleter which will remove all pending files
         }
     }
@@ -401,7 +397,7 @@ public class Lucene {
             return in.readBoolean();
         } else if (type == 9) {
             return in.readBytesRef();
-        }else if (type == 10) {
+        } else if (type == 10) {
             return new BigInteger(in.readString());
         } else {
             throw new IOException("Can't match type [" + type + "]");
@@ -589,9 +585,8 @@ public class Lucene {
         } else if (sortField.getClass() == SortedNumericSortField.class) {
             // for multi-valued sort field, we replace the SortedSetSortField with a simple SortField.
             // It works because the sort field is only used to merge results from different shards.
-            SortField newSortField = new SortField(sortField.getField(),
-                ((SortedNumericSortField) sortField).getNumericType(),
-                sortField.getReverse());
+            SortField newSortField =
+                    new SortField(sortField.getField(), ((SortedNumericSortField) sortField).getNumericType(), sortField.getReverse());
             newSortField.setMissingValue(sortField.getMissingValue());
             sortField = newSortField;
         }
@@ -689,8 +684,7 @@ public class Lucene {
      *
      * Will retry the directory every second for at least {@code timeLimitMillis}
      */
-    public static boolean waitForIndex(final Directory directory, final long timeLimitMillis)
-            throws IOException {
+    public static boolean waitForIndex(final Directory directory, final long timeLimitMillis) throws IOException {
         final long DELAY = 1000;
         long waited = 0;
         try {
@@ -765,7 +759,7 @@ public class Lucene {
         private final Collection<String> files;
         private final Directory dir;
         private final long generation;
-        private final Map<String,String> userData;
+        private final Map<String, String> userData;
         private final int segmentCount;
 
         private CommitPoint(SegmentInfos infos, Directory dir) throws IOException {
@@ -813,7 +807,7 @@ public class Lucene {
         }
 
         @Override
-        public Map<String,String> getUserData() {
+        public Map<String, String> getUserData() {
             return userData;
         }
 
@@ -838,8 +832,8 @@ public class Lucene {
      * <b>NOTE</b>: that the returned {@link Bits} instance MUST be consumed in order.
      * @param estimatedGetCount an estimation of the number of times that {@link Bits#get} will get called
      */
-    public static Bits asSequentialAccessBits(final int maxDoc, @Nullable ScorerSupplier scorerSupplier,
-            long estimatedGetCount) throws IOException {
+    public static Bits asSequentialAccessBits(final int maxDoc, @Nullable ScorerSupplier scorerSupplier, long estimatedGetCount)
+            throws IOException {
         if (scorerSupplier == null) {
             return new Bits.MatchNoBits(maxDoc);
         }
@@ -864,8 +858,8 @@ public class Lucene {
                     throw new IndexOutOfBoundsException(index + " is out of bounds: [" + 0 + "-" + maxDoc + "[");
                 }
                 if (index < previous) {
-                    throw new IllegalArgumentException("This Bits instance can only be consumed in order. "
-                            + "Got called on [" + index + "] while previously called on [" + previous + "]");
+                    throw new IllegalArgumentException("This Bits instance can only be consumed in order. " + "Got called on [" + index
+                            + "] while previously called on [" + previous + "]");
                 }
                 if (index == previous) {
                     // we cache whether it matched because it is illegal to call
@@ -928,23 +922,28 @@ public class Lucene {
         static final class LeafReaderWithLiveDocs extends FilterLeafReader {
             final Bits liveDocs;
             final int numDocs;
-            LeafReaderWithLiveDocs(LeafReader in, Bits liveDocs, int  numDocs) {
+
+            LeafReaderWithLiveDocs(LeafReader in, Bits liveDocs, int numDocs) {
                 super(in);
                 this.liveDocs = liveDocs;
                 this.numDocs = numDocs;
             }
+
             @Override
             public Bits getLiveDocs() {
                 return liveDocs;
             }
+
             @Override
             public int numDocs() {
                 return numDocs;
             }
+
             @Override
             public CacheHelper getCoreCacheHelper() {
                 return in.getCoreCacheHelper();
             }
+
             @Override
             public CacheHelper getReaderCacheHelper() {
                 return null; // Modifying liveDocs

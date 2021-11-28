@@ -57,7 +57,7 @@ public class PhraseSuggestionBuilderTests extends AbstractSuggestionBuilderTestC
                 for (int i = 0; i < numParams; i++) {
                     collateParams.put(randomAlphaOfLength(5), randomAlphaOfLength(5));
                 }
-                testBuilder.collateParams(collateParams );
+                testBuilder.collateParams(collateParams);
             }
         }
         if (randomBoolean()) {
@@ -81,7 +81,7 @@ public class PhraseSuggestionBuilderTests extends AbstractSuggestionBuilderTestC
 
     private static SmoothingModel randomSmoothingModel() {
         SmoothingModel model = null;
-        switch (randomIntBetween(0,2)) {
+        switch (randomIntBetween(0, 2)) {
         case 0:
             model = LaplaceModelTests.createRandomModel();
             break;
@@ -125,7 +125,7 @@ public class PhraseSuggestionBuilderTests extends AbstractSuggestionBuilderTestC
             }
             break;
         case 7:
-            builder.collatePrune(builder.collatePrune() == null ? randomBoolean() : !builder.collatePrune() );
+            builder.collatePrune(builder.collatePrune() == null ? randomBoolean() : !builder.collatePrune());
             break;
         case 8:
             // preTag, postTag
@@ -138,7 +138,7 @@ public class PhraseSuggestionBuilderTests extends AbstractSuggestionBuilderTestC
             }
             break;
         case 9:
-            builder.forceUnigrams(builder.forceUnigrams() == null ? randomBoolean() : ! builder.forceUnigrams());
+            builder.forceUnigrams(builder.forceUnigrams() == null ? randomBoolean() : !builder.forceUnigrams());
             break;
         case 10:
             Map<String, Object> collateParams = builder.collateParams() == null ? new HashMap<>(1) : builder.collateParams();

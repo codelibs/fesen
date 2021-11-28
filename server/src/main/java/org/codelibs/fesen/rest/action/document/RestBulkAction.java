@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.rest.action.document;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -37,11 +42,6 @@ import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 import org.codelibs.fesen.rest.action.search.RestSearchAction;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 /**
  * <pre>
  * { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" }
@@ -55,8 +55,7 @@ public class RestBulkAction extends BaseRestHandler {
 
     private final boolean allowExplicitIndex;
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestSearchAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
-    " Specifying types in bulk requests is deprecated.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" + " Specifying types in bulk requests is deprecated.";
 
     public RestBulkAction(Settings settings) {
         this.allowExplicitIndex = MULTI_ALLOW_EXPLICIT_INDEX.get(settings);
@@ -64,14 +63,10 @@ public class RestBulkAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(POST, "/_bulk"),
-            new Route(PUT, "/_bulk"),
-            new Route(POST, "/{index}/_bulk"),
-            new Route(PUT, "/{index}/_bulk"),
-            // Deprecated typed endpoints.
-            new Route(POST, "/{index}/{type}/_bulk"),
-            new Route(PUT, "/{index}/{type}/_bulk")));
+        return unmodifiableList(asList(new Route(POST, "/_bulk"), new Route(PUT, "/_bulk"), new Route(POST, "/{index}/_bulk"),
+                new Route(PUT, "/{index}/_bulk"),
+                // Deprecated typed endpoints.
+                new Route(POST, "/{index}/{type}/_bulk"), new Route(PUT, "/{index}/{type}/_bulk")));
     }
 
     @Override
@@ -99,8 +94,8 @@ public class RestBulkAction extends BaseRestHandler {
         Boolean defaultRequireAlias = request.paramAsBoolean(DocWriteRequest.REQUIRE_ALIAS, null);
         bulkRequest.timeout(request.paramAsTime("timeout", BulkShardRequest.DEFAULT_TIMEOUT));
         bulkRequest.setRefreshPolicy(request.param("refresh"));
-        bulkRequest.add(request.requiredContent(), defaultIndex, defaultType, defaultRouting,
-            defaultFetchSourceContext, defaultPipeline, defaultRequireAlias, allowExplicitIndex, request.getXContentType());
+        bulkRequest.add(request.requiredContent(), defaultIndex, defaultType, defaultRouting, defaultFetchSourceContext, defaultPipeline,
+                defaultRequireAlias, allowExplicitIndex, request.getXContentType());
 
         return channel -> client.bulk(bulkRequest, new RestStatusToXContentListener<>(channel));
     }

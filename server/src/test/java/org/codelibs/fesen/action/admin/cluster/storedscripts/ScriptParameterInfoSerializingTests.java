@@ -75,10 +75,8 @@ public class ScriptParameterInfoSerializingTests extends AbstractSerializingTest
     }
 
     static ParameterInfo randomInstance() {
-        return new ParameterInfo(
-            baseType + randomAlphaOfLengthBetween(minLength, maxLength),
-            baseName + randomAlphaOfLengthBetween(minLength, maxLength)
-        );
+        return new ParameterInfo(baseType + randomAlphaOfLengthBetween(minLength, maxLength),
+                baseName + randomAlphaOfLengthBetween(minLength, maxLength));
     }
 
     static List<ParameterInfo> randomInstances() {
@@ -88,10 +86,7 @@ public class ScriptParameterInfoSerializingTests extends AbstractSerializingTest
         for (int i = 0; i < size; i++) {
             String suffix = randomValueOtherThanMany(suffixes::contains, () -> randomAlphaOfLengthBetween(minLength, maxLength));
             suffixes.add(suffix);
-            instances.add(new ParameterInfo(
-                baseType + randomAlphaOfLengthBetween(minLength, maxLength),
-                baseName + suffix
-            ));
+            instances.add(new ParameterInfo(baseType + randomAlphaOfLengthBetween(minLength, maxLength), baseName + suffix));
         }
         return Collections.unmodifiableList(instances);
     }

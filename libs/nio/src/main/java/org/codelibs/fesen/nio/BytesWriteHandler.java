@@ -30,12 +30,13 @@ public abstract class BytesWriteHandler implements NioChannelHandler {
 
     public WriteOperation createWriteOperation(SocketChannelContext context, Object message, BiConsumer<Void, Exception> listener) {
         assert message instanceof ByteBuffer[] : "This channel only supports messages that are of type: " + ByteBuffer[].class
-            + ". Found type: " + message.getClass() + ".";
+                + ". Found type: " + message.getClass() + ".";
         return new FlushReadyWrite(context, (ByteBuffer[]) message, listener);
     }
 
     @Override
-    public void channelActive() {}
+    public void channelActive() {
+    }
 
     @Override
     public List<FlushOperation> writeToBytes(WriteOperation writeOperation) {
@@ -54,5 +55,6 @@ public abstract class BytesWriteHandler implements NioChannelHandler {
     }
 
     @Override
-    public void close() {}
+    public void close() {
+    }
 }

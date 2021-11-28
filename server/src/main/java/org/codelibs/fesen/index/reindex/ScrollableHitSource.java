@@ -19,9 +19,17 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Objects.requireNonNull;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
 import org.codelibs.fesen.action.bulk.BulkItemResponse;
@@ -41,14 +49,6 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
-import static java.util.Objects.requireNonNull;
-
 /**
  * A scrollable source of results. Pumps data out into the passed onResponse consumer. Same data may come out several times in case
  * of failures during searching (though not yet). Once the onResponse consumer is done, it should call AsyncResponse.isDone(time) to receive
@@ -65,7 +65,7 @@ public abstract class ScrollableHitSource {
     protected final Consumer<Exception> fail;
 
     public ScrollableHitSource(Logger logger, BackoffPolicy backoffPolicy, ThreadPool threadPool, Runnable countSearchRetry,
-                               Consumer<AsyncResponse> onResponse, Consumer<Exception> fail) {
+            Consumer<AsyncResponse> onResponse, Consumer<Exception> fail) {
         this.logger = logger;
         this.backoffPolicy = backoffPolicy;
         this.threadPool = threadPool;
@@ -83,14 +83,14 @@ public abstract class ScrollableHitSource {
             countSearchRetry.run();
             retryHandler.accept(listener);
         };
-        return new RetryListener(logger, threadPool, backoffPolicy, countingRetryHandler,
-            ActionListener.wrap(this::onResponse, fail));
+        return new RetryListener(logger, threadPool, backoffPolicy, countingRetryHandler, ActionListener.wrap(this::onResponse, fail));
     }
 
     // package private for tests.
     final void startNextScroll(TimeValue extraKeepAlive) {
         startNextScroll(extraKeepAlive, createRetryListener(listener -> startNextScroll(extraKeepAlive, listener)));
     }
+
     private void startNextScroll(TimeValue extraKeepAlive, RejectAwareActionListener<Response> searchListener) {
         doStartNextScroll(scrollId.get(), extraKeepAlive, searchListener);
     }
@@ -100,6 +100,7 @@ public abstract class ScrollableHitSource {
         setScroll(response.getScrollId());
         onResponse.accept(new AsyncResponse() {
             private AtomicBoolean alreadyDone = new AtomicBoolean();
+
             @Override
             public Response response() {
                 return response;
@@ -126,7 +127,7 @@ public abstract class ScrollableHitSource {
     protected abstract void doStart(RejectAwareActionListener<Response> searchListener);
 
     protected abstract void doStartNextScroll(String scrollId, TimeValue extraKeepAlive,
-                                              RejectAwareActionListener<Response> searchListener);
+            RejectAwareActionListener<Response> searchListener);
 
     /**
      * Called to clear a scroll id.
@@ -136,6 +137,7 @@ public abstract class ScrollableHitSource {
      *        successful or not
      */
     protected abstract void clearScroll(String scrollId, Runnable onCompletion);
+
     /**
      * Called after the process has been totally finished to clean up any resources the process
      * needed like remote connections.
@@ -228,14 +230,17 @@ public abstract class ScrollableHitSource {
          * The index in which the hit is stored.
          */
         String getIndex();
+
         /**
          * The type that the hit has.
          */
         String getType();
+
         /**
          * The document id of the hit.
          */
         String getId();
+
         /**
          * The version of the match or {@code -1} if the version wasn't requested. The {@code -1} keeps it inline with Fesen's
          * internal APIs.
@@ -256,15 +261,20 @@ public abstract class ScrollableHitSource {
          * The source of the hit. Returns null if the source didn't come back from the search, usually because it source wasn't stored at
          * all.
          */
-        @Nullable BytesReference getSource();
+        @Nullable
+        BytesReference getSource();
+
         /**
          * The content type of the hit source. Returns null if the source didn't come back from the search.
          */
-        @Nullable XContentType getXContentType();
+        @Nullable
+        XContentType getXContentType();
+
         /**
          * The routing on the hit if there is any or null if there isn't.
          */
-        @Nullable String getRouting();
+        @Nullable
+        String getRouting();
     }
 
     /**
@@ -378,7 +388,7 @@ public abstract class ScrollableHitSource {
         }
 
         public SearchFailure(Throwable reason, @Nullable String index, @Nullable Integer shardId, @Nullable String nodeId,
-                             RestStatus status) {
+                RestStatus status) {
             this.index = index;
             this.shardId = shardId;
             this.reason = requireNonNull(reason, "reason cannot be null");

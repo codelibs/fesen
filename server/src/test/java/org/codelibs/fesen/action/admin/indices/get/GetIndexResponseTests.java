@@ -65,14 +65,14 @@ public class GetIndexResponseTests extends AbstractSerializingTestCase<GetIndexR
         ImmutableOpenMap.Builder<String, String> dataStreams = ImmutableOpenMap.builder();
         IndexScopedSettings indexScopedSettings = IndexScopedSettings.DEFAULT_SCOPED_SETTINGS;
         boolean includeDefaults = randomBoolean();
-        for (String index: indices) {
+        for (String index : indices) {
             // rarely have no types
             int typeCount = rarely() ? 0 : 1;
             mappings.put(index, GetMappingsResponseTests.createMappingsForIndex(typeCount, true));
 
             List<AliasMetadata> aliasMetadataList = new ArrayList<>();
             int aliasesNum = randomIntBetween(0, 3);
-            for (int i=0; i<aliasesNum; i++) {
+            for (int i = 0; i < aliasesNum; i++) {
                 aliasMetadataList.add(GetAliasesResponseTests.createAliasMetadata());
             }
             CollectionUtil.timSort(aliasMetadataList, Comparator.comparing(AliasMetadata::alias));
@@ -90,17 +90,14 @@ public class GetIndexResponseTests extends AbstractSerializingTestCase<GetIndexR
                 dataStreams.put(index, randomAlphaOfLength(5).toLowerCase(Locale.ROOT));
             }
         }
-        return new GetIndexResponse(
-            indices, mappings.build(), aliases.build(), settings.build(), defaultSettings.build(), dataStreams.build()
-        );
+        return new GetIndexResponse(indices, mappings.build(), aliases.build(), settings.build(), defaultSettings.build(),
+                dataStreams.build());
     }
 
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
         //we do not want to add new fields at the root (index-level), or inside the blocks
-        return
-            f -> f.equals("") || f.contains(".settings") || f.contains(".defaults") || f.contains(".mappings") ||
-            f.contains(".aliases");
+        return f -> f.equals("") || f.contains(".settings") || f.contains(".defaults") || f.contains(".mappings") || f.contains(".aliases");
     }
 
     /**

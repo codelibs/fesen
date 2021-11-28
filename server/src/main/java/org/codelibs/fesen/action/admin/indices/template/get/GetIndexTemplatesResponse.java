@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.get;
 
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
+import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.IndexTemplateMetadata;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -27,14 +35,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
-import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
-
 public class GetIndexTemplatesResponse extends ActionResponse implements ToXContentObject {
 
     private final List<IndexTemplateMetadata> indexTemplates;
@@ -43,7 +43,7 @@ public class GetIndexTemplatesResponse extends ActionResponse implements ToXCont
         super(in);
         int size = in.readVInt();
         indexTemplates = new ArrayList<>();
-        for (int i = 0 ; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             indexTemplates.add(0, IndexTemplateMetadata.readFrom(in));
         }
     }
@@ -68,8 +68,7 @@ public class GetIndexTemplatesResponse extends ActionResponse implements ToXCont
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         params = new ToXContent.DelegatingMapParams(singletonMap("reduce_mappings", "true"), params);
 
-        boolean includeTypeName = params.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER,
-            DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+        boolean includeTypeName = params.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
 
         builder.startObject();
         for (IndexTemplateMetadata indexTemplateMetadata : getIndexTemplates()) {

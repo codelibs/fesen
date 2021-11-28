@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.store;
 
+import java.io.IOException;
+
 import org.apache.lucene.store.IndexOutput;
 import org.codelibs.fesen.common.lucene.store.FilterIndexOutput;
-
-import java.io.IOException;
 
 /**
  * abstract class for verifying what was written.

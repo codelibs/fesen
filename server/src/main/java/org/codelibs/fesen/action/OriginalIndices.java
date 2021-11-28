@@ -73,9 +73,6 @@ public final class OriginalIndices implements IndicesRequest {
 
     @Override
     public String toString() {
-        return "OriginalIndices{" +
-            "indices=" + Arrays.toString(indices) +
-            ", indicesOptions=" + indicesOptions +
-            '}';
+        return "OriginalIndices{" + "indices=" + Arrays.toString(indices) + ", indicesOptions=" + indicesOptions + '}';
     }
 }

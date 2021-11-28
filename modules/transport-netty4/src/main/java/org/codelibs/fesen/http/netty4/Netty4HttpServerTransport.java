@@ -19,6 +19,51 @@
 
 package org.codelibs.fesen.http.netty4;
 
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CHUNK_SIZE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CONTENT_LENGTH;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_HEADER_SIZE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_INITIAL_LINE_LENGTH;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_READ_TIMEOUT;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_ALIVE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_COUNT;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_IDLE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_INTERVAL;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_NO_DELAY;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_RECEIVE_BUFFER_SIZE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_REUSE_ADDRESS;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_SEND_BUFFER_SIZE;
+import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_PIPELINING_MAX_EVENTS;
+
+import java.net.InetSocketAddress;
+import java.net.SocketOption;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.common.network.NetworkService;
+import org.codelibs.fesen.common.settings.ClusterSettings;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.unit.ByteSizeUnit;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.common.util.BigArrays;
+import org.codelibs.fesen.common.util.concurrent.EsExecutors;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.core.internal.net.NetUtils;
+import org.codelibs.fesen.http.AbstractHttpServerTransport;
+import org.codelibs.fesen.http.HttpChannel;
+import org.codelibs.fesen.http.HttpHandlingSettings;
+import org.codelibs.fesen.http.HttpReadTimeoutException;
+import org.codelibs.fesen.http.HttpServerChannel;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.NettyAllocator;
+import org.codelibs.fesen.transport.NettyByteBufSizer;
+import org.codelibs.fesen.transport.SharedGroupFactory;
+import org.codelibs.fesen.transport.netty4.Netty4Utils;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -39,50 +84,6 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.network.NetworkService;
-import org.codelibs.fesen.common.settings.ClusterSettings;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.unit.ByteSizeUnit;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.util.BigArrays;
-import org.codelibs.fesen.common.util.concurrent.EsExecutors;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.core.internal.net.NetUtils;
-import org.codelibs.fesen.http.AbstractHttpServerTransport;
-import org.codelibs.fesen.http.HttpChannel;
-import org.codelibs.fesen.http.HttpHandlingSettings;
-import org.codelibs.fesen.http.HttpReadTimeoutException;
-import org.codelibs.fesen.http.HttpServerChannel;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.transport.NettyAllocator;
-import org.codelibs.fesen.transport.NettyByteBufSizer;
-import org.codelibs.fesen.transport.SharedGroupFactory;
-import org.codelibs.fesen.transport.netty4.Netty4Utils;
-
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CHUNK_SIZE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_CONTENT_LENGTH;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_HEADER_SIZE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_MAX_INITIAL_LINE_LENGTH;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_READ_TIMEOUT;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_ALIVE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_COUNT;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_IDLE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_KEEP_INTERVAL;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_NO_DELAY;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_RECEIVE_BUFFER_SIZE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_REUSE_ADDRESS;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_HTTP_TCP_SEND_BUFFER_SIZE;
-import static org.codelibs.fesen.http.HttpTransportSettings.SETTING_PIPELINING_MAX_EVENTS;
-
-import java.net.InetSocketAddress;
-import java.net.SocketOption;
-import java.util.concurrent.TimeUnit;
 
 public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
     private static final Logger logger = LogManager.getLogger(Netty4HttpServerTransport.class);
@@ -99,36 +100,36 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
     private static final String SETTING_KEY_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS = "http.netty.max_composite_buffer_components";
 
     public static Setting<Integer> SETTING_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS =
-        new Setting<>(SETTING_KEY_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS, (s) -> {
-            ByteSizeValue maxContentLength = SETTING_HTTP_MAX_CONTENT_LENGTH.get(s);
-            /*
-             * Netty accumulates buffers containing data from all incoming network packets that make up one HTTP request in an instance of
-             * io.netty.buffer.CompositeByteBuf (think of it as a buffer of buffers). Once its capacity is reached, the buffer will iterate
-             * over its individual entries and put them into larger buffers (see io.netty.buffer.CompositeByteBuf#consolidateIfNeeded()
-             * for implementation details). We want to to resize that buffer because this leads to additional garbage on the heap and also
-             * increases the application's native memory footprint (as direct byte buffers hold their contents off-heap).
-             *
-             * With this setting we control the CompositeByteBuf's capacity (which is by default 1024, see
-             * io.netty.handler.codec.MessageAggregator#DEFAULT_MAX_COMPOSITEBUFFER_COMPONENTS). To determine a proper default capacity for
-             * that buffer, we need to consider that the upper bound for the size of HTTP requests is determined by `maxContentLength`. The
-             * number of buffers that are needed depend on how often Netty reads network packets which depends on the network type (MTU).
-             * We assume here that Fesen receives HTTP requests via an Ethernet connection which has a MTU of 1500 bytes.
-             *
-             * Note that we are *not* pre-allocating any memory based on this setting but rather determine the CompositeByteBuf's capacity.
-             * The tradeoff is between less (but larger) buffers that are contained in the CompositeByteBuf and more (but smaller) buffers.
-             * With the default max content length of 100MB and a MTU of 1500 bytes we would allow 69905 entries.
-             */
-            long maxBufferComponentsEstimate = Math.round((double) (maxContentLength.getBytes() / MTU.getBytes()));
-            // clamp value to the allowed range
-            long maxBufferComponents = Math.max(2, Math.min(maxBufferComponentsEstimate, Integer.MAX_VALUE));
-            return String.valueOf(maxBufferComponents);
-            // Netty's CompositeByteBuf implementation does not allow less than two components.
-        }, s -> Setting.parseInt(s, 2, Integer.MAX_VALUE, SETTING_KEY_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS), Property.NodeScope);
+            new Setting<>(SETTING_KEY_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS, (s) -> {
+                ByteSizeValue maxContentLength = SETTING_HTTP_MAX_CONTENT_LENGTH.get(s);
+                /*
+                 * Netty accumulates buffers containing data from all incoming network packets that make up one HTTP request in an instance of
+                 * io.netty.buffer.CompositeByteBuf (think of it as a buffer of buffers). Once its capacity is reached, the buffer will iterate
+                 * over its individual entries and put them into larger buffers (see io.netty.buffer.CompositeByteBuf#consolidateIfNeeded()
+                 * for implementation details). We want to to resize that buffer because this leads to additional garbage on the heap and also
+                 * increases the application's native memory footprint (as direct byte buffers hold their contents off-heap).
+                 *
+                 * With this setting we control the CompositeByteBuf's capacity (which is by default 1024, see
+                 * io.netty.handler.codec.MessageAggregator#DEFAULT_MAX_COMPOSITEBUFFER_COMPONENTS). To determine a proper default capacity for
+                 * that buffer, we need to consider that the upper bound for the size of HTTP requests is determined by `maxContentLength`. The
+                 * number of buffers that are needed depend on how often Netty reads network packets which depends on the network type (MTU).
+                 * We assume here that Fesen receives HTTP requests via an Ethernet connection which has a MTU of 1500 bytes.
+                 *
+                 * Note that we are *not* pre-allocating any memory based on this setting but rather determine the CompositeByteBuf's capacity.
+                 * The tradeoff is between less (but larger) buffers that are contained in the CompositeByteBuf and more (but smaller) buffers.
+                 * With the default max content length of 100MB and a MTU of 1500 bytes we would allow 69905 entries.
+                 */
+                long maxBufferComponentsEstimate = Math.round((double) (maxContentLength.getBytes() / MTU.getBytes()));
+                // clamp value to the allowed range
+                long maxBufferComponents = Math.max(2, Math.min(maxBufferComponentsEstimate, Integer.MAX_VALUE));
+                return String.valueOf(maxBufferComponents);
+                // Netty's CompositeByteBuf implementation does not allow less than two components.
+            }, s -> Setting.parseInt(s, 2, Integer.MAX_VALUE, SETTING_KEY_HTTP_NETTY_MAX_COMPOSITE_BUFFER_COMPONENTS), Property.NodeScope);
 
     public static final Setting<Integer> SETTING_HTTP_WORKER_COUNT = Setting.intSetting("http.netty.worker_count", 0, Property.NodeScope);
 
     public static final Setting<ByteSizeValue> SETTING_HTTP_NETTY_RECEIVE_PREDICTOR_SIZE =
-        Setting.byteSizeSetting("http.netty.receive_predictor_size", new ByteSizeValue(64, ByteSizeUnit.KB), Property.NodeScope);
+            Setting.byteSizeSetting("http.netty.receive_predictor_size", new ByteSizeValue(64, ByteSizeUnit.KB), Property.NodeScope);
 
     private final ByteSizeValue maxInitialLineLength;
     private final ByteSizeValue maxHeaderSize;
@@ -146,8 +147,8 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
     private volatile SharedGroupFactory.SharedGroup sharedGroup;
 
     public Netty4HttpServerTransport(Settings settings, NetworkService networkService, BigArrays bigArrays, ThreadPool threadPool,
-                                     NamedXContentRegistry xContentRegistry, Dispatcher dispatcher, ClusterSettings clusterSettings,
-                                     SharedGroupFactory sharedGroupFactory) {
+            NamedXContentRegistry xContentRegistry, Dispatcher dispatcher, ClusterSettings clusterSettings,
+            SharedGroupFactory sharedGroupFactory) {
         super(settings, networkService, bigArrays, threadPool, xContentRegistry, dispatcher, clusterSettings);
         Netty4Utils.setAvailableProcessors(EsExecutors.NODE_PROCESSORS_SETTING.get(settings));
         NettyAllocator.logAllocatorDescriptionIfNeeded();
@@ -165,10 +166,11 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
         ByteSizeValue receivePredictor = SETTING_HTTP_NETTY_RECEIVE_PREDICTOR_SIZE.get(settings);
         recvByteBufAllocator = new FixedRecvByteBufAllocator(receivePredictor.bytesAsInt());
 
-        logger.debug("using max_chunk_size[{}], max_header_size[{}], max_initial_line_length[{}], max_content_length[{}], " +
-                "receive_predictor[{}], max_composite_buffer_components[{}], pipelining_max_events[{}]",
-            maxChunkSize, maxHeaderSize, maxInitialLineLength, maxContentLength, receivePredictor, maxCompositeBufferComponents,
-            pipeliningMaxEvents);
+        logger.debug(
+                "using max_chunk_size[{}], max_header_size[{}], max_initial_line_length[{}], max_content_length[{}], "
+                        + "receive_predictor[{}], max_composite_buffer_components[{}], pipelining_max_events[{}]",
+                maxChunkSize, maxHeaderSize, maxInitialLineLength, maxContentLength, receivePredictor, maxCompositeBufferComponents,
+                pipeliningMaxEvents);
     }
 
     public Settings settings() {
@@ -210,7 +212,7 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
                         final SocketOption<Integer> keepIntervalOption = NetUtils.getTcpKeepIntervalSocketOptionOrNull();
                         if (keepIntervalOption != null) {
                             serverBootstrap.childOption(NioChannelOption.of(keepIntervalOption),
-                                SETTING_HTTP_TCP_KEEP_INTERVAL.get(settings));
+                                    SETTING_HTTP_TCP_KEEP_INTERVAL.get(settings));
                         }
                     }
                     if (SETTING_HTTP_TCP_KEEP_COUNT.get(settings) >= 0) {
@@ -293,8 +295,8 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
         protected HttpChannelHandler(final Netty4HttpServerTransport transport, final HttpHandlingSettings handlingSettings) {
             this.transport = transport;
             this.handlingSettings = handlingSettings;
-            this.byteBufSizer =  new NettyByteBufSizer();
-            this.requestCreator =  new Netty4HttpRequestCreator();
+            this.byteBufSizer = new NettyByteBufSizer();
+            this.requestCreator = new Netty4HttpRequestCreator();
             this.requestHandler = new Netty4HttpRequestHandler(transport);
             this.responseCreator = new Netty4HttpResponseCreator();
         }
@@ -305,10 +307,8 @@ public class Netty4HttpServerTransport extends AbstractHttpServerTransport {
             ch.attr(HTTP_CHANNEL_KEY).set(nettyHttpChannel);
             ch.pipeline().addLast("byte_buf_sizer", byteBufSizer);
             ch.pipeline().addLast("read_timeout", new ReadTimeoutHandler(transport.readTimeoutMillis, TimeUnit.MILLISECONDS));
-            final HttpRequestDecoder decoder = new HttpRequestDecoder(
-                handlingSettings.getMaxInitialLineLength(),
-                handlingSettings.getMaxHeaderSize(),
-                handlingSettings.getMaxChunkSize());
+            final HttpRequestDecoder decoder = new HttpRequestDecoder(handlingSettings.getMaxInitialLineLength(),
+                    handlingSettings.getMaxHeaderSize(), handlingSettings.getMaxChunkSize());
             decoder.setCumulator(ByteToMessageDecoder.COMPOSITE_CUMULATOR);
             ch.pipeline().addLast("decoder", decoder);
             ch.pipeline().addLast("decoder_compress", new HttpContentDecompressor());

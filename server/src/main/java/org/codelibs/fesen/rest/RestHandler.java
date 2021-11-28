@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.rest;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.rest.RestRequest.Method;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Handler for REST requests
@@ -89,7 +89,6 @@ public interface RestHandler {
     default List<ReplacedRoute> replacedRoutes() {
         return Collections.emptyList();
     }
-
 
     /**
      * Controls whether requests handled by this class are allowed to to access system indices by default.

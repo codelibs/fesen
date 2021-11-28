@@ -19,12 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ScoreMode;
-
-import java.io.IOException;
 
 /**
  * A Collector that can collect data in separate buckets.
@@ -37,14 +36,17 @@ public abstract class BucketCollector implements Collector {
         public LeafBucketCollector getLeafCollector(LeafReaderContext reader) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }
+
         @Override
         public void preCollection() throws IOException {
             // no-op
         }
+
         @Override
         public void postCollection() throws IOException {
             // no-op
         }
+
         @Override
         public ScoreMode scoreMode() {
             return ScoreMode.COMPLETE_NO_SCORES;

@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.index.query;
 
+import static org.codelibs.fesen.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.ConstantScoreWeight;
@@ -37,11 +42,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.script.FilterScript;
 import org.codelibs.fesen.script.Script;
-
-import static org.codelibs.fesen.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder> {
     public static final String NAME = "script";
@@ -118,7 +118,7 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
                     throw new AssertionError("Impossible token received: " + token.name());
                 }
                 throw new ParsingException(parser.getTokenLocation(),
-                    "[script] query does not support an array of scripts. Use a bool query with a clause per script instead.");
+                        "[script] query does not support an array of scripts. Use a bool query with a clause per script instead.");
             }
         }
 
@@ -126,16 +126,14 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
             throw new ParsingException(parser.getTokenLocation(), "script must be provided with a [script] filter");
         }
 
-        return new ScriptQueryBuilder(script)
-                .boost(boost)
-                .queryName(queryName);
+        return new ScriptQueryBuilder(script).boost(boost).queryName(queryName);
     }
 
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
         if (context.allowExpensiveQueries() == false) {
-            throw new FesenException("[script] queries cannot be executed when '" +
-                    ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
+            throw new FesenException(
+                    "[script] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false.");
         }
         FilterScript.Factory factory = context.compile(script, FilterScript.CONTEXT);
         FilterScript.LeafFactory filterScript = factory.newFactory(script.getParams(), context.lookup());
@@ -221,6 +219,5 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
     protected boolean doEquals(ScriptQueryBuilder other) {
         return Objects.equals(script, other.script);
     }
-
 
 }

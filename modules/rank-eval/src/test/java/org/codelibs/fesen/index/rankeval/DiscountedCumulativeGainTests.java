@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.index.rankeval.EvaluationMetric.filterUnratedDocuments;
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -32,23 +42,10 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.rankeval.DiscountedCumulativeGain;
-import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.codelibs.fesen.index.rankeval.EvaluationMetric.filterUnratedDocuments;
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class DiscountedCumulativeGainTests extends ESTestCase {
 
@@ -77,8 +74,8 @@ public class DiscountedCumulativeGainTests extends ESTestCase {
         SearchHit[] hits = new SearchHit[6];
         for (int i = 0; i < 6; i++) {
             rated.add(new RatedDocument("index", Integer.toString(i), relevanceRatings[i]));
-            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME),
-                Collections.emptyMap(), Collections.emptyMap());
+            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(),
+                    Collections.emptyMap());
             hits[i].shard(new SearchShardTarget("testnode", new ShardId("index", "uuid", 0), null, OriginalIndices.NONE));
         }
         DiscountedCumulativeGain dcg = new DiscountedCumulativeGain();
@@ -128,8 +125,8 @@ public class DiscountedCumulativeGainTests extends ESTestCase {
                     rated.add(new RatedDocument("index", Integer.toString(i), relevanceRatings[i]));
                 }
             }
-            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME),
-                Collections.emptyMap(), Collections.emptyMap());
+            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(),
+                    Collections.emptyMap());
             hits[i].shard(new SearchShardTarget("testnode", new ShardId("index", "uuid", 0), null, OriginalIndices.NONE));
         }
         DiscountedCumulativeGain dcg = new DiscountedCumulativeGain();
@@ -186,8 +183,8 @@ public class DiscountedCumulativeGainTests extends ESTestCase {
         // only create four hits
         SearchHit[] hits = new SearchHit[4];
         for (int i = 0; i < 4; i++) {
-            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME),
-                Collections.emptyMap(), Collections.emptyMap());
+            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(),
+                    Collections.emptyMap());
             hits[i].shard(new SearchShardTarget("testnode", new ShardId("index", "uuid", 0), null, OriginalIndices.NONE));
         }
         DiscountedCumulativeGain dcg = new DiscountedCumulativeGain();
@@ -289,8 +286,8 @@ public class DiscountedCumulativeGainTests extends ESTestCase {
         try (XContentParser parser = createParser(xContentType.xContent(), withRandomFields)) {
             parser.nextToken();
             parser.nextToken();
-            XContentParseException exception = expectThrows(XContentParseException.class,
-                    () -> DiscountedCumulativeGain.fromXContent(parser));
+            XContentParseException exception =
+                    expectThrows(XContentParseException.class, () -> DiscountedCumulativeGain.fromXContent(parser));
             assertThat(exception.getMessage(), containsString("[dcg] unknown field"));
         }
     }
@@ -315,8 +312,8 @@ public class DiscountedCumulativeGainTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         DiscountedCumulativeGain original = createTestItem();
-        DiscountedCumulativeGain deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
-                DiscountedCumulativeGain::new);
+        DiscountedCumulativeGain deserialized =
+                ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), DiscountedCumulativeGain::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);

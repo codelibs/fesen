@@ -156,7 +156,7 @@ public class TermsTests extends BaseAggregationTestCase<TermsAggregationBuilder>
         }
         if (randomBoolean()) {
             List<BucketOrder> order = randomOrder();
-            if(order.size() == 1 && randomBoolean()) {
+            if (order.size() == 1 && randomBoolean()) {
                 factory.order(order.get(0));
             } else {
                 factory.order(order);

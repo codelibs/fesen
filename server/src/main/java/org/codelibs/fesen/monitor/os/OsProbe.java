@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.monitor.os;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.monitor.Probes;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -41,6 +34,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.Constants;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.monitor.Probes;
 
 /**
  * The {@link OsProbe} class retrieves information about the physical and swap size of the machine
@@ -184,7 +184,7 @@ public class OsProbe {
                 final String procLoadAvg = readProcLoadavg();
                 assert procLoadAvg.matches("(\\d+\\.\\d+\\s+){3}\\d+/\\d+\\s+\\d+");
                 final String[] fields = procLoadAvg.split("\\s+");
-                return new double[]{Double.parseDouble(fields[0]), Double.parseDouble(fields[1]), Double.parseDouble(fields[2])};
+                return new double[] { Double.parseDouble(fields[0]), Double.parseDouble(fields[1]), Double.parseDouble(fields[2]) };
             } catch (final IOException e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("error reading /proc/loadavg", e);
@@ -198,7 +198,7 @@ public class OsProbe {
             }
             try {
                 final double oneMinuteLoadAverage = (double) getSystemLoadAverage.invoke(osMxBean);
-                return new double[]{oneMinuteLoadAverage >= 0 ? oneMinuteLoadAverage : -1, -1, -1};
+                return new double[] { oneMinuteLoadAverage >= 0 ? oneMinuteLoadAverage : -1, -1, -1 };
             } catch (IllegalAccessException | InvocationTargetException e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("error reading one minute load average from operating system", e);
@@ -391,15 +391,15 @@ public class OsProbe {
         for (final String line : lines) {
             final String[] fields = line.split("\\s+");
             switch (fields[0]) {
-                case "nr_periods":
-                    numberOfPeriods = Long.parseLong(fields[1]);
-                    break;
-                case "nr_throttled":
-                    numberOfTimesThrottled = Long.parseLong(fields[1]);
-                    break;
-                case "throttled_time":
-                    timeThrottledNanos = Long.parseLong(fields[1]);
-                    break;
+            case "nr_periods":
+                numberOfPeriods = Long.parseLong(fields[1]);
+                break;
+            case "nr_throttled":
+                numberOfTimesThrottled = Long.parseLong(fields[1]);
+                break;
+            case "throttled_time":
+                timeThrottledNanos = Long.parseLong(fields[1]);
+                break;
             }
         }
         assert numberOfPeriods != -1;
@@ -549,16 +549,8 @@ public class OsProbe {
                 final String cgroupMemoryLimitInBytes = getCgroupMemoryLimitInBytes(memoryControlGroup);
                 final String cgroupMemoryUsageInBytes = getCgroupMemoryUsageInBytes(memoryControlGroup);
 
-                return new OsStats.Cgroup(
-                    cpuAcctControlGroup,
-                    cgroupCpuAcctUsageNanos,
-                    cpuControlGroup,
-                    cgroupCpuAcctCpuCfsPeriodMicros,
-                    cgroupCpuAcctCpuCfsQuotaMicros,
-                    cpuStat,
-                    memoryControlGroup,
-                    cgroupMemoryLimitInBytes,
-                    cgroupMemoryUsageInBytes);
+                return new OsStats.Cgroup(cpuAcctControlGroup, cgroupCpuAcctUsageNanos, cpuControlGroup, cgroupCpuAcctCpuCfsPeriodMicros,
+                        cgroupCpuAcctCpuCfsQuotaMicros, cpuStat, memoryControlGroup, cgroupMemoryLimitInBytes, cgroupMemoryUsageInBytes);
             }
         } catch (final IOException e) {
             logger.debug("error reading control group stats", e);
@@ -581,14 +573,8 @@ public class OsProbe {
     private final Logger logger = LogManager.getLogger(getClass());
 
     OsInfo osInfo(long refreshInterval, int allocatedProcessors) throws IOException {
-        return new OsInfo(
-                refreshInterval,
-                Runtime.getRuntime().availableProcessors(),
-                allocatedProcessors,
-                Constants.OS_NAME,
-                getPrettyName(),
-                Constants.OS_ARCH,
-                Constants.OS_VERSION);
+        return new OsInfo(refreshInterval, Runtime.getRuntime().availableProcessors(), allocatedProcessors, Constants.OS_NAME,
+                getPrettyName(), Constants.OS_ARCH, Constants.OS_VERSION);
     }
 
     private String getPrettyName() throws IOException {

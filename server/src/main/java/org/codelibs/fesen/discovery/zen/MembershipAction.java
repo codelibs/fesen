@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.discovery.zen;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -35,12 +41,6 @@ import org.codelibs.fesen.transport.TransportRequest;
 import org.codelibs.fesen.transport.TransportRequestHandler;
 import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class MembershipAction {
 
@@ -67,33 +67,33 @@ public class MembershipAction {
     private final MembershipListener listener;
 
     public MembershipAction(TransportService transportService, MembershipListener listener,
-                            Collection<BiConsumer<DiscoveryNode,ClusterState>> joinValidators) {
+            Collection<BiConsumer<DiscoveryNode, ClusterState>> joinValidators) {
         this.transportService = transportService;
         this.listener = listener;
 
-
-        transportService.registerRequestHandler(DISCOVERY_JOIN_ACTION_NAME,
-            ThreadPool.Names.GENERIC, JoinRequest::new, new JoinRequestRequestHandler());
-        transportService.registerRequestHandler(DISCOVERY_JOIN_VALIDATE_ACTION_NAME,
-            ThreadPool.Names.GENERIC, ValidateJoinRequest::new,
-            new ValidateJoinRequestRequestHandler(transportService::getLocalNode, joinValidators));
-        transportService.registerRequestHandler(DISCOVERY_LEAVE_ACTION_NAME,
-            ThreadPool.Names.GENERIC, LeaveRequest::new, new LeaveRequestRequestHandler());
+        transportService.registerRequestHandler(DISCOVERY_JOIN_ACTION_NAME, ThreadPool.Names.GENERIC, JoinRequest::new,
+                new JoinRequestRequestHandler());
+        transportService.registerRequestHandler(DISCOVERY_JOIN_VALIDATE_ACTION_NAME, ThreadPool.Names.GENERIC, ValidateJoinRequest::new,
+                new ValidateJoinRequestRequestHandler(transportService::getLocalNode, joinValidators));
+        transportService.registerRequestHandler(DISCOVERY_LEAVE_ACTION_NAME, ThreadPool.Names.GENERIC, LeaveRequest::new,
+                new LeaveRequestRequestHandler());
     }
 
     public void sendLeaveRequest(DiscoveryNode masterNode, DiscoveryNode node) {
         transportService.sendRequest(node, DISCOVERY_LEAVE_ACTION_NAME, new LeaveRequest(masterNode),
-            EmptyTransportResponseHandler.INSTANCE_SAME);
+                EmptyTransportResponseHandler.INSTANCE_SAME);
     }
 
     public void sendLeaveRequestBlocking(DiscoveryNode masterNode, DiscoveryNode node, TimeValue timeout) {
-        transportService.submitRequest(masterNode, DISCOVERY_LEAVE_ACTION_NAME, new LeaveRequest(node),
-            EmptyTransportResponseHandler.INSTANCE_SAME).txGet(timeout.millis(), TimeUnit.MILLISECONDS);
+        transportService
+                .submitRequest(masterNode, DISCOVERY_LEAVE_ACTION_NAME, new LeaveRequest(node), EmptyTransportResponseHandler.INSTANCE_SAME)
+                .txGet(timeout.millis(), TimeUnit.MILLISECONDS);
     }
 
     public void sendJoinRequestBlocking(DiscoveryNode masterNode, DiscoveryNode node, TimeValue timeout) {
-        transportService.submitRequest(masterNode, DISCOVERY_JOIN_ACTION_NAME, new JoinRequest(node),
-            EmptyTransportResponseHandler.INSTANCE_SAME).txGet(timeout.millis(), TimeUnit.MILLISECONDS);
+        transportService
+                .submitRequest(masterNode, DISCOVERY_JOIN_ACTION_NAME, new JoinRequest(node), EmptyTransportResponseHandler.INSTANCE_SAME)
+                .txGet(timeout.millis(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -101,7 +101,7 @@ public class MembershipAction {
      */
     public void sendValidateJoinRequestBlocking(DiscoveryNode node, ClusterState state, TimeValue timeout) {
         transportService.submitRequest(node, DISCOVERY_JOIN_VALIDATE_ACTION_NAME, new ValidateJoinRequest(state),
-            EmptyTransportResponseHandler.INSTANCE_SAME).txGet(timeout.millis(), TimeUnit.MILLISECONDS);
+                EmptyTransportResponseHandler.INSTANCE_SAME).txGet(timeout.millis(), TimeUnit.MILLISECONDS);
     }
 
     public static class JoinRequest extends TransportRequest {
@@ -127,7 +127,6 @@ public class MembershipAction {
             node.writeTo(out);
         }
     }
-
 
     private class JoinRequestRequestHandler implements TransportRequestHandler<JoinRequest> {
 
@@ -161,7 +160,7 @@ public class MembershipAction {
         private final Collection<BiConsumer<DiscoveryNode, ClusterState>> joinValidators;
 
         ValidateJoinRequestRequestHandler(Supplier<DiscoveryNode> localNodeSupplier,
-                                          Collection<BiConsumer<DiscoveryNode, ClusterState>> joinValidators) {
+                Collection<BiConsumer<DiscoveryNode, ClusterState>> joinValidators) {
             this.localNodeSupplier = localNodeSupplier;
             this.joinValidators = joinValidators;
         }

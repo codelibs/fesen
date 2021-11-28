@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.path;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,9 +29,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
 
 public class PathTrie<T> {
 
@@ -98,8 +98,8 @@ public class PathTrie<T> {
             this.key = key;
             String newNamedWildcard = key.substring(key.indexOf('{') + 1, key.indexOf('}'));
             if (namedWildcard != null && newNamedWildcard.equals(namedWildcard) == false) {
-                throw new IllegalArgumentException("Trying to use conflicting wildcard names for same path: "
-                    + namedWildcard + " and " + newNamedWildcard);
+                throw new IllegalArgumentException(
+                        "Trying to use conflicting wildcard names for same path: " + namedWildcard + " and " + newNamedWildcard);
             }
             namedWildcard = newNamedWildcard;
         }
@@ -134,8 +134,8 @@ public class PathTrie<T> {
                  */
                 if (index == (path.length - 1)) {
                     if (node.value != null) {
-                        throw new IllegalArgumentException("Path [" + String.join("/", path)+ "] already has a value ["
-                                + node.value + "]");
+                        throw new IllegalArgumentException(
+                                "Path [" + String.join("/", path) + "] already has a value [" + node.value + "]");
                     } else {
                         node.value = value;
                     }

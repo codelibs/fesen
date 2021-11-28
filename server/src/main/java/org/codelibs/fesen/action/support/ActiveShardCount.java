@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.support;
 
-import com.carrotsearch.hppc.cursors.IntObjectCursor;
-
 import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_WAIT_FOR_ACTIVE_SHARDS;
 
 import java.io.IOException;
@@ -32,6 +30,8 @@ import org.codelibs.fesen.cluster.routing.IndexShardRoutingTable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
+
+import com.carrotsearch.hppc.cursors.IntObjectCursor;
 
 /**
  * A class whose instances represent a value for counting the number
@@ -76,17 +76,17 @@ public final class ActiveShardCount implements Writeable {
 
     private static ActiveShardCount get(final int value) {
         switch (value) {
-            case ACTIVE_SHARD_COUNT_DEFAULT:
-                return DEFAULT;
-            case ALL_ACTIVE_SHARDS:
-                return ALL;
-            case 1:
-                return ONE;
-            case 0:
-                return NONE;
-            default:
-                assert value > 1;
-                return new ActiveShardCount(value);
+        case ACTIVE_SHARD_COUNT_DEFAULT:
+            return DEFAULT;
+        case ALL_ACTIVE_SHARDS:
+            return ALL;
+        case 1:
+            return ONE;
+        case 0:
+            return NONE;
+        default:
+            assert value > 1;
+            return new ActiveShardCount(value);
         }
     }
 
@@ -219,12 +219,12 @@ public final class ActiveShardCount implements Writeable {
     @Override
     public String toString() {
         switch (value) {
-            case ALL_ACTIVE_SHARDS:
-                return "ALL";
-            case ACTIVE_SHARD_COUNT_DEFAULT:
-                return "DEFAULT";
-            default:
-                return Integer.toString(value);
+        case ALL_ACTIVE_SHARDS:
+            return "ALL";
+        case ACTIVE_SHARD_COUNT_DEFAULT:
+            return "DEFAULT";
+        default:
+            return Integer.toString(value);
         }
     }
 

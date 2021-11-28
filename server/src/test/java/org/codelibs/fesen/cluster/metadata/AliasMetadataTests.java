@@ -35,16 +35,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class AliasMetadataTests extends AbstractXContentTestCase<AliasMetadata> {
 
     public void testSerialization() throws IOException {
-        final AliasMetadata before =
-                AliasMetadata
-                        .builder("alias")
-                        .filter("{ \"term\": \"foo\"}")
-                        .indexRouting("indexRouting")
-                        .routing("routing")
-                        .searchRouting("trim,tw , ltw , lw")
-                        .writeIndex(randomBoolean() ? null : randomBoolean())
-                        .isHidden(randomBoolean() ? null : randomBoolean())
-                        .build();
+        final AliasMetadata before = AliasMetadata.builder("alias").filter("{ \"term\": \"foo\"}").indexRouting("indexRouting")
+                .routing("routing").searchRouting("trim,tw , ltw , lw").writeIndex(randomBoolean() ? null : randomBoolean())
+                .isHidden(randomBoolean() ? null : randomBoolean()).build();
 
         assertThat(before.searchRoutingValues(), equalTo(Sets.newHashSet("trim", "tw ", " ltw ", " lw")));
 
@@ -61,13 +54,9 @@ public class AliasMetadataTests extends AbstractXContentTestCase<AliasMetadata> 
     protected void assertEqualInstances(AliasMetadata expectedInstance, AliasMetadata newInstance) {
         assertNotSame(newInstance, expectedInstance);
         if (expectedInstance.writeIndex() == null) {
-            expectedInstance = AliasMetadata.builder(expectedInstance.alias())
-                .filter(expectedInstance.filter())
-                .indexRouting(expectedInstance.indexRouting())
-                .searchRouting(expectedInstance.searchRouting())
-                .writeIndex(randomBoolean() ? null : randomBoolean())
-                .isHidden(randomBoolean() ? null : randomBoolean())
-                .build();
+            expectedInstance = AliasMetadata.builder(expectedInstance.alias()).filter(expectedInstance.filter())
+                    .indexRouting(expectedInstance.indexRouting()).searchRouting(expectedInstance.searchRouting())
+                    .writeIndex(randomBoolean() ? null : randomBoolean()).isHidden(randomBoolean() ? null : randomBoolean()).build();
         }
         assertEquals(expectedInstance, newInstance);
         assertEquals(expectedInstance.hashCode(), newInstance.hashCode());

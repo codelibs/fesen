@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class UnmappedSampler extends InternalSampler {
     public static final String NAME = "unmapped_sampler";

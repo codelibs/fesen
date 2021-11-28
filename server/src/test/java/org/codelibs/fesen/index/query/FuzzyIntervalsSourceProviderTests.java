@@ -31,14 +31,8 @@ import java.io.IOException;
 public class FuzzyIntervalsSourceProviderTests extends AbstractSerializingTestCase<Fuzzy> {
     @Override
     protected Fuzzy createTestInstance() {
-        return new Fuzzy(
-            randomAlphaOfLength(10),
-            randomInt(5),
-            randomBoolean(),
-            Fuzziness.fromEdits(randomInt(2)),
-            randomBoolean() ? null : randomAlphaOfLength(10),
-            randomBoolean() ? null : randomAlphaOfLength(10)
-        );
+        return new Fuzzy(randomAlphaOfLength(10), randomInt(5), randomBoolean(), Fuzziness.fromEdits(randomInt(2)),
+                randomBoolean() ? null : randomAlphaOfLength(10), randomBoolean() ? null : randomAlphaOfLength(10));
     }
 
     @Override
@@ -50,39 +44,32 @@ public class FuzzyIntervalsSourceProviderTests extends AbstractSerializingTestCa
         String analyzer = instance.getAnalyzer();
         String useField = instance.getUseField();
         switch (between(0, 5)) {
-            case 0:
-                term = randomAlphaOfLength(5);
-                break;
-            case 1:
-                prefixLength++;
-                break;
-            case 2:
-                isTranspositions = !isTranspositions;
-                break;
-            case 3:
-                if (fuzziness.equals(Fuzziness.ZERO)) {
-                    fuzziness = Fuzziness.ONE;
-                } else {
-                    fuzziness = Fuzziness.ZERO;
-                }
-                break;
-            case 4:
-                analyzer = analyzer == null ? randomAlphaOfLength(5) : null;
-                break;
-            case 5:
-                useField = useField == null ? randomAlphaOfLength(5) : null;
-                break;
-            default:
-                throw new AssertionError("Illegal randomisation branch");
+        case 0:
+            term = randomAlphaOfLength(5);
+            break;
+        case 1:
+            prefixLength++;
+            break;
+        case 2:
+            isTranspositions = !isTranspositions;
+            break;
+        case 3:
+            if (fuzziness.equals(Fuzziness.ZERO)) {
+                fuzziness = Fuzziness.ONE;
+            } else {
+                fuzziness = Fuzziness.ZERO;
+            }
+            break;
+        case 4:
+            analyzer = analyzer == null ? randomAlphaOfLength(5) : null;
+            break;
+        case 5:
+            useField = useField == null ? randomAlphaOfLength(5) : null;
+            break;
+        default:
+            throw new AssertionError("Illegal randomisation branch");
         }
-        return new Fuzzy(
-            term,
-            prefixLength,
-            isTranspositions,
-            fuzziness,
-            analyzer,
-            useField
-        );
+        return new Fuzzy(term, prefixLength, isTranspositions, fuzziness, analyzer, useField);
     }
 
     @Override

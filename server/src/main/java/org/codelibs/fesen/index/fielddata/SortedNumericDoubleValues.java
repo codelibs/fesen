@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import org.apache.lucene.index.SortedNumericDocValues;
-
 import java.io.IOException;
+
+import org.apache.lucene.index.SortedNumericDocValues;
 
 /**
  * Clone of {@link SortedNumericDocValues} for double values.
@@ -30,7 +30,8 @@ public abstract class SortedNumericDoubleValues {
 
     /** Sole constructor. (For invocation by subclass
      * constructors, typically implicit.) */
-    protected SortedNumericDoubleValues() {}
+    protected SortedNumericDoubleValues() {
+    }
 
     /** Advance the iterator to exactly {@code target} and return whether
      *  {@code target} has a value.
@@ -44,7 +45,7 @@ public abstract class SortedNumericDoubleValues {
      * {@link #docValueCount} times for the document.
      */
     public abstract double nextValue() throws IOException;
-    
+
     /** 
      * Retrieves the number of values for the current document.  This must always
      * be greater than zero.

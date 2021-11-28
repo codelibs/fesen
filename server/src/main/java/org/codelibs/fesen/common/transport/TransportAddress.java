@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.transport;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.network.NetworkAddress;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
 /**
  * A transport address used for IP socket address (wraps {@link java.net.InetSocketAddress}).
@@ -81,7 +81,7 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        byte[] bytes = address.getAddress().getAddress();  // 4 bytes (IPv4) or 16 bytes (IPv6)
+        byte[] bytes = address.getAddress().getAddress(); // 4 bytes (IPv4) or 16 bytes (IPv6)
         out.writeByte((byte) bytes.length); // 1 byte
         out.write(bytes, 0, bytes.length);
         out.writeString(address.getHostString());
@@ -115,8 +115,10 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         TransportAddress address1 = (TransportAddress) o;
         return address.equals(address1.address);
     }

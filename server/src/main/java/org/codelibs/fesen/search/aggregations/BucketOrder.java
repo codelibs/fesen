@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.ToLongFunction;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.ToLongFunction;
 
 /**
  * {@link Bucket} ordering strategy. Buckets can be order either as
@@ -105,7 +105,7 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
      * @throws AggregationExecutionException when the ordering is invalid
      *         for this {@linkplain Aggregator}.
      */
-    public final void validate(Aggregator aggregator) throws AggregationExecutionException{
+    public final void validate(Aggregator aggregator) throws AggregationExecutionException {
         /*
          * Building partiallyBuiltBucketComparator and throwing it away is enough
          * to validate this order because doing so checks all of the appropriate

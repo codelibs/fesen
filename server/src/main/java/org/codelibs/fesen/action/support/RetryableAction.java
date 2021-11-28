@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.support;
 
+import java.util.ArrayDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.action.ActionListener;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
-
-import java.util.ArrayDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A action that will be retried on failure if {@link RetryableAction#shouldRetry(Exception)} returns true.
@@ -53,12 +53,12 @@ public abstract class RetryableAction<Response> {
     private volatile Scheduler.ScheduledCancellable retryTask;
 
     public RetryableAction(Logger logger, ThreadPool threadPool, TimeValue initialDelay, TimeValue timeoutValue,
-                           ActionListener<Response> listener) {
+            ActionListener<Response> listener) {
         this(logger, threadPool, initialDelay, timeoutValue, listener, ThreadPool.Names.SAME);
     }
 
     public RetryableAction(Logger logger, ThreadPool threadPool, TimeValue initialDelay, TimeValue timeoutValue,
-                           ActionListener<Response> listener, String executor) {
+            ActionListener<Response> listener, String executor) {
         this.logger = logger;
         this.threadPool = threadPool;
         this.initialDelayMillis = initialDelay.getMillis();
@@ -142,8 +142,9 @@ public abstract class RetryableAction<Response> {
             if (shouldRetry(e)) {
                 final long elapsedMillis = threadPool.relativeTimeInMillis() - startMillis;
                 if (elapsedMillis >= timeoutMillis) {
-                    logger.debug(() -> new ParameterizedMessage("retryable action timed out after {}",
-                        TimeValue.timeValueMillis(elapsedMillis)), e);
+                    logger.debug(
+                            () -> new ParameterizedMessage("retryable action timed out after {}", TimeValue.timeValueMillis(elapsedMillis)),
+                            e);
                     onFinalFailure(e);
                 } else {
                     addException(e);

@@ -27,11 +27,8 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 
 public class ParsedMedianAbsoluteDeviation extends ParsedSingleValueNumericMetricsAggregation implements MedianAbsoluteDeviation {
 
-    private static final ObjectParser<ParsedMedianAbsoluteDeviation, Void> PARSER = new ObjectParser<>(
-        ParsedMedianAbsoluteDeviation.class.getSimpleName(),
-        true,
-        ParsedMedianAbsoluteDeviation::new
-    );
+    private static final ObjectParser<ParsedMedianAbsoluteDeviation, Void> PARSER =
+            new ObjectParser<>(ParsedMedianAbsoluteDeviation.class.getSimpleName(), true, ParsedMedianAbsoluteDeviation::new);
 
     static {
         declareSingleValueFields(PARSER, Double.NaN);

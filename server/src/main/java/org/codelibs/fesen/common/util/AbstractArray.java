@@ -19,12 +19,11 @@
 
 package org.codelibs.fesen.common.util;
 
-import org.apache.lucene.util.Accountable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.lucene.util.Accountable;
 
 abstract class AbstractArray implements BigArray {
 

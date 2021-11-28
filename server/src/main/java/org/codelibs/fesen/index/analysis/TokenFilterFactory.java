@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.analysis;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.codelibs.fesen.search.fetch.subphase.highlight.FastVectorHighlighter;
-
-import java.util.List;
-import java.util.function.Function;
 
 public interface TokenFilterFactory {
     String name();
@@ -58,8 +58,7 @@ public interface TokenFilterFactory {
      * @param allFilters            access to previously defined TokenFilterFactories
      */
     default TokenFilterFactory getChainAwareTokenFilterFactory(TokenizerFactory tokenizer, List<CharFilterFactory> charFilters,
-                                                               List<TokenFilterFactory> previousTokenFilters,
-                                                               Function<String, TokenFilterFactory> allFilters) {
+            List<TokenFilterFactory> previousTokenFilters, Function<String, TokenFilterFactory> allFilters) {
         return this;
     }
 

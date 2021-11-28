@@ -26,8 +26,8 @@ import java.util.Map;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
+import org.codelibs.fesen.search.aggregations.InternalAggregations;
 
 public abstract class SiblingPipelineAggregator extends PipelineAggregator {
     protected SiblingPipelineAggregator(String name, String[] bucketsPaths, Map<String, Object> metadata) {

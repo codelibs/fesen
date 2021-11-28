@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Statistics about an index feature.

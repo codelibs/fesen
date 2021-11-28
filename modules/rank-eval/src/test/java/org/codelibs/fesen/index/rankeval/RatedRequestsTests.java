@@ -19,6 +19,21 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.Matchers.containsString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.settings.Settings;
@@ -32,8 +47,6 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.query.MatchAllQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
-import org.codelibs.fesen.index.rankeval.RatedRequest;
 import org.codelibs.fesen.search.SearchModule;
 import org.codelibs.fesen.search.aggregations.AggregationBuilders;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
@@ -44,30 +57,15 @@ import org.codelibs.fesen.test.ESTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.Matchers.containsString;
-
 public class RatedRequestsTests extends ESTestCase {
 
     private static NamedXContentRegistry xContentRegistry;
 
     @BeforeClass
     public static void init() {
-        xContentRegistry = new NamedXContentRegistry(
-                Stream.of(new SearchModule(Settings.EMPTY, false, emptyList()).getNamedXContents().stream()).flatMap(Function.identity())
-                        .collect(toList()));
+        xContentRegistry =
+                new NamedXContentRegistry(Stream.of(new SearchModule(Settings.EMPTY, false, emptyList()).getNamedXContents().stream())
+                        .flatMap(Function.identity()).collect(toList()));
     }
 
     @AfterClass
@@ -219,8 +217,8 @@ public class RatedRequestsTests extends ESTestCase {
 
     public void testDuplicateRatedDocThrowsException() {
         List<RatedDocument> ratedDocs = Arrays.asList(new RatedDocument("index1", "id1", 1), new RatedDocument("index1", "id1", 5));
-        IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                () -> new RatedRequest("test_query", ratedDocs, new SearchSourceBuilder()));
+        IllegalArgumentException ex =
+                expectThrows(IllegalArgumentException.class, () -> new RatedRequest("test_query", ratedDocs, new SearchSourceBuilder()));
         assertEquals("Found duplicate rated document key [{\"_index\":\"index1\",\"_id\":\"id1\"}] in evaluation request [test_query]",
                 ex.getMessage());
         Map<String, Object> params = new HashMap<>();
@@ -304,27 +302,18 @@ public class RatedRequestsTests extends ESTestCase {
      * matter for parsing xContent
      */
     public void testParseFromXContent() throws IOException {
-        String querySpecString = " {\n"
-                + "   \"id\": \"my_qa_query\",\n"
-                + "   \"request\": {\n"
-                + "           \"query\": {\n"
-                + "               \"bool\": {\n"
-                + "                   \"must\": [\n"
+        String querySpecString = " {\n" + "   \"id\": \"my_qa_query\",\n" + "   \"request\": {\n" + "           \"query\": {\n"
+                + "               \"bool\": {\n" + "                   \"must\": [\n"
                 + "                       {\"match\": {\"beverage\": \"coffee\"}},\n"
                 + "                       {\"term\": {\"browser\": {\"value\": \"safari\"}}},\n"
                 + "                       {\"term\": {\"time_of_day\": "
                 + "                                  {\"value\": \"morning\",\"boost\": 2}}},\n"
                 + "                       {\"term\": {\"ip_location\": "
-                + "                                  {\"value\": \"ams\",\"boost\": 10}}}]}\n"
-                + "           },\n"
-                + "           \"size\": 10\n"
-                + "   },\n"
-                + "   \"summary_fields\" : [\"title\"],\n"
-                + "   \"ratings\": [\n"
+                + "                                  {\"value\": \"ams\",\"boost\": 10}}}]}\n" + "           },\n"
+                + "           \"size\": 10\n" + "   },\n" + "   \"summary_fields\" : [\"title\"],\n" + "   \"ratings\": [\n"
                 + "        {\"_index\": \"test\" , \"_id\": \"1\", \"rating\" : 1 },\n"
                 + "        {\"_index\": \"test\", \"rating\" : 0, \"_id\": \"2\"},\n"
-                + "        {\"_id\": \"3\", \"_index\": \"test\", \"rating\" : 1} ]"
-                + "}\n";
+                + "        {\"_id\": \"3\", \"_index\": \"test\", \"rating\" : 1} ]" + "}\n";
         try (XContentParser parser = createParser(JsonXContent.jsonXContent, querySpecString)) {
             RatedRequest specification = RatedRequest.fromXContent(parser);
             assertEquals("my_qa_query", specification.getId());

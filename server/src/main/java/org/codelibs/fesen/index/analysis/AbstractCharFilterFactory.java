@@ -36,4 +36,3 @@ public abstract class AbstractCharFilterFactory extends AbstractIndexComponent i
         return this.name;
     }
 }
-

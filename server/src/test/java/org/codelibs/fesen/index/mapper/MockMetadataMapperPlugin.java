@@ -89,10 +89,9 @@ public class MockMetadataMapperPlugin extends Plugin implements MapperPlugin {
             }
         }
 
-        public static final TypeParser PARSER = new ConfigurableTypeParser(
-            c -> new MockMetadataMapper(),
-            c -> new MockMetadataMapper.Builder()) {
-        };
+        public static final TypeParser PARSER =
+                new ConfigurableTypeParser(c -> new MockMetadataMapper(), c -> new MockMetadataMapper.Builder()) {
+                };
     }
 
     @Override

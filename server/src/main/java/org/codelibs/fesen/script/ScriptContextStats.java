@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.script;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class ScriptContextStats implements Writeable, ToXContentFragment, Comparable<ScriptContextStats> {
     private final String context;

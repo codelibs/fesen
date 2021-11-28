@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Terms;
@@ -27,8 +29,6 @@ import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.DocIdSetBuilder;
-
-import java.io.IOException;
 
 /**
  * A {@link SortedDocsProducer} that can sort documents based on terms indexed in the provided field.
@@ -39,8 +39,8 @@ class TermsSortedDocsProducer extends SortedDocsProducer {
     }
 
     @Override
-    DocIdSet processLeaf(Query query, CompositeValuesCollectorQueue queue,
-                         LeafReaderContext context, boolean fillDocIdSet) throws IOException {
+    DocIdSet processLeaf(Query query, CompositeValuesCollectorQueue queue, LeafReaderContext context, boolean fillDocIdSet)
+            throws IOException {
         final Terms terms = context.reader().terms(field);
         if (terms == null) {
             // no value for the field
@@ -51,7 +51,7 @@ class TermsSortedDocsProducer extends SortedDocsProducer {
         final TermsEnum te = terms.iterator();
         if (lowerValue != null) {
             if (te.seekCeil(lowerValue) == TermsEnum.SeekStatus.END) {
-                return DocIdSet.EMPTY ;
+                return DocIdSet.EMPTY;
             }
         } else {
             if (te.next() == null) {

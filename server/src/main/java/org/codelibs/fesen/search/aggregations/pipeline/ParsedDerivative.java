@@ -23,9 +23,9 @@ import java.io.IOException;
 
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 
 public class ParsedDerivative extends ParsedSimpleValue implements Derivative {
 
@@ -45,8 +45,8 @@ public class ParsedDerivative extends ParsedSimpleValue implements Derivative {
         return DerivativePipelineAggregationBuilder.NAME;
     }
 
-    private static final ObjectParser<ParsedDerivative, Void> PARSER = new ObjectParser<>(ParsedDerivative.class.getSimpleName(), true,
-            ParsedDerivative::new);
+    private static final ObjectParser<ParsedDerivative, Void> PARSER =
+            new ObjectParser<>(ParsedDerivative.class.getSimpleName(), true, ParsedDerivative::new);
 
     static {
         declareSingleValueFields(PARSER, Double.NaN);

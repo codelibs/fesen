@@ -18,8 +18,9 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
@@ -32,21 +33,15 @@ import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.gateway.PersistedClusterStateService;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 public class RemoveSettingsCommand extends FesenNodeCommand {
 
     static final String SETTINGS_REMOVED_MSG = "Settings were successfully removed from the cluster state";
-    static final String CONFIRMATION_MSG =
-        DELIMITER +
-            "\n" +
-            "You should only run this tool if you have incompatible settings in the\n" +
-            "cluster state that prevent the cluster from forming.\n" +
-            "This tool can cause data loss and its use should be your last resort.\n" +
-            "\n" +
-            "Do you want to proceed?\n";
+    static final String CONFIRMATION_MSG = DELIMITER + "\n" + "You should only run this tool if you have incompatible settings in the\n"
+            + "cluster state that prevent the cluster from forming.\n"
+            + "This tool can cause data loss and its use should be your last resort.\n" + "\n" + "Do you want to proceed?\n";
 
     private final OptionSpec<String> arguments;
 
@@ -57,7 +52,7 @@ public class RemoveSettingsCommand extends FesenNodeCommand {
 
     @Override
     protected void processNodePaths(Terminal terminal, Path[] dataPaths, int nodeLockId, OptionSet options, Environment env)
-        throws IOException, UserException {
+            throws IOException, UserException {
         final List<String> settingsToRemove = arguments.values(options);
         if (settingsToRemove.isEmpty()) {
             throw new UserException(ExitCodes.USAGE, "Must supply at least one setting to remove");
@@ -85,14 +80,14 @@ public class RemoveSettingsCommand extends FesenNodeCommand {
             }
             if (matched == false) {
                 throw new UserException(ExitCodes.USAGE,
-                    "No persistent cluster settings matching [" + settingToRemove + "] were found on this node");
+                        "No persistent cluster settings matching [" + settingToRemove + "] were found on this node");
             }
         }
         final ClusterState newClusterState = ClusterState.builder(oldClusterState)
-            .metadata(Metadata.builder(oldClusterState.metadata()).persistentSettings(newPersistentSettingsBuilder.build()).build())
-            .build();
+                .metadata(Metadata.builder(oldClusterState.metadata()).persistentSettings(newPersistentSettingsBuilder.build()).build())
+                .build();
         terminal.println(Terminal.Verbosity.VERBOSE,
-            "[old cluster state = " + oldClusterState + ", new cluster state = " + newClusterState + "]");
+                "[old cluster state = " + oldClusterState + ", new cluster state = " + newClusterState + "]");
 
         confirm(terminal, CONFIRMATION_MSG);
 

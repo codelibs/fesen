@@ -27,35 +27,42 @@ public interface FileChangesListener {
     /**
      * Called for every file found in the watched directory during initialization
      */
-    default void onFileInit(Path file) {}
+    default void onFileInit(Path file) {
+    }
 
     /**
      * Called for every subdirectory found in the watched directory during initialization
      */
-    default void onDirectoryInit(Path file) {}
+    default void onDirectoryInit(Path file) {
+    }
 
     /**
      * Called for every new file found in the watched directory
      */
-    default void onFileCreated(Path file) {}
+    default void onFileCreated(Path file) {
+    }
 
     /**
      * Called for every file that disappeared in the watched directory
      */
-    default void onFileDeleted(Path file) {}
+    default void onFileDeleted(Path file) {
+    }
 
     /**
      * Called for every file that was changed in the watched directory
      */
-    default void onFileChanged(Path file) {}
+    default void onFileChanged(Path file) {
+    }
 
     /**
      * Called for every new subdirectory found in the watched directory
      */
-    default void onDirectoryCreated(Path file) {}
+    default void onDirectoryCreated(Path file) {
+    }
 
     /**
      * Called for every file that disappeared in the watched directory
      */
-    default void onDirectoryDeleted(Path file) {}
+    default void onDirectoryDeleted(Path file) {
+    }
 }

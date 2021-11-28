@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.indices.recovery;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.io.IOException;
 
 public class RecoveryFailedException extends FesenException {
 
@@ -41,13 +41,10 @@ public class RecoveryFailedException extends FesenException {
         this(state.getShardId(), state.getSourceNode(), state.getTargetNode(), extraInfo, cause);
     }
 
-    public RecoveryFailedException(ShardId shardId,
-                                   DiscoveryNode sourceNode,
-                                   DiscoveryNode targetNode,
-                                   @Nullable String extraInfo,
-                                   Throwable cause) {
-        super(shardId + ": Recovery failed " + (sourceNode != null ? "from " + sourceNode + " into " : "on ") +
-                  targetNode + (extraInfo == null ? "" : " (" + extraInfo + ")"), cause);
+    public RecoveryFailedException(ShardId shardId, DiscoveryNode sourceNode, DiscoveryNode targetNode, @Nullable String extraInfo,
+            Throwable cause) {
+        super(shardId + ": Recovery failed " + (sourceNode != null ? "from " + sourceNode + " into " : "on ") + targetNode
+                + (extraInfo == null ? "" : " (" + extraInfo + ")"), cause);
     }
 
     public RecoveryFailedException(StreamInput in) throws IOException {

@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.index.query;
 
+import static org.codelibs.fesen.common.xcontent.ObjectParser.fromList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -34,17 +45,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.IdFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
-
-import static org.codelibs.fesen.common.xcontent.ObjectParser.fromList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A query that will return only documents matching specific ids (and a type).
@@ -160,7 +160,6 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
         }
     }
 
-
     @Override
     public String getWriteableName() {
         return NAME;
@@ -209,7 +208,6 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
 
     @Override
     protected boolean doEquals(IdsQueryBuilder other) {
-        return Objects.equals(ids, other.ids) &&
-               Arrays.equals(types, other.types);
+        return Objects.equals(ids, other.ids) && Arrays.equals(types, other.types);
     }
 }

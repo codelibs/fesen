@@ -18,10 +18,17 @@
  */
 package org.codelibs.fesen.cluster;
 
+import static org.codelibs.fesen.cluster.metadata.DataStream.getDefaultBackingIndexName;
+import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_INDEX_UUID;
+import static org.codelibs.fesen.test.ESTestCase.randomAlphaOfLength;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import org.apache.lucene.util.LuceneTestCase;
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.cluster.ClusterName;
-import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.DataStream;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -30,15 +37,6 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import static org.codelibs.fesen.cluster.metadata.DataStream.getDefaultBackingIndexName;
-import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_INDEX_UUID;
-import static org.codelibs.fesen.test.ESTestCase.randomAlphaOfLength;
 
 public final class DataStreamTestHelper {
 
@@ -51,17 +49,14 @@ public final class DataStreamTestHelper {
     }
 
     public static IndexMetadata.Builder createBackingIndex(String dataStreamName, int generation) {
-        return IndexMetadata.builder(DataStream.getDefaultBackingIndexName(dataStreamName, generation))
-            .settings(SETTINGS)
-            .numberOfShards(NUMBER_OF_SHARDS)
-            .numberOfReplicas(NUMBER_OF_REPLICAS);
+        return IndexMetadata.builder(DataStream.getDefaultBackingIndexName(dataStreamName, generation)).settings(SETTINGS)
+                .numberOfShards(NUMBER_OF_SHARDS).numberOfReplicas(NUMBER_OF_REPLICAS);
     }
 
     public static IndexMetadata.Builder getIndexMetadataBuilderForIndex(Index index) {
         return IndexMetadata.builder(index.getName())
-            .settings(Settings.builder().put(SETTINGS.build()).put(SETTING_INDEX_UUID, index.getUUID()))
-            .numberOfShards(NUMBER_OF_SHARDS)
-            .numberOfReplicas(NUMBER_OF_REPLICAS);
+                .settings(Settings.builder().put(SETTINGS.build()).put(SETTING_INDEX_UUID, index.getUUID()))
+                .numberOfShards(NUMBER_OF_SHARDS).numberOfReplicas(NUMBER_OF_REPLICAS);
     }
 
     public static DataStream.TimestampField createTimestampField(String fieldName) {
@@ -69,26 +64,14 @@ public final class DataStreamTestHelper {
     }
 
     public static String generateMapping(String timestampFieldName) {
-        return "{\n" +
-            "      \"properties\": {\n" +
-            "        \"" + timestampFieldName + "\": {\n" +
-            "          \"type\": \"date\"\n" +
-            "        }\n" +
-            "      }\n" +
-            "    }";
+        return "{\n" + "      \"properties\": {\n" + "        \"" + timestampFieldName + "\": {\n" + "          \"type\": \"date\"\n"
+                + "        }\n" + "      }\n" + "    }";
     }
 
     public static String generateMapping(String timestampFieldName, String type) {
-        return "{\n" +
-            "      \"_data_stream_timestamp\": {\n" +
-            "        \"enabled\": true\n" +
-            "      }," +
-            "      \"properties\": {\n" +
-            "        \"" + timestampFieldName + "\": {\n" +
-            "          \"type\": \"" + type + "\"\n" +
-            "        }\n" +
-            "      }\n" +
-            "    }";
+        return "{\n" + "      \"_data_stream_timestamp\": {\n" + "        \"enabled\": true\n" + "      }," + "      \"properties\": {\n"
+                + "        \"" + timestampFieldName + "\": {\n" + "          \"type\": \"" + type + "\"\n" + "        }\n" + "      }\n"
+                + "    }";
     }
 
     public static List<Index> randomIndexInstances() {
@@ -125,12 +108,8 @@ public final class DataStreamTestHelper {
             }
             allIndices.addAll(backingIndices);
 
-            DataStream ds = new DataStream(
-                dsTuple.v1(),
-                createTimestampField("@timestamp"),
-                backingIndices.stream().map(IndexMetadata::getIndex).collect(Collectors.toList()),
-                dsTuple.v2()
-            );
+            DataStream ds = new DataStream(dsTuple.v1(), createTimestampField("@timestamp"),
+                    backingIndices.stream().map(IndexMetadata::getIndex).collect(Collectors.toList()), dsTuple.v2());
             builder.put(ds);
         }
 

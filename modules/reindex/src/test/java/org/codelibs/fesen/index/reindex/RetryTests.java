@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Collections.emptyMap;
+import static org.codelibs.fesen.index.reindex.ReindexTestCase.matcher;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.function.Function;
+
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.admin.cluster.node.info.NodeInfo;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
@@ -33,36 +46,11 @@ import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.http.HttpInfo;
 import org.codelibs.fesen.index.query.QueryBuilders;
-import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequestBuilder;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.BulkByScrollTask;
-import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
-import org.codelibs.fesen.index.reindex.DeleteByQueryRequestBuilder;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.ReindexPlugin;
-import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
-import org.codelibs.fesen.index.reindex.RemoteInfo;
-import org.codelibs.fesen.index.reindex.TransportReindexAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryRequestBuilder;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.test.ESIntegTestCase;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.Netty4Plugin;
 import org.junit.After;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CyclicBarrier;
-import java.util.function.Function;
-
-import static java.util.Collections.emptyMap;
-import static org.codelibs.fesen.index.reindex.ReindexTestCase.matcher;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
 
 /**
  * Integration test for bulk retry behavior. Useful because retrying relies on the way that the
@@ -76,23 +64,19 @@ public class RetryTests extends ESIntegTestCase {
 
     @After
     public void forceUnblockAllExecutors() {
-        for (CyclicBarrier barrier: blockedExecutors) {
+        for (CyclicBarrier barrier : blockedExecutors) {
             barrier.reset();
         }
     }
 
     @Override
     protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return Arrays.asList(
-                ReindexPlugin.class,
-                Netty4Plugin.class);
+        return Arrays.asList(ReindexPlugin.class, Netty4Plugin.class);
     }
 
     @Override
     protected Collection<Class<? extends Plugin>> transportClientPlugins() {
-        return Arrays.asList(
-                ReindexPlugin.class,
-                Netty4Plugin.class);
+        return Arrays.asList(ReindexPlugin.class, Netty4Plugin.class);
     }
 
     /**
@@ -111,13 +95,11 @@ public class RetryTests extends ESIntegTestCase {
     final Settings nodeSettings() {
         return Settings.builder()
                 // whitelist reindexing from the HTTP host we're going to use
-                .put(TransportReindexAction.REMOTE_CLUSTER_WHITELIST.getKey(), "127.0.0.1:*")
-                .build();
+                .put(TransportReindexAction.REMOTE_CLUSTER_WHITELIST.getKey(), "127.0.0.1:*").build();
     }
 
     public void testReindex() throws Exception {
-        testCase(
-                ReindexAction.NAME,
+        testCase(ReindexAction.NAME,
                 client -> new ReindexRequestBuilder(client, ReindexAction.INSTANCE).source("source").destination("dest"),
                 matcher().created(DOC_COUNT));
     }
@@ -137,12 +119,10 @@ public class RetryTests extends ESIntegTestCase {
             assertNotNull(masterNode);
 
             TransportAddress address = masterNode.getInfo(HttpInfo.class).getAddress().publishAddress();
-            RemoteInfo remote =
-                new RemoteInfo("http", address.getAddress(), address.getPort(), null,
-                    new BytesArray("{\"match_all\":{}}"), null, null, emptyMap(),
-                    RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
-            ReindexRequestBuilder request = new ReindexRequestBuilder(client, ReindexAction.INSTANCE).source("source").destination("dest")
-                    .setRemoteInfo(remote);
+            RemoteInfo remote = new RemoteInfo("http", address.getAddress(), address.getPort(), null, new BytesArray("{\"match_all\":{}}"),
+                    null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+            ReindexRequestBuilder request =
+                    new ReindexRequestBuilder(client, ReindexAction.INSTANCE).source("source").destination("dest").setRemoteInfo(remote);
             return request;
         };
         testCase(ReindexAction.NAME, function, matcher().created(DOC_COUNT));
@@ -158,11 +138,8 @@ public class RetryTests extends ESIntegTestCase {
                 .filter(QueryBuilders.matchAllQuery()), matcher().deleted(DOC_COUNT));
     }
 
-    private void testCase(
-            String action,
-            Function<Client, AbstractBulkByScrollRequestBuilder<?, ?>> request,
-            BulkIndexByScrollResponseMatcher matcher)
-            throws Exception {
+    private void testCase(String action, Function<Client, AbstractBulkByScrollRequestBuilder<?, ?>> request,
+            BulkIndexByScrollResponseMatcher matcher) throws Exception {
         /*
          * These test cases work by stuffing the bulk queue of a single node and
          * making sure that we read and write from that node.
@@ -172,16 +149,10 @@ public class RetryTests extends ESIntegTestCase {
                 // use pools of size 1 so we can block them
                 .put("thread_pool.write.size", 1)
                 // use queues of size 1 because size 0 is broken and because bulk requests need the queue to function
-                .put("thread_pool.write.queue_size", 1)
-                .put("node.attr.color", "blue")
-                .build();
+                .put("thread_pool.write.queue_size", 1).put("node.attr.color", "blue").build();
         final String node = internalCluster().startDataOnlyNode(nodeSettings);
-        final Settings indexSettings =
-                Settings.builder()
-                        .put("index.number_of_shards", 1)
-                        .put("index.number_of_replicas", 0)
-                        .put("index.routing.allocation.include.color", "blue")
-                        .build();
+        final Settings indexSettings = Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0)
+                .put("index.routing.allocation.include.color", "blue").build();
 
         // Create the source index on the node with small thread pools so we can block them.
         client().admin().indices().prepareCreate("source").setSettings(indexSettings).execute().actionGet();

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.reload;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.nodes.BaseNodesRequest;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.settings.SecureString;
 import org.codelibs.fesen.core.CharArrays;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Request for a reload secure settings action

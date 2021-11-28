@@ -25,12 +25,10 @@ import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 
-public class ResizeRequestBuilder extends AcknowledgedRequestBuilder<ResizeRequest, ResizeResponse,
-    ResizeRequestBuilder> {
+public class ResizeRequestBuilder extends AcknowledgedRequestBuilder<ResizeRequest, ResizeResponse, ResizeRequestBuilder> {
     public ResizeRequestBuilder(FesenClient client, ActionType<ResizeResponse> action) {
         super(client, action, new ResizeRequest());
     }
-
 
     public ResizeRequestBuilder setTargetIndex(CreateIndexRequest request) {
         this.request.setTargetIndex(request);

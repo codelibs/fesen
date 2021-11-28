@@ -17,17 +17,16 @@
  * under the License.
  */
 
-
 package org.codelibs.fesen.tasks;
+
+import java.io.IOException;
+import java.util.Map;
 
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Current task information
@@ -66,7 +65,7 @@ public class Task {
     }
 
     public Task(long id, String type, String action, String description, TaskId parentTask, long startTime, long startTimeNanos,
-                Map<String, String> headers) {
+            Map<String, String> headers) {
         this.id = id;
         this.type = type;
         this.action = action;
@@ -176,7 +175,8 @@ public class Task {
      * because some statuses (reindex) have become defacto standardized because
      * they are used by systems like Kibana.
      */
-    public interface Status extends ToXContentObject, NamedWriteable {}
+    public interface Status extends ToXContentObject, NamedWriteable {
+    }
 
     /**
      * Returns stored task header associated with the task

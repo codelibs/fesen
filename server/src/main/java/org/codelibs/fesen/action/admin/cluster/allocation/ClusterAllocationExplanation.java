@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.admin.cluster.allocation;
 
+import static org.codelibs.fesen.cluster.routing.allocation.AbstractAllocationDecision.discoveryNodeToXContent;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Locale;
+
 import org.codelibs.fesen.cluster.ClusterInfo;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
@@ -34,12 +40,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 
-import static org.codelibs.fesen.cluster.routing.allocation.AbstractAllocationDecision.discoveryNodeToXContent;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Locale;
-
 /**
  * A {@code ClusterAllocationExplanation} is an explanation of why a shard is unassigned,
  * or if it is not unassigned, then which nodes it could possibly be relocated to.
@@ -54,8 +54,8 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
     private final ShardAllocationDecision shardAllocationDecision;
 
     public ClusterAllocationExplanation(ShardRouting shardRouting, @Nullable DiscoveryNode currentNode,
-                                        @Nullable DiscoveryNode relocationTargetNode, @Nullable ClusterInfo clusterInfo,
-                                        ShardAllocationDecision shardAllocationDecision) {
+            @Nullable DiscoveryNode relocationTargetNode, @Nullable ClusterInfo clusterInfo,
+            ShardAllocationDecision shardAllocationDecision) {
         this.shardRouting = shardRouting;
         this.currentNode = currentNode;
         this.relocationTargetNode = relocationTargetNode;
@@ -141,7 +141,8 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
     }
 
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        builder.startObject(); {
+        builder.startObject();
+        {
             builder.field("index", shardRouting.getIndexName());
             builder.field("shard", shardRouting.getId());
             builder.field("primary", shardRouting.primary());
@@ -161,7 +162,8 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
                 builder.endObject();
             }
             if (this.clusterInfo != null) {
-                builder.startObject("cluster_info"); {
+                builder.startObject("cluster_info");
+                {
                     this.clusterInfo.toXContent(builder, params);
                 }
                 builder.endObject(); // end "cluster_info"
@@ -171,12 +173,12 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
             } else {
                 String explanation;
                 if (shardRouting.state() == ShardRoutingState.RELOCATING) {
-                    explanation = "the shard is in the process of relocating from node [" + currentNode.getName() + "] " +
-                                  "to node [" + relocationTargetNode.getName() + "], wait until relocation has completed";
+                    explanation = "the shard is in the process of relocating from node [" + currentNode.getName() + "] " + "to node ["
+                            + relocationTargetNode.getName() + "], wait until relocation has completed";
                 } else {
                     assert shardRouting.state() == ShardRoutingState.INITIALIZING;
-                    explanation = "the shard is in the process of initializing on node [" + currentNode.getName() + "], " +
-                                  "wait until initialization has completed";
+                    explanation = "the shard is in the process of initializing on node [" + currentNode.getName() + "], "
+                            + "wait until initialization has completed";
                 }
                 builder.field("explanation", explanation);
             }
@@ -185,14 +187,12 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
         return builder;
     }
 
-    private XContentBuilder unassignedInfoToXContent(UnassignedInfo unassignedInfo, XContentBuilder builder)
-        throws IOException {
+    private XContentBuilder unassignedInfoToXContent(UnassignedInfo unassignedInfo, XContentBuilder builder) throws IOException {
 
         builder.startObject("unassigned_info");
         builder.field("reason", unassignedInfo.getReason());
-        builder.field("at",
-            UnassignedInfo.DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(unassignedInfo.getUnassignedTimeInMillis())));
-        if (unassignedInfo.getNumFailedAllocations() >  0) {
+        builder.field("at", UnassignedInfo.DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(unassignedInfo.getUnassignedTimeInMillis())));
+        if (unassignedInfo.getNumFailedAllocations() > 0) {
             builder.field("failed_allocation_attempts", unassignedInfo.getNumFailedAllocations());
         }
         String details = unassignedInfo.getDetails();

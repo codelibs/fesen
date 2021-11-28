@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata.ordinals;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.Accountable;
@@ -27,10 +31,6 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.apache.lucene.util.packed.PackedInts;
 import org.codelibs.fesen.index.fielddata.AbstractSortedDocValues;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 public class SinglePackedOrdinals extends Ordinals {
 
@@ -43,7 +43,7 @@ public class SinglePackedOrdinals extends Ordinals {
         this.valueCount = (int) builder.getValueCount();
         // We don't reuse the builder as-is because it might have been built with a higher overhead ratio
         final PackedInts.Mutable reader =
-            PackedInts.getMutable(builder.maxDoc(), PackedInts.bitsRequired(valueCount), acceptableOverheadRatio);
+                PackedInts.getMutable(builder.maxDoc(), PackedInts.bitsRequired(valueCount), acceptableOverheadRatio);
         PackedInts.copy(builder.getFirstOrdinals(), 0, reader, 0, builder.maxDoc(), 8 * 1024);
         this.reader = reader;
     }

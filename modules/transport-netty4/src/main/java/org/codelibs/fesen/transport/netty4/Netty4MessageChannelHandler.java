@@ -19,19 +19,12 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.bytes.ReleasableBytesReference;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -40,6 +33,13 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.InboundPipeline;
 import org.codelibs.fesen.transport.Transport;
 import org.codelibs.fesen.transport.Transports;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 /**
  * A handler (must be the last one!) that does size based frame decoding and forwards the actual message
@@ -59,7 +59,7 @@ final class Netty4MessageChannelHandler extends ChannelDuplexHandler {
         final ThreadPool threadPool = transport.getThreadPool();
         final Transport.RequestHandlers requestHandlers = transport.getRequestHandlers();
         this.pipeline = new InboundPipeline(transport.getVersion(), transport.getStatsTracker(), recycler, threadPool::relativeTimeInMillis,
-            transport.getInflightBreaker(), requestHandlers::getHandler, transport::inboundMessage);
+                transport.getInflightBreaker(), requestHandlers::getHandler, transport::inboundMessage);
     }
 
     @Override

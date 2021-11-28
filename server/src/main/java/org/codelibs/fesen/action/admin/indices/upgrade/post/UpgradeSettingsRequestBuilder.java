@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.core.Tuple;
-
-import java.util.Map;
 
 /**
  * Builder for an update index settings request

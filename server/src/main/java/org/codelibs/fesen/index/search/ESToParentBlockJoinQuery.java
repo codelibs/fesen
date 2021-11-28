@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.search;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
@@ -28,9 +31,6 @@ import org.apache.lucene.search.Weight;
 import org.apache.lucene.search.join.BitSetProducer;
 import org.apache.lucene.search.join.ScoreMode;
 import org.apache.lucene.search.join.ToParentBlockJoinQuery;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /** A {@link ToParentBlockJoinQuery} that allows to retrieve its nested path. */
 public final class ESToParentBlockJoinQuery extends Query {

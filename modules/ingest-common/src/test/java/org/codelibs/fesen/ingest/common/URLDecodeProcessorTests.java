@@ -22,9 +22,6 @@ package org.codelibs.fesen.ingest.common;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.URLDecodeProcessor;
-
 public class URLDecodeProcessorTests extends AbstractStringProcessorTestCase<String> {
     @Override
     protected String modifyInput(String input) {

@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.repositories;
 
-import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.snapshots.SnapshotId;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.codelibs.fesen.cluster.metadata.IndexMetadata;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.snapshots.SnapshotId;
 
 /**
  * Tracks the blob uuids of blobs containing {@link IndexMetadata} for snapshots as well an identifier for each of these blobs.
@@ -53,8 +53,9 @@ public final class IndexMetaDataGenerations {
     final Map<String, String> identifiers;
 
     IndexMetaDataGenerations(Map<SnapshotId, Map<IndexId, String>> lookup, Map<String, String> identifiers) {
-        assert identifiers.keySet().equals(lookup.values().stream().flatMap(m -> m.values().stream()).collect(Collectors.toSet())) :
-            "identifier mappings " + identifiers + " don't track the same blob ids as the lookup map " + lookup;
+        assert identifiers.keySet()
+                .equals(lookup.values().stream().flatMap(m -> m.values().stream()).collect(Collectors.toSet())) : "identifier mappings "
+                        + identifiers + " don't track the same blob ids as the lookup map " + lookup;
         assert lookup.values().stream().noneMatch(Map::isEmpty) : "Lookup contained empty map [" + lookup + "]";
         this.lookup = Collections.unmodifiableMap(lookup);
         this.identifiers = Collections.unmodifiableMap(identifiers);
@@ -104,7 +105,7 @@ public final class IndexMetaDataGenerations {
      * @return instance with added snapshot
      */
     public IndexMetaDataGenerations withAddedSnapshot(SnapshotId snapshotId, Map<IndexId, String> newLookup,
-                                                      Map<String, String> newIdentifiers) {
+            Map<String, String> newIdentifiers) {
         final Map<SnapshotId, Map<IndexId, String>> updatedIndexMetaLookup = new HashMap<>(this.lookup);
         final Map<String, String> updatedIndexMetaIdentifiers = new HashMap<>(identifiers);
         updatedIndexMetaIdentifiers.putAll(newIdentifiers);
@@ -133,8 +134,8 @@ public final class IndexMetaDataGenerations {
         final Map<SnapshotId, Map<IndexId, String>> updatedIndexMetaLookup = new HashMap<>(lookup);
         updatedIndexMetaLookup.keySet().removeAll(snapshotIds);
         final Map<String, String> updatedIndexMetaIdentifiers = new HashMap<>(identifiers);
-        updatedIndexMetaIdentifiers.keySet().removeIf(
-            k -> updatedIndexMetaLookup.values().stream().noneMatch(identifiers -> identifiers.containsValue(k)));
+        updatedIndexMetaIdentifiers.keySet()
+                .removeIf(k -> updatedIndexMetaLookup.values().stream().noneMatch(identifiers -> identifiers.containsValue(k)));
         return new IndexMetaDataGenerations(updatedIndexMetaLookup, updatedIndexMetaIdentifiers);
     }
 
@@ -169,9 +170,8 @@ public final class IndexMetaDataGenerations {
      * @return identifier string
      */
     public static String buildUniqueIdentifier(IndexMetadata indexMetaData) {
-        return indexMetaData.getIndexUUID() +
-                "-" + indexMetaData.getSettings().get(IndexMetadata.SETTING_HISTORY_UUID, IndexMetadata.INDEX_UUID_NA_VALUE) +
-                "-" + indexMetaData.getSettingsVersion() + "-" + indexMetaData.getMappingVersion() +
-                "-" + indexMetaData.getAliasesVersion();
+        return indexMetaData.getIndexUUID() + "-"
+                + indexMetaData.getSettings().get(IndexMetadata.SETTING_HISTORY_UUID, IndexMetadata.INDEX_UUID_NA_VALUE) + "-"
+                + indexMetaData.getSettingsVersion() + "-" + indexMetaData.getMappingVersion() + "-" + indexMetaData.getAliasesVersion();
     }
 }

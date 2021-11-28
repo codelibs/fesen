@@ -54,6 +54,6 @@ public abstract class AbstractCompoundWordTokenFilterFactory extends AbstractTok
 
     @Override
     public TokenFilterFactory getSynonymFilter() {
-        return IDENTITY_FILTER;     // don't decompound synonym file
+        return IDENTITY_FILTER; // don't decompound synonym file
     }
 }

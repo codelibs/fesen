@@ -55,19 +55,16 @@ public class BulkByScrollTaskStatusOrExceptionTests extends AbstractXContentTest
         return StatusOrException.fromXContent(parser);
     }
 
-    public static void assertEqualStatusOrException(StatusOrException expected, StatusOrException actual,
-                                                    boolean includeUpdated, boolean includeCreated) {
+    public static void assertEqualStatusOrException(StatusOrException expected, StatusOrException actual, boolean includeUpdated,
+            boolean includeCreated) {
         if (expected != null && actual != null) {
             assertNotSame(expected, actual);
             if (expected.getException() == null) {
                 BulkByScrollTaskStatusTests
-                    // we test includeCreated params in the Status tests
-                    .assertEqualStatus(expected.getStatus(), actual.getStatus(), includeUpdated, includeCreated);
+                        // we test includeCreated params in the Status tests
+                        .assertEqualStatus(expected.getStatus(), actual.getStatus(), includeUpdated, includeCreated);
             } else {
-                assertThat(
-                    actual.getException().getMessage(),
-                    containsString(expected.getException().getMessage())
-                );
+                assertThat(actual.getException().getMessage(), containsString(expected.getException().getMessage()));
             }
         } else {
             // If one of them is null both of them should be null
@@ -98,7 +95,7 @@ public class BulkByScrollTaskStatusOrExceptionTests extends AbstractXContentTest
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-            getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
-            this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+                getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance, this::assertEqualInstances,
+                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 }

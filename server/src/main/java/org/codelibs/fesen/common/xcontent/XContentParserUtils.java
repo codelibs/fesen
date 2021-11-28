@@ -19,17 +19,14 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-
 import java.io.IOException;
 import java.util.Locale;
 import java.util.function.Consumer;
+
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 
 /**
  * A set of static methods to get {@link Token} from {@link XContentParser}

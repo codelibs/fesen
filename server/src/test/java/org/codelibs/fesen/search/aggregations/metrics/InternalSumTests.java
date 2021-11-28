@@ -47,7 +47,7 @@ public class InternalSumTests extends InternalAggregationTestCase<InternalSum> {
 
     public void testSummationAccuracy() {
         // Summing up a normal array and expect an accurate value
-        double[] values = new double[]{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7};
+        double[] values = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
         verifySummationOfDoubles(values, 13.5, 0d);
 
         // Summing up an array which contains NaN and infinities and expect a result same as naive summation
@@ -55,9 +55,8 @@ public class InternalSumTests extends InternalAggregationTestCase<InternalSum> {
         values = new double[n];
         double sum = 0;
         for (int i = 0; i < n; i++) {
-            values[i] = frequently()
-                ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-                : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
+            values[i] = frequently() ? randomFrom(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+                    : randomDoubleBetween(Double.MIN_VALUE, Double.MAX_VALUE, true);
             sum += values[i];
         }
         verifySummationOfDoubles(values, sum, TOLERANCE);

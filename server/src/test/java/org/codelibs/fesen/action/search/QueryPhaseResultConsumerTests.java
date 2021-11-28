@@ -64,19 +64,18 @@ public class QueryPhaseResultConsumerTests extends ESTestCase {
 
     @Before
     public void setup() {
-        searchPhaseController = new SearchPhaseController(writableRegistry(),
-            s -> new InternalAggregation.ReduceContextBuilder() {
-                @Override
-                public InternalAggregation.ReduceContext forPartialReduction() {
-                    return InternalAggregation.ReduceContext.forPartialReduction(
-                        BigArrays.NON_RECYCLING_INSTANCE, null, () -> PipelineAggregator.PipelineTree.EMPTY);
-                }
+        searchPhaseController = new SearchPhaseController(writableRegistry(), s -> new InternalAggregation.ReduceContextBuilder() {
+            @Override
+            public InternalAggregation.ReduceContext forPartialReduction() {
+                return InternalAggregation.ReduceContext.forPartialReduction(BigArrays.NON_RECYCLING_INSTANCE, null,
+                        () -> PipelineAggregator.PipelineTree.EMPTY);
+            }
 
-                public InternalAggregation.ReduceContext forFinalReduction() {
-                    return InternalAggregation.ReduceContext.forFinalReduction(
-                        BigArrays.NON_RECYCLING_INSTANCE, null, b -> {}, PipelineAggregator.PipelineTree.EMPTY);
-                };
-            });
+            public InternalAggregation.ReduceContext forFinalReduction() {
+                return InternalAggregation.ReduceContext.forFinalReduction(BigArrays.NON_RECYCLING_INSTANCE, null, b -> {},
+                        PipelineAggregator.PipelineTree.EMPTY);
+            };
+        });
         threadPool = new TestThreadPool(SearchPhaseControllerTests.class.getName());
         executor = EsExecutors.newFixed("test", 1, 10, EsExecutors.daemonThreadFactory("test"), threadPool.getThreadContext());
     }
@@ -100,18 +99,18 @@ public class QueryPhaseResultConsumerTests extends ESTestCase {
         SearchRequest searchRequest = new SearchRequest("index");
         searchRequest.setBatchedReduceSize(2);
         AtomicReference<Exception> onPartialMergeFailure = new AtomicReference<>();
-        QueryPhaseResultConsumer queryPhaseResultConsumer = new QueryPhaseResultConsumer(searchRequest, executor,
-            new NoopCircuitBreaker(CircuitBreaker.REQUEST), searchPhaseController, searchProgressListener,
-            writableRegistry(), 10, e -> onPartialMergeFailure.accumulateAndGet(e, (prev, curr) -> {
-                curr.addSuppressed(prev);
-                return curr;
-            }));
+        QueryPhaseResultConsumer queryPhaseResultConsumer =
+                new QueryPhaseResultConsumer(searchRequest, executor, new NoopCircuitBreaker(CircuitBreaker.REQUEST), searchPhaseController,
+                        searchProgressListener, writableRegistry(), 10, e -> onPartialMergeFailure.accumulateAndGet(e, (prev, curr) -> {
+                            curr.addSuppressed(prev);
+                            return curr;
+                        }));
 
         CountDownLatch partialReduceLatch = new CountDownLatch(10);
 
         for (int i = 0; i < 10; i++) {
-            SearchShardTarget searchShardTarget = new SearchShardTarget("node", new ShardId("index", "uuid", i),
-                null, OriginalIndices.NONE);
+            SearchShardTarget searchShardTarget =
+                    new SearchShardTarget("node", new ShardId("index", "uuid", i), null, OriginalIndices.NONE);
             QuerySearchResult querySearchResult = new QuerySearchResult();
             TopDocs topDocs = new TopDocs(new TotalHits(0, TotalHits.Relation.EQUAL_TO), new ScoreDoc[0]);
             querySearchResult.topDocs(new TopDocsAndMaxScore(topDocs, Float.NaN), new DocValueFormat[0]);
@@ -136,7 +135,7 @@ public class QueryPhaseResultConsumerTests extends ESTestCase {
 
         @Override
         protected void onListShards(List<SearchShard> shards, List<SearchShard> skippedShards, SearchResponse.Clusters clusters,
-                                    boolean fetchPhase) {
+                boolean fetchPhase) {
             throw new UnsupportedOperationException();
         }
 
@@ -147,8 +146,7 @@ public class QueryPhaseResultConsumerTests extends ESTestCase {
         }
 
         @Override
-        protected void onPartialReduce(List<SearchShard> shards, TotalHits totalHits,
-                                       InternalAggregations aggs, int reducePhase) {
+        protected void onPartialReduce(List<SearchShard> shards, TotalHits totalHits, InternalAggregations aggs, int reducePhase) {
             onPartialReduce.incrementAndGet();
             throw new UnsupportedOperationException();
         }

@@ -21,7 +21,6 @@ package org.codelibs.fesen.action.admin.indices.cache.clear;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;

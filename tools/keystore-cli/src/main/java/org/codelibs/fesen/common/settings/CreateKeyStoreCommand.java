@@ -23,16 +23,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.KeyStoreAwareCommand;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.KeyStoreWrapper;
-import org.codelibs.fesen.common.settings.SecureString;
 import org.codelibs.fesen.env.Environment;
+
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 /**
  * A sub-command for the keystore cli to create a new keystore.

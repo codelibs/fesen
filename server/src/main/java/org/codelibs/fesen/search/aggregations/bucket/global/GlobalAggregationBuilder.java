@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.global;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -26,11 +29,8 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
-
-import java.io.IOException;
-import java.util.Map;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 
 public class GlobalAggregationBuilder extends AbstractAggregationBuilder<GlobalAggregationBuilder> {
     public static GlobalAggregationBuilder parse(XContentParser parser, String aggregationName) throws IOException {

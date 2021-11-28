@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.X509ExtendedTrustManager;
-
 import static org.codelibs.fesen.common.ssl.SslDiagnostics.getTrustDiagnosticFailure;
 
 import java.net.Socket;
@@ -38,8 +33,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class DiagnosticTrustManager extends X509ExtendedTrustManager {
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.X509ExtendedTrustManager;
 
+public final class DiagnosticTrustManager extends X509ExtendedTrustManager {
 
     /**
      * This interface exists because the ssl-config library does not depend on log4j, however the whole purpose of this class is to log
@@ -49,7 +48,6 @@ public final class DiagnosticTrustManager extends X509ExtendedTrustManager {
     public interface DiagnosticLogger {
         void warning(String message, GeneralSecurityException cause);
     }
-
 
     private final X509ExtendedTrustManager delegate;
     private final Supplier<String> contextName;
@@ -65,9 +63,8 @@ public final class DiagnosticTrustManager extends X509ExtendedTrustManager {
         this.delegate = delegate;
         this.contextName = contextName;
         this.logger = logger;
-        this.issuers = Stream.of(delegate.getAcceptedIssuers())
-            .collect(Collectors.toMap(cert -> cert.getSubjectX500Principal().getName(), Collections::singletonList,
-                (List<X509Certificate> a, List<X509Certificate> b) -> {
+        this.issuers = Stream.of(delegate.getAcceptedIssuers()).collect(Collectors.toMap(cert -> cert.getSubjectX500Principal().getName(),
+                Collections::singletonList, (List<X509Certificate> a, List<X509Certificate> b) -> {
                     final ArrayList<X509Certificate> list = new ArrayList<>(a.size() + b.size());
                     list.addAll(a);
                     list.addAll(b);

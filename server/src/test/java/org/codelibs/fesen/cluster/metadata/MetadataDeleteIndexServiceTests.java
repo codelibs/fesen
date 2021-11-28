@@ -61,7 +61,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 public class MetadataDeleteIndexServiceTests extends ESTestCase {
     private AllocationService allocationService;
     private MetadataDeleteIndexService service;
@@ -72,7 +71,7 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         super.setUp();
         allocationService = mock(AllocationService.class);
         when(allocationService.reroute(any(ClusterState.class), any(String.class)))
-            .thenAnswer(mockInvocation -> mockInvocation.getArguments()[0]);
+                .thenAnswer(mockInvocation -> mockInvocation.getArguments()[0]);
         service = new MetadataDeleteIndexService(Settings.EMPTY, null, allocationService);
     }
 
@@ -86,14 +85,11 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
     public void testDeleteSnapshotting() {
         String index = randomAlphaOfLength(5);
         Snapshot snapshot = new Snapshot("doesn't matter", new SnapshotId("snapshot name", "snapshot uuid"));
-        SnapshotsInProgress snaps = SnapshotsInProgress.of(
-            org.codelibs.fesen.core.List.of(new SnapshotsInProgress.Entry(snapshot, true, false,
-                SnapshotsInProgress.State.INIT, singletonList(new IndexId(index, "doesn't matter")),
-                Collections.emptyList(), System.currentTimeMillis(), (long) randomIntBetween(0, 1000), ImmutableOpenMap.of(), null,
+        SnapshotsInProgress snaps = SnapshotsInProgress.of(org.codelibs.fesen.core.List.of(new SnapshotsInProgress.Entry(snapshot, true,
+                false, SnapshotsInProgress.State.INIT, singletonList(new IndexId(index, "doesn't matter")), Collections.emptyList(),
+                System.currentTimeMillis(), (long) randomIntBetween(0, 1000), ImmutableOpenMap.of(), null,
                 SnapshotInfoTests.randomUserMetadata(), VersionUtils.randomVersion(random()))));
-        ClusterState state = ClusterState.builder(clusterState(index))
-                .putCustom(SnapshotsInProgress.TYPE, snaps)
-                .build();
+        ClusterState state = ClusterState.builder(clusterState(index)).putCustom(SnapshotsInProgress.TYPE, snaps).build();
         Exception e = expectThrows(SnapshotInProgressException.class,
                 () -> service.deleteIndices(state, singleton(state.metadata().getIndices().get(index).getIndex())));
         assertEquals("Cannot delete indices that are being snapshotted: [[" + index + "]]. Try again after snapshot finishes "
@@ -124,8 +120,7 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndices = randomIntBetween(2, 5);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.core.List.of());
+                org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)), org.codelibs.fesen.core.List.of());
 
         int numIndexToDelete = randomIntBetween(1, numBackingIndices - 1);
 
@@ -134,8 +129,8 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
 
         assertThat(after.metadata().getIndices().get(indexToDelete.getName()), IsNull.nullValue());
         assertThat(after.metadata().getIndices().size(), equalTo(numBackingIndices - 1));
-        assertThat(after.metadata().getIndices().get(
-            DataStream.getDefaultBackingIndexName(dataStreamName, numIndexToDelete)), IsNull.nullValue());
+        assertThat(after.metadata().getIndices().get(DataStream.getDefaultBackingIndexName(dataStreamName, numIndexToDelete)),
+                IsNull.nullValue());
     }
 
     public void testDeleteMultipleBackingIndexForDataStream() {
@@ -143,11 +138,10 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndicesToDelete = randomIntBetween(2, numBackingIndices - 1);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.core.List.of());
+                org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)), org.codelibs.fesen.core.List.of());
 
-        List<Integer> indexNumbersToDelete =
-            randomSubsetOf(numBackingIndicesToDelete, IntStream.rangeClosed(1, numBackingIndices - 1).boxed().collect(Collectors.toList()));
+        List<Integer> indexNumbersToDelete = randomSubsetOf(numBackingIndicesToDelete,
+                IntStream.rangeClosed(1, numBackingIndices - 1).boxed().collect(Collectors.toList()));
 
         Set<Index> indicesToDelete = new HashSet<>();
         for (int k : indexNumbersToDelete) {
@@ -169,27 +163,22 @@ public class MetadataDeleteIndexServiceTests extends ESTestCase {
         int numBackingIndices = randomIntBetween(1, 5);
         String dataStreamName = randomAlphaOfLength(6).toLowerCase(Locale.ROOT);
         ClusterState before = DataStreamTestHelper.getClusterStateWithDataStreams(
-            org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)),
-            org.codelibs.fesen.core.List.of());
+                org.codelibs.fesen.core.List.of(new Tuple<>(dataStreamName, numBackingIndices)), org.codelibs.fesen.core.List.of());
 
         Index indexToDelete = before.metadata().index(DataStream.getDefaultBackingIndexName(dataStreamName, numBackingIndices)).getIndex();
         Exception e = expectThrows(IllegalArgumentException.class,
-            () -> service.deleteIndices(before, org.codelibs.fesen.core.Set.of(indexToDelete)));
+                () -> service.deleteIndices(before, org.codelibs.fesen.core.Set.of(indexToDelete)));
 
-        assertThat(e.getMessage(), containsString("index [" + indexToDelete.getName() + "] is the write index for data stream [" +
-            dataStreamName + "] and cannot be deleted"));
+        assertThat(e.getMessage(), containsString("index [" + indexToDelete.getName() + "] is the write index for data stream ["
+                + dataStreamName + "] and cannot be deleted"));
     }
 
     private ClusterState clusterState(String index) {
-        IndexMetadata indexMetadata = IndexMetadata.builder(index)
-                .settings(Settings.builder().put("index.version.created", VersionUtils.randomVersion(random())))
-                .numberOfShards(1)
-                .numberOfReplicas(1)
-                .build();
-        return ClusterState.builder(ClusterName.DEFAULT)
-                .metadata(Metadata.builder().put(indexMetadata, false))
+        IndexMetadata indexMetadata =
+                IndexMetadata.builder(index).settings(Settings.builder().put("index.version.created", VersionUtils.randomVersion(random())))
+                        .numberOfShards(1).numberOfReplicas(1).build();
+        return ClusterState.builder(ClusterName.DEFAULT).metadata(Metadata.builder().put(indexMetadata, false))
                 .routingTable(RoutingTable.builder().addAsNew(indexMetadata).build())
-                .blocks(ClusterBlocks.builder().addBlocks(indexMetadata))
-                .build();
+                .blocks(ClusterBlocks.builder().addBlocks(indexMetadata)).build();
     }
 }

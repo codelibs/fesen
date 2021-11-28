@@ -18,11 +18,10 @@
  */
 package org.codelibs.fesen.cluster.routing;
 
-
 /**
  * Routing Preference Type
  */
-public enum  Preference {
+public enum Preference {
 
     /**
      * Route to specific shards
@@ -58,6 +57,7 @@ public enum  Preference {
     public String type() {
         return type;
     }
+
     /**
      * Parses the Preference Type given a string
      */
@@ -71,23 +71,20 @@ public enum  Preference {
         }
 
         switch (preferenceType) {
-            case "_shards":
-                return SHARDS;
-            case "_prefer_nodes":
-                return PREFER_NODES;
-            case "_local":
-                return LOCAL;
-            case "_only_local":
-            case "_onlyLocal":
-                return ONLY_LOCAL;
-            case "_only_nodes":
-                return ONLY_NODES;
-            default:
-                throw new IllegalArgumentException("no Preference for [" + preferenceType + "]");
+        case "_shards":
+            return SHARDS;
+        case "_prefer_nodes":
+            return PREFER_NODES;
+        case "_local":
+            return LOCAL;
+        case "_only_local":
+        case "_onlyLocal":
+            return ONLY_LOCAL;
+        case "_only_nodes":
+            return ONLY_NODES;
+        default:
+            throw new IllegalArgumentException("no Preference for [" + preferenceType + "]");
         }
     }
 
 }
-
-
-

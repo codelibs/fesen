@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,7 +68,7 @@ public final class CountDown {
         assert countDown.get() >= 0;
         return countDown.getAndSet(0) > 0;
     }
-    
+
     /**
      * Returns <code>true</code> iff the count-down has reached zero. Otherwise <code>false</code>
      */

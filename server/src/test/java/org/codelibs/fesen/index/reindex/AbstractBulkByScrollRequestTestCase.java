@@ -33,7 +33,7 @@ import org.codelibs.fesen.test.ESTestCase;
  * Shared superclass for testing reindex and friends. In particular it makes sure to test the slice features.
  */
 public abstract class AbstractBulkByScrollRequestTestCase<R extends AbstractBulkByScrollRequest<R> & ToXContent>
-    extends AbstractXContentTestCase<R> {
+        extends AbstractXContentTestCase<R> {
 
     public void testForSlice() {
         R original = newRequest();
@@ -57,9 +57,7 @@ public abstract class AbstractBulkByScrollRequestTestCase<R extends AbstractBulk
 
         // it's not important how many slices there are, we just need a number for forSlice
         int actualSlices = between(2, 1000);
-        original.setSlices(randomBoolean()
-            ? actualSlices
-            : AbstractBulkByScrollRequest.AUTO_SLICES);
+        original.setSlices(randomBoolean() ? actualSlices : AbstractBulkByScrollRequest.AUTO_SLICES);
 
         TaskId slicingTask = new TaskId(randomAlphaOfLength(5), randomLong());
         SearchRequest sliceRequest = new SearchRequest();
@@ -75,15 +73,17 @@ public abstract class AbstractBulkByScrollRequestTestCase<R extends AbstractBulk
         assertEquals("requests_per_second is split between all workers", original.getRequestsPerSecond() / actualSlices,
                 forSliced.getRequestsPerSecond(), Float.MIN_NORMAL);
         assertEquals("max_docs is split evenly between all workers",
-            original.getMaxDocs() == AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES
-                ? AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES : original.getMaxDocs() / actualSlices,
-            forSliced.getMaxDocs());
+                original.getMaxDocs() == AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES ? AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES
+                        : original.getMaxDocs() / actualSlices,
+                forSliced.getMaxDocs());
         assertEquals(slicingTask, forSliced.getParentTask());
 
         extraForSliceAssertions(original, forSliced);
     }
 
     protected abstract R newRequest();
+
     protected abstract void extraRandomizationForSlice(R original);
+
     protected abstract void extraForSliceAssertions(R original, R forSliced);
 }

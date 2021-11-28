@@ -52,8 +52,10 @@ public class PersistentTaskResponse extends ActionResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PersistentTaskResponse that = (PersistentTaskResponse) o;
         return Objects.equals(task, that.task);
     }

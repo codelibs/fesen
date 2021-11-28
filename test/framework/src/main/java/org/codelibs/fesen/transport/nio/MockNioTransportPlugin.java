@@ -39,10 +39,8 @@ public class MockNioTransportPlugin extends Plugin implements NetworkPlugin {
 
     @Override
     public Map<String, Supplier<Transport>> getTransports(Settings settings, ThreadPool threadPool, PageCacheRecycler pageCacheRecycler,
-                                                          CircuitBreakerService circuitBreakerService,
-                                                          NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
-        return Collections.singletonMap(MOCK_NIO_TRANSPORT_NAME,
-            () -> new MockNioTransport(settings, Version.CURRENT, threadPool, networkService, pageCacheRecycler,
-                namedWriteableRegistry, circuitBreakerService));
+            CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
+        return Collections.singletonMap(MOCK_NIO_TRANSPORT_NAME, () -> new MockNioTransport(settings, Version.CURRENT, threadPool,
+                networkService, pageCacheRecycler, namedWriteableRegistry, circuitBreakerService));
     }
 }

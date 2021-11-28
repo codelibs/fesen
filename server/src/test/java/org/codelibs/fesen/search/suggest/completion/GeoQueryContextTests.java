@@ -62,10 +62,8 @@ public class GeoQueryContextTests extends QueryContextTestCase<GeoQueryContext> 
 
     public void testNullGeoPointIsIllegal() {
         final GeoQueryContext geoQueryContext = randomGeoQueryContext();
-        final GeoQueryContext.Builder builder = GeoQueryContext.builder()
-            .setNeighbours(geoQueryContext.getNeighbours())
-            .setPrecision(geoQueryContext.getPrecision())
-            .setBoost(geoQueryContext.getBoost());
+        final GeoQueryContext.Builder builder = GeoQueryContext.builder().setNeighbours(geoQueryContext.getNeighbours())
+                .setPrecision(geoQueryContext.getPrecision()).setBoost(geoQueryContext.getBoost());
         try {
             builder.build();
             fail("null geo point is illegal");

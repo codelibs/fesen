@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.plugins;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.shard.ShardPath;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * A plugin that provides alternative directory implementations.

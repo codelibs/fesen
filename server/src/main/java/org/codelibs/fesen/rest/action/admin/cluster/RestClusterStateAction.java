@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateRequest;
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateResponse;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -38,18 +50,6 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestClusterStateAction extends BaseRestHandler {
 
     private final SettingsFilter settingsFilter;
@@ -65,10 +65,8 @@ public class RestClusterStateAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_cluster/state"),
-            new Route(GET, "/_cluster/state/{metric}"),
-            new Route(GET, "/_cluster/state/{metric}/{indices}")));
+        return unmodifiableList(asList(new Route(GET, "/_cluster/state"), new Route(GET, "/_cluster/state/{metric}"),
+                new Route(GET, "/_cluster/state/{metric}/{indices}")));
     }
 
     @Override
@@ -117,8 +115,8 @@ public class RestClusterStateAction extends BaseRestHandler {
                     builder.field(Fields.WAIT_FOR_TIMED_OUT, response.isWaitForTimedOut());
                 }
                 builder.field(Fields.CLUSTER_NAME, response.getClusterName().value());
-                ToXContent.Params params = new ToXContent.DelegatingMapParams(
-                    singletonMap(Metadata.CONTEXT_MODE_PARAM, Metadata.CONTEXT_MODE_API), request);
+                ToXContent.Params params =
+                        new ToXContent.DelegatingMapParams(singletonMap(Metadata.CONTEXT_MODE_PARAM, Metadata.CONTEXT_MODE_API), request);
                 response.getState().toXContent(builder, params);
                 builder.endObject();
                 return new BytesRestResponse(RestStatus.OK, builder);

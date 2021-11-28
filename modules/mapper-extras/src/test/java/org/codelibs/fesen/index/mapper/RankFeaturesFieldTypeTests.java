@@ -21,9 +21,6 @@ package org.codelibs.fesen.index.mapper;
 
 import java.util.Collections;
 
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.RankFeaturesFieldMapper;
-
 public class RankFeaturesFieldTypeTests extends FieldTypeTestCase {
 
     public void testIsNotAggregatable() {

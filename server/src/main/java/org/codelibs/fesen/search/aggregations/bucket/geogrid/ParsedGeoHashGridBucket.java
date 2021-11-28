@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
 
 public class ParsedGeoHashGridBucket extends ParsedGeoGridBucket {
 

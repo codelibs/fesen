@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.watcher;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.io.FileSystemUtils;
-import org.codelibs.fesen.common.util.CollectionUtils;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.io.FileSystemUtils;
+import org.codelibs.fesen.common.util.CollectionUtils;
 
 /**
  * File resources watcher
@@ -200,7 +200,7 @@ public class FileWatcher extends AbstractResourceWatcher<FileChangesListener> {
                 FileObserver[] newChildren = new FileObserver[files.length];
                 int child = 0;
                 int file = 0;
-                while (file < files.length || child < children.length ) {
+                while (file < files.length || child < children.length) {
                     int compare;
 
                     if (file >= files.length) {
@@ -211,7 +211,7 @@ public class FileWatcher extends AbstractResourceWatcher<FileChangesListener> {
                         compare = children[child].file.compareTo(files[file]);
                     }
 
-                    if (compare  == 0) {
+                    if (compare == 0) {
                         // Same file copy it and update
                         children[child].checkAndNotify();
                         newChildren[file] = children[child];

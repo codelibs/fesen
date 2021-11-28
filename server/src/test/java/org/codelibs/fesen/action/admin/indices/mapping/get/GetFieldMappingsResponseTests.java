@@ -62,29 +62,23 @@ public class GetFieldMappingsResponseTests extends AbstractSerializingTestCase<G
     public void testManualJunkedJson() throws Exception {
         // in fact random fields could be evaluated as proper mapping, while proper junk in this case is arrays and values
         final String json =
-            "{\"index1\":{\"mappings\":"
-                + "{\"doctype0\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
-                    + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}},"
-                // junk here
-                + "\"junk1\": [\"field1\", {\"field2\":{}}],"
-                + "\"junk2\": [{\"field3\":{}}],"
-                + "\"junk3\": 42,"
-                + "\"junk4\": \"Q\","
-                + "\"doctype1\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
-                    + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}}}},"
-            + "\"index0\":{\"mappings\":"
-                + "{\"doctype0\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
-                + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}},"
-                + "\"doctype1\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
-                + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}}}}}";
+                "{\"index1\":{\"mappings\":" + "{\"doctype0\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
+                        + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}},"
+                        // junk here
+                        + "\"junk1\": [\"field1\", {\"field2\":{}}]," + "\"junk2\": [{\"field3\":{}}]," + "\"junk3\": 42,"
+                        + "\"junk4\": \"Q\"," + "\"doctype1\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
+                        + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}}}}," + "\"index0\":{\"mappings\":"
+                        + "{\"doctype0\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
+                        + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}},"
+                        + "\"doctype1\":{\"field1\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}},"
+                        + "\"field0\":{\"full_name\":\"my field\",\"mapping\":{\"type\":\"keyword\"}}}}}}";
 
-        final XContentParser parser = XContentType.JSON.xContent().createParser(xContentRegistry(),
-            LoggingDeprecationHandler.INSTANCE, json.getBytes("UTF-8"));
+        final XContentParser parser =
+                XContentType.JSON.xContent().createParser(xContentRegistry(), LoggingDeprecationHandler.INSTANCE, json.getBytes("UTF-8"));
 
         final GetFieldMappingsResponse response = GetFieldMappingsResponse.fromXContent(parser);
 
-        FieldMappingMetadata fieldMappingMetadata =
-            new FieldMappingMetadata("my field", new BytesArray("{\"type\":\"keyword\"}"));
+        FieldMappingMetadata fieldMappingMetadata = new FieldMappingMetadata("my field", new BytesArray("{\"type\":\"keyword\"}"));
         Map<String, FieldMappingMetadata> fieldMapping = new HashMap<>();
         fieldMapping.put("field0", fieldMappingMetadata);
         fieldMapping.put("field1", fieldMappingMetadata);
@@ -121,7 +115,7 @@ public class GetFieldMappingsResponseTests extends AbstractSerializingTestCase<G
         // allow random fields at the level of `index` and `index.mappings.doctype.field`
         // otherwise random field could be evaluated as index name or type name
         return s -> false == (s.matches("(?<index>[^.]+)")
-            || s.matches("(?<index>[^.]+)\\.mappings\\.(?<doctype>[^.]+)\\.(?<field>[^.]+)"));
+                || s.matches("(?<index>[^.]+)\\.mappings\\.(?<doctype>[^.]+)\\.(?<field>[^.]+)"));
     }
 
     /**
@@ -137,16 +131,15 @@ public class GetFieldMappingsResponseTests extends AbstractSerializingTestCase<G
         Map<String, Map<String, Map<String, FieldMappingMetadata>>> mappings = new HashMap<>();
 
         int indices = randomInt(10);
-        for(int i = 0; i < indices; i++) {
+        for (int i = 0; i < indices; i++) {
             final Map<String, Map<String, FieldMappingMetadata>> doctypesMappings = new HashMap<>();
             int doctypes = randomInt(10);
-            for(int j = 0; j < doctypes; j++) {
+            for (int j = 0; j < doctypes; j++) {
                 Map<String, FieldMappingMetadata> fieldMappings = new HashMap<>();
                 int fields = randomInt(10);
-                for(int k = 0; k < fields; k++) {
+                for (int k = 0; k < fields; k++) {
                     final String mapping = randomBoolean() ? "{\"type\":\"string\"}" : "{\"type\":\"keyword\"}";
-                    FieldMappingMetadata metadata =
-                        new FieldMappingMetadata("my field", new BytesArray(mapping));
+                    FieldMappingMetadata metadata = new FieldMappingMetadata("my field", new BytesArray(mapping));
                     fieldMappings.put("field" + k, metadata);
                 }
                 doctypesMappings.put("doctype" + j, fieldMappings);

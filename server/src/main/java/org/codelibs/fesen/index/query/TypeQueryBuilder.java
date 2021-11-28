@@ -19,10 +19,11 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,16 +34,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 
-import java.io.IOException;
-import java.util.Objects;
-
 public class TypeQueryBuilder extends AbstractQueryBuilder<TypeQueryBuilder> {
     public static final String NAME = "type";
 
     private static final ParseField VALUE_FIELD = new ParseField("value");
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(TypeQueryBuilder.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Type queries are deprecated, " +
-        "prefer to filter on a field instead.";
+    static final String TYPES_DEPRECATION_MESSAGE =
+            "[types removal] Type queries are deprecated, " + "prefer to filter on a field instead.";
 
     private final String type;
 
@@ -108,11 +106,8 @@ public class TypeQueryBuilder extends AbstractQueryBuilder<TypeQueryBuilder> {
             throw new ParsingException(parser.getTokenLocation(),
                     "[" + TypeQueryBuilder.NAME + "] filter needs to be provided with a value for the type");
         }
-        return new TypeQueryBuilder(type)
-                .boost(boost)
-                .queryName(queryName);
+        return new TypeQueryBuilder(type).boost(boost).queryName(queryName);
     }
-
 
     @Override
     public String getWriteableName() {

@@ -25,34 +25,21 @@ import java.util.List;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.mapper.ParametrizedFieldMapper;
-import org.codelibs.fesen.index.mapper.ParseContext;
-import org.codelibs.fesen.index.mapper.TermBasedFieldType;
-import org.codelibs.fesen.index.mapper.TextSearchInfo;
-import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 
 // this sucks how much must be overridden just do get a dummy field mapper...
 public class MockFieldMapper extends ParametrizedFieldMapper {
-    static Settings DEFAULT_SETTINGS = Settings.builder()
-        .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT.id)
-        .build();
+    static Settings DEFAULT_SETTINGS = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT.id).build();
 
     public MockFieldMapper(String fullName) {
         this(new FakeFieldType(fullName));
     }
 
     public MockFieldMapper(MappedFieldType fieldType) {
-        super(findSimpleName(fieldType.name()), fieldType,
-            MultiFields.empty(), new CopyTo.Builder().build());
+        super(findSimpleName(fieldType.name()), fieldType, MultiFields.empty(), new CopyTo.Builder().build());
     }
 
-    public MockFieldMapper(String fullName,
-                           MappedFieldType fieldType,
-                           MultiFields multifields,
-                           CopyTo copyTo) {
+    public MockFieldMapper(String fullName, MappedFieldType fieldType, MultiFields multifields, CopyTo copyTo) {
         super(findSimpleName(fullName), fieldType, multifields, copyTo);
     }
 

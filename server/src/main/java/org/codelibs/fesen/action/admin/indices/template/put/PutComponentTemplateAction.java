@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.template.put;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
@@ -28,10 +32,6 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
 
 /**
  * An action for putting a single component template into the cluster state

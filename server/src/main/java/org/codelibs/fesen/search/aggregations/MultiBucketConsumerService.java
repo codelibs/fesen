@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.function.IntConsumer;
+
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 
-import java.io.IOException;
-import java.util.function.IntConsumer;
-
 /**
  * An aggregation service that creates instances of {@link MultiBucketConsumer}.
  * The consumer is used by {@link BucketsAggregator} and {@link InternalMultiBucketAggregation} to limit the number of buckets created
@@ -40,7 +40,7 @@ import java.util.function.IntConsumer;
 public class MultiBucketConsumerService {
     public static final int DEFAULT_MAX_BUCKETS = 65535;
     public static final Setting<Integer> MAX_BUCKET_SETTING =
-        Setting.intSetting("search.max_buckets", DEFAULT_MAX_BUCKETS, 0, Setting.Property.NodeScope, Setting.Property.Dynamic);
+            Setting.intSetting("search.max_buckets", DEFAULT_MAX_BUCKETS, 0, Setting.Property.NodeScope, Setting.Property.Dynamic);
 
     private final CircuitBreaker breaker;
 
@@ -115,8 +115,8 @@ public class MultiBucketConsumerService {
                 count += value;
                 if (count > limit) {
                     throw new TooManyBucketsException("Trying to create too many buckets. Must be less than or equal to: [" + limit
-                        + "] but was [" + count + "]. This limit can be set by changing the [" +
-                        MAX_BUCKET_SETTING.getKey() + "] cluster level setting.", limit);
+                            + "] but was [" + count + "]. This limit can be set by changing the [" + MAX_BUCKET_SETTING.getKey()
+                            + "] cluster level setting.", limit);
                 }
             }
             // check parent circuit breaker every 1024 calls

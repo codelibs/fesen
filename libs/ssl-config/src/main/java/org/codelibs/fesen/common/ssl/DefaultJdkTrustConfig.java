@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509ExtendedTrustManager;
-
-import org.codelibs.fesen.core.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
@@ -32,6 +27,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.BiFunction;
+
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
+
+import org.codelibs.fesen.core.Nullable;
 
 /**
  * This class represents a trust configuration that corresponds to the default trusted CAs of the JDK

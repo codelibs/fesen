@@ -18,7 +18,11 @@
  */
 package org.codelibs.fesen.persistent;
 
-import org.codelibs.fesen.Version;
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionType;
@@ -38,11 +42,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  *  This action can be used to add the record for the persistent action to the cluster state.
@@ -64,7 +63,8 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
 
         private PersistentTaskParams params;
 
-        public Request() {}
+        public Request() {
+        }
 
         public Request(StreamInput in) throws IOException {
             super(in);
@@ -98,8 +98,8 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
             }
             if (params != null) {
                 if (params.getWriteableName().equals(taskName) == false) {
-                    validationException = addValidationError("params have to have the same writeable name as task. params: " +
-                            params.getWriteableName() + " task: " + taskName, validationException);
+                    validationException = addValidationError("params have to have the same writeable name as task. params: "
+                            + params.getWriteableName() + " task: " + taskName, validationException);
                 }
             }
             return validationException;
@@ -107,11 +107,13 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Request request1 = (Request) o;
-            return Objects.equals(taskId, request1.taskId) && Objects.equals(taskName, request1.taskName) &&
-                    Objects.equals(params, request1.params);
+            return Objects.equals(taskId, request1.taskId) && Objects.equals(taskName, request1.taskName)
+                    && Objects.equals(params, request1.params);
         }
 
         @Override
@@ -146,8 +148,8 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
 
     }
 
-    public static class RequestBuilder extends MasterNodeOperationRequestBuilder<StartPersistentTaskAction.Request,
-            PersistentTaskResponse, StartPersistentTaskAction.RequestBuilder> {
+    public static class RequestBuilder extends
+            MasterNodeOperationRequestBuilder<StartPersistentTaskAction.Request, PersistentTaskResponse, StartPersistentTaskAction.RequestBuilder> {
 
         protected RequestBuilder(FesenClient client, StartPersistentTaskAction action) {
             super(client, action, new Request());
@@ -175,14 +177,12 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
         private final PersistentTasksClusterService persistentTasksClusterService;
 
         @Inject
-        public TransportAction(TransportService transportService, ClusterService clusterService,
-                               ThreadPool threadPool, ActionFilters actionFilters,
-                               PersistentTasksClusterService persistentTasksClusterService,
-                               PersistentTasksExecutorRegistry persistentTasksExecutorRegistry,
-                               PersistentTasksService persistentTasksService,
-                               IndexNameExpressionResolver indexNameExpressionResolver) {
-            super(StartPersistentTaskAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                Request::new, indexNameExpressionResolver);
+        public TransportAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+                ActionFilters actionFilters, PersistentTasksClusterService persistentTasksClusterService,
+                PersistentTasksExecutorRegistry persistentTasksExecutorRegistry, PersistentTasksService persistentTasksService,
+                IndexNameExpressionResolver indexNameExpressionResolver) {
+            super(StartPersistentTaskAction.NAME, transportService, clusterService, threadPool, actionFilters, Request::new,
+                    indexNameExpressionResolver);
             this.persistentTasksClusterService = persistentTasksClusterService;
             NodePersistentTasksExecutor executor = new NodePersistentTasksExecutor(threadPool);
             clusterService.addListener(new PersistentTasksNodeService(persistentTasksService, persistentTasksExecutorRegistry,
@@ -207,12 +207,10 @@ public class StartPersistentTaskAction extends ActionType<PersistentTaskResponse
 
         @Override
         protected final void masterOperation(final Request request, ClusterState state,
-                                             final ActionListener<PersistentTaskResponse> listener) {
+                final ActionListener<PersistentTaskResponse> listener) {
             persistentTasksClusterService.createPersistentTask(request.taskId, request.taskName, request.params,
-                ActionListener.delegateFailure(listener,
-                    (delegatedListener, task) -> delegatedListener.onResponse(new PersistentTaskResponse(task))));
+                    ActionListener.delegateFailure(listener,
+                            (delegatedListener, task) -> delegatedListener.onResponse(new PersistentTaskResponse(task))));
         }
     }
 }
-
-

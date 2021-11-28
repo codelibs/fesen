@@ -78,7 +78,7 @@ public final class ClusterAllocationExplanationTests extends ESTestCase {
         } else {
             assertNotNull(cae2.getClusterInfo());
             assertEquals(cae.getClusterInfo().getNodeMostAvailableDiskUsages().size(),
-                cae2.getClusterInfo().getNodeMostAvailableDiskUsages().size());
+                    cae2.getClusterInfo().getNodeMostAvailableDiskUsages().size());
         }
         assertEquals(cae.getShardAllocationDecision().getAllocateDecision(), cae2.getShardAllocationDecision().getAllocateDecision());
         assertEquals(cae.getShardAllocationDecision().getMoveDecision(), cae2.getShardAllocationDecision().getMoveDecision());
@@ -88,22 +88,22 @@ public final class ClusterAllocationExplanationTests extends ESTestCase {
         ClusterAllocationExplanation cae = randomClusterAllocationExplanation(true);
         XContentBuilder builder = XContentFactory.jsonBuilder();
         cae.toXContent(builder, ToXContent.EMPTY_PARAMS);
-        assertEquals("{\"index\":\"idx\",\"shard\":0,\"primary\":true,\"current_state\":\"started\",\"current_node\":" +
-                         "{\"id\":\"node-0\",\"name\":\"\",\"transport_address\":\"" + cae.getCurrentNode().getAddress() +
-                         "\",\"weight_ranking\":3},\"can_remain_on_current_node\":\"yes\",\"can_rebalance_cluster\":\"yes\"," +
-                         "\"can_rebalance_to_other_node\":\"no\",\"rebalance_explanation\":\"cannot rebalance as no target node exists " +
-                         "that can both allocate this shard and improve the cluster balance\"}", Strings.toString(builder));
+        assertEquals("{\"index\":\"idx\",\"shard\":0,\"primary\":true,\"current_state\":\"started\",\"current_node\":"
+                + "{\"id\":\"node-0\",\"name\":\"\",\"transport_address\":\"" + cae.getCurrentNode().getAddress()
+                + "\",\"weight_ranking\":3},\"can_remain_on_current_node\":\"yes\",\"can_rebalance_cluster\":\"yes\","
+                + "\"can_rebalance_to_other_node\":\"no\",\"rebalance_explanation\":\"cannot rebalance as no target node exists "
+                + "that can both allocate this shard and improve the cluster balance\"}", Strings.toString(builder));
     }
 
     private static ClusterAllocationExplanation randomClusterAllocationExplanation(boolean assignedShard) {
         ShardRouting shardRouting = TestShardRouting.newShardRouting(new ShardId(new Index("idx", "123"), 0),
-            assignedShard ? "node-0" : null, true, assignedShard ? ShardRoutingState.STARTED : ShardRoutingState.UNASSIGNED);
-        DiscoveryNode node = assignedShard ? new DiscoveryNode("node-0", buildNewFakeTransportAddress(), emptyMap(), emptySet(),
-                                                                  Version.CURRENT) : null;
+                assignedShard ? "node-0" : null, true, assignedShard ? ShardRoutingState.STARTED : ShardRoutingState.UNASSIGNED);
+        DiscoveryNode node =
+                assignedShard ? new DiscoveryNode("node-0", buildNewFakeTransportAddress(), emptyMap(), emptySet(), Version.CURRENT) : null;
         ShardAllocationDecision shardAllocationDecision;
         if (assignedShard) {
-            MoveDecision moveDecision = MoveDecision.cannotRebalance(Decision.YES, AllocationDecision.NO, 3, null)
-                                            .withRemainDecision(Decision.YES);
+            MoveDecision moveDecision =
+                    MoveDecision.cannotRebalance(Decision.YES, AllocationDecision.NO, 3, null).withRemainDecision(Decision.YES);
             shardAllocationDecision = new ShardAllocationDecision(AllocateUnassignedDecision.NOT_TAKEN, moveDecision);
         } else {
             AllocateUnassignedDecision allocateDecision = AllocateUnassignedDecision.no(UnassignedInfo.AllocationStatus.DECIDERS_NO, null);

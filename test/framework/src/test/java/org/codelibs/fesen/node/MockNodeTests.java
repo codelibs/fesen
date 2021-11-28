@@ -19,21 +19,19 @@
 
 package org.codelibs.fesen.node;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.MockBigArrays;
 import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.node.MockNode;
-import org.codelibs.fesen.node.NodeMocksPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.search.MockSearchService;
 import org.codelibs.fesen.search.SearchService;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.MockHttpTransport;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MockNodeTests extends ESTestCase {
     /**
@@ -42,9 +40,7 @@ public class MockNodeTests extends ESTestCase {
      */
     public void testComponentsMockedByMarkerPlugins() throws IOException {
         Settings settings = Settings.builder() // All these are required or MockNode will fail to build.
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
-                .put("transport.type", getTestTransportType())
-                .build();
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).put("transport.type", getTestTransportType()).build();
         List<Class<? extends Plugin>> plugins = new ArrayList<>();
         plugins.add(getTestTransportPlugin());
         plugins.add(MockHttpTransport.TestPlugin.class);

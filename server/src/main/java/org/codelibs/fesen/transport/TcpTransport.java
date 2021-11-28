@@ -18,8 +18,43 @@
  */
 package org.codelibs.fesen.transport;
 
-import com.carrotsearch.hppc.IntHashSet;
-import com.carrotsearch.hppc.IntSet;
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.common.transport.NetworkExceptionHelper.isCloseConnectionException;
+import static org.codelibs.fesen.common.transport.NetworkExceptionHelper.isConnectException;
+import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
+
+import java.io.IOException;
+import java.io.StreamCorruptedException;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.nio.channels.CancelledKeyException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -59,42 +94,8 @@ import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-import java.net.BindException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.nio.channels.CancelledKeyException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.common.transport.NetworkExceptionHelper.isCloseConnectionException;
-import static org.codelibs.fesen.common.transport.NetworkExceptionHelper.isConnectException;
-import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
+import com.carrotsearch.hppc.IntHashSet;
+import com.carrotsearch.hppc.IntSet;
 
 public abstract class TcpTransport extends AbstractLifecycleComponent implements Transport {
     private static final Logger logger = LogManager.getLogger(TcpTransport.class);
@@ -137,8 +138,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
     private final AtomicLong outboundConnectionCount = new AtomicLong(); // also used as a correlation ID for open/close logs
 
     public TcpTransport(Settings settings, Version version, ThreadPool threadPool, PageCacheRecycler pageCacheRecycler,
-                        CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry,
-                        NetworkService networkService) {
+            CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
         this.settings = settings;
         this.profileSettings = getProfileSettings(settings);
         this.version = version;
@@ -164,12 +164,12 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
         this.outboundHandler = new OutboundHandler(nodeName, version, features, statsTracker, threadPool, bigArrays);
         this.handshaker = new TransportHandshaker(version, threadPool,
-            (node, channel, requestId, v) -> outboundHandler.sendRequest(node, channel, requestId,
-                TransportHandshaker.HANDSHAKE_ACTION_NAME, new TransportHandshaker.HandshakeRequest(version),
-                TransportRequestOptions.EMPTY, v, false, true));
+                (node, channel, requestId, v) -> outboundHandler.sendRequest(node, channel, requestId,
+                        TransportHandshaker.HANDSHAKE_ACTION_NAME, new TransportHandshaker.HandshakeRequest(version),
+                        TransportRequestOptions.EMPTY, v, false, true));
         this.keepAlive = new TransportKeepAlive(threadPool, this.outboundHandler::sendBytes);
         this.inboundHandler = new InboundHandler(threadPool, outboundHandler, namedWriteableRegistry, handshaker, keepAlive,
-            requestHandlers, responseHandlers);
+                requestHandlers, responseHandlers);
     }
 
     public Version getVersion() {
@@ -215,7 +215,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
             this.node = node;
             this.channels = Collections.unmodifiableList(channels);
             assert channels.size() == connectionProfile.getNumConnections() : "expected channels size to be == "
-                + connectionProfile.getNumConnections() + " but was: [" + channels.size() + "]";
+                    + connectionProfile.getNumConnections() + " but was: [" + channels.size() + "]";
             typeMapping = new EnumMap<>(TransportRequestOptions.Type.class);
             for (ConnectionProfile.ConnectionTypeHandle handle : connectionProfile.getHandles()) {
                 for (TransportRequestOptions.Type type : handle.getTypes())
@@ -262,7 +262,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
         @Override
         public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-            throws IOException, TransportException {
+                throws IOException, TransportException {
             if (isClosing.get()) {
                 throw new NodeNotConnectedException(node, "connection already closed");
             }
@@ -295,7 +295,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
     }
 
     private List<TcpChannel> initiateConnection(DiscoveryNode node, ConnectionProfile connectionProfile,
-                                                ActionListener<Transport.Connection> listener) {
+            ActionListener<Transport.Connection> listener) {
         int numConnections = connectionProfile.getNumConnections();
         assert numConnections > 0 : "A connection profile must be configured with at least one connection";
 
@@ -318,7 +318,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
         }
 
         ChannelsConnectedListener channelsConnectedListener = new ChannelsConnectedListener(node, connectionProfile, channels,
-            new ThreadedActionListener<>(logger, threadPool, ThreadPool.Names.GENERIC, listener, false));
+                new ThreadedActionListener<>(logger, threadPool, ThreadPool.Names.GENERIC, listener, false));
 
         for (TcpChannel channel : channels) {
             channel.addConnectListener(channelsConnectedListener);
@@ -348,12 +348,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
             local.add("[::1]"); // may get ports appended!
         }
         return local.stream()
-            .flatMap(
-                address -> Arrays.stream(defaultPortRange())
-                    .limit(LIMIT_LOCAL_PORTS_COUNT)
-                    .mapToObj(port -> address + ":" + port)
-            )
-            .collect(Collectors.toList());
+                .flatMap(address -> Arrays.stream(defaultPortRange()).limit(LIMIT_LOCAL_PORTS_COUNT).mapToObj(port -> address + ":" + port))
+                .collect(Collectors.toList());
     }
 
     protected void bindServer(ProfileSettings profileSettings) {
@@ -411,10 +407,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
                 return true;
             });
             if (!success) {
-                throw new BindTransportException(
-                    "Failed to bind to " + NetworkAddress.format(hostAddress, portsRange),
-                    lastException.get()
-                );
+                throw new BindTransportException("Failed to bind to " + NetworkAddress.format(hostAddress, portsRange),
+                        lastException.get());
             }
         } finally {
             closeLock.writeLock().unlock();
@@ -426,8 +420,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
         return boundSocket.get();
     }
 
-    private BoundTransportAddress createBoundTransportAddress(ProfileSettings profileSettings,
-                                                              List<InetSocketAddress> boundAddresses) {
+    private BoundTransportAddress createBoundTransportAddress(ProfileSettings profileSettings, List<InetSocketAddress> boundAddresses) {
         String[] boundAddressesHostStrings = new String[boundAddresses.size()];
         TransportAddress[] transportBoundAddresses = new TransportAddress[boundAddresses.size()];
         for (int i = 0; i < boundAddresses.size(); i++) {
@@ -457,8 +450,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
     }
 
     // package private for tests
-    static int resolvePublishPort(ProfileSettings profileSettings, List<InetSocketAddress> boundAddresses,
-                                  InetAddress publishInetAddress) {
+    static int resolvePublishPort(ProfileSettings profileSettings, List<InetSocketAddress> boundAddresses, InetAddress publishInetAddress) {
         int publishPort = profileSettings.publishPort;
 
         // if port not explicitly provided, search for port of address in boundAddresses that matches publishInetAddress
@@ -485,10 +477,10 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
         if (publishPort < 0) {
             String profileExplanation = profileSettings.isDefaultProfile ? "" : " for profile " + profileSettings.profileName;
-            throw new BindTransportException("Failed to auto-resolve publish port" + profileExplanation + ", multiple bound addresses " +
-                boundAddresses + " with distinct ports and none of them matched the publish address (" + publishInetAddress + "). " +
-                "Please specify a unique port by setting " + TransportSettings.PORT.getKey() + " or " +
-                TransportSettings.PUBLISH_PORT.getKey());
+            throw new BindTransportException("Failed to auto-resolve publish port" + profileExplanation + ", multiple bound addresses "
+                    + boundAddresses + " with distinct ports and none of them matched the publish address (" + publishInetAddress + "). "
+                    + "Please specify a unique port by setting " + TransportSettings.PORT.getKey() + " or "
+                    + TransportSettings.PUBLISH_PORT.getKey());
         }
         return publishPort;
     }
@@ -500,11 +492,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
     private int[] defaultPortRange() {
         return new PortsRange(
-            settings.get(
-                TransportSettings.PORT_PROFILE.getConcreteSettingForNamespace(TransportSettings.DEFAULT_PROFILE).getKey(),
-                TransportSettings.PORT.get(settings)
-            )
-        ).ports();
+                settings.get(TransportSettings.PORT_PROFILE.getConcreteSettingForNamespace(TransportSettings.DEFAULT_PROFILE).getKey(),
+                        TransportSettings.PORT.get(settings))).ports();
     }
 
     // this code is a take on guava's HostAndPort, like a HostAndPortRange
@@ -528,7 +517,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
                 throw new IllegalArgumentException("Invalid bracketed host/port range: " + hostPortString);
             }
             host = matcher.group(1);
-            portString = matcher.group(2);  // could be null
+            portString = matcher.group(2); // could be null
         } else {
             int colonPos = hostPortString.indexOf(':');
             if (colonPos >= 0 && hostPortString.indexOf(':', colonPos + 1) == -1) {
@@ -553,10 +542,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
             port = Integer.parseInt(portString);
         }
 
-        return Arrays.stream(InetAddress.getAllByName(host))
-            .distinct()
-            .map(address -> new TransportAddress(address, port))
-            .toArray(TransportAddress[]::new);
+        return Arrays.stream(InetAddress.getAllByName(host)).distinct().map(address -> new TransportAddress(address, port))
+                .toArray(TransportAddress[]::new);
     }
 
     @Override
@@ -577,9 +564,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
                 for (Map.Entry<String, List<TcpServerChannel>> entry : serverChannels.entrySet()) {
                     String profile = entry.getKey();
                     List<TcpServerChannel> channels = entry.getValue();
-                    ActionListener<Void> closeFailLogger = ActionListener.wrap(c -> {
-                        },
-                        e -> logger.warn(() -> new ParameterizedMessage("Error closing serverChannel for profile [{}]", profile), e));
+                    ActionListener<Void> closeFailLogger = ActionListener.wrap(c -> {},
+                            e -> logger.warn(() -> new ParameterizedMessage("Error closing serverChannel for profile [{}]", profile), e));
                     channels.forEach(c -> c.addCloseListener(closeFailLogger));
                     CloseableChannel.closeChannels(channels, true);
                 }
@@ -618,7 +604,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
         if (isCloseConnectionException(e)) {
             logger.debug(() -> new ParameterizedMessage(
-                "close connection exception caught on transport layer [{}], disconnecting from relevant node", channel), e);
+                    "close connection exception caught on transport layer [{}], disconnecting from relevant node", channel), e);
             // close the channel, which will cause a node to be disconnected if relevant
             CloseableChannel.closeChannel(channel);
         } else if (isConnectException(e)) {
@@ -631,7 +617,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
             CloseableChannel.closeChannel(channel);
         } else if (e instanceof CancelledKeyException) {
             logger.debug(() -> new ParameterizedMessage(
-                "cancelled key exception caught on transport layer [{}], disconnecting from relevant node", channel), e);
+                    "cancelled key exception caught on transport layer [{}], disconnecting from relevant node", channel), e);
             // close the channel as safe measure, which will cause a node to be disconnected if relevant
             CloseableChannel.closeChannel(channel);
         } else if (e instanceof HttpRequestOnTransportException) {
@@ -729,15 +715,13 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
             }
 
             if (appearsToBeHTTPResponse(headerBuffer)) {
-                throw new StreamCorruptedException("received HTTP response on transport port, ensure that transport port (not " +
-                        "HTTP port) of a remote node is specified in the configuration");
+                throw new StreamCorruptedException("received HTTP response on transport port, ensure that transport port (not "
+                        + "HTTP port) of a remote node is specified in the configuration");
             }
 
-            String firstBytes = "("
-                    + Integer.toHexString(headerBuffer.get(0) & 0xFF) + ","
-                    + Integer.toHexString(headerBuffer.get(1) & 0xFF) + ","
-                    + Integer.toHexString(headerBuffer.get(2) & 0xFF) + ","
-                    + Integer.toHexString(headerBuffer.get(3) & 0xFF) + ")";
+            String firstBytes =
+                    "(" + Integer.toHexString(headerBuffer.get(0) & 0xFF) + "," + Integer.toHexString(headerBuffer.get(1) & 0xFF) + ","
+                            + Integer.toHexString(headerBuffer.get(2) & 0xFF) + "," + Integer.toHexString(headerBuffer.get(3) & 0xFF) + ")";
 
             if (appearsToBeTLS(headerBuffer)) {
                 throw new StreamCorruptedException("SSL/TLS request received but SSL/TLS is not enabled on this node, got " + firstBytes);
@@ -758,22 +742,18 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
 
         if (messageLength > THIRTY_PER_HEAP_SIZE) {
             throw new IllegalArgumentException("transport content length received [" + new ByteSizeValue(messageLength) + "] exceeded ["
-                + new ByteSizeValue(THIRTY_PER_HEAP_SIZE) + "]");
+                    + new ByteSizeValue(THIRTY_PER_HEAP_SIZE) + "]");
         }
 
         return messageLength;
     }
 
     private static boolean appearsToBeHTTPRequest(BytesReference headerBuffer) {
-        return bufferStartsWith(headerBuffer, "GET")
-            || bufferStartsWith(headerBuffer, "POST")
-            || bufferStartsWith(headerBuffer, "PUT")
-            || bufferStartsWith(headerBuffer, "HEAD")
-            || bufferStartsWith(headerBuffer, "DELETE")
-            // Actually 'OPTIONS'. But we are only guaranteed to have read six bytes at this point.
-            || bufferStartsWith(headerBuffer, "OPTION")
-            || bufferStartsWith(headerBuffer, "PATCH")
-            || bufferStartsWith(headerBuffer, "TRACE");
+        return bufferStartsWith(headerBuffer, "GET") || bufferStartsWith(headerBuffer, "POST") || bufferStartsWith(headerBuffer, "PUT")
+                || bufferStartsWith(headerBuffer, "HEAD") || bufferStartsWith(headerBuffer, "DELETE")
+                // Actually 'OPTIONS'. But we are only guaranteed to have read six bytes at this point.
+                || bufferStartsWith(headerBuffer, "OPTION") || bufferStartsWith(headerBuffer, "PATCH")
+                || bufferStartsWith(headerBuffer, "TRACE");
     }
 
     private static boolean appearsToBeHTTPResponse(BytesReference headerBuffer) {
@@ -853,8 +833,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
         final long messagesSent = statsTracker.getMessagesSent();
         final long messagesReceived = statsTracker.getMessagesReceived();
         final long bytesRead = statsTracker.getBytesRead();
-        return new TransportStats(acceptedChannels.size(), outboundConnectionCount.get(),
-                messagesReceived, bytesRead, messagesSent, bytesWritten);
+        return new TransportStats(acceptedChannels.size(), outboundConnectionCount.get(), messagesReceived, bytesRead, messagesSent,
+                bytesWritten);
     }
 
     /**
@@ -913,8 +893,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
                 throw new IllegalStateException("profile [" + profileName + "] has no port configured");
             }
             portOrRange = TransportSettings.PORT_PROFILE.getConcreteSettingForNamespace(profileName).get(settings);
-            publishPort = isDefaultProfile ? TransportSettings.PUBLISH_PORT.get(settings) :
-                TransportSettings.PUBLISH_PORT_PROFILE.getConcreteSettingForNamespace(profileName).get(settings);
+            publishPort = isDefaultProfile ? TransportSettings.PUBLISH_PORT.get(settings)
+                    : TransportSettings.PUBLISH_PORT_PROFILE.getConcreteSettingForNamespace(profileName).get(settings);
         }
     }
 
@@ -937,7 +917,7 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
         private final CountDown countDown;
 
         private ChannelsConnectedListener(DiscoveryNode node, ConnectionProfile connectionProfile, List<TcpChannel> channels,
-                                          ActionListener<Transport.Connection> listener) {
+                ActionListener<Transport.Connection> listener) {
             this.node = node;
             this.connectionProfile = connectionProfile;
             this.channels = channels;
@@ -964,8 +944,8 @@ public abstract class TcpTransport extends AbstractLifecycleComponent implements
                         keepAlive.registerNodeConnection(nodeChannels.channels, connectionProfile);
                         nodeChannels.addCloseListener(new ChannelCloseLogger(node, connectionId, relativeMillisTime));
                         listener.onResponse(nodeChannels);
-                    }, e -> closeAndFail(e instanceof ConnectTransportException ?
-                        e : new ConnectTransportException(node, "general node connection failure", e))));
+                    }, e -> closeAndFail(e instanceof ConnectTransportException ? e
+                            : new ConnectTransportException(node, "general node connection failure", e))));
                 } catch (Exception ex) {
                     closeAndFail(ex);
                 }

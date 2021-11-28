@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.recovery;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
 import org.codelibs.fesen.common.Strings;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Information regarding the recovery state of indices and their associated shards.
@@ -54,7 +54,7 @@ public class RecoveryResponse extends BroadcastResponse {
      * @param shardFailures     List of failures processing shards
      */
     public RecoveryResponse(int totalShards, int successfulShards, int failedShards, Map<String, List<RecoveryState>> shardRecoveryStates,
-                            List<DefaultShardOperationFailedException> shardFailures) {
+            List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.shardRecoveryStates = shardRecoveryStates;
     }

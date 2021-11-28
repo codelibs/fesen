@@ -19,15 +19,11 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.common.util.set.Sets;
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.ingest.ValueSource;
-import org.codelibs.fesen.ingest.IngestDocument.Metadata;
-import org.codelibs.fesen.ingest.common.AppendProcessor;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,11 +35,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import org.codelibs.fesen.common.util.set.Sets;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.IngestDocument.Metadata;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.ingest.ValueSource;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class AppendProcessorTests extends ESTestCase {
 
@@ -204,9 +203,8 @@ public class AppendProcessorTests extends ESTestCase {
 
         // generate new values
         int nonexistingValuesSize = randomIntBetween(0, 10);
-        Set<String> newValues = Stream.generate(() -> randomAlphaOfLengthBetween(1, 10))
-            .limit(nonexistingValuesSize)
-            .collect(Collectors.toSet());
+        Set<String> newValues =
+                Stream.generate(() -> randomAlphaOfLengthBetween(1, 10)).limit(nonexistingValuesSize).collect(Collectors.toSet());
 
         // create a set using the new values making sure there are no overlapping values already present in the existing values
         Set<String> nonexistingValues = Sets.difference(newValues, new HashSet<>(list));
@@ -224,9 +222,8 @@ public class AppendProcessorTests extends ESTestCase {
     }
 
     private static Processor createAppendProcessor(String fieldName, Object fieldValue, boolean allowDuplicates) {
-        return new AppendProcessor(randomAlphaOfLength(10),
-            null, new TestTemplateService.MockTemplateScript.Factory(fieldName),
-            ValueSource.wrap(fieldValue, TestTemplateService.instance()), allowDuplicates);
+        return new AppendProcessor(randomAlphaOfLength(10), null, new TestTemplateService.MockTemplateScript.Factory(fieldName),
+                ValueSource.wrap(fieldValue, TestTemplateService.instance()), allowDuplicates);
     }
 
     private enum Scalar {
@@ -235,27 +232,32 @@ public class AppendProcessorTests extends ESTestCase {
             Object randomValue() {
                 return randomInt();
             }
-        }, DOUBLE {
+        },
+        DOUBLE {
             @Override
             Object randomValue() {
                 return randomDouble();
             }
-        }, FLOAT {
+        },
+        FLOAT {
             @Override
             Object randomValue() {
                 return randomFloat();
             }
-        }, BOOLEAN {
+        },
+        BOOLEAN {
             @Override
             Object randomValue() {
                 return randomBoolean();
             }
-        }, STRING {
+        },
+        STRING {
             @Override
             Object randomValue() {
                 return randomAlphaOfLengthBetween(1, 10);
             }
-        }, MAP {
+        },
+        MAP {
             @Override
             Object randomValue() {
                 int numItems = randomIntBetween(1, 10);
@@ -265,7 +267,8 @@ public class AppendProcessorTests extends ESTestCase {
                 }
                 return map;
             }
-        }, NULL {
+        },
+        NULL {
             @Override
             Object randomValue() {
                 return null;

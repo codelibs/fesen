@@ -19,17 +19,16 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.index.mapper.Mapper;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.index.mapper.MetadataFieldMapper.TypeParser;
 import org.codelibs.fesen.index.query.RankFeatureQueryBuilder;
 import org.codelibs.fesen.plugins.MapperPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.SearchPlugin;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MapperExtrasPlugin extends Plugin implements MapperPlugin, SearchPlugin {
 
@@ -51,8 +50,7 @@ public class MapperExtrasPlugin extends Plugin implements MapperPlugin, SearchPl
 
     @Override
     public List<QuerySpec<?>> getQueries() {
-        return Collections.singletonList(
-            new QuerySpec<>(RankFeatureQueryBuilder.NAME, RankFeatureQueryBuilder::new,
+        return Collections.singletonList(new QuerySpec<>(RankFeatureQueryBuilder.NAME, RankFeatureQueryBuilder::new,
                 p -> RankFeatureQueryBuilder.PARSER.parse(p, null)));
     }
 

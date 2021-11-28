@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.env;
 
-import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-
 import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
@@ -30,6 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.attribute.FileStoreAttributeView;
 import java.util.List;
+
+import org.apache.lucene.util.Constants;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
 
 /** 
  * Implementation of FileStore that supports
@@ -42,7 +42,7 @@ class ESFileStore extends FileStore {
     final FileStore in;
     private int majorDeviceNumber;
     private int minorDeviceNumber;
-    
+
     @SuppressForbidden(reason = "tries to determine if disk is spinning")
     // TODO: move PathUtils to be package-private here instead of 
     // public+forbidden api!
@@ -148,11 +148,14 @@ class ESFileStore extends FileStore {
 
     @Override
     public Object getAttribute(String attribute) throws IOException {
-        switch(attribute) {
-            // for the partition
-            case "lucene:major_device_number": return majorDeviceNumber;
-            case "lucene:minor_device_number": return minorDeviceNumber;
-            default: return in.getAttribute(attribute);
+        switch (attribute) {
+        // for the partition
+        case "lucene:major_device_number":
+            return majorDeviceNumber;
+        case "lucene:minor_device_number":
+            return minorDeviceNumber;
+        default:
+            return in.getAttribute(attribute);
         }
     }
 

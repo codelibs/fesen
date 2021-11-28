@@ -47,9 +47,8 @@ public class RestIndicesStatsActionTests extends ESTestCase {
         final String metric = randomAlphaOfLength(64);
         params.put("metric", metric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_stats").withParams(params).build();
-        final IllegalArgumentException e = expectThrows(
-            IllegalArgumentException.class,
-            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        final IllegalArgumentException e =
+                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
         assertThat(e, hasToString(containsString("request [/_stats] contains unrecognized metric: [" + metric + "]")));
     }
 
@@ -57,14 +56,10 @@ public class RestIndicesStatsActionTests extends ESTestCase {
         final HashMap<String, String> params = new HashMap<>();
         params.put("metric", "request_cache,fieldata,unrecognized");
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_stats").withParams(params).build();
-        final IllegalArgumentException e = expectThrows(
-            IllegalArgumentException.class,
-            () -> action.prepareRequest(request, mock(NodeClient.class)));
-        assertThat(
-            e,
-            hasToString(
-                containsString(
-                    "request [/_stats] contains unrecognized metrics: [fieldata] -> did you mean [fielddata]?, [unrecognized]")));
+        final IllegalArgumentException e =
+                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
+        assertThat(e, hasToString(containsString(
+                "request [/_stats] contains unrecognized metrics: [fieldata] -> did you mean [fielddata]?, [unrecognized]")));
     }
 
     public void testAllRequestWithOtherMetrics() throws IOException {
@@ -72,9 +67,8 @@ public class RestIndicesStatsActionTests extends ESTestCase {
         final String metric = randomSubsetOf(1, RestIndicesStatsAction.METRICS.keySet()).get(0);
         params.put("metric", "_all," + metric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_stats").withParams(params).build();
-        final IllegalArgumentException e = expectThrows(
-            IllegalArgumentException.class,
-            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        final IllegalArgumentException e =
+                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
         assertThat(e, hasToString(containsString("request [/_stats] contains _all and individual metrics [_all," + metric + "]")));
     }
 

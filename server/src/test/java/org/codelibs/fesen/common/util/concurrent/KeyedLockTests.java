@@ -138,7 +138,6 @@ public class KeyedLockTests extends ESTestCase {
         assertFalse(lock.hasLockedKeys());
     }
 
-
     public static class AcquireAndReleaseThread extends Thread {
         private CountDownLatch startLatch;
         KeyedLock<String> connectionLock;

@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,15 +35,6 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.SearchHit;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.OptionalInt;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
 
 /**
  * Metric implementing Mean Reciprocal Rank (https://en.wikipedia.org/wiki/Mean_reciprocal_rank).<br>
@@ -134,8 +134,8 @@ public class MeanReciprocalRank implements EvaluationMetric {
 
     private static final ParseField RELEVANT_RATING_FIELD = new ParseField("relevant_rating_threshold");
     private static final ParseField K_FIELD = new ParseField("k");
-    private static final ConstructingObjectParser<MeanReciprocalRank, Void> PARSER = new ConstructingObjectParser<>("reciprocal_rank",
-            args -> {
+    private static final ConstructingObjectParser<MeanReciprocalRank, Void> PARSER =
+            new ConstructingObjectParser<>("reciprocal_rank", args -> {
                 Integer optionalThreshold = (Integer) args[0];
                 Integer optionalK = (Integer) args[1];
                 return new MeanReciprocalRank(optionalThreshold == null ? DEFAULT_RATING_THRESHOLD : optionalThreshold,
@@ -171,8 +171,7 @@ public class MeanReciprocalRank implements EvaluationMetric {
             return false;
         }
         MeanReciprocalRank other = (MeanReciprocalRank) obj;
-        return Objects.equals(relevantRatingThreshhold, other.relevantRatingThreshhold)
-                && Objects.equals(k, other.k);
+        return Objects.equals(relevantRatingThreshhold, other.relevantRatingThreshhold) && Objects.equals(k, other.k);
     }
 
     @Override
@@ -194,14 +193,12 @@ public class MeanReciprocalRank implements EvaluationMetric {
         }
 
         @Override
-        public
-        String getMetricName() {
+        public String getMetricName() {
             return NAME;
         }
 
         @Override
-        public XContentBuilder innerToXContent(XContentBuilder builder, Params params)
-                throws IOException {
+        public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
             return builder.field(FIRST_RELEVANT_RANK_FIELD.getPreferredName(), firstRelevantRank);
         }
 

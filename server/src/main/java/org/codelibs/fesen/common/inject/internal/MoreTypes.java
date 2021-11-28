@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-
 package org.codelibs.fesen.common.inject.internal;
+
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -37,9 +39,6 @@ import org.codelibs.fesen.common.inject.ConfigurationException;
 import org.codelibs.fesen.common.inject.TypeLiteral;
 import org.codelibs.fesen.common.inject.spi.Message;
 
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableMap;
-
 /**
  * Static methods for working with types that we aren't publishing in the
  * public {@code Types} API.
@@ -48,7 +47,7 @@ import static java.util.Collections.unmodifiableMap;
  */
 public class MoreTypes {
 
-    public static final Type[] EMPTY_TYPE_ARRAY = new Type[]{};
+    public static final Type[] EMPTY_TYPE_ARRAY = new Type[] {};
 
     private MoreTypes() {
     }
@@ -82,9 +81,7 @@ public class MoreTypes {
 
         @SuppressWarnings("unchecked")
         TypeLiteral<T> wrappedPrimitives = (TypeLiteral<T>) PRIMITIVE_TO_WRAPPER.get(type);
-        return wrappedPrimitives != null
-                ? wrappedPrimitives
-                : type;
+        return wrappedPrimitives != null ? wrappedPrimitives : type;
     }
 
     /**
@@ -110,15 +107,12 @@ public class MoreTypes {
      * according to {@link Object#equals(Object) Object.equals()}.
      */
     public static Type canonicalize(Type type) {
-        if (type instanceof ParameterizedTypeImpl
-                || type instanceof GenericArrayTypeImpl
-                || type instanceof WildcardTypeImpl) {
+        if (type instanceof ParameterizedTypeImpl || type instanceof GenericArrayTypeImpl || type instanceof WildcardTypeImpl) {
             return type;
 
         } else if (type instanceof ParameterizedType) {
             ParameterizedType p = (ParameterizedType) type;
-            return new ParameterizedTypeImpl(p.getOwnerType(),
-                    p.getRawType(), p.getActualTypeArguments());
+            return new ParameterizedTypeImpl(p.getOwnerType(), p.getRawType(), p.getActualTypeArguments());
 
         } else if (type instanceof GenericArrayType) {
             GenericArrayType g = (GenericArrayType) type;
@@ -151,9 +145,7 @@ public class MoreTypes {
             // to nested classes exists.
             Type rawType = parameterizedType.getRawType();
             if (!(rawType instanceof Class)) {
-                throw new IllegalArgumentException(
-                        "Expected a Class, but <" + type +"> is of type " + type.getClass().getName()
-                );
+                throw new IllegalArgumentException("Expected a Class, but <" + type + "> is of type " + type.getClass().getName());
             }
             return (Class<?>) rawType;
 
@@ -167,8 +159,8 @@ public class MoreTypes {
             return Object.class;
 
         } else {
-            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or "
-                    + "GenericArrayType, but <" + type + "> is of type " + type.getClass().getName());
+            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or " + "GenericArrayType, but <" + type
+                    + "> is of type " + type.getClass().getName());
         }
     }
 
@@ -192,8 +184,7 @@ public class MoreTypes {
             // TODO: save a .clone() call
             ParameterizedType pa = (ParameterizedType) a;
             ParameterizedType pb = (ParameterizedType) b;
-            return Objects.equals(pa.getOwnerType(), pb.getOwnerType())
-                    && pa.getRawType().equals(pb.getRawType())
+            return Objects.equals(pa.getOwnerType(), pb.getOwnerType()) && pa.getRawType().equals(pb.getRawType())
                     && Arrays.equals(pa.getActualTypeArguments(), pb.getActualTypeArguments());
 
         } else if (a instanceof GenericArrayType) {
@@ -212,8 +203,7 @@ public class MoreTypes {
 
             WildcardType wa = (WildcardType) a;
             WildcardType wb = (WildcardType) b;
-            return Arrays.equals(wa.getUpperBounds(), wb.getUpperBounds())
-                    && Arrays.equals(wa.getLowerBounds(), wb.getLowerBounds());
+            return Arrays.equals(wa.getUpperBounds(), wb.getUpperBounds()) && Arrays.equals(wa.getLowerBounds(), wb.getLowerBounds());
 
         } else if (a instanceof TypeVariable) {
             if (!(b instanceof TypeVariable)) {
@@ -221,8 +211,7 @@ public class MoreTypes {
             }
             TypeVariable<?> va = (TypeVariable) a;
             TypeVariable<?> vb = (TypeVariable) b;
-            return va.getGenericDeclaration() == vb.getGenericDeclaration()
-                    && va.getName().equals(vb.getName());
+            return va.getGenericDeclaration() == vb.getGenericDeclaration() && va.getName().equals(vb.getName());
 
         } else {
             // This isn't a type we support. Could be a generic array type, wildcard type, etc.
@@ -240,9 +229,7 @@ public class MoreTypes {
 
         } else if (type instanceof ParameterizedType) {
             ParameterizedType p = (ParameterizedType) type;
-            return Arrays.hashCode(p.getActualTypeArguments())
-                    ^ p.getRawType().hashCode()
-                    ^ hashCodeOrZero(p.getOwnerType());
+            return Arrays.hashCode(p.getActualTypeArguments()) ^ p.getRawType().hashCode() ^ hashCodeOrZero(p.getOwnerType());
 
         } else if (type instanceof GenericArrayType) {
             return hashCode(((GenericArrayType) type).getGenericComponentType());
@@ -275,9 +262,7 @@ public class MoreTypes {
             }
             stringBuilder.append(toString(parameterizedType.getRawType()));
             if (arguments.length > 0) {
-                stringBuilder
-                        .append("<")
-                        .append(toString(arguments[0]));
+                stringBuilder.append("<").append(toString(arguments[0]));
                 for (int i = 1; i < arguments.length; i++) {
                     stringBuilder.append(", ").append(toString(arguments[i]));
                 }
@@ -331,8 +316,7 @@ public class MoreTypes {
             return Constructor.class;
 
         } else {
-            throw new IllegalArgumentException(
-                    "Unsupported implementation class for Member, " + member.getClass());
+            throw new IllegalArgumentException("Unsupported implementation class for Member, " + member.getClass());
         }
     }
 
@@ -431,13 +415,10 @@ public class MoreTypes {
      */
     private static Class<?> declaringClassOf(TypeVariable typeVariable) {
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
-        return genericDeclaration instanceof Class
-                ? (Class<?>) genericDeclaration
-                : null;
+        return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
     }
 
-    public static class ParameterizedTypeImpl
-            implements ParameterizedType, CompositeType {
+    public static class ParameterizedTypeImpl implements ParameterizedType, CompositeType {
         private final Type ownerType;
         private final Type rawType;
         private final Type[] typeArguments;
@@ -501,8 +482,7 @@ public class MoreTypes {
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof ParameterizedType
-                    && MoreTypes.equals(this, (ParameterizedType) other);
+            return other instanceof ParameterizedType && MoreTypes.equals(this, (ParameterizedType) other);
         }
 
         @Override
@@ -516,8 +496,7 @@ public class MoreTypes {
         }
     }
 
-    public static class GenericArrayTypeImpl
-            implements GenericArrayType, CompositeType {
+    public static class GenericArrayTypeImpl implements GenericArrayType, CompositeType {
         private final Type componentType;
 
         public GenericArrayTypeImpl(Type componentType) {
@@ -536,8 +515,7 @@ public class MoreTypes {
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof GenericArrayType
-                    && MoreTypes.equals(this, (GenericArrayType) o);
+            return o instanceof GenericArrayType && MoreTypes.equals(this, (GenericArrayType) o);
         }
 
         @Override
@@ -586,24 +564,22 @@ public class MoreTypes {
 
         @Override
         public Type[] getUpperBounds() {
-            return new Type[]{upperBound};
+            return new Type[] { upperBound };
         }
 
         @Override
         public Type[] getLowerBounds() {
-            return lowerBound != null ? new Type[]{lowerBound} : EMPTY_TYPE_ARRAY;
+            return lowerBound != null ? new Type[] { lowerBound } : EMPTY_TYPE_ARRAY;
         }
 
         @Override
         public boolean isFullySpecified() {
-            return MoreTypes.isFullySpecified(upperBound)
-                    && (lowerBound == null || MoreTypes.isFullySpecified(lowerBound));
+            return MoreTypes.isFullySpecified(upperBound) && (lowerBound == null || MoreTypes.isFullySpecified(lowerBound));
         }
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof WildcardType
-                    && MoreTypes.equals(this, (WildcardType) other);
+            return other instanceof WildcardType && MoreTypes.equals(this, (WildcardType) other);
         }
 
         @Override

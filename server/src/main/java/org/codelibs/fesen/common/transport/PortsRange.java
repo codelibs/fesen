@@ -19,10 +19,9 @@
 
 package org.codelibs.fesen.common.transport;
 
+import java.util.StringTokenizer;
 
 import com.carrotsearch.hppc.IntArrayList;
-
-import java.util.StringTokenizer;
 
 public class PortsRange {
 
@@ -83,8 +82,6 @@ public class PortsRange {
 
     @Override
     public String toString() {
-        return "PortsRange{" +
-            "portRange='" + portRange + '\'' +
-            '}';
+        return "PortsRange{" + "portRange='" + portRange + '\'' + '}';
     }
 }

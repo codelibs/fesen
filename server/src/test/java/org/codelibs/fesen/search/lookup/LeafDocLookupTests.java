@@ -55,10 +55,7 @@ public class LeafDocLookupTests extends ESTestCase {
         docValues = mock(ScriptDocValues.class);
         IndexFieldData<?> fieldData = createFieldData(docValues);
 
-        docLookup = new LeafDocLookup(mapperService,
-            ignored -> fieldData,
-            new String[] { "type" },
-            null);
+        docLookup = new LeafDocLookup(mapperService, ignored -> fieldData, new String[] { "type" }, null);
     }
 
     public void testBasicLookup() {

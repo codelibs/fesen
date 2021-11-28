@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.cluster;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterState.Custom;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -32,15 +41,6 @@ import org.codelibs.fesen.repositories.RepositoryOperation;
 import org.codelibs.fesen.snapshots.Snapshot;
 import org.codelibs.fesen.snapshots.SnapshotId;
 import org.codelibs.fesen.snapshots.SnapshotsService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A class that represents the snapshot deletions that are in progress in the cluster.
@@ -299,12 +299,8 @@ public class SnapshotDeletionsInProgress extends AbstractNamedDiffable<Custom> i
                 return false;
             }
             Entry that = (Entry) o;
-            return repoName.equals(that.repoName)
-                       && snapshots.equals(that.snapshots)
-                       && startTime == that.startTime
-                       && repositoryStateId == that.repositoryStateId
-                       && state == that.state
-                       && uuid.equals(that.uuid);
+            return repoName.equals(that.repoName) && snapshots.equals(that.snapshots) && startTime == that.startTime
+                    && repositoryStateId == that.repositoryStateId && state == that.state && uuid.equals(that.uuid);
         }
 
         @Override
@@ -318,8 +314,8 @@ public class SnapshotDeletionsInProgress extends AbstractNamedDiffable<Custom> i
                 out.writeString(repoName);
                 out.writeCollection(snapshots);
             } else {
-                assert snapshots.size() == 1 : "Only single deletion allowed in mixed version cluster containing [" + out.getVersion() +
-                        "] but saw " + snapshots;
+                assert snapshots.size() == 1 : "Only single deletion allowed in mixed version cluster containing [" + out.getVersion()
+                        + "] but saw " + snapshots;
                 new Snapshot(repoName, snapshots.get(0)).writeTo(out);
             }
             out.writeVLong(startTime);
@@ -368,12 +364,12 @@ public class SnapshotDeletionsInProgress extends AbstractNamedDiffable<Custom> i
         public static State readFrom(StreamInput in) throws IOException {
             final byte value = in.readByte();
             switch (value) {
-                case 0:
-                    return WAITING;
-                case 1:
-                    return STARTED;
-                default:
-                    throw new IllegalArgumentException("No snapshot delete state for value [" + value + "]");
+            case 0:
+                return WAITING;
+            case 1:
+                return STARTED;
+            default:
+                throw new IllegalArgumentException("No snapshot delete state for value [" + value + "]");
             }
         }
 

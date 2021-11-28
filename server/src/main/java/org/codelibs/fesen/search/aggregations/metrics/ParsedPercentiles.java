@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.aggregations.ParsedAggregation;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class ParsedPercentiles extends ParsedAggregation implements Iterable<Percentile>  {
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
+public abstract class ParsedPercentiles extends ParsedAggregation implements Iterable<Percentile> {
 
     protected final Map<Double, Double> percentiles = new LinkedHashMap<>();
     protected final Map<Double, String> percentilesAsString = new HashMap<>();
@@ -72,6 +72,7 @@ public abstract class ParsedPercentiles extends ParsedAggregation implements Ite
     public Iterator<Percentile> iterator() {
         return new Iterator<Percentile>() {
             final Iterator<Map.Entry<Double, Double>> iterator = percentiles.entrySet().iterator();
+
             @Override
             public boolean hasNext() {
                 return iterator.hasNext();

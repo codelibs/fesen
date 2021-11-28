@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
-import org.codelibs.fesen.core.CheckedFunction;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
+import org.codelibs.fesen.core.CheckedFunction;
 
 /**
  * Superclass for {@link ObjectParser} and {@link ConstructingObjectParser}. Defines most of the "declare" methods so they can be shared.
@@ -65,8 +65,7 @@ public abstract class AbstractObjectParser<Value, Context> {
      *            the field to parse
      */
     public abstract <T> void declareNamedObject(BiConsumer<Value, T> consumer, NamedObjectParser<T, Context> namedObjectParser,
-                                                 ParseField parseField);
-
+            ParseField parseField);
 
     /**
      * Declares named objects in the style of aggregations. These are named
@@ -175,8 +174,8 @@ public abstract class AbstractObjectParser<Value, Context> {
      */
     public <T> void declareObjectOrNull(BiConsumer<Value, T> consumer, ContextParser<Context, T> objectParser, T nullValue,
             ParseField field) {
-        declareField(consumer, (p, c) -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : objectParser.parse(p, c),
-                field, ValueType.OBJECT_OR_NULL);
+        declareField(consumer, (p, c) -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : objectParser.parse(p, c), field,
+                ValueType.OBJECT_OR_NULL);
     }
 
     public void declareFloat(BiConsumer<Value, Float> consumer, ParseField field) {
@@ -188,8 +187,8 @@ public abstract class AbstractObjectParser<Value, Context> {
      * Declare a float field that parses explicit {@code null}s in the json to a default value.
      */
     public void declareFloatOrNull(BiConsumer<Value, Float> consumer, float nullValue, ParseField field) {
-        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.floatValue(),
-                field, ValueType.FLOAT_OR_NULL);
+        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.floatValue(), field,
+                ValueType.FLOAT_OR_NULL);
     }
 
     public void declareDouble(BiConsumer<Value, Double> consumer, ParseField field) {
@@ -201,8 +200,8 @@ public abstract class AbstractObjectParser<Value, Context> {
      * Declare a double field that parses explicit {@code null}s in the json to a default value.
      */
     public void declareDoubleOrNull(BiConsumer<Value, Double> consumer, double nullValue, ParseField field) {
-        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.doubleValue(),
-                field, ValueType.DOUBLE_OR_NULL);
+        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.doubleValue(), field,
+                ValueType.DOUBLE_OR_NULL);
     }
 
     public void declareLong(BiConsumer<Value, Long> consumer, ParseField field) {
@@ -212,8 +211,8 @@ public abstract class AbstractObjectParser<Value, Context> {
 
     public void declareLongOrNull(BiConsumer<Value, Long> consumer, long nullValue, ParseField field) {
         // Using a method reference here angers some compilers
-        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.longValue(),
-            field, ValueType.LONG_OR_NULL);
+        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.longValue(), field,
+                ValueType.LONG_OR_NULL);
     }
 
     public void declareInt(BiConsumer<Value, Integer> consumer, ParseField field) {
@@ -225,8 +224,8 @@ public abstract class AbstractObjectParser<Value, Context> {
      * Declare a double field that parses explicit {@code null}s in the json to a default value.
      */
     public void declareIntOrNull(BiConsumer<Value, Integer> consumer, int nullValue, ParseField field) {
-        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.intValue(),
-                field, ValueType.INT_OR_NULL);
+        declareField(consumer, p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.intValue(), field,
+                ValueType.INT_OR_NULL);
     }
 
     public void declareString(BiConsumer<Value, String> consumer, ParseField field) {
@@ -258,18 +257,13 @@ public abstract class AbstractObjectParser<Value, Context> {
      * like {@link #declareObjectArray(BiConsumer, ContextParser, ParseField)}, but can also handle single null values,
      * in which case the consumer isn't called
      */
-    public <
-        T> void declareObjectArrayOrNull(
-        BiConsumer<Value, List<T>> consumer,
-        ContextParser<Context, T> objectParser,
-        ParseField field
-    ) {
-        declareField(
-            (value, list) -> { if (list != null) consumer.accept(value, list); },
-            (p, c) -> p.currentToken() == XContentParser.Token.VALUE_NULL ? null : parseArray(p, () -> objectParser.parse(p, c)),
-            field,
-            ValueType.OBJECT_ARRAY_OR_NULL
-        );
+    public <T> void declareObjectArrayOrNull(BiConsumer<Value, List<T>> consumer, ContextParser<Context, T> objectParser,
+            ParseField field) {
+        declareField((value, list) -> {
+            if (list != null)
+                consumer.accept(value, list);
+        }, (p, c) -> p.currentToken() == XContentParser.Token.VALUE_NULL ? null : parseArray(p, () -> objectParser.parse(p, c)), field,
+                ValueType.OBJECT_ARRAY_OR_NULL);
     }
 
     public void declareStringArray(BiConsumer<Value, List<String>> consumer, ParseField field) {
@@ -295,8 +289,8 @@ public abstract class AbstractObjectParser<Value, Context> {
     /**
      * Declares a field that can contain an array of elements listed in the type ValueType enum
      */
-    public <T> void declareFieldArray(BiConsumer<Value, List<T>> consumer, ContextParser<Context, T> itemParser,
-                                      ParseField field, ValueType type) {
+    public <T> void declareFieldArray(BiConsumer<Value, List<T>> consumer, ContextParser<Context, T> itemParser, ParseField field,
+            ValueType type) {
         declareField(consumer, (p, c) -> parseArray(p, () -> itemParser.parse(p, c)), field, type);
     }
 
@@ -370,14 +364,12 @@ public abstract class AbstractObjectParser<Value, Context> {
 
     private static <T> List<T> parseArray(XContentParser parser, IOSupplier<T> supplier) throws IOException {
         List<T> list = new ArrayList<>();
-        if (parser.currentToken().isValue()
-                || parser.currentToken() == XContentParser.Token.VALUE_NULL
+        if (parser.currentToken().isValue() || parser.currentToken() == XContentParser.Token.VALUE_NULL
                 || parser.currentToken() == XContentParser.Token.START_OBJECT) {
             list.add(supplier.get()); // single value
         } else {
             while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                if (parser.currentToken().isValue()
-                        || parser.currentToken() == XContentParser.Token.VALUE_NULL
+                if (parser.currentToken().isValue() || parser.currentToken() == XContentParser.Token.VALUE_NULL
                         || parser.currentToken() == XContentParser.Token.START_OBJECT) {
                     list.add(supplier.get());
                 } else {

@@ -19,7 +19,9 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
@@ -30,8 +32,7 @@ import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.indices.SystemIndices;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * A service responsible for updating the metadata used by system indices.
@@ -68,7 +69,7 @@ public class SystemIndexMetadataUpgradeService implements ClusterStateListener {
                         if (systemIndices.isSystemIndex(cursor.value.getIndex()) != cursor.value.isSystem()) {
                             updateTaskPending = true;
                             clusterService.submitStateUpdateTask("system_index_metadata_upgrade_service {system metadata change}",
-                                new SystemIndexMetadataUpdateTask());
+                                    new SystemIndexMetadataUpdateTask());
                             break;
                         }
                     }

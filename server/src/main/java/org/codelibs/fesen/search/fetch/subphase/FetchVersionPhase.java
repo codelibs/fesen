@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.codelibs.fesen.common.lucene.uid.Versions;
@@ -25,8 +27,6 @@ import org.codelibs.fesen.index.mapper.VersionFieldMapper;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
-
-import java.io.IOException;
 
 public final class FetchVersionPhase implements FetchSubPhase {
 

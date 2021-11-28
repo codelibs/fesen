@@ -25,8 +25,8 @@ import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 
 /**
  * An allocation decider that prevents multiple instances of the same shard to
@@ -48,7 +48,7 @@ public class SameShardAllocationDecider extends AllocationDecider {
     public static final String NAME = "same_shard";
 
     public static final Setting<Boolean> CLUSTER_ROUTING_ALLOCATION_SAME_HOST_SETTING =
-        Setting.boolSetting("cluster.routing.allocation.same_shard.host", false, Property.Dynamic, Property.NodeScope);
+            Setting.boolSetting("cluster.routing.allocation.same_shard.host", false, Property.Dynamic, Property.NodeScope);
 
     private volatile boolean sameHost;
 
@@ -97,9 +97,9 @@ public class SameShardAllocationDecider extends AllocationDecider {
                             String hostType = checkNodeOnSameHostAddress ? "address" : "name";
                             String host = checkNodeOnSameHostAddress ? node.node().getHostAddress() : node.node().getHostName();
                             return allocation.decision(Decision.NO, NAME,
-                                "a copy of this shard is already allocated to host %s [%s], on node [%s], and [%s] is [true] which " +
-                                    "forbids more than one node on this host from holding a copy of this shard",
-                                hostType, host, node.nodeId(), CLUSTER_ROUTING_ALLOCATION_SAME_HOST_SETTING.getKey());
+                                    "a copy of this shard is already allocated to host %s [%s], on node [%s], and [%s] is [true] which "
+                                            + "forbids more than one node on this host from holding a copy of this shard",
+                                    hostType, host, node.nodeId(), CLUSTER_ROUTING_ALLOCATION_SAME_HOST_SETTING.getKey());
                         }
                     }
                 }
@@ -116,17 +116,15 @@ public class SameShardAllocationDecider extends AllocationDecider {
     }
 
     private Decision decideSameNode(ShardRouting shardRouting, RoutingNode node, RoutingAllocation allocation,
-                                    Iterable<ShardRouting> assignedShards) {
+            Iterable<ShardRouting> assignedShards) {
         for (ShardRouting assignedShard : assignedShards) {
             if (node.nodeId().equals(assignedShard.currentNodeId())) {
                 if (assignedShard.isSameAllocation(shardRouting)) {
-                    return allocation.decision(Decision.NO, NAME,
-                        "this shard is already allocated to this node [%s]",
-                        shardRouting.toString());
+                    return allocation.decision(Decision.NO, NAME, "this shard is already allocated to this node [%s]",
+                            shardRouting.toString());
                 } else {
-                    return allocation.decision(Decision.NO, NAME,
-                        "a copy of this shard is already allocated to this node [%s]",
-                        assignedShard.toString());
+                    return allocation.decision(Decision.NO, NAME, "a copy of this shard is already allocated to this node [%s]",
+                            assignedShard.toString());
                 }
             }
         }

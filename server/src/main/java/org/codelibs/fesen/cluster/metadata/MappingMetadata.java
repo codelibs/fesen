@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
+
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
@@ -29,13 +34,7 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.index.mapper.DateFieldMapper;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
-
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Mapping configuration for a type.
@@ -58,8 +57,10 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             Routing routing = (Routing) o;
 
@@ -96,8 +97,7 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> {
 
     public MappingMetadata(String type, Map<String, Object> mapping) throws IOException {
         this.type = type;
-        this.source = new CompressedXContent(
-                (builder, params) -> builder.mapContents(mapping), XContentType.JSON, ToXContent.EMPTY_PARAMS);
+        this.source = new CompressedXContent((builder, params) -> builder.mapContents(mapping), XContentType.JSON, ToXContent.EMPTY_PARAMS);
         Map<String, Object> withoutType = mapping;
         if (mapping.size() == 1 && mapping.containsKey(type)) {
             withoutType = (Map<String, Object>) mapping.get(type);
@@ -116,8 +116,9 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> {
                     try {
                         required = nodeBooleanValue(fieldNode);
                     } catch (IllegalArgumentException ex) {
-                        throw new IllegalArgumentException("Failed to create mapping for type [" + this.type() + "]. " +
-                            "Illegal value in field [_routing.required].", ex);
+                        throw new IllegalArgumentException(
+                                "Failed to create mapping for type [" + this.type() + "]. " + "Illegal value in field [_routing.required].",
+                                ex);
                     }
                 }
             }
@@ -177,14 +178,19 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         MappingMetadata that = (MappingMetadata) o;
 
-        if (!routing.equals(that.routing)) return false;
-        if (!source.equals(that.source)) return false;
-        if (!type.equals(that.type)) return false;
+        if (!routing.equals(that.routing))
+            return false;
+        if (!source.equals(that.source))
+            return false;
+        if (!type.equals(that.type))
+            return false;
 
         return true;
     }

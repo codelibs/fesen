@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.bytes;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.FutureArrays;
 import org.codelibs.fesen.common.io.stream.StreamInput;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 public final class BytesArray extends AbstractBytesReference {
 
@@ -91,8 +91,8 @@ public final class BytesArray extends AbstractBytesReference {
     @Override
     public BytesReference slice(int from, int length) {
         if (from < 0 || (from + length) > this.length) {
-            throw new IllegalArgumentException("can't slice a buffer with length [" + this.length +
-                "], with slice parameters from [" + from + "], length [" + length + "]");
+            throw new IllegalArgumentException("can't slice a buffer with length [" + this.length + "], with slice parameters from [" + from
+                    + "], length [" + length + "]");
         }
         return new BytesArray(bytes, offset + from, length);
     }

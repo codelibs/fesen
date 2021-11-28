@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import org.codelibs.fesen.jdk.JavaVersion;
-import org.codelibs.fesen.test.rest.ESRestTestCase;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Collections.unmodifiableList;
+import org.codelibs.fesen.jdk.JavaVersion;
+import org.codelibs.fesen.test.rest.ESRestTestCase;
 
 /**
  * Allows to register additional features supported by the tests runner.
@@ -36,21 +36,9 @@ import static java.util.Collections.unmodifiableList;
  * and the related skip sections can be removed from the tests as well.
  */
 public final class Features {
-    private static final List<String> SUPPORTED = unmodifiableList(Arrays.asList(
-            "catch_unauthorized",
-            "default_shards",
-            "embedded_stash_key",
-            "headers",
-            "node_selector",
-            "stash_in_key",
-            "stash_in_path",
-            "stash_path_replace",
-            "warnings",
-            "yaml",
-            "contains",
-            "transform_and_set",
-            "arbitrary_key",
-            "allowed_warnings"));
+    private static final List<String> SUPPORTED = unmodifiableList(Arrays.asList("catch_unauthorized", "default_shards",
+            "embedded_stash_key", "headers", "node_selector", "stash_in_key", "stash_in_path", "stash_path_replace", "warnings", "yaml",
+            "contains", "transform_and_set", "arbitrary_key", "allowed_warnings"));
 
     private static final String SPI_ON_CLASSPATH_SINCE_JDK_9 = "spi_on_classpath_jdk9";
 
@@ -79,10 +67,9 @@ public final class Features {
     }
 
     private static boolean isSupported(String feature) {
-        if(feature.equals(SPI_ON_CLASSPATH_SINCE_JDK_9) &&
-            JavaVersion.current().compareTo(JavaVersion.parse("9")) >= 0) {
+        if (feature.equals(SPI_ON_CLASSPATH_SINCE_JDK_9) && JavaVersion.current().compareTo(JavaVersion.parse("9")) >= 0) {
             return true;
         }
-        return SUPPORTED.contains(feature) ;
+        return SUPPORTED.contains(feature);
     }
 }

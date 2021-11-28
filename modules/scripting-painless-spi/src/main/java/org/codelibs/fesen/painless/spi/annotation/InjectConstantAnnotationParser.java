@@ -26,7 +26,8 @@ public class InjectConstantAnnotationParser implements WhitelistAnnotationParser
 
     public static final InjectConstantAnnotationParser INSTANCE = new InjectConstantAnnotationParser();
 
-    private InjectConstantAnnotationParser() {}
+    private InjectConstantAnnotationParser() {
+    }
 
     @Override
     public Object parse(Map<String, String> arguments) {

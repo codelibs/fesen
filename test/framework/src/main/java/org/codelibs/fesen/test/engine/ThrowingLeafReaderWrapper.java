@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.test.engine;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.FilterLeafReader;
@@ -31,8 +33,6 @@ import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.automaton.CompiledAutomaton;
-
-import java.io.IOException;
 
 /**
  * An FilterLeafReader that allows to throw exceptions if certain methods
@@ -48,14 +48,7 @@ public class ThrowingLeafReaderWrapper extends FilterLeafReader {
      * when the corresponding method is called.
      */
     public enum Flags {
-        TermVectors,
-        Terms,
-        TermsEnum,
-        Intersect,
-        DocsEnum,
-        DocsAndPositionsEnum,
-        Fields,
-        Norms, NumericDocValues, BinaryDocValues, SortedDocValues, SortedSetDocValues;
+        TermVectors, Terms, TermsEnum, Intersect, DocsEnum, DocsAndPositionsEnum, Fields, Norms, NumericDocValues, BinaryDocValues, SortedDocValues, SortedSetDocValues;
     }
 
     /**
@@ -166,7 +159,6 @@ public class ThrowingLeafReaderWrapper extends FilterLeafReader {
         }
     }
 
-
     @Override
     public NumericDocValues getNumericDocValues(String field) throws IOException {
         thrower.maybeThrow(Flags.NumericDocValues);
@@ -197,7 +189,6 @@ public class ThrowingLeafReaderWrapper extends FilterLeafReader {
         thrower.maybeThrow(Flags.Norms);
         return super.getNormValues(field);
     }
-
 
     @Override
     public CacheHelper getCoreCacheHelper() {

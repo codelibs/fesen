@@ -19,20 +19,21 @@
 
 package org.codelibs.fesen.search.aggregations.matrix;
 
+import static java.util.Collections.singletonList;
+
+import java.util.List;
+
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.aggregations.matrix.stats.InternalMatrixStats;
 import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsParser;
 
-import java.util.List;
-
-import static java.util.Collections.singletonList;
-
 public class MatrixAggregationPlugin extends Plugin implements SearchPlugin {
     @Override
     public List<AggregationSpec> getAggregations() {
-        return singletonList(new AggregationSpec(MatrixStatsAggregationBuilder.NAME, MatrixStatsAggregationBuilder::new,
-                new MatrixStatsParser()).addResultReader(InternalMatrixStats::new));
+        return singletonList(
+                new AggregationSpec(MatrixStatsAggregationBuilder.NAME, MatrixStatsAggregationBuilder::new, new MatrixStatsParser())
+                        .addResultReader(InternalMatrixStats::new));
     }
 }

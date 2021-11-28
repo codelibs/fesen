@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -31,23 +40,10 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.rankeval.DiscountedCumulativeGain;
-import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
-import org.codelibs.fesen.index.rankeval.ExpectedReciprocalRank;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class ExpectedReciprocalRankTests extends ESTestCase {
 
@@ -56,11 +52,11 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
     public void testProbabilityOfRelevance() {
         ExpectedReciprocalRank err = new ExpectedReciprocalRank(5);
         assertEquals(0.0, err.probabilityOfRelevance(0), 0.0);
-        assertEquals(1d/32d, err.probabilityOfRelevance(1), 0.0);
-        assertEquals(3d/32d, err.probabilityOfRelevance(2), 0.0);
-        assertEquals(7d/32d, err.probabilityOfRelevance(3), 0.0);
-        assertEquals(15d/32d, err.probabilityOfRelevance(4), 0.0);
-        assertEquals(31d/32d, err.probabilityOfRelevance(5), 0.0);
+        assertEquals(1d / 32d, err.probabilityOfRelevance(1), 0.0);
+        assertEquals(3d / 32d, err.probabilityOfRelevance(2), 0.0);
+        assertEquals(7d / 32d, err.probabilityOfRelevance(3), 0.0);
+        assertEquals(15d / 32d, err.probabilityOfRelevance(4), 0.0);
+        assertEquals(31d / 32d, err.probabilityOfRelevance(5), 0.0);
     }
 
     /**
@@ -79,7 +75,7 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
      */
     public void testERRAt() {
         List<RatedDocument> rated = new ArrayList<>();
-        Integer[] relevanceRatings = new Integer[] { 3, 2, 0, 1};
+        Integer[] relevanceRatings = new Integer[] { 3, 2, 0, 1 };
         SearchHit[] hits = createSearchHits(rated, relevanceRatings);
         ExpectedReciprocalRank err = new ExpectedReciprocalRank(3, 0, 3);
         assertEquals(0.8984375, err.evaluate("id", hits, rated).metricScore(), DELTA);
@@ -104,7 +100,7 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
      */
     public void testERRMissingRatings() {
         List<RatedDocument> rated = new ArrayList<>();
-        Integer[] relevanceRatings = new Integer[] { 3, null, 0, 1};
+        Integer[] relevanceRatings = new Integer[] { 3, null, 0, 1 };
         SearchHit[] hits = createSearchHits(rated, relevanceRatings);
         ExpectedReciprocalRank err = new ExpectedReciprocalRank(3, null, 4);
         EvalQueryQuality evaluation = err.evaluate("id", hits, rated);
@@ -121,8 +117,8 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
             if (relevanceRatings[i] != null) {
                 rated.add(new RatedDocument("index", Integer.toString(i), relevanceRatings[i]));
             }
-            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME),
-                Collections.emptyMap(), Collections.emptyMap());
+            hits[i] = new SearchHit(i, Integer.toString(i), new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(),
+                    Collections.emptyMap());
             hits[i].shard(new SearchShardTarget("testnode", new ShardId("index", "uuid", 0), null, OriginalIndices.NONE));
         }
         return hits;
@@ -180,8 +176,8 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
         try (XContentParser parser = createParser(xContentType.xContent(), withRandomFields)) {
             parser.nextToken();
             parser.nextToken();
-            XContentParseException exception = expectThrows(XContentParseException.class,
-                    () -> DiscountedCumulativeGain.fromXContent(parser));
+            XContentParseException exception =
+                    expectThrows(XContentParseException.class, () -> DiscountedCumulativeGain.fromXContent(parser));
             assertThat(exception.getMessage(), containsString("[dcg] unknown field"));
         }
     }
@@ -194,8 +190,8 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         ExpectedReciprocalRank original = createTestItem();
-        ExpectedReciprocalRank deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
-                ExpectedReciprocalRank::new);
+        ExpectedReciprocalRank deserialized =
+                ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), ExpectedReciprocalRank::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);

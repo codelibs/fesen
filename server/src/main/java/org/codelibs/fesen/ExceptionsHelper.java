@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexFormatTooNewException;
-import org.apache.lucene.index.IndexFormatTooOldException;
-import org.codelibs.fesen.action.ShardOperationFailedException;
-import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.Index;
-import org.codelibs.fesen.rest.RestStatus;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -47,6 +35,19 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexFormatTooNewException;
+import org.apache.lucene.index.IndexFormatTooOldException;
+import org.codelibs.fesen.action.ShardOperationFailedException;
+import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.Index;
+import org.codelibs.fesen.rest.RestStatus;
+
+import com.fasterxml.jackson.core.JsonParseException;
 
 public final class ExceptionsHelper {
 
@@ -180,7 +181,7 @@ public final class ExceptionsHelper {
     }
 
     private static final List<Class<? extends IOException>> CORRUPTION_EXCEPTIONS =
-        Arrays.asList(CorruptIndexException.class, IndexFormatTooOldException.class, IndexFormatTooNewException.class);
+            Arrays.asList(CorruptIndexException.class, IndexFormatTooOldException.class, IndexFormatTooNewException.class);
 
     /**
      * Looks at the given Throwable's and its cause(s) as well as any suppressed exceptions on the Throwable as well as its causes
@@ -189,7 +190,7 @@ public final class ExceptionsHelper {
      * @return Corruption indicating exception if one is found, otherwise {@code null}
      */
     public static IOException unwrapCorruption(Throwable t) {
-        return t == null ? null : ExceptionsHelper.<IOException>unwrapCausesAndSuppressed(t, cause -> {
+        return t == null ? null : ExceptionsHelper.<IOException> unwrapCausesAndSuppressed(t, cause -> {
             for (Class<?> clazz : CORRUPTION_EXCEPTIONS) {
                 if (clazz.isInstance(cause)) {
                     return true;
@@ -294,11 +295,9 @@ public final class ExceptionsHelper {
                 final String formatted = ExceptionsHelper.formatStackTrace(Thread.currentThread().getStackTrace());
                 logger.error("fatal error\n{}", formatted);
             } finally {
-                new Thread(
-                        () -> {
-                            throw error;
-                        })
-                        .start();
+                new Thread(() -> {
+                    throw error;
+                }).start();
             }
         });
     }
@@ -352,9 +351,8 @@ public final class ExceptionsHelper {
                 return false;
             }
             GroupBy groupBy = (GroupBy) o;
-            return Objects.equals(reason, groupBy.reason) &&
-                Objects.equals(index, groupBy.index) &&
-                Objects.equals(causeType, groupBy.causeType);
+            return Objects.equals(reason, groupBy.reason) && Objects.equals(index, groupBy.index)
+                    && Objects.equals(causeType, groupBy.causeType);
         }
 
         @Override

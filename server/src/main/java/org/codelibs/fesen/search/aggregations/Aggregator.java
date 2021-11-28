@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.function.BiConsumer;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,10 +35,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.function.BiConsumer;
 
 /**
  * An Aggregator.
@@ -114,9 +114,9 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
      * The default implementation throws an exception but we override it on aggregations that support sorting.
      */
     public Aggregator resolveSortPath(AggregationPath.PathElement next, Iterator<AggregationPath.PathElement> path) {
-        throw new IllegalArgumentException("Buckets can only be sorted on a sub-aggregator path " +
-                "that is built out of zero or more single-bucket aggregations within the path and a final " +
-                "single-bucket or a metrics aggregation at the path end. [" + name() + "] is not single-bucket.");
+        throw new IllegalArgumentException("Buckets can only be sorted on a sub-aggregator path "
+                + "that is built out of zero or more single-bucket aggregations within the path and a final "
+                + "single-bucket or a metrics aggregation at the path end. [" + name() + "] is not single-bucket.");
     }
 
     /**
@@ -125,10 +125,11 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
      * The default implementation throws an exception but we override it on aggregations that support sorting.
      */
     public BucketComparator bucketComparator(String key, SortOrder order) {
-        throw new IllegalArgumentException("Buckets can only be sorted on a sub-aggregator path " +
-                "that is built out of zero or more single-bucket aggregations within the path and a final " +
-                "single-bucket or a metrics aggregation at the path end.");
+        throw new IllegalArgumentException("Buckets can only be sorted on a sub-aggregator path "
+                + "that is built out of zero or more single-bucket aggregations within the path and a final "
+                + "single-bucket or a metrics aggregation at the path end.");
     }
+
     /**
      * Compare two buckets by their ordinal.
      */
@@ -157,7 +158,7 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
      */
     public final InternalAggregation buildTopLevel() throws IOException {
         assert parent() == null;
-        return buildAggregations(new long[] {0})[0];
+        return buildAggregations(new long[] { 0 })[0];
     }
 
     /**
@@ -176,7 +177,8 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
      * {@link XContentBuilder#value(Object)}. And they'll have an integration
      * test. 
      */
-    public void collectDebugInfo(BiConsumer<String, Object> add) {}
+    public void collectDebugInfo(BiConsumer<String, Object> add) {
+    }
 
     /** Aggregation mode for sub aggregations. */
     public enum SubAggCollectionMode implements Writeable {

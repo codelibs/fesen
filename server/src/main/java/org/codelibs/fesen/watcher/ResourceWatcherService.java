@@ -18,20 +18,20 @@
  */
 package org.codelibs.fesen.watcher;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.threadpool.Scheduler.Cancellable;
-import org.codelibs.fesen.threadpool.ThreadPool.Names;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.threadpool.Scheduler.Cancellable;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.threadpool.ThreadPool.Names;
 
 /**
  * Generic resource watcher service
@@ -70,11 +70,11 @@ public class ResourceWatcherService implements Closeable {
 
     public static final Setting<Boolean> ENABLED = Setting.boolSetting("resource.reload.enabled", true, Property.NodeScope);
     public static final Setting<TimeValue> RELOAD_INTERVAL_HIGH =
-        Setting.timeSetting("resource.reload.interval.high", Frequency.HIGH.interval, Property.NodeScope);
+            Setting.timeSetting("resource.reload.interval.high", Frequency.HIGH.interval, Property.NodeScope);
     public static final Setting<TimeValue> RELOAD_INTERVAL_MEDIUM = Setting.timeSetting("resource.reload.interval.medium",
-        Setting.timeSetting("resource.reload.interval", Frequency.MEDIUM.interval), Property.NodeScope);
+            Setting.timeSetting("resource.reload.interval", Frequency.MEDIUM.interval), Property.NodeScope);
     public static final Setting<TimeValue> RELOAD_INTERVAL_LOW =
-        Setting.timeSetting("resource.reload.interval.low", Frequency.LOW.interval, Property.NodeScope);
+            Setting.timeSetting("resource.reload.interval.low", Frequency.LOW.interval, Property.NodeScope);
 
     private final boolean enabled;
 
@@ -128,30 +128,30 @@ public class ResourceWatcherService implements Closeable {
     public <W extends ResourceWatcher> WatcherHandle<W> add(W watcher, Frequency frequency) throws IOException {
         watcher.init();
         switch (frequency) {
-            case LOW:
-                return lowMonitor.add(watcher);
-            case MEDIUM:
-                return mediumMonitor.add(watcher);
-            case HIGH:
-                return highMonitor.add(watcher);
-            default:
-                throw new IllegalArgumentException("Unknown frequency [" + frequency + "]");
+        case LOW:
+            return lowMonitor.add(watcher);
+        case MEDIUM:
+            return mediumMonitor.add(watcher);
+        case HIGH:
+            return highMonitor.add(watcher);
+        default:
+            throw new IllegalArgumentException("Unknown frequency [" + frequency + "]");
         }
     }
 
     public void notifyNow(Frequency frequency) {
         switch (frequency) {
-            case LOW:
-                lowMonitor.run();
-                break;
-            case MEDIUM:
-                mediumMonitor.run();
-                break;
-            case HIGH:
-                highMonitor.run();
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown frequency [" + frequency + "]");
+        case LOW:
+            lowMonitor.run();
+            break;
+        case MEDIUM:
+            mediumMonitor.run();
+            break;
+        case HIGH:
+            highMonitor.run();
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown frequency [" + frequency + "]");
         }
     }
 

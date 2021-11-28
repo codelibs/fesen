@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.common.lucene.search;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -35,15 +44,6 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.Strings;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 public class MoreLikeThisQuery extends Query {
 
@@ -68,22 +68,20 @@ public class MoreLikeThisQuery extends Query {
     private boolean boostTerms = XMoreLikeThis.DEFAULT_BOOST;
     private float boostTermsFactor = 1;
 
-
     public MoreLikeThisQuery() {
 
     }
 
     public MoreLikeThisQuery(String likeText, String[] moreLikeFields, Analyzer analyzer) {
-        this.likeText = new String[]{likeText};
+        this.likeText = new String[] { likeText };
         this.moreLikeFields = moreLikeFields;
         this.analyzer = analyzer;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(classHash(), boostTerms, boostTermsFactor, Arrays.hashCode(likeText),
-                maxDocFreq, maxQueryTerms, maxWordLen, minDocFreq, minTermFrequency, minWordLen,
-                Arrays.hashCode(moreLikeFields), minimumShouldMatch, stopWords);
+        return Objects.hash(classHash(), boostTerms, boostTermsFactor, Arrays.hashCode(likeText), maxDocFreq, maxQueryTerms, maxWordLen,
+                minDocFreq, minTermFrequency, minWordLen, Arrays.hashCode(moreLikeFields), minimumShouldMatch, stopWords);
     }
 
     @Override

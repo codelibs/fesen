@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.refresh;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class RefreshStats implements Writeable, ToXContentFragment {
 
@@ -102,7 +102,9 @@ public class RefreshStats implements Writeable, ToXContentFragment {
     /*
      * The total number of external refresh executed.
      */
-    public long getExternalTotal() { return this.externalTotal; }
+    public long getExternalTotal() {
+        return this.externalTotal;
+    }
 
     /**
      * The total time spent executing refreshes (in milliseconds).
@@ -131,6 +133,7 @@ public class RefreshStats implements Writeable, ToXContentFragment {
     public TimeValue getExternalTotalTime() {
         return new TimeValue(externalTotalTimeInMillis);
     }
+
     /**
      * The number of waiting refresh listeners.
      */
@@ -156,11 +159,8 @@ public class RefreshStats implements Writeable, ToXContentFragment {
             return false;
         }
         RefreshStats rhs = (RefreshStats) obj;
-        return total == rhs.total
-                && totalTimeInMillis == rhs.totalTimeInMillis
-                && externalTotal == rhs.externalTotal
-                && externalTotalTimeInMillis == rhs.externalTotalTimeInMillis
-                && listeners == rhs.listeners;
+        return total == rhs.total && totalTimeInMillis == rhs.totalTimeInMillis && externalTotal == rhs.externalTotal
+                && externalTotalTimeInMillis == rhs.externalTotalTimeInMillis && listeners == rhs.listeners;
     }
 
     @Override

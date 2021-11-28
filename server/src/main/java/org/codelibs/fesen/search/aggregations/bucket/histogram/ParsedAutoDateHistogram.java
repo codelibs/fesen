@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.List;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.List;
 
 public class ParsedAutoDateHistogram extends ParsedMultiBucketAggregation<ParsedAutoDateHistogram.ParsedBucket> implements Histogram {
 
@@ -55,11 +55,9 @@ public class ParsedAutoDateHistogram extends ParsedMultiBucketAggregation<Parsed
     private static final ObjectParser<ParsedAutoDateHistogram, Void> PARSER =
             new ObjectParser<>(ParsedAutoDateHistogram.class.getSimpleName(), true, ParsedAutoDateHistogram::new);
     static {
-        declareMultiBucketAggregationFields(PARSER,
-                parser -> ParsedBucket.fromXContent(parser, false),
+        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
-        PARSER.declareString((parsed, value) -> parsed.interval = value,
-            new ParseField("interval"));
+        PARSER.declareString((parsed, value) -> parsed.interval = value, new ParseField("interval"));
     }
 
     public static ParsedAutoDateHistogram fromXContent(XContentParser parser, String name) throws IOException {
@@ -74,7 +72,6 @@ public class ParsedAutoDateHistogram extends ParsedMultiBucketAggregation<Parsed
         builder.field("interval", getInterval());
         return builder;
     }
-
 
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Histogram.Bucket {
 

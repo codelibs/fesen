@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.cluster.coordination;
 
+import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
+import static org.codelibs.fesen.monitor.StatusInfo.Status.UNHEALTHY;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -44,22 +56,10 @@ import org.codelibs.fesen.transport.TransportConnectionListener;
 import org.codelibs.fesen.transport.TransportException;
 import org.codelibs.fesen.transport.TransportRequest;
 import org.codelibs.fesen.transport.TransportRequestOptions;
-import org.codelibs.fesen.transport.TransportResponseHandler;
-import org.codelibs.fesen.transport.TransportService;
 import org.codelibs.fesen.transport.TransportRequestOptions.Type;
 import org.codelibs.fesen.transport.TransportResponse.Empty;
-
-import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentMap;
-import static org.codelibs.fesen.monitor.StatusInfo.Status.UNHEALTHY;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import org.codelibs.fesen.transport.TransportResponseHandler;
+import org.codelibs.fesen.transport.TransportService;
 
 /**
  * The FollowersChecker is responsible for allowing a leader to check that its followers are still connected and healthy. On deciding that a
@@ -75,17 +75,17 @@ public class FollowersChecker {
 
     // the time between checks sent to each node
     public static final Setting<TimeValue> FOLLOWER_CHECK_INTERVAL_SETTING =
-        Setting.timeSetting("cluster.fault_detection.follower_check.interval",
-            TimeValue.timeValueMillis(1000), TimeValue.timeValueMillis(100), Setting.Property.NodeScope);
+            Setting.timeSetting("cluster.fault_detection.follower_check.interval", TimeValue.timeValueMillis(1000),
+                    TimeValue.timeValueMillis(100), Setting.Property.NodeScope);
 
     // the timeout for each check sent to each node
     public static final Setting<TimeValue> FOLLOWER_CHECK_TIMEOUT_SETTING =
-        Setting.timeSetting("cluster.fault_detection.follower_check.timeout",
-            TimeValue.timeValueMillis(10000), TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
+            Setting.timeSetting("cluster.fault_detection.follower_check.timeout", TimeValue.timeValueMillis(10000),
+                    TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
 
     // the number of failed checks that must happen before the follower is considered to have failed.
     public static final Setting<Integer> FOLLOWER_CHECK_RETRY_COUNT_SETTING =
-        Setting.intSetting("cluster.fault_detection.follower_check.retry_count", 3, 1, Setting.Property.NodeScope);
+            Setting.intSetting("cluster.fault_detection.follower_check.retry_count", 3, 1, Setting.Property.NodeScope);
 
     private final Settings settings;
 
@@ -104,8 +104,8 @@ public class FollowersChecker {
     private volatile FastResponseState fastResponseState;
 
     public FollowersChecker(Settings settings, TransportService transportService,
-                            Consumer<FollowerCheckRequest> handleRequestAndUpdateState,
-                            BiConsumer<DiscoveryNode, String> onNodeFailure, NodeHealthService nodeHealthService) {
+            Consumer<FollowerCheckRequest> handleRequestAndUpdateState, BiConsumer<DiscoveryNode, String> onNodeFailure,
+            NodeHealthService nodeHealthService) {
         this.settings = settings;
         this.transportService = transportService;
         this.handleRequestAndUpdateState = handleRequestAndUpdateState;
@@ -118,10 +118,9 @@ public class FollowersChecker {
 
         updateFastResponseState(0, Mode.CANDIDATE);
         transportService.registerRequestHandler(FOLLOWER_CHECK_ACTION_NAME, Names.SAME, false, false, FollowerCheckRequest::new,
-            (request, transportChannel, task) -> handleFollowerCheck(request, transportChannel));
-        transportService.registerRequestHandler(
-            NodesFaultDetection.PING_ACTION_NAME, Names.SAME, false, false, NodesFaultDetection.PingRequest::new,
-            (request, channel, task) -> // TODO: check that we're a follower of the requesting node?
+                (request, transportChannel, task) -> handleFollowerCheck(request, transportChannel));
+        transportService.registerRequestHandler(NodesFaultDetection.PING_ACTION_NAME, Names.SAME, false, false,
+                NodesFaultDetection.PingRequest::new, (request, channel, task) -> // TODO: check that we're a follower of the requesting node?
                 channel.sendResponse(new NodesFaultDetection.PingResponse()));
         transportService.addConnectionListener(new TransportConnectionListener() {
             @Override
@@ -141,9 +140,8 @@ public class FollowersChecker {
             faultyNodes.removeIf(isUnknownNode);
 
             discoveryNodes.mastersFirstStream().forEach(discoveryNode -> {
-                if (discoveryNode.equals(discoveryNodes.getLocalNode()) == false
-                    && followerCheckers.containsKey(discoveryNode) == false
-                    && faultyNodes.contains(discoveryNode) == false) {
+                if (discoveryNode.equals(discoveryNodes.getLocalNode()) == false && followerCheckers.containsKey(discoveryNode) == false
+                        && faultyNodes.contains(discoveryNode) == false) {
 
                     final FollowerChecker followerChecker = new FollowerChecker(discoveryNode);
                     followerCheckers.put(discoveryNode, followerChecker);
@@ -173,8 +171,8 @@ public class FollowersChecker {
     private void handleFollowerCheck(FollowerCheckRequest request, TransportChannel transportChannel) throws IOException {
         final StatusInfo statusInfo = nodeHealthService.getHealth();
         if (statusInfo.getStatus() == UNHEALTHY) {
-            final String message
-                = "handleFollowerCheck: node is unhealthy [" + statusInfo.getInfo() + "], rejecting " + statusInfo.getInfo();
+            final String message =
+                    "handleFollowerCheck: node is unhealthy [" + statusInfo.getInfo() + "], rejecting " + statusInfo.getInfo();
             logger.debug(message);
             throw new NodeHealthCheckFailureException(message);
         }
@@ -226,14 +224,9 @@ public class FollowersChecker {
 
     @Override
     public String toString() {
-        return "FollowersChecker{" +
-            "followerCheckInterval=" + followerCheckInterval +
-            ", followerCheckTimeout=" + followerCheckTimeout +
-            ", followerCheckRetryCount=" + followerCheckRetryCount +
-            ", followerCheckers=" + followerCheckers +
-            ", faultyNodes=" + faultyNodes +
-            ", fastResponseState=" + fastResponseState +
-            '}';
+        return "FollowersChecker{" + "followerCheckInterval=" + followerCheckInterval + ", followerCheckTimeout=" + followerCheckTimeout
+                + ", followerCheckRetryCount=" + followerCheckRetryCount + ", followerCheckers=" + followerCheckers + ", faultyNodes="
+                + faultyNodes + ", fastResponseState=" + fastResponseState + '}';
     }
 
     // For assertions
@@ -268,10 +261,7 @@ public class FollowersChecker {
 
         @Override
         public String toString() {
-            return "FastResponseState{" +
-                "term=" + term +
-                ", mode=" + mode +
-                '}';
+            return "FastResponseState{" + "term=" + term + ", mode=" + mode + '}';
         }
     }
 
@@ -309,66 +299,64 @@ public class FollowersChecker {
             if (Coordinator.isZen1Node(discoveryNode)) {
                 actionName = NodesFaultDetection.PING_ACTION_NAME;
                 transportRequest = new NodesFaultDetection.PingRequest(discoveryNode, ClusterName.CLUSTER_NAME_SETTING.get(settings),
-                    transportService.getLocalNode(), ClusterState.UNKNOWN_VERSION);
+                        transportService.getLocalNode(), ClusterState.UNKNOWN_VERSION);
             } else {
                 actionName = FOLLOWER_CHECK_ACTION_NAME;
                 transportRequest = request;
             }
             transportService.sendRequest(discoveryNode, actionName, transportRequest,
-                TransportRequestOptions.builder().withTimeout(followerCheckTimeout).withType(Type.PING).build(),
-                new TransportResponseHandler<Empty>() {
-                    @Override
-                    public Empty read(StreamInput in) {
-                        return Empty.INSTANCE;
-                    }
-
-                    @Override
-                    public void handleResponse(Empty response) {
-                        if (running() == false) {
-                            logger.trace("{} no longer running", FollowerChecker.this);
-                            return;
+                    TransportRequestOptions.builder().withTimeout(followerCheckTimeout).withType(Type.PING).build(),
+                    new TransportResponseHandler<Empty>() {
+                        @Override
+                        public Empty read(StreamInput in) {
+                            return Empty.INSTANCE;
                         }
 
-                        failureCountSinceLastSuccess = 0;
-                        logger.trace("{} check successful", FollowerChecker.this);
-                        scheduleNextWakeUp();
-                    }
+                        @Override
+                        public void handleResponse(Empty response) {
+                            if (running() == false) {
+                                logger.trace("{} no longer running", FollowerChecker.this);
+                                return;
+                            }
 
-                    @Override
-                    public void handleException(TransportException exp) {
-                        if (running() == false) {
-                            logger.debug(new ParameterizedMessage("{} no longer running", FollowerChecker.this), exp);
-                            return;
-                        }
-
-                        failureCountSinceLastSuccess++;
-
-                        final String reason;
-                        if (exp instanceof ConnectTransportException
-                            || exp.getCause() instanceof ConnectTransportException) {
-                            logger.debug(() -> new ParameterizedMessage("{} disconnected", FollowerChecker.this), exp);
-                            reason = "disconnected";
-                        } else if (exp.getCause() instanceof NodeHealthCheckFailureException) {
-                            logger.debug(() -> new ParameterizedMessage("{} health check failed", FollowerChecker.this), exp);
-                            reason = "health check failed";
-                        } else if (failureCountSinceLastSuccess >= followerCheckRetryCount) {
-                            logger.debug(() -> new ParameterizedMessage("{} failed too many times", FollowerChecker.this), exp);
-                            reason = "followers check retry count exceeded";
-                        } else {
-                            logger.debug(() -> new ParameterizedMessage("{} failed, retrying", FollowerChecker.this), exp);
+                            failureCountSinceLastSuccess = 0;
+                            logger.trace("{} check successful", FollowerChecker.this);
                             scheduleNextWakeUp();
-                            return;
                         }
 
-                        failNode(reason);
-                    }
+                        @Override
+                        public void handleException(TransportException exp) {
+                            if (running() == false) {
+                                logger.debug(new ParameterizedMessage("{} no longer running", FollowerChecker.this), exp);
+                                return;
+                            }
 
+                            failureCountSinceLastSuccess++;
 
-                    @Override
-                    public String executor() {
-                        return Names.SAME;
-                    }
-                });
+                            final String reason;
+                            if (exp instanceof ConnectTransportException || exp.getCause() instanceof ConnectTransportException) {
+                                logger.debug(() -> new ParameterizedMessage("{} disconnected", FollowerChecker.this), exp);
+                                reason = "disconnected";
+                            } else if (exp.getCause() instanceof NodeHealthCheckFailureException) {
+                                logger.debug(() -> new ParameterizedMessage("{} health check failed", FollowerChecker.this), exp);
+                                reason = "health check failed";
+                            } else if (failureCountSinceLastSuccess >= followerCheckRetryCount) {
+                                logger.debug(() -> new ParameterizedMessage("{} failed too many times", FollowerChecker.this), exp);
+                                reason = "followers check retry count exceeded";
+                            } else {
+                                logger.debug(() -> new ParameterizedMessage("{} failed, retrying", FollowerChecker.this), exp);
+                                scheduleNextWakeUp();
+                                return;
+                            }
+
+                            failNode(reason);
+                        }
+
+                        @Override
+                        public String executor() {
+                            return Names.SAME;
+                        }
+                    });
         }
 
         void failNode(String reason) {
@@ -410,11 +398,8 @@ public class FollowersChecker {
 
         @Override
         public String toString() {
-            return "FollowerChecker{" +
-                "discoveryNode=" + discoveryNode +
-                ", failureCountSinceLastSuccess=" + failureCountSinceLastSuccess +
-                ", [" + FOLLOWER_CHECK_RETRY_COUNT_SETTING.getKey() + "]=" + followerCheckRetryCount +
-                '}';
+            return "FollowerChecker{" + "discoveryNode=" + discoveryNode + ", failureCountSinceLastSuccess=" + failureCountSinceLastSuccess
+                    + ", [" + FOLLOWER_CHECK_RETRY_COUNT_SETTING.getKey() + "]=" + followerCheckRetryCount + '}';
         }
     }
 
@@ -452,19 +437,17 @@ public class FollowersChecker {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             FollowerCheckRequest that = (FollowerCheckRequest) o;
-            return term == that.term &&
-                Objects.equals(sender, that.sender);
+            return term == that.term && Objects.equals(sender, that.sender);
         }
 
         @Override
         public String toString() {
-            return "FollowerCheckRequest{" +
-                "term=" + term +
-                ", sender=" + sender +
-                '}';
+            return "FollowerCheckRequest{" + "term=" + term + ", sender=" + sender + '}';
         }
 
         @Override

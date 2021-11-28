@@ -78,7 +78,7 @@ public class LongHashTests extends ESTestCase {
         }
 
         assertEquals(valueToId.size(), hash.size());
-        for (Iterator<LongLongCursor> iterator = valueToId.iterator(); iterator.hasNext(); ) {
+        for (Iterator<LongLongCursor> iterator = valueToId.iterator(); iterator.hasNext();) {
             final LongLongCursor next = iterator.next();
             assertEquals(next.value, hash.find(next.key));
         }

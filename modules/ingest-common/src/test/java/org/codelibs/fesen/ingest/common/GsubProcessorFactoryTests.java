@@ -19,15 +19,13 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.GsubProcessor;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.containsString;
 
 public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTestCase {
 
@@ -58,7 +56,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[pattern] required property is missing"));
         }
     }
@@ -71,7 +69,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[replacement] required property is missing"));
         }
     }
@@ -85,7 +83,7 @@ public class GsubProcessorFactoryTests extends AbstractStringProcessorFactoryTes
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch(FesenParseException e) {
+        } catch (FesenParseException e) {
             assertThat(e.getMessage(), containsString("[pattern] Invalid regex pattern. Unclosed character class"));
         }
     }

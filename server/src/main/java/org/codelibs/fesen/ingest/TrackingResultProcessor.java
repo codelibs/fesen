@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.ingest;
 
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ingest.SimulateProcessorResult;
-import org.codelibs.fesen.core.Tuple;
-
 import static org.codelibs.fesen.ingest.IngestDocument.PIPELINE_CYCLE_ERROR_MESSAGE;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.action.ingest.SimulateProcessorResult;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * Processor to be used within Simulate API to keep track of processors executed in pipeline.
@@ -40,7 +40,7 @@ public final class TrackingResultProcessor implements Processor {
     private final boolean ignoreFailure;
 
     TrackingResultProcessor(boolean ignoreFailure, Processor actualProcessor, ConditionalProcessor conditionalProcessor,
-                            List<SimulateProcessorResult> processorResultList) {
+            List<SimulateProcessorResult> processorResultList) {
         this.ignoreFailure = ignoreFailure;
         this.processorResultList = processorResultList;
         this.actualProcessor = actualProcessor;
@@ -54,7 +54,7 @@ public final class TrackingResultProcessor implements Processor {
             if (conditionalProcessor.evaluate(ingestDocument) == false) {
                 conditionalWithResult = new Tuple<>(conditionalProcessor.getCondition(), Boolean.FALSE);
                 processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                    actualProcessor.getDescription(), conditionalWithResult));
+                        actualProcessor.getDescription(), conditionalWithResult));
                 handler.accept(ingestDocument, null);
                 return;
             } else {
@@ -71,20 +71,19 @@ public final class TrackingResultProcessor implements Processor {
             IngestDocument ingestDocumentCopy = new IngestDocument(ingestDocument);
             Pipeline pipelineToCall = pipelineProcessor.getPipeline(ingestDocument);
             if (pipelineToCall == null) {
-                throw new IllegalArgumentException("Pipeline processor configured for non-existent pipeline [" +
-                    pipelineProcessor.getPipelineToCallName(ingestDocument) + ']');
+                throw new IllegalArgumentException("Pipeline processor configured for non-existent pipeline ["
+                        + pipelineProcessor.getPipelineToCallName(ingestDocument) + ']');
             }
             ingestDocumentCopy.executePipeline(pipelineToCall, (result, e) -> {
                 // special handling for pipeline cycle errors
-                if (e instanceof FesenException &&
-                    e.getCause() instanceof IllegalStateException &&
-                    e.getCause().getMessage().startsWith(PIPELINE_CYCLE_ERROR_MESSAGE)) {
+                if (e instanceof FesenException && e.getCause() instanceof IllegalStateException
+                        && e.getCause().getMessage().startsWith(PIPELINE_CYCLE_ERROR_MESSAGE)) {
                     if (ignoreFailure) {
                         processorResultList.add(new SimulateProcessorResult(pipelineProcessor.getType(), pipelineProcessor.getTag(),
-                            pipelineProcessor.getDescription(), new IngestDocument(ingestDocument), e, conditionalWithResult));
+                                pipelineProcessor.getDescription(), new IngestDocument(ingestDocument), e, conditionalWithResult));
                     } else {
                         processorResultList.add(new SimulateProcessorResult(pipelineProcessor.getType(), pipelineProcessor.getTag(),
-                            pipelineProcessor.getDescription(), e, conditionalWithResult));
+                                pipelineProcessor.getDescription(), e, conditionalWithResult));
                     }
                     handler.accept(null, e);
                 } else {
@@ -92,9 +91,9 @@ public final class TrackingResultProcessor implements Processor {
                     CompoundProcessor verbosePipelineProcessor = decorate(pipeline.getCompoundProcessor(), null, processorResultList);
                     //add the pipeline process to the results
                     processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                        actualProcessor.getDescription(), conditionalWithResult));
-                    Pipeline verbosePipeline = new Pipeline(pipeline.getId(), pipeline.getDescription(), pipeline.getVersion(),
-                        verbosePipelineProcessor);
+                            actualProcessor.getDescription(), conditionalWithResult));
+                    Pipeline verbosePipeline =
+                            new Pipeline(pipeline.getId(), pipeline.getDescription(), pipeline.getVersion(), verbosePipelineProcessor);
                     ingestDocument.executePipeline(verbosePipeline, handler);
                 }
             });
@@ -105,20 +104,20 @@ public final class TrackingResultProcessor implements Processor {
             if (e != null) {
                 if (ignoreFailure) {
                     processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                        actualProcessor.getDescription(), new IngestDocument(ingestDocument), e, conditionalWithResult));
+                            actualProcessor.getDescription(), new IngestDocument(ingestDocument), e, conditionalWithResult));
                 } else {
                     processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                        actualProcessor.getDescription(), e, conditionalWithResult));
+                            actualProcessor.getDescription(), e, conditionalWithResult));
                 }
                 handler.accept(null, e);
             } else {
                 if (result != null) {
                     processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                        actualProcessor.getDescription(), new IngestDocument(ingestDocument), conditionalWithResult));
+                            actualProcessor.getDescription(), new IngestDocument(ingestDocument), conditionalWithResult));
                     handler.accept(result, null);
                 } else {
                     processorResultList.add(new SimulateProcessorResult(actualProcessor.getType(), actualProcessor.getTag(),
-                        actualProcessor.getDescription(), conditionalWithResult));
+                            actualProcessor.getDescription(), conditionalWithResult));
                     handler.accept(null, null);
                 }
             }
@@ -146,7 +145,7 @@ public final class TrackingResultProcessor implements Processor {
     }
 
     public static CompoundProcessor decorate(CompoundProcessor compoundProcessor, ConditionalProcessor parentCondition,
-                                             List<SimulateProcessorResult> processorResultList) {
+            List<SimulateProcessorResult> processorResultList) {
         List<Processor> processors = new ArrayList<>();
         for (Processor processor : compoundProcessor.getProcessors()) {
             ConditionalProcessor conditionalProcessor = parentCondition;
@@ -157,8 +156,8 @@ public final class TrackingResultProcessor implements Processor {
             if (processor instanceof CompoundProcessor) {
                 processors.add(decorate((CompoundProcessor) processor, conditionalProcessor, processorResultList));
             } else {
-                processors.add(
-                    new TrackingResultProcessor(compoundProcessor.isIgnoreFailure(), processor, conditionalProcessor, processorResultList));
+                processors.add(new TrackingResultProcessor(compoundProcessor.isIgnoreFailure(), processor, conditionalProcessor,
+                        processorResultList));
             }
         }
         List<Processor> onFailureProcessors = new ArrayList<>(compoundProcessor.getProcessors().size());
@@ -171,11 +170,10 @@ public final class TrackingResultProcessor implements Processor {
             if (processor instanceof CompoundProcessor) {
                 onFailureProcessors.add(decorate((CompoundProcessor) processor, conditionalProcessor, processorResultList));
             } else {
-                onFailureProcessors.add(
-                    new TrackingResultProcessor(compoundProcessor.isIgnoreFailure(), processor, conditionalProcessor, processorResultList));
+                onFailureProcessors.add(new TrackingResultProcessor(compoundProcessor.isIgnoreFailure(), processor, conditionalProcessor,
+                        processorResultList));
             }
         }
         return new CompoundProcessor(compoundProcessor.isIgnoreFailure(), processors, onFailureProcessors);
     }
 }
-

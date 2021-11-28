@@ -23,10 +23,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.index.seqno.ReplicationTracker;
-import org.codelibs.fesen.index.seqno.RetentionLease;
-import org.codelibs.fesen.index.seqno.RetentionLeases;
-
 public class RetentionLeaseUtils {
 
     private RetentionLeaseUtils() {
@@ -42,11 +38,9 @@ public class RetentionLeaseUtils {
      */
     public static Map<String, RetentionLease> toMapExcludingPeerRecoveryRetentionLeases(final RetentionLeases retentionLeases) {
         return retentionLeases.leases().stream()
-            .filter(l -> ReplicationTracker.PEER_RECOVERY_RETENTION_LEASE_SOURCE.equals(l.source()) == false)
-            .collect(Collectors.toMap(RetentionLease::id, Function.identity(),
-                (o1, o2) -> {
+                .filter(l -> ReplicationTracker.PEER_RECOVERY_RETENTION_LEASE_SOURCE.equals(l.source()) == false)
+                .collect(Collectors.toMap(RetentionLease::id, Function.identity(), (o1, o2) -> {
                     throw new AssertionError("unexpectedly merging " + o1 + " and " + o2);
-                },
-                LinkedHashMap::new));
+                }, LinkedHashMap::new));
     }
 }

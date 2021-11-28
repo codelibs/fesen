@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.document.InetAddressPoint;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.ParseField;
@@ -34,8 +43,8 @@ import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
+import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
@@ -43,22 +52,10 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-
 public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuilder<IpRangeAggregationBuilder> {
     public static final String NAME = "ip_range";
-    public static final ValuesSourceRegistry.RegistryKey<IpRangeAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        IpRangeAggregatorSupplier.class
-    );
+    public static final ValuesSourceRegistry.RegistryKey<IpRangeAggregatorSupplier> REGISTRY_KEY =
+            new ValuesSourceRegistry.RegistryKey<>(NAME, IpRangeAggregatorSupplier.class);
     private static final ParseField MASK_FIELD = new ParseField("mask");
 
     public static final ObjectParser<IpRangeAggregationBuilder, String> PARSER =
@@ -69,7 +66,8 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
         PARSER.declareBoolean(IpRangeAggregationBuilder::keyed, RangeAggregator.KEYED_FIELD);
 
         PARSER.declareObjectArray((agg, ranges) -> {
-            for (Range range : ranges) agg.addRange(range);
+            for (Range range : ranges)
+                agg.addRange(range);
         }, (p, c) -> IpRangeAggregationBuilder.parseRange(p), RangeAggregator.RANGES_FIELD);
     }
 
@@ -187,9 +185,7 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
                 return false;
             }
             Range that = (Range) obj;
-            return Objects.equals(key, that.key)
-                    && Objects.equals(from, that.from)
-                    && Objects.equals(to, that.to);
+            return Objects.equals(key, that.key) && Objects.equals(from, that.from) && Objects.equals(to, that.to);
         }
 
         @Override
@@ -227,7 +223,7 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
 
     protected IpRangeAggregationBuilder(IpRangeAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
-        this.ranges =  new ArrayList<>(clone.ranges);
+        this.ranges = new ArrayList<>(clone.ranges);
         this.keyed = clone.keyed;
     }
 
@@ -381,19 +377,16 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext, ValuesSourceConfig config,
-        AggregatorFactory parent, Builder subFactoriesBuilder)
-                    throws IOException {
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+            AggregatorFactory parent, Builder subFactoriesBuilder) throws IOException {
         List<BinaryRangeAggregator.Range> ranges = new ArrayList<>();
-        if(this.ranges.size() == 0){
+        if (this.ranges.size() == 0) {
             throw new IllegalArgumentException("No [ranges] specified for the [" + this.getName() + "] aggregation");
         }
         for (Range range : this.ranges) {
             ranges.add(new BinaryRangeAggregator.Range(range.key, toBytesRef(range.from), toBytesRef(range.to)));
         }
-        return new BinaryRangeAggregatorFactory(name, config, ranges,
-                keyed, queryShardContext, parent, subFactoriesBuilder, metadata);
+        return new BinaryRangeAggregatorFactory(name, config, ranges, keyed, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override
@@ -410,11 +403,13 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         IpRangeAggregationBuilder that = (IpRangeAggregationBuilder) obj;
-        return keyed == that.keyed
-            && ranges.equals(that.ranges);
+        return keyed == that.keyed && ranges.equals(that.ranges);
     }
 }

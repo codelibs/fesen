@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.profile.aggregation;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -26,13 +33,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.profile.ProfileResult;
-
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A container class to hold the profile results for a single shard in the request.
@@ -66,7 +66,6 @@ public final class AggregationProfileShardResult implements Writeable, ToXConten
         }
     }
 
-
     public List<ProfileResult> getProfileResults() {
         return Collections.unmodifiableList(aggProfileResults);
     }
@@ -85,7 +84,7 @@ public final class AggregationProfileShardResult implements Writeable, ToXConten
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_ARRAY, token, parser);
         List<ProfileResult> aggProfileResults = new ArrayList<>();
-        while((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
+        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
             aggProfileResults.add(ProfileResult.fromXContent(parser));
         }
         return new AggregationProfileShardResult(aggProfileResults);

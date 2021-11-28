@@ -54,9 +54,8 @@ public class UsageServiceTests extends ESTestCase {
         final UsageService service = new UsageService();
         final BaseRestHandler horse = new MockRestHandler(null);
         final IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> service.addRestHandler(horse));
-        assertThat(
-            e.getMessage(),
-            equalTo("handler of type [org.codelibs.fesen.usage.UsageServiceTests$MockRestHandler] does not have a name"));
+        assertThat(e.getMessage(),
+                equalTo("handler of type [org.codelibs.fesen.usage.UsageServiceTests$MockRestHandler] does not have a name"));
     }
 
     /**
@@ -82,12 +81,9 @@ public class UsageServiceTests extends ESTestCase {
         final BaseRestHandler second = new MockRestHandler(name);
         service.addRestHandler(first);
         final IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> service.addRestHandler(second));
-        final String expected = String.format(
-            Locale.ROOT,
-            "handler of type [%s] conflicts with handler of type [%1$s] as they both have the same name [%s]",
-            "org.codelibs.fesen.usage.UsageServiceTests$MockRestHandler",
-            name
-        );
+        final String expected = String.format(Locale.ROOT,
+                "handler of type [%s] conflicts with handler of type [%1$s] as they both have the same name [%s]",
+                "org.codelibs.fesen.usage.UsageServiceTests$MockRestHandler", name);
         assertThat(e.getMessage(), equalTo(expected));
     }
 
@@ -163,7 +159,6 @@ public class UsageServiceTests extends ESTestCase {
             usageService.incAggregationUsage("c", OTHER_SUBTYPE);
         }
 
-
         Map<String, Object> aggsUsage = usageService.getUsageStats();
         assertThat(aggsUsage, notNullValue());
         assertThat(aggsUsage.size(), equalTo(3));
@@ -195,8 +190,7 @@ public class UsageServiceTests extends ESTestCase {
 
         @Override
         protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) {
-            return channel -> {
-            };
+            return channel -> {};
         }
 
     }

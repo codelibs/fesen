@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.sort;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.common.lease.Releasable;
@@ -31,14 +39,6 @@ import org.codelibs.fesen.common.util.DoubleArray;
 import org.codelibs.fesen.common.util.FloatArray;
 import org.codelibs.fesen.common.util.LongArray;
 import org.codelibs.fesen.search.DocValueFormat;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
-import static java.util.Collections.emptyList;
 
 /**
  * Type specialized sort implementations designed for use in aggregations.
@@ -94,10 +94,12 @@ public abstract class BucketedSort implements Releasable {
          * </p>
          */
         void swap(long lhs, long rhs);
+
         /**
          * Prepare to load extra data from a leaf.
          */
         Loader loader(LeafReaderContext ctx) throws IOException;
+
         @FunctionalInterface
         interface Loader {
             /**
@@ -116,7 +118,8 @@ public abstract class BucketedSort implements Releasable {
      */
     public static final ExtraData NOOP_EXTRA_DATA = new ExtraData() {
         @Override
-        public void swap(long lhs, long rhs) {}
+        public void swap(long lhs, long rhs) {
+        }
 
         @Override
         public Loader loader(LeafReaderContext ctx) throws IOException {
@@ -193,7 +196,7 @@ public abstract class BucketedSort implements Releasable {
             result.add(builder.build(index, getValue(index)));
         }
         // TODO we usually have a heap here so we could use that to build the results sorted.
-        result.sort(order.wrap(Comparator.<T>naturalOrder()));
+        result.sort(order.wrap(Comparator.<T> naturalOrder()));
         return result;
     }
 
@@ -413,8 +416,8 @@ public abstract class BucketedSort implements Releasable {
                 grow(requiredSize);
             }
             int next = getNextGatherOffset(rootIndex);
-            assert 0 <= next && next < bucketSize :
-                "Expected next to be in the range of valid buckets [0 <= " + next + " < " + bucketSize + "]";
+            assert 0 <= next && next < bucketSize : "Expected next to be in the range of valid buckets [0 <= " + next + " < " + bucketSize
+                    + "]";
             long index = next + rootIndex;
             setIndexToDocValue(index);
             loader().loadFromDoc(index, doc);
@@ -470,10 +473,14 @@ public abstract class BucketedSort implements Releasable {
         }
 
         @Override
-        public boolean needsScores() { return false; }
+        public boolean needsScores() {
+            return false;
+        }
 
         @Override
-        protected final BigArray values() { return values; }
+        protected final BigArray values() {
+            return values;
+        }
 
         @Override
         protected final void growValues(long minSize) {
@@ -523,7 +530,8 @@ public abstract class BucketedSort implements Releasable {
             protected abstract double docValue();
 
             @Override
-            public final void setScorer(Scorable scorer) {}
+            public final void setScorer(Scorable scorer) {
+            }
 
             @Override
             protected final void setIndexToDocValue(long index) {
@@ -561,7 +569,9 @@ public abstract class BucketedSort implements Releasable {
         }
 
         @Override
-        protected final BigArray values() { return values; }
+        protected final BigArray values() {
+            return values;
+        }
 
         @Override
         protected final void growValues(long minSize) {
@@ -637,10 +647,14 @@ public abstract class BucketedSort implements Releasable {
         }
 
         @Override
-        public final boolean needsScores() { return false; }
+        public final boolean needsScores() {
+            return false;
+        }
 
         @Override
-        protected final BigArray values() { return values; }
+        protected final BigArray values() {
+            return values;
+        }
 
         @Override
         protected final void growValues(long minSize) {
@@ -689,7 +703,8 @@ public abstract class BucketedSort implements Releasable {
             protected abstract long docValue();
 
             @Override
-            public final void setScorer(Scorable scorer) {}
+            public final void setScorer(Scorable scorer) {
+            }
 
             @Override
             protected final void setIndexToDocValue(long index) {

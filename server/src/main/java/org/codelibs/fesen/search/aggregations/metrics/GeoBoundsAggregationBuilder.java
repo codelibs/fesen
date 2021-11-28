@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -33,14 +37,10 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 public class GeoBoundsAggregationBuilder extends ValuesSourceAggregationBuilder<GeoBoundsAggregationBuilder> {
     public static final String NAME = "geo_bounds";
     public static final ValuesSourceRegistry.RegistryKey<GeoBoundsAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, GeoBoundsAggregatorSupplier.class);
+            new ValuesSourceRegistry.RegistryKey<>(NAME, GeoBoundsAggregatorSupplier.class);
 
     public static final ObjectParser<GeoBoundsAggregationBuilder, String> PARSER =
             ObjectParser.fromBuilder(NAME, GeoBoundsAggregationBuilder::new);
@@ -59,9 +59,8 @@ public class GeoBoundsAggregationBuilder extends ValuesSourceAggregationBuilder<
         super(name);
     }
 
-    protected GeoBoundsAggregationBuilder(GeoBoundsAggregationBuilder clone,
-                                          AggregatorFactories.Builder factoriesBuilder,
-                                          Map<String, Object> metadata) {
+    protected GeoBoundsAggregationBuilder(GeoBoundsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.wrapLongitude = clone.wrapLongitude;
     }
@@ -111,8 +110,7 @@ public class GeoBoundsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     @Override
     protected GeoBoundsAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-                                                    AggregatorFactory parent,
-                                                    AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new GeoBoundsAggregatorFactory(name, config, wrapLongitude, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
@@ -129,9 +127,12 @@ public class GeoBoundsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         GeoBoundsAggregationBuilder other = (GeoBoundsAggregationBuilder) obj;
         return Objects.equals(wrapLongitude, other.wrapLongitude);
     }

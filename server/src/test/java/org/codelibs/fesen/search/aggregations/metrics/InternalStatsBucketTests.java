@@ -31,8 +31,8 @@ import org.codelibs.fesen.search.aggregations.pipeline.ParsedStatsBucket;
 public class InternalStatsBucketTests extends InternalStatsTests {
 
     @Override
-    protected InternalStatsBucket createInstance(String name, long count, double sum, double min, double max,
-            DocValueFormat formatter, Map<String, Object> metadata) {
+    protected InternalStatsBucket createInstance(String name, long count, double sum, double min, double max, DocValueFormat formatter,
+            Map<String, Object> metadata) {
         return new InternalStatsBucket(name, count, sum, min, max, formatter, metadata);
     }
 

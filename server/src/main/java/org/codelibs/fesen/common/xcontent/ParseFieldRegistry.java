@@ -19,15 +19,13 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.DeprecationHandler;
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.core.Tuple;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.core.Tuple;
 
 /**
  * Registry for looking things up using ParseField semantics.
@@ -63,7 +61,7 @@ public class ParseFieldRegistry<T> {
      */
     public void register(T value, ParseField parseField) {
         Tuple<ParseField, T> parseFieldParserTuple = new Tuple<>(parseField, value);
-        for (String name: parseField.getAllNamesIncludedDeprecated()) {
+        for (String name : parseField.getAllNamesIncludedDeprecated()) {
             Tuple<ParseField, T> previousValue = registry.putIfAbsent(name, parseFieldParserTuple);
             if (previousValue != null) {
                 throw new IllegalArgumentException("[" + previousValue.v2() + "] already registered for [" + registryName + "][" + name

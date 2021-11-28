@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.reroute;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingExplanations;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,8 +29,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
 
 /**
  * Response returned after a cluster reroute request

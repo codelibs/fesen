@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.action;
 
+import static java.util.Collections.unmodifiableMap;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainAction;
@@ -369,12 +382,12 @@ import org.codelibs.fesen.rest.action.document.RestDeleteAction;
 import org.codelibs.fesen.rest.action.document.RestGetAction;
 import org.codelibs.fesen.rest.action.document.RestGetSourceAction;
 import org.codelibs.fesen.rest.action.document.RestIndexAction;
+import org.codelibs.fesen.rest.action.document.RestIndexAction.AutoIdHandler;
+import org.codelibs.fesen.rest.action.document.RestIndexAction.CreateHandler;
 import org.codelibs.fesen.rest.action.document.RestMultiGetAction;
 import org.codelibs.fesen.rest.action.document.RestMultiTermVectorsAction;
 import org.codelibs.fesen.rest.action.document.RestTermVectorsAction;
 import org.codelibs.fesen.rest.action.document.RestUpdateAction;
-import org.codelibs.fesen.rest.action.document.RestIndexAction.AutoIdHandler;
-import org.codelibs.fesen.rest.action.document.RestIndexAction.CreateHandler;
 import org.codelibs.fesen.rest.action.ingest.RestDeletePipelineAction;
 import org.codelibs.fesen.rest.action.ingest.RestGetPipelineAction;
 import org.codelibs.fesen.rest.action.ingest.RestPutPipelineAction;
@@ -388,19 +401,6 @@ import org.codelibs.fesen.rest.action.search.RestSearchScrollAction;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.usage.UsageService;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Collections.unmodifiableMap;
 
 /**
  * Builds and binds the generic action map, all {@link TransportAction}s, and {@link ActionFilters}.
@@ -426,9 +426,9 @@ public class ActionModule extends AbstractModule {
     private final ThreadPool threadPool;
 
     public ActionModule(boolean transportClient, Settings settings, IndexNameExpressionResolver indexNameExpressionResolver,
-                        IndexScopedSettings indexScopedSettings, ClusterSettings clusterSettings, SettingsFilter settingsFilter,
-                        ThreadPool threadPool, List<ActionPlugin> actionPlugins, NodeClient nodeClient,
-                        CircuitBreakerService circuitBreakerService, UsageService usageService, SystemIndices systemIndices) {
+            IndexScopedSettings indexScopedSettings, ClusterSettings clusterSettings, SettingsFilter settingsFilter, ThreadPool threadPool,
+            List<ActionPlugin> actionPlugins, NodeClient nodeClient, CircuitBreakerService circuitBreakerService, UsageService usageService,
+            SystemIndices systemIndices) {
         this.transportClient = transportClient;
         this.settings = settings;
         this.indexNameExpressionResolver = indexNameExpressionResolver;
@@ -439,14 +439,11 @@ public class ActionModule extends AbstractModule {
         this.threadPool = threadPool;
         actions = setupActions(actionPlugins);
         actionFilters = setupActionFilters(actionPlugins);
-        autoCreateIndex = transportClient
-            ? null
-            : new AutoCreateIndex(settings, clusterSettings, indexNameExpressionResolver, systemIndices);
+        autoCreateIndex =
+                transportClient ? null : new AutoCreateIndex(settings, clusterSettings, indexNameExpressionResolver, systemIndices);
         destructiveOperations = new DestructiveOperations(settings, clusterSettings);
-        Set<RestHeaderDefinition> headers = Stream.concat(
-            actionPlugins.stream().flatMap(p -> p.getRestHeaders().stream()),
-            Stream.of(new RestHeaderDefinition(Task.X_OPAQUE_ID, false))
-        ).collect(Collectors.toSet());
+        Set<RestHeaderDefinition> headers = Stream.concat(actionPlugins.stream().flatMap(p -> p.getRestHeaders().stream()),
+                Stream.of(new RestHeaderDefinition(Task.X_OPAQUE_ID, false))).collect(Collectors.toSet());
         UnaryOperator<RestHandler> restWrapper = null;
         for (ActionPlugin plugin : actionPlugins) {
             UnaryOperator<RestHandler> newRestWrapper = plugin.getRestHandlerWrapper(threadPool.getThreadContext());
@@ -459,7 +456,7 @@ public class ActionModule extends AbstractModule {
             }
         }
         mappingRequestValidators = new RequestValidators<>(
-            actionPlugins.stream().flatMap(p -> p.mappingRequestValidators().stream()).collect(Collectors.toList()));
+                actionPlugins.stream().flatMap(p -> p.mappingRequestValidators().stream()).collect(Collectors.toList()));
         indicesAliasesRequestRequestValidators = new RequestValidators<>(
                 actionPlugins.stream().flatMap(p -> p.indicesAliasesRequestValidators().stream()).collect(Collectors.toList()));
 
@@ -469,7 +466,6 @@ public class ActionModule extends AbstractModule {
             restController = new RestController(headers, restWrapper, nodeClient, circuitBreakerService, usageService);
         }
     }
-
 
     public Map<String, ActionHandler<?, ?>> getActions() {
         return actions;
@@ -486,9 +482,8 @@ public class ActionModule extends AbstractModule {
                 register(handler.getAction().name(), handler);
             }
 
-            public <Request extends ActionRequest, Response extends ActionResponse> void register(
-                ActionType<Response> action, Class<? extends TransportAction<Request, Response>> transportAction,
-                Class<?>... supportTransportActions) {
+            public <Request extends ActionRequest, Response extends ActionResponse> void register(ActionType<Response> action,
+                    Class<? extends TransportAction<Request, Response>> transportAction, Class<?>... supportTransportActions) {
                 register(new ActionHandler<>(action, transportAction, supportTransportActions));
             }
         }
@@ -578,10 +573,8 @@ public class ActionModule extends AbstractModule {
                 TransportShardMultiTermsVectorAction.class);
         actions.register(DeleteAction.INSTANCE, TransportDeleteAction.class);
         actions.register(UpdateAction.INSTANCE, TransportUpdateAction.class);
-        actions.register(MultiGetAction.INSTANCE, TransportMultiGetAction.class,
-                TransportShardMultiGetAction.class);
-        actions.register(BulkAction.INSTANCE, TransportBulkAction.class,
-                TransportShardBulkAction.class);
+        actions.register(MultiGetAction.INSTANCE, TransportMultiGetAction.class, TransportShardMultiGetAction.class);
+        actions.register(BulkAction.INSTANCE, TransportBulkAction.class, TransportShardBulkAction.class);
         actions.register(SearchAction.INSTANCE, TransportSearchAction.class);
         actions.register(SearchScrollAction.INSTANCE, TransportSearchScrollAction.class);
         actions.register(MultiSearchAction.INSTANCE, TransportMultiSearchAction.class);
@@ -600,7 +593,7 @@ public class ActionModule extends AbstractModule {
         actions.register(GetScriptLanguageAction.INSTANCE, TransportGetScriptLanguageAction.class);
 
         actions.register(FieldCapabilitiesAction.INSTANCE, TransportFieldCapabilitiesAction.class,
-            TransportFieldCapabilitiesIndexAction.class);
+                TransportFieldCapabilitiesIndexAction.class);
 
         actions.register(PutPipelineAction.INSTANCE, PutPipelineTransportAction.class);
         actions.register(GetPipelineAction.INSTANCE, GetPipelineTransportAction.class);
@@ -630,8 +623,8 @@ public class ActionModule extends AbstractModule {
     }
 
     private ActionFilters setupActionFilters(List<ActionPlugin> actionPlugins) {
-        return new ActionFilters(
-            Collections.unmodifiableSet(actionPlugins.stream().flatMap(p -> p.getActionFilters().stream()).collect(Collectors.toSet())));
+        return new ActionFilters(Collections
+                .unmodifiableSet(actionPlugins.stream().flatMap(p -> p.getActionFilters().stream()).collect(Collectors.toSet())));
     }
 
     public void initRestHandlers(Supplier<DiscoveryNodes> nodesInCluster) {
@@ -803,8 +796,10 @@ public class ActionModule extends AbstractModule {
     protected void configure() {
         bind(ActionFilters.class).toInstance(actionFilters);
         bind(DestructiveOperations.class).toInstance(destructiveOperations);
-        bind(new TypeLiteral<RequestValidators<PutMappingRequest>>() {}).toInstance(mappingRequestValidators);
-        bind(new TypeLiteral<RequestValidators<IndicesAliasesRequest>>() {}).toInstance(indicesAliasesRequestRequestValidators);
+        bind(new TypeLiteral<RequestValidators<PutMappingRequest>>() {
+        }).toInstance(mappingRequestValidators);
+        bind(new TypeLiteral<RequestValidators<IndicesAliasesRequest>>() {
+        }).toInstance(indicesAliasesRequestRequestValidators);
 
         if (false == transportClient) {
             // Supporting classes only used when not a transport client
@@ -813,8 +808,8 @@ public class ActionModule extends AbstractModule {
 
             // register ActionType -> transportAction Map used by NodeClient
             @SuppressWarnings("rawtypes")
-            MapBinder<ActionType, TransportAction> transportActionsBinder
-                    = MapBinder.newMapBinder(binder(), ActionType.class, TransportAction.class);
+            MapBinder<ActionType, TransportAction> transportActionsBinder =
+                    MapBinder.newMapBinder(binder(), ActionType.class, TransportAction.class);
             for (ActionHandler<?, ?> action : actions.values()) {
                 // bind the action as eager singleton, so the map binder one will reuse it
                 bind(action.getTransportAction()).asEagerSingleton();

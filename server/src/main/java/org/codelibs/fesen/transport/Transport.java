@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.transport;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -29,16 +39,6 @@ import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentMapLong;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Predicate;
 
 public interface Transport extends LifecycleComponent {
 
@@ -108,8 +108,8 @@ public interface Transport extends LifecycleComponent {
          * @param options request options to apply
          * @throws NodeNotConnectedException if the given node is not connected
          */
-        void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options) throws
-            IOException, TransportException;
+        void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
+                throws IOException, TransportException;
 
         /**
          * The listener's {@link ActionListener#onResponse(Object)} method will be called when this
@@ -176,8 +176,8 @@ public interface Transport extends LifecycleComponent {
      * This class is a registry that allows
      */
     final class ResponseHandlers {
-        private final ConcurrentMapLong<ResponseContext<? extends TransportResponse>> handlers = ConcurrentCollections
-            .newConcurrentMapLongWithAggressiveConcurrency();
+        private final ConcurrentMapLong<ResponseContext<? extends TransportResponse>> handlers =
+                ConcurrentCollections.newConcurrentMapLongWithAggressiveConcurrency();
         private final AtomicLong requestIdGenerator = new AtomicLong();
 
         /**
@@ -238,7 +238,7 @@ public interface Transport extends LifecycleComponent {
          * found.
          */
         public TransportResponseHandler<? extends TransportResponse> onResponseReceived(final long requestId,
-                                                                                        final TransportMessageListener listener) {
+                final TransportMessageListener listener) {
             ResponseContext<? extends TransportResponse> context = handlers.remove(requestId);
             listener.onResponseReceived(requestId, context);
             if (context == null) {

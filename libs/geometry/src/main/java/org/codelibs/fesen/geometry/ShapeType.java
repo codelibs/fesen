@@ -25,14 +25,7 @@ import java.util.Locale;
  * Shape types supported by fesen
  */
 public enum ShapeType {
-    POINT,
-    MULTIPOINT,
-    LINESTRING,
-    MULTILINESTRING,
-    POLYGON,
-    MULTIPOLYGON,
-    GEOMETRYCOLLECTION,
-    LINEARRING, // not serialized by itself in WKT or WKB
+    POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, MULTIPOLYGON, GEOMETRYCOLLECTION, LINEARRING, // not serialized by itself in WKT or WKB
     ENVELOPE, // not part of the actual WKB spec
     CIRCLE; // not part of the actual WKB spec
 

@@ -46,13 +46,13 @@ public class TransportCancelTasksAction extends TransportTasksAction<Cancellable
 
     @Inject
     public TransportCancelTasksAction(ClusterService clusterService, TransportService transportService, ActionFilters actionFilters) {
-        super(CancelTasksAction.NAME, clusterService, transportService, actionFilters,
-            CancelTasksRequest::new, CancelTasksResponse::new, TaskInfo::new, ThreadPool.Names.MANAGEMENT);
+        super(CancelTasksAction.NAME, clusterService, transportService, actionFilters, CancelTasksRequest::new, CancelTasksResponse::new,
+                TaskInfo::new, ThreadPool.Names.MANAGEMENT);
     }
 
     @Override
-    protected CancelTasksResponse newResponse(CancelTasksRequest request, List<TaskInfo> tasks, List<TaskOperationFailure>
-        taskOperationFailures, List<FailedNodeException> failedNodeExceptions) {
+    protected CancelTasksResponse newResponse(CancelTasksRequest request, List<TaskInfo> tasks,
+            List<TaskOperationFailure> taskOperationFailures, List<FailedNodeException> failedNodeExceptions) {
         return new CancelTasksResponse(tasks, taskOperationFailures, failedNodeExceptions);
     }
 
@@ -87,7 +87,6 @@ public class TransportCancelTasksAction extends TransportTasksAction<Cancellable
     protected void taskOperation(CancelTasksRequest request, CancellableTask cancellableTask, ActionListener<TaskInfo> listener) {
         String nodeId = clusterService.localNode().getId();
         taskManager.cancelTaskAndDescendants(cancellableTask, request.getReason(), request.waitForCompletion(),
-            ActionListener.map(listener, r -> cancellableTask.taskInfo(nodeId, false)));
+                ActionListener.map(listener, r -> cancellableTask.taskInfo(nodeId, false)));
     }
 }
-

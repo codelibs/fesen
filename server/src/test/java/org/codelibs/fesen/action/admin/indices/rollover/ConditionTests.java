@@ -64,16 +64,16 @@ public class ConditionTests extends ESTestCase {
     public void testMaxSize() {
         MaxSizeCondition maxSizeCondition = new MaxSizeCondition(new ByteSizeValue(randomIntBetween(10, 20), ByteSizeUnit.MB));
 
-        Condition.Result result = maxSizeCondition.evaluate(new Condition.Stats(randomNonNegativeLong(), randomNonNegativeLong(),
-            new ByteSizeValue(0, ByteSizeUnit.MB)));
+        Condition.Result result = maxSizeCondition
+                .evaluate(new Condition.Stats(randomNonNegativeLong(), randomNonNegativeLong(), new ByteSizeValue(0, ByteSizeUnit.MB)));
         assertThat(result.matched, equalTo(false));
 
         result = maxSizeCondition.evaluate(new Condition.Stats(randomNonNegativeLong(), randomNonNegativeLong(),
-            new ByteSizeValue(randomIntBetween(0, 9), ByteSizeUnit.MB)));
+                new ByteSizeValue(randomIntBetween(0, 9), ByteSizeUnit.MB)));
         assertThat(result.matched, equalTo(false));
 
         result = maxSizeCondition.evaluate(new Condition.Stats(randomNonNegativeLong(), randomNonNegativeLong(),
-            new ByteSizeValue(randomIntBetween(20, 1000), ByteSizeUnit.MB)));
+                new ByteSizeValue(randomIntBetween(20, 1000), ByteSizeUnit.MB)));
         assertThat(result.matched, equalTo(true));
     }
 

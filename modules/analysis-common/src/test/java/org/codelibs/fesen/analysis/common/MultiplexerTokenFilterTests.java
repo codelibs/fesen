@@ -19,8 +19,10 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -32,74 +34,50 @@ import org.codelibs.fesen.indices.analysis.AnalysisModule;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
-import java.io.IOException;
-import java.util.Collections;
-
 public class MultiplexerTokenFilterTests extends ESTokenStreamTestCase {
 
     public void testMultiplexingFilter() throws IOException {
-        Settings settings = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-            .build();
-        Settings indexSettings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put("index.analysis.filter.t.type", "truncate")
-            .put("index.analysis.filter.t.length", "2")
-            .put("index.analysis.filter.multiplexFilter.type", "multiplexer")
-            .putList("index.analysis.filter.multiplexFilter.filters", "lowercase, t", "uppercase")
-            .put("index.analysis.analyzer.myAnalyzer.type", "custom")
-            .put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
-            .putList("index.analysis.analyzer.myAnalyzer.filter", "multiplexFilter")
-            .build();
+        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put("index.analysis.filter.t.type", "truncate").put("index.analysis.filter.t.length", "2")
+                .put("index.analysis.filter.multiplexFilter.type", "multiplexer")
+                .putList("index.analysis.filter.multiplexFilter.filters", "lowercase, t", "uppercase")
+                .put("index.analysis.analyzer.myAnalyzer.type", "custom").put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
+                .putList("index.analysis.analyzer.myAnalyzer.filter", "multiplexFilter").build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
-        IndexAnalyzers indexAnalyzers = new AnalysisModule(TestEnvironment.newEnvironment(settings),
-            Collections.singletonList(new CommonAnalysisPlugin())).getAnalysisRegistry().build(idxSettings);
+        IndexAnalyzers indexAnalyzers =
+                new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(new CommonAnalysisPlugin()))
+                        .getAnalysisRegistry().build(idxSettings);
 
         try (NamedAnalyzer analyzer = indexAnalyzers.get("myAnalyzer")) {
             assertNotNull(analyzer);
-            assertAnalyzesTo(analyzer, "ONe tHree", new String[]{
-                "ONe", "on", "ONE", "tHree", "th", "THREE"
-            }, new int[]{
-                1,      0,      0,      1,      0,      0
-            });
+            assertAnalyzesTo(analyzer, "ONe tHree", new String[] { "ONe", "on", "ONE", "tHree", "th", "THREE" },
+                    new int[] { 1, 0, 0, 1, 0, 0 });
             // Duplicates are removed
-            assertAnalyzesTo(analyzer, "ONe THREE", new String[]{
-                "ONe", "on", "ONE", "THREE", "th"
-            }, new int[]{
-                1,      0,      0,      1,      0,      0
-            });
+            assertAnalyzesTo(analyzer, "ONe THREE", new String[] { "ONe", "on", "ONE", "THREE", "th" }, new int[] { 1, 0, 0, 1, 0, 0 });
         }
     }
 
     public void testMultiplexingNoOriginal() throws IOException {
 
-        Settings settings = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-            .build();
-        Settings indexSettings = Settings.builder()
-            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-            .put("index.analysis.filter.t.type", "truncate")
-            .put("index.analysis.filter.t.length", "2")
-            .put("index.analysis.filter.multiplexFilter.type", "multiplexer")
-            .put("index.analysis.filter.multiplexFilter.preserve_original", "false")
-            .putList("index.analysis.filter.multiplexFilter.filters", "lowercase, t", "uppercase")
-            .put("index.analysis.analyzer.myAnalyzer.type", "custom")
-            .put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
-            .putList("index.analysis.analyzer.myAnalyzer.filter", "multiplexFilter")
-            .build();
+        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put("index.analysis.filter.t.type", "truncate").put("index.analysis.filter.t.length", "2")
+                .put("index.analysis.filter.multiplexFilter.type", "multiplexer")
+                .put("index.analysis.filter.multiplexFilter.preserve_original", "false")
+                .putList("index.analysis.filter.multiplexFilter.filters", "lowercase, t", "uppercase")
+                .put("index.analysis.analyzer.myAnalyzer.type", "custom").put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
+                .putList("index.analysis.analyzer.myAnalyzer.filter", "multiplexFilter").build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
-        IndexAnalyzers indexAnalyzers = new AnalysisModule(TestEnvironment.newEnvironment(settings),
-            Collections.singletonList(new CommonAnalysisPlugin())).getAnalysisRegistry().build(idxSettings);
+        IndexAnalyzers indexAnalyzers =
+                new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(new CommonAnalysisPlugin()))
+                        .getAnalysisRegistry().build(idxSettings);
 
         try (NamedAnalyzer analyzer = indexAnalyzers.get("myAnalyzer")) {
             assertNotNull(analyzer);
-            assertAnalyzesTo(analyzer, "ONe tHree", new String[]{
-                "on", "ONE", "th", "THREE"
-            }, new int[]{
-                1,      0,      1,      0,
-            });
+            assertAnalyzesTo(analyzer, "ONe tHree", new String[] { "on", "ONE", "th", "THREE" }, new int[] { 1, 0, 1, 0, });
         }
 
     }

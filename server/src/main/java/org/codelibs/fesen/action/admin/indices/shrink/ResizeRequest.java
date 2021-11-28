@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.action.admin.indices.shrink;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -35,11 +40,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Objects;
-
 /**
  * Request class to shrink an index into a single shard
  */
@@ -48,9 +48,9 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
     public static final ObjectParser<ResizeRequest, Void> PARSER = new ObjectParser<>("resize_request");
     static {
         PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().settings(parser.map()),
-            new ParseField("settings"), ObjectParser.ValueType.OBJECT);
-        PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().aliases(parser.map()),
-            new ParseField("aliases"), ObjectParser.ValueType.OBJECT);
+                new ParseField("settings"), ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().aliases(parser.map()), new ParseField("aliases"),
+                ObjectParser.ValueType.OBJECT);
     }
 
     private CreateIndexRequest targetIndexRequest;
@@ -66,7 +66,8 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         copySettings = in.readOptionalBoolean();
     }
 
-    ResizeRequest() {}
+    ResizeRequest() {
+    }
 
     public ResizeRequest(String targetIndex, String sourceIndex) {
         this.targetIndexRequest = new CreateIndexRequest(targetIndex);
@@ -111,7 +112,7 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
 
     @Override
     public String[] indices() {
-        return new String[] {sourceIndex};
+        return new String[] { sourceIndex };
     }
 
     @Override

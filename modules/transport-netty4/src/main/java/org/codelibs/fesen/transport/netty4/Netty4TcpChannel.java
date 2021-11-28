@@ -19,9 +19,7 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelPromise;
+import java.net.InetSocketAddress;
 
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
@@ -31,7 +29,9 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.transport.TcpChannel;
 import org.codelibs.fesen.transport.TransportException;
 
-import java.net.InetSocketAddress;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelPromise;
 
 public class Netty4TcpChannel implements TcpChannel {
 
@@ -157,9 +157,6 @@ public class Netty4TcpChannel implements TcpChannel {
 
     @Override
     public String toString() {
-        return "Netty4TcpChannel{" +
-            "localAddress=" + getLocalAddress() +
-            ", remoteAddress=" + channel.remoteAddress() +
-            '}';
+        return "Netty4TcpChannel{" + "localAddress=" + getLocalAddress() + ", remoteAddress=" + channel.remoteAddress() + '}';
     }
 }

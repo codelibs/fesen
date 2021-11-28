@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import static org.codelibs.fesen.ingest.ConfigurationUtils.newConfigurationException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.grok.Grok;
@@ -27,12 +33,6 @@ import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.ConfigurationUtils;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.Processor;
-
-import static org.codelibs.fesen.ingest.ConfigurationUtils.newConfigurationException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class GrokProcessor extends AbstractProcessor {
 
@@ -47,7 +47,7 @@ public final class GrokProcessor extends AbstractProcessor {
     private final boolean ignoreMissing;
 
     GrokProcessor(String tag, String description, Map<String, String> patternBank, List<String> matchPatterns, String matchField,
-                  boolean traceMatch, boolean ignoreMissing, MatcherWatchdog matcherWatchdog) {
+            boolean traceMatch, boolean ignoreMissing, MatcherWatchdog matcherWatchdog) {
         super(tag, description);
         this.matchField = matchField;
         this.matchPatterns = matchPatterns;
@@ -129,7 +129,7 @@ public final class GrokProcessor extends AbstractProcessor {
                     combinedPattern = combinedPattern + "|" + valueWrap;
                 }
             }
-        }  else {
+        } else {
             combinedPattern = patterns.get(0);
         }
 
@@ -147,8 +147,8 @@ public final class GrokProcessor extends AbstractProcessor {
         }
 
         @Override
-        public GrokProcessor create(Map<String, Processor.Factory> registry, String processorTag,
-                                    String description, Map<String, Object> config) throws Exception {
+        public GrokProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
+                Map<String, Object> config) throws Exception {
             String matchField = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "field");
             List<String> matchPatterns = ConfigurationUtils.readList(TYPE, processorTag, config, "patterns");
             boolean traceMatch = ConfigurationUtils.readBooleanProperty(TYPE, processorTag, config, "trace_match", false);
@@ -165,10 +165,10 @@ public final class GrokProcessor extends AbstractProcessor {
 
             try {
                 return new GrokProcessor(processorTag, description, patternBank, matchPatterns, matchField, traceMatch, ignoreMissing,
-                    matcherWatchdog);
+                        matcherWatchdog);
             } catch (Exception e) {
                 throw newConfigurationException(TYPE, processorTag, "patterns",
-                    "Invalid regex pattern found in: " + matchPatterns + ". " + e.getMessage());
+                        "Invalid regex pattern found in: " + matchPatterns + ". " + e.getMessage());
             }
 
         }

@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations.support.values;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.common.lucene.ScorerAware;
 import org.codelibs.fesen.index.fielddata.SortingNumericDoubleValues;
@@ -25,11 +30,6 @@ import org.codelibs.fesen.script.AggregationScript;
 import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
 import org.joda.time.ReadableInstant;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.time.ZonedDateTime;
-import java.util.Collection;
 
 /**
  * {@link SortingNumericDoubleValues} implementation which is based on a script

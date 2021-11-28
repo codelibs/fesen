@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.profile.query;
 
+import java.io.IOException;
+import java.util.Collection;
+
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
 import org.codelibs.fesen.search.profile.Timer;
-
-import java.io.IOException;
-import java.util.Collection;
 
 /**
  * {@link Scorer} wrapper that will compute how much time is spent on moving
@@ -38,7 +38,7 @@ final class ProfileScorer extends Scorer {
     private ProfileWeight profileWeight;
 
     private final Timer scoreTimer, nextDocTimer, advanceTimer, matchTimer, shallowAdvanceTimer, computeMaxScoreTimer,
-        setMinCompetitiveScoreTimer;
+            setMinCompetitiveScoreTimer;
 
     ProfileScorer(ProfileWeight w, Scorer scorer, QueryProfileBreakdown profile) throws IOException {
         super(w);

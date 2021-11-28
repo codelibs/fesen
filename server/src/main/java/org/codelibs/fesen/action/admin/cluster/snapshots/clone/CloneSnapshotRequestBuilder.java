@@ -26,16 +26,15 @@ import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilde
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.Strings;
 
-public class CloneSnapshotRequestBuilder extends MasterNodeOperationRequestBuilder<CloneSnapshotRequest, AcknowledgedResponse,
-                                                                                   CloneSnapshotRequestBuilder> {
+public class CloneSnapshotRequestBuilder
+        extends MasterNodeOperationRequestBuilder<CloneSnapshotRequest, AcknowledgedResponse, CloneSnapshotRequestBuilder> {
 
-    protected CloneSnapshotRequestBuilder(FesenClient client, ActionType<AcknowledgedResponse> action,
-                                          CloneSnapshotRequest request) {
+    protected CloneSnapshotRequestBuilder(FesenClient client, ActionType<AcknowledgedResponse> action, CloneSnapshotRequest request) {
         super(client, action, request);
     }
 
-    public CloneSnapshotRequestBuilder(FesenClient client, ActionType<AcknowledgedResponse> action,
-                                       String repository, String source, String target) {
+    public CloneSnapshotRequestBuilder(FesenClient client, ActionType<AcknowledgedResponse> action, String repository, String source,
+            String target) {
         this(client, action, new CloneSnapshotRequest(repository, source, target, Strings.EMPTY_ARRAY));
     }
 

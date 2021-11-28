@@ -137,14 +137,15 @@ public class MultiSearchActionTookTests extends ESTestCase {
 
     private TransportMultiSearchAction createTransportMultiSearchAction(boolean controlledClock, AtomicLong expected) {
         Settings settings = Settings.builder().put("node.name", TransportMultiSearchActionTests.class.getSimpleName()).build();
-        TransportService transportService = new TransportService(Settings.EMPTY, mock(Transport.class), null,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR, boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(),
-            UUIDs.randomBase64UUID()), null, Collections.emptySet()) {
-            @Override
-            public TaskManager getTaskManager() {
-                return taskManager;
-            }
-        };
+        TransportService transportService =
+                new TransportService(Settings.EMPTY, mock(Transport.class), null, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+                        boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(), UUIDs.randomBase64UUID()), null,
+                        Collections.emptySet()) {
+                    @Override
+                    public TaskManager getTaskManager() {
+                        return taskManager;
+                    }
+                };
         ActionFilters actionFilters = new ActionFilters(new HashSet<>());
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(ClusterState.builder(new ClusterName("test")).build());
@@ -163,7 +164,7 @@ public class MultiSearchActionTookTests extends ESTestCase {
                 commonExecutor.execute(() -> {
                     counter.decrementAndGet();
                     listener.onResponse(new SearchResponse(InternalSearchResponse.empty(), null, 0, 0, 0, 0L,
-                        ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY));
+                            ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY));
                 });
             }
 
@@ -175,7 +176,7 @@ public class MultiSearchActionTookTests extends ESTestCase {
 
         if (controlledClock) {
             return new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, availableProcessors,
-                                                  expected::get, client) {
+                    expected::get, client) {
                 @Override
                 void executeSearch(final Queue<SearchRequestSlot> requests, final AtomicArray<MultiSearchResponse.Item> responses,
                         final AtomicInteger responseCounter, final ActionListener<MultiSearchResponse> listener, long startTimeInNanos) {
@@ -184,8 +185,8 @@ public class MultiSearchActionTookTests extends ESTestCase {
                 }
             };
         } else {
-            return new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService,
-                                                  availableProcessors, System::nanoTime, client) {
+            return new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, availableProcessors,
+                    System::nanoTime, client) {
                 @Override
                 void executeSearch(final Queue<SearchRequestSlot> requests, final AtomicArray<MultiSearchResponse.Item> responses,
                         final AtomicInteger responseCounter, final ActionListener<MultiSearchResponse> listener, long startTimeInNanos) {

@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.plugins;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.codelibs.fesen.plugins.ProgressInputStream;
-import org.codelibs.fesen.test.ESTestCase;
-
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codelibs.fesen.test.ESTestCase;
 
 public class ProgressInputStreamTests extends ESTestCase {
 

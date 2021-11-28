@@ -19,8 +19,15 @@
 
 package org.codelibs.fesen.indices;
 
-import com.carrotsearch.hppc.ObjectHashSet;
-import com.carrotsearch.hppc.ObjectSet;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.DirectoryReader;
@@ -36,20 +43,14 @@ import org.codelibs.fesen.common.cache.RemovalListener;
 import org.codelibs.fesen.common.cache.RemovalNotification;
 import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.core.TimeValue;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
+import com.carrotsearch.hppc.ObjectHashSet;
+import com.carrotsearch.hppc.ObjectSet;
 
 /**
  * The indices request cache allows to cache a shard level request stage responses, helping with improving
@@ -73,11 +74,11 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
      * since we are checking on the cluster state IndexMetadata always.
      */
     public static final Setting<Boolean> INDEX_CACHE_REQUEST_ENABLED_SETTING =
-        Setting.boolSetting("index.requests.cache.enable", true, Property.Dynamic, Property.IndexScope);
+            Setting.boolSetting("index.requests.cache.enable", true, Property.Dynamic, Property.IndexScope);
     public static final Setting<ByteSizeValue> INDICES_CACHE_QUERY_SIZE =
-        Setting.memorySizeSetting("indices.requests.cache.size", "1%", Property.NodeScope);
+            Setting.memorySizeSetting("indices.requests.cache.size", "1%", Property.NodeScope);
     public static final Setting<TimeValue> INDICES_CACHE_QUERY_EXPIRE =
-        Setting.positiveTimeSetting("indices.requests.cache.expire", new TimeValue(0), Property.NodeScope);
+            Setting.positiveTimeSetting("indices.requests.cache.expire", new TimeValue(0), Property.NodeScope);
 
     private final ConcurrentMap<CleanupKey, Boolean> registeredClosedListeners = ConcurrentCollections.newConcurrentMap();
     private final Set<CleanupKey> keysToClean = ConcurrentCollections.newConcurrentSet();
@@ -89,8 +90,8 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
         this.size = INDICES_CACHE_QUERY_SIZE.get(settings);
         this.expire = INDICES_CACHE_QUERY_EXPIRE.exists(settings) ? INDICES_CACHE_QUERY_EXPIRE.get(settings) : null;
         long sizeInBytes = size.getBytes();
-        CacheBuilder<Key, BytesReference> cacheBuilder = CacheBuilder.<Key, BytesReference>builder()
-            .setMaximumWeight(sizeInBytes).weigher((k, v) -> k.ramBytesUsed() + v.ramBytesUsed()).removalListener(this);
+        CacheBuilder<Key, BytesReference> cacheBuilder = CacheBuilder.<Key, BytesReference> builder().setMaximumWeight(sizeInBytes)
+                .weigher((k, v) -> k.ramBytesUsed() + v.ramBytesUsed()).removalListener(this);
         if (expire != null) {
             cacheBuilder.setExpireAfterAccess(expire);
         }
@@ -112,10 +113,10 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
         notification.getKey().entity.onRemoval(notification);
     }
 
-    BytesReference getOrCompute(CacheEntity cacheEntity, CheckedSupplier<BytesReference, IOException> loader,
-                                DirectoryReader reader, BytesReference cacheKey) throws Exception {
+    BytesReference getOrCompute(CacheEntity cacheEntity, CheckedSupplier<BytesReference, IOException> loader, DirectoryReader reader,
+            BytesReference cacheKey) throws Exception {
         assert reader.getReaderCacheHelper() != null;
-        final Key key =  new Key(cacheEntity, reader.getReaderCacheHelper().getKey(), cacheKey);
+        final Key key = new Key(cacheEntity, reader.getReaderCacheHelper().getKey(), cacheKey);
         Loader cacheLoader = new Loader(cacheEntity, loader);
         BytesReference value = cache.computeIfAbsent(key, cacheLoader);
         if (cacheLoader.isLoaded()) {
@@ -233,12 +234,17 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Key key = (Key) o;
-            if (Objects.equals(readerCacheKey, key.readerCacheKey) == false) return false;
-            if (!entity.getCacheIdentity().equals(key.entity.getCacheIdentity())) return false;
-            if (!value.equals(key.value)) return false;
+            if (Objects.equals(readerCacheKey, key.readerCacheKey) == false)
+                return false;
+            if (!entity.getCacheIdentity().equals(key.entity.getCacheIdentity()))
+                return false;
+            if (!value.equals(key.value))
+                return false;
             return true;
         }
 
@@ -270,13 +276,16 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
+            if (this == o)
+                return true;
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
             CleanupKey that = (CleanupKey) o;
-            if (Objects.equals(readerCacheKey, that.readerCacheKey) == false) return false;
-            if (!entity.getCacheIdentity().equals(that.entity.getCacheIdentity())) return false;
+            if (Objects.equals(readerCacheKey, that.readerCacheKey) == false)
+                return false;
+            if (!entity.getCacheIdentity().equals(that.entity.getCacheIdentity()))
+                return false;
             return true;
         }
 
@@ -288,14 +297,12 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
         }
     }
 
-
-
     synchronized void cleanCache() {
         final ObjectSet<CleanupKey> currentKeysToClean = new ObjectHashSet<>();
         final ObjectSet<Object> currentFullClean = new ObjectHashSet<>();
         currentKeysToClean.clear();
         currentFullClean.clear();
-        for (Iterator<CleanupKey> iterator = keysToClean.iterator(); iterator.hasNext(); ) {
+        for (Iterator<CleanupKey> iterator = keysToClean.iterator(); iterator.hasNext();) {
             CleanupKey cleanupKey = iterator.next();
             iterator.remove();
             if (cleanupKey.readerCacheKey == null || cleanupKey.entity.isOpen() == false) {
@@ -306,7 +313,7 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
             }
         }
         if (!currentKeysToClean.isEmpty() || !currentFullClean.isEmpty()) {
-            for (Iterator<Key> iterator = cache.keys().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Key> iterator = cache.keys().iterator(); iterator.hasNext();) {
                 Key key = iterator.next();
                 if (currentFullClean.contains(key.entity.getCacheIdentity())) {
                     iterator.remove();
@@ -320,7 +327,6 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
 
         cache.refresh();
     }
-
 
     /**
      * Returns the current size of the cache

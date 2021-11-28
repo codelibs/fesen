@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.transport;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.bytes.ReleasableBytesReference;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.core.internal.io.IOUtils;
-
-import java.io.IOException;
-import java.util.function.Consumer;
 
 public class InboundDecoder implements Releasable {
 

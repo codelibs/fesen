@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.codelibs.fesen.index.mapper.SeqNoFieldMapper;
@@ -25,8 +27,6 @@ import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
-
-import java.io.IOException;
 
 public final class SeqNoPrimaryTermPhase implements FetchSubPhase {
 
@@ -54,7 +54,7 @@ public final class SeqNoPrimaryTermPhase implements FetchSubPhase {
                 // we have to check the primary term field as it is only assigned for non-nested documents
                 if (primaryTermField != null && primaryTermField.advanceExact(docId)) {
                     boolean found = seqNoField.advanceExact(docId);
-                    assert found: "found seq no for " + docId + " but not a primary term";
+                    assert found : "found seq no for " + docId + " but not a primary term";
                     seqNo = seqNoField.longValue();
                     primaryTerm = primaryTermField.longValue();
                 }

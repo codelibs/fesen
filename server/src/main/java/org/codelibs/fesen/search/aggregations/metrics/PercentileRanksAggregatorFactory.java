@@ -41,24 +41,16 @@ class PercentileRanksAggregatorFactory extends ValuesSourceAggregatorFactory {
     private final boolean keyed;
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        builder.register(
-            PercentileRanksAggregationBuilder.REGISTRY_KEY,
-            Arrays.asList(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
-            (name, valuesSource, context, parent, percents, percentilesConfig, keyed,  formatter,
-                                          metadata) -> percentilesConfig
-                .createPercentileRanksAggregator(name, valuesSource, context, parent, percents, keyed, formatter, metadata),
+        builder.register(PercentileRanksAggregationBuilder.REGISTRY_KEY,
+                Arrays.asList(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
+                (name, valuesSource, context, parent, percents, percentilesConfig, keyed, formatter, metadata) -> percentilesConfig
+                        .createPercentileRanksAggregator(name, valuesSource, context, parent, percents, keyed, formatter, metadata),
                 true);
     }
 
-    PercentileRanksAggregatorFactory(String name,
-                                     ValuesSourceConfig config,
-                                     double[] percents,
-                                     PercentilesConfig percentilesConfig,
-                                     boolean keyed,
-                                     QueryShardContext queryShardContext,
-                                     AggregatorFactory parent,
-                                     AggregatorFactories.Builder subFactoriesBuilder,
-                                     Map<String, Object> metadata) throws IOException {
+    PercentileRanksAggregatorFactory(String name, ValuesSourceConfig config, double[] percents, PercentilesConfig percentilesConfig,
+            boolean keyed, QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+            Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.percents = percents;
         this.percentilesConfig = percentilesConfig;
@@ -66,23 +58,16 @@ class PercentileRanksAggregatorFactory extends ValuesSourceAggregatorFactory {
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext,
-                                        Aggregator parent,
-                                        Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
 
-        return percentilesConfig.createPercentileRanksAggregator(name, null, searchContext, parent, percents, keyed,
-                config.format(), metadata);
+        return percentilesConfig.createPercentileRanksAggregator(name, null, searchContext, parent, percents, keyed, config.format(),
+                metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(
-        SearchContext searchContext,
-        Aggregator parent,
-        CardinalityUpperBound bucketCardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(PercentileRanksAggregationBuilder.REGISTRY_KEY, config)
-            .build(name, config.getValuesSource(), searchContext, parent, percents, percentilesConfig, keyed, config.format(), metadata);
+    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound bucketCardinality,
+            Map<String, Object> metadata) throws IOException {
+        return queryShardContext.getValuesSourceRegistry().getAggregator(PercentileRanksAggregationBuilder.REGISTRY_KEY, config).build(name,
+                config.getValuesSource(), searchContext, parent, percents, percentilesConfig, keyed, config.format(), metadata);
     }
 }

@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.search.slice;
 
-import org.apache.lucene.search.Query;
-
 import java.util.Objects;
+
+import org.apache.lucene.search.Query;
 
 /**
  * An abstract {@link Query} that defines an hash function to partition the documents in multiple slices.

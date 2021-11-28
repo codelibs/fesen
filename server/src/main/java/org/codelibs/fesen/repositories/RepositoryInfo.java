@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.repositories;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 public final class RepositoryInfo implements Writeable, ToXContentFragment {
     public final String ephemeralId;
@@ -40,20 +40,12 @@ public final class RepositoryInfo implements Writeable, ToXContentFragment {
     @Nullable
     public final Long stoppedAt;
 
-    public RepositoryInfo(String ephemeralId,
-                          String name,
-                          String type,
-                          Map<String, String> location,
-                          long startedAt) {
+    public RepositoryInfo(String ephemeralId, String name, String type, Map<String, String> location, long startedAt) {
         this(ephemeralId, name, type, location, startedAt, null);
     }
 
-    public RepositoryInfo(String ephemeralId,
-                          String name,
-                          String type,
-                          Map<String, String> location,
-                          long startedAt,
-                          @Nullable Long stoppedAt) {
+    public RepositoryInfo(String ephemeralId, String name, String type, Map<String, String> location, long startedAt,
+            @Nullable Long stoppedAt) {
         this.ephemeralId = ephemeralId;
         this.name = name;
         this.type = type;
@@ -109,15 +101,13 @@ public final class RepositoryInfo implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RepositoryInfo that = (RepositoryInfo) o;
-        return ephemeralId.equals(that.ephemeralId) &&
-            name.equals(that.name) &&
-            type.equals(that.type) &&
-            location.equals(that.location) &&
-            startedAt == that.startedAt &&
-            Objects.equals(stoppedAt, that.stoppedAt);
+        return ephemeralId.equals(that.ephemeralId) && name.equals(that.name) && type.equals(that.type) && location.equals(that.location)
+                && startedAt == that.startedAt && Objects.equals(stoppedAt, that.stoppedAt);
     }
 
     @Override

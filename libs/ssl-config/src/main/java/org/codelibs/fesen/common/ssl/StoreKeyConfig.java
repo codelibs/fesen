@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.X509ExtendedKeyManager;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -30,6 +28,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.X509ExtendedKeyManager;
 
 /**
  * A {@link SslKeyConfig} that builds a Key Manager from a keystore file.
@@ -71,7 +72,7 @@ public class StoreKeyConfig implements SslKeyConfig {
             return KeyStoreUtil.createKeyManager(keyStore, keyPassword, algorithm);
         } catch (UnrecoverableKeyException e) {
             String message = "failed to load a KeyManager for keystore [" + path.toAbsolutePath()
-                + "], this is usually caused by an incorrect key-password";
+                    + "], this is usually caused by an incorrect key-password";
             if (keyPassword.length == 0) {
                 message += " (no key-password was provided)";
             } else if (Arrays.equals(storePassword, keyPassword)) {

@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -30,12 +33,9 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.metrics.MetricsAggregator;
-import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ArrayValuesSource.NumericArrayValuesSource;
+import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Metric Aggregation for computing the pearson product correlation coefficient between multiple fields
@@ -47,8 +47,8 @@ final class MatrixStatsAggregator extends MetricsAggregator {
     /** array of descriptive stats, per shard, needed to compute the correlation */
     ObjectArray<RunningStats> stats;
 
-    MatrixStatsAggregator(String name, Map<String, ValuesSource.Numeric> valuesSources, SearchContext context,
-                                 Aggregator parent, MultiValueMode multiValueMode, Map<String,Object> metadata) throws IOException {
+    MatrixStatsAggregator(String name, Map<String, ValuesSource.Numeric> valuesSources, SearchContext context, Aggregator parent,
+            MultiValueMode multiValueMode, Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         if (valuesSources != null && !valuesSources.isEmpty()) {
             this.valuesSources = new NumericArrayValuesSource(valuesSources, multiValueMode);
@@ -64,8 +64,7 @@ final class MatrixStatsAggregator extends MetricsAggregator {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-                                                final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         if (valuesSources == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }

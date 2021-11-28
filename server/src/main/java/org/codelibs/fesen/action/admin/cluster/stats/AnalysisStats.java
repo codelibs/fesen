@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
-import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.cluster.metadata.MappingMetadata;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +31,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.cluster.metadata.IndexMetadata;
+import org.codelibs.fesen.cluster.metadata.MappingMetadata;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
 /**
  * Statistics about analysis usage.
@@ -144,10 +144,8 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
                 usedBuiltInTokenFilters.values(), usedBuiltInAnalyzers.values());
     }
 
-    private static void aggregateAnalysisTypes(
-                Collection<Settings> settings,
-                Map<String, IndexFeatureStats> stats,
-                Set<String> indexTypes) {
+    private static void aggregateAnalysisTypes(Collection<Settings> settings, Map<String, IndexFeatureStats> stats,
+            Set<String> indexTypes) {
         for (Settings analysisComponentSettings : settings) {
             final String type = analysisComponentSettings.get("type");
             if (type != null) {
@@ -169,15 +167,10 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
     private final Set<IndexFeatureStats> usedCharFilters, usedTokenizers, usedTokenFilters, usedAnalyzers;
     private final Set<IndexFeatureStats> usedBuiltInCharFilters, usedBuiltInTokenizers, usedBuiltInTokenFilters, usedBuiltInAnalyzers;
 
-    AnalysisStats(
-            Collection<IndexFeatureStats> usedCharFilters,
-            Collection<IndexFeatureStats> usedTokenizers,
-            Collection<IndexFeatureStats> usedTokenFilters,
-            Collection<IndexFeatureStats> usedAnalyzers,
-            Collection<IndexFeatureStats> usedBuiltInCharFilters,
-            Collection<IndexFeatureStats> usedBuiltInTokenizers,
-            Collection<IndexFeatureStats> usedBuiltInTokenFilters,
-            Collection<IndexFeatureStats> usedBuiltInAnalyzers) {
+    AnalysisStats(Collection<IndexFeatureStats> usedCharFilters, Collection<IndexFeatureStats> usedTokenizers,
+            Collection<IndexFeatureStats> usedTokenFilters, Collection<IndexFeatureStats> usedAnalyzers,
+            Collection<IndexFeatureStats> usedBuiltInCharFilters, Collection<IndexFeatureStats> usedBuiltInTokenizers,
+            Collection<IndexFeatureStats> usedBuiltInTokenFilters, Collection<IndexFeatureStats> usedBuiltInAnalyzers) {
         this.usedCharFilters = sort(usedCharFilters);
         this.usedTokenizers = sort(usedTokenizers);
         this.usedTokenFilters = sort(usedTokenFilters);
@@ -269,27 +262,27 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         AnalysisStats that = (AnalysisStats) o;
-        return Objects.equals(usedCharFilters, that.usedCharFilters) &&
-                Objects.equals(usedTokenizers, that.usedTokenizers) &&
-                Objects.equals(usedTokenFilters, that.usedTokenFilters) &&
-                Objects.equals(usedAnalyzers, that.usedAnalyzers) &&
-                Objects.equals(usedBuiltInCharFilters, that.usedBuiltInCharFilters) &&
-                Objects.equals(usedBuiltInTokenizers, that.usedBuiltInTokenizers) &&
-                Objects.equals(usedBuiltInTokenFilters, that.usedBuiltInTokenFilters) &&
-                Objects.equals(usedBuiltInAnalyzers, that.usedBuiltInAnalyzers);
+        return Objects.equals(usedCharFilters, that.usedCharFilters) && Objects.equals(usedTokenizers, that.usedTokenizers)
+                && Objects.equals(usedTokenFilters, that.usedTokenFilters) && Objects.equals(usedAnalyzers, that.usedAnalyzers)
+                && Objects.equals(usedBuiltInCharFilters, that.usedBuiltInCharFilters)
+                && Objects.equals(usedBuiltInTokenizers, that.usedBuiltInTokenizers)
+                && Objects.equals(usedBuiltInTokenFilters, that.usedBuiltInTokenFilters)
+                && Objects.equals(usedBuiltInAnalyzers, that.usedBuiltInAnalyzers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(usedCharFilters, usedTokenizers, usedTokenFilters, usedAnalyzers, usedBuiltInCharFilters,
-                usedBuiltInTokenizers, usedBuiltInTokenFilters, usedBuiltInAnalyzers);
+        return Objects.hash(usedCharFilters, usedTokenizers, usedTokenFilters, usedAnalyzers, usedBuiltInCharFilters, usedBuiltInTokenizers,
+                usedBuiltInTokenFilters, usedBuiltInAnalyzers);
     }
 
     private void toXContentCollection(XContentBuilder builder, Params params, String name, Collection<? extends ToXContent> coll)
-                throws IOException {
+            throws IOException {
         builder.startArray(name);
         for (ToXContent toXContent : coll) {
             toXContent.toXContent(builder, params);

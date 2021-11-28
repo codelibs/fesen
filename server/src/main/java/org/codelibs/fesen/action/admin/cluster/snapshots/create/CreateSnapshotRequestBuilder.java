@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.create;
 
+import java.util.Map;
+
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-import java.util.Map;
-
 /**
  * Create snapshot request builder
  */
-public class CreateSnapshotRequestBuilder extends MasterNodeOperationRequestBuilder<CreateSnapshotRequest,
-        CreateSnapshotResponse, CreateSnapshotRequestBuilder> {
+public class CreateSnapshotRequestBuilder
+        extends MasterNodeOperationRequestBuilder<CreateSnapshotRequest, CreateSnapshotResponse, CreateSnapshotRequestBuilder> {
 
     /**
      * Constructs a new create snapshot request builder

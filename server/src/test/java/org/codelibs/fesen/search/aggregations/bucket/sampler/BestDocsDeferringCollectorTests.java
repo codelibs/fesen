@@ -70,7 +70,7 @@ public class BestDocsDeferringCollectorTests extends AggregatorTestCase {
         final AtomicLong bytes = new AtomicLong(0);
 
         BestDocsDeferringCollector collector = new BestDocsDeferringCollector(numDocs,
-            new MockBigArrays(new MockPageCacheRecycler(Settings.EMPTY), new NoneCircuitBreakerService()), bytes::addAndGet);
+                new MockBigArrays(new MockPageCacheRecycler(Settings.EMPTY), new NoneCircuitBreakerService()), bytes::addAndGet);
         Set<Integer> deferredCollectedDocIds = new HashSet<>();
         collector.setDeferredCollector(Collections.singleton(testCollector(deferredCollectedDocIds)));
         collector.preCollection();

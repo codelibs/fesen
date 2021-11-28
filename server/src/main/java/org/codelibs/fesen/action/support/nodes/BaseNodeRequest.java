@@ -29,7 +29,8 @@ import org.codelibs.fesen.transport.TransportRequest;
 // TODO: this class can be removed in master once 7.x is bumped to 7.4.0
 public abstract class BaseNodeRequest extends TransportRequest {
 
-    public BaseNodeRequest() {}
+    public BaseNodeRequest() {
+    }
 
     public BaseNodeRequest(StreamInput in) throws IOException {
         super(in);

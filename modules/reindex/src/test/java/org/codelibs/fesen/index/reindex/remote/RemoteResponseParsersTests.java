@@ -19,19 +19,18 @@
 
 package org.codelibs.fesen.index.reindex.remote;
 
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.action.search.ShardSearchFailure;
 import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource;
-import org.codelibs.fesen.index.reindex.remote.RemoteResponseParsers;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
-
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-
-import java.io.IOException;
 
 public class RemoteResponseParsersTests extends ESTestCase {
 

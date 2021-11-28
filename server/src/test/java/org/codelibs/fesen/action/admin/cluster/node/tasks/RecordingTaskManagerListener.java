@@ -38,7 +38,7 @@ public class RecordingTaskManagerListener implements MockTaskManagerListener {
     private String[] actionMasks;
     private String localNodeId;
 
-    private List<Tuple<Boolean, TaskInfo>> events  = new ArrayList<>();
+    private List<Tuple<Boolean, TaskInfo>> events = new ArrayList<>();
 
     public RecordingTaskManagerListener(String localNodeId, String... actionMasks) {
         this.actionMasks = actionMasks;

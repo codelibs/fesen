@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.get;
 
-import com.carrotsearch.hppc.IntArrayList;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +26,8 @@ import java.util.List;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+
+import com.carrotsearch.hppc.IntArrayList;
 
 public class MultiGetShardResponse extends ActionResponse {
 

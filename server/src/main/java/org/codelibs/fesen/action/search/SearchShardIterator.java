@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.action.search;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.cluster.routing.PlainShardIterator;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
@@ -29,11 +34,6 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Extension of {@link PlainShardIterator} used in the search api, which also holds the {@link OriginalIndices}
@@ -62,13 +62,12 @@ public final class SearchShardIterator implements Comparable<SearchShardIterator
      * @param originalIndices the indices that the search request originally related to (before any rewriting happened)
      */
     public SearchShardIterator(@Nullable String clusterAlias, ShardId shardId, List<ShardRouting> shards, OriginalIndices originalIndices) {
-        this(clusterAlias, shardId, shards.stream().map(ShardRouting::currentNodeId).collect(Collectors.toList()),
-            originalIndices, null, null);
+        this(clusterAlias, shardId, shards.stream().map(ShardRouting::currentNodeId).collect(Collectors.toList()), originalIndices, null,
+                null);
     }
 
-    public SearchShardIterator(@Nullable String clusterAlias, ShardId shardId,
-                               List<String> targetNodeIds, OriginalIndices originalIndices,
-                               ShardSearchContextId searchContextId, TimeValue searchContextKeepAlive) {
+    public SearchShardIterator(@Nullable String clusterAlias, ShardId shardId, List<String> targetNodeIds, OriginalIndices originalIndices,
+            ShardSearchContextId searchContextId, TimeValue searchContextKeepAlive) {
         this.shardId = shardId;
         this.targetNodesIterator = new PlainIterator<>(targetNodeIds);
         this.originalIndices = originalIndices;
@@ -140,7 +139,6 @@ public final class SearchShardIterator implements Comparable<SearchShardIterator
         return skip;
     }
 
-
     @Override
     public int size() {
         return targetNodesIterator.size();
@@ -152,8 +150,10 @@ public final class SearchShardIterator implements Comparable<SearchShardIterator
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SearchShardIterator that = (SearchShardIterator) o;
         return shardId.equals(that.shardId) && Objects.equals(clusterAlias, that.clusterAlias);
     }
@@ -166,7 +166,6 @@ public final class SearchShardIterator implements Comparable<SearchShardIterator
     @Override
     public int compareTo(SearchShardIterator o) {
         return Comparator.comparing(SearchShardIterator::shardId)
-            .thenComparing(SearchShardIterator::getClusterAlias, Comparator.nullsFirst(String::compareTo))
-            .compare(this, o);
+                .thenComparing(SearchShardIterator::getClusterAlias, Comparator.nullsFirst(String::compareTo)).compare(this, o);
     }
 }

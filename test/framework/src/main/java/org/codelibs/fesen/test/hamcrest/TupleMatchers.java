@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.test.hamcrest;
 
+import java.util.Arrays;
+
 import org.codelibs.fesen.core.Tuple;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
-import java.util.Arrays;
 
 public class TupleMatchers {
 

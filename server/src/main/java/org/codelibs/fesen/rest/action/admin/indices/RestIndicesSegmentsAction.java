@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -30,17 +34,11 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestIndicesSegmentsAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_segments"),
-            new Route(GET, "/{index}/_segments")));
+        return unmodifiableList(asList(new Route(GET, "/_segments"), new Route(GET, "/{index}/_segments")));
     }
 
     @Override
@@ -50,8 +48,8 @@ public class RestIndicesSegmentsAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
-        IndicesSegmentsRequest indicesSegmentsRequest = new IndicesSegmentsRequest(
-                Strings.splitStringByCommaToArray(request.param("index")));
+        IndicesSegmentsRequest indicesSegmentsRequest =
+                new IndicesSegmentsRequest(Strings.splitStringByCommaToArray(request.param("index")));
         indicesSegmentsRequest.verbose(request.paramAsBoolean("verbose", false));
         indicesSegmentsRequest.indicesOptions(IndicesOptions.fromRequest(request, indicesSegmentsRequest.indicesOptions()));
         return channel -> client.admin().indices().segments(indicesSegmentsRequest, new RestToXContentListener<>(channel));

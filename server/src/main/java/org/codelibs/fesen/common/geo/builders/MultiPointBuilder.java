@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.XShapeCollection;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
@@ -27,11 +32,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.geometry.MultiPoint;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.spatial4j.shape.Point;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MultiPointBuilder extends ShapeBuilder<XShapeCollection<Point>, MultiPoint, MultiPointBuilder> {
 
@@ -87,8 +87,8 @@ public class MultiPointBuilder extends ShapeBuilder<XShapeCollection<Point>, Mul
         if (coordinates.isEmpty()) {
             return MultiPoint.EMPTY;
         }
-        return new MultiPoint(coordinates.stream().map(coord -> new org.codelibs.fesen.geometry.Point(coord.x, coord.y))
-            .collect(Collectors.toList()));
+        return new MultiPoint(
+                coordinates.stream().map(coord -> new org.codelibs.fesen.geometry.Point(coord.x, coord.y)).collect(Collectors.toList()));
     }
 
     @Override
@@ -99,8 +99,7 @@ public class MultiPointBuilder extends ShapeBuilder<XShapeCollection<Point>, Mul
     @Override
     public int numDimensions() {
         if (coordinates == null || coordinates.isEmpty()) {
-            throw new IllegalStateException("unable to get number of dimensions, " +
-                "LineString has not yet been initialized");
+            throw new IllegalStateException("unable to get number of dimensions, " + "LineString has not yet been initialized");
         }
         return Double.isNaN(coordinates.get(0).z) ? 2 : 3;
     }

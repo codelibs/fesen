@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.common.util;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.recycler.Recycler;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /** Common implementation for array lists that slice data into fixed-size blocks. */
 abstract class AbstractBigArray extends AbstractArray {

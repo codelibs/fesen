@@ -19,15 +19,7 @@
 
 package org.codelibs.fesen.dissect;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.codelibs.fesen.dissect.DissectException;
-import org.codelibs.fesen.dissect.DissectParser;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
-import org.mockito.internal.util.collections.Sets;
+import static com.carrotsearch.randomizedtesting.RandomizedTest.randomAsciiAlphanumOfLengthBetween;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +27,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.carrotsearch.randomizedtesting.RandomizedTest.randomAsciiAlphanumOfLengthBetween;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
+import org.mockito.internal.util.collections.Sets;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DissectParserTests extends ESTestCase {
 
@@ -67,37 +65,40 @@ public class DissectParserTests extends ESTestCase {
         assertMatch("%{a} %{b} %{+b} %{z}", "foo bar baz quux", Arrays.asList("a", "b", "z"), Arrays.asList("foo", "bar baz", "quux"), " ");
         assertMatch("%{a}------->%{b}", "foo------->bar baz quux", Arrays.asList("a", "b"), Arrays.asList("foo", "bar baz quux"));
         assertMatch("%{a}------->%{}", "foo------->bar baz quux", Arrays.asList("a"), Arrays.asList("foo"));
-        assertMatch("%{a} » %{b}»%{c}€%{d}", "foo » bar»baz€quux",
-            Arrays.asList("a", "b", "c", "d"), Arrays.asList("foo", "bar", "baz", "quux"));
+        assertMatch("%{a} » %{b}»%{c}€%{d}", "foo » bar»baz€quux", Arrays.asList("a", "b", "c", "d"),
+                Arrays.asList("foo", "bar", "baz", "quux"));
         assertMatch("%{a} %{b} %{+a}", "foo bar baz quux", Arrays.asList("a", "b"), Arrays.asList("foo baz quux", "bar"), " ");
         //Logstash supports implicit ordering based anchored by the key without the '+'
         //This implementation will only honor implicit ordering for appending right to left else explicit order (/N) is required.
         //The results of this test differ from Logstash.
-        assertMatch("%{+a} %{a} %{+a} %{b}", "December 31 1999 quux",
-            Arrays.asList("a", "b"), Arrays.asList("December 31 1999", "quux"), " ");
+        assertMatch("%{+a} %{a} %{+a} %{b}", "December 31 1999 quux", Arrays.asList("a", "b"), Arrays.asList("December 31 1999", "quux"),
+                " ");
         //Same test as above, but with same result as Logstash using explicit ordering in the pattern
-        assertMatch("%{+a/1} %{a} %{+a/2} %{b}", "December 31 1999 quux",
-            Arrays.asList("a", "b"), Arrays.asList("31 December 1999", "quux"), " ");
+        assertMatch("%{+a/1} %{a} %{+a/2} %{b}", "December 31 1999 quux", Arrays.asList("a", "b"),
+                Arrays.asList("31 December 1999", "quux"), " ");
         assertMatch("%{+a/2} %{+a/4} %{+a/1} %{+a/3}", "bar quux foo baz", Arrays.asList("a"), Arrays.asList("foo bar baz quux"), " ");
         assertMatch("%{+a} %{b}", "foo bar", Arrays.asList("a", "b"), Arrays.asList("foo", "bar"));
-        assertMatch("%{+a} %{b} %{+a} %{c}", "foo bar baz quux",
-            Arrays.asList("a", "b", "c"), Arrays.asList("foo baz", "bar", "quux"), " ");
-        assertMatch("%{} %{syslog_timestamp} %{hostname} %{rt}: %{reason} %{+reason} %{src_ip}/%{src_port}->%{dst_ip}/%{dst_port} " +
-                "%{polrt} %{+polrt} %{+polrt} %{from_zone} %{to_zone} %{rest}",
-            "42 2016-05-25T14:47:23Z host.name.com RT_FLOW - RT_FLOW_SESSION_DENY: session denied 2.2.2.20/60000->1.1.1.10/8090 None " +
-                "6(0) DEFAULT-DENY ZONE-UNTRUST ZONE-DMZ UNKNOWN UNKNOWN N/A(N/A) ge-0/0/0.0",
-            Arrays.asList("syslog_timestamp", "hostname", "rt", "reason", "src_ip", "src_port", "dst_ip", "dst_port", "polrt"
-                , "from_zone", "to_zone", "rest"),
-            Arrays.asList("2016-05-25T14:47:23Z", "host.name.com", "RT_FLOW - RT_FLOW_SESSION_DENY", "session denied", "2.2.2.20", "60000"
-                , "1.1.1.10", "8090", "None 6(0) DEFAULT-DENY", "ZONE-UNTRUST", "ZONE-DMZ", "UNKNOWN UNKNOWN N/A(N/A) ge-0/0/0.0"), " ");
+        assertMatch("%{+a} %{b} %{+a} %{c}", "foo bar baz quux", Arrays.asList("a", "b", "c"), Arrays.asList("foo baz", "bar", "quux"),
+                " ");
+        assertMatch(
+                "%{} %{syslog_timestamp} %{hostname} %{rt}: %{reason} %{+reason} %{src_ip}/%{src_port}->%{dst_ip}/%{dst_port} "
+                        + "%{polrt} %{+polrt} %{+polrt} %{from_zone} %{to_zone} %{rest}",
+                "42 2016-05-25T14:47:23Z host.name.com RT_FLOW - RT_FLOW_SESSION_DENY: session denied 2.2.2.20/60000->1.1.1.10/8090 None "
+                        + "6(0) DEFAULT-DENY ZONE-UNTRUST ZONE-DMZ UNKNOWN UNKNOWN N/A(N/A) ge-0/0/0.0",
+                Arrays.asList("syslog_timestamp", "hostname", "rt", "reason", "src_ip", "src_port", "dst_ip", "dst_port", "polrt",
+                        "from_zone", "to_zone", "rest"),
+                Arrays.asList("2016-05-25T14:47:23Z", "host.name.com", "RT_FLOW - RT_FLOW_SESSION_DENY", "session denied", "2.2.2.20",
+                        "60000", "1.1.1.10", "8090", "None 6(0) DEFAULT-DENY", "ZONE-UNTRUST", "ZONE-DMZ",
+                        "UNKNOWN UNKNOWN N/A(N/A) ge-0/0/0.0"),
+                " ");
         assertBadKey("%{+/2}");
         assertBadKey("%{&+a_field}");
-        assertMatch("%{a->}   %{b->}---%{c}", "foo            bar------------baz",
-            Arrays.asList("a", "b", "c"), Arrays.asList("foo", "bar", "baz"));
+        assertMatch("%{a->}   %{b->}---%{c}", "foo            bar------------baz", Arrays.asList("a", "b", "c"),
+                Arrays.asList("foo", "bar", "baz"));
         assertMatch("%{->}-%{a}", "-----666", Arrays.asList("a"), Arrays.asList("666"));
         assertMatch("%{?skipme->}-%{a}", "-----666", Arrays.asList("a"), Arrays.asList("666"));
-        assertMatch("%{a},%{b},%{c},%{d},%{e},%{f}", "111,,333,,555,666",
-            Arrays.asList("a", "b", "c", "d", "e", "f"), Arrays.asList("111", "", "333", "", "555", "666"));
+        assertMatch("%{a},%{b},%{c},%{d},%{e},%{f}", "111,,333,,555,666", Arrays.asList("a", "b", "c", "d", "e", "f"),
+                Arrays.asList("111", "", "333", "", "555", "666"));
         assertMatch("%{a}.࿏.%{b}", "⟳༒.࿏.༒⟲", Arrays.asList("a", "b"), Arrays.asList("⟳༒", "༒⟲"));
         assertMatch("%{a}", "子", Arrays.asList("a"), Arrays.asList("子"));
         assertMatch("%{a}{\n}%{b}", "aaa{\n}bbb", Arrays.asList("a", "b"), Arrays.asList("aaa", "bbb"));
@@ -105,8 +106,8 @@ public class DissectParserTests extends ESTestCase {
         assertMiss("%{a} %{b} %{c}", "foo:bar:baz");
         assertMatch("/var/%{key1}/log/%{key2}.log", "/var/foo/log/bar.log", Arrays.asList("key1", "key2"), Arrays.asList("foo", "bar"));
         assertMatch("%{a->}   %{b}-.-%{c}-%{d}-..-%{e}-%{f}-%{g}-%{h}", "foo            bar-.-baz-1111-..-22-333-4444-55555",
-            Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h"),
-            Arrays.asList("foo", "bar", "baz", "1111", "22", "333", "4444", "55555"));
+                Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h"),
+                Arrays.asList("foo", "bar", "baz", "1111", "22", "333", "4444", "55555"));
     }
 
     public void testBasicMatch() {
@@ -186,8 +187,8 @@ public class DissectParserTests extends ESTestCase {
         assertMatch("%{*a} %{&a}", "foo bar", Arrays.asList("foo"), Arrays.asList("bar"));
         assertMatch("%{&a} %{*a}", "foo bar", Arrays.asList("bar"), Arrays.asList("foo"));
         assertMatch("%{*a} %{&a} %{*b} %{&b}", "foo bar baz lol", Arrays.asList("foo", "baz"), Arrays.asList("bar", "lol"));
-        assertMatch("%{*a} %{&a} %{c} %{*b} %{&b}", "foo bar x baz lol",
-            Arrays.asList("foo", "baz", "c"), Arrays.asList("bar", "lol", "x"));
+        assertMatch("%{*a} %{&a} %{c} %{*b} %{&b}", "foo bar x baz lol", Arrays.asList("foo", "baz", "c"),
+                Arrays.asList("bar", "lol", "x"));
         assertBadPattern("%{*a} %{a}");
         assertBadPattern("%{a} %{&a}");
         assertMiss("%{*a} %{&a} {a} %{*b} %{&b}", "foo bar x baz lol");
@@ -195,8 +196,8 @@ public class DissectParserTests extends ESTestCase {
 
     public void testAppendAndAssociate() {
         assertMatch("%{a} %{+a} %{*b} %{&b}", "foo bar baz lol", Arrays.asList("a", "baz"), Arrays.asList("foobar", "lol"));
-        assertMatch("%{a->} %{+a/2} %{+a/1} %{*b} %{&b}", "foo      bar baz lol x",
-            Arrays.asList("a", "lol"), Arrays.asList("foobazbar", "x"));
+        assertMatch("%{a->} %{+a/2} %{+a/1} %{*b} %{&b}", "foo      bar baz lol x", Arrays.asList("a", "lol"),
+                Arrays.asList("foobazbar", "x"));
     }
 
     public void testEmptyKey() {
@@ -249,8 +250,8 @@ public class DissectParserTests extends ESTestCase {
         assertMatch("%{a->} %{b}", "foo bar", Arrays.asList("a", "b"), Arrays.asList("foo", "bar"));
         assertMatch("%{a->} %{b}", "foo            bar", Arrays.asList("a", "b"), Arrays.asList("foo", "bar"));
         assertMatch("%{->} %{a}", "foo            bar", Arrays.asList("a"), Arrays.asList("bar"));
-        assertMatch("%{a->} %{+a->} %{*b->} %{&b->} %{c}", "foo       bar    baz  lol    x",
-            Arrays.asList("a", "baz", "c"), Arrays.asList("foobar", "lol", "x"));
+        assertMatch("%{a->} %{+a->} %{*b->} %{&b->} %{c}", "foo       bar    baz  lol    x", Arrays.asList("a", "baz", "c"),
+                Arrays.asList("foobar", "lol", "x"));
     }
 
     public void testTrimmedEnd() {
@@ -296,22 +297,23 @@ public class DissectParserTests extends ESTestCase {
 
     public void testSyslog() {
         assertMatch("%{timestamp} %{+timestamp} %{+timestamp} %{logsource} %{program}[%{pid}]: %{message}",
-            "Mar 16 00:01:25 evita postfix/smtpd[1713]: connect from camomile.cloud9.net[168.100.1.3]",
-            Arrays.asList("timestamp", "logsource", "program", "pid", "message"),
-            Arrays.asList("Mar 16 00:01:25", "evita", "postfix/smtpd", "1713", "connect from camomile.cloud9.net[168.100.1.3]"), " ");
+                "Mar 16 00:01:25 evita postfix/smtpd[1713]: connect from camomile.cloud9.net[168.100.1.3]",
+                Arrays.asList("timestamp", "logsource", "program", "pid", "message"),
+                Arrays.asList("Mar 16 00:01:25", "evita", "postfix/smtpd", "1713", "connect from camomile.cloud9.net[168.100.1.3]"), " ");
     }
 
     public void testApacheLog() {
-        assertMatch("%{clientip} %{ident} %{auth} [%{timestamp}] \"%{verb} %{request} HTTP/%{httpversion}\" %{response} %{bytes}" +
-                " \"%{referrer}\" \"%{agent}\" %{->}",
-            "31.184.238.164 - - [24/Jul/2014:05:35:37 +0530] \"GET /logs/access.log HTTP/1.0\" 200 69849 " +
-                "\"http://8rursodiol.enjin.com\" \"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-                "Chrome/30.0.1599.12785 YaBrowser/13.12.1599.12785 Safari/537.36\" \"www.dlwindianrailways.com\"",
-            Arrays.asList("clientip", "ident", "auth", "timestamp", "verb", "request", "httpversion", "response", "bytes",
-                "referrer", "agent"),
-            Arrays.asList("31.184.238.164", "-", "-", "24/Jul/2014:05:35:37 +0530", "GET", "/logs/access.log", "1.0", "200", "69849",
-                "http://8rursodiol.enjin.com", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36" +
-                    " (KHTML, like Gecko) Chrome/30.0.1599.12785 YaBrowser/13.12.1599.12785 Safari/537.36"));
+        assertMatch(
+                "%{clientip} %{ident} %{auth} [%{timestamp}] \"%{verb} %{request} HTTP/%{httpversion}\" %{response} %{bytes}"
+                        + " \"%{referrer}\" \"%{agent}\" %{->}",
+                "31.184.238.164 - - [24/Jul/2014:05:35:37 +0530] \"GET /logs/access.log HTTP/1.0\" 200 69849 "
+                        + "\"http://8rursodiol.enjin.com\" \"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                        + "Chrome/30.0.1599.12785 YaBrowser/13.12.1599.12785 Safari/537.36\" \"www.dlwindianrailways.com\"",
+                Arrays.asList("clientip", "ident", "auth", "timestamp", "verb", "request", "httpversion", "response", "bytes", "referrer",
+                        "agent"),
+                Arrays.asList("31.184.238.164", "-", "-", "24/Jul/2014:05:35:37 +0530", "GET", "/logs/access.log", "1.0", "200", "69849",
+                        "http://8rursodiol.enjin.com", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36"
+                                + " (KHTML, like Gecko) Chrome/30.0.1599.12785 YaBrowser/13.12.1599.12785 Safari/537.36"));
     }
 
     /**
@@ -347,7 +349,7 @@ public class DissectParserTests extends ESTestCase {
         }
     }
 
-    private DissectException assertFail(String pattern, String input){
+    private DissectException assertFail(String pattern, String input) {
         return expectThrows(DissectException.class, () -> new DissectParser(pattern, null).parse(input));
     }
 

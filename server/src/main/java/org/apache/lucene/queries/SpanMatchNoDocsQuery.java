@@ -18,6 +18,11 @@
  */
 package org.apache.lucene.queries;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermStates;
@@ -26,11 +31,6 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanWeight;
 import org.apache.lucene.search.spans.Spans;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A {@link SpanQuery} that matches no documents.
@@ -68,7 +68,8 @@ public class SpanMatchNoDocsQuery extends SpanQuery {
     public SpanWeight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
         return new SpanWeight(this, searcher, Collections.emptyMap(), boost) {
             @Override
-            public void extractTermStates(Map<Term, TermStates> contexts) {}
+            public void extractTermStates(Map<Term, TermStates> contexts) {
+            }
 
             @Override
             public Spans getSpans(LeafReaderContext ctx, Postings requiredPostings) {
@@ -76,7 +77,8 @@ public class SpanMatchNoDocsQuery extends SpanQuery {
             }
 
             @Override
-            public void extractTerms(Set<Term> terms) {}
+            public void extractTerms(Set<Term> terms) {
+            }
 
             @Override
             public boolean isCacheable(LeafReaderContext ctx) {

@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.transport;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.compress.CompressorFactory;
 import org.codelibs.fesen.common.io.Streams;
 import org.codelibs.fesen.common.io.stream.BytesStream;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.internal.io.IOUtils;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * This class exists to provide a stream with optional compression. This is useful as using compression

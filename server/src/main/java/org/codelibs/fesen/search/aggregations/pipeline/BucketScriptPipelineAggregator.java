@@ -35,9 +35,9 @@ import org.codelibs.fesen.script.BucketAggregationScript;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 
 public class BucketScriptPipelineAggregator extends PipelineAggregator {
@@ -86,8 +86,7 @@ public class BucketScriptPipelineAggregator extends PipelineAggregator {
                 (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregation;
         List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = originalAgg.getBuckets();
 
-        BucketAggregationScript.Factory factory =
-            reduceContext.scriptService().compile(script, BucketAggregationScript.CONTEXT);
+        BucketAggregationScript.Factory factory = reduceContext.scriptService().compile(script, BucketAggregationScript.CONTEXT);
         List<InternalMultiBucketAggregation.InternalBucket> newBuckets = new ArrayList<>();
         for (InternalMultiBucketAggregation.InternalBucket bucket : buckets) {
             Map<String, Object> vars = new HashMap<>();
@@ -112,13 +111,13 @@ public class BucketScriptPipelineAggregator extends PipelineAggregator {
                 if (returned == null) {
                     newBuckets.add(bucket);
                 } else {
-                    final List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map(
-                        (p) -> (InternalAggregation) p).collect(Collectors.toList());
+                    final List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
+                            .map((p) -> (InternalAggregation) p).collect(Collectors.toList());
 
                     InternalSimpleValue simpleValue = new InternalSimpleValue(name(), returned.doubleValue(), formatter, metadata());
                     aggs.add(simpleValue);
-                    InternalMultiBucketAggregation.InternalBucket newBucket = originalAgg.createBucket(InternalAggregations.from(aggs),
-                        bucket);
+                    InternalMultiBucketAggregation.InternalBucket newBucket =
+                            originalAgg.createBucket(InternalAggregations.from(aggs), bucket);
                     newBuckets.add(newBucket);
                 }
             }

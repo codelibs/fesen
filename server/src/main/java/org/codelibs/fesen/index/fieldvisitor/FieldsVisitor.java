@@ -18,6 +18,18 @@
  */
 package org.codelibs.fesen.index.fieldvisitor;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.StoredFieldVisitor;
 import org.apache.lucene.util.BytesRef;
@@ -32,25 +44,11 @@ import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
 import org.codelibs.fesen.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.index.mapper.Uid;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
-
 /**
  * Base {@link StoredFieldVisitor} that retrieves all non-redundant metadata.
  */
 public class FieldsVisitor extends StoredFieldVisitor {
-    private static final Set<String> BASE_REQUIRED_FIELDS = unmodifiableSet(newHashSet(
-            IdFieldMapper.NAME,
-            RoutingFieldMapper.NAME));
+    private static final Set<String> BASE_REQUIRED_FIELDS = unmodifiableSet(newHashSet(IdFieldMapper.NAME, RoutingFieldMapper.NAME));
 
     private final boolean loadSource;
     private final String sourceFieldName;
@@ -83,9 +81,7 @@ public class FieldsVisitor extends StoredFieldVisitor {
         }
         // All these fields are single-valued so we can stop when the set is
         // empty
-        return requiredFields.isEmpty()
-                ? Status.STOP
-                : Status.NO;
+        return requiredFields.isEmpty() ? Status.STOP : Status.NO;
     }
 
     public void postProcess(MapperService mapperService) {
@@ -96,8 +92,7 @@ public class FieldsVisitor extends StoredFieldVisitor {
         for (Map.Entry<String, List<Object>> entry : fields().entrySet()) {
             MappedFieldType fieldType = mapperService.fieldType(entry.getKey());
             if (fieldType == null) {
-                throw new IllegalStateException("Field [" + entry.getKey()
-                    + "] exists in the index but not in mappings");
+                throw new IllegalStateException("Field [" + entry.getKey() + "] exists in the index but not in mappings");
             }
             List<Object> fieldValues = entry.getValue();
             for (int i = 0; i < fieldValues.size(); i++) {
@@ -185,7 +180,8 @@ public class FieldsVisitor extends StoredFieldVisitor {
     }
 
     public void reset() {
-        if (fieldsValues != null) fieldsValues.clear();
+        if (fieldsValues != null)
+            fieldsValues.clear();
         source = null;
         type = null;
         id = null;

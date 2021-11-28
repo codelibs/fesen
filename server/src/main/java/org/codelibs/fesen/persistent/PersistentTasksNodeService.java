@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.persistent;
 
+import static java.util.Objects.requireNonNull;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -36,15 +45,6 @@ import org.codelibs.fesen.tasks.TaskAwareRequest;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskManager;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.Objects.requireNonNull;
-
 /**
  * This component is responsible for coordination of execution of persistent tasks on individual nodes. It runs on all
  * non-transport client nodes in the cluster and monitors cluster state changes to detect started commands.
@@ -60,8 +60,8 @@ public class PersistentTasksNodeService implements ClusterStateListener {
     private final NodePersistentTasksExecutor nodePersistentTasksExecutor;
 
     public PersistentTasksNodeService(PersistentTasksService persistentTasksService,
-                                      PersistentTasksExecutorRegistry persistentTasksExecutorRegistry,
-                                      TaskManager taskManager, NodePersistentTasksExecutor nodePersistentTasksExecutor) {
+            PersistentTasksExecutorRegistry persistentTasksExecutorRegistry, TaskManager taskManager,
+            NodePersistentTasksExecutor nodePersistentTasksExecutor) {
         this.persistentTasksService = persistentTasksService;
         this.persistentTasksExecutorRegistry = persistentTasksExecutorRegistry;
         this.taskManager = taskManager;
@@ -115,9 +115,10 @@ public class PersistentTasksNodeService implements ClusterStateListener {
                             try {
                                 startTask(taskInProgress);
                             } catch (Exception e) {
-                                logger.error("Unable to start allocated task [" + taskInProgress.getTaskName()
-                                    + "] with id [" + taskInProgress.getId()
-                                    + "] and allocation id [" + taskInProgress.getAllocationId() + "]", e);
+                                logger.error(
+                                        "Unable to start allocated task [" + taskInProgress.getTaskName() + "] with id ["
+                                                + taskInProgress.getId() + "] and allocation id [" + taskInProgress.getAllocationId() + "]",
+                                        e);
                             }
                         } else {
                             // The task is still running
@@ -131,8 +132,8 @@ public class PersistentTasksNodeService implements ClusterStateListener {
                 AllocatedPersistentTask task = runningTasks.get(id);
                 if (task.isCompleted()) {
                     // Result was sent to the caller and the caller acknowledged acceptance of the result
-                    logger.trace("Found completed persistent task [{}] with id [{}] and allocation id [{}] - removing",
-                            task.getAction(), task.getPersistentTaskId(), task.getAllocationId());
+                    logger.trace("Found completed persistent task [{}] with id [{}] and allocation id [{}] - removing", task.getAction(),
+                            task.getPersistentTaskId(), task.getAllocationId());
                     runningTasks.remove(id);
                 } else {
                     // task is running locally, but master doesn't know about it - that means that the persistent task was removed
@@ -174,9 +175,8 @@ public class PersistentTasksNodeService implements ClusterStateListener {
         try {
             task = (AllocatedPersistentTask) taskManager.register("persistent", taskInProgress.getTaskName() + "[c]", request);
         } catch (Exception e) {
-            logger.error("Fatal error registering persistent task [" + taskInProgress.getTaskName()
-                + "] with id [" + taskInProgress.getId() + "] and allocation id [" + taskInProgress.getAllocationId()
-                + "], removing from persistent tasks", e);
+            logger.error("Fatal error registering persistent task [" + taskInProgress.getTaskName() + "] with id [" + taskInProgress.getId()
+                    + "] and allocation id [" + taskInProgress.getAllocationId() + "], removing from persistent tasks", e);
             notifyMasterOfFailedTask(taskInProgress, e);
             return;
         }
@@ -205,22 +205,22 @@ public class PersistentTasksNodeService implements ClusterStateListener {
     }
 
     private <Params extends PersistentTaskParams> void notifyMasterOfFailedTask(PersistentTask<Params> taskInProgress,
-                                                                                Exception originalException) {
+            Exception originalException) {
         persistentTasksService.sendCompletionRequest(taskInProgress.getId(), taskInProgress.getAllocationId(), originalException,
-            new ActionListener<PersistentTask<?>>() {
-                @Override
-                public void onResponse(PersistentTask<?> persistentTask) {
-                    logger.trace("completion notification for failed task [{}] with id [{}] was successful", taskInProgress.getTaskName(),
-                        taskInProgress.getAllocationId());
-                }
+                new ActionListener<PersistentTask<?>>() {
+                    @Override
+                    public void onResponse(PersistentTask<?> persistentTask) {
+                        logger.trace("completion notification for failed task [{}] with id [{}] was successful",
+                                taskInProgress.getTaskName(), taskInProgress.getAllocationId());
+                    }
 
-                @Override
-                public void onFailure(Exception notificationException) {
-                    notificationException.addSuppressed(originalException);
-                    logger.warn(new ParameterizedMessage("notification for task [{}] with id [{}] failed",
-                        taskInProgress.getTaskName(), taskInProgress.getAllocationId()), notificationException);
-                }
-            });
+                    @Override
+                    public void onFailure(Exception notificationException) {
+                        notificationException.addSuppressed(originalException);
+                        logger.warn(new ParameterizedMessage("notification for task [{}] with id [{}] failed", taskInProgress.getTaskName(),
+                                taskInProgress.getAllocationId()), notificationException);
+                    }
+                });
     }
 
     /**
@@ -242,9 +242,8 @@ public class PersistentTasksNodeService implements ClusterStateListener {
                 @Override
                 public void onFailure(Exception e) {
                     // There is really nothing we can do in case of failure here
-                    logger.warn(() -> new ParameterizedMessage(
-                        "failed to cancel task [{}] with id [{}] and allocation id [{}]",
-                        task.getAction(), task.getPersistentTaskId(), task.getAllocationId()), e);
+                    logger.warn(() -> new ParameterizedMessage("failed to cancel task [{}] with id [{}] and allocation id [{}]",
+                            task.getAction(), task.getPersistentTaskId(), task.getAllocationId()), e);
                 }
             });
         }
@@ -294,8 +293,10 @@ public class PersistentTasksNodeService implements ClusterStateListener {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Status status = (Status) o;
             return state == status.state;
         }

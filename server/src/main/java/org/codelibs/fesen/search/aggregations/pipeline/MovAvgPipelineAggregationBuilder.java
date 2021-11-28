@@ -49,7 +49,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
     public static final ParseField SETTINGS = new ParseField("settings");
     private static final ParseField PREDICT = new ParseField("predict");
     private static final ParseField MINIMIZE = new ParseField("minimize");
-    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(MovAvgPipelineAggregationBuilder.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(MovAvgPipelineAggregationBuilder.class);
 
     private String format;
     private GapPolicy gapPolicy = GapPolicy.SKIP;
@@ -285,8 +285,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
     }
 
     public static MovAvgPipelineAggregationBuilder parse(
-            ParseFieldRegistry<MovAvgModel.AbstractModelParser> movingAverageMdelParserRegistry,
-            String pipelineAggregatorName, XContentParser parser) throws IOException {
+            ParseFieldRegistry<MovAvgModel.AbstractModelParser> movingAverageMdelParserRegistry, String pipelineAggregatorName,
+            XContentParser parser) throws IOException {
         XContentParser.Token token;
         String currentFieldName = null;
         String[] bucketsPaths = null;
@@ -300,7 +300,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
         Boolean minimize = null;
 
         DEPRECATION_LOGGER.deprecate("moving_avg_aggregation",
-            "The moving_avg aggregation has been deprecated in favor of the moving_fn aggregation.");
+                "The moving_avg aggregation has been deprecated in favor of the moving_fn aggregation.");
 
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -372,8 +372,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
                     + "] for movingAvg aggregation [" + pipelineAggregatorName + "]");
         }
 
-        MovAvgPipelineAggregationBuilder factory =
-                new MovAvgPipelineAggregationBuilder(pipelineAggregatorName, bucketsPaths[0]);
+        MovAvgPipelineAggregationBuilder factory = new MovAvgPipelineAggregationBuilder(pipelineAggregatorName, bucketsPaths[0]);
         if (format != null) {
             factory.format(format);
         }
@@ -387,8 +386,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
             factory.predict(predict);
         }
         if (model != null) {
-            MovAvgModel.AbstractModelParser modelParser = movingAverageMdelParserRegistry.lookup(model,
-                parser.getTokenLocation(), parser.getDeprecationHandler());
+            MovAvgModel.AbstractModelParser modelParser =
+                    movingAverageMdelParserRegistry.lookup(model, parser.getTokenLocation(), parser.getDeprecationHandler());
             MovAvgModel movAvgModel;
             try {
                 movAvgModel = modelParser.parse(settings, pipelineAggregatorName, factory.window());
@@ -410,16 +409,15 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         MovAvgPipelineAggregationBuilder other = (MovAvgPipelineAggregationBuilder) obj;
-        return Objects.equals(format, other.format)
-                && Objects.equals(gapPolicy, other.gapPolicy)
-                && Objects.equals(window, other.window)
-                && Objects.equals(model, other.model)
-                && Objects.equals(predict, other.predict)
-                && Objects.equals(minimize, other.minimize);
+        return Objects.equals(format, other.format) && Objects.equals(gapPolicy, other.gapPolicy) && Objects.equals(window, other.window)
+                && Objects.equals(model, other.model) && Objects.equals(predict, other.predict) && Objects.equals(minimize, other.minimize);
     }
 
     @Override

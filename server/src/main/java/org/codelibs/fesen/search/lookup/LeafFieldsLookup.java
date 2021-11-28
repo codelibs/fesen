@@ -18,14 +18,7 @@
  */
 package org.codelibs.fesen.search.lookup;
 
-import org.apache.lucene.index.LeafReader;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.fieldvisitor.SingleFieldsVisitor;
-import org.codelibs.fesen.index.mapper.DocumentMapper;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.mapper.TypeFieldMapper;
+import static java.util.Collections.singletonMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Collections.singletonMap;
+import org.apache.lucene.index.LeafReader;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.fieldvisitor.SingleFieldsVisitor;
+import org.codelibs.fesen.index.mapper.DocumentMapper;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.TypeFieldMapper;
 
 public class LeafFieldsLookup implements Map {
 
@@ -64,7 +64,6 @@ public class LeafFieldsLookup implements Map {
         this.docId = docId;
         clearCache();
     }
-
 
     @Override
     public Object get(Object key) {

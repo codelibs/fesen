@@ -19,39 +19,18 @@
 
 package org.codelibs.fesen.client;
 
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.TargetAuthenticationStrategy;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.util.EntityUtils;
-import org.codelibs.fesen.client.Cancellable;
-import org.codelibs.fesen.client.Request;
-import org.codelibs.fesen.client.RequestOptions;
-import org.codelibs.fesen.client.Response;
-import org.codelibs.fesen.client.ResponseException;
-import org.codelibs.fesen.client.ResponseListener;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientBuilder;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.RestClientTestUtil;
-import org.elasticsearch.mocksocket.MockHttpServer;
-import org.junit.After;
-import org.junit.Before;
+import static org.codelibs.fesen.client.RestClientTestUtil.getAllStatusCodes;
+import static org.codelibs.fesen.client.RestClientTestUtil.getHttpMethods;
+import static org.codelibs.fesen.client.RestClientTestUtil.randomHttpMethod;
+import static org.codelibs.fesen.client.RestClientTestUtil.randomStatusCode;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,18 +49,30 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.codelibs.fesen.client.RestClientTestUtil.getAllStatusCodes;
-import static org.codelibs.fesen.client.RestClientTestUtil.getHttpMethods;
-import static org.codelibs.fesen.client.RestClientTestUtil.randomHttpMethod;
-import static org.codelibs.fesen.client.RestClientTestUtil.randomStatusCode;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.http.Consts;
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.TargetAuthenticationStrategy;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.mocksocket.MockHttpServer;
+import org.junit.After;
+import org.junit.Before;
+
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 /**
  * Integration test to check interaction between {@link RestClient} and {@link org.apache.http.client.HttpClient}.
@@ -127,8 +118,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
         public void handle(HttpExchange exchange) throws IOException {
             try {
                 cancelHandlerLatch.await();
-            } catch (InterruptedException ignore) {
-            } finally {
+            } catch (InterruptedException ignore) {} finally {
                 exchange.sendResponseHeaders(200, 0);
                 exchange.close();
             }
@@ -175,8 +165,9 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
         final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("user", "pass"));
 
-        final RestClientBuilder restClientBuilder = RestClient.builder(
-            new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort())).setDefaultHeaders(defaultHeaders);
+        final RestClientBuilder restClientBuilder =
+                RestClient.builder(new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort()))
+                        .setDefaultHeaders(defaultHeaders);
         if (pathPrefix.length() > 0) {
             restClientBuilder.setPathPrefix(pathPrefix);
         }
@@ -235,8 +226,8 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
 
         assertTrue("timeout waiting for requests to be sent", latch.await(10, TimeUnit.SECONDS));
         if (exceptions.isEmpty() == false) {
-            AssertionError error = new AssertionError("expected no failures but got some. see suppressed for first 10 of ["
-                + exceptions.size() + "] failures");
+            AssertionError error = new AssertionError(
+                    "expected no failures but got some. see suppressed for first 10 of [" + exceptions.size() + "] failures");
             for (Exception exception : exceptions.subList(0, Math.min(10, exceptions.size()))) {
                 error.addSuppressed(exception);
             }
@@ -290,7 +281,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
                 try {
                     future.get();
                     fail("expected cancellation exception");
-                } catch(CancellationException e) {
+                } catch (CancellationException e) {
                     //expected
                 }
                 assertTrue(future.isCancelled());
@@ -305,7 +296,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
                     assertTrue(future.isCancelled());
                     future.get();
                     throw new AssertionError("exception should have been thrown");
-                } catch(CancellationException e) {
+                } catch (CancellationException e) {
                     //expected
                 }
             }
@@ -433,7 +424,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
      * Verify that credentials are sent on the first request with preemptive auth enabled (default when provided with credentials).
      */
     public void testPreemptiveAuthEnabled() throws Exception {
-        final String[] methods = {"POST", "PUT", "GET", "DELETE"};
+        final String[] methods = { "POST", "PUT", "GET", "DELETE" };
 
         try (RestClient restClient = createRestClient(true, true)) {
             for (final String method : methods) {
@@ -448,7 +439,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
      * Verify that credentials are <em>not</em> sent on the first request with preemptive auth disabled.
      */
     public void testPreemptiveAuthDisabled() throws Exception {
-        final String[] methods = {"POST", "PUT", "GET", "DELETE"};
+        final String[] methods = { "POST", "PUT", "GET", "DELETE" };
 
         try (RestClient restClient = createRestClient(true, false)) {
             for (final String method : methods) {
@@ -463,12 +454,12 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
      * Verify that credentials continue to be sent even if a 401 (Unauthorized) response is received
      */
     public void testAuthCredentialsAreNotClearedOnAuthChallenge() throws Exception {
-        final String[] methods = {"POST", "PUT", "GET", "DELETE"};
+        final String[] methods = { "POST", "PUT", "GET", "DELETE" };
 
         try (RestClient restClient = createRestClient(true, true)) {
             for (final String method : methods) {
                 Header realmHeader = new BasicHeader("WWW-Authenticate", "Basic realm=\"test\"");
-                final Response response401 = bodyTest(restClient, method, 401, new Header[]{realmHeader});
+                final Response response401 = bodyTest(restClient, method, 401, new Header[] { realmHeader });
                 assertThat(response401.getHeader("Authorization"), startsWith("Basic"));
 
                 final Response response200 = bodyTest(restClient, method, 200, new Header[0]);
@@ -493,9 +484,9 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
             }
             {
                 //pathPrefix is not required to start with '/', will be added automatically
-                try (RestClient restClient = RestClient.builder(
-                    new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort()))
-                    .setPathPrefix(pathPrefix.substring(1)).build()) {
+                try (RestClient restClient =
+                        RestClient.builder(new HttpHost(httpServer.getAddress().getHostString(), httpServer.getAddress().getPort()))
+                                .setPathPrefix(pathPrefix.substring(1)).build()) {
                     Response response = RestClientSingleHostTests.performRequestSyncOrAsync(restClient, new Request("GET", "200"));
                     //a trailing slash gets automatically added if a pathPrefix is configured
                     assertEquals(200, response.getStatusLine().getStatusCode());
@@ -525,7 +516,7 @@ public class RestClientSingleHostIntegTests extends RestClientTestCase {
         Response esResponse;
         try {
             esResponse = RestClientSingleHostTests.performRequestSyncOrAsync(restClient, request);
-        } catch(ResponseException e) {
+        } catch (ResponseException e) {
             esResponse = e.getResponse();
         }
         assertEquals(method, esResponse.getRequestLine().getMethod());

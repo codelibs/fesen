@@ -24,11 +24,8 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.client.FesenClient;
 
-public abstract class BroadcastOperationRequestBuilder<
-            Request extends BroadcastRequest<Request>,
-            Response extends BroadcastResponse,
-            RequestBuilder extends BroadcastOperationRequestBuilder<Request, Response, RequestBuilder>
-        > extends ActionRequestBuilder<Request, Response> {
+public abstract class BroadcastOperationRequestBuilder<Request extends BroadcastRequest<Request>, Response extends BroadcastResponse, RequestBuilder extends BroadcastOperationRequestBuilder<Request, Response, RequestBuilder>>
+        extends ActionRequestBuilder<Request, Response> {
 
     protected BroadcastOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);

@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.join.aggregations;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -27,24 +30,20 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class ParentToChildrenAggregator extends ParentJoinAggregator {
 
     static final ParseField TYPE_FIELD = new ParseField("type");
 
-    public ParentToChildrenAggregator(String name, AggregatorFactories factories,
-            SearchContext context, Aggregator parent, Query childFilter,
-            Query parentFilter, ValuesSource.Bytes.WithOrdinals valuesSource,
-            long maxOrd, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+    public ParentToChildrenAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent,
+            Query childFilter, Query parentFilter, ValuesSource.Bytes.WithOrdinals valuesSource, long maxOrd,
+            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
         super(name, factories, context, parent, parentFilter, childFilter, valuesSource, maxOrd, cardinality, metadata);
     }
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) ->
-            new InternalChildren(name, bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
+        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) -> new InternalChildren(name,
+                bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
     }
 
     @Override

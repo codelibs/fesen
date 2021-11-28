@@ -17,13 +17,11 @@
  * under the License.
  */
 
-
 package org.codelibs.fesen.index.analysis;
 
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
-
 
 /**
  * Builds an analyzer for normalization that lowercases terms.  

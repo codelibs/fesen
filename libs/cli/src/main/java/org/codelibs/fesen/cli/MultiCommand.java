@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.cli;
 
-import joptsimple.NonOptionArgumentSpec;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.util.KeyValuePair;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,6 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import joptsimple.NonOptionArgumentSpec;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.util.KeyValuePair;
 
 /**
  * A cli tool which is made up of multiple subcommands.

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.alias;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -35,10 +39,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryBuilder;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 /**
  * Represents an alias, to be associated with an index
@@ -302,12 +302,15 @@ public class Alias implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Alias alias = (Alias) o;
 
-        if (name != null ? !name.equals(alias.name) : alias.name != null) return false;
+        if (name != null ? !name.equals(alias.name) : alias.name != null)
+            return false;
 
         return true;
     }

@@ -19,32 +19,6 @@
 
 package org.codelibs.fesen.common.io.stream;
 
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexFormatTooNewException;
-import org.apache.lucene.index.IndexFormatTooOldException;
-import org.apache.lucene.store.AlreadyClosedException;
-import org.apache.lucene.store.LockObtainFailedException;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.BitUtil;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.CharsRef;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.geo.GeoPoint;
-import org.codelibs.fesen.common.settings.SecureString;
-import org.codelibs.fesen.common.text.Text;
-import org.codelibs.fesen.common.time.DateUtils;
-import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
-import org.codelibs.fesen.core.CharArrays;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
-import org.joda.time.DateTimeZone;
-
 import static org.codelibs.fesen.FesenException.readStackTrace;
 
 import java.io.ByteArrayInputStream;
@@ -81,6 +55,32 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
+
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexFormatTooNewException;
+import org.apache.lucene.index.IndexFormatTooOldException;
+import org.apache.lucene.store.AlreadyClosedException;
+import org.apache.lucene.store.LockObtainFailedException;
+import org.apache.lucene.util.ArrayUtil;
+import org.apache.lucene.util.BitUtil;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.CharsRef;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.collect.ImmutableOpenMap;
+import org.codelibs.fesen.common.geo.GeoPoint;
+import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.common.text.Text;
+import org.codelibs.fesen.common.time.DateUtils;
+import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.core.CharArrays;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.script.JodaCompatibleZonedDateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  * A stream from this node to another node. Technically, it can also be streamed to a byte array but that is mostly for testing.
@@ -187,8 +187,7 @@ public abstract class StreamInput extends InputStream {
      * Reads four bytes and returns an int.
      */
     public int readInt() throws IOException {
-        return ((readByte() & 0xFF) << 24) | ((readByte() & 0xFF) << 16)
-                | ((readByte() & 0xFF) << 8) | (readByte() & 0xFF);
+        return ((readByte() & 0xFF) << 24) | ((readByte() & 0xFF) << 16) | ((readByte() & 0xFF) << 8) | (readByte() & 0xFF);
     }
 
     /**
@@ -334,7 +333,6 @@ public abstract class StreamInput extends InputStream {
         return new BigInteger(readString());
     }
 
-
     @Nullable
     public Text readOptionalText() throws IOException {
         int length = readInt();
@@ -424,7 +422,7 @@ public abstract class StreamInput extends InputStream {
         int missingFromPartial = 0;
         final byte[] byteBuffer = stringReadBuffer.get();
         final char[] charBuffer = charsRef.chars;
-        for (; charsOffset < charCount; ) {
+        for (; charsOffset < charCount;) {
             final int charsLeft = charCount - charsOffset;
             int bufferFree = byteBuffer.length - sizeByteArray;
             // Determine the minimum amount of bytes that are left in the string
@@ -445,13 +443,13 @@ public abstract class StreamInput extends InputStream {
                 if (offsetByteArray > 0) {
                     sizeByteArray = sizeByteArray - offsetByteArray;
                     switch (sizeByteArray) { // We only have 0, 1 or 2 => no need to bother with a native call to System#arrayCopy
-                        case 1:
-                            byteBuffer[0] = byteBuffer[offsetByteArray];
-                            break;
-                        case 2:
-                            byteBuffer[0] = byteBuffer[offsetByteArray];
-                            byteBuffer[1] = byteBuffer[offsetByteArray + 1];
-                            break;
+                    case 1:
+                        byteBuffer[0] = byteBuffer[offsetByteArray];
+                        break;
+                    case 2:
+                        byteBuffer[0] = byteBuffer[offsetByteArray];
+                        byteBuffer[1] = byteBuffer[offsetByteArray + 1];
+                        break;
                     }
                     assert sizeByteArray <= 2 : "We never copy more than 2 bytes here since a char is 3 bytes max";
                     toRead = Math.min(bufferFree + offsetByteArray, minRemainingBytes);
@@ -469,26 +467,26 @@ public abstract class StreamInput extends InputStream {
             for (; offsetByteArray < sizeByteArray - 2; offsetByteArray++) {
                 final int c = byteBuffer[offsetByteArray] & 0xff;
                 switch (c >> 4) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                        charBuffer[charsOffset++] = (char) c;
-                        break;
-                    case 12:
-                    case 13:
-                        charBuffer[charsOffset++] = (char) ((c & 0x1F) << 6 | byteBuffer[++offsetByteArray] & 0x3F);
-                        break;
-                    case 14:
-                        charBuffer[charsOffset++] = (char) (
-                            (c & 0x0F) << 12 | (byteBuffer[++offsetByteArray] & 0x3F) << 6 | (byteBuffer[++offsetByteArray] & 0x3F));
-                        break;
-                    default:
-                        throwOnBrokenChar(c);
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    charBuffer[charsOffset++] = (char) c;
+                    break;
+                case 12:
+                case 13:
+                    charBuffer[charsOffset++] = (char) ((c & 0x1F) << 6 | byteBuffer[++offsetByteArray] & 0x3F);
+                    break;
+                case 14:
+                    charBuffer[charsOffset++] = (char) ((c & 0x0F) << 12 | (byteBuffer[++offsetByteArray] & 0x3F) << 6
+                            | (byteBuffer[++offsetByteArray] & 0x3F));
+                    break;
+                default:
+                    throwOnBrokenChar(c);
                 }
             }
             // try to extract chars from remaining bytes with bounds checks for multi-byte chars
@@ -496,32 +494,32 @@ public abstract class StreamInput extends InputStream {
             for (int i = 0; i < bufferedBytesRemaining; i++) {
                 final int c = byteBuffer[offsetByteArray] & 0xff;
                 switch (c >> 4) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                        charBuffer[charsOffset++] = (char) c;
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    charBuffer[charsOffset++] = (char) c;
+                    offsetByteArray++;
+                    break;
+                case 12:
+                case 13:
+                    missingFromPartial = 2 - (bufferedBytesRemaining - i);
+                    if (missingFromPartial == 0) {
                         offsetByteArray++;
-                        break;
-                    case 12:
-                    case 13:
-                        missingFromPartial = 2 - (bufferedBytesRemaining - i);
-                        if (missingFromPartial == 0) {
-                            offsetByteArray++;
-                            charBuffer[charsOffset++] = (char) ((c & 0x1F) << 6 | byteBuffer[offsetByteArray++] & 0x3F);
-                        }
-                        ++i;
-                        break;
-                    case 14:
-                        missingFromPartial = 3 - (bufferedBytesRemaining - i);
-                        ++i;
-                        break;
-                    default:
-                        throwOnBrokenChar(c);
+                        charBuffer[charsOffset++] = (char) ((c & 0x1F) << 6 | byteBuffer[offsetByteArray++] & 0x3F);
+                    }
+                    ++i;
+                    break;
+                case 14:
+                    missingFromPartial = 3 - (bufferedBytesRemaining - i);
+                    ++i;
+                    break;
+                default:
+                    throwOnBrokenChar(c);
                 }
             }
         }
@@ -678,7 +676,7 @@ public abstract class StreamInput extends InputStream {
         if (size == 0) {
             return ImmutableOpenMap.of();
         }
-        final ImmutableOpenMap.Builder<K,V> builder = ImmutableOpenMap.builder(size);
+        final ImmutableOpenMap.Builder<K, V> builder = ImmutableOpenMap.builder(size);
         for (int i = 0; i < size; i++) {
             builder.put(keyReader.read(this), valueReader.read(this));
         }
@@ -693,64 +691,64 @@ public abstract class StreamInput extends InputStream {
     public Object readGenericValue() throws IOException {
         byte type = readByte();
         switch (type) {
-            case -1:
-                return null;
-            case 0:
-                return readString();
-            case 1:
-                return readInt();
-            case 2:
-                return readLong();
-            case 3:
-                return readFloat();
-            case 4:
-                return readDouble();
-            case 5:
-                return readBoolean();
-            case 6:
-                return readByteArray();
-            case 7:
-                return readArrayList();
-            case 8:
-                return readArray();
-            case 9:
-                return readLinkedHashMap();
-            case 10:
-                return readHashMap();
-            case 11:
-                return readByte();
-            case 12:
-                return readDate();
-            case 13:
-                return readDateTime();
-            case 14:
-                return readBytesReference();
-            case 15:
-                return readText();
-            case 16:
-                return readShort();
-            case 17:
-                return readIntArray();
-            case 18:
-                return readLongArray();
-            case 19:
-                return readFloatArray();
-            case 20:
-                return readDoubleArray();
-            case 21:
-                return readBytesRef();
-            case 22:
-                return readGeoPoint();
-            case 23:
-                return readZonedDateTime();
-            case 24:
-                return readCollection(StreamInput::readGenericValue, LinkedHashSet::new, Collections.emptySet());
-            case 25:
-                return readCollection(StreamInput::readGenericValue, HashSet::new, Collections.emptySet());
-            case 26:
-                return readBigInteger();
-            default:
-                throw new IOException("Can't read unknown type [" + type + "]");
+        case -1:
+            return null;
+        case 0:
+            return readString();
+        case 1:
+            return readInt();
+        case 2:
+            return readLong();
+        case 3:
+            return readFloat();
+        case 4:
+            return readDouble();
+        case 5:
+            return readBoolean();
+        case 6:
+            return readByteArray();
+        case 7:
+            return readArrayList();
+        case 8:
+            return readArray();
+        case 9:
+            return readLinkedHashMap();
+        case 10:
+            return readHashMap();
+        case 11:
+            return readByte();
+        case 12:
+            return readDate();
+        case 13:
+            return readDateTime();
+        case 14:
+            return readBytesReference();
+        case 15:
+            return readText();
+        case 16:
+            return readShort();
+        case 17:
+            return readIntArray();
+        case 18:
+            return readLongArray();
+        case 19:
+            return readFloatArray();
+        case 20:
+            return readDoubleArray();
+        case 21:
+            return readBytesRef();
+        case 22:
+            return readGeoPoint();
+        case 23:
+            return readZonedDateTime();
+        case 24:
+            return readCollection(StreamInput::readGenericValue, LinkedHashSet::new, Collections.emptySet());
+        case 25:
+            return readCollection(StreamInput::readGenericValue, HashSet::new, Collections.emptySet());
+        case 26:
+            return readBigInteger();
+        default:
+            throw new IOException("Can't read unknown type [" + type + "]");
         }
     }
 
@@ -1017,97 +1015,97 @@ public abstract class StreamInput extends InputStream {
         if (readBoolean()) {
             int key = readVInt();
             switch (key) {
+            case 0:
+                final int ord = readVInt();
+                return (T) FesenException.readException(this, ord);
+            case 1:
+                String msg1 = readOptionalString();
+                String resource1 = readOptionalString();
+                return (T) readStackTrace(new CorruptIndexException(msg1, resource1, readException()), this);
+            case 2:
+                String resource2 = readOptionalString();
+                int version2 = readInt();
+                int minVersion2 = readInt();
+                int maxVersion2 = readInt();
+                return (T) readStackTrace(new IndexFormatTooNewException(resource2, version2, minVersion2, maxVersion2), this);
+            case 3:
+                String resource3 = readOptionalString();
+                if (readBoolean()) {
+                    int version3 = readInt();
+                    int minVersion3 = readInt();
+                    int maxVersion3 = readInt();
+                    return (T) readStackTrace(new IndexFormatTooOldException(resource3, version3, minVersion3, maxVersion3), this);
+                } else {
+                    String version3 = readOptionalString();
+                    return (T) readStackTrace(new IndexFormatTooOldException(resource3, version3), this);
+                }
+            case 4:
+                return (T) readStackTrace(new NullPointerException(readOptionalString()), this);
+            case 5:
+                return (T) readStackTrace(new NumberFormatException(readOptionalString()), this);
+            case 6:
+                return (T) readStackTrace(new IllegalArgumentException(readOptionalString(), readException()), this);
+            case 7:
+                return (T) readStackTrace(new AlreadyClosedException(readOptionalString(), readException()), this);
+            case 8:
+                return (T) readStackTrace(new EOFException(readOptionalString()), this);
+            case 9:
+                return (T) readStackTrace(new SecurityException(readOptionalString(), readException()), this);
+            case 10:
+                return (T) readStackTrace(new StringIndexOutOfBoundsException(readOptionalString()), this);
+            case 11:
+                return (T) readStackTrace(new ArrayIndexOutOfBoundsException(readOptionalString()), this);
+            case 12:
+                return (T) readStackTrace(new FileNotFoundException(readOptionalString()), this);
+            case 13:
+                final int subclass = readVInt();
+                final String file = readOptionalString();
+                final String other = readOptionalString();
+                final String reason = readOptionalString();
+                readOptionalString(); // skip the msg - it's composed from file, other and reason
+                final Exception exception;
+                switch (subclass) {
                 case 0:
-                    final int ord = readVInt();
-                    return (T) FesenException.readException(this, ord);
+                    exception = new NoSuchFileException(file, other, reason);
+                    break;
                 case 1:
-                    String msg1 = readOptionalString();
-                    String resource1 = readOptionalString();
-                    return (T) readStackTrace(new CorruptIndexException(msg1, resource1, readException()), this);
+                    exception = new NotDirectoryException(file);
+                    break;
                 case 2:
-                    String resource2 = readOptionalString();
-                    int version2 = readInt();
-                    int minVersion2 = readInt();
-                    int maxVersion2 = readInt();
-                    return (T) readStackTrace(new IndexFormatTooNewException(resource2, version2, minVersion2, maxVersion2), this);
+                    exception = new DirectoryNotEmptyException(file);
+                    break;
                 case 3:
-                    String resource3 = readOptionalString();
-                    if (readBoolean()) {
-                        int version3 = readInt();
-                        int minVersion3 = readInt();
-                        int maxVersion3 = readInt();
-                        return (T) readStackTrace(new IndexFormatTooOldException(resource3, version3, minVersion3, maxVersion3), this);
-                    } else {
-                        String version3 = readOptionalString();
-                        return (T) readStackTrace(new IndexFormatTooOldException(resource3, version3), this);
-                    }
+                    exception = new AtomicMoveNotSupportedException(file, other, reason);
+                    break;
                 case 4:
-                    return (T) readStackTrace(new NullPointerException(readOptionalString()), this);
+                    exception = new FileAlreadyExistsException(file, other, reason);
+                    break;
                 case 5:
-                    return (T) readStackTrace(new NumberFormatException(readOptionalString()), this);
+                    exception = new AccessDeniedException(file, other, reason);
+                    break;
                 case 6:
-                    return (T) readStackTrace(new IllegalArgumentException(readOptionalString(), readException()), this);
+                    exception = new FileSystemLoopException(file);
+                    break;
                 case 7:
-                    return (T) readStackTrace(new AlreadyClosedException(readOptionalString(), readException()), this);
-                case 8:
-                    return (T) readStackTrace(new EOFException(readOptionalString()), this);
-                case 9:
-                    return (T) readStackTrace(new SecurityException(readOptionalString(), readException()), this);
-                case 10:
-                    return (T) readStackTrace(new StringIndexOutOfBoundsException(readOptionalString()), this);
-                case 11:
-                    return (T) readStackTrace(new ArrayIndexOutOfBoundsException(readOptionalString()), this);
-                case 12:
-                    return (T) readStackTrace(new FileNotFoundException(readOptionalString()), this);
-                case 13:
-                    final int subclass = readVInt();
-                    final String file = readOptionalString();
-                    final String other = readOptionalString();
-                    final String reason = readOptionalString();
-                    readOptionalString(); // skip the msg - it's composed from file, other and reason
-                    final Exception exception;
-                    switch (subclass) {
-                        case 0:
-                            exception = new NoSuchFileException(file, other, reason);
-                            break;
-                        case 1:
-                            exception = new NotDirectoryException(file);
-                            break;
-                        case 2:
-                            exception = new DirectoryNotEmptyException(file);
-                            break;
-                        case 3:
-                            exception = new AtomicMoveNotSupportedException(file, other, reason);
-                            break;
-                        case 4:
-                            exception = new FileAlreadyExistsException(file, other, reason);
-                            break;
-                        case 5:
-                            exception = new AccessDeniedException(file, other, reason);
-                            break;
-                        case 6:
-                            exception = new FileSystemLoopException(file);
-                            break;
-                        case 7:
-                            exception = new FileSystemException(file, other, reason);
-                            break;
-                        default:
-                            throw new IllegalStateException("unknown FileSystemException with index " + subclass);
-                    }
-                    return (T) readStackTrace(exception, this);
-                case 14:
-                    return (T) readStackTrace(new IllegalStateException(readOptionalString(), readException()), this);
-                case 15:
-                    return (T) readStackTrace(new LockObtainFailedException(readOptionalString(), readException()), this);
-                case 16:
-                    return (T) readStackTrace(new InterruptedException(readOptionalString()), this);
-                case 17:
-                    return (T) readStackTrace(new IOException(readOptionalString(), readException()), this);
-                case 18:
-                    final boolean isExecutorShutdown = readBoolean();
-                    return (T) readStackTrace(new EsRejectedExecutionException(readOptionalString(), isExecutorShutdown), this);
+                    exception = new FileSystemException(file, other, reason);
+                    break;
                 default:
-                    throw new IOException("no such exception for id: " + key);
+                    throw new IllegalStateException("unknown FileSystemException with index " + subclass);
+                }
+                return (T) readStackTrace(exception, this);
+            case 14:
+                return (T) readStackTrace(new IllegalStateException(readOptionalString(), readException()), this);
+            case 15:
+                return (T) readStackTrace(new LockObtainFailedException(readOptionalString(), readException()), this);
+            case 16:
+                return (T) readStackTrace(new InterruptedException(readOptionalString()), this);
+            case 17:
+                return (T) readStackTrace(new IOException(readOptionalString(), readException()), this);
+            case 18:
+                final boolean isExecutorShutdown = readBoolean();
+                return (T) readStackTrace(new EsRejectedExecutionException(readOptionalString(), isExecutorShutdown), this);
+            default:
+                throw new IOException("no such exception for id: " + key);
             }
         }
         return null;
@@ -1144,7 +1142,7 @@ public abstract class StreamInput extends InputStream {
      */
     @Nullable
     public <C extends NamedWriteable> C readNamedWriteable(@SuppressWarnings("unused") Class<C> categoryClass,
-                                                           @SuppressWarnings("unused") String name) throws IOException {
+            @SuppressWarnings("unused") String name) throws IOException {
         throw new UnsupportedOperationException("can't read named writeable from StreamInput");
     }
 
@@ -1208,15 +1206,14 @@ public abstract class StreamInput extends InputStream {
     /**
      * Reads a collection of objects
      */
-    private <T, C extends Collection<? super T>> C readCollection(Writeable.Reader<T> reader,
-                                                                  IntFunction<C> constructor,
-                                                                  C empty) throws IOException {
+    private <T, C extends Collection<? super T>> C readCollection(Writeable.Reader<T> reader, IntFunction<C> constructor, C empty)
+            throws IOException {
         int count = readArraySize();
         if (count == 0) {
             return empty;
         }
         C builder = constructor.apply(count);
-        for (int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             builder.add(reader.read(this));
         }
         return builder;
@@ -1232,7 +1229,7 @@ public abstract class StreamInput extends InputStream {
             return Collections.emptyList();
         }
         List<T> builder = new ArrayList<>(count);
-        for (int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             builder.add(readNamedWriteable(categoryClass));
         }
         return builder;
@@ -1284,7 +1281,7 @@ public abstract class StreamInput extends InputStream {
     private int readArraySize() throws IOException {
         final int arraySize = readVInt();
         if (arraySize > ArrayUtil.MAX_ARRAY_LENGTH) {
-            throw new IllegalStateException("array length must be <= to " + ArrayUtil.MAX_ARRAY_LENGTH  + " but was: " + arraySize);
+            throw new IllegalStateException("array length must be <= to " + ArrayUtil.MAX_ARRAY_LENGTH + " but was: " + arraySize);
         }
         if (arraySize < 0) {
             throw new NegativeArraySizeException("array size must be positive but was: " + arraySize);
@@ -1306,8 +1303,8 @@ public abstract class StreamInput extends InputStream {
 
     static {
         // assert the exact form of the TimeUnit values to ensure we're not silently broken by a JDK change
-        if (Arrays.equals(TIME_UNITS, new TimeUnit[]{TimeUnit.NANOSECONDS, TimeUnit.MICROSECONDS, TimeUnit.MILLISECONDS,
-            TimeUnit.SECONDS, TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS}) == false) {
+        if (Arrays.equals(TIME_UNITS, new TimeUnit[] { TimeUnit.NANOSECONDS, TimeUnit.MICROSECONDS, TimeUnit.MILLISECONDS, TimeUnit.SECONDS,
+                TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS }) == false) {
             throw new AssertionError("Incompatible JDK version used that breaks assumptions on the structure of the TimeUnit enum");
         }
     }

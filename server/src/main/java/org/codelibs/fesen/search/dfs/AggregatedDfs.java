@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.search.dfs;
 
+import java.io.IOException;
 
-import com.carrotsearch.hppc.ObjectObjectHashMap;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.CollectionStatistics;
 import org.apache.lucene.search.TermStatistics;
@@ -30,7 +29,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 
-import java.io.IOException;
+import com.carrotsearch.hppc.ObjectObjectHashMap;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 public class AggregatedDfs implements Writeable {
 
@@ -43,9 +43,7 @@ public class AggregatedDfs implements Writeable {
         termStatistics = HppcMaps.newMap(size);
         for (int i = 0; i < size; i++) {
             Term term = new Term(in.readString(), in.readBytesRef());
-            TermStatistics stats = new TermStatistics(in.readBytesRef(),
-                in.readVLong(),
-                DfsSearchResult.subOne(in.readVLong()));
+            TermStatistics stats = new TermStatistics(in.readBytesRef(), in.readVLong(), DfsSearchResult.subOne(in.readVLong()));
             termStatistics.put(term, stats);
         }
         fieldStatistics = DfsSearchResult.readFieldStats(in);

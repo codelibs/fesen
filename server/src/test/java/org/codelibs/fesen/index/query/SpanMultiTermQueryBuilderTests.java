@@ -69,22 +69,12 @@ import static org.hamcrest.CoreMatchers.startsWith;
 public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMultiTermQueryBuilder> {
     @Override
     protected void initializeAdditionalMappings(MapperService mapperService) throws IOException {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties")
-            .startObject("prefix_field")
-                .field("type", "text")
-                .startObject("index_prefixes").endObject()
-            .endObject()
-            .startObject("prefix_field_alias")
-                .field("type", "alias")
-                .field("path", "prefix_field")
-            .endObject()
-            .startObject("body")
-                .field("type", "text")
-            .endObject()
-        .endObject().endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties").startObject("prefix_field")
+                .field("type", "text").startObject("index_prefixes").endObject().endObject().startObject("prefix_field_alias")
+                .field("type", "alias").field("path", "prefix_field").endObject().startObject("body").field("type", "text").endObject()
+                .endObject().endObject().endObject();
 
-        mapperService.merge("_doc",
-            new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
+        mapperService.merge("_doc", new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
     }
 
     @Override
@@ -98,8 +88,7 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
         if (query instanceof SpanMatchNoDocsQuery) {
             return;
         }
-        assertThat(query, either(instanceOf(SpanMultiTermQueryWrapper.class))
-                .or(instanceOf(FieldMaskingSpanQuery.class)));
+        assertThat(query, either(instanceOf(SpanMultiTermQueryWrapper.class)).or(instanceOf(FieldMaskingSpanQuery.class)));
         if (query instanceof SpanMultiTermQueryWrapper) {
             SpanMultiTermQueryWrapper wrapper = (SpanMultiTermQueryWrapper) query;
             Query innerQuery = queryBuilder.innerQuery().toQuery(context);
@@ -186,8 +175,8 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
     public void testUnsupportedInnerQueryType() throws IOException {
         MultiTermQueryBuilder query = new TermMultiTermQueryBuilder();
         SpanMultiTermQueryBuilder spanMultiTermQuery = new SpanMultiTermQueryBuilder(query);
-        UnsupportedOperationException e = expectThrows(UnsupportedOperationException.class,
-                () -> spanMultiTermQuery.toQuery(createShardContext()));
+        UnsupportedOperationException e =
+                expectThrows(UnsupportedOperationException.class, () -> spanMultiTermQuery.toQuery(createShardContext()));
         assertThat(e.getMessage(), startsWith("unsupported inner query"));
     }
 
@@ -228,20 +217,9 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
     }
 
     public void testFromJson() throws IOException {
-        String json =
-                "{\n" +
-                "  \"span_multi\" : {\n" +
-                "    \"match\" : {\n" +
-                "      \"prefix\" : {\n" +
-                "        \"user\" : {\n" +
-                "          \"value\" : \"ki\",\n" +
-                "          \"boost\" : 1.08\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"boost\" : 1.0\n" +
-                "  }\n" +
-                "}";
+        String json = "{\n" + "  \"span_multi\" : {\n" + "    \"match\" : {\n" + "      \"prefix\" : {\n" + "        \"user\" : {\n"
+                + "          \"value\" : \"ki\",\n" + "          \"boost\" : 1.08\n" + "        }\n" + "      }\n" + "    },\n"
+                + "    \"boost\" : 1.0\n" + "  }\n" + "}";
 
         SpanMultiTermQueryBuilder parsed = (SpanMultiTermQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -251,8 +229,7 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
     }
 
     public void testDefaultMaxRewriteBuilder() throws Exception {
-        Query query = QueryBuilders.spanMultiTermQueryBuilder(QueryBuilders.prefixQuery("body", "b"))
-            .toQuery(createShardContext());
+        Query query = QueryBuilders.spanMultiTermQueryBuilder(QueryBuilders.prefixQuery("body", "b")).toQuery(createShardContext());
 
         assertTrue(query instanceof SpanMultiTermQueryWrapper);
         if (query instanceof SpanMultiTermQueryWrapper) {
@@ -271,9 +248,7 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
                     int origBoolMaxClauseCount = BooleanQuery.getMaxClauseCount();
                     BooleanQuery.setMaxClauseCount(1);
                     try {
-                        QueryBuilder queryBuilder = new SpanMultiTermQueryBuilder(
-                            QueryBuilders.prefixQuery("body", "bar")
-                        );
+                        QueryBuilder queryBuilder = new SpanMultiTermQueryBuilder(QueryBuilders.prefixQuery("body", "bar"));
                         Query query = queryBuilder.toQuery(createShardContext(new IndexSearcher(reader)));
                         RuntimeException exc = expectThrows(RuntimeException.class, () -> query.rewrite(reader));
                         assertThat(exc.getMessage(), containsString("maxClauseCount"));
@@ -286,13 +261,12 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
     }
 
     public void testTopNMultiTermsRewriteInsideSpan() throws Exception {
-        Query query = QueryBuilders.spanMultiTermQueryBuilder(
-            QueryBuilders.prefixQuery("body", "b").rewrite("top_terms_boost_2000")
-        ).toQuery(createShardContext());
+        Query query = QueryBuilders.spanMultiTermQueryBuilder(QueryBuilders.prefixQuery("body", "b").rewrite("top_terms_boost_2000"))
+                .toQuery(createShardContext());
 
         assertTrue(query instanceof SpanMultiTermQueryWrapper);
         if (query instanceof SpanMultiTermQueryWrapper) {
-            MultiTermQuery.RewriteMethod rewriteMethod = ((SpanMultiTermQueryWrapper)query).getRewriteMethod();
+            MultiTermQuery.RewriteMethod rewriteMethod = ((SpanMultiTermQueryWrapper) query).getRewriteMethod();
             assertFalse(rewriteMethod instanceof SpanBooleanQueryRewriteWithMaxClause);
         }
 

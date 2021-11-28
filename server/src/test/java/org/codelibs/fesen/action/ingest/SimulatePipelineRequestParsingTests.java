@@ -66,7 +66,7 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         CompoundProcessor pipelineCompoundProcessor = new CompoundProcessor(processor);
         Pipeline pipeline = new Pipeline(SIMULATED_PIPELINE_ID, null, null, pipelineCompoundProcessor);
         Map<String, Processor.Factory> registry =
-            Collections.singletonMap("mock_processor", (factories, tag, description, config) -> processor);
+                Collections.singletonMap("mock_processor", (factories, tag, description, config) -> processor);
         ingestService = mock(IngestService.class);
         when(ingestService.getPipeline(SIMULATED_PIPELINE_ID)).thenReturn(pipeline);
         when(ingestService.getProcessorFactories()).thenReturn(registry);
@@ -114,7 +114,7 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         }
 
         SimulatePipelineRequest.Parsed actualRequest =
-            SimulatePipelineRequest.parseWithPipelineId(SIMULATED_PIPELINE_ID, requestContent, false, ingestService);
+                SimulatePipelineRequest.parseWithPipelineId(SIMULATED_PIPELINE_ID, requestContent, false, ingestService);
         assertThat(actualRequest.isVerbose(), equalTo(false));
         assertThat(actualRequest.getDocuments().size(), equalTo(numDocs));
         Iterator<Map<String, Object>> expectedDocsIterator = expectedDocs.iterator();
@@ -153,17 +153,15 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         for (int i = 0; i < numDocs; i++) {
             Map<String, Object> doc = new HashMap<>();
             Map<String, Object> expectedDoc = new HashMap<>();
-            List<IngestDocument.Metadata> fields = Arrays.asList(INDEX, TYPE, ID, ROUTING, VERSION, VERSION_TYPE, IF_SEQ_NO, 
-                IF_PRIMARY_TERM);
-            for(IngestDocument.Metadata field : fields) {
+            List<IngestDocument.Metadata> fields =
+                    Arrays.asList(INDEX, TYPE, ID, ROUTING, VERSION, VERSION_TYPE, IF_SEQ_NO, IF_PRIMARY_TERM);
+            for (IngestDocument.Metadata field : fields) {
                 if (field == VERSION) {
                     Long value = randomLong();
                     doc.put(field.getFieldName(), value);
                     expectedDoc.put(field.getFieldName(), value);
                 } else if (field == VERSION_TYPE) {
-                    String value = VersionType.toString(
-                        randomFrom(VersionType.INTERNAL, VersionType.EXTERNAL, VersionType.EXTERNAL_GTE)
-                    );
+                    String value = VersionType.toString(randomFrom(VersionType.INTERNAL, VersionType.EXTERNAL, VersionType.EXTERNAL_GTE));
                     doc.put(field.getFieldName(), value);
                     expectedDoc.put(field.getFieldName(), value);
                 } else if (field == IF_SEQ_NO || field == IF_PRIMARY_TERM) {
@@ -256,7 +254,7 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         List<Map<String, Object>> docs = new ArrayList<>();
         requestContent.put(Fields.DOCS, docs);
         Exception e = expectThrows(IllegalArgumentException.class,
-            () -> SimulatePipelineRequest.parseWithPipelineId(null, requestContent, false, ingestService));
+                () -> SimulatePipelineRequest.parseWithPipelineId(null, requestContent, false, ingestService));
         assertThat(e.getMessage(), equalTo("param [pipeline] is null"));
     }
 
@@ -266,7 +264,7 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         List<Map<String, Object>> docs = new ArrayList<>();
         requestContent.put(Fields.DOCS, docs);
         Exception e = expectThrows(IllegalArgumentException.class,
-            () -> SimulatePipelineRequest.parseWithPipelineId(pipelineId, requestContent, false, ingestService));
+                () -> SimulatePipelineRequest.parseWithPipelineId(pipelineId, requestContent, false, ingestService));
         assertThat(e.getMessage(), equalTo("pipeline [" + pipelineId + "] does not exist"));
     }
 
@@ -278,8 +276,8 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         pipelineConfig.put("processors", processors);
         requestContent.put(Fields.DOCS, docs);
         requestContent.put(Fields.PIPELINE, pipelineConfig);
-        Exception e1 = expectThrows(IllegalArgumentException.class,
-            () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
+        Exception e1 =
+                expectThrows(IllegalArgumentException.class, () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
         assertThat(e1.getMessage(), equalTo("must specify at least one document in [docs]"));
 
         List<String> stringList = new ArrayList<>();
@@ -287,15 +285,14 @@ public class SimulatePipelineRequestParsingTests extends ESTestCase {
         pipelineConfig.put("processors", processors);
         requestContent.put(Fields.DOCS, stringList);
         requestContent.put(Fields.PIPELINE, pipelineConfig);
-        Exception e2 = expectThrows(IllegalArgumentException.class,
-            () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
+        Exception e2 =
+                expectThrows(IllegalArgumentException.class, () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
         assertThat(e2.getMessage(), equalTo("malformed [docs] section, should include an inner object"));
 
         docs.add(new HashMap<>());
         requestContent.put(Fields.DOCS, docs);
         requestContent.put(Fields.PIPELINE, pipelineConfig);
-        Exception e3 = expectThrows(FesenParseException.class,
-            () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
+        Exception e3 = expectThrows(FesenParseException.class, () -> SimulatePipelineRequest.parse(requestContent, false, ingestService));
         assertThat(e3.getMessage(), containsString("required property is missing"));
     }
 }

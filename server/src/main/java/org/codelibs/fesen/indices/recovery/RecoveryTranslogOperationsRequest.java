@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.index.seqno.RetentionLeases;
-import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.translog.Translog;
 
@@ -42,16 +40,9 @@ public class RecoveryTranslogOperationsRequest extends RecoveryTransportRequest 
     private final RetentionLeases retentionLeases;
     private final long mappingVersionOnPrimary;
 
-    RecoveryTranslogOperationsRequest(
-            final long recoveryId,
-            final long requestSeqNo,
-            final ShardId shardId,
-            final List<Translog.Operation> operations,
-            final int totalTranslogOps,
-            final long maxSeenAutoIdTimestampOnPrimary,
-            final long maxSeqNoOfUpdatesOrDeletesOnPrimary,
-            final RetentionLeases retentionLeases,
-            final long mappingVersionOnPrimary) {
+    RecoveryTranslogOperationsRequest(final long recoveryId, final long requestSeqNo, final ShardId shardId,
+            final List<Translog.Operation> operations, final int totalTranslogOps, final long maxSeenAutoIdTimestampOnPrimary,
+            final long maxSeqNoOfUpdatesOrDeletesOnPrimary, final RetentionLeases retentionLeases, final long mappingVersionOnPrimary) {
         super(requestSeqNo);
         this.recoveryId = recoveryId;
         this.shardId = shardId;

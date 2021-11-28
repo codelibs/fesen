@@ -74,8 +74,10 @@ public class GeoJsonSerializationTests extends ESTestCase {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             GeometryWrapper that = (GeometryWrapper) o;
             return Objects.equals(geometry, that.geometry);
         }
@@ -86,19 +88,12 @@ public class GeoJsonSerializationTests extends ESTestCase {
         }
     }
 
-
     private void xContentTest(Supplier<Geometry> instanceSupplier) throws IOException {
-        AbstractXContentTestCase.xContentTester(
-            this::createParser,
-            () -> new GeometryWrapper(instanceSupplier.get()),
-            (geometryWrapper, xContentBuilder) -> {
-                geometryWrapper.toXContent(xContentBuilder, ToXContent.EMPTY_PARAMS);
-            },
-            GeometryWrapper::fromXContent)
-            .supportsUnknownFields(true)
-            .test();
+        AbstractXContentTestCase.xContentTester(this::createParser, () -> new GeometryWrapper(instanceSupplier.get()),
+                (geometryWrapper, xContentBuilder) -> {
+                    geometryWrapper.toXContent(xContentBuilder, ToXContent.EMPTY_PARAMS);
+                }, GeometryWrapper::fromXContent).supportsUnknownFields(true).test();
     }
-
 
     public void testPoint() throws IOException {
         xContentTest(() -> randomPoint(randomBoolean()));
@@ -143,8 +138,8 @@ public class GeoJsonSerializationTests extends ESTestCase {
             GeoJson.toXContent(geometry, builder, ToXContent.EMPTY_PARAMS);
             StreamInput input = BytesReference.bytes(builder).streamInput();
 
-            try (XContentParser parser = XContentType.JSON.xContent()
-                .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, input)) {
+            try (XContentParser parser =
+                    XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, input)) {
                 Map<String, Object> map = GeoJson.toMap(geometry);
                 assertThat(parser.map(), equalTo(map));
             }

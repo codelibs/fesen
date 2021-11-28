@@ -20,7 +20,8 @@
 package org.codelibs.fesen.index.query;
 
 public final class RankFeatureQueryBuilders {
-    private RankFeatureQueryBuilders() {}
+    private RankFeatureQueryBuilders() {
+    }
 
     /**
      * Return a new {@link RankFeatureQueryBuilder} that will score documents as

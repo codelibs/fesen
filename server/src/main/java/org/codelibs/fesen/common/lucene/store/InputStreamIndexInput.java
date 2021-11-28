@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common.lucene.store;
 
-import org.apache.lucene.store.IndexInput;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.lucene.store.IndexInput;
 
 public class InputStreamIndexInput extends InputStream {
 

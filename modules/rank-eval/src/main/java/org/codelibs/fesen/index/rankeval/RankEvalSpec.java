@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -31,16 +41,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.script.Script;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * Specification of the ranking evaluation request.<br>
@@ -182,8 +182,7 @@ public class RankEvalSpec implements Writeable, ToXContentObject {
         }
 
         private static final ConstructingObjectParser<ScriptWithId, Void> PARSER =
-                new ConstructingObjectParser<>("script_with_id",
-                        a -> new ScriptWithId((String) a[0], (Script) a[1]));
+                new ConstructingObjectParser<>("script_with_id", a -> new ScriptWithId((String) a[0], (Script) a[1]));
 
         public static ScriptWithId fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
@@ -239,10 +238,8 @@ public class RankEvalSpec implements Writeable, ToXContentObject {
         }
         RankEvalSpec other = (RankEvalSpec) obj;
 
-        return Objects.equals(ratedRequests, other.ratedRequests) &&
-                Objects.equals(metric, other.metric) &&
-                Objects.equals(maxConcurrentSearches, other.maxConcurrentSearches) &&
-                Objects.equals(templates, other.templates);
+        return Objects.equals(ratedRequests, other.ratedRequests) && Objects.equals(metric, other.metric)
+                && Objects.equals(maxConcurrentSearches, other.maxConcurrentSearches) && Objects.equals(templates, other.templates);
     }
 
     @Override

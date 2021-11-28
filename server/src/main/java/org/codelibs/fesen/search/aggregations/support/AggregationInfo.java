@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.support;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.node.ReportingService;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -32,6 +27,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.LongAdder;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.node.ReportingService;
 
 public class AggregationInfo implements ReportingService.Info {
 
@@ -54,7 +54,7 @@ public class AggregationInfo implements ReportingService.Info {
             String key = in.readString();
             final int keys = in.readVInt();
             final Set<String> types = new TreeSet<>();
-            for (int j = 0; j < keys; j ++) {
+            for (int j = 0; j < keys; j++) {
                 types.add(in.readString());
             }
             aggs.put(key, types);
@@ -95,8 +95,10 @@ public class AggregationInfo implements ReportingService.Info {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         AggregationInfo that = (AggregationInfo) o;
         return Objects.equals(aggs, that.aggs);
     }

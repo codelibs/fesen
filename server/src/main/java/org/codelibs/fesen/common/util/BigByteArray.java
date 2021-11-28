@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.common.util;
 
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.RamUsageEstimator;
-
 import static org.codelibs.fesen.common.util.PageCacheRecycler.BYTE_PAGE_SIZE;
 
 import java.util.Arrays;
+
+import org.apache.lucene.util.ArrayUtil;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.RamUsageEstimator;
 
 /**
  * Byte array abstraction able to support more than 2B values. This implementation slices data into fixed-sized blocks of

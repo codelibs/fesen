@@ -17,7 +17,6 @@
  * under the License.
  */
 
-
 /**
  * Common Geometry classes
  */

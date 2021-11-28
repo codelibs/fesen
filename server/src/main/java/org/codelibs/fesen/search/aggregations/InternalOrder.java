@@ -18,7 +18,18 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import org.codelibs.fesen.Version;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.ToLongFunction;
+
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -31,18 +42,6 @@ import org.codelibs.fesen.search.aggregations.Aggregator.BucketComparator;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.ToLongFunction;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Implementations for {@link Bucket} ordering strategies.
@@ -113,8 +112,7 @@ public abstract class InternalOrder extends BucketOrder {
                 return false;
             }
             Aggregation other = (Aggregation) obj;
-            return Objects.equals(path, other.path)
-                && Objects.equals(order, other.order);
+            return Objects.equals(path, other.path) && Objects.equals(order, other.order);
         }
     }
 
@@ -183,9 +181,8 @@ public abstract class InternalOrder extends BucketOrder {
 
         @Override
         public <T extends Bucket> Comparator<T> partiallyBuiltBucketComparator(ToLongFunction<T> ordinalReader, Aggregator aggregator) {
-            List<Comparator<T>> comparators = orderElements.stream()
-                    .map(oe -> oe.partiallyBuiltBucketComparator(ordinalReader, aggregator))
-                    .collect(toList());
+            List<Comparator<T>> comparators =
+                    orderElements.stream().map(oe -> oe.partiallyBuiltBucketComparator(ordinalReader, aggregator)).collect(toList());
             return (lhs, rhs) -> {
                 Iterator<Comparator<T>> itr = comparators.iterator();
                 int result;
@@ -280,9 +277,7 @@ public abstract class InternalOrder extends BucketOrder {
                 return false;
             }
             SimpleOrder other = (SimpleOrder) obj;
-            return Objects.equals(id, other.id)
-                && Objects.equals(key, other.key)
-                && Objects.equals(order, other.order);
+            return Objects.equals(id, other.id) && Objects.equals(key, other.key) && Objects.equals(order, other.order);
         }
     }
 
@@ -407,23 +402,27 @@ public abstract class InternalOrder extends BucketOrder {
         public static BucketOrder readOrder(StreamInput in) throws IOException {
             byte id = in.readByte();
             switch (id) {
-                case COUNT_DESC_ID: return COUNT_DESC;
-                case COUNT_ASC_ID: return COUNT_ASC;
-                case KEY_DESC_ID: return KEY_DESC;
-                case KEY_ASC_ID: return KEY_ASC;
-                case Aggregation.ID:
-                    boolean asc = in.readBoolean();
-                    String key = in.readString();
-                    return new Aggregation(key, asc);
-                case CompoundOrder.ID:
-                    int size = in.readVInt();
-                    List<BucketOrder> compoundOrder = new ArrayList<>(size);
-                    for (int i = 0; i < size; i++) {
-                        compoundOrder.add(Streams.readOrder(in));
-                    }
-                    return new CompoundOrder(compoundOrder, false);
-                default:
-                    throw new RuntimeException("unknown order id [" + id + "]");
+            case COUNT_DESC_ID:
+                return COUNT_DESC;
+            case COUNT_ASC_ID:
+                return COUNT_ASC;
+            case KEY_DESC_ID:
+                return KEY_DESC;
+            case KEY_ASC_ID:
+                return KEY_ASC;
+            case Aggregation.ID:
+                boolean asc = in.readBoolean();
+                String key = in.readString();
+                return new Aggregation(key, asc);
+            case CompoundOrder.ID:
+                int size = in.readVInt();
+                List<BucketOrder> compoundOrder = new ArrayList<>(size);
+                for (int i = 0; i < size; i++) {
+                    compoundOrder.add(Streams.readOrder(in));
+                }
+                return new CompoundOrder(compoundOrder, false);
+            default:
+                throw new RuntimeException("unknown order id [" + id + "]");
             }
         }
 
@@ -481,8 +480,7 @@ public abstract class InternalOrder extends BucketOrder {
      */
     public static class Parser {
 
-        private static final DeprecationLogger deprecationLogger =
-                DeprecationLogger.getLogger(Parser.class);
+        private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(Parser.class);
 
         /**
          * Parse a {@link BucketOrder} from {@link XContent}.
@@ -505,32 +503,29 @@ public abstract class InternalOrder extends BucketOrder {
                     } else if ("desc".equalsIgnoreCase(dir)) {
                         orderAsc = false;
                     } else {
-                        throw new ParsingException(parser.getTokenLocation(),
-                            "Unknown order direction [" + dir + "]");
+                        throw new ParsingException(parser.getTokenLocation(), "Unknown order direction [" + dir + "]");
                     }
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(),
-                        "Unexpected token [" + token + "] for [order]");
+                    throw new ParsingException(parser.getTokenLocation(), "Unexpected token [" + token + "] for [order]");
                 }
             }
             if (orderKey == null) {
-                throw new ParsingException(parser.getTokenLocation(),
-                    "Must specify at least one field for [order]");
+                throw new ParsingException(parser.getTokenLocation(), "Must specify at least one field for [order]");
             }
             // _term and _time order deprecated in 6.0; replaced by _key
             if ("_term".equals(orderKey) || "_time".equals(orderKey)) {
-                deprecationLogger.deprecate("aggregation_order_key",
-                    "Deprecated aggregation order key [{}] used, replaced by [_key]", orderKey);
+                deprecationLogger.deprecate("aggregation_order_key", "Deprecated aggregation order key [{}] used, replaced by [_key]",
+                        orderKey);
             }
             switch (orderKey) {
-                case "_term":
-                case "_time":
-                case "_key":
-                    return orderAsc ? KEY_ASC : KEY_DESC;
-                case "_count":
-                    return orderAsc ? COUNT_ASC : COUNT_DESC;
-                default: // assume all other orders are sorting on a sub-aggregation. Validation occurs later.
-                    return aggregation(orderKey, orderAsc);
+            case "_term":
+            case "_time":
+            case "_key":
+                return orderAsc ? KEY_ASC : KEY_DESC;
+            case "_count":
+                return orderAsc ? COUNT_ASC : COUNT_DESC;
+            default: // assume all other orders are sorting on a sub-aggregation. Validation occurs later.
+                return aggregation(orderKey, orderAsc);
             }
         }
     }

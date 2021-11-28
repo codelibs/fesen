@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
-import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.cluster.metadata.MappingMetadata;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +30,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.cluster.metadata.IndexMetadata;
+import org.codelibs.fesen.cluster.metadata.MappingMetadata;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
 /**
  * Usage statistics about mappings usage.

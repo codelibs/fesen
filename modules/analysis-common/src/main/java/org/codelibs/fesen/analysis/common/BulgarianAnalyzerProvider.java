@@ -33,10 +33,8 @@ public class BulgarianAnalyzerProvider extends AbstractIndexAnalyzerProvider<Bul
 
     BulgarianAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, name, settings);
-        analyzer = new BulgarianAnalyzer(
-            Analysis.parseStopWords(env, settings, BulgarianAnalyzer.getDefaultStopSet()),
-            Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET)
-        );
+        analyzer = new BulgarianAnalyzer(Analysis.parseStopWords(env, settings, BulgarianAnalyzer.getDefaultStopSet()),
+                Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET));
         analyzer.setVersion(version);
     }
 

@@ -39,4 +39,5 @@ import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
 @ThreadLeakZombies(ThreadLeakZombies.Consequence.IGNORE_REMAINING_TESTS)
 @ThreadLeakLingering(linger = 5000)
 @TimeoutSuite(millis = 2 * 60 * 60 * 1000)
-abstract class LaunchersTestCase extends RandomizedTest {}
+abstract class LaunchersTestCase extends RandomizedTest {
+}

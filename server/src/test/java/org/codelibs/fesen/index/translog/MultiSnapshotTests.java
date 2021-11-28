@@ -75,9 +75,7 @@ public class MultiSnapshotTests extends ESTestCase {
         for (long i = 0; i < iterations; i++) {
             int batchSize = between(1, 1500);
             currentSeq -= batchSize;
-            List<Long> batch = LongStream.range(currentSeq, currentSeq + batchSize)
-                .boxed()
-                .collect(Collectors.toList());
+            List<Long> batch = LongStream.range(currentSeq, currentSeq + batchSize).boxed().collect(Collectors.toList());
             Randomness.shuffle(batch);
             batch.forEach(seq -> {
                 boolean existed = normalSet.add(seq) == false;

@@ -18,6 +18,17 @@
  */
 package org.codelibs.fesen.cluster;
 
+import static org.codelibs.fesen.common.settings.Setting.positiveTimeSetting;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,24 +44,13 @@ import org.codelibs.fesen.cluster.service.ClusterApplier;
 import org.codelibs.fesen.common.component.AbstractLifecycleComponent;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
-
-import static org.codelibs.fesen.common.settings.Setting.Property;
-import static org.codelibs.fesen.common.settings.Setting.positiveTimeSetting;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This component is responsible for maintaining connections from this node to all the nodes listed in the cluster state, and for
@@ -72,7 +72,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
     private static final Logger logger = LogManager.getLogger(NodeConnectionsService.class);
 
     public static final Setting<TimeValue> CLUSTER_NODE_RECONNECT_INTERVAL_SETTING =
-        positiveTimeSetting("cluster.nodes.reconnect_interval", TimeValue.timeValueSeconds(10), Property.NodeScope);
+            positiveTimeSetting("cluster.nodes.reconnect_interval", TimeValue.timeValueSeconds(10), Property.NodeScope);
 
     private final ThreadPool threadPool;
     private final TransportService transportService;
@@ -106,8 +106,8 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
             return;
         }
 
-        final GroupedActionListener<Void> listener
-            = new GroupedActionListener<>(ActionListener.wrap(onCompletion), discoveryNodes.getSize());
+        final GroupedActionListener<Void> listener =
+                new GroupedActionListener<>(ActionListener.wrap(onCompletion), discoveryNodes.getSize());
 
         final List<Runnable> runnables = new ArrayList<>(discoveryNodes.getSize());
         synchronized (mutex) {
@@ -172,8 +172,8 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
             if (connectionTargets.isEmpty()) {
                 runnables.add(onCompletion);
             } else {
-                final GroupedActionListener<Void> listener = new GroupedActionListener<>(
-                    ActionListener.wrap(onCompletion), connectionTargets.size());
+                final GroupedActionListener<Void> listener =
+                        new GroupedActionListener<>(ActionListener.wrap(onCompletion), connectionTargets.size());
                 for (final ConnectionTarget connectionTarget : connectionTargets) {
                     runnables.add(connectionTarget.awaitCurrentActivity(listener));
                 }
@@ -195,8 +195,8 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
                 runnables.add(onCompletion);
             } else {
                 logger.trace("connectDisconnectedTargets: {}", targetsByNode);
-                final GroupedActionListener<Void> listener = new GroupedActionListener<>(
-                    ActionListener.wrap(onCompletion), connectionTargets.size());
+                final GroupedActionListener<Void> listener =
+                        new GroupedActionListener<>(ActionListener.wrap(onCompletion), connectionTargets.size());
                 for (final ConnectionTarget connectionTarget : connectionTargets) {
                     runnables.add(connectionTarget.ensureConnected(listener));
                 }
@@ -255,9 +255,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
     }
 
     private enum ActivityType {
-        IDLE,
-        CONNECTING,
-        DISCONNECTING
+        IDLE, CONNECTING, DISCONNECTING
     }
 
     /**
@@ -338,8 +336,8 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
                 final int currentFailureCount = consecutiveFailureCount.incrementAndGet();
                 // only warn every 6th failure
                 final Level level = currentFailureCount % 6 == 1 ? Level.WARN : Level.DEBUG;
-                logger.log(level, new ParameterizedMessage("failed to connect to {} (tried [{}] times)",
-                    discoveryNode, currentFailureCount), e);
+                logger.log(level,
+                        new ParameterizedMessage("failed to connect to {} (tried [{}] times)", discoveryNode, currentFailureCount), e);
                 onCompletion(ActivityType.CONNECTING, e, disconnectActivity);
             }
 
@@ -376,12 +374,12 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
 
         Runnable connect(@Nullable ActionListener<Void> listener) {
             return addListenerAndStartActivity(listener, ActivityType.CONNECTING, connectActivity,
-                "disconnection cancelled by reconnection");
+                    "disconnection cancelled by reconnection");
         }
 
         Runnable disconnect() {
             return addListenerAndStartActivity(null, ActivityType.DISCONNECTING, disconnectActivity,
-                "connection cancelled by disconnection");
+                    "connection cancelled by disconnection");
         }
 
         Runnable ensureConnected(@Nullable ActionListener<Void> listener) {
@@ -398,8 +396,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
                 }
             } else {
                 addListener(listener);
-                return () -> {
-                };
+                return () -> {};
             }
         }
 
@@ -410,8 +407,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
                 return () -> listener.onResponse(null);
             } else {
                 addListener(listener);
-                return () -> {
-                };
+                return () -> {};
             }
         }
 
@@ -431,7 +427,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
         }
 
         private Runnable addListenerAndStartActivity(@Nullable ActionListener<Void> listener, ActivityType newActivityType,
-                                                     Runnable activity, String cancellationMessage) {
+                Runnable activity, String cancellationMessage) {
             assert Thread.holdsLock(mutex) : "mutex not held";
             assert newActivityType.equals(ActivityType.IDLE) == false;
 
@@ -443,8 +439,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
 
             if (activityType == newActivityType) {
                 addListener(listener);
-                return () -> {
-                };
+                return () -> {};
             }
 
             activityType = newActivityType;
@@ -484,10 +479,7 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
         @Override
         public String toString() {
             synchronized (mutex) {
-                return "ConnectionTarget{" +
-                    "discoveryNode=" + discoveryNode +
-                    ", activityType=" + activityType +
-                    '}';
+                return "ConnectionTarget{" + "discoveryNode=" + discoveryNode + ", activityType=" + activityType + '}';
             }
         }
     }

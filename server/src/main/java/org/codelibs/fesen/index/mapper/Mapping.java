@@ -19,14 +19,8 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -35,8 +29,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentHelper;
+import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
 
 /**
  * Wrapper around everything that defines a mapping, without references to
@@ -51,8 +51,8 @@ public final class Mapping implements ToXContentFragment {
     final Map<String, MetadataFieldMapper> metadataMappersByName;
     final Map<String, Object> meta;
 
-    public Mapping(Version indexCreated, RootObjectMapper rootObjectMapper,
-                   MetadataFieldMapper[] metadataMappers, Map<String, Object> meta) {
+    public Mapping(Version indexCreated, RootObjectMapper rootObjectMapper, MetadataFieldMapper[] metadataMappers,
+            Map<String, Object> meta) {
         this.indexCreated = indexCreated;
         this.metadataMappers = metadataMappers;
         Map<Class<? extends MetadataFieldMapper>, MetadataFieldMapper> metadataMappersMap = new HashMap<>();

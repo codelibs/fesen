@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.get;
 
-import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
-import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
 public class UpgradeStatusResponse extends BroadcastResponse {
     private ShardUpgradeStatus[] shards;
@@ -48,7 +48,7 @@ public class UpgradeStatusResponse extends BroadcastResponse {
     }
 
     UpgradeStatusResponse(ShardUpgradeStatus[] shards, int totalShards, int successfulShards, int failedShards,
-                          List<DefaultShardOperationFailedException> shardFailures) {
+            List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.shards = shards;
     }
@@ -128,9 +128,9 @@ public class UpgradeStatusResponse extends BroadcastResponse {
 
                 builder.humanReadableField(Fields.SIZE_IN_BYTES, Fields.SIZE, new ByteSizeValue(indexUpgradeStatus.getTotalBytes()));
                 builder.humanReadableField(Fields.SIZE_TO_UPGRADE_IN_BYTES, Fields.SIZE_TO_UPGRADE,
-                    new ByteSizeValue(indexUpgradeStatus.getToUpgradeBytes()));
+                        new ByteSizeValue(indexUpgradeStatus.getToUpgradeBytes()));
                 builder.humanReadableField(Fields.SIZE_TO_UPGRADE_ANCIENT_IN_BYTES, Fields.SIZE_TO_UPGRADE_ANCIENT,
-                    new ByteSizeValue(indexUpgradeStatus.getToUpgradeBytesAncient()));
+                        new ByteSizeValue(indexUpgradeStatus.getToUpgradeBytesAncient()));
                 if (outputShards) {
                     builder.startObject(Fields.SHARDS);
                     for (IndexShardUpgradeStatus indexShardUpgradeStatus : indexUpgradeStatus) {
@@ -140,9 +140,9 @@ public class UpgradeStatusResponse extends BroadcastResponse {
 
                             builder.humanReadableField(Fields.SIZE_IN_BYTES, Fields.SIZE, new ByteSizeValue(getTotalBytes()));
                             builder.humanReadableField(Fields.SIZE_TO_UPGRADE_IN_BYTES, Fields.SIZE_TO_UPGRADE,
-                                new ByteSizeValue(getToUpgradeBytes()));
+                                    new ByteSizeValue(getToUpgradeBytes()));
                             builder.humanReadableField(Fields.SIZE_TO_UPGRADE_ANCIENT_IN_BYTES, Fields.SIZE_TO_UPGRADE_ANCIENT,
-                                new ByteSizeValue(getToUpgradeBytesAncient()));
+                                    new ByteSizeValue(getToUpgradeBytesAncient()));
 
                             builder.startObject(Fields.ROUTING);
                             builder.field(Fields.STATE, shardUpgradeStatus.getShardRouting().state());

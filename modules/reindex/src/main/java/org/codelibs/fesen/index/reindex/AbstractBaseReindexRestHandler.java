@@ -19,15 +19,16 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.BulkByScrollTask;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestRequest;
@@ -35,14 +36,8 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.tasks.LoggingTaskListener;
 import org.codelibs.fesen.tasks.Task;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-public abstract class AbstractBaseReindexRestHandler<
-                Request extends AbstractBulkByScrollRequest<Request>,
-                A extends ActionType<BulkByScrollResponse>
-            > extends BaseRestHandler {
+public abstract class AbstractBaseReindexRestHandler<Request extends AbstractBulkByScrollRequest<Request>, A extends ActionType<BulkByScrollResponse>>
+        extends BaseRestHandler {
 
     private final A action;
 
@@ -50,8 +45,8 @@ public abstract class AbstractBaseReindexRestHandler<
         this.action = action;
     }
 
-    protected RestChannelConsumer doPrepareRequest(RestRequest request, NodeClient client,
-                                                   boolean includeCreated, boolean includeUpdated) throws IOException {
+    protected RestChannelConsumer doPrepareRequest(RestRequest request, NodeClient client, boolean includeCreated, boolean includeUpdated)
+            throws IOException {
         // Build the internal request
         Request internal = setCommonOptions(request, buildRequest(request, client.getNamedWriteableRegistry()));
 
@@ -140,13 +135,13 @@ public abstract class AbstractBaseReindexRestHandler<
         try {
             slices = Integer.parseInt(slicesString);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                "[slices] must be a positive integer or the string \"auto\", but was [" + slicesString + "]", e);
+            throw new IllegalArgumentException("[slices] must be a positive integer or the string \"auto\", but was [" + slicesString + "]",
+                    e);
         }
 
         if (slices < 1) {
             throw new IllegalArgumentException(
-                "[slices] must be a positive integer or the string \"auto\", but was [" + slicesString + "]");
+                    "[slices] must be a positive integer or the string \"auto\", but was [" + slicesString + "]");
         }
 
         return slices;
@@ -164,24 +159,22 @@ public abstract class AbstractBaseReindexRestHandler<
         try {
             requestsPerSecond = Float.parseFloat(requestsPerSecondString);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "[requests_per_second] must be a float greater than 0. Use -1 to disable throttling.", e);
+            throw new IllegalArgumentException("[requests_per_second] must be a float greater than 0. Use -1 to disable throttling.", e);
         }
         if (requestsPerSecond == -1) {
             return Float.POSITIVE_INFINITY;
         }
         if (requestsPerSecond <= 0) {
             // We validate here and in the setters because the setters use "Float.POSITIVE_INFINITY" instead of -1
-            throw new IllegalArgumentException(
-                    "[requests_per_second] must be a float greater than 0. Use -1 to disable throttling.");
+            throw new IllegalArgumentException("[requests_per_second] must be a float greater than 0. Use -1 to disable throttling.");
         }
         return requestsPerSecond;
     }
 
     static void setMaxDocsValidateIdentical(AbstractBulkByScrollRequest<?> request, int maxDocs) {
         if (request.getMaxDocs() != AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES && request.getMaxDocs() != maxDocs) {
-            throw new IllegalArgumentException("[max_docs] set to two different values [" + request.getMaxDocs() + "]" +
-                " and [" + maxDocs + "]");
+            throw new IllegalArgumentException(
+                    "[max_docs] set to two different values [" + request.getMaxDocs() + "]" + " and [" + maxDocs + "]");
         } else {
             request.setMaxDocs(maxDocs);
         }

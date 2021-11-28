@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.admin.cluster.node.info.NodeInfo;
 import org.codelibs.fesen.action.admin.cluster.node.stats.NodeStats;
 import org.codelibs.fesen.action.admin.indices.stats.ShardStats;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
 
 public class ClusterStatsNodeResponse extends BaseNodeResponse {
 
@@ -49,8 +49,8 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
         shardsStats = in.readArray(ShardStats::new, ShardStats[]::new);
     }
 
-    public ClusterStatsNodeResponse(DiscoveryNode node, @Nullable ClusterHealthStatus clusterStatus,
-                                    NodeInfo nodeInfo, NodeStats nodeStats, ShardStats[] shardsStats) {
+    public ClusterStatsNodeResponse(DiscoveryNode node, @Nullable ClusterHealthStatus clusterStatus, NodeInfo nodeInfo, NodeStats nodeStats,
+            ShardStats[] shardsStats) {
         super(node);
         this.nodeInfo = nodeInfo;
         this.nodeStats = nodeStats;

@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -25,12 +31,6 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Result of the {@link TermsAggregator} when the field is some kind of whole number like a integer, long, or a date.
@@ -115,8 +115,8 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
     public LongTerms(String name, BucketOrder reduceOrder, BucketOrder order, int requiredSize, long minDocCount,
             Map<String, Object> metadata, DocValueFormat format, int shardSize, boolean showTermDocCountError, long otherDocCount,
             List<Bucket> buckets, long docCountError) {
-        super(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError,
-                otherDocCount, buckets, docCountError);
+        super(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError, otherDocCount,
+                buckets, docCountError);
     }
 
     /**
@@ -133,8 +133,8 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
 
     @Override
     public LongTerms create(List<Bucket> buckets) {
-        return new LongTerms(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize,
-                showTermDocCountError, otherDocCount, buckets, docCountError);
+        return new LongTerms(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError,
+                otherDocCount, buckets, docCountError);
     }
 
     @Override
@@ -145,8 +145,8 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
 
     @Override
     protected LongTerms create(String name, List<Bucket> buckets, BucketOrder reduceOrder, long docCountError, long otherDocCount) {
-        return new LongTerms(name, reduceOrder, order, requiredSize, minDocCount, getMetadata(), format, shardSize,
-                showTermDocCountError, otherDocCount, buckets, docCountError);
+        return new LongTerms(name, reduceOrder, order, requiredSize, minDocCount, getMetadata(), format, shardSize, showTermDocCountError,
+                otherDocCount, buckets, docCountError);
     }
 
     @Override
@@ -197,14 +197,12 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
         List<LongTerms.Bucket> buckets = longTerms.getBuckets();
         List<DoubleTerms.Bucket> newBuckets = new ArrayList<>();
         for (Terms.Bucket bucket : buckets) {
-            newBuckets.add(new DoubleTerms.Bucket(bucket.getKeyAsNumber().doubleValue(),
-                bucket.getDocCount(), (InternalAggregations) bucket.getAggregations(), longTerms.showTermDocCountError,
-                longTerms.showTermDocCountError ? bucket.getDocCountError() : 0, decimalFormat));
+            newBuckets.add(new DoubleTerms.Bucket(bucket.getKeyAsNumber().doubleValue(), bucket.getDocCount(),
+                    (InternalAggregations) bucket.getAggregations(), longTerms.showTermDocCountError,
+                    longTerms.showTermDocCountError ? bucket.getDocCountError() : 0, decimalFormat));
         }
-        return new DoubleTerms(longTerms.getName(), longTerms.reduceOrder, longTerms.order, longTerms.requiredSize,
-            longTerms.minDocCount,
-            longTerms.metadata, longTerms.format, longTerms.shardSize,
-            longTerms.showTermDocCountError, longTerms.otherDocCount,
-            newBuckets, longTerms.docCountError);
+        return new DoubleTerms(longTerms.getName(), longTerms.reduceOrder, longTerms.order, longTerms.requiredSize, longTerms.minDocCount,
+                longTerms.metadata, longTerms.format, longTerms.shardSize, longTerms.showTermDocCountError, longTerms.otherDocCount,
+                newBuckets, longTerms.docCountError);
     }
 }

@@ -18,6 +18,25 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
+import static java.lang.Math.max;
+import static org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING;
+import static org.codelibs.fesen.cluster.ClusterState.UNKNOWN_VERSION;
+import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentSet;
+import static org.codelibs.fesen.discovery.zen.ElectMasterService.DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING;
+import static org.codelibs.fesen.discovery.zen.ZenDiscovery.PING_TIMEOUT_SETTING;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -34,8 +53,8 @@ import org.codelibs.fesen.common.util.concurrent.CountDown;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.discovery.zen.ElectMasterService;
-import org.codelibs.fesen.discovery.zen.UnicastZenPing;
 import org.codelibs.fesen.discovery.zen.ElectMasterService.MasterCandidate;
+import org.codelibs.fesen.discovery.zen.UnicastZenPing;
 import org.codelibs.fesen.discovery.zen.UnicastZenPing.UnicastPingRequest;
 import org.codelibs.fesen.discovery.zen.UnicastZenPing.UnicastPingResponse;
 import org.codelibs.fesen.discovery.zen.ZenPing.PingResponse;
@@ -45,25 +64,6 @@ import org.codelibs.fesen.transport.TransportException;
 import org.codelibs.fesen.transport.TransportRequestOptions;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static java.lang.Math.max;
-import static org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING;
-import static org.codelibs.fesen.cluster.ClusterState.UNKNOWN_VERSION;
-import static org.codelibs.fesen.common.util.concurrent.ConcurrentCollections.newConcurrentSet;
-import static org.codelibs.fesen.discovery.zen.ElectMasterService.DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING;
-import static org.codelibs.fesen.discovery.zen.ZenDiscovery.PING_TIMEOUT_SETTING;
 
 /**
  * Deals with rolling upgrades of the cluster coordination layer. In mixed clusters we prefer to elect the older nodes, but
@@ -75,13 +75,12 @@ public class DiscoveryUpgradeService {
     private static Logger logger = LogManager.getLogger(DiscoveryUpgradeService.class);
 
     // how long to wait after activation before attempting to join a master or perform a bootstrap upgrade
-    public static final Setting<TimeValue> BWC_PING_TIMEOUT_SETTING =
-        Setting.timeSetting("discovery.zen.bwc_ping_timeout",
+    public static final Setting<TimeValue> BWC_PING_TIMEOUT_SETTING = Setting.timeSetting("discovery.zen.bwc_ping_timeout",
             PING_TIMEOUT_SETTING, TimeValue.timeValueMillis(1), Setting.Property.NodeScope, Setting.Property.Deprecated);
 
     // whether to try and bootstrap all the discovered Zen2 nodes when the last Zen1 node leaves the cluster.
-    public static final Setting<Boolean> ENABLE_UNSAFE_BOOTSTRAPPING_ON_UPGRADE_SETTING =
-        Setting.boolSetting("discovery.zen.unsafe_rolling_upgrades_enabled", true, Setting.Property.NodeScope, Setting.Property.Deprecated);
+    public static final Setting<Boolean> ENABLE_UNSAFE_BOOTSTRAPPING_ON_UPGRADE_SETTING = Setting
+            .boolSetting("discovery.zen.unsafe_rolling_upgrades_enabled", true, Setting.Property.NodeScope, Setting.Property.Deprecated);
 
     /**
      * Dummy {@link ElectMasterService} that is only used to choose the best 6.x master from the discovered nodes, ignoring the
@@ -101,10 +100,9 @@ public class DiscoveryUpgradeService {
     @Nullable // null if no active joining round
     private volatile JoiningRound joiningRound;
 
-    public DiscoveryUpgradeService(Settings settings, TransportService transportService,
-                                   BooleanSupplier isBootstrappedSupplier, JoinHelper joinHelper,
-                                   Supplier<Iterable<DiscoveryNode>> peersSupplier,
-                                   Consumer<VotingConfiguration> initialConfigurationConsumer) {
+    public DiscoveryUpgradeService(Settings settings, TransportService transportService, BooleanSupplier isBootstrappedSupplier,
+            JoinHelper joinHelper, Supplier<Iterable<DiscoveryNode>> peersSupplier,
+            Consumer<VotingConfiguration> initialConfigurationConsumer) {
         assert Version.CURRENT.major < 9 : "remove this service once unsafe upgrades are no longer needed";
         this.transportService = transportService;
         this.isBootstrappedSupplier = isBootstrappedSupplier;
@@ -128,15 +126,15 @@ public class DiscoveryUpgradeService {
 
         final Settings dynamicSettings = lastAcceptedClusterState.metadata().settings();
         final int minimumMasterNodes = DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING.exists(dynamicSettings)
-            ? DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING.get(dynamicSettings)
-            : lastAcceptedClusterState.getMinimumMasterNodesOnPublishingMaster();
+                ? DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING.get(dynamicSettings)
+                : lastAcceptedClusterState.getMinimumMasterNodesOnPublishingMaster();
 
         assert joiningRound == null : joiningRound;
         final Set<String> knownMasterNodeIds = new HashSet<>();
         lastAcceptedClusterState.nodes().getMasterNodes().forEach(c -> knownMasterNodeIds.add(c.key));
 
-        joiningRound
-            = new JoiningRound(enableUnsafeBootstrappingOnUpgrade && lastKnownLeader.isPresent(), minimumMasterNodes, knownMasterNodeIds);
+        joiningRound =
+                new JoiningRound(enableUnsafeBootstrappingOnUpgrade && lastKnownLeader.isPresent(), minimumMasterNodes, knownMasterNodeIds);
         joiningRound.scheduleNextAttempt();
     }
 
@@ -204,8 +202,10 @@ public class DiscoveryUpgradeService {
                         return;
                     }
 
-                    final Set<DiscoveryNode> discoveryNodes = Stream.concat(StreamSupport.stream(peersSupplier.get().spliterator(), false),
-                        Stream.of(transportService.getLocalNode())).filter(DiscoveryNode::isMasterNode).collect(Collectors.toSet());
+                    final Set<DiscoveryNode> discoveryNodes = Stream
+                            .concat(StreamSupport.stream(peersSupplier.get().spliterator(), false),
+                                    Stream.of(transportService.getLocalNode()))
+                            .filter(DiscoveryNode::isMasterNode).collect(Collectors.toSet());
 
                     // this set of nodes is reasonably fresh - the PeerFinder cleans up nodes to which the transport service is not
                     // connected each time it wakes up (every second by default)
@@ -227,8 +227,8 @@ public class DiscoveryUpgradeService {
                                 }
 
                                 final VotingConfiguration votingConfiguration = new VotingConfiguration(nodeIds);
-                                assert votingConfiguration.hasQuorum(
-                                    discoveryNodes.stream().map(DiscoveryNode::getId).collect(Collectors.toList()));
+                                assert votingConfiguration
+                                        .hasQuorum(discoveryNodes.stream().map(DiscoveryNode::getId).collect(Collectors.toList()));
                                 assert 2 * minimumMasterNodes - 2 <= nodeIds.size() : nodeIds + " too small for " + minimumMasterNodes;
 
                                 initialConfigurationConsumer.accept(votingConfiguration);
@@ -249,30 +249,30 @@ public class DiscoveryUpgradeService {
                  */
                 private void electBestOldMaster(Set<DiscoveryNode> discoveryNodes) {
                     final Set<MasterCandidate> masterCandidates = newConcurrentSet();
-                    final ListenableCountDown listenableCountDown
-                        = new ListenableCountDown(discoveryNodes.size(), new ActionListener<Void>() {
+                    final ListenableCountDown listenableCountDown =
+                            new ListenableCountDown(discoveryNodes.size(), new ActionListener<Void>() {
 
-                        @Override
-                        public void onResponse(Void value) {
-                            assert masterCandidates.size() == discoveryNodes.size()
-                                : masterCandidates + " does not match " + discoveryNodes;
+                                @Override
+                                public void onResponse(Void value) {
+                                    assert masterCandidates.size() == discoveryNodes.size() : masterCandidates + " does not match "
+                                            + discoveryNodes;
 
-                            // TODO we shouldn't elect a master with a version that's older than ours
-                            // If the only Zen1 nodes left are stale, and we can bootstrap, maybe we should bootstrap?
-                            // Do we ever need to elect a freshly-started Zen1 node?
-                            if (isRunning()) {
-                                final MasterCandidate electedMaster = electMasterService.electMaster(masterCandidates);
-                                logger.debug("elected {}, sending join", electedMaster);
-                                joinHelper.sendJoinRequest(electedMaster.getNode(), 0L, Optional.empty(),
-                                    JoiningRound.this::scheduleNextAttempt);
-                            }
-                        }
+                                    // TODO we shouldn't elect a master with a version that's older than ours
+                                    // If the only Zen1 nodes left are stale, and we can bootstrap, maybe we should bootstrap?
+                                    // Do we ever need to elect a freshly-started Zen1 node?
+                                    if (isRunning()) {
+                                        final MasterCandidate electedMaster = electMasterService.electMaster(masterCandidates);
+                                        logger.debug("elected {}, sending join", electedMaster);
+                                        joinHelper.sendJoinRequest(electedMaster.getNode(), 0L, Optional.empty(),
+                                                JoiningRound.this::scheduleNextAttempt);
+                                    }
+                                }
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            scheduleNextAttempt();
-                        }
-                    });
+                                @Override
+                                public void onFailure(Exception e) {
+                                    scheduleNextAttempt();
+                                }
+                            });
 
                     boolean foundOldMaster = false;
                     for (final DiscoveryNode discoveryNode : discoveryNodes) {
@@ -280,45 +280,44 @@ public class DiscoveryUpgradeService {
                         if (Coordinator.isZen1Node(discoveryNode)) {
                             foundOldMaster = true;
                             transportService.sendRequest(discoveryNode, UnicastZenPing.ACTION_NAME,
-                                new UnicastPingRequest(0, TimeValue.ZERO,
-                                    new PingResponse(createDiscoveryNodeWithImpossiblyHighId(transportService.getLocalNode()),
-                                        null, clusterName, UNKNOWN_VERSION)),
-                                TransportRequestOptions.builder().withTimeout(bwcPingTimeout).build(),
-                                new TransportResponseHandler<UnicastPingResponse>() {
-                                    @Override
-                                    public void handleResponse(UnicastPingResponse response) {
-                                        long clusterStateVersion = UNKNOWN_VERSION;
-                                        for (PingResponse pingResponse : response.pingResponses) {
-                                            if (discoveryNode.equals(pingResponse.node())) {
-                                                clusterStateVersion
-                                                    = max(clusterStateVersion, pingResponse.getClusterStateVersion());
+                                    new UnicastPingRequest(0, TimeValue.ZERO,
+                                            new PingResponse(createDiscoveryNodeWithImpossiblyHighId(transportService.getLocalNode()), null,
+                                                    clusterName, UNKNOWN_VERSION)),
+                                    TransportRequestOptions.builder().withTimeout(bwcPingTimeout).build(),
+                                    new TransportResponseHandler<UnicastPingResponse>() {
+                                        @Override
+                                        public void handleResponse(UnicastPingResponse response) {
+                                            long clusterStateVersion = UNKNOWN_VERSION;
+                                            for (PingResponse pingResponse : response.pingResponses) {
+                                                if (discoveryNode.equals(pingResponse.node())) {
+                                                    clusterStateVersion = max(clusterStateVersion, pingResponse.getClusterStateVersion());
+                                                }
                                             }
+                                            masterCandidates.add(new MasterCandidate(discoveryNode, clusterStateVersion));
+                                            listenableCountDown.countDown();
                                         }
-                                        masterCandidates.add(new MasterCandidate(discoveryNode, clusterStateVersion));
-                                        listenableCountDown.countDown();
-                                    }
 
-                                    @Override
-                                    public void handleException(TransportException exp) {
-                                        logger.debug(
-                                            new ParameterizedMessage("unexpected exception when pinging {}", discoveryNode), exp);
-                                        listenableCountDown.onFailure(exp);
-                                    }
+                                        @Override
+                                        public void handleException(TransportException exp) {
+                                            logger.debug(new ParameterizedMessage("unexpected exception when pinging {}", discoveryNode),
+                                                    exp);
+                                            listenableCountDown.onFailure(exp);
+                                        }
 
-                                    @Override
-                                    public String executor() {
-                                        return Names.SAME;
-                                    }
+                                        @Override
+                                        public String executor() {
+                                            return Names.SAME;
+                                        }
 
-                                    @Override
-                                    public UnicastPingResponse read(StreamInput in) throws IOException {
-                                        return new UnicastPingResponse(in);
-                                    }
-                                });
+                                        @Override
+                                        public UnicastPingResponse read(StreamInput in) throws IOException {
+                                            return new UnicastPingResponse(in);
+                                        }
+                                    });
 
                         } else {
-                            masterCandidates.add(
-                                new MasterCandidate(createDiscoveryNodeWithImpossiblyHighId(discoveryNode), UNKNOWN_VERSION));
+                            masterCandidates
+                                    .add(new MasterCandidate(createDiscoveryNodeWithImpossiblyHighId(discoveryNode), UNKNOWN_VERSION));
                             listenableCountDown.countDown();
                         }
                     }
@@ -341,7 +340,7 @@ public class DiscoveryUpgradeService {
     public static DiscoveryNode createDiscoveryNodeWithImpossiblyHighId(DiscoveryNode node) {
         // IDs are base-64-encoded UUIDs, which means they use the character set [0-9A-Za-z_-]. The highest character in this set is 'z',
         // and 'z' < '{', so by starting the ID with '{' we can be sure it's greater. This is terrible.
-        return new DiscoveryNode(node.getName(), "{zen2}" + node.getId(), node.getEphemeralId(), node.getHostName(),
-            node.getHostAddress(), node.getAddress(), node.getAttributes(), node.getRoles(), node.getVersion());
+        return new DiscoveryNode(node.getName(), "{zen2}" + node.getId(), node.getEphemeralId(), node.getHostName(), node.getHostAddress(),
+                node.getAddress(), node.getAttributes(), node.getRoles(), node.getVersion());
     }
 }

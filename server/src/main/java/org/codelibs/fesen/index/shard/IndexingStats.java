@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.shard;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -27,10 +31,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class IndexingStats implements Writeable, ToXContentFragment {
 
@@ -47,7 +47,8 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         private long throttleTimeInMillis;
         private boolean isThrottled;
 
-        Stats() {}
+        Stats() {
+        }
 
         public Stats(StreamInput in) throws IOException {
             indexCount = in.readVLong();
@@ -63,7 +64,7 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         }
 
         public Stats(long indexCount, long indexTimeInMillis, long indexCurrent, long indexFailedCount, long deleteCount,
-                        long deleteTimeInMillis, long deleteCurrent, long noopUpdateCount, boolean isThrottled, long throttleTimeInMillis) {
+                long deleteTimeInMillis, long deleteCurrent, long noopUpdateCount, boolean isThrottled, long throttleTimeInMillis) {
             this.indexCount = indexCount;
             this.indexTimeInMillis = indexTimeInMillis;
             this.indexCurrent = indexCurrent;
@@ -96,22 +97,30 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         /**
          * The total number of indexing operations
          */
-        public long getIndexCount() { return indexCount; }
+        public long getIndexCount() {
+            return indexCount;
+        }
 
         /**
          * The number of failed indexing operations
          */
-        public long getIndexFailedCount() { return indexFailedCount; }
+        public long getIndexFailedCount() {
+            return indexFailedCount;
+        }
 
         /**
          * The total amount of time spend on executing index operations.
          */
-        public TimeValue getIndexTime() { return new TimeValue(indexTimeInMillis); }
+        public TimeValue getIndexTime() {
+            return new TimeValue(indexTimeInMillis);
+        }
 
         /**
          * Returns the currently in-flight indexing operations.
          */
-        public long getIndexCurrent() { return indexCurrent;}
+        public long getIndexCurrent() {
+            return indexCurrent;
+        }
 
         /**
          * Returns the number of delete operation executed
@@ -123,12 +132,16 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         /**
          * Returns if the index is under merge throttling control
          */
-        public boolean isThrottled() { return isThrottled; }
+        public boolean isThrottled() {
+            return isThrottled;
+        }
 
         /**
          * Gets the amount of time in a TimeValue that the index has been under merge throttling control
          */
-        public TimeValue getThrottleTime() { return new TimeValue(throttleTimeInMillis); }
+        public TimeValue getThrottleTime() {
+            return new TimeValue(throttleTimeInMillis);
+        }
 
         /**
          * The total amount of time spend on executing delete operations.

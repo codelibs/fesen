@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.searchafter;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
@@ -38,13 +45,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.sort.SortAndFormats;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 public class SearchAfterBuilder implements ToXContentObject, Writeable {
     public static final ParseField SEARCH_AFTER = new ParseField("search_after");
@@ -82,17 +82,28 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
             throw new IllegalArgumentException("Values must contains at least one value.");
         }
         for (int i = 0; i < values.length; i++) {
-            if (values[i] == null) continue;
-            if (values[i] instanceof String) continue;
-            if (values[i] instanceof Text) continue;
-            if (values[i] instanceof Long) continue;
-            if (values[i] instanceof Integer) continue;
-            if (values[i] instanceof Short) continue;
-            if (values[i] instanceof Byte) continue;
-            if (values[i] instanceof Double) continue;
-            if (values[i] instanceof Float) continue;
-            if (values[i] instanceof Boolean) continue;
-            if (values[i] instanceof BigInteger) continue;
+            if (values[i] == null)
+                continue;
+            if (values[i] instanceof String)
+                continue;
+            if (values[i] instanceof Text)
+                continue;
+            if (values[i] instanceof Long)
+                continue;
+            if (values[i] instanceof Integer)
+                continue;
+            if (values[i] instanceof Short)
+                continue;
+            if (values[i] instanceof Byte)
+                continue;
+            if (values[i] instanceof Double)
+                continue;
+            if (values[i] instanceof Float)
+                continue;
+            if (values[i] instanceof Boolean)
+                continue;
+            if (values[i] instanceof BigInteger)
+                continue;
             throw new IllegalArgumentException("Can't handle " + SEARCH_AFTER + " field value of type [" + values[i].getClass() + "]");
         }
         sortValues = new Object[values.length];
@@ -111,9 +122,8 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
 
         SortField[] sortFields = sort.sort.getSort();
         if (sortFields.length != values.length) {
-            throw new IllegalArgumentException(
-                    SEARCH_AFTER.getPreferredName() + " has " + values.length + " value(s) but sort has "
-                            + sort.sort.getSort().length + ".");
+            throw new IllegalArgumentException(SEARCH_AFTER.getPreferredName() + " has " + values.length + " value(s) but sort has "
+                    + sort.sort.getSort().length + ".");
         }
         Object[] fieldValues = new Object[sortFields.length];
         for (int i = 0; i < sortFields.length; i++) {
@@ -158,53 +168,54 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
     private static Object convertValueFromSortType(String fieldName, SortField.Type sortType, Object value, DocValueFormat format) {
         try {
             switch (sortType) {
-                case DOC:
-                    if (value instanceof Number) {
-                        return ((Number) value).intValue();
-                    }
-                    return Integer.parseInt(value.toString());
+            case DOC:
+                if (value instanceof Number) {
+                    return ((Number) value).intValue();
+                }
+                return Integer.parseInt(value.toString());
 
-                case SCORE:
-                    if (value instanceof Number) {
-                        return ((Number) value).floatValue();
-                    }
-                    return Float.parseFloat(value.toString());
+            case SCORE:
+                if (value instanceof Number) {
+                    return ((Number) value).floatValue();
+                }
+                return Float.parseFloat(value.toString());
 
-                case INT:
-                    if (value instanceof Number) {
-                        return ((Number) value).intValue();
-                    }
-                    return Integer.parseInt(value.toString());
+            case INT:
+                if (value instanceof Number) {
+                    return ((Number) value).intValue();
+                }
+                return Integer.parseInt(value.toString());
 
-                case DOUBLE:
-                    if (value instanceof Number) {
-                        return ((Number) value).doubleValue();
-                    }
-                    return Double.parseDouble(value.toString());
+            case DOUBLE:
+                if (value instanceof Number) {
+                    return ((Number) value).doubleValue();
+                }
+                return Double.parseDouble(value.toString());
 
-                case LONG:
-                    // for unsigned_long field type we want to pass search_after value through formatting
-                    if (value instanceof Number && format != DocValueFormat.UNSIGNED_LONG_SHIFTED) {
-                        return ((Number) value).longValue();
-                    }
-                    return format.parseLong(value.toString(), false,
-                        () -> { throw new IllegalStateException("now() is not allowed in [search_after] key"); });
+            case LONG:
+                // for unsigned_long field type we want to pass search_after value through formatting
+                if (value instanceof Number && format != DocValueFormat.UNSIGNED_LONG_SHIFTED) {
+                    return ((Number) value).longValue();
+                }
+                return format.parseLong(value.toString(), false, () -> {
+                    throw new IllegalStateException("now() is not allowed in [search_after] key");
+                });
 
-                case FLOAT:
-                    if (value instanceof Number) {
-                        return ((Number) value).floatValue();
-                    }
-                    return Float.parseFloat(value.toString());
+            case FLOAT:
+                if (value instanceof Number) {
+                    return ((Number) value).floatValue();
+                }
+                return Float.parseFloat(value.toString());
 
-                case STRING_VAL:
-                case STRING:
-                    return format.parseBytesRef(value.toString());
+            case STRING_VAL:
+            case STRING:
+                return format.parseBytesRef(value.toString());
 
-                default:
-                    throw new IllegalArgumentException("Comparator type [" + sortType.name() + "] for field [" + fieldName
-                            + "] is not supported.");
+            default:
+                throw new IllegalArgumentException(
+                        "Comparator type [" + sortType.name() + "] for field [" + fieldName + "] is not supported.");
             }
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "Failed to parse " + SEARCH_AFTER.getPreferredName() + " value for field [" + fieldName + "].", e);
         }
@@ -225,34 +236,34 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
     public static SearchAfterBuilder fromXContent(XContentParser parser) throws IOException {
         SearchAfterBuilder builder = new SearchAfterBuilder();
         XContentParser.Token token = parser.currentToken();
-        List<Object> values = new ArrayList<> ();
+        List<Object> values = new ArrayList<>();
         if (token == XContentParser.Token.START_ARRAY) {
             while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                 if (token == XContentParser.Token.VALUE_NUMBER) {
                     switch (parser.numberType()) {
-                        case INT:
-                            values.add(parser.intValue());
-                            break;
+                    case INT:
+                        values.add(parser.intValue());
+                        break;
 
-                        case LONG:
-                            values.add(parser.longValue());
-                            break;
+                    case LONG:
+                        values.add(parser.longValue());
+                        break;
 
-                        case DOUBLE:
-                            values.add(parser.doubleValue());
-                            break;
+                    case DOUBLE:
+                        values.add(parser.doubleValue());
+                        break;
 
-                        case FLOAT:
-                            values.add(parser.floatValue());
-                            break;
+                    case FLOAT:
+                        values.add(parser.floatValue());
+                        break;
 
-                        case BIG_INTEGER:
-                            values.add(parser.text());
-                            break;
+                    case BIG_INTEGER:
+                        values.add(parser.text());
+                        break;
 
-                        default:
-                            throw new IllegalArgumentException("[search_after] does not accept numbers of type ["
-                                + parser.numberType() + "], got " + parser.text());
+                    default:
+                        throw new IllegalArgumentException(
+                                "[search_after] does not accept numbers of type [" + parser.numberType() + "], got " + parser.text());
                     }
                 } else if (token == XContentParser.Token.VALUE_STRING) {
                     values.add(parser.text());
@@ -261,9 +272,10 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
                 } else if (token == XContentParser.Token.VALUE_NULL) {
                     values.add(null);
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(), "Expected [" + XContentParser.Token.VALUE_STRING + "] or ["
-                            + XContentParser.Token.VALUE_NUMBER + "] or [" + XContentParser.Token.VALUE_BOOLEAN + "] or ["
-                            + XContentParser.Token.VALUE_NULL + "] but found [" + token + "] inside search_after.");
+                    throw new ParsingException(parser.getTokenLocation(),
+                            "Expected [" + XContentParser.Token.VALUE_STRING + "] or [" + XContentParser.Token.VALUE_NUMBER + "] or ["
+                                    + XContentParser.Token.VALUE_BOOLEAN + "] or [" + XContentParser.Token.VALUE_NULL + "] but found ["
+                                    + token + "] inside search_after.");
                 }
             }
         } else {
@@ -276,7 +288,7 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
 
     @Override
     public boolean equals(Object other) {
-        if (! (other instanceof SearchAfterBuilder)) {
+        if (!(other instanceof SearchAfterBuilder)) {
             return false;
         }
         return Arrays.equals(sortValues, ((SearchAfterBuilder) other).sortValues);

@@ -85,8 +85,8 @@ public class NodeConnectionsServiceTests extends ESTestCase {
         List<DiscoveryNode> nodes = new ArrayList<>();
         for (int i = randomIntBetween(20, 50); i > 0; i--) {
             Set<DiscoveryNodeRole> roles = new HashSet<>(randomSubsetOf(DiscoveryNodeRole.BUILT_IN_ROLES));
-            nodes.add(new DiscoveryNode("node_" + i, "" + i, buildNewFakeTransportAddress(), Collections.emptyMap(),
-                roles, Version.CURRENT));
+            nodes.add(
+                    new DiscoveryNode("node_" + i, "" + i, buildNewFakeTransportAddress(), Collections.emptyMap(), roles, Version.CURRENT));
         }
         return nodes;
     }
@@ -171,16 +171,16 @@ public class NodeConnectionsServiceTests extends ESTestCase {
             settings.put(CLUSTER_NODE_RECONNECT_INTERVAL_SETTING.getKey(), reconnectIntervalMillis + "ms");
         }
 
-        final DeterministicTaskQueue deterministicTaskQueue
-            = new DeterministicTaskQueue(builder().put(NODE_NAME_SETTING.getKey(), "node").build(), random());
+        final DeterministicTaskQueue deterministicTaskQueue =
+                new DeterministicTaskQueue(builder().put(NODE_NAME_SETTING.getKey(), "node").build(), random());
 
         MockTransport transport = new MockTransport(deterministicTaskQueue.getThreadPool());
         TestTransportService transportService = new TestTransportService(transport, deterministicTaskQueue.getThreadPool());
         transportService.start();
         transportService.acceptIncomingRequests();
 
-        final NodeConnectionsService service
-            = new NodeConnectionsService(settings.build(), deterministicTaskQueue.getThreadPool(), transportService);
+        final NodeConnectionsService service =
+                new NodeConnectionsService(settings.build(), deterministicTaskQueue.getThreadPool(), transportService);
         service.start();
 
         final List<DiscoveryNode> allNodes = generateNodes();
@@ -306,18 +306,18 @@ public class NodeConnectionsServiceTests extends ESTestCase {
         }
     }
 
-    @TestLogging(reason="testing that DEBUG-level logging is reasonable", value="org.codelibs.fesen.cluster.NodeConnectionsService:DEBUG")
+    @TestLogging(reason = "testing that DEBUG-level logging is reasonable", value = "org.codelibs.fesen.cluster.NodeConnectionsService:DEBUG")
     public void testDebugLogging() throws IllegalAccessException {
-        final DeterministicTaskQueue deterministicTaskQueue
-            = new DeterministicTaskQueue(builder().put(NODE_NAME_SETTING.getKey(), "node").build(), random());
+        final DeterministicTaskQueue deterministicTaskQueue =
+                new DeterministicTaskQueue(builder().put(NODE_NAME_SETTING.getKey(), "node").build(), random());
 
         MockTransport transport = new MockTransport(deterministicTaskQueue.getThreadPool());
         TestTransportService transportService = new TestTransportService(transport, deterministicTaskQueue.getThreadPool());
         transportService.start();
         transportService.acceptIncomingRequests();
 
-        final NodeConnectionsService service
-            = new NodeConnectionsService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(), transportService);
+        final NodeConnectionsService service =
+                new NodeConnectionsService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(), transportService);
         service.start();
 
         final List<DiscoveryNode> allNodes = generateNodes();
@@ -337,18 +337,14 @@ public class NodeConnectionsServiceTests extends ESTestCase {
             for (DiscoveryNode targetNode : targetNodes) {
                 if (disconnectedNodes.contains(targetNode)) {
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connecting to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connecting to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connecting to " + targetNode));
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connected to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connected to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connected to " + targetNode));
                 } else {
                     appender.addExpectation(new MockLogAppender.UnseenEventExpectation("connecting to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connecting to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connecting to " + targetNode));
                     appender.addExpectation(new MockLogAppender.UnseenEventExpectation("connected to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connected to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connected to " + targetNode));
                 }
             }
 
@@ -357,7 +353,8 @@ public class NodeConnectionsServiceTests extends ESTestCase {
         } finally {
             Loggers.removeAppender(LogManager.getLogger("org.codelibs.fesen.cluster.NodeConnectionsService"), appender);
             appender.stop();
-        }        for (DiscoveryNode disconnectedNode : disconnectedNodes) {
+        }
+        for (DiscoveryNode disconnectedNode : disconnectedNodes) {
             transportService.disconnectFromNode(disconnectedNode);
         }
 
@@ -373,36 +370,28 @@ public class NodeConnectionsServiceTests extends ESTestCase {
             for (DiscoveryNode targetNode : targetNodes) {
                 if (disconnectedNodes.contains(targetNode) && newTargetNodes.get(targetNode.getId()) != null) {
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connecting to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connecting to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connecting to " + targetNode));
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connected to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connected to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connected to " + targetNode));
                 } else {
                     appender.addExpectation(new MockLogAppender.UnseenEventExpectation("connecting to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connecting to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connecting to " + targetNode));
                     appender.addExpectation(new MockLogAppender.UnseenEventExpectation("connected to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connected to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connected to " + targetNode));
                 }
                 if (newTargetNodes.get(targetNode.getId()) == null) {
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("disconnected from " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "disconnected from " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "disconnected from " + targetNode));
                 }
             }
             for (DiscoveryNode targetNode : newTargetNodes) {
                 appender.addExpectation(new MockLogAppender.UnseenEventExpectation("disconnected from " + targetNode,
-                    "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                    "disconnected from " + targetNode));
+                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "disconnected from " + targetNode));
                 if (targetNodes.get(targetNode.getId()) == null) {
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connecting to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connecting to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connecting to " + targetNode));
                     appender.addExpectation(new MockLogAppender.SeenEventExpectation("connected to " + targetNode,
-                        "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG,
-                        "connected to " + targetNode));
+                            "org.codelibs.fesen.cluster.NodeConnectionsService", Level.DEBUG, "connected to " + targetNode));
                 }
             }
 
@@ -473,13 +462,13 @@ public class NodeConnectionsServiceTests extends ESTestCase {
 
         private TestTransportService(Transport transport, ThreadPool threadPool) {
             super(Settings.EMPTY, transport, threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
-                boundAddress -> DiscoveryNode.createLocal(Settings.EMPTY, buildNewFakeTransportAddress(), UUIDs.randomBase64UUID()),
-                null, emptySet());
+                    boundAddress -> DiscoveryNode.createLocal(Settings.EMPTY, buildNewFakeTransportAddress(), UUIDs.randomBase64UUID()),
+                    null, emptySet());
         }
 
         @Override
         public void handshake(Transport.Connection connection, long timeout, Predicate<ClusterName> clusterNamePredicate,
-                              ActionListener<HandshakeResponse> listener) {
+                ActionListener<HandshakeResponse> listener) {
             listener.onResponse(new HandshakeResponse(connection.getNode(), new ClusterName(""), Version.CURRENT));
         }
 
@@ -493,13 +482,13 @@ public class NodeConnectionsServiceTests extends ESTestCase {
             final CheckedRunnable<Exception> connectionBlock = nodeConnectionBlocks.get(node);
             if (connectionBlock != null) {
                 getThreadPool().generic().execute(() -> {
-                        try {
-                            connectionBlock.run();
-                            super.connectToNode(node, listener);
-                        } catch (Exception e) {
-                            throw new AssertionError(e);
-                        }
-                    });
+                    try {
+                        connectionBlock.run();
+                        super.connectToNode(node, listener);
+                    } catch (Exception e) {
+                        throw new AssertionError(e);
+                    }
+                });
             } else {
                 super.connectToNode(node, listener);
             }
@@ -548,7 +537,7 @@ public class NodeConnectionsServiceTests extends ESTestCase {
 
                     @Override
                     public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-                        throws TransportException {
+                            throws TransportException {
                     }
 
                     @Override

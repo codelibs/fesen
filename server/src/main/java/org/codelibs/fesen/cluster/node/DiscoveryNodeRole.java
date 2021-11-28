@@ -27,8 +27,8 @@ import java.util.TreeSet;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.transport.RemoteClusterService;
 
 /**
@@ -91,12 +91,8 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
         this(true, roleName, roleNameAbbreviation, canContainData);
     }
 
-    private DiscoveryNodeRole(
-        final boolean isKnownRole,
-        final String roleName,
-        final String roleNameAbbreviation,
-        final boolean canContainData
-    ) {
+    private DiscoveryNodeRole(final boolean isKnownRole, final String roleName, final String roleNameAbbreviation,
+            final boolean canContainData) {
         this.isKnownRole = isKnownRole;
         this.roleName = Objects.requireNonNull(roleName);
         this.roleNameAbbreviation = Objects.requireNonNull(roleNameAbbreviation);
@@ -117,13 +113,13 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DiscoveryNodeRole that = (DiscoveryNodeRole) o;
-        return roleName.equals(that.roleName) &&
-            roleNameAbbreviation.equals(that.roleNameAbbreviation) &&
-            canContainData == that.canContainData &&
-            isKnownRole == that.isKnownRole;
+        return roleName.equals(that.roleName) && roleNameAbbreviation.equals(that.roleNameAbbreviation)
+                && canContainData == that.canContainData && isKnownRole == that.isKnownRole;
     }
 
     @Override
@@ -138,12 +134,8 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
 
     @Override
     public final String toString() {
-        return "DiscoveryNodeRole{" +
-                "roleName='" + roleName + '\'' +
-                ", roleNameAbbreviation='" + roleNameAbbreviation + '\'' +
-                ", canContainData=" + canContainData +
-                (isKnownRole ? "" : ", isKnownRole=false") +
-                '}';
+        return "DiscoveryNodeRole{" + "roleName='" + roleName + '\'' + ", roleNameAbbreviation='" + roleNameAbbreviation + '\''
+                + ", canContainData=" + canContainData + (isKnownRole ? "" : ", isKnownRole=false") + '}';
     }
 
     /**
@@ -190,12 +182,8 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
         @Override
         public Setting<Boolean> legacySetting() {
             // copy the setting here so we can mark it private in org.codelibs.fesen.node.Node
-            return Setting.boolSetting(
-                "node.remote_cluster_client",
-                RemoteClusterService.ENABLE_REMOTE_CLUSTERS,
-                Property.Deprecated,
-                Property.NodeScope
-            );
+            return Setting.boolSetting("node.remote_cluster_client", RemoteClusterService.ENABLE_REMOTE_CLUSTERS, Property.Deprecated,
+                    Property.NodeScope);
         }
 
     };
@@ -203,8 +191,8 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
     /**
      * The built-in node roles.
      */
-    public static SortedSet<DiscoveryNodeRole> BUILT_IN_ROLES = Collections.unmodifiableSortedSet(
-        new TreeSet<>(Arrays.asList(DATA_ROLE, INGEST_ROLE, MASTER_ROLE, REMOTE_CLUSTER_CLIENT_ROLE)));
+    public static SortedSet<DiscoveryNodeRole> BUILT_IN_ROLES = Collections
+            .unmodifiableSortedSet(new TreeSet<>(Arrays.asList(DATA_ROLE, INGEST_ROLE, MASTER_ROLE, REMOTE_CLUSTER_CLIENT_ROLE)));
 
     /**
      * The version that {@link #REMOTE_CLUSTER_CLIENT_ROLE} is introduced. Nodes before this version do not have that role even
@@ -213,7 +201,7 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
     public static final Version REMOTE_CLUSTER_CLIENT_ROLE_VERSION = Version.V_7_8_0;
 
     static SortedSet<DiscoveryNodeRole> LEGACY_ROLES =
-        Collections.unmodifiableSortedSet(new TreeSet<>(Arrays.asList(DATA_ROLE, INGEST_ROLE, MASTER_ROLE)));
+            Collections.unmodifiableSortedSet(new TreeSet<>(Arrays.asList(DATA_ROLE, INGEST_ROLE, MASTER_ROLE)));
 
     /**
      * Represents an unknown role. This can occur if a newer version adds a role that an older version does not know about, or a newer

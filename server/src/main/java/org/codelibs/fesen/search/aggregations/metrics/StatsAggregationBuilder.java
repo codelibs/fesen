@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -34,18 +37,12 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class StatsAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, StatsAggregationBuilder> {
     public static final String NAME = "stats";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        MetricAggregatorSupplier.class
-    );
+    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY =
+            new ValuesSourceRegistry.RegistryKey<>(NAME, MetricAggregatorSupplier.class);
 
-    public static final ObjectParser<StatsAggregationBuilder, String> PARSER =
-            ObjectParser.fromBuilder(NAME, StatsAggregationBuilder::new);
+    public static final ObjectParser<StatsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, StatsAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
@@ -54,8 +51,8 @@ public class StatsAggregationBuilder extends ValuesSourceAggregationBuilder.Leaf
         super(name);
     }
 
-    protected StatsAggregationBuilder(StatsAggregationBuilder clone,
-                                      AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected StatsAggregationBuilder(StatsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -86,9 +83,8 @@ public class StatsAggregationBuilder extends ValuesSourceAggregationBuilder.Leaf
     }
 
     @Override
-    protected StatsAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-                                                AggregatorFactory parent,
-                                                AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected StatsAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new StatsAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

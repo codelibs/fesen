@@ -62,7 +62,7 @@ public class ComponentTemplateMetadataTests extends AbstractNamedWriteableTestCa
     @Override
     protected NamedWriteableRegistry getNamedWriteableRegistry() {
         return new NamedWriteableRegistry(Collections.singletonList(new NamedWriteableRegistry.Entry(ComponentTemplateMetadata.class,
-            ComponentTemplateMetadata.TYPE, ComponentTemplateMetadata::new)));
+                ComponentTemplateMetadata.TYPE, ComponentTemplateMetadata::new)));
     }
 
     @Override

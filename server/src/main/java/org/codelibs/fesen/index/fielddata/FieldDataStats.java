@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.FieldMemoryStats;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class FieldDataStats implements Writeable, ToXContentFragment {
 
@@ -109,12 +109,12 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         FieldDataStats that = (FieldDataStats) o;
-        return memorySize == that.memorySize &&
-            evictions == that.evictions &&
-            Objects.equals(fields, that.fields);
+        return memorySize == that.memorySize && evictions == that.evictions && Objects.equals(fields, that.fields);
     }
 
     @Override

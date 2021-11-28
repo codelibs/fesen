@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.common.lease.Releasables;
@@ -33,9 +36,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class SumAggregator extends NumericMetricsAggregator.SingleValue {
 
     private final ValuesSource.Numeric valuesSource;
@@ -44,13 +44,8 @@ public class SumAggregator extends NumericMetricsAggregator.SingleValue {
     private DoubleArray sums;
     private DoubleArray compensations;
 
-    SumAggregator(
-        String name,
-        ValuesSourceConfig valuesSourceConfig,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata
-    ) throws IOException {
+    SumAggregator(String name, ValuesSourceConfig valuesSourceConfig, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         // TODO: stop expecting nulls here
         this.valuesSource = valuesSourceConfig.hasValues() ? (ValuesSource.Numeric) valuesSourceConfig.getValuesSource() : null;
@@ -67,8 +62,7 @@ public class SumAggregator extends NumericMetricsAggregator.SingleValue {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         if (valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }

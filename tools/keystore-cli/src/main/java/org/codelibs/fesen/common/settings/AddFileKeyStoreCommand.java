@@ -19,22 +19,20 @@
 
 package org.codelibs.fesen.common.settings;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
-import org.codelibs.fesen.common.settings.KeyStoreWrapper;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.env.Environment;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.env.Environment;
+
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 /**
  * A subcommand for the keystore cli which adds a file setting.
@@ -45,10 +43,8 @@ class AddFileKeyStoreCommand extends BaseKeyStoreCommand {
 
     AddFileKeyStoreCommand() {
         super("Add a file setting to the keystore", false);
-        this.forceOption = parser.acceptsAll(
-            Arrays.asList("f", "force"),
-            "Overwrite existing setting without prompting, creating keystore if necessary"
-        );
+        this.forceOption = parser.acceptsAll(Arrays.asList("f", "force"),
+                "Overwrite existing setting without prompting, creating keystore if necessary");
         // jopt simple has issue with multiple non options, so we just get one set of them here
         // and convert to File when necessary
         // see https://github.com/jopt-simple/jopt-simple/issues/103

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.merge;
 
+import java.util.List;
+
 import org.apache.lucene.index.MergePolicy;
 import org.apache.lucene.index.SegmentCommitInfo;
-
-import java.util.List;
 
 /**
  * Represents a single on going merge within an index.
@@ -44,7 +44,6 @@ public class OnGoingMerge {
     public String getId() {
         return id;
     }
-
 
     /**
      * Returns the total size in bytes of this merge. Note that this does not

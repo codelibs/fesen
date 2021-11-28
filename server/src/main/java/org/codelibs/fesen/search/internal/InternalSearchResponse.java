@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.internal;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.action.search.SearchResponseSections;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -28,8 +30,6 @@ import org.codelibs.fesen.search.SearchHits;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.profile.SearchProfileShardResults;
 import org.codelibs.fesen.search.suggest.Suggest;
-
-import java.io.IOException;
 
 /**
  * {@link SearchResponseSections} subclass that can be serialized over the wire.
@@ -44,27 +44,19 @@ public class InternalSearchResponse extends SearchResponseSections implements Wr
     }
 
     public InternalSearchResponse(SearchHits hits, InternalAggregations aggregations, Suggest suggest,
-                                  SearchProfileShardResults profileResults, boolean timedOut, Boolean terminatedEarly,
-                                  int numReducePhases) {
+            SearchProfileShardResults profileResults, boolean timedOut, Boolean terminatedEarly, int numReducePhases) {
         super(hits, aggregations, suggest, timedOut, terminatedEarly, profileResults, numReducePhases);
     }
 
     public InternalSearchResponse(StreamInput in) throws IOException {
-        super(
-                new SearchHits(in),
-                in.readBoolean() ? InternalAggregations.readFrom(in) : null,
-                in.readBoolean() ? new Suggest(in) : null,
-                in.readBoolean(),
-                in.readOptionalBoolean(),
-                in.readOptionalWriteable(SearchProfileShardResults::new),
-                in.readVInt()
-        );
+        super(new SearchHits(in), in.readBoolean() ? InternalAggregations.readFrom(in) : null, in.readBoolean() ? new Suggest(in) : null,
+                in.readBoolean(), in.readOptionalBoolean(), in.readOptionalWriteable(SearchProfileShardResults::new), in.readVInt());
     }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         hits.writeTo(out);
-        out.writeOptionalWriteable((InternalAggregations)aggregations);
+        out.writeOptionalWriteable((InternalAggregations) aggregations);
         out.writeOptionalWriteable(suggest);
         out.writeBoolean(timedOut);
         out.writeOptionalBoolean(terminatedEarly);

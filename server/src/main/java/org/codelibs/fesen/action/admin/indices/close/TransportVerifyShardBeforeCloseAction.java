@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.action.admin.indices.close;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.Version;
@@ -44,22 +47,18 @@ import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-import java.util.Objects;
-
-public class TransportVerifyShardBeforeCloseAction extends TransportReplicationAction<
-    TransportVerifyShardBeforeCloseAction.ShardRequest, TransportVerifyShardBeforeCloseAction.ShardRequest, ReplicationResponse> {
+public class TransportVerifyShardBeforeCloseAction extends
+        TransportReplicationAction<TransportVerifyShardBeforeCloseAction.ShardRequest, TransportVerifyShardBeforeCloseAction.ShardRequest, ReplicationResponse> {
 
     public static final String NAME = CloseIndexAction.NAME + "[s]";
     protected Logger logger = LogManager.getLogger(getClass());
 
     @Inject
     public TransportVerifyShardBeforeCloseAction(final Settings settings, final TransportService transportService,
-                                                 final ClusterService clusterService, final IndicesService indicesService,
-                                                 final ThreadPool threadPool, final ShardStateAction stateAction,
-                                                 final ActionFilters actionFilters) {
-        super(settings, NAME, transportService, clusterService, indicesService, threadPool, stateAction, actionFilters,
-            ShardRequest::new, ShardRequest::new, ThreadPool.Names.MANAGEMENT);
+            final ClusterService clusterService, final IndicesService indicesService, final ThreadPool threadPool,
+            final ShardStateAction stateAction, final ActionFilters actionFilters) {
+        super(settings, NAME, transportService, clusterService, indicesService, threadPool, stateAction, actionFilters, ShardRequest::new,
+                ShardRequest::new, ThreadPool.Names.MANAGEMENT);
     }
 
     @Override
@@ -68,19 +67,15 @@ public class TransportVerifyShardBeforeCloseAction extends TransportReplicationA
     }
 
     @Override
-    protected void acquirePrimaryOperationPermit(final IndexShard primary,
-                                                 final ShardRequest request,
-                                                 final ActionListener<Releasable> onAcquired) {
+    protected void acquirePrimaryOperationPermit(final IndexShard primary, final ShardRequest request,
+            final ActionListener<Releasable> onAcquired) {
         primary.acquireAllPrimaryOperationsPermits(onAcquired, request.timeout());
     }
 
     @Override
-    protected void acquireReplicaOperationPermit(final IndexShard replica,
-                                                 final ShardRequest request,
-                                                 final ActionListener<Releasable> onAcquired,
-                                                 final long primaryTerm,
-                                                 final long globalCheckpoint,
-                                                 final long maxSeqNoOfUpdateOrDeletes) {
+    protected void acquireReplicaOperationPermit(final IndexShard replica, final ShardRequest request,
+            final ActionListener<Releasable> onAcquired, final long primaryTerm, final long globalCheckpoint,
+            final long maxSeqNoOfUpdateOrDeletes) {
         replica.acquireAllReplicaOperationsPermits(primaryTerm, globalCheckpoint, maxSeqNoOfUpdateOrDeletes, onAcquired, request.timeout());
     }
 
@@ -139,7 +134,7 @@ public class TransportVerifyShardBeforeCloseAction extends TransportReplicationA
     class VerifyShardBeforeCloseActionReplicasProxy extends ReplicasProxy {
         @Override
         public void markShardCopyAsStaleIfNeeded(final ShardId shardId, final String allocationId, final long primaryTerm,
-                                                 final ActionListener<Void> listener) {
+                final ActionListener<Void> listener) {
             shardStateAction.remoteShardFailed(shardId, allocationId, primaryTerm, true, "mark copy as stale", null, listener);
         }
     }

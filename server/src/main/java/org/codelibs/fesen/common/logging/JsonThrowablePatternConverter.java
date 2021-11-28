@@ -16,7 +16,9 @@
  */
 package org.codelibs.fesen.common.logging;
 
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import java.nio.charset.Charset;
+import java.util.StringJoiner;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -26,8 +28,7 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.ThrowablePatternConverter;
 import org.apache.logging.log4j.util.Strings;
 
-import java.nio.charset.Charset;
-import java.util.StringJoiner;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 
 /**
 
@@ -38,7 +39,7 @@ import java.util.StringJoiner;
  * LoggingEvent into a multiline string
  */
 @Plugin(name = "JsonThrowablePatternConverter", category = PatternConverter.CATEGORY)
-@ConverterKeys({"exceptionAsJson"})
+@ConverterKeys({ "exceptionAsJson" })
 public final class JsonThrowablePatternConverter extends ThrowablePatternConverter {
     private final ExtendedThrowablePatternConverter throwablePatternConverter;
 

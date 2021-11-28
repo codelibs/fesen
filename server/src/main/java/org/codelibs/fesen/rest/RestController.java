@@ -19,27 +19,6 @@
 
 package org.codelibs.fesen.rest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.client.node.NodeClient;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.breaker.CircuitBreaker;
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.path.PathTrie;
-import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.internal.io.Streams;
-import org.codelibs.fesen.http.HttpServerTransport;
-import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
-import org.codelibs.fesen.usage.UsageService;
-
 import static org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver.SYSTEM_INDEX_ACCESS_CONTROL_HEADER_KEY;
 import static org.codelibs.fesen.rest.BytesRestResponse.TEXT_CONTENT_TYPE;
 import static org.codelibs.fesen.rest.RestStatus.BAD_REQUEST;
@@ -61,6 +40,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.client.node.NodeClient;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.breaker.CircuitBreaker;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.path.PathTrie;
+import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.internal.io.Streams;
+import org.codelibs.fesen.http.HttpServerTransport;
+import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
+import org.codelibs.fesen.usage.UsageService;
 
 public class RestController implements HttpServerTransport.Dispatcher {
 
@@ -92,8 +92,8 @@ public class RestController implements HttpServerTransport.Dispatcher {
     private final Set<RestHeaderDefinition> headersToCopy;
     private final UsageService usageService;
 
-    public RestController(Set<RestHeaderDefinition> headersToCopy, UnaryOperator<RestHandler> handlerWrapper,
-            NodeClient client, CircuitBreakerService circuitBreakerService, UsageService usageService) {
+    public RestController(Set<RestHeaderDefinition> headersToCopy, UnaryOperator<RestHandler> handlerWrapper, NodeClient client,
+            CircuitBreakerService circuitBreakerService, UsageService usageService) {
         this.headersToCopy = headersToCopy;
         this.usageService = usageService;
         if (handlerWrapper == null) {
@@ -102,8 +102,8 @@ public class RestController implements HttpServerTransport.Dispatcher {
         this.handlerWrapper = handlerWrapper;
         this.client = client;
         this.circuitBreakerService = circuitBreakerService;
-        registerHandlerNoWrap(RestRequest.Method.GET, "/favicon.ico", (request, channel, clnt) ->
-                channel.sendResponse(new BytesRestResponse(RestStatus.OK, "image/x-icon", FAVICON_RESPONSE)));
+        registerHandlerNoWrap(RestRequest.Method.GET, "/favicon.ico",
+                (request, channel, clnt) -> channel.sendResponse(new BytesRestResponse(RestStatus.OK, "image/x-icon", FAVICON_RESPONSE)));
     }
 
     /**
@@ -145,10 +145,10 @@ public class RestController implements HttpServerTransport.Dispatcher {
      * @param deprecatedPath <em>Deprecated</em> path to handle (e.g., "/_optimize")
      */
     protected void registerWithDeprecatedHandler(RestRequest.Method method, String path, RestHandler handler,
-                                              RestRequest.Method deprecatedMethod, String deprecatedPath) {
+            RestRequest.Method deprecatedMethod, String deprecatedPath) {
         // e.g., [POST /_optimize] is deprecated! Use [POST /_forcemerge] instead.
         final String deprecationMessage =
-            "[" + deprecatedMethod.name() + " " + deprecatedPath + "] is deprecated! Use [" + method.name() + " " + path + "] instead.";
+                "[" + deprecatedMethod.name() + " " + deprecatedPath + "] is deprecated! Use [" + method.name() + " " + path + "] instead.";
 
         registerHandler(method, path, handler);
         registerAsDeprecatedHandler(deprecatedMethod, deprecatedPath, handler, deprecationMessage);
@@ -170,7 +170,7 @@ public class RestController implements HttpServerTransport.Dispatcher {
 
     private void registerHandlerNoWrap(RestRequest.Method method, String path, RestHandler maybeWrappedHandler) {
         handlers.insertOrUpdate(path, new MethodHandlers(path, maybeWrappedHandler, method),
-            (mHandlers, newMHandler) -> mHandlers.addMethods(maybeWrappedHandler, method));
+                (mHandlers, newMHandler) -> mHandlers.addMethods(maybeWrappedHandler, method));
     }
 
     /**
@@ -179,10 +179,10 @@ public class RestController implements HttpServerTransport.Dispatcher {
      */
     public void registerHandler(final RestHandler restHandler) {
         restHandler.routes().forEach(route -> registerHandler(route.getMethod(), route.getPath(), restHandler));
-        restHandler.deprecatedRoutes().forEach(route ->
-            registerAsDeprecatedHandler(route.getMethod(), route.getPath(), restHandler, route.getDeprecationMessage()));
-        restHandler.replacedRoutes().forEach(route -> registerWithDeprecatedHandler(route.getMethod(), route.getPath(),
-            restHandler, route.getDeprecatedMethod(), route.getDeprecatedPath()));
+        restHandler.deprecatedRoutes().forEach(
+                route -> registerAsDeprecatedHandler(route.getMethod(), route.getPath(), restHandler, route.getDeprecationMessage()));
+        restHandler.replacedRoutes().forEach(route -> registerWithDeprecatedHandler(route.getMethod(), route.getPath(), restHandler,
+                route.getDeprecatedMethod(), route.getDeprecatedPath()));
     }
 
     @Override
@@ -194,8 +194,7 @@ public class RestController implements HttpServerTransport.Dispatcher {
                 channel.sendResponse(new BytesRestResponse(channel, e));
             } catch (Exception inner) {
                 inner.addSuppressed(e);
-                logger.error(() ->
-                    new ParameterizedMessage("failed to send failure response for uri [{}]", request.uri()), inner);
+                logger.error(() -> new ParameterizedMessage("failed to send failure response for uri [{}]", request.uri()), inner);
             }
         }
     }
@@ -231,7 +230,7 @@ public class RestController implements HttpServerTransport.Dispatcher {
             }
             if (handler.supportsContentStream() && xContentType != XContentType.JSON && xContentType != XContentType.SMILE) {
                 channel.sendResponse(BytesRestResponse.createSimpleErrorResponse(channel, RestStatus.NOT_ACCEPTABLE,
-                    "Content-Type [" + xContentType + "] does not support stream parsing. Use JSON or SMILE instead"));
+                        "Content-Type [" + xContentType + "] does not support stream parsing. Use JSON or SMILE instead"));
                 return;
             }
         }
@@ -285,8 +284,7 @@ public class RestController implements HttpServerTransport.Dispatcher {
         if (contentTypeHeader == null) {
             errorMessage = "Content-Type header is missing";
         } else {
-            errorMessage = "Content-Type header [" +
-                Strings.collectionToCommaDelimitedString(contentTypeHeader) + "] is not supported";
+            errorMessage = "Content-Type header [" + Strings.collectionToCommaDelimitedString(contentTypeHeader) + "] is not supported";
         }
 
         channel.sendResponse(BytesRestResponse.createSimpleErrorResponse(channel, NOT_ACCEPTABLE, errorMessage));
@@ -299,9 +297,8 @@ public class RestController implements HttpServerTransport.Dispatcher {
             if (headerValues != null && headerValues.isEmpty() == false) {
                 final List<String> distinctHeaderValues = headerValues.stream().distinct().collect(Collectors.toList());
                 if (restHeader.isMultiValueAllowed() == false && distinctHeaderValues.size() > 1) {
-                    channel.sendResponse(
-                        BytesRestResponse.
-                            createSimpleErrorResponse(channel, BAD_REQUEST, "multiple values for single-valued header [" + name + "]."));
+                    channel.sendResponse(BytesRestResponse.createSimpleErrorResponse(channel, BAD_REQUEST,
+                            "multiple values for single-valued header [" + name + "]."));
                     return;
                 } else {
                     threadContext.putHeader(name, String.join(",", distinctHeaderValues));
@@ -333,9 +330,9 @@ public class RestController implements HttpServerTransport.Dispatcher {
                     handler = handlers.getHandler(requestMethod);
                 }
                 if (handler == null) {
-                  if (handleNoHandlerFound(rawPath, requestMethod, uri, channel)) {
-                      return;
-                  }
+                    if (handleNoHandlerFound(rawPath, requestMethod, uri, channel)) {
+                        return;
+                    }
                 } else {
                     dispatchRequest(request, channel, handler);
                     return;
@@ -377,11 +374,8 @@ public class RestController implements HttpServerTransport.Dispatcher {
      * <a href="https://tools.ietf.org/html/rfc2616#section-10.4.6">HTTP/1.1 -
      * 10.4.6 - 405 Method Not Allowed</a>).
      */
-    private void handleUnsupportedHttpMethod(String uri,
-                                             @Nullable RestRequest.Method method,
-                                             final RestChannel channel,
-                                             final Set<RestRequest.Method> validMethodSet,
-                                             @Nullable final IllegalArgumentException exception) {
+    private void handleUnsupportedHttpMethod(String uri, @Nullable RestRequest.Method method, final RestChannel channel,
+            final Set<RestRequest.Method> validMethodSet, @Nullable final IllegalArgumentException exception) {
         try {
             final StringBuilder msg = new StringBuilder();
             if (exception == null) {

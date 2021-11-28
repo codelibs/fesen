@@ -67,26 +67,22 @@ public class IndicesServiceCloseTests extends ESTestCase {
         final Path tempDir = createTempDir();
         String nodeName = "node_s_0";
         Settings settings = Settings.builder()
-            .put(ClusterName.CLUSTER_NAME_SETTING.getKey(), InternalTestCluster.clusterName("single-node-cluster", random().nextLong()))
-            .put(Environment.PATH_HOME_SETTING.getKey(), tempDir)
-            .put(Environment.PATH_REPO_SETTING.getKey(), tempDir.resolve("repo"))
-            .put(Environment.PATH_SHARED_DATA_SETTING.getKey(), createTempDir().getParent())
-            .put(Node.NODE_NAME_SETTING.getKey(), nodeName)
-            .put(EsExecutors.NODE_PROCESSORS_SETTING.getKey(), 1) // limit the number of threads created
-            .put("transport.type", getTestTransportType())
-            .put(dataNode())
-            .put(NodeEnvironment.NODE_ID_SEED_SETTING.getKey(), random().nextLong())
-            // default the watermarks low values to prevent tests from failing on nodes without enough disk space
-            .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_LOW_DISK_WATERMARK_SETTING.getKey(), "1b")
-            .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_HIGH_DISK_WATERMARK_SETTING.getKey(), "1b")
-            .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_DISK_FLOOD_STAGE_WATERMARK_SETTING.getKey(), "1b")
-            // turning on the real memory circuit breaker leads to spurious test failures. As have no full control over heap usage, we
-            // turn it off for these tests.
-            .put(HierarchyCircuitBreakerService.USE_REAL_MEMORY_USAGE_SETTING.getKey(), false)
-            .putList(DISCOVERY_SEED_HOSTS_SETTING.getKey()) // empty list disables a port scan for other nodes
-            .putList(INITIAL_MASTER_NODES_SETTING.getKey(), nodeName)
-            .put(IndicesQueryCache.INDICES_QUERIES_CACHE_ALL_SEGMENTS_SETTING.getKey(), true)
-            .build();
+                .put(ClusterName.CLUSTER_NAME_SETTING.getKey(), InternalTestCluster.clusterName("single-node-cluster", random().nextLong()))
+                .put(Environment.PATH_HOME_SETTING.getKey(), tempDir).put(Environment.PATH_REPO_SETTING.getKey(), tempDir.resolve("repo"))
+                .put(Environment.PATH_SHARED_DATA_SETTING.getKey(), createTempDir().getParent())
+                .put(Node.NODE_NAME_SETTING.getKey(), nodeName).put(EsExecutors.NODE_PROCESSORS_SETTING.getKey(), 1) // limit the number of threads created
+                .put("transport.type", getTestTransportType()).put(dataNode())
+                .put(NodeEnvironment.NODE_ID_SEED_SETTING.getKey(), random().nextLong())
+                // default the watermarks low values to prevent tests from failing on nodes without enough disk space
+                .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_LOW_DISK_WATERMARK_SETTING.getKey(), "1b")
+                .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_HIGH_DISK_WATERMARK_SETTING.getKey(), "1b")
+                .put(DiskThresholdSettings.CLUSTER_ROUTING_ALLOCATION_DISK_FLOOD_STAGE_WATERMARK_SETTING.getKey(), "1b")
+                // turning on the real memory circuit breaker leads to spurious test failures. As have no full control over heap usage, we
+                // turn it off for these tests.
+                .put(HierarchyCircuitBreakerService.USE_REAL_MEMORY_USAGE_SETTING.getKey(), false)
+                .putList(DISCOVERY_SEED_HOSTS_SETTING.getKey()) // empty list disables a port scan for other nodes
+                .putList(INITIAL_MASTER_NODES_SETTING.getKey(), nodeName)
+                .put(IndicesQueryCache.INDICES_QUERIES_CACHE_ALL_SEGMENTS_SETTING.getKey(), true).build();
 
         Node node = new MockNode(settings,
                 Arrays.asList(MockNioTransportPlugin.class, MockHttpTransport.TestPlugin.class, InternalSettingsPlugin.class), true);
@@ -173,10 +169,8 @@ public class IndicesServiceCloseTests extends ESTestCase {
         IndicesService indicesService = node.injector().getInstance(IndicesService.class);
         assertEquals(1, indicesService.indicesRefCount.refCount());
 
-        assertAcked(node.client().admin().indices().prepareCreate("test")
-                .setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
-                        .put(SETTING_NUMBER_OF_REPLICAS, 0)
-                        .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
+        assertAcked(node.client().admin().indices().prepareCreate("test").setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
+                .put(SETTING_NUMBER_OF_REPLICAS, 0).put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
         FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
@@ -208,10 +202,8 @@ public class IndicesServiceCloseTests extends ESTestCase {
         IndicesService indicesService = node.injector().getInstance(IndicesService.class);
         assertEquals(1, indicesService.indicesRefCount.refCount());
 
-        assertAcked(node.client().admin().indices().prepareCreate("test")
-                .setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
-                        .put(SETTING_NUMBER_OF_REPLICAS, 0)
-                        .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
+        assertAcked(node.client().admin().indices().prepareCreate("test").setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
+                .put(SETTING_NUMBER_OF_REPLICAS, 0).put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
         FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
@@ -242,10 +234,8 @@ public class IndicesServiceCloseTests extends ESTestCase {
         IndicesService indicesService = node.injector().getInstance(IndicesService.class);
         assertEquals(1, indicesService.indicesRefCount.refCount());
 
-        assertAcked(node.client().admin().indices().prepareCreate("test")
-                .setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
-                        .put(SETTING_NUMBER_OF_REPLICAS, 0)
-                        .put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
+        assertAcked(node.client().admin().indices().prepareCreate("test").setSettings(Settings.builder().put(SETTING_NUMBER_OF_SHARDS, 1)
+                .put(SETTING_NUMBER_OF_REPLICAS, 0).put(IndexModule.INDEX_QUERY_CACHE_EVERYTHING_SETTING.getKey(), true)));
         node.client().prepareIndex("test", "_doc", "1").setSource(Collections.singletonMap("foo", 3L)).get();
         FesenAssertions.assertAllSuccessful(node.client().admin().indices().prepareRefresh("test").get());
 
@@ -269,7 +259,8 @@ public class IndicesServiceCloseTests extends ESTestCase {
             }
 
             @Override
-            public void onCached(Key key, BytesReference value) {}
+            public void onCached(Key key, BytesReference value) {
+            }
 
             @Override
             public boolean isOpen() {
@@ -282,13 +273,16 @@ public class IndicesServiceCloseTests extends ESTestCase {
             }
 
             @Override
-            public void onHit() {}
+            public void onHit() {
+            }
 
             @Override
-            public void onMiss() {}
+            public void onMiss() {
+            }
 
             @Override
-            public void onRemoval(RemovalNotification<Key, BytesReference> notification) {}
+            public void onRemoval(RemovalNotification<Key, BytesReference> notification) {
+            }
         };
         cache.getOrCompute(cacheEntity, () -> new BytesArray("bar"), searcher.getDirectoryReader(), new BytesArray("foo"));
         assertEquals(1L, cache.count());

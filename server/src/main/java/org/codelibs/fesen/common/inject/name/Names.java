@@ -62,7 +62,7 @@ public class Names {
         binder = binder.skipSources(Names.class);
 
         // use enumeration to include the default properties
-        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements(); ) {
+        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
             String propertyName = (String) e.nextElement();
             String value = properties.getProperty(propertyName);
             binder.bind(Key.get(String.class, new NamedImpl(propertyName))).toInstance(value);

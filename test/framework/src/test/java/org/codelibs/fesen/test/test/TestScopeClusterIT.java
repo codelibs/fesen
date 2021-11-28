@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.test.test;
 
+import static org.hamcrest.Matchers.equalTo;
+
 import java.io.IOException;
 
 import org.codelibs.fesen.test.ESIntegTestCase;
 import org.codelibs.fesen.test.TestCluster;
-
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * This test ensures that the cluster initializion for TEST scope is not influencing

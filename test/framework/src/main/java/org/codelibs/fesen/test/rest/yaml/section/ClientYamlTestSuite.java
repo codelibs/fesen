@@ -18,14 +18,6 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.client.NodeSelector;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.XContentParseException;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -40,6 +32,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.codelibs.fesen.client.NodeSelector;
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.XContentParseException;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
 
 /**
  * Holds a REST test suite loaded from a specific yaml file.
@@ -70,10 +70,10 @@ public class ClientYamlTestSuite {
             }
         }
 
-        try (XContentParser parser = YamlXContent.yamlXContent.createParser(executeableSectionRegistry,
-            LoggingDeprecationHandler.INSTANCE, Files.newInputStream(file))) {
+        try (XContentParser parser = YamlXContent.yamlXContent.createParser(executeableSectionRegistry, LoggingDeprecationHandler.INSTANCE,
+                Files.newInputStream(file))) {
             return parse(api, filename, parser);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IOException("Error parsing " + api + "/" + filename, e);
         }
     }
@@ -87,11 +87,11 @@ public class ClientYamlTestSuite {
         SetupSection setupSection = SetupSection.parseIfNext(parser);
         TeardownSection teardownSection = TeardownSection.parseIfNext(parser);
         Set<ClientYamlTestSection> testSections = new TreeSet<>();
-        while(true) {
+        while (true) {
             //the "---" section separator is not understood by the yaml parser. null is returned, same as when the parser is closed
             //we need to somehow distinguish between a null in the middle of a test ("---")
             // and a null at the end of the file (at least two consecutive null tokens)
-            if(parser.currentToken() == null) {
+            if (parser.currentToken() == null) {
                 if (parser.nextToken() == null) {
                     break;
                 }
@@ -112,7 +112,7 @@ public class ClientYamlTestSuite {
     private final List<ClientYamlTestSection> testSections;
 
     public ClientYamlTestSuite(String api, String name, SetupSection setupSection, TeardownSection teardownSection,
-                        List<ClientYamlTestSection> testSections) {
+            List<ClientYamlTestSection> testSections) {
         this.api = api;
         this.name = name;
         this.setupSection = Objects.requireNonNull(setupSection, "setup section cannot be null");
@@ -144,64 +144,59 @@ public class ClientYamlTestSuite {
         Stream<String> errors = validateExecutableSections(setupSection.getExecutableSections(), null, setupSection, null);
         errors = Stream.concat(errors, validateExecutableSections(teardownSection.getDoSections(), null, null, teardownSection));
         errors = Stream.concat(errors, testSections.stream()
-            .flatMap(section -> validateExecutableSections(section.getExecutableSections(), section, setupSection, teardownSection)));
+                .flatMap(section -> validateExecutableSections(section.getExecutableSections(), section, setupSection, teardownSection)));
         String errorMessage = errors.collect(Collectors.joining(",\n"));
         if (errorMessage.isEmpty() == false) {
             throw new IllegalArgumentException(getPath() + ":\n" + errorMessage);
         }
     }
 
-    private static Stream<String> validateExecutableSections(List<ExecutableSection> sections,
-                                                   ClientYamlTestSection testSection,
-                                                   SetupSection setupSection, TeardownSection teardownSection) {
+    private static Stream<String> validateExecutableSections(List<ExecutableSection> sections, ClientYamlTestSection testSection,
+            SetupSection setupSection, TeardownSection teardownSection) {
 
-        Stream<String> errors = sections.stream().filter(section -> section instanceof DoSection)
-            .map(section -> (DoSection) section)
-            .filter(section -> false == section.getExpectedWarningHeaders().isEmpty())
-            .filter(section -> false == hasSkipFeature("warnings", testSection, setupSection, teardownSection))
-            .map(section -> "attempted to add a [do] with a [warnings] section " +
-                "without a corresponding [\"skip\": \"features\": \"warnings\"] so runners that do not support the [warnings] " +
-                "section can skip the test at line [" + section.getLocation().lineNumber + "]");
+        Stream<String> errors = sections.stream().filter(section -> section instanceof DoSection).map(section -> (DoSection) section)
+                .filter(section -> false == section.getExpectedWarningHeaders().isEmpty())
+                .filter(section -> false == hasSkipFeature("warnings", testSection, setupSection, teardownSection))
+                .map(section -> "attempted to add a [do] with a [warnings] section "
+                        + "without a corresponding [\"skip\": \"features\": \"warnings\"] so runners that do not support the [warnings] "
+                        + "section can skip the test at line [" + section.getLocation().lineNumber + "]");
 
-        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection)
-                .map(section -> (DoSection) section)
+        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection).map(section -> (DoSection) section)
                 .filter(section -> false == section.getAllowedWarningHeaders().isEmpty())
                 .filter(section -> false == hasSkipFeature("allowed_warnings", testSection, setupSection, teardownSection))
-                .map(section -> "attempted to add a [do] with a [allowed_warnings] section " +
-                    "without a corresponding [\"skip\": \"features\": \"allowed_warnings\"] so runners that do not " +
-                    "support the [allowed_warnings] section can skip the test at line [" + section.getLocation().lineNumber + "]"));
+                .map(section -> "attempted to add a [do] with a [allowed_warnings] section "
+                        + "without a corresponding [\"skip\": \"features\": \"allowed_warnings\"] so runners that do not "
+                        + "support the [allowed_warnings] section can skip the test at line [" + section.getLocation().lineNumber + "]"));
 
-        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection)
-            .map(section -> (DoSection) section)
-            .filter(section -> NodeSelector.ANY != section.getApiCallSection().getNodeSelector())
-            .filter(section -> false == hasSkipFeature("node_selector", testSection, setupSection, teardownSection))
-            .map(section -> "attempted to add a [do] with a [node_selector] " +
-                "section without a corresponding [\"skip\": \"features\": \"node_selector\"] so runners that do not support the " +
-                "[node_selector] section can skip the test at line [" + section.getLocation().lineNumber + "]"));
+        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection).map(section -> (DoSection) section)
+                .filter(section -> NodeSelector.ANY != section.getApiCallSection().getNodeSelector())
+                .filter(section -> false == hasSkipFeature("node_selector", testSection, setupSection, teardownSection))
+                .map(section -> "attempted to add a [do] with a [node_selector] "
+                        + "section without a corresponding [\"skip\": \"features\": \"node_selector\"] so runners that do not support the "
+                        + "[node_selector] section can skip the test at line [" + section.getLocation().lineNumber + "]"));
 
-        errors = Stream.concat(errors, sections.stream()
-            .filter(section -> section instanceof ContainsAssertion)
-            .filter(section -> false == hasSkipFeature("contains", testSection, setupSection, teardownSection))
-            .map(section -> "attempted to add a [contains] assertion " +
-                "without a corresponding [\"skip\": \"features\": \"contains\"] so runners that do not support the " +
-                "[contains] assertion can skip the test at line [" + section.getLocation().lineNumber + "]"));
+        errors = Stream.concat(errors,
+                sections.stream().filter(section -> section instanceof ContainsAssertion)
+                        .filter(section -> false == hasSkipFeature("contains", testSection, setupSection, teardownSection))
+                        .map(section -> "attempted to add a [contains] assertion "
+                                + "without a corresponding [\"skip\": \"features\": \"contains\"] so runners that do not support the "
+                                + "[contains] assertion can skip the test at line [" + section.getLocation().lineNumber + "]"));
 
-        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection)
-            .map(section -> (DoSection) section)
-            .filter(section -> false == section.getApiCallSection().getHeaders().isEmpty())
-            .filter(section -> false == hasSkipFeature("headers", testSection, setupSection, teardownSection))
-            .map(section -> "attempted to add a [do] with a [headers] section without a corresponding "
-                + "[\"skip\": \"features\": \"headers\"] so runners that do not support the [headers] section can skip the test at " +
-                "line [" + section.getLocation().lineNumber + "]"));
+        errors = Stream.concat(errors, sections.stream().filter(section -> section instanceof DoSection).map(section -> (DoSection) section)
+                .filter(section -> false == section.getApiCallSection().getHeaders().isEmpty())
+                .filter(section -> false == hasSkipFeature("headers", testSection, setupSection, teardownSection))
+                .map(section -> "attempted to add a [do] with a [headers] section without a corresponding "
+                        + "[\"skip\": \"features\": \"headers\"] so runners that do not support the [headers] section can skip the test at "
+                        + "line [" + section.getLocation().lineNumber + "]"));
 
         return errors;
     }
 
-    private static boolean hasSkipFeature(String feature, ClientYamlTestSection testSection,
-                                          SetupSection setupSection, TeardownSection teardownSection) {
-        return (testSection != null && hasSkipFeature(feature, testSection.getSkipSection())) ||
-            (setupSection != null && hasSkipFeature(feature, setupSection.getSkipSection())) ||
-            (teardownSection != null && hasSkipFeature(feature, teardownSection.getSkipSection()));
+    private static boolean hasSkipFeature(String feature, ClientYamlTestSection testSection, SetupSection setupSection,
+            TeardownSection teardownSection) {
+        return (testSection != null && hasSkipFeature(feature, testSection.getSkipSection()))
+                || (setupSection != null && hasSkipFeature(feature, setupSection.getSkipSection()))
+                || (teardownSection != null && hasSkipFeature(feature, teardownSection.getSkipSection()));
     }
 
     private static boolean hasSkipFeature(String feature, SkipSection skipSection) {

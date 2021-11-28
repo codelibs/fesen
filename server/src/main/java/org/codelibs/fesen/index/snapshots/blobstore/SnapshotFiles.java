@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.index.snapshots.blobstore;
 
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.snapshots.blobstore.BlobStoreIndexShardSnapshot.FileInfo;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.snapshots.blobstore.BlobStoreIndexShardSnapshot.FileInfo;
 
 /**
  * Contains a list of files participating in a snapshot
@@ -120,7 +120,7 @@ public class SnapshotFiles {
     public FileInfo findPhysicalIndexFile(String physicalName) {
         if (physicalFiles == null) {
             Map<String, FileInfo> files = new HashMap<>();
-            for(FileInfo fileInfo : indexFiles) {
+            for (FileInfo fileInfo : indexFiles) {
                 files.put(fileInfo.physicalName(), fileInfo);
             }
             this.physicalFiles = files;

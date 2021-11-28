@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.common.lucene.search;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexReaderContext;
 import org.apache.lucene.index.LeafReaderContext;
@@ -35,11 +40,6 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.util.AttributeSource;
 import org.apache.lucene.util.BytesRef;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A span rewrite method that extracts the first <code>maxExpansions</code> terms
@@ -104,8 +104,9 @@ public class SpanBooleanQueryRewriteWithMaxClause extends SpanMultiTermQueryWrap
                     while ((bytes = termsEnum.next()) != null) {
                         if (queries.size() >= maxExpansions) {
                             if (hardLimit) {
-                                throw new RuntimeException("[" + query.toString() + " ] " +
-                                    "exceeds maxClauseCount [ Boolean maxClauseCount is set to " + BooleanQuery.getMaxClauseCount() + "]");
+                                throw new RuntimeException(
+                                        "[" + query.toString() + " ] " + "exceeds maxClauseCount [ Boolean maxClauseCount is set to "
+                                                + BooleanQuery.getMaxClauseCount() + "]");
                             } else {
                                 return queries;
                             }

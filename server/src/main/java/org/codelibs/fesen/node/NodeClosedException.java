@@ -36,7 +36,7 @@ public class NodeClosedException extends FesenException {
         super("node closed " + node);
     }
 
-    public NodeClosedException(StreamInput in) throws IOException{
+    public NodeClosedException(StreamInput in) throws IOException {
         super(in);
     }
 }

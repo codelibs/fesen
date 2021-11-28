@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.document.DocumentField;
 import org.codelibs.fesen.common.util.CollectionUtils;
@@ -25,12 +31,6 @@ import org.codelibs.fesen.script.FieldScript;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public final class ScriptFieldsPhase implements FetchSubPhase {
 
@@ -82,8 +82,7 @@ public final class ScriptFieldsPhase implements FetchSubPhase {
         };
     }
 
-    private FieldScript[] createLeafScripts(LeafReaderContext context,
-                                            List<ScriptFieldsContext.ScriptField> scriptFields) {
+    private FieldScript[] createLeafScripts(LeafReaderContext context, List<ScriptFieldsContext.ScriptField> scriptFields) {
         FieldScript[] scripts = new FieldScript[scriptFields.size()];
         for (int i = 0; i < scripts.length; i++) {
             try {

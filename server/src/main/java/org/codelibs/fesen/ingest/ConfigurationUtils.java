@@ -23,10 +23,16 @@ import static org.codelibs.fesen.script.Script.DEFAULT_TEMPLATE_LANG;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -38,13 +44,6 @@ import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.script.ScriptType;
 import org.codelibs.fesen.script.TemplateScript;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class ConfigurationUtils {
 
@@ -59,8 +58,8 @@ public final class ConfigurationUtils {
      *
      * If the property value isn't of type string a {@link FesenParseException} is thrown.
      */
-    public static String readOptionalStringProperty(String processorType, String processorTag,
-                                                    Map<String, Object> configuration, String propertyName) {
+    public static String readOptionalStringProperty(String processorType, String processorTag, Map<String, Object> configuration,
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         return readString(processorType, processorTag, propertyName, value);
     }
@@ -72,7 +71,7 @@ public final class ConfigurationUtils {
      * If the property is missing an {@link FesenParseException} is thrown
      */
     public static String readStringProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                            String propertyName) {
+            String propertyName) {
         return readStringProperty(processorType, processorTag, configuration, propertyName, null);
     }
 
@@ -83,7 +82,7 @@ public final class ConfigurationUtils {
      * If the property is missing and no default value has been specified a {@link FesenParseException} is thrown
      */
     public static String readStringProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                            String propertyName, String defaultValue) {
+            String propertyName, String defaultValue) {
         Object value = configuration.remove(propertyName);
         if (value == null && defaultValue != null) {
             return defaultValue;
@@ -100,8 +99,8 @@ public final class ConfigurationUtils {
         if (value instanceof String) {
             return (String) value;
         }
-        throw newConfigurationException(processorType, processorTag, propertyName, "property isn't a string, but of type [" +
-            value.getClass().getName() + "]");
+        throw newConfigurationException(processorType, processorTag, propertyName,
+                "property isn't a string, but of type [" + value.getClass().getName() + "]");
     }
 
     /**
@@ -110,20 +109,18 @@ public final class ConfigurationUtils {
      * If the property value isn't of type string or int a {@link FesenParseException} is thrown.
      * If the property is missing and no default value has been specified a {@link FesenParseException} is thrown
      */
-     public static String readStringOrIntProperty(String processorType, String processorTag,
-            Map<String, Object> configuration, String propertyName, String defaultValue) {
+    public static String readStringOrIntProperty(String processorType, String processorTag, Map<String, Object> configuration,
+            String propertyName, String defaultValue) {
         Object value = configuration.remove(propertyName);
         if (value == null && defaultValue != null) {
             return defaultValue;
         } else if (value == null) {
-            throw newConfigurationException(processorType, processorTag, propertyName,
-                "required property is missing");
+            throw newConfigurationException(processorType, processorTag, propertyName, "required property is missing");
         }
         return readStringOrInt(processorType, processorTag, propertyName, value);
     }
 
-    private static String readStringOrInt(String processorType, String processorTag,
-            String propertyName, Object value) {
+    private static String readStringOrInt(String processorType, String processorTag, String propertyName, Object value) {
         if (value == null) {
             return null;
         }
@@ -133,7 +130,7 @@ public final class ConfigurationUtils {
             return String.valueOf(value);
         }
         throw newConfigurationException(processorType, processorTag, propertyName,
-            "property isn't a string or int, but of type [" + value.getClass().getName() + "]");
+                "property isn't a string or int, but of type [" + value.getClass().getName() + "]");
     }
 
     /**
@@ -141,8 +138,8 @@ public final class ConfigurationUtils {
      *
      * If the property value isn't of type string or int a {@link FesenParseException} is thrown.
      */
-    public static String readOptionalStringOrIntProperty(String processorType, String processorTag,
-            Map<String, Object> configuration, String propertyName) {
+    public static String readOptionalStringOrIntProperty(String processorType, String processorTag, Map<String, Object> configuration,
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             return null;
@@ -151,7 +148,7 @@ public final class ConfigurationUtils {
     }
 
     public static Boolean readBooleanProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                             String propertyName, boolean defaultValue) {
+            String propertyName, boolean defaultValue) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             return defaultValue;
@@ -167,8 +164,8 @@ public final class ConfigurationUtils {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
-        throw newConfigurationException(processorType, processorTag, propertyName, "property isn't a boolean, but of type [" +
-            value.getClass().getName() + "]");
+        throw newConfigurationException(processorType, processorTag, propertyName,
+                "property isn't a boolean, but of type [" + value.getClass().getName() + "]");
     }
 
     /**
@@ -177,8 +174,8 @@ public final class ConfigurationUtils {
      * If the property value isn't of type int a {@link FesenParseException} is thrown.
      * If the property is missing an {@link FesenParseException} is thrown
      */
-    public static Integer readIntProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                          String propertyName, Integer defaultValue) {
+    public static Integer readIntProperty(String processorType, String processorTag, Map<String, Object> configuration, String propertyName,
+            Integer defaultValue) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             return defaultValue;
@@ -187,7 +184,7 @@ public final class ConfigurationUtils {
             return Integer.parseInt(value.toString());
         } catch (Exception e) {
             throw newConfigurationException(processorType, processorTag, propertyName,
-                "property cannot be converted to an int [" + value.toString() + "]");
+                    "property cannot be converted to an int [" + value.toString() + "]");
         }
     }
 
@@ -198,7 +195,7 @@ public final class ConfigurationUtils {
      * If the property is missing an {@link FesenParseException} is thrown
      */
     public static Double readDoubleProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                          String propertyName) {
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             throw newConfigurationException(processorType, processorTag, propertyName, "required property is missing");
@@ -207,7 +204,7 @@ public final class ConfigurationUtils {
             return Double.parseDouble(value.toString());
         } catch (Exception e) {
             throw newConfigurationException(processorType, processorTag, propertyName,
-                "property cannot be converted to a double [" + value.toString() + "]");
+                    "property cannot be converted to a double [" + value.toString() + "]");
         }
     }
 
@@ -217,7 +214,7 @@ public final class ConfigurationUtils {
      * If the property value isn't of type list an {@link FesenParseException} is thrown.
      */
     public static <T> List<T> readOptionalList(String processorType, String processorTag, Map<String, Object> configuration,
-                                               String propertyName) {
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             return null;
@@ -231,8 +228,7 @@ public final class ConfigurationUtils {
      * If the property value isn't of type list an {@link FesenParseException} is thrown.
      * If the property is missing an {@link FesenParseException} is thrown
      */
-    public static <T> List<T> readList(String processorType, String processorTag, Map<String, Object> configuration,
-                                       String propertyName) {
+    public static <T> List<T> readList(String processorType, String processorTag, Map<String, Object> configuration, String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             throw newConfigurationException(processorType, processorTag, propertyName, "required property is missing");
@@ -248,7 +244,7 @@ public final class ConfigurationUtils {
             return stringList;
         } else {
             throw newConfigurationException(processorType, processorTag, propertyName,
-                "property isn't a list, but of type [" + value.getClass().getName() + "]");
+                    "property isn't a list, but of type [" + value.getClass().getName() + "]");
         }
     }
 
@@ -259,7 +255,7 @@ public final class ConfigurationUtils {
      * If the property is missing an {@link FesenParseException} is thrown
      */
     public static <T> Map<String, T> readMap(String processorType, String processorTag, Map<String, Object> configuration,
-                                             String propertyName) {
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             throw newConfigurationException(processorType, processorTag, propertyName, "required property is missing");
@@ -274,7 +270,7 @@ public final class ConfigurationUtils {
      * If the property value isn't of type map an {@link FesenParseException} is thrown.
      */
     public static <T> Map<String, T> readOptionalMap(String processorType, String processorTag, Map<String, Object> configuration,
-                                                     String propertyName) {
+            String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             return null;
@@ -290,15 +286,14 @@ public final class ConfigurationUtils {
             return map;
         } else {
             throw newConfigurationException(processorType, processorTag, propertyName,
-                "property isn't a map, but of type [" + value.getClass().getName() + "]");
+                    "property isn't a map, but of type [" + value.getClass().getName() + "]");
         }
     }
 
     /**
      * Returns and removes the specified property as an {@link Object} from the specified configuration map.
      */
-    public static Object readObject(String processorType, String processorTag, Map<String, Object> configuration,
-                                    String propertyName) {
+    public static Object readObject(String processorType, String processorTag, Map<String, Object> configuration, String propertyName) {
         Object value = configuration.remove(propertyName);
         if (value == null) {
             throw newConfigurationException(processorType, processorTag, propertyName, "required property is missing");
@@ -306,11 +301,10 @@ public final class ConfigurationUtils {
         return value;
     }
 
-    public static FesenException newConfigurationException(String processorType, String processorTag,
-                                                                        String propertyName, String reason) {
+    public static FesenException newConfigurationException(String processorType, String processorTag, String propertyName, String reason) {
         String msg;
         if (propertyName == null) {
-           msg = reason;
+            msg = reason;
         } else {
             msg = "[" + propertyName + "] " + reason;
         }
@@ -319,16 +313,15 @@ public final class ConfigurationUtils {
         return exception;
     }
 
-    public static FesenException newConfigurationException(String processorType, String processorTag,
-                                                                        String propertyName, Exception cause) {
+    public static FesenException newConfigurationException(String processorType, String processorTag, String propertyName,
+            Exception cause) {
         FesenException exception = ExceptionsHelper.convertToElastic(cause);
         addMetadataToException(exception, processorType, processorTag, propertyName);
         return exception;
     }
 
-    public static List<Processor> readProcessorConfigs(List<Map<String, Object>> processorConfigs,
-                                                       ScriptService scriptService,
-                                                       Map<String, Processor.Factory> processorFactories) throws Exception {
+    public static List<Processor> readProcessorConfigs(List<Map<String, Object>> processorConfigs, ScriptService scriptService,
+            Map<String, Processor.Factory> processorFactories) throws Exception {
         Exception exception = null;
         List<Processor> processors = new ArrayList<>();
         if (processorConfigs != null) {
@@ -351,13 +344,13 @@ public final class ConfigurationUtils {
     }
 
     public static TemplateScript.Factory readTemplateProperty(String processorType, String processorTag, Map<String, Object> configuration,
-                                                              String propertyName, ScriptService scriptService) {
+            String propertyName, ScriptService scriptService) {
         String value = readStringProperty(processorType, processorTag, configuration, propertyName, null);
         return compileTemplate(processorType, processorTag, propertyName, value, scriptService);
     }
 
     public static TemplateScript.Factory compileTemplate(String processorType, String processorTag, String propertyName,
-                                                           String propertyValue, ScriptService scriptService) {
+            String propertyValue, ScriptService scriptService) {
         try {
             // This check is here because the DEFAULT_TEMPLATE_LANG(mustache) is not
             // installed for use by REST tests. `propertyValue` will not be
@@ -379,8 +372,7 @@ public final class ConfigurationUtils {
         }
     }
 
-    private static void addMetadataToException(FesenException exception, String processorType,
-                                               String processorTag, String propertyName) {
+    private static void addMetadataToException(FesenException exception, String processorType, String processorTag, String propertyName) {
         if (processorType != null) {
             exception.addMetadata("es.processor_type", processorType);
         }
@@ -393,9 +385,8 @@ public final class ConfigurationUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static Processor readProcessor(Map<String, Processor.Factory> processorFactories,
-                                          ScriptService scriptService,
-                                          String type, Object config) throws Exception {
+    public static Processor readProcessor(Map<String, Processor.Factory> processorFactories, ScriptService scriptService, String type,
+            Object config) throws Exception {
         if (config instanceof Map) {
             return readProcessor(processorFactories, scriptService, type, (Map<String, Object>) config);
         } else if (config instanceof String && "script".equals(type)) {
@@ -403,14 +394,12 @@ public final class ConfigurationUtils {
             normalizedScript.put(ScriptType.INLINE.getParseField().getPreferredName(), config);
             return readProcessor(processorFactories, scriptService, type, normalizedScript);
         } else {
-            throw newConfigurationException(type, null, null,
-                "property isn't a map, but of type [" + config.getClass().getName() + "]");
+            throw newConfigurationException(type, null, null, "property isn't a map, but of type [" + config.getClass().getName() + "]");
         }
     }
 
-    public static Processor readProcessor(Map<String, Processor.Factory> processorFactories,
-                                           ScriptService scriptService,
-                                           String type, Map<String, Object> config) throws Exception {
+    public static Processor readProcessor(Map<String, Processor.Factory> processorFactories, ScriptService scriptService, String type,
+            Map<String, Object> config) throws Exception {
         String tag = ConfigurationUtils.readOptionalStringProperty(null, null, config, TAG_KEY);
         String description = ConfigurationUtils.readOptionalStringProperty(null, tag, config, DESCRIPTION_KEY);
         Script conditionalScript = extractConditional(config);
@@ -418,20 +407,19 @@ public final class ConfigurationUtils {
         if (factory != null) {
             boolean ignoreFailure = ConfigurationUtils.readBooleanProperty(null, null, config, "ignore_failure", false);
             List<Map<String, Object>> onFailureProcessorConfigs =
-                ConfigurationUtils.readOptionalList(null, null, config, Pipeline.ON_FAILURE_KEY);
+                    ConfigurationUtils.readOptionalList(null, null, config, Pipeline.ON_FAILURE_KEY);
 
             List<Processor> onFailureProcessors = readProcessorConfigs(onFailureProcessorConfigs, scriptService, processorFactories);
 
             if (onFailureProcessorConfigs != null && onFailureProcessors.isEmpty()) {
-                throw newConfigurationException(type, tag, Pipeline.ON_FAILURE_KEY,
-                    "processors list cannot be empty");
+                throw newConfigurationException(type, tag, Pipeline.ON_FAILURE_KEY, "processors list cannot be empty");
             }
 
             try {
                 Processor processor = factory.create(processorFactories, tag, description, config);
                 if (config.isEmpty() == false) {
-                    throw new FesenParseException("processor [{}] doesn't support one or more provided configuration parameters {}",
-                        type, Arrays.toString(config.keySet().toArray()));
+                    throw new FesenParseException("processor [{}] doesn't support one or more provided configuration parameters {}", type,
+                            Arrays.toString(config.keySet().toArray()));
                 }
                 if (onFailureProcessors.size() > 0 || ignoreFailure) {
                     processor = new CompoundProcessor(ignoreFailure, Collections.singletonList(processor), onFailureProcessors);
@@ -450,11 +438,10 @@ public final class ConfigurationUtils {
     private static Script extractConditional(Map<String, Object> config) throws IOException {
         Object scriptSource = config.remove("if");
         if (scriptSource != null) {
-            try (XContentBuilder builder = XContentBuilder.builder(JsonXContent.jsonXContent)
-                .map(normalizeScript(scriptSource));
-                 InputStream stream = BytesReference.bytes(builder).streamInput();
-                 XContentParser parser = XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY,
-                     LoggingDeprecationHandler.INSTANCE, stream)) {
+            try (XContentBuilder builder = XContentBuilder.builder(JsonXContent.jsonXContent).map(normalizeScript(scriptSource));
+                    InputStream stream = BytesReference.bytes(builder).streamInput();
+                    XContentParser parser = XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY,
+                            LoggingDeprecationHandler.INSTANCE, stream)) {
                 return Script.parse(parser);
             }
         }
@@ -469,7 +456,7 @@ public final class ConfigurationUtils {
             return Collections.singletonMap("source", scriptConfig);
         } else {
             throw newConfigurationException("conditional", null, "script",
-                "property isn't a map or string, but of type [" + scriptConfig.getClass().getName() + "]");
+                    "property isn't a map or string, but of type [" + scriptConfig.getClass().getName() + "]");
         }
     }
 }

@@ -19,21 +19,19 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.io.StringReader;
+
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
-import org.codelibs.fesen.analysis.common.KeepTypesFilterFactory;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
-
-import java.io.IOException;
-import java.io.StringReader;
-
-import static org.hamcrest.Matchers.instanceOf;
 
 public class KeepTypesFilterFactoryTests extends ESTokenStreamTestCase {
 

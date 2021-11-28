@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.core.internal.io;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.codelibs.fesen.core.internal.io.Streams;
 import org.codelibs.fesen.test.ESTestCase;
-
-import static org.hamcrest.Matchers.equalTo;
 
 public class StreamsTests extends ESTestCase {
     public void testCopyFromInputStream() throws IOException {

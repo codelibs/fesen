@@ -19,8 +19,12 @@
 
 package org.codelibs.fesen.repositories;
 
-import com.carrotsearch.hppc.ObjectContainer;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -40,11 +44,8 @@ import org.codelibs.fesen.transport.TransportRequestHandler;
 import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.carrotsearch.hppc.ObjectContainer;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 public class VerifyNodeRepositoryAction {
 
@@ -59,12 +60,12 @@ public class VerifyNodeRepositoryAction {
     private final RepositoriesService repositoriesService;
 
     public VerifyNodeRepositoryAction(TransportService transportService, ClusterService clusterService,
-                                      RepositoriesService repositoriesService) {
+            RepositoriesService repositoriesService) {
         this.transportService = transportService;
         this.clusterService = clusterService;
         this.repositoriesService = repositoriesService;
         transportService.registerRequestHandler(ACTION_NAME, ThreadPool.Names.SNAPSHOT, VerifyNodeRepositoryRequest::new,
-            new VerifyNodeRepositoryRequestHandler());
+                new VerifyNodeRepositoryRequestHandler());
     }
 
     public void verify(String repository, String verificationToken, final ActionListener<List<DiscoveryNode>> listener) {
@@ -94,28 +95,28 @@ public class VerifyNodeRepositoryAction {
                 }
             } else {
                 transportService.sendRequest(node, ACTION_NAME, new VerifyNodeRepositoryRequest(repository, verificationToken),
-                    new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
-                        @Override
-                        public void handleResponse(TransportResponse.Empty response) {
-                            if (counter.decrementAndGet() == 0) {
-                                finishVerification(repository, listener, nodes, errors);
+                        new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
+                            @Override
+                            public void handleResponse(TransportResponse.Empty response) {
+                                if (counter.decrementAndGet() == 0) {
+                                    finishVerification(repository, listener, nodes, errors);
+                                }
                             }
-                        }
 
-                        @Override
-                        public void handleException(TransportException exp) {
-                            errors.add(new VerificationFailure(node.getId(), exp));
-                            if (counter.decrementAndGet() == 0) {
-                                finishVerification(repository, listener, nodes, errors);
+                            @Override
+                            public void handleException(TransportException exp) {
+                                errors.add(new VerificationFailure(node.getId(), exp));
+                                if (counter.decrementAndGet() == 0) {
+                                    finishVerification(repository, listener, nodes, errors);
+                                }
                             }
-                        }
-                    });
+                        });
             }
         }
     }
 
     private static void finishVerification(String repositoryName, ActionListener<List<DiscoveryNode>> listener, List<DiscoveryNode> nodes,
-                                   CopyOnWriteArrayList<VerificationFailure> errors) {
+            CopyOnWriteArrayList<VerificationFailure> errors) {
         if (errors.isEmpty() == false) {
             listener.onFailure(new RepositoryVerificationException(repositoryName, errors.toString()));
         } else {

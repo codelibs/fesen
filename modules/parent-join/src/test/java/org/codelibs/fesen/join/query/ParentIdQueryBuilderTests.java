@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.join.query;
 
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -33,23 +45,10 @@ import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.join.ParentJoinPlugin;
-import org.codelibs.fesen.join.query.ParentIdQueryBuilder;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.test.AbstractQueryTestCase;
 import org.codelibs.fesen.test.TestGeoShapeFieldMapperPlugin;
 import org.hamcrest.Matchers;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ParentIdQueryBuilderTests extends AbstractQueryTestCase<ParentIdQueryBuilder> {
 
@@ -65,38 +64,15 @@ public class ParentIdQueryBuilderTests extends AbstractQueryTestCase<ParentIdQue
 
     @Override
     protected void initializeAdditionalMappings(MapperService mapperService) throws IOException {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties")
-            .startObject("join_field")
-                .field("type", "join")
-                .startObject("relations")
-                    .field("parent", "child")
-                .endObject()
-            .endObject()
-            .startObject(TEXT_FIELD_NAME)
-                .field("type", "text")
-            .endObject()
-            .startObject(KEYWORD_FIELD_NAME)
-                .field("type", "keyword")
-            .endObject()
-            .startObject(INT_FIELD_NAME)
-                .field("type", "integer")
-            .endObject()
-            .startObject(DOUBLE_FIELD_NAME)
-                .field("type", "double")
-            .endObject()
-            .startObject(BOOLEAN_FIELD_NAME)
-                .field("type", "boolean")
-            .endObject()
-            .startObject(DATE_FIELD_NAME)
-                .field("type", "date")
-            .endObject()
-            .startObject(OBJECT_FIELD_NAME)
-                .field("type", "object")
-            .endObject()
-            .endObject().endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties").startObject("join_field")
+                .field("type", "join").startObject("relations").field("parent", "child").endObject().endObject()
+                .startObject(TEXT_FIELD_NAME).field("type", "text").endObject().startObject(KEYWORD_FIELD_NAME).field("type", "keyword")
+                .endObject().startObject(INT_FIELD_NAME).field("type", "integer").endObject().startObject(DOUBLE_FIELD_NAME)
+                .field("type", "double").endObject().startObject(BOOLEAN_FIELD_NAME).field("type", "boolean").endObject()
+                .startObject(DATE_FIELD_NAME).field("type", "date").endObject().startObject(OBJECT_FIELD_NAME).field("type", "object")
+                .endObject().endObject().endObject().endObject();
 
-        mapperService.merge(TYPE,
-            new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
+        mapperService.merge(TYPE, new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
     }
 
     @Override
@@ -110,23 +86,14 @@ public class ParentIdQueryBuilderTests extends AbstractQueryTestCase<ParentIdQue
         BooleanQuery booleanQuery = (BooleanQuery) query;
         assertThat(booleanQuery.clauses().size(), Matchers.equalTo(2));
         BooleanQuery expected = new BooleanQuery.Builder()
-            .add(new TermQuery(new Term(JOIN_FIELD_NAME + "#" + PARENT_NAME, queryBuilder.getId())), BooleanClause.Occur.MUST)
-            .add(new TermQuery(new Term(JOIN_FIELD_NAME, queryBuilder.getType())), BooleanClause.Occur.FILTER)
-            .build();
+                .add(new TermQuery(new Term(JOIN_FIELD_NAME + "#" + PARENT_NAME, queryBuilder.getId())), BooleanClause.Occur.MUST)
+                .add(new TermQuery(new Term(JOIN_FIELD_NAME, queryBuilder.getType())), BooleanClause.Occur.FILTER).build();
         assertThat(expected, equalTo(query));
     }
 
     public void testFromJson() throws IOException {
-        String query =
-            "{\n" +
-                "  \"parent_id\" : {\n" +
-                "    \"type\" : \"child\",\n" +
-                "    \"id\" : \"123\",\n" +
-                "    \"ignore_unmapped\" : false,\n" +
-                "    \"boost\" : 3.0,\n" +
-                "    \"_name\" : \"name\"" +
-                "  }\n" +
-                "}";
+        String query = "{\n" + "  \"parent_id\" : {\n" + "    \"type\" : \"child\",\n" + "    \"id\" : \"123\",\n"
+                + "    \"ignore_unmapped\" : false,\n" + "    \"boost\" : 3.0,\n" + "    \"_name\" : \"name\"" + "  }\n" + "}";
         ParentIdQueryBuilder queryBuilder = (ParentIdQueryBuilder) parseQuery(query);
         checkGeneratedJson(query, queryBuilder);
         assertThat(queryBuilder.getType(), Matchers.equalTo("child"));
@@ -153,9 +120,7 @@ public class ParentIdQueryBuilderTests extends AbstractQueryTestCase<ParentIdQue
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
         ParentIdQueryBuilder queryBuilder = doCreateTestQueryBuilder();
-        FesenException e = expectThrows(FesenException.class,
-                () -> queryBuilder.toQuery(queryShardContext));
-        assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
-                e.getMessage());
+        FesenException e = expectThrows(FesenException.class, () -> queryBuilder.toQuery(queryShardContext));
+        assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.", e.getMessage());
     }
 }

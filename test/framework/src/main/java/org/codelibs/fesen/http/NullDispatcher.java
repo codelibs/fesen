@@ -20,7 +20,6 @@
 package org.codelibs.fesen.http;
 
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.rest.RestChannel;
 import org.codelibs.fesen.rest.RestRequest;
 

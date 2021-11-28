@@ -62,18 +62,14 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.allocationService = createAllocationService(Settings.builder()
-                .put("cluster.routing.allocation.node_concurrent_recoveries", Integer.MAX_VALUE) // don't limit recoveries
-                .put("cluster.routing.allocation.node_initial_primaries_recoveries", Integer.MAX_VALUE)
-                .build());
+        this.allocationService =
+                createAllocationService(Settings.builder().put("cluster.routing.allocation.node_concurrent_recoveries", Integer.MAX_VALUE) // don't limit recoveries
+                        .put("cluster.routing.allocation.node_initial_primaries_recoveries", Integer.MAX_VALUE).build());
         this.numberOfShards = randomIntBetween(1, 5);
         this.numberOfReplicas = randomIntBetween(0, 5);
         logger.info("Setup test with {} shards and {} replicas.", this.numberOfShards, this.numberOfReplicas);
         this.primaryTermsPerIndex.clear();
-        Metadata metadata = Metadata.builder()
-                .put(createIndexMetadata(TEST_INDEX_1))
-                .put(createIndexMetadata(TEST_INDEX_2))
-                .build();
+        Metadata metadata = Metadata.builder().put(createIndexMetadata(TEST_INDEX_1)).put(createIndexMetadata(TEST_INDEX_2)).build();
 
         RoutingTable routingTable = new RoutingTable.Builder()
                 .add(new IndexRoutingTable.Builder(metadata.index(TEST_INDEX_1).getIndex()).initializeAsNew(metadata.index(TEST_INDEX_1))
@@ -83,7 +79,7 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
                 .build();
 
         this.clusterState = ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-            .metadata(metadata).routingTable(routingTable).build();
+                .metadata(metadata).routingTable(routingTable).build();
     }
 
     /**
@@ -126,8 +122,8 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
         ClusterState previousClusterState = this.clusterState;
         ClusterState.Builder builder = ClusterState.builder(newClusterState).incrementVersion();
         if (previousClusterState.routingTable() != newClusterState.routingTable()) {
-            builder.routingTable(RoutingTable.builder(newClusterState.routingTable()).version(newClusterState.routingTable().version() + 1)
-                    .build());
+            builder.routingTable(
+                    RoutingTable.builder(newClusterState.routingTable()).version(newClusterState.routingTable().version() + 1).build());
         }
         if (previousClusterState.metadata() != newClusterState.metadata()) {
             builder.metadata(Metadata.builder(newClusterState.metadata()).version(newClusterState.metadata().version() + 1));
@@ -135,8 +131,8 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
         this.clusterState = builder.build();
         final ClusterStateHealth clusterHealth = new ClusterStateHealth(clusterState);
         logger.info("applied reroute. active shards: p [{}], t [{}], init shards: [{}], relocating: [{}]",
-                clusterHealth.getActivePrimaryShards(), clusterHealth.getActiveShards(),
-                clusterHealth.getInitializingShards(), clusterHealth.getRelocatingShards());
+                clusterHealth.getActivePrimaryShards(), clusterHealth.getActiveShards(), clusterHealth.getInitializingShards(),
+                clusterHealth.getRelocatingShards());
     }
 
     private void failSomePrimaries(String index) {
@@ -151,7 +147,7 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
             failedShards.add(new FailedShard(indexShardRoutingTable.shard(shard).primaryShard(), "test", null, randomBoolean()));
             incrementPrimaryTerm(index, shard); // the primary failure should increment the primary term;
         }
-        applyRerouteResult(allocationService.applyFailedShards(this.clusterState, failedShards,Collections.emptyList()));
+        applyRerouteResult(allocationService.applyFailedShards(this.clusterState, failedShards, Collections.emptyList()));
     }
 
     private void addNodes() {
@@ -168,10 +164,8 @@ public class PrimaryTermsTests extends ESAllocationTestCase {
 
     private IndexMetadata.Builder createIndexMetadata(String indexName) {
         primaryTermsPerIndex.put(indexName, new long[numberOfShards]);
-        final IndexMetadata.Builder builder = new IndexMetadata.Builder(indexName)
-                .settings(DEFAULT_SETTINGS)
-                .numberOfReplicas(this.numberOfReplicas)
-                .numberOfShards(this.numberOfShards);
+        final IndexMetadata.Builder builder = new IndexMetadata.Builder(indexName).settings(DEFAULT_SETTINGS)
+                .numberOfReplicas(this.numberOfReplicas).numberOfShards(this.numberOfShards);
         for (int i = 0; i < numberOfShards; i++) {
             builder.primaryTerm(i, randomInt(200));
             primaryTermsPerIndex.get(indexName)[i] = builder.primaryTerm(i);

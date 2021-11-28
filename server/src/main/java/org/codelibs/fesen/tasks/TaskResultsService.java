@@ -18,11 +18,21 @@
  */
 package org.codelibs.fesen.tasks;
 
+import static org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction.TASKS_ORIGIN;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequest;
@@ -48,16 +58,6 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.Streams;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Map;
-
-import static org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction.TASKS_ORIGIN;
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-
 /**
  * Service that can store task results.
  */
@@ -79,8 +79,7 @@ public class TaskResultsService {
      * The backoff policy to use when saving a task result fails. The total wait
      * time is 600000 milliseconds, ten minutes.
      */
-    static final BackoffPolicy STORE_BACKOFF_POLICY =
-            BackoffPolicy.exponentialBackoff(timeValueMillis(250), 14);
+    static final BackoffPolicy STORE_BACKOFF_POLICY = BackoffPolicy.exponentialBackoff(timeValueMillis(250), 14);
 
     private final Client client;
 
@@ -132,8 +131,8 @@ public class TaskResultsService {
             if (getTaskResultMappingVersion(metadata) < TASK_RESULT_MAPPING_VERSION) {
                 // The index already exists but doesn't have our mapping
                 client.admin().indices().preparePutMapping(TASK_INDEX).setType(TASK_TYPE)
-                    .setSource(taskResultIndexMapping(), XContentType.JSON)
-                    .execute(ActionListener.delegateFailure(listener, (l, r) -> doStoreResult(taskResult, listener)));
+                        .setSource(taskResultIndexMapping(), XContentType.JSON)
+                        .execute(ActionListener.delegateFailure(listener, (l, r) -> doStoreResult(taskResult, listener)));
             } else {
                 doStoreResult(taskResult, listener);
             }
@@ -145,7 +144,8 @@ public class TaskResultsService {
         if (mappingMetadata == null) {
             return 0;
         }
-        @SuppressWarnings("unchecked") Map<String, Object> meta = (Map<String, Object>) mappingMetadata.sourceAsMap().get("_meta");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> meta = (Map<String, Object>) mappingMetadata.sourceAsMap().get("_meta");
         if (meta == null || meta.containsKey(TASK_RESULT_MAPPING_VERSION_META_FIELD) == false) {
             return 1; // The mapping was created before meta field was introduced
         }
@@ -172,8 +172,7 @@ public class TaskResultsService {
 
             @Override
             public void onFailure(Exception e) {
-                if (false == (e instanceof EsRejectedExecutionException)
-                        || false == backoff.hasNext()) {
+                if (false == (e instanceof EsRejectedExecutionException) || false == backoff.hasNext()) {
                     listener.onFailure(e);
                 } else {
                     TimeValue wait = backoff.next();
@@ -185,11 +184,9 @@ public class TaskResultsService {
     }
 
     private Settings taskResultIndexSettings() {
-        return Settings.builder()
-            .put(IndexMetadata.INDEX_NUMBER_OF_SHARDS_SETTING.getKey(), 1)
-            .put(IndexMetadata.INDEX_AUTO_EXPAND_REPLICAS_SETTING.getKey(), "0-1")
-            .put(IndexMetadata.SETTING_PRIORITY, Integer.MAX_VALUE)
-            .build();
+        return Settings.builder().put(IndexMetadata.INDEX_NUMBER_OF_SHARDS_SETTING.getKey(), 1)
+                .put(IndexMetadata.INDEX_AUTO_EXPAND_REPLICAS_SETTING.getKey(), "0-1")
+                .put(IndexMetadata.SETTING_PRIORITY, Integer.MAX_VALUE).build();
     }
 
     public String taskResultIndexMapping() {
@@ -198,8 +195,9 @@ public class TaskResultsService {
             Streams.copy(is, out);
             return out.toString(StandardCharsets.UTF_8.name());
         } catch (Exception e) {
-            logger.error(() -> new ParameterizedMessage(
-                    "failed to create tasks results index template [{}]", TASK_RESULT_INDEX_MAPPING_FILE), e);
+            logger.error(
+                    () -> new ParameterizedMessage("failed to create tasks results index template [{}]", TASK_RESULT_INDEX_MAPPING_FILE),
+                    e);
             throw new IllegalStateException("failed to create tasks results index template [" + TASK_RESULT_INDEX_MAPPING_FILE + "]", e);
         }
 

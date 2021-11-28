@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
+import java.nio.channels.ClosedChannelException;
+import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.http.HttpPipelinedRequest;
 import org.codelibs.fesen.http.HttpPipelinedResponse;
 import org.codelibs.fesen.http.HttpPipeliningAggregator;
 
-import java.nio.channels.ClosedChannelException;
-import java.util.List;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 /**
  * Implements HTTP pipelining ordering, ensuring that responses are completely served in the same order as their corresponding requests.

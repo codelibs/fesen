@@ -27,10 +27,6 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface CardinalityAggregatorSupplier {
-    Aggregator build(String name,
-                     ValuesSourceConfig valuesSourceConfig,
-                     int precision,
-                     SearchContext context,
-                     Aggregator parent,
-                     Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name, ValuesSourceConfig valuesSourceConfig, int precision, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata) throws IOException;
 }

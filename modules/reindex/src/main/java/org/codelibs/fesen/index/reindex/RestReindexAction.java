@@ -19,23 +19,21 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.action.DocWriteRequest;
-import org.codelibs.fesen.client.node.NodeClient;
-import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.ReindexRequest;
-import org.codelibs.fesen.rest.RestRequest;
-import org.codelibs.fesen.rest.RestRequestFilter;
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import org.codelibs.fesen.action.DocWriteRequest;
+import org.codelibs.fesen.client.node.NodeClient;
+import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.rest.RestRequest;
+import org.codelibs.fesen.rest.RestRequestFilter;
 
 /**
  * Expose reindex over rest.
@@ -64,8 +62,8 @@ public class RestReindexAction extends AbstractBaseReindexRestHandler<ReindexReq
     @Override
     protected ReindexRequest buildRequest(RestRequest request, NamedWriteableRegistry namedWriteableRegistry) throws IOException {
         if (request.hasParam("pipeline")) {
-            throw new IllegalArgumentException("_reindex doesn't support [pipeline] as a query parameter. "
-                    + "Specify it in the [dest] object instead.");
+            throw new IllegalArgumentException(
+                    "_reindex doesn't support [pipeline] as a query parameter. " + "Specify it in the [dest] object instead.");
         }
 
         ReindexRequest internal;

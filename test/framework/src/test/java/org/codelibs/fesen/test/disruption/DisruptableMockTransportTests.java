@@ -19,29 +19,10 @@
 
 package org.codelibs.fesen.test.disruption;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.core.Tuple;
-import org.codelibs.fesen.node.Node;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.disruption.DisruptableMockTransport;
-import org.codelibs.fesen.test.disruption.DisruptableMockTransport.ConnectionStatus;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.transport.ConnectTransportException;
-import org.codelibs.fesen.transport.TransportChannel;
-import org.codelibs.fesen.transport.TransportException;
-import org.codelibs.fesen.transport.TransportRequest;
-import org.codelibs.fesen.transport.TransportRequestHandler;
-import org.codelibs.fesen.transport.TransportResponse;
-import org.codelibs.fesen.transport.TransportResponseHandler;
-import org.codelibs.fesen.transport.TransportService;
-import org.codelibs.fesen.transport.TransportResponse.Empty;
-import org.junit.Before;
+import static org.codelibs.fesen.transport.TransportService.NOOP_TRANSPORT_INTERCEPTOR;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.instanceOf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,10 +35,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static org.codelibs.fesen.transport.TransportService.NOOP_TRANSPORT_INTERCEPTOR;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.instanceOf;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.action.support.PlainActionFuture;
+import org.codelibs.fesen.cluster.coordination.DeterministicTaskQueue;
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.transport.TransportAddress;
+import org.codelibs.fesen.core.Tuple;
+import org.codelibs.fesen.node.Node;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.disruption.DisruptableMockTransport.ConnectionStatus;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.ConnectTransportException;
+import org.codelibs.fesen.transport.TransportChannel;
+import org.codelibs.fesen.transport.TransportException;
+import org.codelibs.fesen.transport.TransportRequest;
+import org.codelibs.fesen.transport.TransportRequestHandler;
+import org.codelibs.fesen.transport.TransportResponse;
+import org.codelibs.fesen.transport.TransportResponse.Empty;
+import org.codelibs.fesen.transport.TransportResponseHandler;
+import org.codelibs.fesen.transport.TransportService;
+import org.junit.Before;
 
 public class DisruptableMockTransportTests extends ESTestCase {
 
@@ -101,8 +100,8 @@ public class DisruptableMockTransportTests extends ESTestCase {
 
         List<DisruptableMockTransport> transports = new ArrayList<>();
 
-        deterministicTaskQueue = new DeterministicTaskQueue(
-            Settings.builder().put(Node.NODE_NAME_SETTING.getKey(), "dummy").build(), random());
+        deterministicTaskQueue =
+                new DeterministicTaskQueue(Settings.builder().put(Node.NODE_NAME_SETTING.getKey(), "dummy").build(), random());
 
         final DisruptableMockTransport transport1 = new DisruptableMockTransport(node1, logger, deterministicTaskQueue) {
             @Override
@@ -141,10 +140,10 @@ public class DisruptableMockTransportTests extends ESTestCase {
         transports.add(transport1);
         transports.add(transport2);
 
-        service1 = transport1.createTransportService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(),
-            NOOP_TRANSPORT_INTERCEPTOR, a -> node1, null, Collections.emptySet());
-        service2 = transport2.createTransportService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(),
-            NOOP_TRANSPORT_INTERCEPTOR, a -> node2, null, Collections.emptySet());
+        service1 = transport1.createTransportService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(), NOOP_TRANSPORT_INTERCEPTOR,
+                a -> node1, null, Collections.emptySet());
+        service2 = transport2.createTransportService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(), NOOP_TRANSPORT_INTERCEPTOR,
+                a -> node2, null, Collections.emptySet());
 
         service1.start();
         service2.start();
@@ -262,7 +261,7 @@ public class DisruptableMockTransportTests extends ESTestCase {
     }
 
     private void send(TransportService transportService, DiscoveryNode destinationNode,
-                      TransportResponseHandler<TransportResponse> responseHandler) {
+            TransportResponseHandler<TransportResponse> responseHandler) {
         transportService.sendRequest(destinationNode, "internal:dummy", TransportRequest.Empty.INSTANCE, responseHandler);
     }
 
@@ -421,21 +420,21 @@ public class DisruptableMockTransportTests extends ESTestCase {
 
         disconnectedLinks.add(Tuple.tuple(node1, node2));
         assertThat(expectThrows(ConnectTransportException.class, () -> service1.connectToNode(node2)).getMessage(),
-            endsWith("is [DISCONNECTED] not [CONNECTED]"));
+                endsWith("is [DISCONNECTED] not [CONNECTED]"));
         disconnectedLinks.clear();
 
         blackholedLinks.add(Tuple.tuple(node1, node2));
         assertThat(expectThrows(ConnectTransportException.class, () -> service1.connectToNode(node2)).getMessage(),
-            endsWith("is [BLACK_HOLE] not [CONNECTED]"));
+                endsWith("is [BLACK_HOLE] not [CONNECTED]"));
         blackholedLinks.clear();
 
         blackholedRequestLinks.add(Tuple.tuple(node1, node2));
         assertThat(expectThrows(ConnectTransportException.class, () -> service1.connectToNode(node2)).getMessage(),
-            endsWith("is [BLACK_HOLE_REQUESTS_ONLY] not [CONNECTED]"));
+                endsWith("is [BLACK_HOLE_REQUESTS_ONLY] not [CONNECTED]"));
         blackholedRequestLinks.clear();
 
         final DiscoveryNode node3 = new DiscoveryNode("node3", buildNewFakeTransportAddress(), Version.CURRENT);
         assertThat(expectThrows(ConnectTransportException.class, () -> service1.connectToNode(node3)).getMessage(),
-            endsWith("does not exist"));
+                endsWith("does not exist"));
     }
 }

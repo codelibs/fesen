@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -27,15 +33,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.PipelineAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import org.codelibs.fesen.search.aggregations.PipelineAggregationBuilder;
 
 public abstract class PipelineAggregator implements NamedWriteable {
     /**
@@ -58,8 +57,7 @@ public abstract class PipelineAggregator implements NamedWriteable {
          * @throws java.io.IOException
          *             When parsing fails
          */
-        PipelineAggregationBuilder parse(String pipelineAggregatorName, XContentParser parser)
-                throws IOException;
+        PipelineAggregationBuilder parse(String pipelineAggregatorName, XContentParser parser) throws IOException;
     }
 
     /**
@@ -130,7 +128,7 @@ public abstract class PipelineAggregator implements NamedWriteable {
             bucketsPaths = in.readStringArray();
             metadata = in.readMap();
         } else {
-           throw new IllegalStateException("Cannot deserialize pipeline [" + getClass() + "] from before 7.8.0");
+            throw new IllegalStateException("Cannot deserialize pipeline [" + getClass() + "] from before 7.8.0");
         }
     }
 
@@ -168,7 +166,6 @@ public abstract class PipelineAggregator implements NamedWriteable {
     public String getWriteableName() {
         throw new IllegalArgumentException("[" + name + "] is not supported on versions before 7.8.0");
     }
-
 
     public String name() {
         return name;

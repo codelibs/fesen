@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
+import java.io.IOException;
+import java.util.function.LongUnaryOperator;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.codelibs.fesen.common.util.BigArrays;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.bucket.geogrid.GeoTileUtils;
 
-import java.io.IOException;
-import java.util.function.LongUnaryOperator;
-
 /**
  * A {@link SingleDimensionValuesSource} for geotile values.
  *
@@ -37,14 +37,9 @@ import java.util.function.LongUnaryOperator;
  * The main differences is {@link GeoTileValuesSource#setAfter(Comparable)} as it needs to accept geotile string values i.e. "zoom/x/y".
  */
 class GeoTileValuesSource extends LongValuesSource {
-    GeoTileValuesSource(BigArrays bigArrays,
-                        MappedFieldType fieldType,
-                        CheckedFunction<LeafReaderContext, SortedNumericDocValues, IOException> docValuesFunc,
-                        LongUnaryOperator rounding,
-                        DocValueFormat format,
-                        boolean missingBucket,
-                        int size,
-                        int reverseMul) {
+    GeoTileValuesSource(BigArrays bigArrays, MappedFieldType fieldType,
+            CheckedFunction<LeafReaderContext, SortedNumericDocValues, IOException> docValuesFunc, LongUnaryOperator rounding,
+            DocValueFormat format, boolean missingBucket, int size, int reverseMul) {
         super(bigArrays, fieldType, docValuesFunc, rounding, format, missingBucket, size, reverseMul);
     }
 

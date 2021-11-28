@@ -61,7 +61,7 @@ public class DeprecationRestHandlerTests extends ESTestCase {
         String invalidDeprecationMessage = randomFrom("", null, "     ");
 
         expectThrows(IllegalArgumentException.class,
-                     () -> new DeprecationRestHandler(handler, invalidDeprecationMessage, deprecationLogger));
+                () -> new DeprecationRestHandler(handler, invalidDeprecationMessage, deprecationLogger));
     }
 
     public void testNullDeprecationLogger() {
@@ -103,9 +103,9 @@ public class DeprecationRestHandlerTests extends ESTestCase {
 
     public void testInvalidHeaderValue() {
         ASCIIHeaderGenerator generator = new ASCIIHeaderGenerator();
-        String value = generator.ofCodeUnitsLength(random(), 0, 25) +
-                       randomFrom('\t', '\0', '\n', (char)27 /* ESC */, (char)31 /* unit separator*/, (char)127 /* DEL */) +
-                       generator.ofCodeUnitsLength(random(), 0, 25);
+        String value = generator.ofCodeUnitsLength(random(), 0, 25)
+                + randomFrom('\t', '\0', '\n', (char) 27 /* ESC */, (char) 31 /* unit separator*/, (char) 127 /* DEL */)
+                + generator.ofCodeUnitsLength(random(), 0, 25);
 
         assertFalse(DeprecationRestHandler.validHeaderValue(value));
 
@@ -151,7 +151,7 @@ public class DeprecationRestHandlerTests extends ESTestCase {
             char[] chars = new char[to - from + 1];
 
             for (int i = from; i <= to; ++i) {
-                chars[i - from] = (char)i;
+                chars[i - from] = (char) i;
             }
 
             return chars;

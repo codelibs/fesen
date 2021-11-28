@@ -18,13 +18,7 @@
  */
 package org.codelibs.fesen.rest;
 
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.Streams;
-import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.core.Nullable;
+import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +26,13 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.toSet;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.io.Streams;
+import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Nullable;
 
 public abstract class AbstractRestChannel implements RestChannel {
 
@@ -121,7 +121,7 @@ public abstract class AbstractRestChannel implements RestChannel {
 
         OutputStream unclosableOutputStream = Streams.flushOnCloseStream(bytesOutput());
         XContentBuilder builder =
-            new XContentBuilder(XContentFactory.xContent(responseContentType), unclosableOutputStream, includes, excludes);
+                new XContentBuilder(XContentFactory.xContent(responseContentType), unclosableOutputStream, includes, excludes);
         if (pretty) {
             builder.prettyPrint().lfAtEnd();
         }

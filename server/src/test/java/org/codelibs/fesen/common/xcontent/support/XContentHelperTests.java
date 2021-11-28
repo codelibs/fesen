@@ -96,8 +96,8 @@ public class XContentHelperTests extends ESTestCase {
             expectThrows(IOException.class, () -> XContentHelper.toXContent(toXContent, xContentType, randomBoolean()));
         } else {
             BytesReference bytes = XContentHelper.toXContent(toXContent, xContentType, randomBoolean());
-            try (XContentParser parser = xContentType.xContent()
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+            try (XContentParser parser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
                 assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
                 assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());
                 assertTrue(parser.nextToken().isValue());
@@ -114,17 +114,16 @@ public class XContentHelperTests extends ESTestCase {
 
             XContentBuilder builder = XContentBuilder.builder(xContentType.xContent());
             builder.startObject().startObject("level1");
-            builder.startObject("level2")
-                .startObject("object").field("text", "string").field("number", 10).endObject()
-                .startObject("object2").field("boolean", true).nullField("null")
-                .startArray("array_of_strings").value("string1").value("string2").endArray().endObject().endObject();
+            builder.startObject("level2").startObject("object").field("text", "string").field("number", 10).endObject()
+                    .startObject("object2").field("boolean", true).nullField("null").startArray("array_of_strings").value("string1")
+                    .value("string2").endArray().endObject().endObject();
             builder.field("field", "value");
             builder.endObject().endObject();
             BytesReference input = BytesReference.bytes(builder);
 
             BytesReference bytes;
-            try (XContentParser parser = xContentType.xContent()
-                .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input.streamInput())) {
+            try (XContentParser parser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input.streamInput())) {
 
                 assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
                 assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());
@@ -138,8 +137,8 @@ public class XContentHelperTests extends ESTestCase {
             }
 
             // now parse the contents of 'level2'
-            try (XContentParser parser = xContentType.xContent()
-                .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+            try (XContentParser parser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
                 assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
                 assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());
                 assertEquals("object", parser.currentName());
@@ -189,8 +188,8 @@ public class XContentHelperTests extends ESTestCase {
         BytesReference bytes = BytesReference.bytes(builder);
 
         BytesReference inner;
-        try (XContentParser parser = XContentType.CBOR.xContent().createParser(
-            NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
+        try (XContentParser parser = XContentType.CBOR.xContent().createParser(NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, bytes.streamInput())) {
 
             assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
             assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());
@@ -199,8 +198,8 @@ public class XContentHelperTests extends ESTestCase {
             assertNull(parser.nextToken());
         }
 
-        try (XContentParser parser = XContentType.CBOR.xContent().createParser(
-            NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inner.streamInput())) {
+        try (XContentParser parser = XContentType.CBOR.xContent().createParser(NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inner.streamInput())) {
 
             assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
             assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());
@@ -216,8 +215,8 @@ public class XContentHelperTests extends ESTestCase {
     public void testEmptyChildBytes() throws IOException {
 
         String inputJson = "{ \"mappings\" : {} }";
-        try (XContentParser parser = XContentType.JSON.xContent()
-            .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inputJson)) {
+        try (XContentParser parser = XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inputJson)) {
 
             assertEquals(XContentParser.Token.START_OBJECT, parser.nextToken());
             assertEquals(XContentParser.Token.FIELD_NAME, parser.nextToken());

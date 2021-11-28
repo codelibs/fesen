@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.lucene.search.TotalHits;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -33,20 +40,11 @@ import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestCountAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_cat/count"),
-            new Route(GET, "/_cat/count/{index}")));
+        return unmodifiableList(asList(new Route(GET, "/_cat/count"), new Route(GET, "/_cat/count/{index}")));
     }
 
     @Override

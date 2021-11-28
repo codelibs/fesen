@@ -36,8 +36,7 @@ public final class AnalyzerComponents {
     private final TokenFilterFactory[] tokenFilters;
     private final AnalysisMode analysisMode;
 
-    AnalyzerComponents(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters,
-                       TokenFilterFactory[] tokenFilters) {
+    AnalyzerComponents(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters, TokenFilterFactory[] tokenFilters) {
 
         this.tokenizerFactory = tokenizerFactory;
         this.charFilters = charFilters;

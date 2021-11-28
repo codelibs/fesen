@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.ingest.useragent;
 
+import java.util.Objects;
+
 import org.codelibs.fesen.common.cache.Cache;
 import org.codelibs.fesen.common.cache.CacheBuilder;
 import org.codelibs.fesen.ingest.useragent.UserAgentParser.Details;
-
-import java.util.Objects;
 
 class UserAgentCache {
     private final Cache<CompositeCacheKey, Details> cache;
 
     UserAgentCache(long cacheSize) {
-        cache = CacheBuilder.<CompositeCacheKey, Details>builder().setMaximumWeight(cacheSize).build();
+        cache = CacheBuilder.<CompositeCacheKey, Details> builder().setMaximumWeight(cacheSize).build();
     }
 
     public Details get(String parserName, String userAgent) {
@@ -51,8 +51,8 @@ class UserAgentCache {
 
         @Override
         public boolean equals(Object obj) {
-            if(obj != null && obj instanceof CompositeCacheKey) {
-                CompositeCacheKey s = (CompositeCacheKey)obj;
+            if (obj != null && obj instanceof CompositeCacheKey) {
+                CompositeCacheKey s = (CompositeCacheKey) obj;
                 return parserName.equals(s.parserName) && userAgent.equals(s.userAgent);
             }
             return false;

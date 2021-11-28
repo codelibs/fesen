@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.transport;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.core.Tuple;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
 
 public class Header {
 

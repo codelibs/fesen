@@ -21,7 +21,6 @@ package org.codelibs.fesen.action.admin.indices.flush;
 
 import org.codelibs.fesen.action.ActionType;
 
-
 public class SyncedFlushAction extends ActionType<SyncedFlushResponse> {
 
     public static final SyncedFlushAction INSTANCE = new SyncedFlushAction();

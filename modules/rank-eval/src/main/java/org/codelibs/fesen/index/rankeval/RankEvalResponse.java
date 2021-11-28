@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -31,14 +39,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.core.Tuple;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Returns the results for a {@link RankEvalRequest}.<br>
@@ -54,10 +54,9 @@ public class RankEvalResponse extends ActionResponse implements ToXContentObject
     /** exceptions for specific ranking evaluation queries, keyed by their id */
     private Map<String, Exception> failures;
 
-    public RankEvalResponse(double metricScore, Map<String, EvalQueryQuality> partialResults,
-            Map<String, Exception> failures) {
+    public RankEvalResponse(double metricScore, Map<String, EvalQueryQuality> partialResults, Map<String, Exception> failures) {
         this.metricScore = metricScore;
-        this.details =  new HashMap<>(partialResults);
+        this.details = new HashMap<>(partialResults);
         this.failures = new HashMap<>(failures);
     }
 

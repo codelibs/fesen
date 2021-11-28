@@ -37,10 +37,8 @@ public class RestCountActionTests extends RestActionTestCase {
     }
 
     public void testTypeInPath() {
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(Method.POST)
-            .withPath("/some_index/some_type/_count")
-            .build();
+        RestRequest request =
+                new FakeRestRequest.Builder(xContentRegistry()).withMethod(Method.POST).withPath("/some_index/some_type/_count").build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);
@@ -53,11 +51,8 @@ public class RestCountActionTests extends RestActionTestCase {
         Map<String, String> params = new HashMap<>();
         params.put("type", "some_type");
 
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(Method.GET)
-            .withPath("/some_index/_count")
-            .withParams(params)
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(Method.GET).withPath("/some_index/_count")
+                .withParams(params).build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);

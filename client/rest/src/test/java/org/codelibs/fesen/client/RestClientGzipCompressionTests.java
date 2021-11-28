@@ -19,24 +19,6 @@
 
 package org.codelibs.fesen.client;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.codelibs.fesen.client.Request;
-import org.codelibs.fesen.client.RequestOptions;
-import org.codelibs.fesen.client.Response;
-import org.codelibs.fesen.client.ResponseListener;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.elasticsearch.mocksocket.MockHttpServer;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +29,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.elasticsearch.mocksocket.MockHttpServer;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 public class RestClientGzipCompressionTests extends RestClientTestCase {
 
@@ -120,9 +115,8 @@ public class RestClientGzipCompressionTests extends RestClientTestCase {
 
     private RestClient createClient(boolean enableCompression) {
         InetSocketAddress address = httpServer.getAddress();
-        return RestClient.builder(new HttpHost(address.getHostString(), address.getPort(), "http"))
-            .setCompressionEnabled(enableCompression)
-            .build();
+        return RestClient.builder(new HttpHost(address.getHostString(), address.getPort(), "http")).setCompressionEnabled(enableCompression)
+                .build();
     }
 
     public void testGzipHeaderSync() throws Exception {
@@ -178,9 +172,8 @@ public class RestClientGzipCompressionTests extends RestClientTestCase {
 
     public void testCompressingClientAsync() throws Exception {
         InetSocketAddress address = httpServer.getAddress();
-        RestClient restClient = RestClient.builder(new HttpHost(address.getHostString(), address.getPort(), "http"))
-            .setCompressionEnabled(true)
-            .build();
+        RestClient restClient =
+                RestClient.builder(new HttpHost(address.getHostString(), address.getPort(), "http")).setCompressionEnabled(true).build();
 
         Request request = new Request("POST", "/");
         request.setEntity(new StringEntity("compressing client", ContentType.TEXT_PLAIN));

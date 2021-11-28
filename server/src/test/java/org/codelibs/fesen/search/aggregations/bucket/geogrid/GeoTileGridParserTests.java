@@ -56,8 +56,8 @@ public class GeoTileGridParserTests extends ESTestCase {
         XContentParser stParser = createParser(JsonXContent.jsonXContent, "{\"field\":\"my_loc\", \"precision\":false}");
         XContentParser.Token token = stParser.nextToken();
         assertSame(XContentParser.Token.START_OBJECT, token);
-        XContentParseException e = expectThrows(XContentParseException.class,
-                () -> GeoTileGridAggregationBuilder.PARSER.parse(stParser, "geotile_grid"));
+        XContentParseException e =
+                expectThrows(XContentParseException.class, () -> GeoTileGridAggregationBuilder.PARSER.parse(stParser, "geotile_grid"));
         assertThat(ExceptionsHelper.detailedMessage(e),
                 containsString("[geotile_grid] precision doesn't support values of type: VALUE_BOOLEAN"));
     }
@@ -78,12 +78,9 @@ public class GeoTileGridParserTests extends ESTestCase {
     public void testParseValidBounds() throws Exception {
         Rectangle bbox = GeometryTestUtils.randomRectangle();
         XContentParser stParser = createParser(JsonXContent.jsonXContent,
-            "{\"field\":\"my_loc\", \"precision\": 5, \"size\": 500, \"shard_size\": 550," + "\"bounds\": { "
-                + "\"top\": " + bbox.getMaxY() + ","
-                + "\"bottom\": " + bbox.getMinY() + ","
-                + "\"left\": " + bbox.getMinX() + ","
-                + "\"right\": " + bbox.getMaxX() + "}"
-                + "}");
+                "{\"field\":\"my_loc\", \"precision\": 5, \"size\": 500, \"shard_size\": 550," + "\"bounds\": { " + "\"top\": "
+                        + bbox.getMaxY() + "," + "\"bottom\": " + bbox.getMinY() + "," + "\"left\": " + bbox.getMinX() + "," + "\"right\": "
+                        + bbox.getMaxX() + "}" + "}");
         XContentParser.Token token = stParser.nextToken();
         assertSame(XContentParser.Token.START_OBJECT, token);
         // can create a factory

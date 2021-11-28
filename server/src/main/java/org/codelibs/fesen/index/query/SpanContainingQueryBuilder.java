@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.index.query;
 
+import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanContainingQuery;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -28,11 +33,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Builder for {@link org.apache.lucene.search.spans.SpanContainingQuery}.
@@ -162,8 +162,7 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
 
     @Override
     protected boolean doEquals(SpanContainingQueryBuilder other) {
-        return Objects.equals(big, other.big) &&
-               Objects.equals(little, other.little);
+        return Objects.equals(big, other.big) && Objects.equals(little, other.little);
     }
 
     @Override

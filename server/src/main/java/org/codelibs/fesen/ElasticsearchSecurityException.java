@@ -29,22 +29,22 @@ public class ElasticsearchSecurityException extends FesenSecurityException {
 
     public ElasticsearchSecurityException(String msg, RestStatus status, Throwable cause, Object... args) {
         super(msg, status, cause, args);
-     }
+    }
 
     public ElasticsearchSecurityException(String msg, Exception cause, Object... args) {
         super(msg, cause, args);
-     }
+    }
 
     public ElasticsearchSecurityException(String msg, Object... args) {
         super(msg, args);
-     }
+    }
 
     public ElasticsearchSecurityException(String msg, RestStatus status, Object... args) {
         super(msg, status, args);
-     }
+    }
 
     public ElasticsearchSecurityException(StreamInput in) throws IOException {
         super(in);
-     }
+    }
 
 }

@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.Collections;
+
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.xcontent.ToXContent;
@@ -27,15 +34,7 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.util.Collections;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class RatedDocumentTests extends ESTestCase {
 
@@ -68,8 +67,8 @@ public class RatedDocumentTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         RatedDocument original = createRatedDocument();
-        RatedDocument deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
-                RatedDocument::new);
+        RatedDocument deserialized =
+                ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), RatedDocument::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);

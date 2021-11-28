@@ -24,9 +24,7 @@ import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 public class FieldCapabilitiesRequestBuilder extends ActionRequestBuilder<FieldCapabilitiesRequest, FieldCapabilitiesResponse> {
-    public FieldCapabilitiesRequestBuilder(FesenClient client,
-                                           FieldCapabilitiesAction action,
-                                           String... indices) {
+    public FieldCapabilitiesRequestBuilder(FesenClient client, FieldCapabilitiesAction action, String... indices) {
         super(client, action, new FieldCapabilitiesRequest().indices(indices));
     }
 

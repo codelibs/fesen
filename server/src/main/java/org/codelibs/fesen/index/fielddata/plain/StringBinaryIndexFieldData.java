@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.SortField;
@@ -31,8 +33,6 @@ import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.io.IOException;
 
 public class StringBinaryIndexFieldData implements IndexFieldData<StringBinaryDVLeafFieldData> {
 
@@ -56,8 +56,7 @@ public class StringBinaryIndexFieldData implements IndexFieldData<StringBinaryDV
 
     @Override
     public SortField sortField(Object missingValue, MultiValueMode sortMode, Nested nested, boolean reverse) {
-        XFieldComparatorSource source = new BytesRefFieldComparatorSource(this, missingValue,
-                sortMode, nested);
+        XFieldComparatorSource source = new BytesRefFieldComparatorSource(this, missingValue, sortMode, nested);
         return new SortField(getFieldName(), source, reverse);
     }
 
@@ -69,6 +68,7 @@ public class StringBinaryIndexFieldData implements IndexFieldData<StringBinaryDV
             throw new IllegalStateException("Cannot load doc values", e);
         }
     }
+
     @Override
     public BucketedSort newBucketedSort(BigArrays bigArrays, Object missingValue, MultiValueMode sortMode, Nested nested,
             SortOrder sortOrder, DocValueFormat format, int bucketSize, BucketedSort.ExtraData extra) {

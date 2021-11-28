@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.synchronizedList;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.client.RestClient;
 import org.codelibs.fesen.client.RestClientBuilderTestCase;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -27,29 +37,16 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.TestEnvironment;
 import org.codelibs.fesen.index.query.MatchAllQueryBuilder;
-import org.codelibs.fesen.index.reindex.ReindexSslConfig;
-import org.codelibs.fesen.index.reindex.Reindexer;
-import org.codelibs.fesen.index.reindex.RemoteInfo;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.synchronizedList;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.mock;
 
 public class ReindexFromRemoteBuildRestClientTests extends RestClientBuilderTestCase {
 
     private final BytesReference matchAll = new BytesArray(new MatchAllQueryBuilder().toString());
 
     public void testBuildRestClient() throws Exception {
-        for(final String path: new String[]{"", null, "/", "path"}) {
+        for (final String path : new String[] { "", null, "/", "path" }) {
             RemoteInfo remoteInfo = new RemoteInfo("https", "localhost", 9200, path, matchAll, null, null, emptyMap(),
-                RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+                    RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
             long taskId = randomLong();
             List<Thread> threads = synchronizedList(new ArrayList<>());
             RestClient client = Reindexer.buildRestClient(remoteInfo, sslConfig(), taskId, threads);
@@ -72,8 +69,8 @@ public class ReindexFromRemoteBuildRestClientTests extends RestClientBuilderTest
         for (int i = 0; i < numHeaders; ++i) {
             headers.put("header" + i, Integer.toString(i));
         }
-        RemoteInfo remoteInfo = new RemoteInfo("https", "localhost", 9200, null, matchAll, null, null,
-            headers, RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+        RemoteInfo remoteInfo = new RemoteInfo("https", "localhost", 9200, null, matchAll, null, null, headers,
+                RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
         long taskId = randomLong();
         List<Thread> threads = synchronizedList(new ArrayList<>());
         RestClient client = Reindexer.buildRestClient(remoteInfo, sslConfig(), taskId, threads);

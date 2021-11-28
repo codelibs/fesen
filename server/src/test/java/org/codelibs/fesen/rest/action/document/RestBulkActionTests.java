@@ -60,21 +60,13 @@ public class RestBulkActionTests extends ESTestCase {
         }) {
             final Map<String, String> params = new HashMap<>();
             params.put("pipeline", "timestamps");
-            new RestBulkAction(settings(Version.CURRENT).build())
-                .handleRequest(
-                    new FakeRestRequest.Builder(
-                        xContentRegistry()).withPath("my_index/_bulk").withParams(params)
-                        .withContent(
-                            new BytesArray(
-                                "{\"index\":{\"_id\":\"1\"}}\n" +
-                                    "{\"field1\":\"val1\"}\n" +
-                                    "{\"update\":{\"_id\":\"2\"}}\n" +
-                                    "{\"script\":{\"source\":\"ctx._source.counter++;\"},\"upsert\":{\"field1\":\"upserted_val\"}}\n"
-                            ),
-                            XContentType.JSON
-                        ).withMethod(RestRequest.Method.POST).build(),
-                    mock(RestChannel.class), verifyingClient
-                );
+            new RestBulkAction(settings(Version.CURRENT).build()).handleRequest(new FakeRestRequest.Builder(xContentRegistry())
+                    .withPath("my_index/_bulk").withParams(params)
+                    .withContent(
+                            new BytesArray("{\"index\":{\"_id\":\"1\"}}\n" + "{\"field1\":\"val1\"}\n" + "{\"update\":{\"_id\":\"2\"}}\n"
+                                    + "{\"script\":{\"source\":\"ctx._source.counter++;\"},\"upsert\":{\"field1\":\"upserted_val\"}}\n"),
+                            XContentType.JSON)
+                    .withMethod(RestRequest.Method.POST).build(), mock(RestChannel.class), verifyingClient);
             assertThat(bulkCalled.get(), equalTo(true));
         }
     }

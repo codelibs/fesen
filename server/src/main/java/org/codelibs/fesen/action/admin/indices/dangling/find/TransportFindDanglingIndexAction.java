@@ -38,44 +38,24 @@ import org.codelibs.fesen.transport.TransportService;
 /**
  * Finds a specified dangling index by its UUID, searching across all nodes.
  */
-public class TransportFindDanglingIndexAction extends TransportNodesAction<
-    FindDanglingIndexRequest,
-    FindDanglingIndexResponse,
-    NodeFindDanglingIndexRequest,
-    NodeFindDanglingIndexResponse> {
+public class TransportFindDanglingIndexAction extends
+        TransportNodesAction<FindDanglingIndexRequest, FindDanglingIndexResponse, NodeFindDanglingIndexRequest, NodeFindDanglingIndexResponse> {
 
     private final TransportService transportService;
     private final DanglingIndicesState danglingIndicesState;
 
     @Inject
-    public TransportFindDanglingIndexAction(
-        ThreadPool threadPool,
-        ClusterService clusterService,
-        TransportService transportService,
-        ActionFilters actionFilters,
-        DanglingIndicesState danglingIndicesState
-    ) {
-        super(
-            FindDanglingIndexAction.NAME,
-            threadPool,
-            clusterService,
-            transportService,
-            actionFilters,
-            FindDanglingIndexRequest::new,
-            NodeFindDanglingIndexRequest::new,
-            ThreadPool.Names.MANAGEMENT,
-            NodeFindDanglingIndexResponse.class
-        );
+    public TransportFindDanglingIndexAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
+            ActionFilters actionFilters, DanglingIndicesState danglingIndicesState) {
+        super(FindDanglingIndexAction.NAME, threadPool, clusterService, transportService, actionFilters, FindDanglingIndexRequest::new,
+                NodeFindDanglingIndexRequest::new, ThreadPool.Names.MANAGEMENT, NodeFindDanglingIndexResponse.class);
         this.transportService = transportService;
         this.danglingIndicesState = danglingIndicesState;
     }
 
     @Override
-    protected FindDanglingIndexResponse newResponse(
-        FindDanglingIndexRequest request,
-        List<NodeFindDanglingIndexResponse> nodeResponses,
-        List<FailedNodeException> failures
-    ) {
+    protected FindDanglingIndexResponse newResponse(FindDanglingIndexRequest request, List<NodeFindDanglingIndexResponse> nodeResponses,
+            List<FailedNodeException> failures) {
         return new FindDanglingIndexResponse(clusterService.getClusterName(), nodeResponses, failures);
     }
 

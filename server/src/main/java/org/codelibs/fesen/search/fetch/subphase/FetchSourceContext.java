@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -31,13 +38,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.rest.RestRequest;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Context used to fetch the {@code _source}.
@@ -129,7 +129,7 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
         if (token == XContentParser.Token.VALUE_BOOLEAN) {
             fetchSource = parser.booleanValue();
         } else if (token == XContentParser.Token.VALUE_STRING) {
-            includes = new String[]{parser.text()};
+            includes = new String[] { parser.text() };
         } else if (token == XContentParser.Token.START_ARRAY) {
             ArrayList<String> list = new ArrayList<>();
             while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
@@ -148,8 +148,8 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
                             if (token == XContentParser.Token.VALUE_STRING) {
                                 includesList.add(parser.text());
                             } else {
-                                throw new ParsingException(parser.getTokenLocation(), "Unknown key for a " + token
-                                        + " in [" + currentFieldName + "].", parser.getTokenLocation());
+                                throw new ParsingException(parser.getTokenLocation(),
+                                        "Unknown key for a " + token + " in [" + currentFieldName + "].", parser.getTokenLocation());
                             }
                         }
                         includes = includesList.toArray(new String[includesList.size()]);
@@ -159,23 +159,23 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
                             if (token == XContentParser.Token.VALUE_STRING) {
                                 excludesList.add(parser.text());
                             } else {
-                                throw new ParsingException(parser.getTokenLocation(), "Unknown key for a " + token
-                                        + " in [" + currentFieldName + "].", parser.getTokenLocation());
+                                throw new ParsingException(parser.getTokenLocation(),
+                                        "Unknown key for a " + token + " in [" + currentFieldName + "].", parser.getTokenLocation());
                             }
                         }
                         excludes = excludesList.toArray(new String[excludesList.size()]);
                     } else {
-                        throw new ParsingException(parser.getTokenLocation(), "Unknown key for a " + token
-                                + " in [" + currentFieldName + "].", parser.getTokenLocation());
+                        throw new ParsingException(parser.getTokenLocation(),
+                                "Unknown key for a " + token + " in [" + currentFieldName + "].", parser.getTokenLocation());
                     }
                 } else if (token == XContentParser.Token.VALUE_STRING) {
                     if (INCLUDES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                        includes = new String[] {parser.text()};
+                        includes = new String[] { parser.text() };
                     } else if (EXCLUDES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                        excludes = new String[] {parser.text()};
+                        excludes = new String[] { parser.text() };
                     } else {
-                        throw new ParsingException(parser.getTokenLocation(), "Unknown key for a " + token
-                            + " in [" + currentFieldName + "].", parser.getTokenLocation());
+                        throw new ParsingException(parser.getTokenLocation(),
+                                "Unknown key for a " + token + " in [" + currentFieldName + "].", parser.getTokenLocation());
                     }
                 } else {
                     throw new ParsingException(parser.getTokenLocation(), "Unknown key for a " + token + " in [" + currentFieldName + "].",
@@ -204,14 +204,19 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         FetchSourceContext that = (FetchSourceContext) o;
 
-        if (fetchSource != that.fetchSource) return false;
-        if (!Arrays.equals(excludes, that.excludes)) return false;
-        if (!Arrays.equals(includes, that.includes)) return false;
+        if (fetchSource != that.fetchSource)
+            return false;
+        if (!Arrays.equals(excludes, that.excludes))
+            return false;
+        if (!Arrays.equals(includes, that.includes))
+            return false;
 
         return true;
     }

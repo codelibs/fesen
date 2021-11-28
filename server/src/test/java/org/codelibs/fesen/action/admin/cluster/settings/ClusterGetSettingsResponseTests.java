@@ -43,16 +43,13 @@ public class ClusterGetSettingsResponseTests extends AbstractXContentTestCase<Cl
     protected ClusterGetSettingsResponse createTestInstance() {
         Settings persistentSettings = ClusterUpdateSettingsResponseTests.randomClusterSettings(0, 2);
         Settings transientSettings = ClusterUpdateSettingsResponseTests.randomClusterSettings(0, 2);
-        Settings defaultSettings = randomBoolean() ?
-            ClusterUpdateSettingsResponseTests.randomClusterSettings(0, 2): Settings.EMPTY;
+        Settings defaultSettings = randomBoolean() ? ClusterUpdateSettingsResponseTests.randomClusterSettings(0, 2) : Settings.EMPTY;
         return new ClusterGetSettingsResponse(persistentSettings, transientSettings, defaultSettings);
     }
 
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
-        return p ->
-            p.startsWith(ClusterGetSettingsResponse.TRANSIENT_FIELD) ||
-                p.startsWith(ClusterGetSettingsResponse.PERSISTENT_FIELD) ||
-                p.startsWith(ClusterGetSettingsResponse.DEFAULTS_FIELD);
+        return p -> p.startsWith(ClusterGetSettingsResponse.TRANSIENT_FIELD) || p.startsWith(ClusterGetSettingsResponse.PERSISTENT_FIELD)
+                || p.startsWith(ClusterGetSettingsResponse.DEFAULTS_FIELD);
     }
 }

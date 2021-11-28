@@ -45,10 +45,9 @@ public class TransportNodesUsageAction
 
     @Inject
     public TransportNodesUsageAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-                                     ActionFilters actionFilters, UsageService restUsageService,
-                                     AggregationUsageService aggregationUsageService) {
-        super(NodesUsageAction.NAME, threadPool, clusterService, transportService, actionFilters,
-            NodesUsageRequest::new, NodeUsageRequest::new, ThreadPool.Names.MANAGEMENT, NodeUsage.class);
+            ActionFilters actionFilters, UsageService restUsageService, AggregationUsageService aggregationUsageService) {
+        super(NodesUsageAction.NAME, threadPool, clusterService, transportService, actionFilters, NodesUsageRequest::new,
+                NodeUsageRequest::new, ThreadPool.Names.MANAGEMENT, NodeUsage.class);
         this.restUsageService = restUsageService;
         this.aggregationUsageService = aggregationUsageService;
         this.sinceTime = System.currentTimeMillis();

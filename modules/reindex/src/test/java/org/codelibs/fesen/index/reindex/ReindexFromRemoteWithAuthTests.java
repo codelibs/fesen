@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.index.reindex.ReindexTestCase.matcher;
+import static org.hamcrest.Matchers.containsString;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.FesenSecurityException;
 import org.codelibs.fesen.FesenStatusException;
@@ -43,11 +56,6 @@ import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.http.HttpInfo;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.ReindexPlugin;
-import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
-import org.codelibs.fesen.index.reindex.RemoteInfo;
-import org.codelibs.fesen.index.reindex.TransportReindexAction;
 import org.codelibs.fesen.plugins.ActionPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.repositories.RepositoriesService;
@@ -61,28 +69,12 @@ import org.codelibs.fesen.transport.Netty4Plugin;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
 import org.junit.Before;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.index.reindex.ReindexTestCase.matcher;
-import static org.hamcrest.Matchers.containsString;
-
 public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
     private TransportAddress address;
 
     @Override
     protected Collection<Class<? extends Plugin>> getPlugins() {
-        return Arrays.asList(
-            Netty4Plugin.class,
-            ReindexFromRemoteWithAuthTests.TestPlugin.class,
-            ReindexPlugin.class);
+        return Arrays.asList(Netty4Plugin.class, ReindexFromRemoteWithAuthTests.TestPlugin.class, ReindexPlugin.class);
     }
 
     @Override
@@ -114,9 +106,8 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
      * Build a {@link RemoteInfo}, defaulting values that we don't care about in this test to values that don't hurt anything.
      */
     private RemoteInfo newRemoteInfo(String username, String password, Map<String, String> headers) {
-        return new RemoteInfo("http", address.getAddress(), address.getPort(), null,
-            new BytesArray("{\"match_all\":{}}"), username, password, headers,
-            RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+        return new RemoteInfo("http", address.getAddress(), address.getPort(), null, new BytesArray("{\"match_all\":{}}"), username,
+                password, headers, RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
     }
 
     public void testReindexFromRemoteWithAuthentication() throws Exception {
@@ -158,11 +149,9 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
 
         @Override
         public Collection<Object> createComponents(Client client, ClusterService clusterService, ThreadPool threadPool,
-                                                   ResourceWatcherService resourceWatcherService, ScriptService scriptService,
-                                                   NamedXContentRegistry xContentRegistry, Environment environment,
-                                                   NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
-                                                   IndexNameExpressionResolver expressionResolver,
-                                                   Supplier<RepositoriesService> repositoriesServiceSupplier) {
+                ResourceWatcherService resourceWatcherService, ScriptService scriptService, NamedXContentRegistry xContentRegistry,
+                Environment environment, NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
+                IndexNameExpressionResolver expressionResolver, Supplier<RepositoriesService> repositoriesServiceSupplier) {
             testFilter.set(new ReindexFromRemoteWithAuthTests.TestFilter(threadPool));
             return Collections.emptyList();
         }
@@ -175,7 +164,7 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
         @Override
         public Collection<RestHeaderDefinition> getRestHeaders() {
             return Arrays.asList(new RestHeaderDefinition(TestFilter.AUTHORIZATION_HEADER, false),
-                new RestHeaderDefinition(TestFilter.EXAMPLE_HEADER, false));
+                    new RestHeaderDefinition(TestFilter.EXAMPLE_HEADER, false));
         }
     }
 
@@ -202,8 +191,8 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
         }
 
         @Override
-        public <Request extends ActionRequest, Response extends ActionResponse> void apply(Task task, String action,
-                Request request, ActionListener<Response> listener, ActionFilterChain<Request, Response> chain) {
+        public <Request extends ActionRequest, Response extends ActionResponse> void apply(Task task, String action, Request request,
+                ActionListener<Response> listener, ActionFilterChain<Request, Response> chain) {
             if (false == action.equals(SearchAction.NAME)) {
                 chain.proceed(task, action, request, listener);
                 return;
@@ -213,8 +202,7 @@ public class ReindexFromRemoteWithAuthTests extends ESSingleNodeTestCase {
             }
             String auth = context.getHeader(AUTHORIZATION_HEADER);
             if (auth == null) {
-                FesenSecurityException e = new FesenSecurityException("Authentication required",
-                        RestStatus.UNAUTHORIZED);
+                FesenSecurityException e = new FesenSecurityException("Authentication required", RestStatus.UNAUTHORIZED);
                 e.addHeader("WWW-Authenticate", "Basic realm=auth-realm");
                 throw e;
             }

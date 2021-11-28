@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,9 +32,6 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestGetScriptContextAction extends BaseRestHandler {
 
     @Override
@@ -39,13 +39,14 @@ public class RestGetScriptContextAction extends BaseRestHandler {
         return singletonList(new Route(GET, "/_script_context"));
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "script_context_action";
     }
 
-    @Override protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
-        return channel -> client.execute(GetScriptContextAction.INSTANCE,
-            new GetScriptContextRequest(),
-            new RestToXContentListener<>(channel));
+    @Override
+    protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
+        return channel -> client.execute(GetScriptContextAction.INSTANCE, new GetScriptContextRequest(),
+                new RestToXContentListener<>(channel));
     }
 }

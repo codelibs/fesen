@@ -20,7 +20,6 @@
 package org.codelibs.fesen.env;
 
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.env.Environment;
 
 /**
  * Provides a convenience method for tests to construct an Environment when the config path does not matter.

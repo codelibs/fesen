@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.OrdinalMap;
 import org.apache.lucene.index.SortedSetDocValues;
@@ -28,10 +30,10 @@ import org.apache.lucene.search.SortedSetSortField;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
@@ -39,8 +41,6 @@ import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
-
-import java.util.function.Function;
 
 public class SortedSetOrdinalsIndexFieldData extends AbstractIndexOrdinalsFieldData {
 
@@ -60,21 +60,13 @@ public class SortedSetOrdinalsIndexFieldData extends AbstractIndexOrdinalsFieldD
         }
 
         @Override
-        public SortedSetOrdinalsIndexFieldData build(
-            IndexFieldDataCache cache,
-            CircuitBreakerService breakerService
-        ) {
+        public SortedSetOrdinalsIndexFieldData build(IndexFieldDataCache cache, CircuitBreakerService breakerService) {
             return new SortedSetOrdinalsIndexFieldData(cache, name, valuesSourceType, breakerService, scriptFunction);
         }
     }
 
-    public SortedSetOrdinalsIndexFieldData(
-        IndexFieldDataCache cache,
-        String fieldName,
-        ValuesSourceType valuesSourceType,
-        CircuitBreakerService breakerService,
-        Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction
-    ) {
+    public SortedSetOrdinalsIndexFieldData(IndexFieldDataCache cache, String fieldName, ValuesSourceType valuesSourceType,
+            CircuitBreakerService breakerService, Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction) {
         super(fieldName, valuesSourceType, cache, breakerService, scriptFunction);
     }
 
@@ -85,15 +77,14 @@ public class SortedSetOrdinalsIndexFieldData extends AbstractIndexOrdinalsFieldD
          * Check if we can use a simple {@link SortedSetSortField} compatible with index sorting and
          * returns a custom sort field otherwise.
          */
-        if (nested != null ||
-                (sortMode != MultiValueMode.MAX && sortMode != MultiValueMode.MIN) ||
-                (source.sortMissingLast(missingValue) == false && source.sortMissingFirst(missingValue) == false)) {
+        if (nested != null || (sortMode != MultiValueMode.MAX && sortMode != MultiValueMode.MIN)
+                || (source.sortMissingLast(missingValue) == false && source.sortMissingFirst(missingValue) == false)) {
             return new SortField(getFieldName(), source, reverse);
         }
         SortField sortField = new SortedSetSortField(getFieldName(), reverse,
-            sortMode == MultiValueMode.MAX ? SortedSetSelector.Type.MAX : SortedSetSelector.Type.MIN);
-        sortField.setMissingValue(source.sortMissingLast(missingValue) ^ reverse ?
-            SortedSetSortField.STRING_LAST : SortedSetSortField.STRING_FIRST);
+                sortMode == MultiValueMode.MAX ? SortedSetSelector.Type.MAX : SortedSetSelector.Type.MIN);
+        sortField.setMissingValue(
+                source.sortMissingLast(missingValue) ^ reverse ? SortedSetSortField.STRING_LAST : SortedSetSortField.STRING_FIRST);
         return sortField;
     }
 

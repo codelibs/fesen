@@ -19,7 +19,19 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static java.util.Collections.singletonMap;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.UnaryOperator;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -46,18 +58,7 @@ import org.codelibs.fesen.indices.IndexTemplateMissingException;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.UnaryOperator;
-
-import static java.util.Collections.singletonMap;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * Upgrades Templates on behalf of installed {@link Plugin}s when a node joins the cluster
@@ -79,7 +80,7 @@ public class TemplateUpgradeService implements ClusterStateListener {
     private ImmutableOpenMap<String, IndexTemplateMetadata> lastTemplateMetadata;
 
     public TemplateUpgradeService(Client client, ClusterService clusterService, ThreadPool threadPool,
-                                  Collection<UnaryOperator<Map<String, IndexTemplateMetadata>>> indexTemplateMetadataUpgraders) {
+            Collection<UnaryOperator<Map<String, IndexTemplateMetadata>>> indexTemplateMetadataUpgraders) {
         this.client = client;
         this.clusterService = clusterService;
         this.threadPool = threadPool;
@@ -125,10 +126,8 @@ public class TemplateUpgradeService implements ClusterStateListener {
         Optional<Tuple<Map<String, BytesReference>, Set<String>>> changes = calculateTemplateChanges(templates);
         if (changes.isPresent()) {
             if (upgradesInProgress.compareAndSet(0, changes.get().v1().size() + changes.get().v2().size() + 1)) {
-                logger.info("Starting template upgrade to version {}, {} templates will be updated and {} will be removed",
-                    Version.CURRENT,
-                    changes.get().v1().size(),
-                    changes.get().v2().size());
+                logger.info("Starting template upgrade to version {}, {} templates will be updated and {} will be removed", Version.CURRENT,
+                        changes.get().v1().size(), changes.get().v2().size());
 
                 assert threadPool.getThreadContext().isSystemContext();
                 threadPool.generic().execute(() -> upgradeTemplates(changes.get().v1(), changes.get().v2()));
@@ -143,8 +142,7 @@ public class TemplateUpgradeService implements ClusterStateListener {
         }
 
         for (Map.Entry<String, BytesReference> change : changes.entrySet()) {
-            PutIndexTemplateRequest request =
-                new PutIndexTemplateRequest(change.getKey()).source(change.getValue(), XContentType.JSON);
+            PutIndexTemplateRequest request = new PutIndexTemplateRequest(change.getKey()).source(change.getValue(), XContentType.JSON);
             request.masterNodeTimeout(TimeValue.timeValueMinutes(1));
             client.admin().indices().putTemplate(request, new ActionListener<AcknowledgedResponse>() {
                 @Override
@@ -219,7 +217,7 @@ public class TemplateUpgradeService implements ClusterStateListener {
     }
 
     Optional<Tuple<Map<String, BytesReference>, Set<String>>> calculateTemplateChanges(
-        ImmutableOpenMap<String, IndexTemplateMetadata> templates) {
+            ImmutableOpenMap<String, IndexTemplateMetadata> templates) {
         // collect current templates
         Map<String, IndexTemplateMetadata> existingMap = new HashMap<>();
         for (ObjectObjectCursor<String, IndexTemplateMetadata> customCursor : templates) {

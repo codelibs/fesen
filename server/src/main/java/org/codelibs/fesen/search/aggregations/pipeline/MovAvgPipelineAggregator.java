@@ -34,9 +34,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.HistogramFactory;
@@ -50,8 +50,8 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
     private final int predict;
     private final boolean minimize;
 
-    MovAvgPipelineAggregator(String name, String[] bucketsPaths, DocValueFormat formatter, GapPolicy gapPolicy,
-                             int window, int predict, MovAvgModel model, boolean minimize, Map<String, Object> metadata) {
+    MovAvgPipelineAggregator(String name, String[] bucketsPaths, DocValueFormat formatter, GapPolicy gapPolicy, int window, int predict,
+            MovAvgModel model, boolean minimize, Map<String, Object> metadata) {
         super(name, bucketsPaths, metadata);
         this.formatter = formatter;
         this.gapPolicy = gapPolicy;
@@ -91,9 +91,8 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
 
     @Override
     public InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext) {
-        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>
-                histo = (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends
-                InternalMultiBucketAggregation.InternalBucket>) aggregation;
+        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket> histo =
+                (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>) aggregation;
         List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = histo.getBuckets();
         HistogramFactory factory = (HistogramFactory) histo;
 
@@ -124,8 +123,7 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
                     double movavg = model.next(values);
 
                     List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
-                        .map((p) -> (InternalAggregation) p)
-                        .collect(Collectors.toList());
+                            .map((p) -> (InternalAggregation) p).collect(Collectors.toList());
                     aggs.add(new InternalSimpleValue(name(), movavg, formatter, metadata()));
                     newBucket = factory.createBucket(factory.getKey(bucket), bucket.getDocCount(), InternalAggregations.from(aggs));
                 }
@@ -153,9 +151,8 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
                     Bucket bucket = newBuckets.get(lastValidPosition + i + 1);
 
                     // Get the existing aggs in the bucket so we don't clobber data
-                    aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
-                        .map((p) -> (InternalAggregation) p)
-                        .collect(Collectors.toList());
+                    aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map((p) -> (InternalAggregation) p)
+                            .collect(Collectors.toList());
                     aggs.add(new InternalSimpleValue(name(), predictions[i], formatter, metadata()));
 
                     Bucket newBucket = factory.createBucket(newKey, bucket.getDocCount(), InternalAggregations.from(aggs));
@@ -180,8 +177,8 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
         return factory.createAggregation(newBuckets);
     }
 
-    private MovAvgModel minimize(List<? extends InternalMultiBucketAggregation.InternalBucket> buckets,
-                                 MultiBucketsAggregation histo, MovAvgModel model) {
+    private MovAvgModel minimize(List<? extends InternalMultiBucketAggregation.InternalBucket> buckets, MultiBucketsAggregation histo,
+            MovAvgModel model) {
 
         int counter = 0;
         EvictingQueue<Double> values = new EvictingQueue<>(this.window);

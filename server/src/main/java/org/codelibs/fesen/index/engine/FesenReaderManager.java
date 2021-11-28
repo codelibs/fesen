@@ -24,7 +24,6 @@ import java.util.function.BiConsumer;
 
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.ReferenceManager;
-
 import org.apache.lucene.search.SearcherManager;
 import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.core.SuppressForbidden;
@@ -49,8 +48,7 @@ class FesenReaderManager extends ReferenceManager<FesenDirectoryReader> {
      * @param reader            the directoryReader to use for future reopens
      * @param refreshListener   A consumer that is called every time a new reader is opened
      */
-    FesenReaderManager(FesenDirectoryReader reader,
-                               BiConsumer<FesenDirectoryReader, FesenDirectoryReader> refreshListener) {
+    FesenReaderManager(FesenDirectoryReader reader, BiConsumer<FesenDirectoryReader, FesenDirectoryReader> refreshListener) {
         this.current = reader;
         this.refreshListener = refreshListener;
         refreshListener.accept(current, null);

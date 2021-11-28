@@ -36,7 +36,8 @@ public final class LivenessResponse extends ActionResponse {
     private DiscoveryNode node;
     private ClusterName clusterName;
 
-    public LivenessResponse() {}
+    public LivenessResponse() {
+    }
 
     public LivenessResponse(StreamInput in) throws IOException {
         super(in);

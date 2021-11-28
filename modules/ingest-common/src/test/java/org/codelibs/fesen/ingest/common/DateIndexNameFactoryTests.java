@@ -19,17 +19,16 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.ingest.common.DateIndexNameProcessor;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
-
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 public class DateIndexNameFactoryTests extends ESTestCase {
 

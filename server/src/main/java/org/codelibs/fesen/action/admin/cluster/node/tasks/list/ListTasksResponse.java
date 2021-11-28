@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.list;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.TaskOperationFailure;
 import org.codelibs.fesen.action.support.tasks.BaseTasksResponse;
@@ -37,16 +47,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskInfo;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * Returns the list of tasks currently running on the nodes
  */
@@ -59,8 +59,7 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
 
     private List<TaskGroup> groups;
 
-    public ListTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures,
-            List<? extends FesenException> nodeFailures) {
+    public ListTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures, List<? extends FesenException> nodeFailures) {
         super(taskFailures, nodeFailures);
         this.tasks = tasks == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(tasks));
     }
@@ -77,31 +76,25 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
     }
 
     protected static <T> ConstructingObjectParser<T, Void> setupParser(String name,
-                                                                       TriFunction<
-                                                                           List<TaskInfo>,
-                                                                           List<TaskOperationFailure>,
-                                                                           List<FesenException>,
-                                                                           T> ctor) {
-        ConstructingObjectParser<T, Void> parser = new ConstructingObjectParser<>(name, true,
-            constructingObjects -> {
-                int i = 0;
-                @SuppressWarnings("unchecked")
-                List<TaskInfo> tasks = (List<TaskInfo>) constructingObjects[i++];
-                @SuppressWarnings("unchecked")
-                List<TaskOperationFailure> tasksFailures = (List<TaskOperationFailure>) constructingObjects[i++];
-                @SuppressWarnings("unchecked")
-                List<FesenException> nodeFailures = (List<FesenException>) constructingObjects[i];
-                return ctor.apply(tasks,tasksFailures, nodeFailures);
-            });
+            TriFunction<List<TaskInfo>, List<TaskOperationFailure>, List<FesenException>, T> ctor) {
+        ConstructingObjectParser<T, Void> parser = new ConstructingObjectParser<>(name, true, constructingObjects -> {
+            int i = 0;
+            @SuppressWarnings("unchecked")
+            List<TaskInfo> tasks = (List<TaskInfo>) constructingObjects[i++];
+            @SuppressWarnings("unchecked")
+            List<TaskOperationFailure> tasksFailures = (List<TaskOperationFailure>) constructingObjects[i++];
+            @SuppressWarnings("unchecked")
+            List<FesenException> nodeFailures = (List<FesenException>) constructingObjects[i];
+            return ctor.apply(tasks, tasksFailures, nodeFailures);
+        });
         parser.declareObjectArray(optionalConstructorArg(), TaskInfo.PARSER, new ParseField(TASKS));
         parser.declareObjectArray(optionalConstructorArg(), (p, c) -> TaskOperationFailure.fromXContent(p), new ParseField(TASK_FAILURES));
-        parser.declareObjectArray(optionalConstructorArg(),
-            (p, c) -> FesenException.fromXContent(p), new ParseField(NODE_FAILURES));
+        parser.declareObjectArray(optionalConstructorArg(), (p, c) -> FesenException.fromXContent(p), new ParseField(NODE_FAILURES));
         return parser;
     }
 
     private static final ConstructingObjectParser<ListTasksResponse, Void> PARSER =
-        setupParser("list_tasks_response", ListTasksResponse::new);
+            setupParser("list_tasks_response", ListTasksResponse::new);
 
     /**
      * Returns the list of tasks by node
@@ -190,7 +183,7 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
                 }
             }
             builder.startObject(TASKS);
-            for(TaskInfo task : entry.getValue()) {
+            for (TaskInfo task : entry.getValue()) {
                 builder.startObject(task.getTaskId().toString());
                 task.toXContent(builder, params);
                 builder.endObject();

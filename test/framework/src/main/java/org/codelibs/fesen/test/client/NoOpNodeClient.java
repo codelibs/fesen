@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.test.client;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
@@ -34,10 +38,6 @@ import org.codelibs.fesen.tasks.TaskListener;
 import org.codelibs.fesen.threadpool.TestThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.RemoteClusterService;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * Client that always response with {@code null} to every request. Override {@link #doExecute(ActionType, ActionRequest, ActionListener)},
@@ -63,27 +63,27 @@ public class NoOpNodeClient extends NodeClient {
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse>
-    void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
+    public <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action, Request request,
+            ActionListener<Response> listener) {
         listener.onResponse(null);
     }
 
     @Override
     public void initialize(Map<ActionType, TransportAction> actions, Supplier<String> localNodeId,
-                           RemoteClusterService remoteClusterService, NamedWriteableRegistry namedWriteableRegistry) {
+            RemoteClusterService remoteClusterService, NamedWriteableRegistry namedWriteableRegistry) {
         throw new UnsupportedOperationException("cannot initialize " + this.getClass().getSimpleName());
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse>
-    Task executeLocally(ActionType<Response> action, Request request, ActionListener<Response> listener) {
+    public <Request extends ActionRequest, Response extends ActionResponse> Task executeLocally(ActionType<Response> action,
+            Request request, ActionListener<Response> listener) {
         listener.onResponse(null);
         return null;
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse>
-    Task executeLocally(ActionType<Response> action, Request request, TaskListener<Response> listener) {
+    public <Request extends ActionRequest, Response extends ActionResponse> Task executeLocally(ActionType<Response> action,
+            Request request, TaskListener<Response> listener) {
         listener.onResponse(null, null);
         return null;
     }

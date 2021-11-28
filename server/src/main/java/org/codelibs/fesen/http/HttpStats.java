@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.http;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
 
 public class HttpStats implements Writeable, ToXContentFragment {
 

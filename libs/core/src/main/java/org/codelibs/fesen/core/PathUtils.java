@@ -36,14 +36,15 @@ import java.nio.file.Paths;
 // TODO: can we move this to the .env package and make it package-private?
 public final class PathUtils {
     /** no instantiation */
-    private PathUtils() {}
-    
+    private PathUtils() {
+    }
+
     /** the actual JDK default */
     static final FileSystem ACTUAL_DEFAULT = FileSystems.getDefault();
-    
+
     /** can be changed by tests */
     static volatile FileSystem DEFAULT = ACTUAL_DEFAULT;
-    
+
     /** 
      * Returns a {@code Path} from name components.
      * <p>
@@ -57,7 +58,7 @@ public final class PathUtils {
     public static Path get(String first, String... more) {
         return DEFAULT.getPath(first, more);
     }
-    
+
     /** 
      * Returns a {@code Path} from a URI
      * <p>
@@ -83,7 +84,7 @@ public final class PathUtils {
         for (Path root : roots) {
             Path normalizedRoot = root.normalize();
             Path normalizedPath = normalizedRoot.resolve(path).normalize();
-            if(normalizedPath.startsWith(normalizedRoot)) {
+            if (normalizedPath.startsWith(normalizedRoot)) {
                 return normalizedPath;
             }
         }

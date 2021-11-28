@@ -44,10 +44,8 @@ public class SearchIndexNameMatcher implements Predicate<String> {
      *                     should be null or equal to {@link RemoteClusterAware#LOCAL_CLUSTER_GROUP_KEY}.
      * @param clusterService the cluster service.
      */
-    public SearchIndexNameMatcher(String indexName,
-                                  String clusterAlias,
-                                  ClusterService clusterService,
-                                  IndexNameExpressionResolver expressionResolver) {
+    public SearchIndexNameMatcher(String indexName, String clusterAlias, ClusterService clusterService,
+            IndexNameExpressionResolver expressionResolver) {
         this.indexName = indexName;
         this.clusterAlias = RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY.equals(clusterAlias) ? null : clusterAlias;
         this.clusterService = clusterService;
@@ -73,8 +71,8 @@ public class SearchIndexNameMatcher implements Predicate<String> {
     }
 
     private boolean matchesIndex(String pattern) {
-        String[] concreteIndices = expressionResolver.concreteIndexNames(
-            clusterService.state(), IndicesOptions.lenientExpandOpen(), true, pattern);
+        String[] concreteIndices =
+                expressionResolver.concreteIndexNames(clusterService.state(), IndicesOptions.lenientExpandOpen(), true, pattern);
         for (String index : concreteIndices) {
             if (Regex.simpleMatch(index, indexName)) {
                 return true;

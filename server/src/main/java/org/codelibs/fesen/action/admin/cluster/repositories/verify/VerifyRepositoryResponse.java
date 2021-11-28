@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.admin.cluster.repositories.verify;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.ParseField;
@@ -30,12 +36,6 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Verify repository response
@@ -56,7 +56,9 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         final String nodeId;
         String name;
 
-        public NodeView(String nodeId) { this.nodeId = nodeId; }
+        public NodeView(String nodeId) {
+            this.nodeId = nodeId;
+        }
 
         public NodeView(String nodeId, String name) {
             this(nodeId);
@@ -73,11 +75,17 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
             out.writeString(name);
         }
 
-        void setName(String name) { this.name = name; }
+        void setName(String name) {
+            this.name = name;
+        }
 
-        public String getName() { return name; }
+        public String getName() {
+            return name;
+        }
 
-        public String getNodeId() { return nodeId; }
+        public String getNodeId() {
+            return nodeId;
+        }
 
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startObject(nodeId);
@@ -97,8 +105,7 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
                 return false;
             }
             NodeView other = (NodeView) obj;
-            return Objects.equals(nodeId, other.nodeId) &&
-                Objects.equals(name, other.name);
+            return Objects.equals(nodeId, other.nodeId) && Objects.equals(name, other.name);
         }
 
         @Override
@@ -110,12 +117,13 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
     private List<NodeView> nodes;
 
     private static final ObjectParser<VerifyRepositoryResponse, Void> PARSER =
-        new ObjectParser<>(VerifyRepositoryResponse.class.getName(), true, VerifyRepositoryResponse::new);
+            new ObjectParser<>(VerifyRepositoryResponse.class.getName(), true, VerifyRepositoryResponse::new);
     static {
         PARSER.declareNamedObjects(VerifyRepositoryResponse::setNodes, NodeView.PARSER, new ParseField("nodes"));
     }
 
-    public VerifyRepositoryResponse() {}
+    public VerifyRepositoryResponse() {
+    }
 
     public VerifyRepositoryResponse(StreamInput in) throws IOException {
         super(in);
@@ -123,7 +131,7 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
     }
 
     public VerifyRepositoryResponse(DiscoveryNode[] nodes) {
-        this.nodes = Arrays.stream(nodes).map(dn ->  new NodeView(dn.getId(), dn.getName())).collect(Collectors.toList());
+        this.nodes = Arrays.stream(nodes).map(dn -> new NodeView(dn.getId(), dn.getName())).collect(Collectors.toList());
     }
 
     public VerifyRepositoryResponse(List<NodeView> nodes) {
@@ -170,8 +178,10 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         VerifyRepositoryResponse that = (VerifyRepositoryResponse) o;
         return Objects.equals(nodes, that.nodes);
     }

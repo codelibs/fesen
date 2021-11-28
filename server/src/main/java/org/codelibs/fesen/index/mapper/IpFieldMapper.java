@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
 import org.apache.lucene.document.InetAddressPoint;
 import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StoredField;
@@ -40,16 +50,6 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-
 /** A {@link FieldMapper} for ip addresses. */
 public class IpFieldMapper extends ParametrizedFieldMapper {
 
@@ -68,8 +68,8 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
         private final Parameter<Boolean> stored = Parameter.storeParam(m -> toType(m).stored, false);
 
         private final Parameter<Boolean> ignoreMalformed;
-        private final Parameter<String> nullValue
-            = Parameter.stringParam("null_value", false, m -> toType(m).nullValueAsString, null).acceptsNull();
+        private final Parameter<String> nullValue =
+                Parameter.stringParam("null_value", false, m -> toType(m).nullValueAsString, null).acceptsNull();
 
         private final Parameter<Map<String, String>> meta = Parameter.metaParam();
 
@@ -80,8 +80,7 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
             super(name);
             this.ignoreMalformedByDefault = ignoreMalformedByDefault;
             this.indexCreatedVersion = indexCreatedVersion;
-            this.ignoreMalformed
-                = Parameter.boolParam("ignore_malformed", true, m -> toType(m).ignoreMalformed, ignoreMalformedByDefault);
+            this.ignoreMalformed = Parameter.boolParam("ignore_malformed", true, m -> toType(m).ignoreMalformed, ignoreMalformedByDefault);
         }
 
         Builder nullValue(String nullValue) {
@@ -98,7 +97,7 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
                 return InetAddresses.forString(nullValueAsString);
             } catch (Exception e) {
                 DEPRECATION_LOGGER.deprecate("ip_mapper_null_field", "Error parsing [" + nullValue.getValue()
-                    + "] as IP in [null_value] on field [" + name() + "]); [null_value] will be ignored");
+                        + "] as IP in [null_value] on field [" + name() + "]); [null_value] will be ignored");
                 return null;
             }
         }
@@ -110,10 +109,9 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
 
         @Override
         public IpFieldMapper build(BuilderContext context) {
-            return new IpFieldMapper(name,
-                new IpFieldType(buildFullName(context), indexed.getValue(), stored.getValue(),
-                    hasDocValues.getValue(), parseNullValue(), meta.getValue()),
-                multiFieldsBuilder.build(this, context), copyTo.build(), this);
+            return new IpFieldMapper(name, new IpFieldType(buildFullName(context), indexed.getValue(), stored.getValue(),
+                    hasDocValues.getValue(), parseNullValue(), meta.getValue()), multiFieldsBuilder.build(this, context), copyTo.build(),
+                    this);
         }
 
     }
@@ -127,8 +125,8 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
 
         private final InetAddress nullValue;
 
-        public IpFieldType(String name, boolean indexed, boolean stored, boolean hasDocValues,
-                           InetAddress nullValue, Map<String, String> meta) {
+        public IpFieldType(String name, boolean indexed, boolean stored, boolean hasDocValues, InetAddress nullValue,
+                Map<String, String> meta) {
             super(name, indexed, stored, hasDocValues, TextSearchInfo.SIMPLE_MATCH_ONLY, meta);
             this.nullValue = nullValue;
         }
@@ -218,26 +216,16 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
         @Override
         public Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, QueryShardContext context) {
             failIfNotIndexed();
-            return rangeQuery(
-                lowerTerm,
-                upperTerm,
-                includeLower,
-                includeUpper,
-                (lower, upper) -> InetAddressPoint.newRangeQuery(name(), lower, upper)
-            );
+            return rangeQuery(lowerTerm, upperTerm, includeLower, includeUpper,
+                    (lower, upper) -> InetAddressPoint.newRangeQuery(name(), lower, upper));
         }
 
         /**
          * Processes query bounds into {@code long}s and delegates the
          * provided {@code builder} to build a range query.
          */
-        public static Query rangeQuery(
-            Object lowerTerm,
-            Object upperTerm,
-            boolean includeLower,
-            boolean includeUpper,
-            BiFunction<InetAddress, InetAddress, Query> builder
-        ) {
+        public static Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper,
+                BiFunction<InetAddress, InetAddress, Query> builder) {
             InetAddress lower;
             if (lowerTerm == null) {
                 lower = InetAddressPoint.MIN_VALUE;
@@ -300,8 +288,8 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
             public String get(int index) {
                 try {
                     BytesRef encoded = in.lookupOrd(ords[index]);
-                    InetAddress address = InetAddressPoint.decode(
-                            Arrays.copyOfRange(encoded.bytes, encoded.offset, encoded.offset + encoded.length));
+                    InetAddress address =
+                            InetAddressPoint.decode(Arrays.copyOfRange(encoded.bytes, encoded.offset, encoded.offset + encoded.length));
                     return InetAddresses.toAddrString(address);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -334,8 +322,8 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
                 throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName() + "] does not support custom formats");
             }
             if (timeZone != null) {
-                throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName()
-                    + "] does not support custom time zones");
+                throw new IllegalArgumentException(
+                        "Field [" + name() + "] of type [" + typeName() + "] does not support custom time zones");
             }
             return DocValueFormat.IP;
         }
@@ -352,12 +340,7 @@ public class IpFieldMapper extends ParametrizedFieldMapper {
     private final boolean ignoreMalformedByDefault;
     private final Version indexCreatedVersion;
 
-    private IpFieldMapper(
-            String simpleName,
-            MappedFieldType mappedFieldType,
-            MultiFields multiFields,
-            CopyTo copyTo,
-            Builder builder) {
+    private IpFieldMapper(String simpleName, MappedFieldType mappedFieldType, MultiFields multiFields, CopyTo copyTo, Builder builder) {
         super(simpleName, mappedFieldType, multiFields, copyTo);
         this.ignoreMalformedByDefault = builder.ignoreMalformedByDefault;
         this.indexed = builder.indexed.getValue();

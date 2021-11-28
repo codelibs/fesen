@@ -140,7 +140,6 @@ public class LeaderBulkByScrollTaskStateTests extends ESTestCase {
         };
     }
 
-
     private <T> T captureResponse(Class<T> responseClass, ActionListener<T> listener) {
         ArgumentCaptor<Exception> failure = ArgumentCaptor.forClass(Exception.class);
         // Rethrow any failures just so we get a nice exception if there were any. We don't expect any though.

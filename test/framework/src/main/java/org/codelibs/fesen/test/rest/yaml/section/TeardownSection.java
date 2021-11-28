@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.XContentParser;
 
 public class TeardownSection {
     /**

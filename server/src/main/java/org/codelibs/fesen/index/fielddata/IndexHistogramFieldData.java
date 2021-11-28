@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
 /**

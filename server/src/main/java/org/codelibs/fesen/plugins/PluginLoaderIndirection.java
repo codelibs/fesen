@@ -21,8 +21,6 @@ package org.codelibs.fesen.plugins;
 
 import java.util.List;
 
-import org.codelibs.fesen.plugins.ExtendedPluginsClassLoader;
-
 /**
  * This class exists solely as an intermediate layer to avoid causing PluginsService
  * to load ExtendedPluginsClassLoader when used in the transport client.

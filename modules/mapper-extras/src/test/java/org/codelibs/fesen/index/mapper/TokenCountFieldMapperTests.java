@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CannedTokenStream;
 import org.apache.lucene.analysis.MockTokenizer;
@@ -31,21 +40,7 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AnalyzerScope;
 import org.codelibs.fesen.index.analysis.IndexAnalyzers;
 import org.codelibs.fesen.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.index.mapper.DocumentMapper;
-import org.codelibs.fesen.index.mapper.MapperExtrasPlugin;
-import org.codelibs.fesen.index.mapper.ParseContext;
-import org.codelibs.fesen.index.mapper.SourceToParse;
-import org.codelibs.fesen.index.mapper.TokenCountFieldMapper;
 import org.codelibs.fesen.plugins.Plugin;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Test for {@link TokenCountFieldMapper}.
@@ -74,22 +69,15 @@ public class TokenCountFieldMapperTests extends MapperTestCase {
         checker.registerConflictCheck("doc_values", b -> b.field("doc_values", false));
         checker.registerConflictCheck("null_value", b -> b.field("null_value", 1));
         checker.registerConflictCheck("enable_position_increments", b -> b.field("enable_position_increments", false));
-        checker.registerUpdateCheck(
-            this::minimalMapping,
-            b -> b.field("type", "token_count").field("analyzer", "standard"),
-            m -> {
-                TokenCountFieldMapper tcfm = (TokenCountFieldMapper) m;
-                assertThat(tcfm.analyzer(), equalTo("standard"));
-            });
+        checker.registerUpdateCheck(this::minimalMapping, b -> b.field("type", "token_count").field("analyzer", "standard"), m -> {
+            TokenCountFieldMapper tcfm = (TokenCountFieldMapper) m;
+            assertThat(tcfm.analyzer(), equalTo("standard"));
+        });
     }
 
     @Override
     protected IndexAnalyzers createIndexAnalyzers(IndexSettings indexSettings) {
-        NamedAnalyzer dflt = new NamedAnalyzer(
-            "default",
-            AnalyzerScope.INDEX,
-            new StandardAnalyzer()
-        );
+        NamedAnalyzer dflt = new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer());
         NamedAnalyzer standard = new NamedAnalyzer("standard", AnalyzerScope.INDEX, new StandardAnalyzer());
         NamedAnalyzer keyword = new NamedAnalyzer("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer());
         Map<String, NamedAnalyzer> analyzers = new HashMap<>();
@@ -129,14 +117,14 @@ public class TokenCountFieldMapperTests extends MapperTestCase {
     }
 
     private Analyzer createMockAnalyzer() {
-        Token t1 = new Token();      // Token without an increment
+        Token t1 = new Token(); // Token without an increment
         t1.setPositionIncrement(0);
         Token t2 = new Token();
-        t2.setPositionIncrement(1);  // Normal token with one increment
+        t2.setPositionIncrement(1); // Normal token with one increment
         Token t3 = new Token();
-        t2.setPositionIncrement(2);  // Funny token with more than one increment
+        t2.setPositionIncrement(2); // Funny token with more than one increment
         int finalTokenIncrement = 4; // Final token increment
-        Token[] tokens = new Token[] {t1, t2, t3};
+        Token[] tokens = new Token[] { t1, t2, t3 };
         Collections.shuffle(Arrays.asList(tokens), random());
         final TokenStream tokenStream = new CannedTokenStream(finalTokenIncrement, 0, tokens);
         // TODO: we have no CannedAnalyzer?
@@ -191,7 +179,6 @@ public class TokenCountFieldMapperTests extends MapperTestCase {
     }
 
     private ParseContext.Document parseDocument(DocumentMapper mapper, SourceToParse request) {
-        return mapper.parse(request)
-            .docs().stream().findFirst().orElseThrow(() -> new IllegalStateException("Test object not parsed"));
+        return mapper.parse(request).docs().stream().findFirst().orElseThrow(() -> new IllegalStateException("Test object not parsed"));
     }
 }

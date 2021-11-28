@@ -19,16 +19,17 @@
 
 package org.codelibs.fesen.common.settings;
 
-import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.ChangeKeyStorePasswordCommand;
-import org.codelibs.fesen.env.Environment;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
+import org.codelibs.fesen.cli.Command;
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.env.Environment;
 
 public class ChangeKeyStorePasswordCommandTests extends KeyStoreCommandTestCase {
     @Override
@@ -93,13 +94,8 @@ public class ChangeKeyStorePasswordCommandTests extends KeyStoreCommandTestCase 
         UserException e = expectThrows(UserException.class, this::execute);
         assertEquals(e.getMessage(), ExitCodes.DATA_ERROR, e.exitCode);
         if (inFipsJvm()) {
-            assertThat(
-                e.getMessage(),
-                anyOf(
-                    containsString("Provided keystore password was incorrect"),
-                    containsString("Keystore has been corrupted or tampered with")
-                )
-            );
+            assertThat(e.getMessage(), anyOf(containsString("Provided keystore password was incorrect"),
+                    containsString("Keystore has been corrupted or tampered with")));
         } else {
             assertThat(e.getMessage(), containsString("Provided keystore password was incorrect"));
         }

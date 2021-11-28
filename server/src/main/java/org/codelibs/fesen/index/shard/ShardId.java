@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.shard;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,8 +28,6 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.Index;
-
-import java.io.IOException;
 
 /**
  * Allows for shard level components to be injected with the shard id.
@@ -99,8 +99,10 @@ public class ShardId implements Comparable<ShardId>, ToXContentFragment, Writeab
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ShardId shardId1 = (ShardId) o;
         return shardId == shardId1.shardId && index.equals(shardId1.index);
     }

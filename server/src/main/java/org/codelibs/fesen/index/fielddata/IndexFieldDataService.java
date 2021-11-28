@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.settings.Setting;
@@ -32,28 +41,19 @@ import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.indices.fielddata.cache.IndicesFieldDataCache;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 public class IndexFieldDataService extends AbstractIndexComponent implements Closeable {
     public static final String FIELDDATA_CACHE_VALUE_NODE = "node";
     public static final String FIELDDATA_CACHE_KEY = "index.fielddata.cache";
     public static final Setting<String> INDEX_FIELDDATA_CACHE_KEY =
-        new Setting<>(FIELDDATA_CACHE_KEY, (s) -> FIELDDATA_CACHE_VALUE_NODE, (s) -> {
-            switch (s) {
+            new Setting<>(FIELDDATA_CACHE_KEY, (s) -> FIELDDATA_CACHE_VALUE_NODE, (s) -> {
+                switch (s) {
                 case "node":
                 case "none":
                     return s;
                 default:
                     throw new IllegalArgumentException("failed to parse [" + s + "] must be one of [node,none]");
-            }
-        }, Property.IndexScope);
+                }
+            }, Property.IndexScope);
 
     private final CircuitBreakerService circuitBreakerService;
 
@@ -72,9 +72,8 @@ public class IndexFieldDataService extends AbstractIndexComponent implements Clo
     };
     private volatile IndexFieldDataCache.Listener listener = DEFAULT_NOOP_LISTENER;
 
-
     public IndexFieldDataService(IndexSettings indexSettings, IndicesFieldDataCache indicesFieldDataCache,
-                                 CircuitBreakerService circuitBreakerService, MapperService mapperService) {
+            CircuitBreakerService circuitBreakerService, MapperService mapperService) {
         super(indexSettings);
         this.indicesFieldDataCache = indicesFieldDataCache;
         this.circuitBreakerService = circuitBreakerService;
@@ -113,9 +112,8 @@ public class IndexFieldDataService extends AbstractIndexComponent implements Clo
      * a {@link SearchLookup} supplier available that is required for runtime fields.
      */
     @SuppressWarnings("unchecked")
-    public <IFD extends IndexFieldData<?>> IFD getForField(MappedFieldType fieldType,
-                                                           String fullyQualifiedIndexName,
-                                                           Supplier<SearchLookup> searchLookup) {
+    public <IFD extends IndexFieldData<?>> IFD getForField(MappedFieldType fieldType, String fullyQualifiedIndexName,
+            Supplier<SearchLookup> searchLookup) {
         final String fieldName = fieldType.name();
         IndexFieldData.Builder builder = fieldType.fielddataBuilder(fullyQualifiedIndexName, searchLookup);
 
@@ -126,7 +124,7 @@ public class IndexFieldDataService extends AbstractIndexComponent implements Clo
                 String cacheType = indexSettings.getValue(INDEX_FIELDDATA_CACHE_KEY);
                 if (FIELDDATA_CACHE_VALUE_NODE.equals(cacheType)) {
                     cache = indicesFieldDataCache.buildIndexFieldDataCache(listener, index(), fieldName);
-                } else if ("none".equals(cacheType)){
+                } else if ("none".equals(cacheType)) {
                     cache = new IndexFieldDataCache.None();
                 } else {
                     throw new IllegalArgumentException("cache type not supported [" + cacheType + "] for field [" + fieldName + "]");

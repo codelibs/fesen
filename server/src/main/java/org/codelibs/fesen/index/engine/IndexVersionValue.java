@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.engine;
 
+import java.util.Objects;
+
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.index.translog.Translog;
-
-import java.util.Objects;
 
 final class IndexVersionValue extends VersionValue {
 
@@ -42,9 +42,12 @@ final class IndexVersionValue extends VersionValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
         IndexVersionValue that = (IndexVersionValue) o;
         return Objects.equals(translogLocation, that.translogLocation);
     }
@@ -56,12 +59,7 @@ final class IndexVersionValue extends VersionValue {
 
     @Override
     public String toString() {
-        return "IndexVersionValue{" +
-            "version=" + version +
-            ", seqNo=" + seqNo +
-            ", term=" + term +
-            ", location=" + translogLocation +
-            '}';
+        return "IndexVersionValue{" + "version=" + version + ", seqNo=" + seqNo + ", term=" + term + ", location=" + translogLocation + '}';
     }
 
     @Override

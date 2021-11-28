@@ -18,24 +18,22 @@
  */
 package org.codelibs.fesen.script.mustache;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+
+import java.io.IOException;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.search.ShardSearchFailure;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.script.mustache.MultiSearchTemplateResponse;
-import org.codelibs.fesen.script.mustache.SearchTemplateResponse;
 import org.codelibs.fesen.search.internal.InternalSearchResponse;
 import org.codelibs.fesen.test.AbstractXContentTestCase;
-
-import java.io.IOException;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 
 public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<MultiSearchTemplateResponse> {
 
@@ -54,8 +52,8 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
             InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
             SearchResponse.Clusters clusters = randomClusters();
             SearchTemplateResponse searchTemplateResponse = new SearchTemplateResponse();
-            SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards,
-                    successfulShards, skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters);
+            SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards, successfulShards, skippedShards,
+                    tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters);
             searchTemplateResponse.setResponse(searchResponse);
             items[i] = new MultiSearchTemplateResponse.Item(searchTemplateResponse, null);
         }
@@ -69,7 +67,7 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
         return new SearchResponse.Clusters(totalClusters, successfulClusters, skippedClusters);
     }
 
-    private static  MultiSearchTemplateResponse createTestInstanceWithFailures() {
+    private static MultiSearchTemplateResponse createTestInstanceWithFailures() {
         int numItems = randomIntBetween(0, 128);
         long overallTookInMillis = randomNonNegativeLong();
         MultiSearchTemplateResponse.Item[] items = new MultiSearchTemplateResponse.Item[numItems];
@@ -83,8 +81,8 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
                 InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
                 SearchResponse.Clusters clusters = randomClusters();
                 SearchTemplateResponse searchTemplateResponse = new SearchTemplateResponse();
-                SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards,
-                        successfulShards, skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters);
+                SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards, successfulShards,
+                        skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters);
                 searchTemplateResponse.setResponse(searchResponse);
                 items[i] = new MultiSearchTemplateResponse.Item(searchTemplateResponse, null);
             } else {
@@ -106,7 +104,7 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
 
     protected Predicate<String> getRandomFieldsExcludeFilterWhenResultHasErrors() {
         return field -> field.startsWith("responses");
-    }    
+    }
 
     @Override
     protected void assertEqualInstances(MultiSearchTemplateResponse expectedInstance, MultiSearchTemplateResponse newInstance) {
@@ -124,7 +122,7 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
             }
         }
     }
-    
+
     /**
      * Test parsing {@link MultiSearchTemplateResponse} with inner failures as they don't support asserting on xcontent equivalence, given
      * exceptions are not parsed back as the same original class. We run the usual {@link AbstractXContentTestCase#testFromXContent()}
@@ -138,7 +136,7 @@ public class MultiSearchTemplateResponseTests extends AbstractXContentTestCase<M
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-                getRandomFieldsExcludeFilterWhenResultHasErrors(), this::createParser, this::doParseInstance,
-                this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+                getRandomFieldsExcludeFilterWhenResultHasErrors(), this::createParser, this::doParseInstance, this::assertEqualInstances,
+                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 }

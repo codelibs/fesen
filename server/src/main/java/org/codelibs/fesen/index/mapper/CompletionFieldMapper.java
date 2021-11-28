@@ -18,6 +18,16 @@
  */
 package org.codelibs.fesen.index.mapper;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.lucene.codecs.PostingsFormat;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
@@ -45,16 +55,6 @@ import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.suggest.completion.CompletionSuggester;
 import org.codelibs.fesen.search.suggest.completion.context.ContextMapping;
 import org.codelibs.fesen.search.suggest.completion.context.ContextMappings;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Mapper for completion field. The field values are indexed as a weighted FST for
@@ -123,27 +123,24 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
 
         private final Parameter<NamedAnalyzer> analyzer;
         private final Parameter<NamedAnalyzer> searchAnalyzer;
-        private final Parameter<Boolean> preserveSeparators = Parameter.boolParam("preserve_separators", false,
-            m -> toType(m).preserveSeparators, Defaults.DEFAULT_PRESERVE_SEPARATORS)
-            .alwaysSerialize();
-        private final Parameter<Boolean> preservePosInc = Parameter.boolParam("preserve_position_increments", false,
-            m -> toType(m).preservePosInc, Defaults.DEFAULT_POSITION_INCREMENTS)
-            .alwaysSerialize();
+        private final Parameter<Boolean> preserveSeparators =
+                Parameter.boolParam("preserve_separators", false, m -> toType(m).preserveSeparators, Defaults.DEFAULT_PRESERVE_SEPARATORS)
+                        .alwaysSerialize();
+        private final Parameter<Boolean> preservePosInc = Parameter
+                .boolParam("preserve_position_increments", false, m -> toType(m).preservePosInc, Defaults.DEFAULT_POSITION_INCREMENTS)
+                .alwaysSerialize();
         private final Parameter<ContextMappings> contexts = new Parameter<>("contexts", false, () -> null,
-            (n, c, o) -> ContextMappings.load(o, c.indexVersionCreated()), m -> toType(m).contexts)
-            .setSerializer((b, n, c) -> {
-                if (c == null) {
-                    return;
-                }
-                b.startArray(n);
-                c.toXContent(b, ToXContent.EMPTY_PARAMS);
-                b.endArray();
-            }, Objects::toString);
-        private final Parameter<Integer> maxInputLength = Parameter.intParam("max_input_length", true,
-            m -> toType(m).maxInputLength, Defaults.DEFAULT_MAX_INPUT_LENGTH)
-            .addDeprecatedName("max_input_len")
-            .setValidator(Builder::validateInputLength)
-            .alwaysSerialize();
+                (n, c, o) -> ContextMappings.load(o, c.indexVersionCreated()), m -> toType(m).contexts).setSerializer((b, n, c) -> {
+                    if (c == null) {
+                        return;
+                    }
+                    b.startArray(n);
+                    c.toXContent(b, ToXContent.EMPTY_PARAMS);
+                    b.endArray();
+                }, Objects::toString);
+        private final Parameter<Integer> maxInputLength =
+                Parameter.intParam("max_input_length", true, m -> toType(m).maxInputLength, Defaults.DEFAULT_MAX_INPUT_LENGTH)
+                        .addDeprecatedName("max_input_len").setValidator(Builder::validateInputLength).alwaysSerialize();
         private final Parameter<Map<String, String>> meta = Parameter.metaParam();
 
         private final NamedAnalyzer defaultAnalyzer;
@@ -158,10 +155,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
             super(name);
             this.defaultAnalyzer = defaultAnalyzer;
             this.indexVersionCreated = indexVersionCreated;
-            this.analyzer = Parameter.analyzerParam("analyzer", false, m -> toType(m).analyzer, () -> defaultAnalyzer)
-                .alwaysSerialize();
-            this.searchAnalyzer
-                = Parameter.analyzerParam("search_analyzer", true, m -> toType(m).searchAnalyzer, analyzer::getValue);
+            this.analyzer = Parameter.analyzerParam("analyzer", false, m -> toType(m).analyzer, () -> defaultAnalyzer).alwaysSerialize();
+            this.searchAnalyzer = Parameter.analyzerParam("search_analyzer", true, m -> toType(m).searchAnalyzer, analyzer::getValue);
         }
 
         private static void validateInputLength(int maxInputLength) {
@@ -179,35 +174,34 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
         public CompletionFieldMapper build(BuilderContext context) {
             checkCompletionContextsLimit(context);
             NamedAnalyzer completionAnalyzer = new NamedAnalyzer(this.searchAnalyzer.getValue().name(), AnalyzerScope.INDEX,
-                new CompletionAnalyzer(this.searchAnalyzer.getValue(), preserveSeparators.getValue(), preservePosInc.getValue()));
+                    new CompletionAnalyzer(this.searchAnalyzer.getValue(), preserveSeparators.getValue(), preservePosInc.getValue()));
 
-            CompletionFieldType ft
-                = new CompletionFieldType(buildFullName(context), completionAnalyzer, meta.getValue());
+            CompletionFieldType ft = new CompletionFieldType(buildFullName(context), completionAnalyzer, meta.getValue());
             ft.setContextMappings(contexts.getValue());
             ft.setPreservePositionIncrements(preservePosInc.getValue());
             ft.setPreserveSep(preserveSeparators.getValue());
             ft.setIndexAnalyzer(analyzer.getValue());
-            return new CompletionFieldMapper(name, ft, defaultAnalyzer,
-                multiFieldsBuilder.build(this, context), copyTo.build(), indexVersionCreated, this);
+            return new CompletionFieldMapper(name, ft, defaultAnalyzer, multiFieldsBuilder.build(this, context), copyTo.build(),
+                    indexVersionCreated, this);
         }
 
         private void checkCompletionContextsLimit(BuilderContext context) {
             if (this.contexts.getValue() != null && this.contexts.getValue().size() > COMPLETION_CONTEXTS_LIMIT) {
                 deprecationLogger.deprecate("excessive_completion_contexts",
-                    "You have defined more than [" + COMPLETION_CONTEXTS_LIMIT + "] completion contexts" +
-                        " in the mapping for index [" + context.indexSettings().get(IndexMetadata.SETTING_INDEX_PROVIDED_NAME) + "]. " +
-                        "The maximum allowed number of completion contexts in a mapping will be limited to " +
-                        "[" + COMPLETION_CONTEXTS_LIMIT + "] starting in version [8.0].");
+                        "You have defined more than [" + COMPLETION_CONTEXTS_LIMIT + "] completion contexts" + " in the mapping for index ["
+                                + context.indexSettings().get(IndexMetadata.SETTING_INDEX_PROVIDED_NAME) + "]. "
+                                + "The maximum allowed number of completion contexts in a mapping will be limited to " + "["
+                                + COMPLETION_CONTEXTS_LIMIT + "] starting in version [8.0].");
             }
         }
 
     }
 
-    public static final Set<String> ALLOWED_CONTENT_FIELD_NAMES = Sets.newHashSet(Fields.CONTENT_FIELD_NAME_INPUT,
-            Fields.CONTENT_FIELD_NAME_WEIGHT, Fields.CONTENT_FIELD_NAME_CONTEXTS);
+    public static final Set<String> ALLOWED_CONTENT_FIELD_NAMES =
+            Sets.newHashSet(Fields.CONTENT_FIELD_NAME_INPUT, Fields.CONTENT_FIELD_NAME_WEIGHT, Fields.CONTENT_FIELD_NAME_CONTEXTS);
 
-    public static final TypeParser PARSER
-        = new TypeParser((n, c) -> new Builder(n, c.getIndexAnalyzers().get("simple"), c.indexVersionCreated()));
+    public static final TypeParser PARSER =
+            new TypeParser((n, c) -> new Builder(n, c.getIndexAnalyzers().get("simple"), c.indexVersionCreated()));
 
     public static final class CompletionFieldType extends TermBasedFieldType {
 
@@ -274,7 +268,7 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
          */
         public CompletionQuery prefixQuery(Object value) {
             return new PrefixCompletionQuery(getTextSearchInfo().getSearchAnalyzer().analyzer(),
-                new Term(name(), indexedValueForSearch(value)));
+                    new Term(name(), indexedValueForSearch(value)));
         }
 
         /**
@@ -287,13 +281,11 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
         /**
          * Completion prefix fuzzy query
          */
-        public CompletionQuery fuzzyQuery(String value, Fuzziness fuzziness, int nonFuzzyPrefixLength,
-                                          int minFuzzyPrefixLength, int maxExpansions, boolean transpositions,
-                                          boolean unicodeAware) {
+        public CompletionQuery fuzzyQuery(String value, Fuzziness fuzziness, int nonFuzzyPrefixLength, int minFuzzyPrefixLength,
+                int maxExpansions, boolean transpositions, boolean unicodeAware) {
             return new FuzzyCompletionQuery(getTextSearchInfo().getSearchAnalyzer().analyzer(),
-                new Term(name(), indexedValueForSearch(value)), null,
-                fuzziness.asDistance(), transpositions, nonFuzzyPrefixLength, minFuzzyPrefixLength,
-                unicodeAware, maxExpansions);
+                    new Term(name(), indexedValueForSearch(value)), null, fuzziness.asDistance(), transpositions, nonFuzzyPrefixLength,
+                    minFuzzyPrefixLength, unicodeAware, maxExpansions);
         }
 
         @Override
@@ -330,8 +322,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
     private final ContextMappings contexts;
     private final Version indexVersionCreated;
 
-    public CompletionFieldMapper(String simpleName, MappedFieldType mappedFieldType, NamedAnalyzer defaultAnalyzer,
-                                 MultiFields multiFields, CopyTo copyTo, Version indexVersionCreated, Builder builder) {
+    public CompletionFieldMapper(String simpleName, MappedFieldType mappedFieldType, NamedAnalyzer defaultAnalyzer, MultiFields multiFields,
+            CopyTo copyTo, Version indexVersionCreated, Builder builder) {
         super(simpleName, mappedFieldType, multiFields, copyTo);
         this.defaultAnalyzer = defaultAnalyzer;
         this.maxInputLength = builder.maxInputLength.getValue();
@@ -407,15 +399,14 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
             }
             CompletionInputMetadata metadata = completionInput.getValue();
             if (fieldType().hasContextMappings()) {
-                fieldType().getContextMappings().addField(context.doc(), fieldType().name(),
-                        input, metadata.weight, metadata.contexts);
+                fieldType().getContextMappings().addField(context.doc(), fieldType().name(), input, metadata.weight, metadata.contexts);
             } else {
                 context.doc().add(new SuggestField(fieldType().name(), input, metadata.weight));
             }
         }
 
         createFieldNamesField(context);
-        for (CompletionInputMetadata metadata: inputMap.values()) {
+        for (CompletionInputMetadata metadata : inputMap.values()) {
             ParseContext externalValueContext = context.createExternalValueContext(metadata);
             multiFields.parse(this, externalValueContext);
         }
@@ -442,11 +433,11 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
      *  "STRING" - interpreted as the field value (input)
      *  "OBJECT" - { "input": STRING|ARRAY, "weight": STRING|INT, "contexts": ARRAY|OBJECT }
      */
-    private void parse(ParseContext parseContext, Token token,
-                       XContentParser parser, Map<String, CompletionInputMetadata> inputMap) throws IOException {
+    private void parse(ParseContext parseContext, Token token, XContentParser parser, Map<String, CompletionInputMetadata> inputMap)
+            throws IOException {
         String currentFieldName = null;
         if (token == Token.VALUE_STRING) {
-            inputMap.put(parser.text(), new CompletionInputMetadata(parser.text(), Collections.<String, Set<String>>emptyMap(), 1));
+            inputMap.put(parser.text(), new CompletionInputMetadata(parser.text(), Collections.<String, Set<String>> emptyMap(), 1));
         } else if (token == Token.START_OBJECT) {
             Set<String> inputs = new HashSet<>();
             int weight = 1;
@@ -455,8 +446,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
                 if (token == Token.FIELD_NAME) {
                     currentFieldName = parser.currentName();
                     if (!ALLOWED_CONTENT_FIELD_NAMES.contains(currentFieldName)) {
-                        throw new IllegalArgumentException("unknown field name [" + currentFieldName
-                            + "], must be one of " + ALLOWED_CONTENT_FIELD_NAMES);
+                        throw new IllegalArgumentException(
+                                "unknown field name [" + currentFieldName + "], must be one of " + ALLOWED_CONTENT_FIELD_NAMES);
                     }
                 } else if (currentFieldName != null) {
                     if (Fields.CONTENT_FIELD_NAME_INPUT.equals(currentFieldName)) {
@@ -467,8 +458,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
                                 if (token == Token.VALUE_STRING) {
                                     inputs.add(parser.text());
                                 } else {
-                                    throw new IllegalArgumentException("input array must have string values, but was ["
-                                        + token.name() + "]");
+                                    throw new IllegalArgumentException(
+                                            "input array must have string values, but was [" + token.name() + "]");
                                 }
                             }
                         } else {
@@ -493,8 +484,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
                         }
                         // always parse a long to make sure we don't get overflow
                         if (weightValue.longValue() < 0 || weightValue.longValue() > Integer.MAX_VALUE) {
-                            throw new IllegalArgumentException("weight must be in the interval [0..2147483647], but was ["
-                                + weightValue.longValue() + "]");
+                            throw new IllegalArgumentException(
+                                    "weight must be in the interval [0..2147483647], but was [" + weightValue.longValue() + "]");
                         }
                         weight = weightValue.intValue();
                     } else if (Fields.CONTENT_FIELD_NAME_CONTEXTS.equals(currentFieldName)) {
@@ -528,8 +519,8 @@ public class CompletionFieldMapper extends ParametrizedFieldMapper {
                 }
             }
         } else {
-            throw new ParsingException(parser.getTokenLocation(), "failed to parse [" + parser.currentName()
-                + "]: expected text or object, but got " + token.name());
+            throw new ParsingException(parser.getTokenLocation(),
+                    "failed to parse [" + parser.currentName() + "]: expected text or object, but got " + token.name());
         }
     }
 

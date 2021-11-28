@@ -34,11 +34,8 @@ public class InternalWeightedAvgTests extends InternalAggregationTestCase<Intern
     @Override
     protected InternalWeightedAvg createTestInstance(String name, Map<String, Object> metadata) {
         DocValueFormat formatter = randomNumericDocValueFormat();
-        return new InternalWeightedAvg(
-            name,
-            randomDoubleBetween(0, 100000, true),
-            randomDoubleBetween(0, 100000, true),
-            formatter, metadata);
+        return new InternalWeightedAvg(name, randomDoubleBetween(0, 100000, true), randomDoubleBetween(0, 100000, true), formatter,
+                metadata);
     }
 
     @Override

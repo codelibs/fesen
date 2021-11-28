@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.action.search;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -29,19 +35,14 @@ import org.codelibs.fesen.search.SearchPhaseResult;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 /**
  * A listener that allows to track progress of the {@link SearchAction}.
  */
 public abstract class SearchProgressListener {
     private static final Logger logger = LogManager.getLogger(SearchProgressListener.class);
 
-    public static final SearchProgressListener NOOP = new SearchProgressListener() {};
+    public static final SearchProgressListener NOOP = new SearchProgressListener() {
+    };
 
     private List<SearchShard> shards;
 
@@ -53,14 +54,16 @@ public abstract class SearchProgressListener {
      * @param clusters The statistics for remote clusters included in the search.
      * @param fetchPhase <code>true</code> if the search needs a fetch phase, <code>false</code> otherwise.
      **/
-    protected void onListShards(List<SearchShard> shards, List<SearchShard> skippedShards, Clusters clusters, boolean fetchPhase) {}
+    protected void onListShards(List<SearchShard> shards, List<SearchShard> skippedShards, Clusters clusters, boolean fetchPhase) {
+    }
 
     /**
      * Executed when a shard returns a query result.
      *
      * @param shardIndex The index of the shard in the list provided by {@link SearchProgressListener#onListShards} )}.
      */
-    protected void onQueryResult(int shardIndex) {}
+    protected void onQueryResult(int shardIndex) {
+    }
 
     /**
      * Executed when a shard reports a query failure.
@@ -69,7 +72,8 @@ public abstract class SearchProgressListener {
      * @param shardTarget The last shard target that thrown an exception.
      * @param exc The cause of the failure.
      */
-    protected void onQueryFailure(int shardIndex, SearchShardTarget shardTarget, Exception exc) {}
+    protected void onQueryFailure(int shardIndex, SearchShardTarget shardTarget, Exception exc) {
+    }
 
     /**
      * Executed when a partial reduce is created. The number of partial reduce can be controlled via
@@ -80,7 +84,8 @@ public abstract class SearchProgressListener {
      * @param aggs The partial result for aggregations.
      * @param reducePhase The version number for this reduce.
      */
-    protected void onPartialReduce(List<SearchShard> shards, TotalHits totalHits, InternalAggregations aggs, int reducePhase) {}
+    protected void onPartialReduce(List<SearchShard> shards, TotalHits totalHits, InternalAggregations aggs, int reducePhase) {
+    }
 
     /**
      * Executed once when the final reduce is created.
@@ -90,14 +95,16 @@ public abstract class SearchProgressListener {
      * @param aggs The final result for aggregations.
      * @param reducePhase The version number for this reduce.
      */
-    protected void onFinalReduce(List<SearchShard> shards, TotalHits totalHits, InternalAggregations aggs, int reducePhase) {}
+    protected void onFinalReduce(List<SearchShard> shards, TotalHits totalHits, InternalAggregations aggs, int reducePhase) {
+    }
 
     /**
      * Executed when a shard returns a fetch result.
      *
      * @param shardIndex The index of the shard in the list provided by {@link SearchProgressListener#onListShards})}.
      */
-    protected void onFetchResult(int shardIndex) {}
+    protected void onFetchResult(int shardIndex) {
+    }
 
     /**
      * Executed when a shard reports a fetch failure.
@@ -106,7 +113,8 @@ public abstract class SearchProgressListener {
      * @param shardTarget The last shard target that thrown an exception.
      * @param exc The cause of the failure.
      */
-    protected void onFetchFailure(int shardIndex, SearchShardTarget shardTarget, Exception exc) {}
+    protected void onFetchFailure(int shardIndex, SearchShardTarget shardTarget, Exception exc) {
+    }
 
     final void notifyListShards(List<SearchShard> shards, List<SearchShard> skippedShards, Clusters clusters, boolean fetchPhase) {
         this.shards = shards;
@@ -121,8 +129,8 @@ public abstract class SearchProgressListener {
         try {
             onQueryResult(shardIndex);
         } catch (Exception e) {
-            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on query result",
-                shards.get(shardIndex)), e);
+            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on query result", shards.get(shardIndex)),
+                    e);
         }
     }
 
@@ -130,8 +138,8 @@ public abstract class SearchProgressListener {
         try {
             onQueryFailure(shardIndex, shardTarget, exc);
         } catch (Exception e) {
-            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on query failure",
-                shards.get(shardIndex)), e);
+            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on query failure", shards.get(shardIndex)),
+                    e);
         }
     }
 
@@ -155,8 +163,8 @@ public abstract class SearchProgressListener {
         try {
             onFetchResult(shardIndex);
         } catch (Exception e) {
-            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on fetch result",
-                shards.get(shardIndex)), e);
+            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on fetch result", shards.get(shardIndex)),
+                    e);
         }
     }
 
@@ -164,24 +172,20 @@ public abstract class SearchProgressListener {
         try {
             onFetchFailure(shardIndex, shardTarget, exc);
         } catch (Exception e) {
-            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on fetch failure",
-                shards.get(shardIndex)), e);
+            logger.warn(() -> new ParameterizedMessage("[{}] Failed to execute progress listener on fetch failure", shards.get(shardIndex)),
+                    e);
         }
     }
 
     static List<SearchShard> buildSearchShards(List<? extends SearchPhaseResult> results) {
-        List<SearchShard> lst = results.stream()
-            .filter(Objects::nonNull)
-            .map(SearchPhaseResult::getSearchShardTarget)
-            .map(e -> new SearchShard(e.getClusterAlias(), e.getShardId()))
-            .collect(Collectors.toList());
+        List<SearchShard> lst = results.stream().filter(Objects::nonNull).map(SearchPhaseResult::getSearchShardTarget)
+                .map(e -> new SearchShard(e.getClusterAlias(), e.getShardId())).collect(Collectors.toList());
         return Collections.unmodifiableList(lst);
     }
 
     static List<SearchShard> buildSearchShards(GroupShardsIterator<SearchShardIterator> its) {
-        List<SearchShard> lst = StreamSupport.stream(its.spliterator(), false)
-            .map(e -> new SearchShard(e.getClusterAlias(), e.shardId()))
-            .collect(Collectors.toList());
+        List<SearchShard> lst = StreamSupport.stream(its.spliterator(), false).map(e -> new SearchShard(e.getClusterAlias(), e.shardId()))
+                .collect(Collectors.toList());
         return Collections.unmodifiableList(lst);
     }
 }

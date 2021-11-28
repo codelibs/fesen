@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -33,10 +37,6 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions.NodesResponseRestListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 public class RestNodesInfoAction extends BaseRestHandler {
     static final Set<String> ALLOWED_METRICS = NodesInfoRequest.Metric.allMetrics();
 
@@ -48,13 +48,11 @@ public class RestNodesInfoAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_nodes"),
-            // this endpoint is used for metrics, not for node IDs, like /_nodes/fs
-            new Route(GET, "/_nodes/{nodeId}"),
-            new Route(GET, "/_nodes/{nodeId}/{metrics}"),
-            // added this endpoint to be aligned with stats
-            new Route(GET, "/_nodes/{nodeId}/info/{metrics}")));
+        return unmodifiableList(asList(new Route(GET, "/_nodes"),
+                // this endpoint is used for metrics, not for node IDs, like /_nodes/fs
+                new Route(GET, "/_nodes/{nodeId}"), new Route(GET, "/_nodes/{nodeId}/{metrics}"),
+                // added this endpoint to be aligned with stats
+                new Route(GET, "/_nodes/{nodeId}/info/{metrics}")));
     }
 
     @Override
@@ -82,7 +80,7 @@ public class RestNodesInfoAction extends BaseRestHandler {
             Set<String> metricsOrNodeIds = Strings.tokenizeByCommaToSet(nodeId);
             boolean isMetricsOnly = ALLOWED_METRICS.containsAll(metricsOrNodeIds);
             if (isMetricsOnly) {
-                nodeIds = new String[]{"_all"};
+                nodeIds = new String[] { "_all" };
                 metrics = metricsOrNodeIds;
             } else {
                 nodeIds = Strings.tokenizeToStringArray(nodeId, ",");

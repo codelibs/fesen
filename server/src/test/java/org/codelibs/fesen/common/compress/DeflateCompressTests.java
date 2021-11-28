@@ -55,7 +55,7 @@ public class DeflateCompressTests extends ESTestCase {
         int threadCount = TestUtil.nextInt(r, 2, 6);
         Thread[] threads = new Thread[threadCount];
         final CountDownLatch startingGun = new CountDownLatch(1);
-        for (int tid=0; tid < threadCount; tid++) {
+        for (int tid = 0; tid < threadCount; tid++) {
             final long seed = r.nextLong();
             threads[tid] = new Thread() {
                 @Override
@@ -101,7 +101,7 @@ public class DeflateCompressTests extends ESTestCase {
         int threadCount = TestUtil.nextInt(r, 2, 6);
         Thread[] threads = new Thread[threadCount];
         final CountDownLatch startingGun = new CountDownLatch(1);
-        for (int tid=0; tid < threadCount; tid++) {
+        for (int tid = 0; tid < threadCount; tid++) {
             final long seed = r.nextLong();
             threads[tid] = new Thread() {
                 @Override
@@ -161,7 +161,7 @@ public class DeflateCompressTests extends ESTestCase {
         int threadCount = TestUtil.nextInt(r, 2, 6);
         Thread[] threads = new Thread[threadCount];
         final CountDownLatch startingGun = new CountDownLatch(1);
-        for (int tid=0; tid < threadCount; tid++) {
+        for (int tid = 0; tid < threadCount; tid++) {
             final long seed = r.nextLong();
             threads[tid] = new Thread() {
                 @Override
@@ -225,7 +225,7 @@ public class DeflateCompressTests extends ESTestCase {
         int threadCount = TestUtil.nextInt(r, 2, 6);
         Thread[] threads = new Thread[threadCount];
         final CountDownLatch startingGun = new CountDownLatch(1);
-        for (int tid=0; tid < threadCount; tid++) {
+        for (int tid = 0; tid < threadCount; tid++) {
             final long seed = r.nextLong();
             threads[tid] = new Thread() {
                 @Override
@@ -349,7 +349,7 @@ public class DeflateCompressTests extends ESTestCase {
         int threadCount = TestUtil.nextInt(r, 2, 6);
         Thread[] threads = new Thread[threadCount];
         final CountDownLatch startingGun = new CountDownLatch(1);
-        for (int tid=0; tid < threadCount; tid++) {
+        for (int tid = 0; tid < threadCount; tid++) {
             final long seed = r.nextLong();
             threads[tid] = new Thread() {
                 @Override

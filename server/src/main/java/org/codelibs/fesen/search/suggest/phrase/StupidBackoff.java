@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.suggest.phrase;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.util.BytesRef;
@@ -29,9 +32,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.search.suggest.phrase.WordScorer.WordScorerFactory;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A "stupid-backoff" smoothing model similar to <a
@@ -122,7 +122,7 @@ public final class StupidBackoff extends SmoothingModel {
 
     @Override
     public WordScorerFactory buildWordScorerFactory() {
-        return (IndexReader reader, Terms terms, String field, double realWordLikelihood, BytesRef separator)
-                -> new StupidBackoffScorer(reader, terms, field, realWordLikelihood, separator, discount);
+        return (IndexReader reader, Terms terms, String field, double realWordLikelihood,
+                BytesRef separator) -> new StupidBackoffScorer(reader, terms, field, realWordLikelihood, separator, discount);
     }
 }

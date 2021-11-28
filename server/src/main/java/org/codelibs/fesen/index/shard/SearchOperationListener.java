@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.index.shard;
 
+import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.search.internal.ReaderContext;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.transport.TransportRequest;
-
-import java.util.List;
 
 /**
  * An listener for search, fetch and context events.
@@ -36,13 +36,15 @@ public interface SearchOperationListener {
      * Executed before the query phase is executed
      * @param searchContext the current search context
      */
-    default void onPreQueryPhase(SearchContext searchContext) {}
+    default void onPreQueryPhase(SearchContext searchContext) {
+    }
 
     /**
      * Executed if a query phased failed.
      * @param searchContext the current search context
      */
-    default void onFailedQueryPhase(SearchContext searchContext) {}
+    default void onFailedQueryPhase(SearchContext searchContext) {
+    }
 
     /**
      * Executed after the query phase successfully finished.
@@ -52,19 +54,22 @@ public interface SearchOperationListener {
      *
      * @see #onFailedQueryPhase(SearchContext)
      */
-    default void onQueryPhase(SearchContext searchContext, long tookInNanos) {}
+    default void onQueryPhase(SearchContext searchContext, long tookInNanos) {
+    }
 
     /**
      * Executed before the fetch phase is executed
      * @param searchContext the current search context
      */
-    default void onPreFetchPhase(SearchContext searchContext) {}
+    default void onPreFetchPhase(SearchContext searchContext) {
+    }
 
     /**
      * Executed if a fetch phased failed.
      * @param searchContext the current search context
      */
-    default void onFailedFetchPhase(SearchContext searchContext) {}
+    default void onFailedFetchPhase(SearchContext searchContext) {
+    }
 
     /**
      * Executed after the fetch phase successfully finished.
@@ -74,13 +79,15 @@ public interface SearchOperationListener {
      *
      * @see #onFailedFetchPhase(SearchContext)
      */
-    default void onFetchPhase(SearchContext searchContext, long tookInNanos) {}
+    default void onFetchPhase(SearchContext searchContext, long tookInNanos) {
+    }
 
     /**
      * Executed when a new reader context was created
      * @param readerContext the created context
      */
-    default void onNewReaderContext(ReaderContext readerContext) {}
+    default void onNewReaderContext(ReaderContext readerContext) {
+    }
 
     /**
      * Executed when a previously created reader context is freed.
@@ -89,13 +96,15 @@ public interface SearchOperationListener {
      * cleaned up.
      * @param readerContext the freed reader context
      */
-    default void onFreeReaderContext(ReaderContext readerContext) {}
+    default void onFreeReaderContext(ReaderContext readerContext) {
+    }
 
     /**
      * Executed when a new scroll search {@link ReaderContext} was created
      * @param readerContext the created reader context
      */
-    default void onNewScrollContext(ReaderContext readerContext) {}
+    default void onNewScrollContext(ReaderContext readerContext) {
+    }
 
     /**
      * Executed when a scroll search {@link SearchContext} is freed.
@@ -104,7 +113,8 @@ public interface SearchOperationListener {
      * cleaned up.
      * @param readerContext the freed search context
      */
-    default void onFreeScrollContext(ReaderContext readerContext) {}
+    default void onFreeScrollContext(ReaderContext readerContext) {
+    }
 
     /**
      * Executed prior to using a {@link ReaderContext} that has been retrieved
@@ -113,7 +123,8 @@ public interface SearchOperationListener {
      * @param readerContext The reader context used by this request.
      * @param transportRequest the request that is going to use the search context
      */
-    default void validateReaderContext(ReaderContext readerContext, TransportRequest transportRequest) {}
+    default void validateReaderContext(ReaderContext readerContext, TransportRequest transportRequest) {
+    }
 
     /**
      * A Composite listener that multiplexes calls to each of the listeners methods.

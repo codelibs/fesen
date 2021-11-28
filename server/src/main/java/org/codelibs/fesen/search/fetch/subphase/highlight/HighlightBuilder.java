@@ -19,22 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.vectorhighlight.SimpleBoundaryScanner;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
-import org.codelibs.fesen.index.query.QueryBuilder;
-import org.codelibs.fesen.index.query.QueryRewriteContext;
-import org.codelibs.fesen.index.query.QueryShardContext;
-import org.codelibs.fesen.index.query.Rewriteable;
-import org.codelibs.fesen.search.fetch.subphase.highlight.SearchHighlightContext.FieldOptions;
-
 import static org.codelibs.fesen.common.xcontent.ObjectParser.fromList;
 
 import java.io.IOException;
@@ -49,13 +33,29 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.vectorhighlight.SimpleBoundaryScanner;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.index.query.QueryBuilder;
+import org.codelibs.fesen.index.query.QueryRewriteContext;
+import org.codelibs.fesen.index.query.QueryShardContext;
+import org.codelibs.fesen.index.query.Rewriteable;
+import org.codelibs.fesen.search.fetch.subphase.highlight.SearchHighlightContext.FieldOptions;
+
 /**
  * A builder for search highlighting. Settings can control how large fields
  * are summarized to show only selected snippets ("fragments") containing search terms.
  *
  * @see org.codelibs.fesen.search.builder.SearchSourceBuilder#highlight()
  */
-public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilder>  {
+public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilder> {
     /** default for whether to highlight fields based on the source even if stored separately */
     public static final boolean DEFAULT_FORCE_SOURCE = false;
     /** default for whether a field should be highlighted only if a query matches that field */
@@ -75,30 +75,26 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
     /** the default number of fragments size in characters */
     public static final int DEFAULT_FRAGMENT_CHAR_SIZE = 100;
     /** the default opening tag  */
-    static final String[] DEFAULT_PRE_TAGS = new String[]{"<em>"};
+    static final String[] DEFAULT_PRE_TAGS = new String[] { "<em>" };
     /** the default closing tag  */
-    static final String[] DEFAULT_POST_TAGS = new String[]{"</em>"};
+    static final String[] DEFAULT_POST_TAGS = new String[] { "</em>" };
 
     /** the default opening tags when {@code tag_schema = "styled"}  */
-    public static final String[] DEFAULT_STYLED_PRE_TAG = {
-            "<em class=\"hlt1\">", "<em class=\"hlt2\">", "<em class=\"hlt3\">",
-            "<em class=\"hlt4\">", "<em class=\"hlt5\">", "<em class=\"hlt6\">",
-            "<em class=\"hlt7\">", "<em class=\"hlt8\">", "<em class=\"hlt9\">",
-            "<em class=\"hlt10\">"
-    };
+    public static final String[] DEFAULT_STYLED_PRE_TAG =
+            { "<em class=\"hlt1\">", "<em class=\"hlt2\">", "<em class=\"hlt3\">", "<em class=\"hlt4\">", "<em class=\"hlt5\">",
+                    "<em class=\"hlt6\">", "<em class=\"hlt7\">", "<em class=\"hlt8\">", "<em class=\"hlt9\">", "<em class=\"hlt10\">" };
     /** the default closing tags when {@code tag_schema = "styled"}  */
-    public static final String[] DEFAULT_STYLED_POST_TAGS = {"</em>"};
+    public static final String[] DEFAULT_STYLED_POST_TAGS = { "</em>" };
 
     /**
      * a {@link FieldOptions} with default settings
      */
-    static final FieldOptions defaultOptions = new SearchHighlightContext.FieldOptions.Builder()
-            .preTags(DEFAULT_PRE_TAGS).postTags(DEFAULT_POST_TAGS).scoreOrdered(DEFAULT_SCORE_ORDERED)
-            .highlightFilter(DEFAULT_HIGHLIGHT_FILTER).requireFieldMatch(DEFAULT_REQUIRE_FIELD_MATCH)
-            .forceSource(DEFAULT_FORCE_SOURCE).fragmentCharSize(DEFAULT_FRAGMENT_CHAR_SIZE)
-            .numberOfFragments(DEFAULT_NUMBER_OF_FRAGMENTS).encoder(DEFAULT_ENCODER)
-            .boundaryMaxScan(SimpleBoundaryScanner.DEFAULT_MAX_SCAN).boundaryChars(SimpleBoundaryScanner.DEFAULT_BOUNDARY_CHARS)
-            .boundaryScannerLocale(Locale.ROOT).noMatchSize(DEFAULT_NO_MATCH_SIZE).phraseLimit(DEFAULT_PHRASE_LIMIT).build();
+    static final FieldOptions defaultOptions = new SearchHighlightContext.FieldOptions.Builder().preTags(DEFAULT_PRE_TAGS)
+            .postTags(DEFAULT_POST_TAGS).scoreOrdered(DEFAULT_SCORE_ORDERED).highlightFilter(DEFAULT_HIGHLIGHT_FILTER)
+            .requireFieldMatch(DEFAULT_REQUIRE_FIELD_MATCH).forceSource(DEFAULT_FORCE_SOURCE).fragmentCharSize(DEFAULT_FRAGMENT_CHAR_SIZE)
+            .numberOfFragments(DEFAULT_NUMBER_OF_FRAGMENTS).encoder(DEFAULT_ENCODER).boundaryMaxScan(SimpleBoundaryScanner.DEFAULT_MAX_SCAN)
+            .boundaryChars(SimpleBoundaryScanner.DEFAULT_BOUNDARY_CHARS).boundaryScannerLocale(Locale.ROOT)
+            .noMatchSize(DEFAULT_NO_MATCH_SIZE).phraseLimit(DEFAULT_PHRASE_LIMIT).build();
 
     private final List<Field> fields;
 
@@ -156,7 +152,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         return field(new Field(name).fragmentSize(fragmentSize));
     }
 
-
     /**
      * Adds a field to be highlighted with a provided fragment size (in characters), and
      * a provided (maximum) number of fragments.
@@ -179,8 +174,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      * @param fragmentOffset    The offset from the start of the fragment to the start of the highlight
      */
     public HighlightBuilder field(String name, int fragmentSize, int numberOfFragments, int fragmentOffset) {
-        return field(new Field(name).fragmentSize(fragmentSize).numOfFragments(numberOfFragments)
-                .fragmentOffset(fragmentOffset));
+        return field(new Field(name).fragmentSize(fragmentSize).numOfFragments(numberOfFragments).fragmentOffset(fragmentOffset));
     }
 
     public HighlightBuilder field(Field field) {
@@ -213,7 +207,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
             postTags(DEFAULT_STYLED_POST_TAGS);
             break;
         default:
-            throw new IllegalArgumentException("Unknown tag schema ["+ schemaName +"]");
+            throw new IllegalArgumentException("Unknown tag schema [" + schemaName + "]");
         }
         return this;
     }
@@ -269,6 +263,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
                 FIELDS_FIELD);
         PARSER = setupParser(parser);
     }
+
     public static HighlightBuilder fromXContent(XContentParser p) {
         return PARSER.apply(p, new HighlightBuilder());
     }
@@ -293,8 +288,8 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
                 fieldOptionsBuilder.matchedFields(matchedFields);
             }
             transferOptions(field, fieldOptionsBuilder, context);
-            fieldOptions.add(new SearchHighlightContext.Field(field.name(), fieldOptionsBuilder
-                    .merge(globalOptionsBuilder.build()).build()));
+            fieldOptions
+                    .add(new SearchHighlightContext.Field(field.name(), fieldOptionsBuilder.merge(globalOptionsBuilder.build()).build()));
         }
         return new SearchHighlightContext(fieldOptions);
     }
@@ -309,8 +304,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void transferOptions(AbstractHighlighterBuilder highlighterBuilder,
-                                        SearchHighlightContext.FieldOptions.Builder targetOptionsBuilder,
-                                        QueryShardContext context) throws IOException {
+            SearchHighlightContext.FieldOptions.Builder targetOptionsBuilder, QueryShardContext context) throws IOException {
         if (highlighterBuilder.preTags != null) {
             targetOptionsBuilder.preTags(highlighterBuilder.preTags);
         }
@@ -416,9 +410,8 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
     @Override
     protected boolean doEquals(HighlightBuilder other) {
-        return Objects.equals(encoder, other.encoder) &&
-                Objects.equals(useExplicitFieldOrder, other.useExplicitFieldOrder) &&
-                Objects.equals(fields, other.fields);
+        return Objects.equals(encoder, other.encoder) && Objects.equals(useExplicitFieldOrder, other.useExplicitFieldOrder)
+                && Objects.equals(fields, other.fields);
     }
 
     @Override
@@ -474,7 +467,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         }
 
         @Override
-        protected  void doWriteTo(StreamOutput out) throws IOException {
+        protected void doWriteTo(StreamOutput out) throws IOException {
             out.writeString(name);
             out.writeVInt(fragmentOffset);
             out.writeOptionalStringArray(matchedFields);
@@ -521,9 +514,8 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
         @Override
         protected boolean doEquals(Field other) {
-            return Objects.equals(name, other.name) &&
-                    Objects.equals(fragmentOffset, other.fragmentOffset) &&
-                    Arrays.equals(matchedFields, other.matchedFields);
+            return Objects.equals(name, other.name) && Objects.equals(fragmentOffset, other.fragmentOffset)
+                    && Arrays.equals(matchedFields, other.matchedFields);
         }
 
         @Override

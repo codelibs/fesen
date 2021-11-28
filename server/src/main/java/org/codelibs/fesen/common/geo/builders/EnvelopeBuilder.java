@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import org.locationtech.spatial4j.shape.Rectangle;
-import org.locationtech.jts.geom.Coordinate;
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.parsers.GeoWKTParser;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Objects;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.spatial4j.shape.Rectangle;
 
 public class EnvelopeBuilder extends ShapeBuilder<Rectangle, org.codelibs.fesen.geometry.Rectangle, EnvelopeBuilder> {
 
@@ -140,7 +140,6 @@ public class EnvelopeBuilder extends ShapeBuilder<Rectangle, org.codelibs.fesen.
             return false;
         }
         EnvelopeBuilder other = (EnvelopeBuilder) obj;
-        return Objects.equals(topLeft, other.topLeft) &&
-                Objects.equals(bottomRight, other.bottomRight);
+        return Objects.equals(topLeft, other.topLeft) && Objects.equals(bottomRight, other.bottomRight);
     }
 }

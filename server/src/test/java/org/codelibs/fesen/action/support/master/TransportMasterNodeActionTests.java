@@ -97,14 +97,14 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         transport = new CapturingTransport();
         clusterService = createClusterService(threadPool);
         transportService = transport.createTransportService(clusterService.getSettings(), threadPool,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
+                TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
         transportService.start();
         transportService.acceptIncomingRequests();
         localNode = new DiscoveryNode("local_node", buildNewFakeTransportAddress(), Collections.emptyMap(),
                 Collections.singleton(DiscoveryNodeRole.MASTER_ROLE), Version.CURRENT);
         remoteNode = new DiscoveryNode("remote_node", buildNewFakeTransportAddress(), Collections.emptyMap(),
                 Collections.singleton(DiscoveryNodeRole.MASTER_ROLE), Version.CURRENT);
-        allNodes = new DiscoveryNode[]{localNode, remoteNode};
+        allNodes = new DiscoveryNode[] { localNode, remoteNode };
     }
 
     @After
@@ -130,7 +130,8 @@ public class TransportMasterNodeActionTests extends ESTestCase {
     }
 
     public static class Request extends MasterNodeRequest<Request> {
-        Request() {}
+        Request() {
+        }
 
         Request(StreamInput in) throws IOException {
             super(in);
@@ -145,7 +146,8 @@ public class TransportMasterNodeActionTests extends ESTestCase {
     class Response extends ActionResponse {
         private long identity = randomLong();
 
-        Response() {}
+        Response() {
+        }
 
         Response(StreamInput in) throws IOException {
             super(in);
@@ -154,8 +156,10 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Response response = (Response) o;
             return identity == response.identity;
         }
@@ -172,10 +176,9 @@ public class TransportMasterNodeActionTests extends ESTestCase {
     }
 
     class Action extends TransportMasterNodeAction<Request, Response> {
-        Action(String actionName, TransportService transportService, ClusterService clusterService,
-               ThreadPool threadPool) {
-            super(actionName, transportService, clusterService, threadPool,
-                    new ActionFilters(new HashSet<>()), Request::new, new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
+        Action(String actionName, TransportService transportService, ClusterService clusterService, ThreadPool threadPool) {
+            super(actionName, transportService, clusterService, threadPool, new ActionFilters(new HashSet<>()), Request::new,
+                    new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
         }
 
         @Override
@@ -248,8 +251,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         Request request = new Request().masterNodeTimeout(TimeValue.timeValueSeconds(unblockBeforeTimeout ? 60 : 0));
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
 
-        ClusterBlock block = new ClusterBlock(1, "", retryableBlock, true,
-            false, randomFrom(RestStatus.values()), ClusterBlockLevel.ALL);
+        ClusterBlock block = new ClusterBlock(1, "", retryableBlock, true, false, randomFrom(RestStatus.values()), ClusterBlockLevel.ALL);
         ClusterState stateWithBlock = ClusterState.builder(ClusterStateCreationUtils.state(localNode, localNode, allNodes))
                 .blocks(ClusterBlocks.builder().addGlobalBlock(block)).build();
         setState(clusterService, stateWithBlock);
@@ -290,10 +292,9 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         Request request = new Request().masterNodeTimeout(TimeValue.timeValueSeconds(60));
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
 
-        ClusterBlock block = new ClusterBlock(1, "", true, true,
-            false, randomFrom(RestStatus.values()), ClusterBlockLevel.ALL);
+        ClusterBlock block = new ClusterBlock(1, "", true, true, false, randomFrom(RestStatus.values()), ClusterBlockLevel.ALL);
         ClusterState stateWithBlock = ClusterState.builder(ClusterStateCreationUtils.state(localNode, localNode, allNodes))
-            .blocks(ClusterBlocks.builder().addGlobalBlock(block)).build();
+                .blocks(ClusterBlocks.builder().addGlobalBlock(block)).build();
         setState(clusterService, stateWithBlock);
 
         new Action("internal:testAction", transportService, clusterService, threadPool) {
@@ -313,7 +314,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         } else {
             assertFalse(listener.isDone());
             setState(clusterService, ClusterState.builder(ClusterStateCreationUtils.state(localNode, localNode, allNodes))
-                .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build());
+                    .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build());
             assertListenerThrows("checkBlock has thrown exception", listener, RuntimeException.class);
         }
     }
@@ -379,11 +380,9 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         boolean rejoinSameMaster = failsWithConnectTransportException && randomBoolean();
         Request request = new Request().masterNodeTimeout(TimeValue.timeValueSeconds(failsWithConnectTransportException ? 60 : 0));
         DiscoveryNode masterNode = this.remoteNode;
-        setState(
-            clusterService,
-            // use a random base version so it can go down when simulating a restart.
-            ClusterState.builder(ClusterStateCreationUtils.state(localNode, masterNode, allNodes)).version(randomIntBetween(0, 10))
-        );
+        setState(clusterService,
+                // use a random base version so it can go down when simulating a restart.
+                ClusterState.builder(ClusterStateCreationUtils.state(localNode, masterNode, allNodes)).version(randomIntBetween(0, 10)));
 
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
         new Action("internal:testAction", transportService, clusterService, threadPool).execute(request, listener);
@@ -397,7 +396,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         if (rejoinSameMaster) {
             transport.handleRemoteError(capturedRequest.requestId,
-                randomBoolean() ? new ConnectTransportException(masterNode, "Fake error") : new NodeClosedException(masterNode));
+                    randomBoolean() ? new ConnectTransportException(masterNode, "Fake error") : new NodeClosedException(masterNode));
             assertFalse(listener.isDone());
             if (randomBoolean()) {
                 // simulate master node removal
@@ -460,14 +459,13 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         setState(clusterService, ClusterStateCreationUtils.state(localNode, localNode, allNodes));
 
-        new Action( "internal:testAction", transportService, clusterService, threadPool) {
+        new Action("internal:testAction", transportService, clusterService, threadPool) {
             @Override
             protected void masterOperation(Request request, ClusterState state, ActionListener<Response> listener) throws Exception {
                 // The other node has become master, simulate failures of this node while publishing cluster state through ZenDiscovery
                 setState(clusterService, ClusterStateCreationUtils.state(localNode, remoteNode, allNodes));
-                Exception failure = randomBoolean()
-                        ? new FailedToCommitClusterStateException("Fake error")
-                        : new NotMasterException("Fake error");
+                Exception failure =
+                        randomBoolean() ? new FailedToCommitClusterStateException("Fake error") : new NotMasterException("Fake error");
                 listener.onFailure(failure);
             }
         }.execute(request, listener);

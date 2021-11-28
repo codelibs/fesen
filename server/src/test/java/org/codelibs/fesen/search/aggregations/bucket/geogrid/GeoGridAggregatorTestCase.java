@@ -99,11 +99,9 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
     }
 
     public void testUnmappedMissing() throws IOException {
-        GeoGridAggregationBuilder builder = createBuilder("_name")
-            .field("wrong_field")
-            .missing("53.69437,6.475031");
+        GeoGridAggregationBuilder builder = createBuilder("_name").field("wrong_field").missing("53.69437,6.475031");
         testCase(new MatchAllDocsQuery(), randomPrecision(), null, geoGrid -> assertEquals(1, geoGrid.getBuckets().size()),
-            iw -> iw.addDocument(Collections.singleton(new LatLonDocValuesField(FIELD_NAME, 10D, 10D))), builder);
+                iw -> iw.addDocument(Collections.singleton(new LatLonDocValuesField(FIELD_NAME, 10D, 10D))), builder);
 
     }
 
@@ -162,12 +160,11 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
             expectedCountPerGeoHash.put(hash, expectedCountPerGeoHash.getOrDefault(hash, 0L) + 1);
         }
         CheckedConsumer<RandomIndexWriter, IOException> buildIndex = iw -> iw.addDocuments(docs);
-        TermsAggregationBuilder aggregationBuilder = new TermsAggregationBuilder("t").field("t")
-            .size(expectedCountPerTPerGeoHash.size())
-            .subAggregation(createBuilder("gg").field(FIELD_NAME).precision(precision));
+        TermsAggregationBuilder aggregationBuilder = new TermsAggregationBuilder("t").field("t").size(expectedCountPerTPerGeoHash.size())
+                .subAggregation(createBuilder("gg").field(FIELD_NAME).precision(precision));
         Consumer<StringTerms> verify = (terms) -> {
             Map<String, Map<String, Long>> actual = new TreeMap<>();
-            for (StringTerms.Bucket tb: terms.getBuckets()) {
+            for (StringTerms.Bucket tb : terms.getBuckets()) {
                 InternalGeoGrid<?> gg = tb.getAggregations().get("gg");
                 Map<String, Long> sub = new TreeMap<>();
                 for (InternalGeoGridBucket<?> ggb : gg.getBuckets()) {
@@ -191,7 +188,7 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
         lng = GeoEncodingUtils.decodeLongitude(GeoEncodingUtils.encodeLongitude(lng));
         lat = GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(lat));
 
-        return new double[] {lat, lng};
+        return new double[] { lat, lng };
     }
 
     public void testBounds() throws IOException {
@@ -203,8 +200,8 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
 
         // only consider bounding boxes that are at least GEOHASH_TOLERANCE wide and have quantized coordinates
         GeoBoundingBox bbox = randomValueOtherThanMany(
-            (b) -> Math.abs(GeoUtils.normalizeLon(b.right()) - GeoUtils.normalizeLon(b.left())) < GEOHASH_TOLERANCE,
-            GeoBoundingBoxTests::randomBBox);
+                (b) -> Math.abs(GeoUtils.normalizeLon(b.right()) - GeoUtils.normalizeLon(b.left())) < GEOHASH_TOLERANCE,
+                GeoBoundingBoxTests::randomBBox);
         Function<Double, Double> encodeDecodeLat = (lat) -> GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(lat));
         Function<Double, Double> encodeDecodeLon = (lon) -> GeoEncodingUtils.decodeLongitude(GeoEncodingUtils.encodeLongitude(lon));
         bbox.topLeft().reset(encodeDecodeLat.apply(bbox.top()), encodeDecodeLon.apply(bbox.left()));
@@ -215,9 +212,8 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
         while (in + out < numDocs) {
             if (bbox.left() > bbox.right()) {
                 if (randomBoolean()) {
-                    double lonWithin = randomBoolean() ?
-                        randomDoubleBetween(bbox.left(), 180.0, true)
-                        : randomDoubleBetween(-180.0, bbox.right(), true);
+                    double lonWithin = randomBoolean() ? randomDoubleBetween(bbox.left(), 180.0, true)
+                            : randomDoubleBetween(-180.0, bbox.right(), true);
                     double latWithin = randomDoubleBetween(bbox.bottom(), bbox.top(), true);
                     in++;
                     docs.add(new LatLonDocValuesField(FIELD_NAME, latWithin, lonWithin));
@@ -260,16 +256,13 @@ public abstract class GeoGridAggregatorTestCase<T extends InternalGeoGridBucket>
         });
     }
 
-    private void testCase(Query query, String field, int precision, GeoBoundingBox geoBoundingBox,
-                          Consumer<InternalGeoGrid<T>> verify,
-                          CheckedConsumer<RandomIndexWriter, IOException> buildIndex) throws IOException {
+    private void testCase(Query query, String field, int precision, GeoBoundingBox geoBoundingBox, Consumer<InternalGeoGrid<T>> verify,
+            CheckedConsumer<RandomIndexWriter, IOException> buildIndex) throws IOException {
         testCase(query, precision, geoBoundingBox, verify, buildIndex, createBuilder("_name").field(field));
     }
 
-    private void testCase(Query query, int precision, GeoBoundingBox geoBoundingBox,
-                          Consumer<InternalGeoGrid<T>> verify,
-                          CheckedConsumer<RandomIndexWriter, IOException> buildIndex,
-                          GeoGridAggregationBuilder aggregationBuilder) throws IOException {
+    private void testCase(Query query, int precision, GeoBoundingBox geoBoundingBox, Consumer<InternalGeoGrid<T>> verify,
+            CheckedConsumer<RandomIndexWriter, IOException> buildIndex, GeoGridAggregationBuilder aggregationBuilder) throws IOException {
         Directory directory = newDirectory();
         RandomIndexWriter indexWriter = new RandomIndexWriter(random(), directory);
         buildIndex.accept(indexWriter);

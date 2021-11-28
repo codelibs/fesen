@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static org.codelibs.fesen.index.query.QueryBuilders.matchQuery;
+import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -27,17 +32,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.codelibs.fesen.action.index.IndexRequestBuilder;
 import org.codelibs.fesen.index.query.MatchQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilders;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-
-import static org.codelibs.fesen.index.query.QueryBuilders.matchQuery;
-import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
-import static org.hamcrest.Matchers.equalTo;
 
 public class DeleteByQueryConcurrentTests extends ReindexTestCase {
 
     public void testConcurrentDeleteByQueriesOnDifferentDocs() throws Throwable {
-        final Thread[] threads =  new Thread[scaledRandomIntBetween(2, 5)];
+        final Thread[] threads = new Thread[scaledRandomIntBetween(2, 5)];
         final long docs = randomIntBetween(1, 50);
 
         List<IndexRequestBuilder> builders = new ArrayList<>();
@@ -86,7 +85,7 @@ public class DeleteByQueryConcurrentTests extends ReindexTestCase {
         }
         indexRandom(true, true, true, builders);
 
-        final Thread[] threads =  new Thread[scaledRandomIntBetween(2, 9)];
+        final Thread[] threads = new Thread[scaledRandomIntBetween(2, 9)];
 
         final CountDownLatch start = new CountDownLatch(1);
         final MatchQueryBuilder query = matchQuery("foo", "bar");

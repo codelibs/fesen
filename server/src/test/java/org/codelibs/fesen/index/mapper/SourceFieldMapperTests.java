@@ -52,44 +52,35 @@ public class SourceFieldMapperTests extends ESSingleNodeTestCase {
     }
 
     public void testNoFormat() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-                .startObject("_source").endObject()
-                .endObject().endObject());
+        String mapping = Strings.toString(
+                XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source").endObject().endObject().endObject());
 
         DocumentMapperParser parser = createIndex("test").mapperService().documentMapperParser();
         DocumentMapper documentMapper = parser.parse("type", new CompressedXContent(mapping));
         ParsedDocument doc = documentMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder().startObject()
-                .field("field", "value")
-                .endObject()),
-                XContentType.JSON));
+                BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field("field", "value").endObject()), XContentType.JSON));
 
         assertThat(XContentFactory.xContentType(doc.source().toBytesRef().bytes), equalTo(XContentType.JSON));
 
         documentMapper = parser.parse("type", new CompressedXContent(mapping));
         doc = documentMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.smileBuilder().startObject()
-                .field("field", "value")
-                .endObject()),
+                BytesReference.bytes(XContentFactory.smileBuilder().startObject().field("field", "value").endObject()),
                 XContentType.SMILE));
 
         assertThat(XContentHelper.xContentType(doc.source()), equalTo(XContentType.SMILE));
     }
 
     public void testIncludes() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("includes", new String[]{"path1*"}).endObject()
-            .endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("includes", new String[] { "path1*" }).endObject().endObject().endObject());
 
-        DocumentMapper documentMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        DocumentMapper documentMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
 
-        ParsedDocument doc = documentMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder().startObject()
-            .startObject("path1").field("field1", "value1").endObject()
-            .startObject("path2").field("field2", "value2").endObject()
-            .endObject()),
-            XContentType.JSON));
+        ParsedDocument doc = documentMapper.parse(new SourceToParse(
+                "test", "type", "1", BytesReference.bytes(XContentFactory.jsonBuilder().startObject().startObject("path1")
+                        .field("field1", "value1").endObject().startObject("path2").field("field2", "value2").endObject().endObject()),
+                XContentType.JSON));
 
         IndexableField sourceField = doc.rootDoc().getField("_source");
         Map<String, Object> sourceAsMap;
@@ -101,19 +92,16 @@ public class SourceFieldMapperTests extends ESSingleNodeTestCase {
     }
 
     public void testExcludes() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("excludes", "path1*").endObject()
-            .endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("excludes", "path1*").endObject().endObject().endObject());
 
-        DocumentMapper documentMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        DocumentMapper documentMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
 
-        ParsedDocument doc = documentMapper.parse(new SourceToParse("test", "type", "1",
-            BytesReference.bytes(XContentFactory.jsonBuilder().startObject()
-            .startObject("path1").field("field1", "value1").endObject()
-            .startObject("path2").field("field2", "value2").endObject()
-            .endObject()),
-            XContentType.JSON));
+        ParsedDocument doc = documentMapper.parse(new SourceToParse(
+                "test", "type", "1", BytesReference.bytes(XContentFactory.jsonBuilder().startObject().startObject("path1")
+                        .field("field1", "value1").endObject().startObject("path2").field("field2", "value2").endObject().endObject()),
+                XContentType.JSON));
 
         IndexableField sourceField = doc.rootDoc().getField("_source");
         Map<String, Object> sourceAsMap;
@@ -128,30 +116,26 @@ public class SourceFieldMapperTests extends ESSingleNodeTestCase {
         DocumentMapperParser parser = createIndex("test").mapperService().documentMapperParser();
         // using default of true
         String mapping1 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
-        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").field("enabled", false).endObject()
-            .endObject().endObject());
+        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .field("enabled", false).endObject().endObject().endObject());
         assertConflicts(mapping1, mapping2, parser, "Cannot update parameter [enabled] from [true] to [false]");
 
         // not changing is ok
-        String mapping3 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").field("enabled", true).endObject()
-            .endObject().endObject());
+        String mapping3 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .field("enabled", true).endObject().endObject().endObject());
         assertConflicts(mapping1, mapping3, parser);
     }
 
     public void testIncludesNotUpdateable() throws Exception {
         DocumentMapperParser parser = createIndex("test").mapperService().documentMapperParser();
         String defaultMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
-        String mapping1 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("includes", "foo.*").endObject()
-            .endObject().endObject());
+        String mapping1 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("includes", "foo.*").endObject().endObject().endObject());
         assertConflicts(defaultMapping, mapping1, parser, "Cannot update parameter [includes] from [[]] to [[foo.*]]");
         assertConflicts(mapping1, defaultMapping, parser, "Cannot update parameter [includes] from [[foo.*]] to [[]]");
 
-        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("includes", "foo.*", "bar.*").endObject()
-            .endObject().endObject());
+        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("includes", "foo.*", "bar.*").endObject().endObject().endObject());
         assertConflicts(mapping1, mapping2, parser, "Cannot update parameter [includes] from [[foo.*]] to [[foo.*, bar.*]]");
 
         // not changing is ok
@@ -161,15 +145,13 @@ public class SourceFieldMapperTests extends ESSingleNodeTestCase {
     public void testExcludesNotUpdateable() throws Exception {
         DocumentMapperParser parser = createIndex("test").mapperService().documentMapperParser();
         String defaultMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
-        String mapping1 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("excludes", "foo.*").endObject()
-            .endObject().endObject());
+        String mapping1 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("excludes", "foo.*").endObject().endObject().endObject());
         assertConflicts(defaultMapping, mapping1, parser, "Cannot update parameter [excludes] from [[]] to [[foo.*]]");
         assertConflicts(mapping1, defaultMapping, parser, "Cannot update parameter [excludes] from [[foo.*]] to [[]]");
 
-        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("excludes", "foo.*", "bar.*").endObject()
-            .endObject().endObject());
+        String mapping2 = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("excludes", "foo.*", "bar.*").endObject().endObject().endObject());
         assertConflicts(mapping1, mapping2, parser, "Cannot update parameter [excludes]");
 
         // not changing is ok
@@ -181,30 +163,26 @@ public class SourceFieldMapperTests extends ESSingleNodeTestCase {
         String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
         assertTrue(parser.parse("type", new CompressedXContent(mapping)).sourceMapper().isComplete());
 
-        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").field("enabled", false).endObject()
-            .endObject().endObject());
+        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .field("enabled", false).endObject().endObject().endObject());
         assertFalse(parser.parse("type", new CompressedXContent(mapping)).sourceMapper().isComplete());
 
-        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("includes", "foo.*").endObject()
-            .endObject().endObject());
+        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("includes", "foo.*").endObject().endObject().endObject());
         assertFalse(parser.parse("type", new CompressedXContent(mapping)).sourceMapper().isComplete());
 
-        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-            .startObject("_source").array("excludes", "foo.*").endObject()
-            .endObject().endObject());
+        mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("_source")
+                .array("excludes", "foo.*").endObject().endObject().endObject());
         assertFalse(parser.parse("type", new CompressedXContent(mapping)).sourceMapper().isComplete());
     }
 
     public void testSourceObjectContainsExtraTokens() throws Exception {
         String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").endObject().endObject());
-        DocumentMapper documentMapper = createIndex("test").mapperService().documentMapperParser()
-            .parse("type", new CompressedXContent(mapping));
+        DocumentMapper documentMapper =
+                createIndex("test").mapperService().documentMapperParser().parse("type", new CompressedXContent(mapping));
 
         try {
-            documentMapper.parse(new SourceToParse("test", "type", "1",
-                new BytesArray("{}}"), XContentType.JSON)); // extra end object (invalid JSON)
+            documentMapper.parse(new SourceToParse("test", "type", "1", new BytesArray("{}}"), XContentType.JSON)); // extra end object (invalid JSON)
             fail("Expected parse exception");
         } catch (MapperParsingException e) {
             assertNotNull(e.getRootCause());

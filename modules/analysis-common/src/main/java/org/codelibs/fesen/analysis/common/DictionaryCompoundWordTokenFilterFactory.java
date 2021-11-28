@@ -25,7 +25,6 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 
-
 /**
  * Uses the {@link org.apache.lucene.analysis.compound.DictionaryCompoundWordTokenFilter} to decompound tokens using a dictionary.
  *
@@ -39,7 +38,6 @@ public class DictionaryCompoundWordTokenFilterFactory extends AbstractCompoundWo
 
     @Override
     public TokenStream create(TokenStream tokenStream) {
-        return new DictionaryCompoundWordTokenFilter(tokenStream, wordList, minWordSize,
-                                                     minSubwordSize, maxSubwordSize, onlyLongestMatch);
+        return new DictionaryCompoundWordTokenFilter(tokenStream, wordList, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
     }
 }

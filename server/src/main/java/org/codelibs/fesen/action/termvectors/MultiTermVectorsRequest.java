@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.action.termvectors;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -30,14 +38,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class MultiTermVectorsRequest extends ActionRequest
         implements Iterable<TermVectorsRequest>, CompositeIndicesRequest, RealtimeRequest {
@@ -57,7 +57,8 @@ public class MultiTermVectorsRequest extends ActionRequest
         }
     }
 
-    public MultiTermVectorsRequest() {}
+    public MultiTermVectorsRequest() {
+    }
 
     public MultiTermVectorsRequest add(TermVectorsRequest termVectorsRequest) {
         requests.add(termVectorsRequest);
@@ -79,8 +80,8 @@ public class MultiTermVectorsRequest extends ActionRequest
                 TermVectorsRequest termVectorsRequest = requests.get(i);
                 ActionRequestValidationException validationExceptionForDoc = termVectorsRequest.validate();
                 if (validationExceptionForDoc != null) {
-                    validationException = ValidateActions.addValidationError("at multi term vectors for doc " + i,
-                            validationExceptionForDoc);
+                    validationException =
+                            ValidateActions.addValidationError("at multi term vectors for doc " + i, validationExceptionForDoc);
                 }
             }
         }

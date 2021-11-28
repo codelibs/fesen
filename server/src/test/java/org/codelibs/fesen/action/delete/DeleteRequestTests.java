@@ -38,7 +38,7 @@ public class DeleteRequestTests extends ESTestCase {
 
         {
             //Empty types are accepted but fail validation
-            final DeleteRequest request = new DeleteRequest("index4",  "",  randomBoolean() ? "" : null);
+            final DeleteRequest request = new DeleteRequest("index4", "", randomBoolean() ? "" : null);
             final ActionRequestValidationException validate = request.validate();
 
             assertThat(validate, not(nullValue()));
@@ -51,6 +51,6 @@ public class DeleteRequestTests extends ESTestCase {
 
             assertThat(validate, not(nullValue()));
             assertThat(validate.validationErrors(), hasItems("id is missing"));
-        }        
+        }
     }
 }

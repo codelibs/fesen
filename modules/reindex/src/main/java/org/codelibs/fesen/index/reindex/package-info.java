@@ -22,7 +22,3 @@
  * {@link DeleteByQueryAction}.
  */
 package org.codelibs.fesen.index.reindex;
-
-import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
-import org.codelibs.fesen.index.reindex.ReindexAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryAction;

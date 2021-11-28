@@ -19,18 +19,14 @@
 
 package org.codelibs.fesen.common.xcontent;
 
+import java.io.IOException;
+import java.util.function.BiConsumer;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.AbstractObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.core.CheckedFunction;
-
-import java.io.IOException;
-import java.util.function.BiConsumer;
 
 /**
  * This class provides helpers for {@link ObjectParser} that allow dealing with
@@ -41,9 +37,8 @@ public final class ObjectParserHelper<Value, Context> {
     /**
      * Helper to declare an object that will be parsed into a {@link BytesReference}
      */
-    public void declareRawObject(final AbstractObjectParser<Value, Context> parser,
-                                 final BiConsumer<Value, BytesReference> consumer,
-                                 final ParseField field) {
+    public void declareRawObject(final AbstractObjectParser<Value, Context> parser, final BiConsumer<Value, BytesReference> consumer,
+            final ParseField field) {
         final CheckedFunction<XContentParser, BytesReference, IOException> bytesParser = p -> {
             try (XContentBuilder builder = JsonXContent.contentBuilder()) {
                 builder.copyCurrentStructure(p);

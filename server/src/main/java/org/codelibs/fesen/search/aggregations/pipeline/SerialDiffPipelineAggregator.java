@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import org.codelibs.fesen.common.collect.EvictingQueue;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.search.DocValueFormat;
-import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregations;
-import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
-import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
-import org.codelibs.fesen.search.aggregations.bucket.histogram.HistogramFactory;
-import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
-
 import static org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
 
 import java.io.IOException;
@@ -41,13 +28,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.codelibs.fesen.common.collect.EvictingQueue;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.search.DocValueFormat;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
+import org.codelibs.fesen.search.aggregations.InternalAggregations;
+import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
+import org.codelibs.fesen.search.aggregations.bucket.histogram.HistogramFactory;
+import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
+
 public class SerialDiffPipelineAggregator extends PipelineAggregator {
     private DocValueFormat formatter;
     private GapPolicy gapPolicy;
     private int lag;
 
-    SerialDiffPipelineAggregator(String name, String[] bucketsPaths, @Nullable DocValueFormat formatter, GapPolicy gapPolicy,
-                                 int lag, Map<String, Object> metadata) {
+    SerialDiffPipelineAggregator(String name, String[] bucketsPaths, @Nullable DocValueFormat formatter, GapPolicy gapPolicy, int lag,
+            Map<String, Object> metadata) {
         super(name, bucketsPaths, metadata);
         this.formatter = formatter;
         this.gapPolicy = gapPolicy;
@@ -78,9 +78,8 @@ public class SerialDiffPipelineAggregator extends PipelineAggregator {
 
     @Override
     public InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext) {
-        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>
-                histo = (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends
-                InternalMultiBucketAggregation.InternalBucket>) aggregation;
+        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket> histo =
+                (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>) aggregation;
         List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = histo.getBuckets();
         HistogramFactory factory = (HistogramFactory) histo;
 
@@ -99,7 +98,7 @@ public class SerialDiffPipelineAggregator extends PipelineAggregator {
             if (counter <= lag) {
                 lagValue = Double.NaN;
             } else {
-                lagValue = lagWindow.peek();  // Peek here, because we rely on add'ing to always move the window
+                lagValue = lagWindow.peek(); // Peek here, because we rely on add'ing to always move the window
             }
 
             // Normalize null's to NaN
@@ -111,8 +110,8 @@ public class SerialDiffPipelineAggregator extends PipelineAggregator {
             if (!Double.isNaN(thisBucketValue) && !Double.isNaN(lagValue)) {
                 double diff = thisBucketValue - lagValue;
 
-                List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map(
-                        (p) -> (InternalAggregation) p).collect(Collectors.toList());
+                List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
+                        .map((p) -> (InternalAggregation) p).collect(Collectors.toList());
                 aggs.add(new InternalSimpleValue(name(), diff, formatter, metadata()));
                 newBucket = factory.createBucket(factory.getKey(bucket), bucket.getDocCount(), InternalAggregations.from(aggs));
             }

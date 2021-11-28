@@ -30,7 +30,7 @@ public class FlushResponseTests extends AbstractBroadcastResponseTestCase<FlushR
 
     @Override
     protected FlushResponse createTestInstance(int totalShards, int successfulShards, int failedShards,
-                                               List<DefaultShardOperationFailedException> failures) {
+            List<DefaultShardOperationFailedException> failures) {
         return new FlushResponse(totalShards, successfulShards, failedShards, failures);
     }
 

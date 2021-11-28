@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.common.ParseField;
@@ -30,14 +38,6 @@ import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregation<ParsedSignificantTerms.ParsedBucket>
         implements SignificantTerms {
@@ -85,7 +85,7 @@ public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregatio
     }
 
     static <T extends ParsedSignificantTerms> T parseSignificantTermsXContent(final CheckedSupplier<T, IOException> aggregationSupplier,
-                                                                              final String name) throws IOException {
+            final String name) throws IOException {
         T aggregation = aggregationSupplier.get();
         aggregation.setName(name);
         for (ParsedBucket bucket : aggregation.buckets) {
@@ -96,10 +96,10 @@ public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregatio
     }
 
     static void declareParsedSignificantTermsFields(final ObjectParser<? extends ParsedSignificantTerms, Void> objectParser,
-                                     final CheckedFunction<XContentParser, ParsedSignificantTerms.ParsedBucket, IOException> bucketParser) {
+            final CheckedFunction<XContentParser, ParsedSignificantTerms.ParsedBucket, IOException> bucketParser) {
         declareMultiBucketAggregationFields(objectParser, bucketParser::apply, bucketParser::apply);
-        objectParser.declareLong((parsedTerms, value) -> parsedTerms.subsetSize = value , CommonFields.DOC_COUNT);
-        objectParser.declareLong((parsedTerms, value) -> parsedTerms.supersetSize = value ,
+        objectParser.declareLong((parsedTerms, value) -> parsedTerms.subsetSize = value, CommonFields.DOC_COUNT);
+        objectParser.declareLong((parsedTerms, value) -> parsedTerms.supersetSize = value,
                 new ParseField(InternalMappedSignificantTerms.BG_COUNT));
     }
 
@@ -157,7 +157,7 @@ public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregatio
         protected abstract XContentBuilder keyToXContent(XContentBuilder builder) throws IOException;
 
         static <B extends ParsedBucket> B parseSignificantTermsBucketXContent(final XContentParser parser, final B bucket,
-            final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer) throws IOException {
+                final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer) throws IOException {
 
             final List<Aggregation> aggregations = new ArrayList<>();
             XContentParser.Token token;

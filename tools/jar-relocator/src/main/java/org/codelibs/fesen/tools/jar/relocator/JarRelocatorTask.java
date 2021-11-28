@@ -16,9 +16,6 @@
 
 package org.codelibs.fesen.tools.jar.relocator;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +25,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 /**
  * A task that copies {@link JarEntry jar entries} from a {@link JarFile jar input} to a
@@ -50,7 +50,7 @@ final class JarRelocatorTask {
     }
 
     void processEntries() throws IOException {
-        for (Enumeration<JarEntry> entries = this.jarIn.entries(); entries.hasMoreElements(); ) {
+        for (Enumeration<JarEntry> entries = this.jarIn.entries(); entries.hasMoreElements();) {
             JarEntry entry = entries.nextElement();
 
             // The 'INDEX.LIST' file is an optional file, containing information about the packages

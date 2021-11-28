@@ -36,7 +36,8 @@ import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesRequest.Alias
 
 public final class RandomAliasActionsGenerator {
 
-    private RandomAliasActionsGenerator() {}
+    private RandomAliasActionsGenerator() {
+    }
 
     public static AliasActions randomAliasAction() {
         return randomAliasAction(false);

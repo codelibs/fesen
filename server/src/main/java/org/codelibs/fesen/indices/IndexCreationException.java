@@ -32,7 +32,7 @@ public class IndexCreationException extends FesenException implements FesenWrapp
         setIndex(index);
     }
 
-    public IndexCreationException(StreamInput in) throws IOException{
+    public IndexCreationException(StreamInput in) throws IOException {
         super(in);
     }
 }

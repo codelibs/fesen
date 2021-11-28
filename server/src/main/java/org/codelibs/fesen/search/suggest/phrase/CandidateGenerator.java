@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
+import java.io.IOException;
+
 import org.apache.lucene.codecs.TermStats;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.CandidateSet;
-
-import java.io.IOException;
 
 //TODO public for tests
 public abstract class CandidateGenerator {
@@ -40,12 +40,13 @@ public abstract class CandidateGenerator {
     public Candidate createCandidate(BytesRef term, boolean userInput) throws IOException {
         return createCandidate(term, termStats(term), 1.0, userInput);
     }
+
     public Candidate createCandidate(BytesRef term, TermStats termStats, double channelScore) throws IOException {
         return createCandidate(term, termStats, channelScore, false);
     }
 
-    public abstract Candidate createCandidate(BytesRef term, TermStats termStats,
-                                                double channelScore, boolean userInput) throws IOException;
+    public abstract Candidate createCandidate(BytesRef term, TermStats termStats, double channelScore, boolean userInput)
+            throws IOException;
 
     public abstract CandidateSet drawCandidates(CandidateSet set) throws IOException;
 }

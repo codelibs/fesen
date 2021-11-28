@@ -29,15 +29,7 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 interface RareTermsAggregatorSupplier {
-    Aggregator build(String name,
-                     AggregatorFactories factories,
-                     ValuesSource valuesSource,
-                     DocValueFormat format,
-                     int maxDocCount,
-                     double precision,
-                     IncludeExclude includeExclude,
-                     SearchContext context,
-                     Aggregator parent,
-                     CardinalityUpperBound carinality,
-                     Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name, AggregatorFactories factories, ValuesSource valuesSource, DocValueFormat format, int maxDocCount,
+            double precision, IncludeExclude includeExclude, SearchContext context, Aggregator parent, CardinalityUpperBound carinality,
+            Map<String, Object> metadata) throws IOException;
 }

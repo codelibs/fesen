@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.common.document.DocumentField;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.mapper.ValueFetcher;
-import org.codelibs.fesen.search.lookup.SearchLookup;
-import org.codelibs.fesen.search.lookup.SourceLookup;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,14 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.index.LeafReaderContext;
+import org.codelibs.fesen.common.document.DocumentField;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.ValueFetcher;
+import org.codelibs.fesen.search.lookup.SearchLookup;
+import org.codelibs.fesen.search.lookup.SourceLookup;
+
 /**
  * A helper class to {@link FetchFieldsPhase} that's initialized with a list of field patterns to fetch.
  * Then given a specific document, it can retrieve the corresponding fields from the document's source.
  */
 public class FieldFetcher {
-    public static FieldFetcher create(MapperService mapperService,
-                                      SearchLookup searchLookup,
-                                      Collection<FieldAndFormat> fieldAndFormats) {
+    public static FieldFetcher create(MapperService mapperService, SearchLookup searchLookup, Collection<FieldAndFormat> fieldAndFormats) {
 
         List<FieldContext> fieldContexts = new ArrayList<>();
 
@@ -98,8 +96,7 @@ public class FieldFetcher {
         final String fieldName;
         final ValueFetcher valueFetcher;
 
-        FieldContext(String fieldName,
-                     ValueFetcher valueFetcher) {
+        FieldContext(String fieldName, ValueFetcher valueFetcher) {
             this.fieldName = fieldName;
             this.valueFetcher = valueFetcher;
         }

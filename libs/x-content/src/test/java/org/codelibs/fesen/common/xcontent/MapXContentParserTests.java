@@ -19,19 +19,20 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
-import org.codelibs.fesen.core.CheckedConsumer;
-import org.codelibs.fesen.test.ESTestCase;
-
 import static org.codelibs.fesen.common.xcontent.XContentParserTests.generateRandomObject;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Map;
+
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.test.ESTestCase;
 
 public class MapXContentParserTests extends ESTestCase {
 
@@ -65,12 +66,11 @@ public class MapXContentParserTests extends ESTestCase {
                 builder.endObject();
             }
             builder.endObject();
-            builder.field("bytes", new byte[]{1, 2, 3});
+            builder.field("bytes", new byte[] { 1, 2, 3 });
             builder.nullField("nothing");
             builder.endObject();
         });
     }
-
 
     public void testRandomObject() throws IOException {
         compareTokens(builder -> generateRandomObject(builder, randomIntBetween(0, 10)));
@@ -92,8 +92,8 @@ public class MapXContentParserTests extends ESTestCase {
             }
 
             try (XContentParser parser = createParser(xContentType.xContent(), BytesReference.bytes(builder))) {
-                try (XContentParser mapParser = new MapXContentParser(
-                    xContentRegistry(), LoggingDeprecationHandler.INSTANCE, map, xContentType)) {
+                try (XContentParser mapParser =
+                        new MapXContentParser(xContentRegistry(), LoggingDeprecationHandler.INSTANCE, map, xContentType)) {
                     assertEquals(parser.contentType(), mapParser.contentType());
                     XContentParser.Token token;
                     assertEquals(parser.currentToken(), mapParser.currentToken());
@@ -112,34 +112,34 @@ public class MapXContentParserTests extends ESTestCase {
                                 assertEquals(parser.textOrNull(), mapParser.textOrNull());
                             }
                             switch (token) {
-                                case VALUE_STRING:
-                                    assertEquals(parser.text(), mapParser.text());
-                                    break;
-                                case VALUE_NUMBER:
-                                    assertEquals(parser.numberType(), mapParser.numberType());
-                                    assertEquals(parser.numberValue(), mapParser.numberValue());
-                                    if (parser.numberType() == XContentParser.NumberType.LONG ||
-                                        parser.numberType() == XContentParser.NumberType.INT) {
-                                        assertEquals(parser.longValue(), mapParser.longValue());
-                                        if (parser.longValue() <= Integer.MAX_VALUE && parser.longValue() >= Integer.MIN_VALUE) {
-                                            assertEquals(parser.intValue(), mapParser.intValue());
-                                            if (parser.longValue() <= Short.MAX_VALUE && parser.longValue() >= Short.MIN_VALUE) {
-                                                assertEquals(parser.shortValue(), mapParser.shortValue());
-                                            }
+                            case VALUE_STRING:
+                                assertEquals(parser.text(), mapParser.text());
+                                break;
+                            case VALUE_NUMBER:
+                                assertEquals(parser.numberType(), mapParser.numberType());
+                                assertEquals(parser.numberValue(), mapParser.numberValue());
+                                if (parser.numberType() == XContentParser.NumberType.LONG
+                                        || parser.numberType() == XContentParser.NumberType.INT) {
+                                    assertEquals(parser.longValue(), mapParser.longValue());
+                                    if (parser.longValue() <= Integer.MAX_VALUE && parser.longValue() >= Integer.MIN_VALUE) {
+                                        assertEquals(parser.intValue(), mapParser.intValue());
+                                        if (parser.longValue() <= Short.MAX_VALUE && parser.longValue() >= Short.MIN_VALUE) {
+                                            assertEquals(parser.shortValue(), mapParser.shortValue());
                                         }
-                                    } else {
-                                        assertEquals(parser.doubleValue(), mapParser.doubleValue(), 0.000001);
                                     }
-                                    break;
-                                case VALUE_BOOLEAN:
-                                    assertEquals(parser.booleanValue(), mapParser.booleanValue());
-                                    break;
-                                case VALUE_EMBEDDED_OBJECT:
-                                    assertArrayEquals(parser.binaryValue(), mapParser.binaryValue());
-                                    break;
-                                case VALUE_NULL:
-                                    assertNull(mapParser.textOrNull());
-                                    break;
+                                } else {
+                                    assertEquals(parser.doubleValue(), mapParser.doubleValue(), 0.000001);
+                                }
+                                break;
+                            case VALUE_BOOLEAN:
+                                assertEquals(parser.booleanValue(), mapParser.booleanValue());
+                                break;
+                            case VALUE_EMBEDDED_OBJECT:
+                                assertArrayEquals(parser.binaryValue(), mapParser.binaryValue());
+                                break;
+                            case VALUE_NULL:
+                                assertNull(mapParser.textOrNull());
+                                break;
                             }
                             assertEquals(parser.currentName(), mapParser.currentName());
                             assertEquals(parser.isClosed(), mapParser.isClosed());

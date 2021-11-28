@@ -24,8 +24,7 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.core.TimeValue;
 
-public abstract class NodesOperationRequestBuilder<Request extends BaseNodesRequest<Request>, Response extends BaseNodesResponse,
-        RequestBuilder extends NodesOperationRequestBuilder<Request, Response, RequestBuilder>>
+public abstract class NodesOperationRequestBuilder<Request extends BaseNodesRequest<Request>, Response extends BaseNodesResponse, RequestBuilder extends NodesOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
     protected NodesOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {

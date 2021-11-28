@@ -37,7 +37,7 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
     public static final class Defaults {
         public static final boolean UPGRADE_ONLY_ANCIENT_SEGMENTS = false;
     }
-    
+
     private boolean upgradeOnlyAncientSegments = Defaults.UPGRADE_ONLY_ANCIENT_SEGMENTS;
 
     /**
@@ -78,8 +78,6 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
 
     @Override
     public String toString() {
-        return "UpgradeRequest{" +
-                "upgradeOnlyAncientSegments=" + upgradeOnlyAncientSegments +
-                '}';
+        return "UpgradeRequest{" + "upgradeOnlyAncientSegments=" + upgradeOnlyAncientSegments + '}';
     }
 }

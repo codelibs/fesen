@@ -30,7 +30,8 @@ import org.codelibs.fesen.core.SuppressForbidden;
 public class FilePermissionUtils {
 
     /** no instantiation */
-    private FilePermissionUtils() {}
+    private FilePermissionUtils() {
+    }
 
     /**
      * Add access to single file path
@@ -64,7 +65,7 @@ public class FilePermissionUtils {
      */
     @SuppressForbidden(reason = "only place where creating Java-9 compatible FilePermission objects is possible")
     public static void addDirectoryPath(Permissions policy, String configurationName, Path path, String permissions,
-                                        boolean recursiveAccessOnly) throws IOException {
+            boolean recursiveAccessOnly) throws IOException {
         // paths may not exist yet, this also checks accessibility
         try {
             Security.ensureDirectoryExists(path);

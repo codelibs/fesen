@@ -19,27 +19,7 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import com.carrotsearch.randomizedtesting.RandomizedRunner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.bootstrap.Bootstrap;
-import org.codelibs.fesen.bootstrap.BootstrapInfo;
-import org.codelibs.fesen.bootstrap.BootstrapSettings;
-import org.codelibs.fesen.bootstrap.ESPolicy;
-import org.codelibs.fesen.bootstrap.FilePermissionUtils;
-import org.codelibs.fesen.bootstrap.Security;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.FileSystemUtils;
-import org.codelibs.fesen.common.network.IfConfig;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.jdk.JarHell;
-import org.codelibs.fesen.plugins.PluginInfo;
-import org.codelibs.fesen.secure_sm.SecureSM;
-import org.junit.Assert;
+import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsBoolean;
 
 import java.io.InputStream;
 import java.net.SocketPermission;
@@ -61,7 +41,22 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsBoolean;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.LuceneTestCase;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.io.FileSystemUtils;
+import org.codelibs.fesen.common.network.IfConfig;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.jdk.JarHell;
+import org.codelibs.fesen.plugins.PluginInfo;
+import org.codelibs.fesen.secure_sm.SecureSM;
+import org.junit.Assert;
+
+import com.carrotsearch.randomizedtesting.RandomizedRunner;
 
 /**
  * Initializes natives and installs test security manager
@@ -78,8 +73,8 @@ public class BootstrapForTesting {
 
     static {
         // make sure java.io.tmpdir exists always (in case code uses it in a static initializer)
-        Path javaTmpDir = PathUtils.get(Objects.requireNonNull(System.getProperty("java.io.tmpdir"),
-                                                               "please set ${java.io.tmpdir} in pom.xml"));
+        Path javaTmpDir =
+                PathUtils.get(Objects.requireNonNull(System.getProperty("java.io.tmpdir"), "please set ${java.io.tmpdir} in pom.xml"));
         try {
             Security.ensureDirectoryExists(javaTmpDir);
         } catch (Exception e) {
@@ -87,8 +82,7 @@ public class BootstrapForTesting {
         }
 
         // just like bootstrap, initialize natives, then SM
-        final boolean memoryLock =
-                BootstrapSettings.MEMORY_LOCK_SETTING.get(Settings.EMPTY); // use the default bootstrap.memory_lock setting
+        final boolean memoryLock = BootstrapSettings.MEMORY_LOCK_SETTING.get(Settings.EMPTY); // use the default bootstrap.memory_lock setting
         final boolean systemCallFilter = Booleans.parseBoolean(System.getProperty("tests.system_call_filter", "true"));
         Bootstrap.initializeNatives(javaTmpDir, memoryLock, systemCallFilter, true);
 
@@ -122,8 +116,7 @@ public class BootstrapForTesting {
                     FilePermissionUtils.addSingleFilePath(perms, PathUtils.get(System.getProperty("tests.config")), "read,readlink");
                 }
                 // jacoco coverage output file
-                final boolean testsCoverage =
-                        Booleans.parseBoolean(System.getProperty("tests.coverage", "false"));
+                final boolean testsCoverage = Booleans.parseBoolean(System.getProperty("tests.coverage", "false"));
                 if (testsCoverage) {
                     Path coverageDir = PathUtils.get(System.getProperty("tests.coverage.dir"));
                     FilePermissionUtils.addSingleFilePath(perms, coverageDir.resolve("jacoco.exec"), "read,write");
@@ -147,11 +140,11 @@ public class BootstrapForTesting {
                 // read test-framework permissions
                 Map<String, URL> codebases = Security.getCodebaseJarMap(JarHell.parseClassPath());
                 // when testing server, the main fesen code is not yet in a jar, so we need to manually add it
-                addClassCodebase(codebases,"fesen-engine-server", "org.codelibs.fesen.plugins.PluginsService");
+                addClassCodebase(codebases, "fesen-engine-server", "org.codelibs.fesen.plugins.PluginsService");
                 if (System.getProperty("tests.gradle") == null) {
                     // intellij and eclipse don't package our internal libs, so we need to set the codebases for them manually
-                    addClassCodebase(codebases,"plugin-classloader", "org.codelibs.fesen.plugins.ExtendedPluginsClassLoader");
-                    addClassCodebase(codebases,"fesen-nio", "org.codelibs.fesen.nio.ChannelFactory");
+                    addClassCodebase(codebases, "plugin-classloader", "org.codelibs.fesen.plugins.ExtendedPluginsClassLoader");
+                    addClassCodebase(codebases, "fesen-nio", "org.codelibs.fesen.nio.ChannelFactory");
                     addClassCodebase(codebases, "fesen-secure-sm", "org.codelibs.fesen.secure_sm.SecureSM");
                     addClassCodebase(codebases, "fesen-rest-client", "org.codelibs.fesen.client.RestClient");
                 }
@@ -206,7 +199,7 @@ public class BootstrapForTesting {
      * like core, test-framework, etc. this way tests fail if accesscontroller blocks are missing.
      */
     @SuppressForbidden(reason = "accesses fully qualified URLs to configure security")
-    static Map<String,Policy> getPluginPermissions() throws Exception {
+    static Map<String, Policy> getPluginPermissions() throws Exception {
         List<URL> pluginPolicies = Collections.list(BootstrapForTesting.class.getClassLoader().getResources(PluginInfo.ES_PLUGIN_POLICY));
         if (pluginPolicies.isEmpty()) {
             return Collections.emptyMap();
@@ -224,8 +217,7 @@ public class BootstrapForTesting {
                 // randomized runner
                 RandomizedRunner.class.getProtectionDomain().getCodeSource().getLocation(),
                 // junit library
-                Assert.class.getProtectionDomain().getCodeSource().getLocation()
-        ));
+                Assert.class.getProtectionDomain().getCodeSource().getLocation()));
         codebases.removeAll(excluded);
 
         // parse each policy file, with codebase substitution from the classpath
@@ -235,7 +227,7 @@ public class BootstrapForTesting {
         }
 
         // consult each policy file for those codebases
-        Map<String,Policy> map = new HashMap<>();
+        Map<String, Policy> map = new HashMap<>();
         for (URL url : codebases) {
             map.put(url.getFile(), new Policy() {
                 @Override
@@ -274,5 +266,6 @@ public class BootstrapForTesting {
     }
 
     // does nothing, just easy way to make sure the class is loaded.
-    public static void ensureInitialized() {}
+    public static void ensureInitialized() {
+    }
 }

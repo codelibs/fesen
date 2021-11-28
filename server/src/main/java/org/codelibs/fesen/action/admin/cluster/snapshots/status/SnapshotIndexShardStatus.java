@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastShardResponse;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -34,11 +39,6 @@ import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.snapshots.IndexShardSnapshotStatus;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
 
 public class SnapshotIndexShardStatus extends BroadcastShardResponse implements ToXContentFragment {
 
@@ -71,27 +71,27 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
     SnapshotIndexShardStatus(ShardId shardId, IndexShardSnapshotStatus.Copy indexShardStatus, String nodeId) {
         super(shardId);
         switch (indexShardStatus.getStage()) {
-            case INIT:
-                stage = SnapshotIndexShardStage.INIT;
-                break;
-            case STARTED:
-                stage = SnapshotIndexShardStage.STARTED;
-                break;
-            case FINALIZE:
-                stage = SnapshotIndexShardStage.FINALIZE;
-                break;
-            case DONE:
-                stage = SnapshotIndexShardStage.DONE;
-                break;
-            case FAILURE:
-                stage = SnapshotIndexShardStage.FAILURE;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown stage type " + indexShardStatus.getStage());
+        case INIT:
+            stage = SnapshotIndexShardStage.INIT;
+            break;
+        case STARTED:
+            stage = SnapshotIndexShardStage.STARTED;
+            break;
+        case FINALIZE:
+            stage = SnapshotIndexShardStage.FINALIZE;
+            break;
+        case DONE:
+            stage = SnapshotIndexShardStage.DONE;
+            break;
+        case FAILURE:
+            stage = SnapshotIndexShardStage.FAILURE;
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown stage type " + indexShardStatus.getStage());
         }
         this.stats = new SnapshotStats(indexShardStatus.getStartTime(), indexShardStatus.getTotalTime(),
-            indexShardStatus.getIncrementalFileCount(), indexShardStatus.getTotalFileCount(), indexShardStatus.getProcessedFileCount(),
-            indexShardStatus.getIncrementalSize(), indexShardStatus.getTotalSize(), indexShardStatus.getProcessedSize());
+                indexShardStatus.getIncrementalFileCount(), indexShardStatus.getTotalFileCount(), indexShardStatus.getProcessedFileCount(),
+                indexShardStatus.getIncrementalSize(), indexShardStatus.getTotalSize(), indexShardStatus.getProcessedSize());
         this.failure = indexShardStatus.getFailure();
         this.nodeId = nodeId;
     }
@@ -164,26 +164,23 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     static final ObjectParser.NamedObjectParser<SnapshotIndexShardStatus, String> PARSER;
     static {
-        ConstructingObjectParser<SnapshotIndexShardStatus, ShardId> innerParser = new ConstructingObjectParser<>(
-            "snapshot_index_shard_status", true,
-            (Object[] parsedObjects, ShardId shard) -> {
-                int i = 0;
-                String rawStage = (String) parsedObjects[i++];
-                String nodeId = (String) parsedObjects[i++];
-                String failure = (String) parsedObjects[i++];
-                SnapshotStats stats = (SnapshotStats) parsedObjects[i];
+        ConstructingObjectParser<SnapshotIndexShardStatus, ShardId> innerParser =
+                new ConstructingObjectParser<>("snapshot_index_shard_status", true, (Object[] parsedObjects, ShardId shard) -> {
+                    int i = 0;
+                    String rawStage = (String) parsedObjects[i++];
+                    String nodeId = (String) parsedObjects[i++];
+                    String failure = (String) parsedObjects[i++];
+                    SnapshotStats stats = (SnapshotStats) parsedObjects[i];
 
-                SnapshotIndexShardStage stage;
-                try {
-                    stage = SnapshotIndexShardStage.valueOf(rawStage);
-                } catch (IllegalArgumentException iae) {
-                    throw new FesenParseException(
-                        "failed to parse snapshot index shard status [{}][{}], unknown stage [{}]",
-                        shard.getIndex().getName(), shard.getId(), rawStage);
-                }
-                return new SnapshotIndexShardStatus(shard, stage, stats, nodeId, failure);
-            }
-        );
+                    SnapshotIndexShardStage stage;
+                    try {
+                        stage = SnapshotIndexShardStage.valueOf(rawStage);
+                    } catch (IllegalArgumentException iae) {
+                        throw new FesenParseException("failed to parse snapshot index shard status [{}][{}], unknown stage [{}]",
+                                shard.getIndex().getName(), shard.getId(), rawStage);
+                    }
+                    return new SnapshotIndexShardStatus(shard, stage, stats, nodeId, failure);
+                });
         innerParser.declareString(constructorArg(), new ParseField(Fields.STAGE));
         innerParser.declareString(optionalConstructorArg(), new ParseField(Fields.NODE));
         innerParser.declareString(optionalConstructorArg(), new ParseField(Fields.REASON));
@@ -195,8 +192,8 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
             try {
                 shard = Integer.parseInt(shardName);
             } catch (NumberFormatException nfe) {
-                throw new FesenParseException(
-                    "failed to parse snapshot index shard status [{}], expected numeric shard id but got [{}]", indexId, shardName);
+                throw new FesenParseException("failed to parse snapshot index shard status [{}], expected numeric shard id but got [{}]",
+                        indexId, shardName);
             }
             ShardId shardId = new ShardId(new Index(indexId, IndexMetadata.INDEX_UUID_NA_VALUE), shard);
             return innerParser.parse(p, shardId);
@@ -210,14 +207,19 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         SnapshotIndexShardStatus that = (SnapshotIndexShardStatus) o;
 
-        if (stage != that.stage) return false;
-        if (stats != null ? !stats.equals(that.stats) : that.stats != null) return false;
-        if (nodeId != null ? !nodeId.equals(that.nodeId) : that.nodeId != null) return false;
+        if (stage != that.stage)
+            return false;
+        if (stats != null ? !stats.equals(that.stats) : that.stats != null)
+            return false;
+        if (nodeId != null ? !nodeId.equals(that.nodeId) : that.nodeId != null)
+            return false;
         return failure != null ? failure.equals(that.failure) : that.failure == null;
     }
 

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.query;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.OriginalIndices;
@@ -35,9 +38,6 @@ import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.transport.TransportRequest;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class QuerySearchRequest extends TransportRequest implements IndicesRequest {
 
     private final ShardSearchContextId contextId;
@@ -45,8 +45,8 @@ public class QuerySearchRequest extends TransportRequest implements IndicesReque
     private final OriginalIndices originalIndices;
     private final ShardSearchRequest shardSearchRequest;
 
-    public QuerySearchRequest(OriginalIndices originalIndices, ShardSearchContextId contextId,
-                              ShardSearchRequest shardSearchRequest, AggregatedDfs dfs) {
+    public QuerySearchRequest(OriginalIndices originalIndices, ShardSearchContextId contextId, ShardSearchRequest shardSearchRequest,
+            AggregatedDfs dfs) {
         this.contextId = contextId;
         this.dfs = dfs;
         this.shardSearchRequest = shardSearchRequest;

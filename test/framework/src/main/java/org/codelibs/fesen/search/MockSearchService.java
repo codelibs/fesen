@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.indices.IndicesService;
@@ -26,21 +31,16 @@ import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.node.MockNode;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.script.ScriptService;
-import org.codelibs.fesen.search.SearchService;
 import org.codelibs.fesen.search.fetch.FetchPhase;
 import org.codelibs.fesen.search.internal.ReaderContext;
 import org.codelibs.fesen.threadpool.ThreadPool;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 public class MockSearchService extends SearchService {
     /**
      * Marker plugin used by {@link MockNode} to enable {@link MockSearchService}.
      */
-    public static class TestPlugin extends Plugin {}
+    public static class TestPlugin extends Plugin {
+    }
 
     private static final Map<ReaderContext, Throwable> ACTIVE_SEARCH_CONTEXTS = new ConcurrentHashMap<>();
 
@@ -71,9 +71,8 @@ public class MockSearchService extends SearchService {
         ACTIVE_SEARCH_CONTEXTS.remove(context);
     }
 
-    public MockSearchService(ClusterService clusterService,
-            IndicesService indicesService, ThreadPool threadPool, ScriptService scriptService,
-            BigArrays bigArrays, FetchPhase fetchPhase, CircuitBreakerService circuitBreakerService) {
+    public MockSearchService(ClusterService clusterService, IndicesService indicesService, ThreadPool threadPool,
+            ScriptService scriptService, BigArrays bigArrays, FetchPhase fetchPhase, CircuitBreakerService circuitBreakerService) {
         super(clusterService, indicesService, threadPool, scriptService, bigArrays, fetchPhase, null, circuitBreakerService);
     }
 

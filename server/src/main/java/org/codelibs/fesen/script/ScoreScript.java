@@ -18,6 +18,13 @@
  */
 package org.codelibs.fesen.script;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Scorable;
@@ -27,13 +34,6 @@ import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.search.lookup.LeafSearchLookup;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 
 /**
  * A script used for adjusting the score on a per document basis.
@@ -65,23 +65,17 @@ public abstract class ScoreScript {
     }
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
-            "doc", value -> {
-                deprecationLogger.deprecate("score-script_doc",
-                        "Accessing variable [doc] via [params.doc] from within an score-script "
-                                + "is deprecated in favor of directly accessing [doc].");
-                return value;
-            },
-            "_doc", value -> {
-                deprecationLogger.deprecate("score-script__doc",
-                        "Accessing variable [doc] via [params._doc] from within an score-script "
-                                + "is deprecated in favor of directly accessing [doc].");
-                return value;
-            },
-            "_source", value -> ((SourceLookup)value).loadSourceIfNeeded()
-    );
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of("doc", value -> {
+        deprecationLogger.deprecate("score-script_doc", "Accessing variable [doc] via [params.doc] from within an score-script "
+                + "is deprecated in favor of directly accessing [doc].");
+        return value;
+    }, "_doc", value -> {
+        deprecationLogger.deprecate("score-script__doc", "Accessing variable [doc] via [params._doc] from within an score-script "
+                + "is deprecated in favor of directly accessing [doc].");
+        return value;
+    }, "_source", value -> ((SourceLookup) value).loadSourceIfNeeded());
 
-    public static final String[] PARAMETERS = new String[]{ "explanation" };
+    public static final String[] PARAMETERS = new String[] { "explanation" };
 
     /** The generic runtime parameters for the script. */
     private final Map<String, Object> params;
@@ -149,7 +143,6 @@ public abstract class ScoreScript {
     public double get_score() {
         return scoreSupplier.getAsDouble();
     }
-
 
     /**
      * Starting a name with underscore, so that the user cannot access this function directly through a script
@@ -228,7 +221,6 @@ public abstract class ScoreScript {
     public void _setIndexVersion(Version indexVersion) {
         this.indexVersion = indexVersion;
     }
-
 
     /** A factory to construct {@link ScoreScript} instances. */
     public interface LeafFactory {

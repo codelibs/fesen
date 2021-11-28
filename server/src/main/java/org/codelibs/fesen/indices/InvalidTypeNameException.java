@@ -35,7 +35,6 @@ public class InvalidTypeNameException extends MapperException {
         super(message);
     }
 
-
     @Override
     public RestStatus status() {
         return RestStatus.BAD_REQUEST;

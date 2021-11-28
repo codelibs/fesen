@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
@@ -32,15 +40,6 @@ import org.codelibs.fesen.rest.action.RestResponseListener;
 import org.codelibs.fesen.snapshots.SnapshotInfo;
 import org.codelibs.fesen.snapshots.SnapshotState;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 /**
  * Cat API class to display information about snapshots
  */
@@ -48,9 +47,7 @@ public class RestSnapshotAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_cat/snapshots"),
-            new Route(GET, "/_cat/snapshots/{repository}")));
+        return unmodifiableList(asList(new Route(GET, "/_cat/snapshots"), new Route(GET, "/_cat/snapshots/{repository}")));
     }
 
     @Override
@@ -60,21 +57,20 @@ public class RestSnapshotAction extends AbstractCatAction {
 
     @Override
     protected RestChannelConsumer doCatRequest(final RestRequest request, NodeClient client) {
-        GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest()
-                .repository(request.param("repository"))
-                .snapshots(new String[]{GetSnapshotsRequest.ALL_SNAPSHOTS});
+        GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest().repository(request.param("repository"))
+                .snapshots(new String[] { GetSnapshotsRequest.ALL_SNAPSHOTS });
 
         getSnapshotsRequest.ignoreUnavailable(request.paramAsBoolean("ignore_unavailable", getSnapshotsRequest.ignoreUnavailable()));
 
         getSnapshotsRequest.masterNodeTimeout(request.paramAsTime("master_timeout", getSnapshotsRequest.masterNodeTimeout()));
 
-        return channel ->
-            client.admin().cluster().getSnapshots(getSnapshotsRequest, new RestResponseListener<GetSnapshotsResponse>(channel) {
-                @Override
-                public RestResponse buildResponse(GetSnapshotsResponse getSnapshotsResponse) throws Exception {
-                    return RestTable.buildResponse(buildTable(request, getSnapshotsResponse), channel);
-                }
-            });
+        return channel -> client.admin().cluster().getSnapshots(getSnapshotsRequest,
+                new RestResponseListener<GetSnapshotsResponse>(channel) {
+                    @Override
+                    public RestResponse buildResponse(GetSnapshotsResponse getSnapshotsResponse) throws Exception {
+                        return RestTable.buildResponse(buildTable(request, getSnapshotsResponse), channel);
+                    }
+                });
     }
 
     @Override
@@ -84,9 +80,7 @@ public class RestSnapshotAction extends AbstractCatAction {
 
     @Override
     protected Table getTableWithHeader(RestRequest request) {
-        return new Table()
-                .startHeaders()
-                .addCell("id", "alias:id,snapshot;desc:unique snapshot")
+        return new Table().startHeaders().addCell("id", "alias:id,snapshot;desc:unique snapshot")
                 .addCell("status", "alias:s,status;text-align:right;desc:snapshot name")
                 .addCell("start_epoch", "alias:ste,startEpoch;desc:start time in seconds since 1970-01-01 00:00:00")
                 .addCell("start_time", "alias:sti,startTime;desc:start time in HH:MM:SS")
@@ -97,8 +91,7 @@ public class RestSnapshotAction extends AbstractCatAction {
                 .addCell("successful_shards", "alias:ss,successful_shards;text-align:right;desc:number of successful shards")
                 .addCell("failed_shards", "alias:fs,failed_shards;text-align:right;desc:number of failed shards")
                 .addCell("total_shards", "alias:ts,total_shards;text-align:right;desc:number of total shards")
-                .addCell("reason", "default:false;alias:r,reason;desc:reason for failures")
-                .endHeaders();
+                .addCell("reason", "default:false;alias:r,reason;desc:reason for failures").endHeaders();
     }
 
     private static final DateFormatter FORMATTER = DateFormatter.forPattern("HH:mm:ss").withZone(ZoneOffset.UTC);

@@ -19,6 +19,21 @@
 
 package org.codelibs.fesen.index;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -35,8 +50,8 @@ import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.TriFunction;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.core.CheckedFunction;
@@ -65,21 +80,6 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
  * IndexModule represents the central extension point for index level custom implementations like:
  * <ul>
@@ -107,14 +107,13 @@ public final class IndexModule {
             new Setting<>("index.store.type", "", Function.identity(), Property.IndexScope, Property.NodeScope);
 
     public static final Setting<String> INDEX_RECOVERY_TYPE_SETTING =
-        new Setting<>("index.recovery.type", "", Function.identity(), Property.IndexScope, Property.NodeScope);
+            new Setting<>("index.recovery.type", "", Function.identity(), Property.IndexScope, Property.NodeScope);
 
     /** On which extensions to load data into the file-system cache upon opening of files.
      *  This only works with the mmap directory, and even in that case is still
      *  best-effort only. */
-    public static final Setting<List<String>> INDEX_STORE_PRE_LOAD_SETTING =
-            Setting.listSetting("index.store.preload", Collections.emptyList(), Function.identity(),
-                    Property.IndexScope, Property.NodeScope);
+    public static final Setting<List<String>> INDEX_STORE_PRE_LOAD_SETTING = Setting.listSetting("index.store.preload",
+            Collections.emptyList(), Function.identity(), Property.IndexScope, Property.NodeScope);
 
     public static final String SIMILARITY_SETTINGS_PREFIX = "index.similarity";
 
@@ -124,13 +123,13 @@ public final class IndexModule {
 
     // for test purposes only
     public static final Setting<Boolean> INDEX_QUERY_CACHE_EVERYTHING_SETTING =
-        Setting.boolSetting("index.queries.cache.everything", false, Property.IndexScope);
+            Setting.boolSetting("index.queries.cache.everything", false, Property.IndexScope);
 
     private final IndexSettings indexSettings;
     private final AnalysisRegistry analysisRegistry;
     private final EngineFactory engineFactory;
-    private SetOnce<Function<IndexService,
-        CheckedFunction<DirectoryReader, DirectoryReader, IOException>>> indexReaderWrapper = new SetOnce<>();
+    private SetOnce<Function<IndexService, CheckedFunction<DirectoryReader, DirectoryReader, IOException>>> indexReaderWrapper =
+            new SetOnce<>();
     private final Set<IndexEventListener> indexEventListeners = new HashSet<>();
     private final Map<String, TriFunction<Settings, Version, ScriptService, Similarity>> similarities = new HashMap<>();
     private final Map<String, IndexStorePlugin.DirectoryFactory> directoryFactories;
@@ -151,12 +150,8 @@ public final class IndexModule {
      * @param engineFactory       the engine factory
      * @param directoryFactories the available store types
      */
-    public IndexModule(
-            final IndexSettings indexSettings,
-            final AnalysisRegistry analysisRegistry,
-            final EngineFactory engineFactory,
-            final Map<String, IndexStorePlugin.DirectoryFactory> directoryFactories,
-            final BooleanSupplier allowExpensiveQueries,
+    public IndexModule(final IndexSettings indexSettings, final AnalysisRegistry analysisRegistry, final EngineFactory engineFactory,
+            final Map<String, IndexStorePlugin.DirectoryFactory> directoryFactories, final BooleanSupplier allowExpensiveQueries,
             final IndexNameExpressionResolver expressionResolver,
             final Map<String, IndexStorePlugin.RecoveryStateFactory> recoveryStateFactories) {
         this.indexSettings = indexSettings;
@@ -320,8 +315,8 @@ public final class IndexModule {
      * The returned reader is closed once it goes out of scope.
      * </p>
      */
-    public void setReaderWrapper(Function<IndexService,
-                                    CheckedFunction<DirectoryReader, DirectoryReader, IOException>> indexReaderWrapperFactory) {
+    public void setReaderWrapper(
+            Function<IndexService, CheckedFunction<DirectoryReader, DirectoryReader, IOException>> indexReaderWrapperFactory) {
         ensureNotFrozen();
         this.indexReaderWrapper.set(indexReaderWrapperFactory);
     }
@@ -343,13 +338,8 @@ public final class IndexModule {
         return false;
     }
 
-
     public enum Type {
-        HYBRIDFS("hybridfs"),
-        NIOFS("niofs"),
-        MMAPFS("mmapfs"),
-        SIMPLEFS("simplefs"),
-        FS("fs");
+        HYBRIDFS("hybridfs"), NIOFS("niofs"), MMAPFS("mmapfs"), SIMPLEFS("simplefs"), FS("fs");
 
         private final String settingsKey;
 
@@ -398,25 +388,15 @@ public final class IndexModule {
         }
     }
 
-    public IndexService newIndexService(IndexService.IndexCreationContext indexCreationContext,
-                                        NodeEnvironment environment,
-                                        NamedXContentRegistry xContentRegistry,
-                                        IndexService.ShardStoreDeleter shardStoreDeleter,
-                                        CircuitBreakerService circuitBreakerService,
-                                        BigArrays bigArrays,
-                                        ThreadPool threadPool,
-                                        ScriptService scriptService,
-                                        ClusterService clusterService,
-                                        Client client,
-                                        IndicesQueryCache indicesQueryCache,
-                                        MapperRegistry mapperRegistry,
-                                        IndicesFieldDataCache indicesFieldDataCache,
-                                        NamedWriteableRegistry namedWriteableRegistry,
-                                        BooleanSupplier idFieldDataEnabled,
-                                        ValuesSourceRegistry valuesSourceRegistry) throws IOException {
+    public IndexService newIndexService(IndexService.IndexCreationContext indexCreationContext, NodeEnvironment environment,
+            NamedXContentRegistry xContentRegistry, IndexService.ShardStoreDeleter shardStoreDeleter,
+            CircuitBreakerService circuitBreakerService, BigArrays bigArrays, ThreadPool threadPool, ScriptService scriptService,
+            ClusterService clusterService, Client client, IndicesQueryCache indicesQueryCache, MapperRegistry mapperRegistry,
+            IndicesFieldDataCache indicesFieldDataCache, NamedWriteableRegistry namedWriteableRegistry, BooleanSupplier idFieldDataEnabled,
+            ValuesSourceRegistry valuesSourceRegistry) throws IOException {
         final IndexEventListener eventListener = freeze();
         Function<IndexService, CheckedFunction<DirectoryReader, DirectoryReader, IOException>> readerWrapperFactory =
-            indexReaderWrapper.get() == null ? (shard) -> null : indexReaderWrapper.get();
+                indexReaderWrapper.get() == null ? (shard) -> null : indexReaderWrapper.get();
         eventListener.beforeIndexCreated(indexSettings.getIndex(), indexSettings.getSettings());
         final IndexStorePlugin.DirectoryFactory directoryFactory = getDirectoryFactory(indexSettings, directoryFactories);
         final IndexStorePlugin.RecoveryStateFactory recoveryStateFactory = getRecoveryStateFactory(indexSettings, recoveryStateFactories);
@@ -438,11 +418,11 @@ public final class IndexModule {
                 indexAnalyzers = analysisRegistry.build(indexSettings);
             }
             final IndexService indexService = new IndexService(indexSettings, indexCreationContext, environment, xContentRegistry,
-                new SimilarityService(indexSettings, scriptService, similarities), shardStoreDeleter, indexAnalyzers,
-                engineFactory, circuitBreakerService, bigArrays, threadPool, scriptService, clusterService, client, queryCache,
-                directoryFactory, eventListener, readerWrapperFactory, mapperRegistry, indicesFieldDataCache, searchOperationListeners,
-                indexOperationListeners, namedWriteableRegistry, idFieldDataEnabled, allowExpensiveQueries, expressionResolver,
-                valuesSourceRegistry, recoveryStateFactory);
+                    new SimilarityService(indexSettings, scriptService, similarities), shardStoreDeleter, indexAnalyzers, engineFactory,
+                    circuitBreakerService, bigArrays, threadPool, scriptService, clusterService, client, queryCache, directoryFactory,
+                    eventListener, readerWrapperFactory, mapperRegistry, indicesFieldDataCache, searchOperationListeners,
+                    indexOperationListeners, namedWriteableRegistry, idFieldDataEnabled, allowExpensiveQueries, expressionResolver,
+                    valuesSourceRegistry, recoveryStateFactory);
             success = true;
             return indexService;
         } finally {
@@ -452,8 +432,8 @@ public final class IndexModule {
         }
     }
 
-    private static IndexStorePlugin.DirectoryFactory getDirectoryFactory(
-            final IndexSettings indexSettings, final Map<String, IndexStorePlugin.DirectoryFactory> indexStoreFactories) {
+    private static IndexStorePlugin.DirectoryFactory getDirectoryFactory(final IndexSettings indexSettings,
+            final Map<String, IndexStorePlugin.DirectoryFactory> indexStoreFactories) {
         final String storeType = indexSettings.getValue(INDEX_STORE_TYPE_SETTING);
         final Type type;
         final Boolean allowMmap = NODE_STORE_ALLOW_MMAP.get(indexSettings.getNodeSettings());
@@ -481,8 +461,8 @@ public final class IndexModule {
         return factory;
     }
 
-    private static IndexStorePlugin.RecoveryStateFactory getRecoveryStateFactory(
-        final IndexSettings indexSettings, final Map<String, IndexStorePlugin.RecoveryStateFactory> recoveryStateFactories) {
+    private static IndexStorePlugin.RecoveryStateFactory getRecoveryStateFactory(final IndexSettings indexSettings,
+            final Map<String, IndexStorePlugin.RecoveryStateFactory> recoveryStateFactories) {
         final String recoveryType = indexSettings.getValue(INDEX_RECOVERY_TYPE_SETTING);
 
         if (recoveryType.isEmpty()) {
@@ -504,8 +484,9 @@ public final class IndexModule {
     public MapperService newIndexMapperService(NamedXContentRegistry xContentRegistry, MapperRegistry mapperRegistry,
             ScriptService scriptService) throws IOException {
         return new MapperService(indexSettings, analysisRegistry.build(indexSettings), xContentRegistry,
-            new SimilarityService(indexSettings, scriptService, similarities), mapperRegistry,
-            () -> { throw new UnsupportedOperationException("no index query shard context available"); }, () -> false, scriptService);
+                new SimilarityService(indexSettings, scriptService, similarities), mapperRegistry, () -> {
+                    throw new UnsupportedOperationException("no index query shard context available");
+                }, () -> false, scriptService);
     }
 
     /**

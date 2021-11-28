@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,22 +37,14 @@ import org.codelibs.fesen.search.aggregations.metrics.InternalMax;
 import org.codelibs.fesen.search.aggregations.metrics.InternalNumericMetricsAggregation;
 import org.codelibs.fesen.search.aggregations.metrics.Percentile;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 public class InternalPercentilesBucket extends InternalNumericMetricsAggregation.MultiValue implements PercentilesBucket {
     private double[] percentiles;
     private double[] percents;
     private boolean keyed = true;
     private final transient Map<Double, Double> percentileLookups = new HashMap<>();
 
-    InternalPercentilesBucket(String name, double[] percents, double[] percentiles, boolean keyed,
-                                     DocValueFormat formatter, Map<String, Object> metadata) {
+    InternalPercentilesBucket(String name, double[] percents, double[] percentiles, boolean keyed, DocValueFormat formatter,
+            Map<String, Object> metadata) {
         super(name, metadata);
         if ((percentiles.length == percents.length) == false) {
             throw new IllegalArgumentException("The number of provided percents and percentiles didn't match. percents: "
@@ -99,8 +99,8 @@ public class InternalPercentilesBucket extends InternalNumericMetricsAggregation
     public double percentile(double percent) throws IllegalArgumentException {
         Double percentile = percentileLookups.get(percent);
         if (percentile == null) {
-            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not" +
-                    " one of the computed percentiles.  Available keys are: " + Arrays.toString(percents));
+            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not"
+                    + " one of the computed percentiles.  Available keys are: " + Arrays.toString(percents));
         }
         return percentile;
     }
@@ -163,9 +163,12 @@ public class InternalPercentilesBucket extends InternalNumericMetricsAggregation
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalPercentilesBucket that = (InternalPercentilesBucket) obj;
         return Arrays.equals(percents, that.percents) && Arrays.equals(percentiles, that.percentiles);

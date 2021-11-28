@@ -28,14 +28,7 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface DiversifiedAggregatorSupplier {
-    Aggregator build(
-        String name,
-        int shardSize,
-        AggregatorFactories factories,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata,
-        ValuesSourceConfig valuesSourceConfig,
-        int maxDocsPerValue,
-        String executionHint) throws IOException;
+    Aggregator build(String name, int shardSize, AggregatorFactories factories, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata, ValuesSourceConfig valuesSourceConfig, int maxDocsPerValue, String executionHint)
+            throws IOException;
 }

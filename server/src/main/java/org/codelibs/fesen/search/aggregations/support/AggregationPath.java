@@ -26,8 +26,8 @@ import java.util.List;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
 import org.codelibs.fesen.search.aggregations.Aggregator;
-import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.Aggregator.BucketComparator;
+import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.bucket.SingleBucketAggregator;
 import org.codelibs.fesen.search.aggregations.metrics.NumericMetricsAggregator;
 import org.codelibs.fesen.search.profile.aggregation.ProfilingAggregator;
@@ -127,13 +127,17 @@ public class AggregationPath {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             PathElement token = (PathElement) o;
 
-            if (key != null ? !key.equals(token.key) : token.key != null) return false;
-            if (!name.equals(token.name)) return false;
+            if (key != null ? !key.equals(token.key) : token.key != null)
+                return false;
+            if (!name.equals(token.name))
+                return false;
 
             return true;
         }

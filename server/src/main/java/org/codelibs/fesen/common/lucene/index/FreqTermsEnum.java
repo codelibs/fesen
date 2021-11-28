@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.lucene.index;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.search.Query;
@@ -30,8 +32,6 @@ import org.codelibs.fesen.common.util.BytesRefHash;
 import org.codelibs.fesen.common.util.IntArray;
 import org.codelibs.fesen.common.util.LongArray;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
 
 /**
  * A frequency terms enum that maintains a cache of docFreq, totalTermFreq, or both for repeated term lookup. 
@@ -46,9 +46,8 @@ public class FreqTermsEnum extends FilterableTermsEnum implements Releasable {
     private final boolean needDocFreqs;
     private final boolean needTotalTermFreqs;
 
-
-    public FreqTermsEnum(IndexReader reader, String field, boolean needDocFreq, boolean needTotalTermFreq,
-            @Nullable Query filter, BigArrays bigArrays) throws IOException {
+    public FreqTermsEnum(IndexReader reader, String field, boolean needDocFreq, boolean needTotalTermFreq, @Nullable Query filter,
+            BigArrays bigArrays) throws IOException {
         super(reader, field, needTotalTermFreq ? PostingsEnum.FREQS : PostingsEnum.NONE, filter);
         this.bigArrays = bigArrays;
         this.needDocFreqs = needDocFreq;
@@ -65,7 +64,6 @@ public class FreqTermsEnum extends FilterableTermsEnum implements Releasable {
         }
         cachedTermOrds = new BytesRefHash(INITIAL_NUM_TERM_FREQS_CACHED, bigArrays);
     }
-
 
     @Override
     public boolean seekExact(BytesRef text) throws IOException {
@@ -85,7 +83,7 @@ public class FreqTermsEnum extends FilterableTermsEnum implements Releasable {
             current = found ? text : null;
             return found;
         }
-        
+
         //Cache miss - gather stats
         final boolean found = super.seekExact(text);
 
@@ -100,7 +98,6 @@ public class FreqTermsEnum extends FilterableTermsEnum implements Releasable {
         }
         return found;
     }
-
 
     @Override
     public void close() {

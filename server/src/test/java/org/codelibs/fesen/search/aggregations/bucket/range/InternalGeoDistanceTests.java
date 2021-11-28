@@ -63,10 +63,8 @@ public class InternalGeoDistanceTests extends InternalRangeTestCase<InternalGeoD
     }
 
     @Override
-    protected InternalGeoDistance createTestInstance(String name,
-                                                     Map<String, Object> metadata,
-                                                     InternalAggregations aggregations,
-                                                     boolean keyed) {
+    protected InternalGeoDistance createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggregations,
+            boolean keyed) {
         final List<InternalGeoDistance.Bucket> buckets = new ArrayList<>();
         for (int i = 0; i < geoDistanceRanges.size(); ++i) {
             Tuple<Double, Double> range = geoDistanceRanges.get(i);

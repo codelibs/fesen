@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.put;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -39,8 +41,6 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-
 /**
  * Put index template action.
  */
@@ -52,12 +52,11 @@ public class TransportPutIndexTemplateAction extends TransportMasterNodeAction<P
     private final IndexScopedSettings indexScopedSettings;
 
     @Inject
-    public TransportPutIndexTemplateAction(TransportService transportService, ClusterService clusterService,
-                                           ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService,
-                                           ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                           IndexScopedSettings indexScopedSettings) {
-        super(PutIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-            PutIndexTemplateRequest::new, indexNameExpressionResolver);
+    public TransportPutIndexTemplateAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            MetadataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, IndexScopedSettings indexScopedSettings) {
+        super(PutIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters, PutIndexTemplateRequest::new,
+                indexNameExpressionResolver);
         this.indexTemplateService = indexTemplateService;
         this.indexScopedSettings = indexScopedSettings;
     }
@@ -80,7 +79,7 @@ public class TransportPutIndexTemplateAction extends TransportMasterNodeAction<P
 
     @Override
     protected void masterOperation(final PutIndexTemplateRequest request, final ClusterState state,
-                                   final ActionListener<AcknowledgedResponse> listener) {
+            final ActionListener<AcknowledgedResponse> listener) {
         String cause = request.cause();
         if (cause.length() == 0) {
             cause = "api";
@@ -88,15 +87,10 @@ public class TransportPutIndexTemplateAction extends TransportMasterNodeAction<P
         final Settings.Builder templateSettingsBuilder = Settings.builder();
         templateSettingsBuilder.put(request.settings()).normalizePrefix(IndexMetadata.INDEX_SETTING_PREFIX);
         indexScopedSettings.validate(templateSettingsBuilder.build(), true); // templates must be consistent with regards to dependencies
-        indexTemplateService.putTemplate(new MetadataIndexTemplateService.PutRequest(cause, request.name())
-                .patterns(request.patterns())
-                .order(request.order())
-                .settings(templateSettingsBuilder.build())
-                .mappings(request.mappings())
-                .aliases(request.aliases())
-                .create(request.create())
-                .masterTimeout(request.masterNodeTimeout())
-                .version(request.version()),
+        indexTemplateService.putTemplate(
+                new MetadataIndexTemplateService.PutRequest(cause, request.name()).patterns(request.patterns()).order(request.order())
+                        .settings(templateSettingsBuilder.build()).mappings(request.mappings()).aliases(request.aliases())
+                        .create(request.create()).masterTimeout(request.masterNodeTimeout()).version(request.version()),
 
                 new MetadataIndexTemplateService.PutListener() {
                     @Override

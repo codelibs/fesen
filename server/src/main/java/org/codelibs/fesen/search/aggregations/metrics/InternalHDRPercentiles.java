@@ -18,20 +18,20 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.HdrHistogram.DoubleHistogram;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.search.DocValueFormat;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.HdrHistogram.DoubleHistogram;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.search.DocValueFormat;
 
 public class InternalHDRPercentiles extends AbstractInternalHDRPercentiles implements Percentiles {
     public static final String NAME = "hdr_percentiles";
 
     public InternalHDRPercentiles(String name, double[] percents, DoubleHistogram state, boolean keyed, DocValueFormat formatter,
-                                   Map<String, Object> metadata) {
-        super(name, percents, state, keyed, formatter,  metadata);
+            Map<String, Object> metadata) {
+        super(name, percents, state, keyed, formatter, metadata);
     }
 
     /**

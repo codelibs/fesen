@@ -208,9 +208,7 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
             field.addToMappings(mappingBuilder);
         }
         mappingBuilder.endObject().endObject().endObject();
-        Settings.Builder settings = Settings.builder()
-                .put(indexSettings())
-                .put("index.analysis.analyzer.tv_test.tokenizer", "standard")
+        Settings.Builder settings = Settings.builder().put(indexSettings()).put("index.analysis.analyzer.tv_test.tokenizer", "standard")
                 .putList("index.analysis.analyzer.tv_test.filter", "lowercase");
         assertAcked(prepareCreate(index).addMapping("type1", mappingBuilder).setSettings(settings).addAlias(new Alias(alias)));
     }
@@ -219,11 +217,11 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
      * Generate test documentsThe returned documents are already indexed.
      */
     protected TestDoc[] generateTestDocs(String index, TestFieldSetting[] fieldSettings) {
-        String[] fieldContentOptions = new String[]{"Generating a random permutation of a sequence (such as when shuffling cards).",
+        String[] fieldContentOptions = new String[] { "Generating a random permutation of a sequence (such as when shuffling cards).",
                 "Selecting a random sample of a population (important in statistical sampling).",
                 "Allocating experimental units via random assignment to a treatment or control condition.",
                 "Generating random numbers: see Random number generation.",
-                "Transforming a data stream (such as when using a scrambler in telecommunications)."};
+                "Transforming a data stream (such as when using a scrambler in telecommunications)." };
 
         String[] contentArray = new String[fieldSettings.length];
         Map<String, Object> docSource = new HashMap<>();
@@ -268,16 +266,17 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
                 }
 
             }
-            TestConfig config = new TestConfig(testDocs[randomInt(testDocs.length - 1)], selectedFields == null ? null
-                    : selectedFields.toArray(new String[]{}), randomBoolean(), randomBoolean(), randomBoolean());
+            TestConfig config = new TestConfig(testDocs[randomInt(testDocs.length - 1)],
+                    selectedFields == null ? null : selectedFields.toArray(new String[] {}), randomBoolean(), randomBoolean(),
+                    randomBoolean());
 
             configs.add(config);
         }
         // always adds a test that fails
-        configs.add(new TestConfig(new TestDoc("doesnt_exist", new TestFieldSetting[]{}, new String[]{})
-            .index("doesn't_exist").alias("doesn't_exist"),
-                new String[]{"doesnt_exist"}, true, true, true)
-            .expectedException(org.codelibs.fesen.index.IndexNotFoundException.class));
+        configs.add(new TestConfig(
+                new TestDoc("doesnt_exist", new TestFieldSetting[] {}, new String[] {}).index("doesn't_exist").alias("doesn't_exist"),
+                new String[] { "doesnt_exist" }, true, true, true)
+                        .expectedException(org.codelibs.fesen.index.IndexNotFoundException.class));
 
         refresh();
 
@@ -285,12 +284,11 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
     }
 
     protected TestFieldSetting[] getFieldSettings() {
-        return new TestFieldSetting[]{new TestFieldSetting("field_with_positions", false, false, true),
+        return new TestFieldSetting[] { new TestFieldSetting("field_with_positions", false, false, true),
                 new TestFieldSetting("field_with_offsets", true, false, false),
                 new TestFieldSetting("field_with_only_tv", false, false, false),
                 new TestFieldSetting("field_with_positions_offsets", false, false, true),
-                new TestFieldSetting("field_with_positions_payloads", false, true, true)
-        };
+                new TestFieldSetting("field_with_positions_payloads", false, true, true) };
     }
 
     protected DirectoryReader indexDocsWithLucene(TestDoc[] testDocs) throws IOException {
@@ -342,8 +340,7 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
     protected void validateResponse(TermVectorsResponse esResponse, Fields luceneFields, TestConfig testConfig) throws IOException {
         assertThat(esResponse.getIndex(), equalTo(testConfig.doc.index));
         TestDoc testDoc = testConfig.doc;
-        HashSet<String> selectedFields = testConfig.selectedFields == null ? null : new HashSet<>(
-                Arrays.asList(testConfig.selectedFields));
+        HashSet<String> selectedFields = testConfig.selectedFields == null ? null : new HashSet<>(Arrays.asList(testConfig.selectedFields));
         Fields esTermVectorFields = esResponse.getFields();
         for (TestFieldSetting field : testDoc.fieldSettings) {
             Terms esTerms = esTermVectorFields.terms(field.name);
@@ -406,9 +403,8 @@ public abstract class AbstractTermVectorsTestCase extends ESIntegTestCase {
 
     protected TermVectorsRequestBuilder getRequestForConfig(TestConfig config) {
         return client().prepareTermVectors(randomBoolean() ? config.doc.index : config.doc.alias, config.doc.type, config.doc.id)
-            .setPayloads(config.requestPayloads)
-            .setOffsets(config.requestOffsets).setPositions(config.requestPositions).setFieldStatistics(true).setTermStatistics(true)
-            .setSelectedFields(config.selectedFields).setRealtime(false);
+                .setPayloads(config.requestPayloads).setOffsets(config.requestOffsets).setPositions(config.requestPositions)
+                .setFieldStatistics(true).setTermStatistics(true).setSelectedFields(config.selectedFields).setRealtime(false);
     }
 
     protected Fields getTermVectorsFromLucene(DirectoryReader directoryReader, TestDoc doc) throws IOException {

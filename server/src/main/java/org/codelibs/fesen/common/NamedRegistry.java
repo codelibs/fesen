@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A registry from String to some class implementation. Used to ensure implementations are registered only once.

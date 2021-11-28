@@ -76,13 +76,17 @@ public final class CategoryQueryContext implements ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         CategoryQueryContext that = (CategoryQueryContext) o;
 
-        if (isPrefix != that.isPrefix) return false;
-        if (boost != that.boost) return false;
+        if (isPrefix != that.isPrefix)
+            return false;
+        if (boost != that.boost)
+            return false;
         return category != null ? category.equals(that.category) : that.category == null;
 
     }
@@ -109,7 +113,7 @@ public final class CategoryQueryContext implements ToXContentObject {
         if (token == XContentParser.Token.START_OBJECT) {
             try {
                 CATEGORY_PARSER.parse(parser, builder, null);
-            } catch(XContentParseException e) {
+            } catch (XContentParseException e) {
                 throw new XContentParseException("category context must be a string, number or boolean");
             }
         } else if (token == XContentParser.Token.VALUE_STRING || token == XContentParser.Token.VALUE_BOOLEAN

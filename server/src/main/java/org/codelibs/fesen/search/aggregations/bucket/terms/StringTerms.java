@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,16 +31,12 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * Result of the {@link TermsAggregator} when the field is a String.
  */
 public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bucket> {
     public static final String NAME = "sterms";
+
     public static class Bucket extends InternalTerms.Bucket<Bucket> {
         BytesRef termBytes;
 
@@ -106,8 +107,8 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
     public StringTerms(String name, BucketOrder reduceOrder, BucketOrder order, int requiredSize, long minDocCount,
             Map<String, Object> metadata, DocValueFormat format, int shardSize, boolean showTermDocCountError, long otherDocCount,
             List<Bucket> buckets, long docCountError) {
-        super(name, reduceOrder, order, requiredSize, minDocCount, metadata, format,
-                shardSize, showTermDocCountError, otherDocCount, buckets, docCountError);
+        super(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError, otherDocCount,
+                buckets, docCountError);
     }
 
     /**
@@ -124,8 +125,8 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
 
     @Override
     public StringTerms create(List<Bucket> buckets) {
-        return new StringTerms(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize,
-                showTermDocCountError, otherDocCount, buckets, docCountError);
+        return new StringTerms(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError,
+                otherDocCount, buckets, docCountError);
     }
 
     @Override
@@ -141,8 +142,8 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
 
     @Override
     protected StringTerms create(String name, List<Bucket> buckets, BucketOrder reduceOrder, long docCountError, long otherDocCount) {
-        return new StringTerms(name, reduceOrder, order, requiredSize, minDocCount, getMetadata(), format, shardSize,
-                showTermDocCountError, otherDocCount, buckets, docCountError);
+        return new StringTerms(name, reduceOrder, order, requiredSize, minDocCount, getMetadata(), format, shardSize, showTermDocCountError,
+                otherDocCount, buckets, docCountError);
     }
 
     @Override

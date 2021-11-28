@@ -19,17 +19,16 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.apache.lucene.analysis.Tokenizer;
-import org.codelibs.fesen.analysis.common.PathHierarchyTokenizerFactory;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
-import java.io.IOException;
-import java.io.StringReader;
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 
 public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
 
@@ -39,7 +38,7 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
         Tokenizer tokenizer = new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
                 "path-hierarchy-tokenizer", Settings.EMPTY).create();
         tokenizer.setReader(new StringReader("/one/two/three"));
-        assertTokenStreamContents(tokenizer, new String[] {"/one", "/one/two", "/one/two/three"});
+        assertTokenStreamContents(tokenizer, new String[] { "/one", "/one/two", "/one/two/three" });
     }
 
     public void testReverse() throws IOException {
@@ -49,7 +48,7 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
         Tokenizer tokenizer = new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
                 "path-hierarchy-tokenizer", settings).create();
         tokenizer.setReader(new StringReader("/one/two/three"));
-        assertTokenStreamContents(tokenizer, new String[] {"/one/two/three", "one/two/three", "two/three", "three"});
+        assertTokenStreamContents(tokenizer, new String[] { "/one/two/three", "one/two/three", "two/three", "three" });
     }
 
     public void testDelimiter() throws IOException {
@@ -59,9 +58,9 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
         Tokenizer tokenizer = new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
                 "path-hierarchy-tokenizer", settings).create();
         tokenizer.setReader(new StringReader("/one/two/three"));
-        assertTokenStreamContents(tokenizer, new String[] {"/one/two/three"});
+        assertTokenStreamContents(tokenizer, new String[] { "/one/two/three" });
         tokenizer.setReader(new StringReader("one-two-three"));
-        assertTokenStreamContents(tokenizer, new String[] {"one", "one-two", "one-two-three"});
+        assertTokenStreamContents(tokenizer, new String[] { "one", "one-two", "one-two-three" });
     }
 
     public void testReplace() throws IOException {
@@ -71,9 +70,9 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
         Tokenizer tokenizer = new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
                 "path-hierarchy-tokenizer", settings).create();
         tokenizer.setReader(new StringReader("/one/two/three"));
-        assertTokenStreamContents(tokenizer, new String[] {"-one", "-one-two", "-one-two-three"});
+        assertTokenStreamContents(tokenizer, new String[] { "-one", "-one-two", "-one-two-three" });
         tokenizer.setReader(new StringReader("one-two-three"));
-        assertTokenStreamContents(tokenizer, new String[] {"one-two-three"});
+        assertTokenStreamContents(tokenizer, new String[] { "one-two-three" });
     }
 
     public void testSkip() throws IOException {
@@ -83,14 +82,14 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
         Tokenizer tokenizer = new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
                 "path-hierarchy-tokenizer", settings).create();
         tokenizer.setReader(new StringReader("/one/two/three/four/five"));
-        assertTokenStreamContents(tokenizer, new String[] {"/three", "/three/four", "/three/four/five"});
+        assertTokenStreamContents(tokenizer, new String[] { "/three", "/three/four", "/three/four/five" });
     }
 
     public void testDelimiterExceptions() {
         final Index index = new Index("test", "_na_");
         final Settings indexSettings = newAnalysisSettingsBuilder().build();
         {
-            String delimiter = RandomPicks.randomFrom(random(), new String[] {"--", ""});
+            String delimiter = RandomPicks.randomFrom(random(), new String[] { "--", "" });
             Settings settings = newAnalysisSettingsBuilder().put("delimiter", delimiter).build();
             IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
                     () -> new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,
@@ -98,7 +97,7 @@ public class PathHierarchyTokenizerFactoryTests extends ESTokenStreamTestCase {
             assertEquals("delimiter must be a one char value", e.getMessage());
         }
         {
-            String replacement = RandomPicks.randomFrom(random(), new String[] {"--", ""});
+            String replacement = RandomPicks.randomFrom(random(), new String[] { "--", "" });
             Settings settings = newAnalysisSettingsBuilder().put("replacement", replacement).build();
             IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
                     () -> new PathHierarchyTokenizerFactory(IndexSettingsModule.newIndexSettings(index, indexSettings), null,

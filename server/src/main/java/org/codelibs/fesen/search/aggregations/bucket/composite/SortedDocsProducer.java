@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.DocIdSetIterator;
@@ -27,8 +29,6 @@ import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.DocIdSetBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
-
-import java.io.IOException;
 
 /**
  * A producer that visits composite buckets in the order of the value indexed in the leading source of the composite
@@ -51,7 +51,7 @@ abstract class SortedDocsProducer {
      * composite buckets.
      */
     protected boolean processBucket(CompositeValuesCollectorQueue queue, LeafReaderContext context, DocIdSetIterator iterator,
-                                    Comparable leadSourceBucket, @Nullable DocIdSetBuilder builder) throws IOException {
+            Comparable leadSourceBucket, @Nullable DocIdSetBuilder builder) throws IOException {
         final int[] topCompositeCollected = new int[1];
         final boolean[] hasCollected = new boolean[1];
         final LeafBucketCollector queueCollector = new LeafBucketCollector() {
@@ -76,7 +76,7 @@ abstract class SortedDocsProducer {
                             remainingBits = 128;
                         }
                         adder.add(doc);
-                        remainingBits --;
+                        remainingBits--;
                         lastDoc = doc;
                     }
                 }
@@ -89,9 +89,7 @@ abstract class SortedDocsProducer {
                 collector.collect(iterator.docID());
             }
         }
-        if (queue.isFull() &&
-                hasCollected[0] &&
-                topCompositeCollected[0] == 0) {
+        if (queue.isFull() && hasCollected[0] && topCompositeCollected[0] == 0) {
             return true;
         }
         return false;
@@ -102,6 +100,6 @@ abstract class SortedDocsProducer {
      * Returns the {@link DocIdSet} of the documents that contain a top composite bucket in this leaf or
      * {@link DocIdSet#EMPTY} if <code>fillDocIdSet</code> is false.
      */
-    abstract DocIdSet processLeaf(Query query, CompositeValuesCollectorQueue queue,
-                                  LeafReaderContext context, boolean fillDocIdSet) throws IOException;
+    abstract DocIdSet processLeaf(Query query, CompositeValuesCollectorQueue queue, LeafReaderContext context, boolean fillDocIdSet)
+            throws IOException;
 }

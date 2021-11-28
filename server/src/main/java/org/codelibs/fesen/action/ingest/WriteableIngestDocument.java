@@ -19,7 +19,15 @@
 
 package org.codelibs.fesen.action.ingest;
 
-import org.codelibs.fesen.Version;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -31,17 +39,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.IngestDocument.Metadata;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 final class WriteableIngestDocument implements Writeable, ToXContentFragment {
 
     static final String SOURCE_FIELD = "_source";
@@ -51,10 +48,7 @@ final class WriteableIngestDocument implements Writeable, ToXContentFragment {
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<WriteableIngestDocument, Void> INGEST_DOC_PARSER =
-        new ConstructingObjectParser<>(
-            "ingest_document",
-            true,
-            a -> {
+            new ConstructingObjectParser<>("ingest_document", true, a -> {
                 HashMap<String, Object> sourceAndMetadata = new HashMap<>();
                 sourceAndMetadata.put(Metadata.INDEX.getFieldName(), a[0]);
                 sourceAndMetadata.put(Metadata.TYPE.getFieldName(), a[1]);
@@ -68,10 +62,9 @@ final class WriteableIngestDocument implements Writeable, ToXContentFragment {
                 if (a[5] != null) {
                     sourceAndMetadata.put(Metadata.VERSION_TYPE.getFieldName(), a[5]);
                 }
-                sourceAndMetadata.putAll((Map<String, Object>)a[6]);
-                return new WriteableIngestDocument(new IngestDocument(sourceAndMetadata, (Map<String, Object>)a[7]));
-            }
-        );
+                sourceAndMetadata.putAll((Map<String, Object>) a[6]);
+                return new WriteableIngestDocument(new IngestDocument(sourceAndMetadata, (Map<String, Object>) a[7]));
+            });
     static {
         INGEST_DOC_PARSER.declareString(constructorArg(), new ParseField(Metadata.INDEX.getFieldName()));
         INGEST_DOC_PARSER.declareString(constructorArg(), new ParseField(Metadata.TYPE.getFieldName()));
@@ -80,26 +73,15 @@ final class WriteableIngestDocument implements Writeable, ToXContentFragment {
         INGEST_DOC_PARSER.declareLong(optionalConstructorArg(), new ParseField(Metadata.VERSION.getFieldName()));
         INGEST_DOC_PARSER.declareString(optionalConstructorArg(), new ParseField(Metadata.VERSION_TYPE.getFieldName()));
         INGEST_DOC_PARSER.declareObject(constructorArg(), (p, c) -> p.map(), new ParseField(SOURCE_FIELD));
-        INGEST_DOC_PARSER.declareObject(
-            constructorArg(),
-            (p, c) -> {
-                Map<String, Object> ingestMap = p.map();
-                ingestMap.computeIfPresent(
-                    "timestamp",
-                    (k, o) -> ZonedDateTime.parse((String)o)
-                );
-                return ingestMap;
-            },
-            new ParseField(INGEST_FIELD)
-        );
+        INGEST_DOC_PARSER.declareObject(constructorArg(), (p, c) -> {
+            Map<String, Object> ingestMap = p.map();
+            ingestMap.computeIfPresent("timestamp", (k, o) -> ZonedDateTime.parse((String) o));
+            return ingestMap;
+        }, new ParseField(INGEST_FIELD));
     }
 
     public static final ConstructingObjectParser<WriteableIngestDocument, Void> PARSER =
-        new ConstructingObjectParser<>(
-            "writeable_ingest_document",
-            true,
-            a -> (WriteableIngestDocument)a[0]
-        );
+            new ConstructingObjectParser<>("writeable_ingest_document", true, a -> (WriteableIngestDocument) a[0]);
     static {
         PARSER.declareObject(constructorArg(), INGEST_DOC_PARSER, new ParseField(DOC_FIELD));
     }

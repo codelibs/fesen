@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.util.BytesRef;
-
-import java.io.IOException;
 
 final class SingletonSortedBinaryDocValues extends SortedBinaryDocValues {
 

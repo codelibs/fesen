@@ -19,18 +19,17 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import java.util.Map;
+
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestChannel;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
-
-import java.util.Map;
 
 /**
  * RestBuilderListener that returns higher than 200 status if there are any failures and allows to set XContent.Params.
@@ -66,7 +65,7 @@ public class BulkIndexByScrollResponseContentListener extends RestBuilderListene
                 status = failure.getStatus();
             }
         }
-        for (SearchFailure failure: response.getSearchFailures()) {
+        for (SearchFailure failure : response.getSearchFailures()) {
             RestStatus failureStatus = failure.getStatus();
             if (failureStatus.getStatus() > status.getStatus()) {
                 status = failureStatus;

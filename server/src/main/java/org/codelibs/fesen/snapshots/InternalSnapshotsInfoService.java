@@ -19,7 +19,15 @@
 
 package org.codelibs.fesen.snapshots;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -45,27 +53,18 @@ import org.codelibs.fesen.repositories.RepositoriesService;
 import org.codelibs.fesen.repositories.Repository;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.Supplier;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 public class InternalSnapshotsInfoService implements ClusterStateListener, SnapshotsInfoService {
 
     public static final Setting<Integer> INTERNAL_SNAPSHOT_INFO_MAX_CONCURRENT_FETCHES_SETTING =
-        Setting.intSetting("cluster.snapshot.info.max_concurrent_fetches", 5, 1,
-            Setting.Property.Dynamic, Setting.Property.NodeScope);
+            Setting.intSetting("cluster.snapshot.info.max_concurrent_fetches", 5, 1, Setting.Property.Dynamic, Setting.Property.NodeScope);
 
     private static final Logger logger = LogManager.getLogger(InternalSnapshotsInfoService.class);
 
-    private static final ActionListener<ClusterState> REROUTE_LISTENER = ActionListener.wrap(
-        r -> logger.trace("reroute after snapshot shard size update completed"),
-        e -> logger.debug("reroute after snapshot shard size update failed", e)
-    );
+    private static final ActionListener<ClusterState> REROUTE_LISTENER =
+            ActionListener.wrap(r -> logger.trace("reroute after snapshot shard size update completed"),
+                    e -> logger.debug("reroute after snapshot shard size update failed", e));
 
     private final ThreadPool threadPool;
     private final Supplier<RepositoriesService> repositoriesService;
@@ -90,18 +89,14 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
 
     private final Object mutex;
 
-    public InternalSnapshotsInfoService(
-        final Settings settings,
-        final ClusterService clusterService,
-        final Supplier<RepositoriesService> repositoriesServiceSupplier,
-        final Supplier<RerouteService> rerouteServiceSupplier
-    ) {
+    public InternalSnapshotsInfoService(final Settings settings, final ClusterService clusterService,
+            final Supplier<RepositoriesService> repositoriesServiceSupplier, final Supplier<RerouteService> rerouteServiceSupplier) {
         this.threadPool = clusterService.getClusterApplierService().threadPool();
         this.repositoriesService = repositoriesServiceSupplier;
         this.rerouteService = rerouteServiceSupplier;
         this.knownSnapshotShards = ImmutableOpenMap.of();
-        this.unknownSnapshotShards  = new LinkedHashSet<>();
-        this.failedSnapshotShards  = new LinkedHashSet<>();
+        this.unknownSnapshotShards = new LinkedHashSet<>();
+        this.failedSnapshotShards = new LinkedHashSet<>();
         this.queue = new LinkedList<>();
         this.mutex = new Object();
         this.activeFetches = 0;
@@ -119,7 +114,7 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
 
     @Override
     public SnapshotShardSizeInfo snapshotShardSizes() {
-        synchronized (mutex){
+        synchronized (mutex) {
             final ImmutableOpenMap.Builder<SnapshotShard, Long> snapshotShardSizes = ImmutableOpenMap.builder(knownSnapshotShards);
             if (failedSnapshotShards.isEmpty() == false) {
                 for (SnapshotShard snapshotShard : failedSnapshotShards) {
@@ -215,11 +210,9 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
             final Repository repository = repositories.repository(snapshotShard.snapshot.getRepository());
 
             logger.debug("fetching snapshot shard size for {}", snapshotShard);
-            final long snapshotShardSize = repository.getShardSnapshotStatus(
-                snapshotShard.snapshot().getSnapshotId(),
-                snapshotShard.index(),
-                snapshotShard.shardId()
-            ).asCopy().getTotalSize();
+            final long snapshotShardSize = repository
+                    .getShardSnapshotStatus(snapshotShard.snapshot().getSnapshotId(), snapshotShard.index(), snapshotShard.shardId())
+                    .asCopy().getTotalSize();
 
             logger.debug("snapshot shard size for {}: {} bytes", snapshotShard, snapshotShardSize);
 
@@ -229,7 +222,7 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
                 assert removed : "snapshot shard to remove does not exist " + snapshotShardSize;
                 if (isMaster) {
                     final ImmutableOpenMap.Builder<SnapshotShard, Long> newSnapshotShardSizes =
-                        ImmutableOpenMap.builder(knownSnapshotShards);
+                            ImmutableOpenMap.builder(knownSnapshotShards);
                     updated = newSnapshotShardSizes.put(snapshotShard, snapshotShardSize) == null;
                     assert updated : "snapshot shard size already exists for " + snapshotShard;
                     knownSnapshotShards = newSnapshotShardSizes.build();
@@ -328,9 +321,9 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
         for (ShardRouting shardRouting : state.routingTable().shardsWithState(ShardRoutingState.UNASSIGNED)) {
             if (shardRouting.primary() && shardRouting.recoverySource().getType() == RecoverySource.Type.SNAPSHOT) {
                 final RecoverySource.SnapshotRecoverySource snapshotRecoverySource =
-                    (RecoverySource.SnapshotRecoverySource) shardRouting.recoverySource();
-                final SnapshotShard snapshotShard = new SnapshotShard(snapshotRecoverySource.snapshot(),
-                    snapshotRecoverySource.index(), shardRouting.shardId());
+                        (RecoverySource.SnapshotRecoverySource) shardRouting.recoverySource();
+                final SnapshotShard snapshotShard =
+                        new SnapshotShard(snapshotRecoverySource.snapshot(), snapshotRecoverySource.index(), shardRouting.shardId());
                 snapshotShards.add(snapshotShard);
             }
         }
@@ -370,9 +363,7 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
                 return false;
             }
             final SnapshotShard that = (SnapshotShard) o;
-            return shardId.equals(that.shardId)
-                && snapshot.equals(that.snapshot)
-                && index.equals(that.index);
+            return shardId.equals(that.shardId) && snapshot.equals(that.snapshot) && index.equals(that.index);
         }
 
         @Override
@@ -382,11 +373,7 @@ public class InternalSnapshotsInfoService implements ClusterStateListener, Snaps
 
         @Override
         public String toString() {
-            return "[" +
-                "snapshot=" + snapshot +
-                ", index=" + index +
-                ", shard=" + shardId +
-                ']';
+            return "[" + "snapshot=" + snapshot + ", index=" + index + ", shard=" + shardId + ']';
         }
     }
 }

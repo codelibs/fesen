@@ -26,8 +26,8 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 
 public class ParsedGeoTileGrid extends ParsedGeoGrid {
 
-    private static final ObjectParser<ParsedGeoGrid, Void> PARSER = createParser(ParsedGeoTileGrid::new,
-        ParsedGeoTileGridBucket::fromXContent, ParsedGeoTileGridBucket::fromXContent);
+    private static final ObjectParser<ParsedGeoGrid, Void> PARSER =
+            createParser(ParsedGeoTileGrid::new, ParsedGeoTileGridBucket::fromXContent, ParsedGeoTileGridBucket::fromXContent);
 
     public static ParsedGeoGrid fromXContent(XContentParser parser, String name) throws IOException {
         ParsedGeoGrid aggregation = PARSER.parse(parser, null);

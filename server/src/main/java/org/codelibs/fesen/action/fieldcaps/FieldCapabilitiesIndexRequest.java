@@ -53,14 +53,11 @@ public class FieldCapabilitiesIndexRequest extends ActionRequest implements Indi
         fields = in.readStringArray();
         originalIndices = OriginalIndices.readOriginalIndices(in);
         indexFilter = in.getVersion().onOrAfter(Version.V_7_9_0) ? in.readOptionalNamedWriteable(QueryBuilder.class) : null;
-        nowInMillis =  in.getVersion().onOrAfter(Version.V_7_9_0) ? in.readLong() : 0L;
+        nowInMillis = in.getVersion().onOrAfter(Version.V_7_9_0) ? in.readLong() : 0L;
     }
 
-    FieldCapabilitiesIndexRequest(String[] fields,
-                                  String index,
-                                  OriginalIndices originalIndices,
-                                  QueryBuilder indexFilter,
-                                  long nowInMillis) {
+    FieldCapabilitiesIndexRequest(String[] fields, String index, OriginalIndices originalIndices, QueryBuilder indexFilter,
+            long nowInMillis) {
         if (fields == null || fields.length == 0) {
             throw new IllegalArgumentException("specified fields can't be null or empty");
         }

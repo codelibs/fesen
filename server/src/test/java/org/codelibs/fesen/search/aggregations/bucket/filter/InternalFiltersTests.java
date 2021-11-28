@@ -85,8 +85,7 @@ public class InternalFiltersTests extends InternalMultiBucketAggregationTestCase
         }
         final Map<String, Long> actualCounts = new TreeMap<>();
         for (InternalFilters.InternalBucket bucket : reduced.getBuckets()) {
-            actualCounts.compute(bucket.getKeyAsString(),
-                    (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
+            actualCounts.compute(bucket.getKeyAsString(), (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
         }
         assertEquals(expectedCounts, actualCounts);
     }
@@ -144,8 +143,7 @@ public class InternalFiltersTests extends InternalMultiBucketAggregationTestCase
             }
         };
         PipelineTree tree = new PipelineTree(
-            org.codelibs.fesen.core.Map.of(inner.getName(), new PipelineTree(emptyMap(), singletonList(mockPipeline))),
-            emptyList());
+                org.codelibs.fesen.core.Map.of(inner.getName(), new PipelineTree(emptyMap(), singletonList(mockPipeline))), emptyList());
         InternalFilters reduced = (InternalFilters) test.reducePipelines(test, emptyReduceContextBuilder().forFinalReduction(), tree);
         for (InternalFilters.InternalBucket bucket : reduced.getBuckets()) {
             assertThat(bucket.getAggregations().get(dummy.getName()), sameInstance(dummy));

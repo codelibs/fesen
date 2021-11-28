@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -32,18 +41,6 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicRequestLine;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.util.EntityUtils;
-import org.codelibs.fesen.client.Response;
-import org.codelibs.fesen.client.ResponseException;
-import org.codelibs.fesen.client.RestClientTestCase;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 public class ResponseExceptionTests extends RestClientTestCase {
 
@@ -61,7 +58,7 @@ public class ResponseExceptionTests extends RestClientTestCase {
             } else {
                 //test a non repeatable entity
                 entity = new InputStreamEntity(new ByteArrayInputStream(responseBody.getBytes(StandardCharsets.UTF_8)),
-                    ContentType.APPLICATION_JSON);
+                        ContentType.APPLICATION_JSON);
             }
             httpResponse.setEntity(entity);
         }
@@ -78,13 +75,9 @@ public class ResponseExceptionTests extends RestClientTestCase {
             assertNull(responseException.getResponse().getEntity());
         }
 
-        String message = String.format(Locale.ROOT,
-            "method [%s], host [%s], URI [%s], status line [%s]",
-            response.getRequestLine().getMethod(),
-            response.getHost(),
-            response.getRequestLine().getUri(),
-            response.getStatusLine().toString()
-        );
+        String message =
+                String.format(Locale.ROOT, "method [%s], host [%s], URI [%s], status line [%s]", response.getRequestLine().getMethod(),
+                        response.getHost(), response.getRequestLine().getUri(), response.getStatusLine().toString());
 
         if (hasBody) {
             message += "\n" + responseBody;

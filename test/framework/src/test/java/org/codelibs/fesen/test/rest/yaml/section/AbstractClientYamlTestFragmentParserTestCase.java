@@ -19,14 +19,12 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import org.junit.After;
-
 import static org.hamcrest.Matchers.nullValue;
 
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.rest.yaml.section.ExecutableSection;
+import org.junit.After;
 
 /**
  * Superclass for tests that parse parts of the test suite.

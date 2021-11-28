@@ -26,8 +26,8 @@ import org.codelibs.fesen.common.settings.SecureString;
 /**
  * Builder for the reload secure settings nodes request
  */
-public class NodesReloadSecureSettingsRequestBuilder extends NodesOperationRequestBuilder<NodesReloadSecureSettingsRequest,
-        NodesReloadSecureSettingsResponse, NodesReloadSecureSettingsRequestBuilder> {
+public class NodesReloadSecureSettingsRequestBuilder extends
+        NodesOperationRequestBuilder<NodesReloadSecureSettingsRequest, NodesReloadSecureSettingsResponse, NodesReloadSecureSettingsRequestBuilder> {
 
     public NodesReloadSecureSettingsRequestBuilder(FesenClient client, NodesReloadSecureSettingsAction action) {
         super(client, action, new NodesReloadSecureSettingsRequest());

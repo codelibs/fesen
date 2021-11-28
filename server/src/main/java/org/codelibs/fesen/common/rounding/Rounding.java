@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.common.rounding;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.core.TimeValue;
 import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeZone;
 import org.joda.time.IllegalInstantException;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A strategy for rounding long values.
@@ -203,8 +203,7 @@ public abstract class Rounding implements Writeable {
                     // Therefore the previous offset _is_ in effect at `alsoLocalStartOfDay`, and it's earlier than anyLocalStartOfDay,
                     // so this is the answer to use.
                     return alsoLocalStartOfDay;
-                }
-                else {
+                } else {
                     // The previous offset is not in effect at `alsoLocalStartOfDay`, so the current offset must be.
                     return anyLocalStartOfDay;
                 }
@@ -410,14 +409,14 @@ public abstract class Rounding implements Writeable {
             Rounding rounding;
             byte id = in.readByte();
             switch (id) {
-                case TimeUnitRounding.ID:
-                    rounding = new TimeUnitRounding(in);
-                    break;
-                case TimeIntervalRounding.ID:
-                    rounding = new TimeIntervalRounding(in);
-                    break;
-                default:
-                    throw new FesenException("unknown rounding id [" + id + "]");
+            case TimeUnitRounding.ID:
+                rounding = new TimeUnitRounding(in);
+                break;
+            case TimeIntervalRounding.ID:
+                rounding = new TimeIntervalRounding(in);
+                break;
+            default:
+                throw new FesenException("unknown rounding id [" + id + "]");
             }
             return rounding;
         }

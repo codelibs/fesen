@@ -19,10 +19,18 @@
 
 package org.codelibs.fesen.search;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.search.TotalHits.Relation;
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -32,15 +40,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.action.search.RestSearchAction;
-
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 
 public final class SearchHits implements Writeable, ToXContentFragment, Iterable<SearchHit> {
     public static SearchHits empty() {
@@ -69,7 +68,7 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
     }
 
     public SearchHits(SearchHit[] hits, @Nullable TotalHits totalHits, float maxScore, @Nullable SortField[] sortFields,
-                      @Nullable String collapseField, @Nullable Object[] collapseValues) {
+            @Nullable String collapseField, @Nullable Object[] collapseValues) {
         this.hits = hits;
         this.totalHits = totalHits;
         this.maxScore = maxScore;
@@ -263,18 +262,15 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
             return false;
         }
         SearchHits other = (SearchHits) obj;
-        return Objects.equals(totalHits, other.totalHits)
-                && Objects.equals(maxScore, other.maxScore)
-                && Arrays.equals(hits, other.hits)
-                && Arrays.equals(sortFields, other.sortFields)
-                && Objects.equals(collapseField, other.collapseField)
+        return Objects.equals(totalHits, other.totalHits) && Objects.equals(maxScore, other.maxScore) && Arrays.equals(hits, other.hits)
+                && Arrays.equals(sortFields, other.sortFields) && Objects.equals(collapseField, other.collapseField)
                 && Arrays.equals(collapseValues, other.collapseValues);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalHits, maxScore, Arrays.hashCode(hits),
-            Arrays.hashCode(sortFields), collapseField, Arrays.hashCode(collapseValues));
+        return Objects.hash(totalHits, maxScore, Arrays.hashCode(hits), Arrays.hashCode(sortFields), collapseField,
+                Arrays.hashCode(collapseValues));
     }
 
     public static TotalHits parseTotalHitsFragment(XContentParser parser) throws IOException {

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
-
-import java.io.IOException;
-import java.util.List;
 
 public class ParsedHistogram extends ParsedMultiBucketAggregation<ParsedHistogram.ParsedBucket> implements Histogram {
 
@@ -41,8 +41,7 @@ public class ParsedHistogram extends ParsedMultiBucketAggregation<ParsedHistogra
     private static final ObjectParser<ParsedHistogram, Void> PARSER =
             new ObjectParser<>(ParsedHistogram.class.getSimpleName(), true, ParsedHistogram::new);
     static {
-        declareMultiBucketAggregationFields(PARSER,
-                parser -> ParsedBucket.fromXContent(parser, false),
+        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 

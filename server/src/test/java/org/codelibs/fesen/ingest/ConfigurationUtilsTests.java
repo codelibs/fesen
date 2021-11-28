@@ -111,15 +111,14 @@ public class ConfigurationUtilsTests extends ESTestCase {
         try {
             ConfigurationUtils.readStringOrIntProperty(null, null, config, "arr", null);
         } catch (FesenParseException e) {
-            assertThat(e.getMessage(), equalTo(
-                "[arr] property isn't a string or int, but of type [java.util.Arrays$ArrayList]"));
+            assertThat(e.getMessage(), equalTo("[arr] property isn't a string or int, but of type [java.util.Arrays$ArrayList]"));
         }
     }
 
     public void testReadProcessors() throws Exception {
         Processor processor = mock(Processor.class);
         Map<String, Processor.Factory> registry =
-            Collections.singletonMap("test_processor", (factories, tag, description, config) -> processor);
+                Collections.singletonMap("test_processor", (factories, tag, description, config) -> processor);
 
         List<Map<String, Object>> config = new ArrayList<>();
         Map<String, Object> emptyConfig = Collections.emptyMap();
@@ -137,8 +136,8 @@ public class ConfigurationUtilsTests extends ESTestCase {
             unknownTaggedConfig.put("description", "my_description");
         }
         config.add(Collections.singletonMap("unknown_processor", unknownTaggedConfig));
-        FesenParseException e = expectThrows(FesenParseException.class,
-            () -> ConfigurationUtils.readProcessorConfigs(config, scriptService, registry));
+        FesenParseException e =
+                expectThrows(FesenParseException.class, () -> ConfigurationUtils.readProcessorConfigs(config, scriptService, registry));
         assertThat(e.getMessage(), equalTo("No processor type exists with name [unknown_processor]"));
         assertThat(e.getMetadata("es.processor_tag"), equalTo(Collections.singletonList("my_unknown")));
         assertThat(e.getMetadata("es.processor_type"), equalTo(Collections.singletonList("unknown_processor")));
@@ -152,10 +151,7 @@ public class ConfigurationUtilsTests extends ESTestCase {
         Map<String, Object> secondUnknownTaggedConfig = new HashMap<>();
         secondUnknownTaggedConfig.put("tag", "my_second_unknown");
         config2.add(Collections.singletonMap("second_unknown_processor", secondUnknownTaggedConfig));
-        e = expectThrows(
-            FesenParseException.class,
-            () -> ConfigurationUtils.readProcessorConfigs(config2, scriptService, registry)
-        );
+        e = expectThrows(FesenParseException.class, () -> ConfigurationUtils.readProcessorConfigs(config2, scriptService, registry));
         assertThat(e.getMessage(), equalTo("No processor type exists with name [unknown_processor]"));
         assertThat(e.getMetadata("es.processor_tag"), equalTo(Collections.singletonList("my_unknown")));
         assertThat(e.getMetadata("es.processor_type"), equalTo(Collections.singletonList("unknown_processor")));
@@ -172,11 +168,10 @@ public class ConfigurationUtilsTests extends ESTestCase {
 
     public void testReadProcessorNullDescription() throws Exception {
         Processor processor = new TestProcessor("tag", "type", null, (ingestDocument) -> {});
-        Map<String, Processor.Factory> registry =
-            Collections.singletonMap("test_processor", (factories, tag, description, config) -> {
-                assertNull(description);
-                return processor;
-            });
+        Map<String, Processor.Factory> registry = Collections.singletonMap("test_processor", (factories, tag, description, config) -> {
+            assertNull(description);
+            return processor;
+        });
 
         List<Map<String, Object>> config = new ArrayList<>();
         Map<String, Object> emptyConfig = Collections.emptyMap();
@@ -189,11 +184,10 @@ public class ConfigurationUtilsTests extends ESTestCase {
     public void testReadProcessorDescription() throws Exception {
         String testDescription = randomAlphaOfLengthBetween(10, 20);
         Processor processor = new TestProcessor("tag", "type", testDescription, (ingestDocument) -> {});
-        Map<String, Processor.Factory> registry =
-            Collections.singletonMap("test_processor", (factories, tag, description, config) -> {
-                assertThat(description, equalTo(processor.getDescription()));
-                return processor;
-            });
+        Map<String, Processor.Factory> registry = Collections.singletonMap("test_processor", (factories, tag, description, config) -> {
+            assertThat(description, equalTo(processor.getDescription()));
+            return processor;
+        });
 
         List<Map<String, Object>> config = new ArrayList<>();
         Map<String, Object> processorConfig = new HashMap<>();
@@ -206,11 +200,10 @@ public class ConfigurationUtilsTests extends ESTestCase {
 
     public void testReadProcessorFromObjectOrMap() throws Exception {
         Processor processor = mock(Processor.class);
-        Map<String, Processor.Factory> registry =
-            Collections.singletonMap("script", (processorFactories, tag, description, config) -> {
-                config.clear();
-                return processor;
-            });
+        Map<String, Processor.Factory> registry = Collections.singletonMap("script", (processorFactories, tag, description, config) -> {
+            config.clear();
+            return processor;
+        });
 
         Object emptyConfig = Collections.emptyMap();
         Processor processor1 = ConfigurationUtils.readProcessor(registry, scriptService, "script", emptyConfig);
@@ -223,7 +216,7 @@ public class ConfigurationUtilsTests extends ESTestCase {
         Object invalidConfig = 12L;
 
         FesenParseException ex = expectThrows(FesenParseException.class,
-            () -> ConfigurationUtils.readProcessor(registry, scriptService, "unknown_processor", invalidConfig));
+                () -> ConfigurationUtils.readProcessor(registry, scriptService, "unknown_processor", invalidConfig));
         assertThat(ex.getMessage(), equalTo("property isn't a map, but of type [" + invalidConfig.getClass().getName() + "]"));
     }
 
@@ -233,7 +226,7 @@ public class ConfigurationUtilsTests extends ESTestCase {
         String propertyValue = randomAlphaOfLength(10);
         TemplateScript.Factory result;
         result = ConfigurationUtils.compileTemplate(randomAlphaOfLength(10), randomAlphaOfLength(10), randomAlphaOfLength(10),
-            propertyValue, scriptService);
+                propertyValue, scriptService);
         assertThat(result.newInstance(null).execute(), equalTo(propertyValue));
         verify(scriptService, times(0)).compile(any(), any());
     }
@@ -246,7 +239,7 @@ public class ConfigurationUtilsTests extends ESTestCase {
         when(scriptService.compile(any(), any())).thenReturn(new TestTemplateService.MockTemplateScript.Factory(compiledValue));
         TemplateScript.Factory result;
         result = ConfigurationUtils.compileTemplate(randomAlphaOfLength(10), randomAlphaOfLength(10), randomAlphaOfLength(10),
-            propertyValue, scriptService);
+                propertyValue, scriptService);
         assertThat(result.newInstance(null).execute(), equalTo(compiledValue));
         verify(scriptService, times(1)).compile(any(), any());
     }

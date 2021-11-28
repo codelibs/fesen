@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.inject.Inject;
@@ -27,11 +32,6 @@ import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.profile.query.CollectorResult;
 import org.codelibs.fesen.search.profile.query.InternalProfileCollector;
 import org.codelibs.fesen.search.query.QueryPhaseExecutionException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Aggregation phase of a search request, used to collect aggregations
@@ -57,7 +57,7 @@ public class AggregationPhase {
                 context.aggregations().aggregators(aggregators);
                 if (!collectors.isEmpty()) {
                     Collector collector = MultiBucketCollector.wrap(collectors);
-                    ((BucketCollector)collector).preCollection();
+                    ((BucketCollector) collector).preCollection();
                     if (context.getProfilers() != null) {
                         collector = new InternalProfileCollector(collector, CollectorResult.REASON_AGGREGATION,
                                 // TODO: report on child aggs as well
@@ -100,10 +100,10 @@ public class AggregationPhase {
                 if (context.getProfilers() == null) {
                     collector = globalsCollector;
                 } else {
-                    InternalProfileCollector profileCollector = new InternalProfileCollector(
-                            globalsCollector, CollectorResult.REASON_AGGREGATION_GLOBAL,
-                            // TODO: report on sub collectors
-                            Collections.emptyList());
+                    InternalProfileCollector profileCollector =
+                            new InternalProfileCollector(globalsCollector, CollectorResult.REASON_AGGREGATION_GLOBAL,
+                                    // TODO: report on sub collectors
+                                    Collections.emptyList());
                     collector = profileCollector;
                     // start a new profile with this collector
                     context.getProfilers().addQueryProfiler().setCollector(profileCollector);
@@ -125,8 +125,8 @@ public class AggregationPhase {
                 throw new AggregationExecutionException("Failed to build aggregation [" + aggregator.name() + "]", e);
             }
         }
-        context.queryResult().aggregations(new InternalAggregations(aggregations,
-                context.request().source().aggregations()::buildPipelineTree));
+        context.queryResult()
+                .aggregations(new InternalAggregations(aggregations, context.request().source().aggregations()::buildPipelineTree));
 
         // disable aggregations so that they don't run on next pages in case of scrolling
         context.aggregations(null);

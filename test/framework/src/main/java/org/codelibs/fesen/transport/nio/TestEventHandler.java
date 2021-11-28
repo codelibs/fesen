@@ -39,7 +39,7 @@ public class TestEventHandler extends EventHandler {
     private final MockNioTransport.TransportThreadWatchdog transportThreadWatchdog;
 
     TestEventHandler(Consumer<Exception> exceptionHandler, Supplier<NioSelector> selectorSupplier,
-                     MockNioTransport.TransportThreadWatchdog transportThreadWatchdog) {
+            MockNioTransport.TransportThreadWatchdog transportThreadWatchdog) {
         super(exceptionHandler, selectorSupplier);
         this.transportThreadWatchdog = transportThreadWatchdog;
     }

@@ -19,7 +19,11 @@
 
 package org.codelibs.fesen.search.sort;
 
-import org.codelibs.fesen.Version;
+import static org.codelibs.fesen.search.sort.SortBuilder.parseNestedFilter;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,11 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryRewriteContext;
-
-import static org.codelibs.fesen.search.sort.SortBuilder.parseNestedFilter;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class NestedSortBuilder implements Writeable, ToXContentObject {
     public static final ParseField NESTED_FIELD = new ParseField("nested");
@@ -65,7 +64,9 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
         return filter;
     }
 
-    public int getMaxChildren() { return maxChildren; }
+    public int getMaxChildren() {
+        return maxChildren;
+    }
 
     public NestedSortBuilder setFilter(final QueryBuilder filter) {
         this.filter = filter;
@@ -161,10 +162,8 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
             return false;
         }
         NestedSortBuilder that = (NestedSortBuilder) obj;
-        return Objects.equals(path, that.path)
-            && Objects.equals(filter, that.filter)
-            && Objects.equals(maxChildren, that.maxChildren)
-            && Objects.equals(nestedSort, that.nestedSort);
+        return Objects.equals(path, that.path) && Objects.equals(filter, that.filter) && Objects.equals(maxChildren, that.maxChildren)
+                && Objects.equals(nestedSort, that.nestedSort);
     }
 
     @Override

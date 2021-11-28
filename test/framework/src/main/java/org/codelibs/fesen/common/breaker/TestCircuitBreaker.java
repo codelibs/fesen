@@ -21,9 +21,6 @@ package org.codelibs.fesen.common.breaker;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.codelibs.fesen.common.breaker.CircuitBreakingException;
-import org.codelibs.fesen.common.breaker.NoopCircuitBreaker;
-
 public class TestCircuitBreaker extends NoopCircuitBreaker {
 
     private final AtomicBoolean shouldBreak = new AtomicBoolean(false);

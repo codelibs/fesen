@@ -19,27 +19,18 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.codelibs.fesen.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.index.mapper.DocValueFetcher;
-import org.codelibs.fesen.index.mapper.FieldMapper;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperParsingException;
-import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.mapper.NumberFieldMapper;
-import org.codelibs.fesen.index.mapper.ParametrizedFieldMapper;
-import org.codelibs.fesen.index.mapper.ParseContext;
-import org.codelibs.fesen.index.mapper.ValueFetcher;
-import org.codelibs.fesen.search.lookup.SearchLookup;
-
 import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeIntegerValue;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.codelibs.fesen.index.analysis.NamedAnalyzer;
+import org.codelibs.fesen.search.lookup.SearchLookup;
 
 /**
  * A {@link FieldMapper} that takes a string and writes a count of the tokens in that string
@@ -58,13 +49,11 @@ public class TokenCountFieldMapper extends ParametrizedFieldMapper {
         private final Parameter<Boolean> hasDocValues = Parameter.docValuesParam(m -> toType(m).hasDocValues, true);
         private final Parameter<Boolean> store = Parameter.storeParam(m -> toType(m).store, false);
 
-        private final Parameter<NamedAnalyzer> analyzer
-            = Parameter.analyzerParam("analyzer", true, m -> toType(m).analyzer, () -> null);
-        private final Parameter<Integer> nullValue = new Parameter<>(
-            "null_value", false, () -> null,
-            (n, c, o) -> o == null ? null : nodeIntegerValue(o), m -> toType(m).nullValue).acceptsNull();
-        private final Parameter<Boolean> enablePositionIncrements
-            = Parameter.boolParam("enable_position_increments", false, m -> toType(m).enablePositionIncrements, true);
+        private final Parameter<NamedAnalyzer> analyzer = Parameter.analyzerParam("analyzer", true, m -> toType(m).analyzer, () -> null);
+        private final Parameter<Integer> nullValue = new Parameter<>("null_value", false, () -> null,
+                (n, c, o) -> o == null ? null : nodeIntegerValue(o), m -> toType(m).nullValue).acceptsNull();
+        private final Parameter<Boolean> enablePositionIncrements =
+                Parameter.boolParam("enable_position_increments", false, m -> toType(m).enablePositionIncrements, true);
 
         private final Parameter<Map<String, String>> meta = Parameter.metaParam();
 
@@ -82,21 +71,16 @@ public class TokenCountFieldMapper extends ParametrizedFieldMapper {
             if (analyzer.getValue() == null) {
                 throw new MapperParsingException("Analyzer must be set for field [" + name + "] but wasn't.");
             }
-            MappedFieldType ft = new TokenCountFieldType(
-                buildFullName(context),
-                index.getValue(),
-                store.getValue(),
-                hasDocValues.getValue(),
-                nullValue.getValue(),
-                meta.getValue());
+            MappedFieldType ft = new TokenCountFieldType(buildFullName(context), index.getValue(), store.getValue(),
+                    hasDocValues.getValue(), nullValue.getValue(), meta.getValue());
             return new TokenCountFieldMapper(name, ft, multiFieldsBuilder.build(this, context), copyTo.build(), this);
         }
     }
 
     static class TokenCountFieldType extends NumberFieldMapper.NumberFieldType {
 
-        TokenCountFieldType(String name, boolean isSearchable, boolean isStored,
-                            boolean hasDocValues, Number nullValue, Map<String, String> meta) {
+        TokenCountFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues, Number nullValue,
+                Map<String, String> meta) {
             super(name, NumberFieldMapper.NumberType.INTEGER, isSearchable, isStored, hasDocValues, false, nullValue, meta);
         }
 
@@ -118,8 +102,8 @@ public class TokenCountFieldMapper extends ParametrizedFieldMapper {
     private final boolean enablePositionIncrements;
     private final Integer nullValue;
 
-    protected TokenCountFieldMapper(String simpleName, MappedFieldType defaultFieldType,
-                                    MultiFields multiFields, CopyTo copyTo, Builder builder) {
+    protected TokenCountFieldMapper(String simpleName, MappedFieldType defaultFieldType, MultiFields multiFields, CopyTo copyTo,
+            Builder builder) {
         super(simpleName, defaultFieldType, multiFields, copyTo);
         this.analyzer = builder.analyzer.getValue();
         this.enablePositionIncrements = builder.enablePositionIncrements.getValue();
@@ -149,9 +133,7 @@ public class TokenCountFieldMapper extends ParametrizedFieldMapper {
             tokenCount = countPositions(analyzer, name(), value, enablePositionIncrements);
         }
 
-        context.doc().addAll(
-            NumberFieldMapper.NumberType.INTEGER.createFields(fieldType().name(), tokenCount, index, hasDocValues, store)
-        );
+        context.doc().addAll(NumberFieldMapper.NumberType.INTEGER.createFields(fieldType().name(), tokenCount, index, hasDocValues, store));
     }
 
     /**

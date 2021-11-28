@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.indices.validate.query;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ValidateActions;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -30,9 +33,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.MatchAllQueryBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A request to validate a specific query.
@@ -180,8 +180,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     @Override
     public String toString() {
-        return "[" + Arrays.toString(indices) + "]" + Arrays.toString(types) + ", query[" + query + "], explain:" + explain +
-                ", rewrite:" + rewrite + ", all_shards:" + allShards;
+        return "[" + Arrays.toString(indices) + "]" + Arrays.toString(types) + ", query[" + query + "], explain:" + explain + ", rewrite:"
+                + rewrite + ", all_shards:" + allShards;
     }
 
     @Override

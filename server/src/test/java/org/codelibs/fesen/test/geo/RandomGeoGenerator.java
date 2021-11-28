@@ -31,18 +31,18 @@ import org.codelibs.fesen.common.geo.GeoPoint;
 public class RandomGeoGenerator {
 
     public static void randomPoint(Random r, double[] pt) {
-        final double[] min = {-180, -90};
-        final double[] max = {180, 90};
+        final double[] min = { -180, -90 };
+        final double[] max = { 180, 90 };
         randomPointIn(r, min[0], min[1], max[0], max[1], pt);
     }
 
-    public static void randomPointIn(Random r, final double minLon, final double minLat,
-                                     final double maxLon, final double maxLat, double[] pt) {
+    public static void randomPointIn(Random r, final double minLon, final double minLat, final double maxLon, final double maxLat,
+            double[] pt) {
         assert pt != null && pt.length == 2;
 
         // normalize min and max
-        double[] min = {normalizeLongitude(minLon), normalizeLatitude(minLat)};
-        double[] max = {normalizeLongitude(maxLon), normalizeLatitude(maxLat)};
+        double[] min = { normalizeLongitude(minLon), normalizeLatitude(minLat) };
+        double[] max = { normalizeLongitude(maxLon), normalizeLatitude(maxLat) };
         final double[] tMin = new double[2];
         final double[] tMax = new double[2];
         tMin[0] = Math.min(min[0], max[0]);
@@ -58,8 +58,7 @@ public class RandomGeoGenerator {
         return randomPointIn(r, -180, -90, 180, 90);
     }
 
-    public static GeoPoint randomPointIn(Random r, final double minLon, final double minLat,
-                                         final double maxLon, final double maxLat) {
+    public static GeoPoint randomPointIn(Random r, final double minLon, final double minLat, final double maxLon, final double maxLat) {
         double[] pt = new double[2];
         randomPointIn(r, minLon, minLat, maxLon, maxLat, pt);
         return new GeoPoint(pt[1], pt[0]);
@@ -71,7 +70,7 @@ public class RandomGeoGenerator {
             return latitude; //common case, and avoids slight double precision shifting
         }
         double off = Math.abs((latitude + 90) % 360);
-        return (off <= 180 ? off : 360-off) - 90;
+        return (off <= 180 ? off : 360 - off) - 90;
     }
 
     /** Puts longitude in range of -180 to +180. */

@@ -19,19 +19,18 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import static org.hamcrest.Matchers.equalTo;
+
+import java.util.HashMap;
+
 import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.IngestDocument.Metadata;
 import org.codelibs.fesen.ingest.Processor;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
 import org.codelibs.fesen.ingest.TestTemplateService;
 import org.codelibs.fesen.ingest.ValueSource;
-import org.codelibs.fesen.ingest.IngestDocument.Metadata;
-import org.codelibs.fesen.ingest.common.SetProcessor;
 import org.codelibs.fesen.test.ESTestCase;
 import org.hamcrest.Matchers;
-
-import java.util.HashMap;
-
-import static org.hamcrest.Matchers.equalTo;
 
 public class SetProcessorTests extends ESTestCase {
 
@@ -64,9 +63,9 @@ public class SetProcessorTests extends ESTestCase {
         try {
             processor.execute(ingestDocument);
             fail("processor execute should have failed");
-        } catch(IllegalArgumentException e) {
-            assertThat(e.getMessage(), equalTo("cannot set [inner] with parent object of type [java.lang.String] as " +
-                    "part of path [field.inner]"));
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(),
+                    equalTo("cannot set [inner] with parent object of type [java.lang.String] as " + "part of path [field.inner]"));
         }
     }
 

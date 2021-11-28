@@ -46,25 +46,20 @@ public class SignificantLongTermsTests extends InternalSignificantTermsTestCase 
     }
 
     @Override
-    protected InternalSignificantTerms createTestInstance(String name,
-                                                          Map<String, Object> metadata,
-                                                          InternalAggregations aggs,
-                                                          int requiredSize, int numBuckets,
-                                                          long subsetSize, int[] subsetDfs,
-                                                          long supersetSize, int[] supersetDfs,
-                                                          SignificanceHeuristic significanceHeuristic) {
+    protected InternalSignificantTerms createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggs,
+            int requiredSize, int numBuckets, long subsetSize, int[] subsetDfs, long supersetSize, int[] supersetDfs,
+            SignificanceHeuristic significanceHeuristic) {
 
         List<SignificantLongTerms.Bucket> buckets = new ArrayList<>(numBuckets);
         Set<Long> terms = new HashSet<>();
         for (int i = 0; i < numBuckets; ++i) {
             long term = randomValueOtherThanMany(l -> terms.add(l) == false, random()::nextLong);
-            SignificantLongTerms.Bucket bucket = new SignificantLongTerms.Bucket(subsetDfs[i], subsetSize,
-                    supersetDfs[i], supersetSize, term, aggs, format, 0);
+            SignificantLongTerms.Bucket bucket =
+                    new SignificantLongTerms.Bucket(subsetDfs[i], subsetSize, supersetDfs[i], supersetSize, term, aggs, format, 0);
             bucket.updateScore(significanceHeuristic);
             buckets.add(bucket);
         }
-        return new SignificantLongTerms(name, requiredSize, 1L, metadata, format, subsetSize,
-                supersetSize, significanceHeuristic, buckets);
+        return new SignificantLongTerms(name, requiredSize, 1L, metadata, format, subsetSize, supersetSize, significanceHeuristic, buckets);
     }
 
     @Override
@@ -117,8 +112,8 @@ public class SignificantLongTermsTests extends InternalSignificantTermsTestCase 
             default:
                 throw new AssertionError("Illegal randomisation branch");
             }
-            return new SignificantLongTerms(name, requiredSize, minDocCount, metadata, format, subsetSize,
-                    supersetSize, significanceHeuristic, buckets);
+            return new SignificantLongTerms(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize,
+                    significanceHeuristic, buckets);
         } else {
             String name = instance.getName();
             int requiredSize = instance.requiredSize;

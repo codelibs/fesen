@@ -26,19 +26,16 @@ import org.codelibs.fesen.action.search.SearchAction;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 
-public class ReindexRequestBuilder extends
-        AbstractBulkIndexByScrollRequestBuilder<ReindexRequest, ReindexRequestBuilder> {
+public class ReindexRequestBuilder extends AbstractBulkIndexByScrollRequestBuilder<ReindexRequest, ReindexRequestBuilder> {
     private final IndexRequestBuilder destination;
 
-    public ReindexRequestBuilder(FesenClient client,
-            ActionType<BulkByScrollResponse> action) {
+    public ReindexRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action) {
         this(client, action, new SearchRequestBuilder(client, SearchAction.INSTANCE),
                 new IndexRequestBuilder(client, IndexAction.INSTANCE));
     }
 
-    private ReindexRequestBuilder(FesenClient client,
-            ActionType<BulkByScrollResponse> action,
-            SearchRequestBuilder search, IndexRequestBuilder destination) {
+    private ReindexRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action, SearchRequestBuilder search,
+            IndexRequestBuilder destination) {
         super(client, action, search, new ReindexRequest(search.request(), destination.request()));
         this.destination = destination;
     }

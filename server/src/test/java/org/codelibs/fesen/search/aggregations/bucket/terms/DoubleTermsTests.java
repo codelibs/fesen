@@ -39,11 +39,8 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.UnmappedTerms;
 public class DoubleTermsTests extends InternalTermsTestCase {
 
     @Override
-    protected InternalTerms<?, ?> createTestInstance(String name,
-                                                     Map<String, Object> metadata,
-                                                     InternalAggregations aggregations,
-                                                     boolean showTermDocCountError,
-                                                     long docCountError) {
+    protected InternalTerms<?, ?> createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggregations,
+            boolean showTermDocCountError, long docCountError) {
         BucketOrder order = BucketOrder.count(false);
         long minDocCount = 1;
         int requiredSize = 3;
@@ -60,8 +57,8 @@ public class DoubleTermsTests extends InternalTermsTestCase {
         }
         BucketOrder reduceOrder = rarely() ? order : BucketOrder.key(true);
         Collections.sort(buckets, reduceOrder.comparator());
-        return new DoubleTerms(name, reduceOrder, order, requiredSize, minDocCount,
-                metadata, format, shardSize, showTermDocCountError, otherDocCount, buckets, docCountError);
+        return new DoubleTerms(name, reduceOrder, order, requiredSize, minDocCount, metadata, format, shardSize, showTermDocCountError,
+                otherDocCount, buckets, docCountError);
     }
 
     @Override

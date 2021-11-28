@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.io.IOException;
 
 /**
  * A query that multiplies the weight to the score.

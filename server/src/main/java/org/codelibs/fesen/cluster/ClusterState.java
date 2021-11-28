@@ -19,10 +19,17 @@
 
 package org.codelibs.fesen.cluster;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static org.codelibs.fesen.cluster.coordination.Coordinator.ZEN1_BWC_TERM;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.StreamSupport;
+
 import org.codelibs.fesen.client.transport.TransportClient;
 import org.codelibs.fesen.cluster.block.ClusterBlock;
 import org.codelibs.fesen.cluster.block.ClusterBlocks;
@@ -55,16 +62,8 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.discovery.Discovery;
 
-import static org.codelibs.fesen.cluster.coordination.Coordinator.ZEN1_BWC_TERM;
-
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.StreamSupport;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * Represents the current state of the cluster.
@@ -178,13 +177,13 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     private volatile RoutingNodes routingNodes;
 
     public ClusterState(long version, String stateUUID, ClusterState state) {
-        this(state.clusterName, version, stateUUID, state.metadata(), state.routingTable(), state.nodes(), state.blocks(),
-                state.customs(), -1, false);
+        this(state.clusterName, version, stateUUID, state.metadata(), state.routingTable(), state.nodes(), state.blocks(), state.customs(),
+                -1, false);
     }
 
     public ClusterState(ClusterName clusterName, long version, String stateUUID, Metadata metadata, RoutingTable routingTable,
-                        DiscoveryNodes nodes, ClusterBlocks blocks, ImmutableOpenMap<String, Custom> customs,
-                        int minimumMasterNodesOnPublishingMaster, boolean wasReadFromDiff) {
+            DiscoveryNodes nodes, ClusterBlocks blocks, ImmutableOpenMap<String, Custom> customs, int minimumMasterNodesOnPublishingMaster,
+            boolean wasReadFromDiff) {
         this.version = version;
         this.stateUUID = stateUUID;
         this.clusterName = clusterName;
@@ -324,27 +323,23 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         final String TAB = "   ";
-        sb.append("cluster uuid: ").append(metadata.clusterUUID())
-            .append(" [committed: ").append(metadata.clusterUUIDCommitted()).append("]").append("\n");
+        sb.append("cluster uuid: ").append(metadata.clusterUUID()).append(" [committed: ").append(metadata.clusterUUIDCommitted())
+                .append("]").append("\n");
         sb.append("version: ").append(version).append("\n");
         sb.append("state uuid: ").append(stateUUID).append("\n");
         sb.append("from_diff: ").append(wasReadFromDiff).append("\n");
         sb.append("meta data version: ").append(metadata.version()).append("\n");
         sb.append(TAB).append("coordination_metadata:\n");
         sb.append(TAB).append(TAB).append("term: ").append(coordinationMetadata().term()).append("\n");
-        sb.append(TAB).append(TAB)
-                .append("last_committed_config: ").append(coordinationMetadata().getLastCommittedConfiguration()).append("\n");
-        sb.append(TAB).append(TAB)
-                .append("last_accepted_config: ").append(coordinationMetadata().getLastAcceptedConfiguration()).append("\n");
-        sb.append(TAB).append(TAB)
-                .append("voting tombstones: ").append(coordinationMetadata().getVotingConfigExclusions()).append("\n");
+        sb.append(TAB).append(TAB).append("last_committed_config: ").append(coordinationMetadata().getLastCommittedConfiguration())
+                .append("\n");
+        sb.append(TAB).append(TAB).append("last_accepted_config: ").append(coordinationMetadata().getLastAcceptedConfiguration())
+                .append("\n");
+        sb.append(TAB).append(TAB).append("voting tombstones: ").append(coordinationMetadata().getVotingConfigExclusions()).append("\n");
         for (IndexMetadata indexMetadata : metadata) {
             sb.append(TAB).append(indexMetadata.getIndex());
-            sb.append(": v[").append(indexMetadata.getVersion())
-                    .append("], mv[").append(indexMetadata.getMappingVersion())
-                    .append("], sv[").append(indexMetadata.getSettingsVersion())
-                    .append("], av[").append(indexMetadata.getAliasesVersion())
-                    .append("]\n");
+            sb.append(": v[").append(indexMetadata.getVersion()).append("], mv[").append(indexMetadata.getMappingVersion()).append("], sv[")
+                    .append(indexMetadata.getSettingsVersion()).append("], av[").append(indexMetadata.getAliasesVersion()).append("]\n");
             for (int shard = 0; shard < indexMetadata.getNumberOfShards(); shard++) {
                 sb.append(TAB).append(TAB).append(shard).append(": ");
                 sb.append("p_term [").append(indexMetadata.primaryTerm(shard)).append("], ");
@@ -383,19 +378,13 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
      */
     public boolean supersedes(ClusterState other) {
         return this.nodes().getMasterNodeId() != null && this.nodes().getMasterNodeId().equals(other.nodes().getMasterNodeId())
-            && this.version() > other.version();
+                && this.version() > other.version();
 
     }
 
     public enum Metric {
-        VERSION("version"),
-        MASTER_NODE("master_node"),
-        BLOCKS("blocks"),
-        NODES("nodes"),
-        METADATA("metadata"),
-        ROUTING_TABLE("routing_table"),
-        ROUTING_NODES("routing_nodes"),
-        CUSTOMS("customs");
+        VERSION("version"), MASTER_NODE("master_node"), BLOCKS("blocks"), NODES("nodes"), METADATA("metadata"), ROUTING_TABLE(
+                "routing_table"), ROUTING_NODES("routing_nodes"), CUSTOMS("customs");
 
         private static Map<String, Metric> valueToEnum;
 
@@ -669,7 +658,7 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
                 uuid = UUIDs.randomBase64UUID();
             }
             return new ClusterState(clusterName, version, uuid, metadata, routingTable, nodes, blocks, customs.build(),
-                minimumMasterNodesOnPublishingMaster, fromDiff);
+                    minimumMasterNodesOnPublishingMaster, fromDiff);
         }
 
         public static byte[] toBytes(ClusterState state) throws IOException {

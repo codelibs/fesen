@@ -19,20 +19,20 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.painless.spi.PainlessExtension;
 import org.codelibs.fesen.painless.spi.Whitelist;
 import org.codelibs.fesen.painless.spi.WhitelistLoader;
 import org.codelibs.fesen.script.IngestScript;
 import org.codelibs.fesen.script.ScriptContext;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class ProcessorsWhitelistExtension implements PainlessExtension {
 
     private static final Whitelist WHITELIST =
-        WhitelistLoader.loadFromResourceFiles(ProcessorsWhitelistExtension.class, "processors_whitelist.txt");
+            WhitelistLoader.loadFromResourceFiles(ProcessorsWhitelistExtension.class, "processors_whitelist.txt");
 
     @Override
     public Map<ScriptContext<?>, List<Whitelist>> getContextWhitelists() {

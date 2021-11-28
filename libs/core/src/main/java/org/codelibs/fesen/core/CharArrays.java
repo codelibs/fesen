@@ -30,7 +30,8 @@ import java.util.Objects;
  */
 public final class CharArrays {
 
-    private CharArrays() {}
+    private CharArrays() {
+    }
 
     /**
      * Decodes the provided byte[] to a UTF-8 char[]. This is done while avoiding

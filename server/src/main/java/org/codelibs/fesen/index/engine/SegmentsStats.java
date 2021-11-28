@@ -19,7 +19,7 @@
 
 package org.codelibs.fesen.index.engine;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
 
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,7 +29,7 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
-import java.io.IOException;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 public class SegmentsStats implements Writeable, ToXContentFragment {
 
@@ -53,29 +53,15 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
      * Ideally this should be in sync to what the current version of Lucene is using, but it's harmless to leave extensions out,
      * they'll just miss a proper description in the stats
      */
-    private static final ImmutableOpenMap<String, String> FILE_DESCRIPTIONS = ImmutableOpenMap.<String, String>builder()
-            .fPut("si", "Segment Info")
-            .fPut("fnm", "Fields")
-            .fPut("fdx", "Field Index")
-            .fPut("fdt", "Field Data")
-            .fPut("tim", "Term Dictionary")
-            .fPut("tip", "Term Index")
-            .fPut("doc", "Frequencies")
-            .fPut("pos", "Positions")
-            .fPut("pay", "Payloads")
-            .fPut("nvd", "Norms")
-            .fPut("nvm", "Norms")
-            .fPut("dii", "Points")
-            .fPut("dim", "Points")
-            .fPut("dvd", "DocValues")
-            .fPut("dvm", "DocValues")
-            .fPut("tvx", "Term Vector Index")
-            .fPut("tvd", "Term Vector Documents")
-            .fPut("tvf", "Term Vector Fields")
-            .fPut("liv", "Live Documents")
-            .build();
+    private static final ImmutableOpenMap<String, String> FILE_DESCRIPTIONS =
+            ImmutableOpenMap.<String, String> builder().fPut("si", "Segment Info").fPut("fnm", "Fields").fPut("fdx", "Field Index")
+                    .fPut("fdt", "Field Data").fPut("tim", "Term Dictionary").fPut("tip", "Term Index").fPut("doc", "Frequencies")
+                    .fPut("pos", "Positions").fPut("pay", "Payloads").fPut("nvd", "Norms").fPut("nvm", "Norms").fPut("dii", "Points")
+                    .fPut("dim", "Points").fPut("dvd", "DocValues").fPut("dvm", "DocValues").fPut("tvx", "Term Vector Index")
+                    .fPut("tvd", "Term Vector Documents").fPut("tvf", "Term Vector Fields").fPut("liv", "Live Documents").build();
 
-    public SegmentsStats() {}
+    public SegmentsStats() {
+    }
 
     public SegmentsStats(StreamInput in) throws IOException {
         count = in.readVLong();

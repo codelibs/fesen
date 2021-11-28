@@ -64,20 +64,20 @@ public class WrapperQueryBuilderTests extends AbstractQueryTestCase<WrapperQuery
         BytesReference bytes;
         try {
             bytes = XContentHelper.toXContent(wrappedQuery, XContentType.JSON, false);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
 
         switch (randomInt(2)) {
-            case 0:
-                return new WrapperQueryBuilder(wrappedQuery.toString());
-            case 1:
+        case 0:
+            return new WrapperQueryBuilder(wrappedQuery.toString());
+        case 1:
 
-                return new WrapperQueryBuilder(BytesReference.toBytes(bytes));
-            case 2:
-                return new WrapperQueryBuilder(bytes);
-            default:
-                throw new UnsupportedOperationException();
+            return new WrapperQueryBuilder(BytesReference.toBytes(bytes));
+        case 2:
+            return new WrapperQueryBuilder(bytes);
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -110,13 +110,7 @@ public class WrapperQueryBuilderTests extends AbstractQueryTestCase<WrapperQuery
     }
 
     public void testFromJson() throws IOException {
-        String json =
-                "{\n" +
-                "  \"wrapper\" : {\n" +
-                "    \"query\" : \"e30=\"\n" +
-                "  }\n" +
-                "}";
-
+        String json = "{\n" + "  \"wrapper\" : {\n" + "    \"query\" : \"e30=\"\n" + "  }\n" + "}";
 
         WrapperQueryBuilder parsed = (WrapperQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -144,7 +138,7 @@ public class WrapperQueryBuilderTests extends AbstractQueryTestCase<WrapperQuery
         assertEquals(new MatchAllQueryBuilder().queryName("foobar"), builder.rewrite(shardContext));
         builder = new WrapperQueryBuilder("{ \"match_all\" : {\"_name\" : \"foobar\"}}").queryName("outer");
         assertEquals(new BoolQueryBuilder().must(new MatchAllQueryBuilder().queryName("foobar")).queryName("outer"),
-            builder.rewrite(shardContext));
+                builder.rewrite(shardContext));
     }
 
     public void testRewriteWithInnerBoost() throws IOException {
@@ -159,15 +153,12 @@ public class WrapperQueryBuilderTests extends AbstractQueryTestCase<WrapperQuery
     public void testRewriteInnerQueryToo() throws IOException {
         QueryShardContext shardContext = createShardContext();
 
-        QueryBuilder qb = new WrapperQueryBuilder(
-            new WrapperQueryBuilder(new TermQueryBuilder(TEXT_FIELD_NAME, "bar").toString()).toString()
-        );
+        QueryBuilder qb =
+                new WrapperQueryBuilder(new WrapperQueryBuilder(new TermQueryBuilder(TEXT_FIELD_NAME, "bar").toString()).toString());
         assertEquals(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), qb.rewrite(shardContext).toQuery(shardContext));
         qb = new WrapperQueryBuilder(
-            new WrapperQueryBuilder(
-                new WrapperQueryBuilder(new TermQueryBuilder(TEXT_FIELD_NAME, "bar").toString()).toString()
-            ).toString()
-        );
+                new WrapperQueryBuilder(new WrapperQueryBuilder(new TermQueryBuilder(TEXT_FIELD_NAME, "bar").toString()).toString())
+                        .toString());
         assertEquals(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), qb.rewrite(shardContext).toQuery(shardContext));
 
         qb = new WrapperQueryBuilder(new BoolQueryBuilder().toString());

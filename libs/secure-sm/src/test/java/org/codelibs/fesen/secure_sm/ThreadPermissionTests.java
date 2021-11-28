@@ -19,11 +19,9 @@
 
 package org.codelibs.fesen.secure_sm;
 
-import junit.framework.TestCase;
-
 import java.security.AllPermission;
 
-import org.codelibs.fesen.secure_sm.ThreadPermission;
+import junit.framework.TestCase;
 
 /**
  * Simple tests for ThreadPermission
@@ -33,7 +31,8 @@ public class ThreadPermissionTests extends TestCase {
     public void testEquals() {
         assertEquals(new ThreadPermission("modifyArbitraryThread"), new ThreadPermission("modifyArbitraryThread"));
         assertFalse(new ThreadPermission("modifyArbitraryThread").equals(new AllPermission()));
-        assertFalse(new ThreadPermission("modifyArbitraryThread").equals(new ThreadPermission("modifyArbitraryThreadGroup"))); }
+        assertFalse(new ThreadPermission("modifyArbitraryThread").equals(new ThreadPermission("modifyArbitraryThreadGroup")));
+    }
 
     public void testImplies() {
         assertTrue(new ThreadPermission("modifyArbitraryThread").implies(new ThreadPermission("modifyArbitraryThread")));

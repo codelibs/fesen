@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.action.ingest;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -30,14 +38,6 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
 public class SimulatePipelineResponse extends ActionResponse implements ToXContentObject {
     private String pipelineId;
     private boolean verbose;
@@ -45,11 +45,8 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<SimulatePipelineResponse, Void> PARSER =
-        new ConstructingObjectParser<>(
-            "simulate_pipeline_response",
-            true,
-            a -> {
-                List<SimulateDocumentResult> results = (List<SimulateDocumentResult>)a[0];
+            new ConstructingObjectParser<>("simulate_pipeline_response", true, a -> {
+                List<SimulateDocumentResult> results = (List<SimulateDocumentResult>) a[0];
                 boolean verbose = false;
                 if (results.size() > 0) {
                     if (results.get(0) instanceof SimulateDocumentVerboseResult) {
@@ -57,50 +54,45 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
                     }
                 }
                 return new SimulatePipelineResponse(null, verbose, results);
-            }
-        );
+            });
     static {
-        PARSER.declareObjectArray(
-            constructorArg(),
-            (parser, context) -> {
-                Token token = parser.currentToken();
-                ensureExpectedToken(Token.START_OBJECT, token, parser);
-                SimulateDocumentResult result = null;
-                while ((token = parser.nextToken()) != Token.END_OBJECT) {
-                    ensureExpectedToken(Token.FIELD_NAME, token, parser);
-                    String fieldName = parser.currentName();
-                    token = parser.nextToken();
-                    if (token == Token.START_ARRAY) {
-                        if (fieldName.equals(SimulateDocumentVerboseResult.PROCESSOR_RESULT_FIELD)) {
-                            List<SimulateProcessorResult> results = new ArrayList<>();
-                            while ((token = parser.nextToken()) == Token.START_OBJECT) {
-                                results.add(SimulateProcessorResult.fromXContent(parser));
-                            }
-                            ensureExpectedToken(Token.END_ARRAY, token, parser);
-                            result = new SimulateDocumentVerboseResult(results);
-                        } else {
-                            parser.skipChildren();
+        PARSER.declareObjectArray(constructorArg(), (parser, context) -> {
+            Token token = parser.currentToken();
+            ensureExpectedToken(Token.START_OBJECT, token, parser);
+            SimulateDocumentResult result = null;
+            while ((token = parser.nextToken()) != Token.END_OBJECT) {
+                ensureExpectedToken(Token.FIELD_NAME, token, parser);
+                String fieldName = parser.currentName();
+                token = parser.nextToken();
+                if (token == Token.START_ARRAY) {
+                    if (fieldName.equals(SimulateDocumentVerboseResult.PROCESSOR_RESULT_FIELD)) {
+                        List<SimulateProcessorResult> results = new ArrayList<>();
+                        while ((token = parser.nextToken()) == Token.START_OBJECT) {
+                            results.add(SimulateProcessorResult.fromXContent(parser));
                         }
-                    } else if (token.equals(Token.START_OBJECT)) {
-                        switch (fieldName) {
-                            case WriteableIngestDocument.DOC_FIELD:
-                                result = new SimulateDocumentBaseResult(
-                                    WriteableIngestDocument.INGEST_DOC_PARSER.apply(parser, null).getIngestDocument()
-                                );
-                                break;
-                            case "error":
-                                result = new SimulateDocumentBaseResult(FesenException.fromXContent(parser));
-                                break;
-                            default:
-                                parser.skipChildren();
-                                break;
-                        }
-                    } // else it is a value skip it
-                }
-                assert result != null;
-                return result;
-            },
-            new ParseField(Fields.DOCUMENTS));
+                        ensureExpectedToken(Token.END_ARRAY, token, parser);
+                        result = new SimulateDocumentVerboseResult(results);
+                    } else {
+                        parser.skipChildren();
+                    }
+                } else if (token.equals(Token.START_OBJECT)) {
+                    switch (fieldName) {
+                    case WriteableIngestDocument.DOC_FIELD:
+                        result = new SimulateDocumentBaseResult(
+                                WriteableIngestDocument.INGEST_DOC_PARSER.apply(parser, null).getIngestDocument());
+                        break;
+                    case "error":
+                        result = new SimulateDocumentBaseResult(FesenException.fromXContent(parser));
+                        break;
+                    default:
+                        parser.skipChildren();
+                        break;
+                    }
+                } // else it is a value skip it
+            }
+            assert result != null;
+            return result;
+        }, new ParseField(Fields.DOCUMENTS));
     }
 
     public SimulatePipelineResponse(StreamInput in) throws IOException {

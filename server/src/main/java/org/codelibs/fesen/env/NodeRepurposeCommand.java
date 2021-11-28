@@ -18,9 +18,17 @@
  */
 package org.codelibs.fesen.env;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
+import static org.codelibs.fesen.env.NodeEnvironment.INDICES_FOLDER;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cli.Terminal;
@@ -35,17 +43,10 @@ import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.gateway.MetadataStateFormat;
 import org.codelibs.fesen.gateway.PersistedClusterStateService;
 
-import static org.codelibs.fesen.env.NodeEnvironment.INDICES_FOLDER;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 public class NodeRepurposeCommand extends FesenNodeCommand {
 
@@ -76,7 +77,7 @@ public class NodeRepurposeCommand extends FesenNodeCommand {
 
     @Override
     protected void processNodePaths(Terminal terminal, Path[] dataPaths, int nodeLockId, OptionSet options, Environment env)
-        throws IOException {
+            throws IOException {
         assert DiscoveryNode.isDataNode(env.settings()) == false;
 
         if (DiscoveryNode.isMasterNode(env.settings()) == false) {
@@ -105,9 +106,8 @@ public class NodeRepurposeCommand extends FesenNodeCommand {
             return;
         }
 
-        final Set<String> indexUUIDs = Sets.union(indexUUIDsFor(indexPaths),
-            StreamSupport.stream(metadata.indices().values().spliterator(), false)
-                .map(imd -> imd.value.getIndexUUID()).collect(Collectors.toSet()));
+        final Set<String> indexUUIDs = Sets.union(indexUUIDsFor(indexPaths), StreamSupport
+                .stream(metadata.indices().values().spliterator(), false).map(imd -> imd.value.getIndexUUID()).collect(Collectors.toSet()));
 
         outputVerboseInformation(terminal, indexPaths, indexUUIDs, metadata);
 
@@ -174,6 +174,7 @@ public class NodeRepurposeCommand extends FesenNodeCommand {
             terminal.println("Use -v to see list of paths and indices affected");
         }
     }
+
     private String toIndexName(String uuid, Metadata metadata) {
         if (metadata != null) {
             for (ObjectObjectCursor<String, IndexMetadata> indexMetadata : metadata.indices()) {
@@ -190,8 +191,7 @@ public class NodeRepurposeCommand extends FesenNodeCommand {
     }
 
     static String noMasterMessage(int indexes, int shards, int indexMetadata) {
-        return "Found " + indexes + " indices ("
-                + shards + " shards and " + indexMetadata + " index meta data) to clean up";
+        return "Found " + indexes + " indices (" + shards + " shards and " + indexMetadata + " index meta data) to clean up";
     }
 
     static String shardMessage(int shards, int indices) {

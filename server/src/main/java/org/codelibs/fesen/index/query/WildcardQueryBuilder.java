@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.MultiTermQuery;
@@ -35,9 +38,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.ConstantFieldType;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.support.QueryParsers;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Implements the wildcard search query. Supported wildcards are {@code *}, which
@@ -96,7 +96,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
         rewrite = in.readOptionalString();
         if (in.getVersion().onOrAfter(Version.V_7_10_0)) {
             caseInsensitive = in.readBoolean();
-        }        
+        }
     }
 
     @Override
@@ -106,7 +106,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
         out.writeOptionalString(rewrite);
         if (out.getVersion().onOrAfter(Version.V_7_10_0)) {
             out.writeBoolean(caseInsensitive);
-        }    
+        }
     }
 
     @Override
@@ -162,7 +162,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
         String rewrite = null;
         String value = null;
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
-        boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;        
+        boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;
         String queryName = null;
         String currentFieldName = null;
         XContentParser.Token token;
@@ -201,10 +201,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
             }
         }
 
-        return new WildcardQueryBuilder(fieldName, value)
-                .rewrite(rewrite)
-                .boost(boost)
-                .queryName(queryName)
+        return new WildcardQueryBuilder(fieldName, value).rewrite(rewrite).boost(boost).queryName(queryName)
                 .caseInsensitive(caseInsensitive);
     }
 
@@ -225,13 +222,13 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
                 } else if (query instanceof MatchNoDocsQuery) {
                     return new MatchNoneQueryBuilder();
                 } else {
-                    assert false : "Constant fields must produce match-all or match-none queries, got " + query ;
+                    assert false : "Constant fields must produce match-all or match-none queries, got " + query;
                 }
             }
         }
 
         return super.doRewrite(queryRewriteContext);
-    }    
+    }
 
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
@@ -241,8 +238,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
             throw new IllegalStateException("Rewrite first");
         }
 
-        MultiTermQuery.RewriteMethod method = QueryParsers.parseRewriteMethod(
-            rewrite, null, LoggingDeprecationHandler.INSTANCE);
+        MultiTermQuery.RewriteMethod method = QueryParsers.parseRewriteMethod(rewrite, null, LoggingDeprecationHandler.INSTANCE);
         return fieldType.wildcardQuery(value, method, caseInsensitive, context);
     }
 
@@ -253,9 +249,7 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
 
     @Override
     protected boolean doEquals(WildcardQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) &&
-                Objects.equals(value, other.value) &&
-                Objects.equals(rewrite, other.rewrite)&&
-                Objects.equals(caseInsensitive, other.caseInsensitive);
+        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value) && Objects.equals(rewrite, other.rewrite)
+                && Objects.equals(caseInsensitive, other.caseInsensitive);
     }
 }

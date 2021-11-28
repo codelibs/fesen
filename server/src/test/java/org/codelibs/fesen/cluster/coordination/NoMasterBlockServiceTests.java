@@ -42,8 +42,8 @@ public class NoMasterBlockServiceTests extends ESTestCase {
     }
 
     private void assertDeprecatedWarningEmitted() {
-        assertWarnings("[discovery.zen.no_master_block] setting was deprecated in Fesen and will be removed in a future release! " +
-            "See the breaking changes documentation for the next major version.");
+        assertWarnings("[discovery.zen.no_master_block] setting was deprecated in Fesen and will be removed in a future release! "
+                + "See the breaking changes documentation for the next major version.");
     }
 
     public void testBlocksWritesByDefault() {
@@ -79,13 +79,13 @@ public class NoMasterBlockServiceTests extends ESTestCase {
     }
 
     public void testRejectsInvalidSetting() {
-        expectThrows(IllegalArgumentException.class, () ->
-            createService(Settings.builder().put(NO_MASTER_BLOCK_SETTING.getKey(), "unknown").build()));
+        expectThrows(IllegalArgumentException.class,
+                () -> createService(Settings.builder().put(NO_MASTER_BLOCK_SETTING.getKey(), "unknown").build()));
     }
 
     public void testRejectsInvalidLegacySetting() {
-        expectThrows(IllegalArgumentException.class, () ->
-            createService(Settings.builder().put(LEGACY_NO_MASTER_BLOCK_SETTING.getKey(), "unknown").build()));
+        expectThrows(IllegalArgumentException.class,
+                () -> createService(Settings.builder().put(LEGACY_NO_MASTER_BLOCK_SETTING.getKey(), "unknown").build()));
         assertDeprecatedWarningEmitted();
     }
 

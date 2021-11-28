@@ -18,6 +18,14 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
@@ -35,14 +43,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-
 /**
  * An aggregator that finds "rare" string values (e.g. terms agg that orders ascending)
  */
@@ -51,37 +51,17 @@ public class StringRareTermsAggregator extends AbstractRareTermsAggregator {
     private final IncludeExclude.StringFilter filter;
     private final BytesKeyedBucketOrds bucketOrds;
 
-    StringRareTermsAggregator(
-        String name,
-        AggregatorFactories factories,
-        ValuesSource.Bytes valuesSource,
-        DocValueFormat format,
-        IncludeExclude.StringFilter filter,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata,
-        long maxDocCount,
-        double precision,
-        CardinalityUpperBound cardinality
-    ) throws IOException {
-        super(
-            name,
-            factories,
-            context,
-            parent,
-            metadata,
-            maxDocCount,
-            precision,
-            format
-        );
+    StringRareTermsAggregator(String name, AggregatorFactories factories, ValuesSource.Bytes valuesSource, DocValueFormat format,
+            IncludeExclude.StringFilter filter, SearchContext context, Aggregator parent, Map<String, Object> metadata, long maxDocCount,
+            double precision, CardinalityUpperBound cardinality) throws IOException {
+        super(name, factories, context, parent, metadata, maxDocCount, precision, format);
         this.valuesSource = valuesSource;
         this.filter = filter;
         this.bucketOrds = BytesKeyedBucketOrds.build(context.bigArrays(), cardinality);
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-                                                final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         final SortedBinaryDocValues values = valuesSource.bytesValues(ctx);
         return new LeafBucketCollectorBase(sub, values) {
             final BytesRefBuilder previous = new BytesRefBuilder();
@@ -172,15 +152,8 @@ public class StringRareTermsAggregator extends AbstractRareTermsAggregator {
         InternalAggregation[] result = new InternalAggregation[owningBucketOrds.length];
         for (int ordIdx = 0; ordIdx < owningBucketOrds.length; ordIdx++) {
             Arrays.sort(rarestPerOrd[ordIdx], ORDER.comparator());
-            result[ordIdx] = new StringRareTerms(
-                name,
-                ORDER,
-                metadata(),
-                format,
-                Arrays.asList(rarestPerOrd[ordIdx]),
-                maxDocCount,
-                filters[ordIdx]
-            );
+            result[ordIdx] =
+                    new StringRareTerms(name, ORDER, metadata(), format, Arrays.asList(rarestPerOrd[ordIdx]), maxDocCount, filters[ordIdx]);
         }
         return result;
     }
@@ -195,4 +168,3 @@ public class StringRareTermsAggregator extends AbstractRareTermsAggregator {
         Releasables.close(bucketOrds);
     }
 }
-

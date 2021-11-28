@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MultiBucketCollectorTests  extends ESTestCase {
+public class MultiBucketCollectorTests extends ESTestCase {
     private static class ScoreAndDoc extends Scorable {
         float score;
         int doc = -1;
@@ -95,10 +95,12 @@ public class MultiBucketCollectorTests  extends ESTestCase {
         }
 
         @Override
-        public void preCollection() {}
+        public void preCollection() {
+        }
 
         @Override
-        public void postCollection() {}
+        public void postCollection() {
+        }
     }
 
     private static class TotalHitCountBucketCollector extends BucketCollector {
@@ -124,10 +126,12 @@ public class MultiBucketCollectorTests  extends ESTestCase {
         }
 
         @Override
-        public void preCollection() {}
+        public void preCollection() {
+        }
 
         @Override
-        public void postCollection() {}
+        public void postCollection() {
+        }
 
         int getTotalHits() {
             return count;
@@ -161,10 +165,12 @@ public class MultiBucketCollectorTests  extends ESTestCase {
         }
 
         @Override
-        public void preCollection() {}
+        public void preCollection() {
+        }
 
         @Override
-        public void postCollection() {}
+        public void postCollection() {
+        }
     }
 
     public void testCollectionTerminatedExceptionHandling() throws IOException {

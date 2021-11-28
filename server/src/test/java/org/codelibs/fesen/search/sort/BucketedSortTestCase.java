@@ -53,8 +53,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
      * @param values values to test, always sent as doubles just to have
      *        numbers to test. subclasses should cast to their favorite types
      */
-    protected abstract T build(SortOrder sortOrder, DocValueFormat format, int bucketSize,
-            BucketedSort.ExtraData extra, double[] values);
+    protected abstract T build(SortOrder sortOrder, DocValueFormat format, int bucketSize, BucketedSort.ExtraData extra, double[] values);
 
     /**
      * Build the expected sort value for a value.
@@ -96,7 +95,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public final void testSingleDoc() throws IOException {
-        try (T sort = build(randomFrom(SortOrder.values()), 1, new double[] {1})) {
+        try (T sort = build(randomFrom(SortOrder.values()), 1, new double[] { 1 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             assertThat(sort.getValues(0), contains(expectedSortValue(1)));
@@ -104,7 +103,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testNonCompetitive() throws IOException {
-        try (T sort = build(SortOrder.DESC, 1, new double[] {2, 1})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { 2, 1 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(1, 0);
@@ -113,7 +112,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testCompetitive() throws IOException {
-        try (T sort = build(SortOrder.DESC, 1, new double[] {1, 2})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { 1, 2 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(1, 0);
@@ -122,7 +121,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testNegativeValue() throws IOException {
-        try (T sort = build(SortOrder.DESC, 1, new double[] {-1})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { -1 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             assertThat(sort.getValues(0), contains(expectedSortValue(-1)));
@@ -130,8 +129,8 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testSomeBuckets() throws IOException {
-        try (Extra extra = new Extra(bigArrays(), new int[] {100, 200});
-                T sort = build(SortOrder.DESC, 1, extra, new double[] {2, 3})) {
+        try (Extra extra = new Extra(bigArrays(), new int[] { 100, 200 });
+                T sort = build(SortOrder.DESC, 1, extra, new double[] { 2, 3 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(0, 1);
@@ -151,7 +150,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testBucketGaps() throws IOException {
-        try (T sort = build(SortOrder.DESC, 1, new double[] {2})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { 2 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(0, 2);
@@ -163,7 +162,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testBucketsOutOfOrder() throws IOException {
-        try (T sort = build(SortOrder.DESC, 1, new double[] {2})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { 2 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 1);
             leaf.collect(0, 0);
@@ -183,7 +182,7 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
 
         double[] maxes = new double[buckets.length];
 
-        try (T sort = build(SortOrder.DESC, 1, new double[] {2, 3, -1})) {
+        try (T sort = build(SortOrder.DESC, 1, new double[] { 2, 3, -1 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             for (int b : buckets) {
                 maxes[b] = 2;
@@ -204,8 +203,8 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     public void testTwoHitsDesc() throws IOException {
-        try (Extra extra = new Extra(bigArrays(), new int[] {100, 200, 3000});
-                T sort = build(SortOrder.DESC, 2, extra, new double[] {1, 2, 3})) {
+        try (Extra extra = new Extra(bigArrays(), new int[] { 100, 200, 3000 });
+                T sort = build(SortOrder.DESC, 2, extra, new double[] { 1, 2, 3 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(1, 0);
@@ -215,9 +214,9 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
             assertThat(sort.getValues(0, extra.valueBuilder()), contains(extraValue(3000, 3), extraValue(200, 2)));
         }
     }
-    
+
     public void testTwoHitsAsc() throws IOException {
-        try (T sort = build(SortOrder.ASC, 2, new double[] {1, 2, 3})) {
+        try (T sort = build(SortOrder.ASC, 2, new double[] { 1, 2, 3 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(1, 0);
@@ -241,18 +240,16 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
             for (int doc = 0; doc < values.length; doc++) {
                 leaf.collect(doc, 0);
             }
-            assertThat(sort.getValues(0), contains(Arrays.stream(values).boxed()
-                    .sorted((lhs, rhs) -> rhs.compareTo(lhs))
-                    .limit(bucketSize).map(s -> equalTo(expectedSortValue(s)))
-                    .collect(toList())));
+            assertThat(sort.getValues(0), contains(Arrays.stream(values).boxed().sorted((lhs, rhs) -> rhs.compareTo(lhs)).limit(bucketSize)
+                    .map(s -> equalTo(expectedSortValue(s))).collect(toList())));
             assertThat(sort.getValues(1), empty());
         }
         // We almost always *way* undershoot this value.
-        assertThat(counter.count, lessThan((long)(bucketSize + values.length * Math.log(bucketSize) / Math.log(2))));
+        assertThat(counter.count, lessThan((long) (bucketSize + values.length * Math.log(bucketSize) / Math.log(2))));
     }
 
     public void testTwoHitsTwoBucket() throws IOException {
-        try (T sort = build(SortOrder.DESC, 2, new double[] {1, 2, 3, 4})) {
+        try (T sort = build(SortOrder.DESC, 2, new double[] { 1, 2, 3, 4 })) {
             BucketedSort.Leaf leaf = sort.forLeaf(null);
             leaf.collect(0, 0);
             leaf.collect(0, 1);
@@ -296,10 +293,9 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
                     }
                 }
                 bucketUsed[bucket].close();
-                assertThat("Bucket " + bucket, sort.getValues(bucket), contains(bucketValues.stream()
-                        .sorted((lhs, rhs) -> rhs.compareTo(lhs))
-                        .limit(bucketSize).map(s -> equalTo(expectedSortValue(s)))
-                        .collect(toList())));
+                assertThat("Bucket " + bucket, sort.getValues(bucket),
+                        contains(bucketValues.stream().sorted((lhs, rhs) -> rhs.compareTo(lhs)).limit(bucketSize)
+                                .map(s -> equalTo(expectedSortValue(s))).collect(toList())));
             }
             assertThat(sort.getValues(buckets), empty());
         }

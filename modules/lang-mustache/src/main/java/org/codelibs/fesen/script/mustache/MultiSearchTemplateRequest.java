@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
@@ -32,14 +40,6 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class MultiSearchTemplateRequest extends ActionRequest implements CompositeIndicesRequest {
 
     private int maxConcurrentSearchRequests = 0;
@@ -47,7 +47,8 @@ public class MultiSearchTemplateRequest extends ActionRequest implements Composi
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
 
-    public MultiSearchTemplateRequest() {}
+    public MultiSearchTemplateRequest() {
+    }
 
     public MultiSearchTemplateRequest(StreamInput in) throws IOException {
         super(in);
@@ -132,12 +133,13 @@ public class MultiSearchTemplateRequest extends ActionRequest implements Composi
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MultiSearchTemplateRequest that = (MultiSearchTemplateRequest) o;
-        return maxConcurrentSearchRequests == that.maxConcurrentSearchRequests &&
-                Objects.equals(requests, that.requests) &&
-                Objects.equals(indicesOptions, that.indicesOptions);
+        return maxConcurrentSearchRequests == that.maxConcurrentSearchRequests && Objects.equals(requests, that.requests)
+                && Objects.equals(indicesOptions, that.indicesOptions);
     }
 
     @Override
@@ -145,8 +147,7 @@ public class MultiSearchTemplateRequest extends ActionRequest implements Composi
         return Objects.hash(maxConcurrentSearchRequests, requests, indicesOptions);
     }
 
-    public static byte[] writeMultiLineFormat(MultiSearchTemplateRequest multiSearchTemplateRequest,
-            XContent xContent) throws IOException {
+    public static byte[] writeMultiLineFormat(MultiSearchTemplateRequest multiSearchTemplateRequest, XContent xContent) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         for (SearchTemplateRequest templateRequest : multiSearchTemplateRequest.requests()) {
             final SearchRequest searchRequest = templateRequest.getRequest();

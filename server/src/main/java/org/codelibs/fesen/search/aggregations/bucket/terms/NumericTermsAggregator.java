@@ -18,6 +18,16 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import static java.util.Collections.emptyList;
+import static org.codelibs.fesen.search.aggregations.InternalOrder.isKeyOrder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
@@ -47,38 +57,17 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.ContextIndexSearcher;
 import org.codelibs.fesen.search.internal.SearchContext;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.search.aggregations.InternalOrder.isKeyOrder;
-
 public class NumericTermsAggregator extends TermsAggregator {
     private final ResultStrategy<?, ?> resultStrategy;
     private final ValuesSource.Numeric valuesSource;
     private final LongKeyedBucketOrds bucketOrds;
     private final LongFilter longFilter;
 
-    public NumericTermsAggregator(
-        String name,
-        AggregatorFactories factories,
-        Function<NumericTermsAggregator, ResultStrategy<?, ?>> resultStrategy,
-        ValuesSource.Numeric valuesSource,
-        DocValueFormat format,
-        BucketOrder order,
-        BucketCountThresholds bucketCountThresholds,
-        SearchContext aggregationContext,
-        Aggregator parent,
-        SubAggCollectionMode subAggCollectMode,
-        IncludeExclude.LongFilter longFilter,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    )
-        throws IOException {
+    public NumericTermsAggregator(String name, AggregatorFactories factories,
+            Function<NumericTermsAggregator, ResultStrategy<?, ?>> resultStrategy, ValuesSource.Numeric valuesSource, DocValueFormat format,
+            BucketOrder order, BucketCountThresholds bucketCountThresholds, SearchContext aggregationContext, Aggregator parent,
+            SubAggCollectionMode subAggCollectMode, IncludeExclude.LongFilter longFilter, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         super(name, factories, aggregationContext, parent, bucketCountThresholds, order, format, subAggCollectMode, metadata);
         this.resultStrategy = resultStrategy.apply(this); // ResultStrategy needs a reference to the Aggregator to do its job.
         this.valuesSource = valuesSource;
@@ -151,8 +140,7 @@ public class NumericTermsAggregator extends TermsAggregator {
      * Strategy for building results.
      */
     abstract class ResultStrategy<R extends InternalAggregation, B extends InternalMultiBucketAggregation.InternalBucket>
-        implements
-            Releasable {
+            implements Releasable {
         private InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
             B[][] topBucketsPerOrd = buildTopBucketsPerOrd(owningBucketOrds.length);
             long[] otherDocCounts = new long[owningBucketOrds.length];
@@ -191,8 +179,7 @@ public class NumericTermsAggregator extends TermsAggregator {
 
             InternalAggregation[] result = new InternalAggregation[owningBucketOrds.length];
             for (int ordIdx = 0; ordIdx < owningBucketOrds.length; ordIdx++) {
-                result[ordIdx] = buildResult(owningBucketOrds[ordIdx], otherDocCounts[ordIdx],
-                    topBucketsPerOrd[ordIdx]);
+                result[ordIdx] = buildResult(owningBucketOrds[ordIdx], otherDocCounts[ordIdx], topBucketsPerOrd[ordIdx]);
             }
             return result;
         }
@@ -268,8 +255,8 @@ public class NumericTermsAggregator extends TermsAggregator {
         abstract R buildEmptyResult();
     }
 
-    abstract class StandardTermsResultStrategy<R extends InternalMappedTerms<R, B>, B extends InternalTerms.Bucket<B>> extends
-        ResultStrategy<R, B> {
+    abstract class StandardTermsResultStrategy<R extends InternalMappedTerms<R, B>, B extends InternalTerms.Bucket<B>>
+            extends ResultStrategy<R, B> {
         protected final boolean showTermDocCountError;
 
         StandardTermsResultStrategy(boolean showTermDocCountError) {
@@ -324,7 +311,8 @@ public class NumericTermsAggregator extends TermsAggregator {
         }
 
         @Override
-        public final void close() {}
+        public final void close() {
+        }
     }
 
     class LongTermsResults extends StandardTermsResultStrategy<LongTerms, LongTerms.Bucket> {
@@ -373,38 +361,14 @@ public class NumericTermsAggregator extends TermsAggregator {
             } else {
                 reduceOrder = order;
             }
-            return new LongTerms(
-                name,
-                reduceOrder,
-                order,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                bucketCountThresholds.getShardSize(),
-                showTermDocCountError,
-                otherDocCount,
-                List.of(topBuckets),
-                0
-            );
+            return new LongTerms(name, reduceOrder, order, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
+                    metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError, otherDocCount, List.of(topBuckets), 0);
         }
 
         @Override
         LongTerms buildEmptyResult() {
-            return new LongTerms(
-                name,
-                order,
-                order,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                bucketCountThresholds.getShardSize(),
-                showTermDocCountError,
-                0,
-                emptyList(),
-                0
-            );
+            return new LongTerms(name, order, order, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
+                    metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError, 0, emptyList(), 0);
         }
     }
 
@@ -455,38 +419,15 @@ public class NumericTermsAggregator extends TermsAggregator {
             } else {
                 reduceOrder = order;
             }
-            return new DoubleTerms(
-                name,
-                reduceOrder,
-                order,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                bucketCountThresholds.getShardSize(),
-                showTermDocCountError,
-                otherDocCount,
-                List.of(topBuckets),
-                0
-            );
+            return new DoubleTerms(name, reduceOrder, order, bucketCountThresholds.getRequiredSize(),
+                    bucketCountThresholds.getMinDocCount(), metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError,
+                    otherDocCount, List.of(topBuckets), 0);
         }
 
         @Override
         DoubleTerms buildEmptyResult() {
-            return new DoubleTerms(
-                name,
-                order,
-                order,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                bucketCountThresholds.getShardSize(),
-                showTermDocCountError,
-                0,
-                emptyList(),
-                0
-            );
+            return new DoubleTerms(name, order, order, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
+                    metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError, 0, emptyList(), 0);
         }
     }
 
@@ -496,11 +437,8 @@ public class NumericTermsAggregator extends TermsAggregator {
         private final SignificanceHeuristic significanceHeuristic;
         private LongArray subsetSizes;
 
-        SignificantLongTermsResults(
-            SignificanceLookup significanceLookup,
-            SignificanceHeuristic significanceHeuristic,
-            CardinalityUpperBound cardinality
-        ) {
+        SignificantLongTermsResults(SignificanceLookup significanceLookup, SignificanceHeuristic significanceHeuristic,
+                CardinalityUpperBound cardinality) {
             backgroundFrequencies = significanceLookup.longLookup(context.bigArrays(), cardinality);
             supersetSize = significanceLookup.supersetSize();
             this.significanceHeuristic = significanceHeuristic;
@@ -567,21 +505,13 @@ public class NumericTermsAggregator extends TermsAggregator {
         }
 
         @Override
-        void collectZeroDocEntriesIfNeeded(long owningBucketOrd) throws IOException {}
+        void collectZeroDocEntriesIfNeeded(long owningBucketOrd) throws IOException {
+        }
 
         @Override
         SignificantLongTerms buildResult(long owningBucketOrd, long otherDocCoun, SignificantLongTerms.Bucket[] topBuckets) {
-            return new SignificantLongTerms(
-                name,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                subsetSizes.get(owningBucketOrd),
-                supersetSize,
-                significanceHeuristic,
-                List.of(topBuckets)
-            );
+            return new SignificantLongTerms(name, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
+                    metadata(), format, subsetSizes.get(owningBucketOrd), supersetSize, significanceHeuristic, List.of(topBuckets));
         }
 
         @Override
@@ -590,17 +520,8 @@ public class NumericTermsAggregator extends TermsAggregator {
             ContextIndexSearcher searcher = context.searcher();
             IndexReader topReader = searcher.getIndexReader();
             int supersetSize = topReader.numDocs();
-            return new SignificantLongTerms(
-                name,
-                bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(),
-                metadata(),
-                format,
-                0,
-                supersetSize,
-                significanceHeuristic,
-                emptyList()
-            );
+            return new SignificantLongTerms(name, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
+                    metadata(), format, 0, supersetSize, significanceHeuristic, emptyList());
         }
 
         @Override
@@ -608,6 +529,5 @@ public class NumericTermsAggregator extends TermsAggregator {
             Releasables.close(backgroundFrequencies, subsetSizes);
         }
     }
-
 
 }

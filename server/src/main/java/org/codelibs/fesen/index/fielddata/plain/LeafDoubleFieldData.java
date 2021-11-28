@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.index.fielddata.FieldData;
@@ -28,11 +32,6 @@ import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 import org.codelibs.fesen.index.mapper.DocValueFetcher;
 import org.codelibs.fesen.search.DocValueFormat;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 
 /**
  * Specialization of {@link LeafNumericFieldData} for floating-point numerics.

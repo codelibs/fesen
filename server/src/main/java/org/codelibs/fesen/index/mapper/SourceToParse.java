@@ -80,7 +80,6 @@ public class SourceToParse {
     }
 
     public enum Origin {
-        PRIMARY,
-        REPLICA
+        PRIMARY, REPLICA
     }
 }

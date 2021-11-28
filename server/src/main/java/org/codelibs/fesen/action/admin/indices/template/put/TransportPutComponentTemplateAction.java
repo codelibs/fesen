@@ -42,18 +42,17 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
 public class TransportPutComponentTemplateAction
-    extends TransportMasterNodeAction<PutComponentTemplateAction.Request, AcknowledgedResponse> {
+        extends TransportMasterNodeAction<PutComponentTemplateAction.Request, AcknowledgedResponse> {
 
     private final MetadataIndexTemplateService indexTemplateService;
     private final IndexScopedSettings indexScopedSettings;
 
     @Inject
-    public TransportPutComponentTemplateAction(TransportService transportService, ClusterService clusterService,
-                                               ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService,
-                                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                               IndexScopedSettings indexScopedSettings) {
+    public TransportPutComponentTemplateAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            MetadataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, IndexScopedSettings indexScopedSettings) {
         super(PutComponentTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-            PutComponentTemplateAction.Request::new, indexNameExpressionResolver);
+                PutComponentTemplateAction.Request::new, indexNameExpressionResolver);
         this.indexTemplateService = indexTemplateService;
         this.indexScopedSettings = indexScopedSettings;
     }
@@ -76,7 +75,7 @@ public class TransportPutComponentTemplateAction
 
     @Override
     protected void masterOperation(final PutComponentTemplateAction.Request request, final ClusterState state,
-                                   final ActionListener<AcknowledgedResponse> listener) {
+            final ActionListener<AcknowledgedResponse> listener) {
         ComponentTemplate componentTemplate = request.componentTemplate();
         Template template = componentTemplate.template();
         // Normalize the index settings if necessary
@@ -88,6 +87,6 @@ public class TransportPutComponentTemplateAction
             componentTemplate = new ComponentTemplate(template, componentTemplate.version(), componentTemplate.metadata());
         }
         indexTemplateService.putComponentTemplate(request.cause(), request.create(), request.name(), request.masterNodeTimeout(),
-            componentTemplate, listener);
+                componentTemplate, listener);
     }
 }

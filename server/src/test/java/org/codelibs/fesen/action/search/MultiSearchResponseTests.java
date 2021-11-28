@@ -51,8 +51,8 @@ public class MultiSearchResponseTests extends AbstractXContentTestCase<MultiSear
             int skippedShards = totalShards - successfulShards;
             SearchResponse.Clusters clusters = SearchResponseTests.randomClusters();
             InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
-            SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards,
-                    successfulShards, skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters, null);
+            SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards, successfulShards, skippedShards,
+                    tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters, null);
             items[i] = new MultiSearchResponse.Item(searchResponse, null);
         }
         return new MultiSearchResponse(items, randomNonNegativeLong());
@@ -70,8 +70,8 @@ public class MultiSearchResponseTests extends AbstractXContentTestCase<MultiSear
                 int skippedShards = totalShards - successfulShards;
                 SearchResponse.Clusters clusters = SearchResponseTests.randomClusters();
                 InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
-                SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards,
-                        successfulShards, skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters, null);
+                SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null, totalShards, successfulShards,
+                        skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, clusters, null);
                 items[i] = new MultiSearchResponse.Item(searchResponse, null);
             } else {
                 items[i] = new MultiSearchResponse.Item(null, new FesenException("an error"));
@@ -124,8 +124,8 @@ public class MultiSearchResponseTests extends AbstractXContentTestCase<MultiSear
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-                getRandomFieldsExcludeFilterWhenResultHasErrors(), this::createParser, this::doParseInstance,
-                this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+                getRandomFieldsExcludeFilterWhenResultHasErrors(), this::createParser, this::doParseInstance, this::assertEqualInstances,
+                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 
 }

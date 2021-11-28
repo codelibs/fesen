@@ -84,7 +84,7 @@ public class OutboundHandlerTests extends ESTestCase {
         channel = new FakeTcpChannel(randomBoolean(), buildNewFakeTransportAddress().address(), buildNewFakeTransportAddress().address());
         TransportAddress transportAddress = buildNewFakeTransportAddress();
         node = new DiscoveryNode("", transportAddress, Version.CURRENT);
-        String[] features = {feature1, feature2};
+        String[] features = { feature1, feature2 };
         StatsTracker statsTracker = new StatsTracker();
         handler = new OutboundHandler("node", Version.CURRENT, features, statsTracker, threadPool, BigArrays.NON_RECYCLING_INSTANCE);
 
@@ -92,15 +92,14 @@ public class OutboundHandlerTests extends ESTestCase {
         final InboundDecoder decoder = new InboundDecoder(Version.CURRENT, PageCacheRecycler.NON_RECYCLING_INSTANCE);
         final Supplier<CircuitBreaker> breaker = () -> new NoopCircuitBreaker("test");
         final InboundAggregator aggregator = new InboundAggregator(breaker, (Predicate<String>) action -> true);
-        pipeline = new InboundPipeline(statsTracker, millisSupplier, decoder, aggregator,
-            (c, m) -> {
-                try (BytesStreamOutput streamOutput = new BytesStreamOutput()) {
-                    Streams.copy(m.openOrGetStreamInput(), streamOutput);
-                    message.set(new Tuple<>(m.getHeader(), streamOutput.bytes()));
-                } catch (IOException e) {
-                    throw new AssertionError(e);
-                }
-            });
+        pipeline = new InboundPipeline(statsTracker, millisSupplier, decoder, aggregator, (c, m) -> {
+            try (BytesStreamOutput streamOutput = new BytesStreamOutput()) {
+                Streams.copy(m.openOrGetStreamInput(), streamOutput);
+                message.set(new Tuple<>(m.getHeader(), streamOutput.bytes()));
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
+        });
     }
 
     @After
@@ -151,7 +150,7 @@ public class OutboundHandlerTests extends ESTestCase {
         handler.setMessageListener(new TransportMessageListener() {
             @Override
             public void onRequestSent(DiscoveryNode node, long requestId, String action, TransportRequest request,
-                                      TransportRequestOptions options) {
+                    TransportRequestOptions options) {
                 nodeRef.set(node);
                 requestIdRef.set(requestId);
                 actionRef.set(action);
@@ -172,8 +171,7 @@ public class OutboundHandlerTests extends ESTestCase {
         assertEquals(action, actionRef.get());
         assertEquals(request, requestRef.get());
 
-        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {
-        }));
+        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {}));
         final Tuple<Header, BytesReference> tuple = message.get();
         final Header header = tuple.v1();
         final TestRequest message = new TestRequest(tuple.v2().streamInput());
@@ -231,8 +229,7 @@ public class OutboundHandlerTests extends ESTestCase {
         assertEquals(action, actionRef.get());
         assertEquals(response, responseRef.get());
 
-        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {
-        }));
+        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {}));
         final Tuple<Header, BytesReference> tuple = message.get();
         final Header header = tuple.v1();
         final TestResponse message = new TestResponse(tuple.v2().streamInput());
@@ -289,9 +286,7 @@ public class OutboundHandlerTests extends ESTestCase {
         assertEquals(action, actionRef.get());
         assertEquals(error, responseRef.get());
 
-
-        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {
-        }));
+        pipeline.handleBytes(channel, new ReleasableBytesReference(reference, () -> {}));
         final Tuple<Header, BytesReference> tuple = message.get();
         final Header header = tuple.v1();
         assertEquals(version, header.getVersion());

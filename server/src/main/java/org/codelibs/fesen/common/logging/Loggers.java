@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.common.logging;
 
+import static org.codelibs.fesen.common.util.CollectionUtils.asArrayList;
+
+import java.util.Map;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,10 +35,6 @@ import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 
-import static org.codelibs.fesen.common.util.CollectionUtils.asArrayList;
-
-import java.util.Map;
-
 /**
  * A set of utilities around Logging.
  */
@@ -43,10 +43,9 @@ public class Loggers {
     public static final String SPACE = " ";
 
     public static final Setting<Level> LOG_DEFAULT_LEVEL_SETTING =
-        new Setting<>("logger.level", Level.INFO.name(), Level::valueOf, Setting.Property.NodeScope);
-    public static final Setting.AffixSetting<Level> LOG_LEVEL_SETTING =
-        Setting.prefixKeySetting("logger.", (key) -> new Setting<>(key, Level.INFO.name(), Level::valueOf, Setting.Property.Dynamic,
-            Setting.Property.NodeScope));
+            new Setting<>("logger.level", Level.INFO.name(), Level::valueOf, Setting.Property.NodeScope);
+    public static final Setting.AffixSetting<Level> LOG_LEVEL_SETTING = Setting.prefixKeySetting("logger.",
+            (key) -> new Setting<>(key, Level.INFO.name(), Level::valueOf, Setting.Property.Dynamic, Setting.Property.NodeScope));
 
     public static Logger getLogger(Class<?> clazz, ShardId shardId, String... prefixes) {
         return getLogger(clazz, shardId.getIndex(), asArrayList(Integer.toString(shardId.id()), prefixes).toArray(new String[0]));
@@ -72,7 +71,7 @@ public class Loggers {
     public static Logger getLogger(Logger parentLogger, String s) {
         Logger inner = LogManager.getLogger(parentLogger.getName() + s);
         if (parentLogger instanceof PrefixLogger) {
-            return new PrefixLogger(inner, ((PrefixLogger)parentLogger).prefix());
+            return new PrefixLogger(inner, ((PrefixLogger) parentLogger).prefix());
         }
         return inner;
     }

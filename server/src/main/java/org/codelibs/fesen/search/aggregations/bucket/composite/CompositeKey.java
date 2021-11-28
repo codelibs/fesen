@@ -60,8 +60,10 @@ class CompositeKey implements Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         CompositeKey that = (CompositeKey) o;
         return Arrays.equals(values, that.values);
@@ -74,8 +76,6 @@ class CompositeKey implements Writeable {
 
     @Override
     public String toString() {
-        return "CompositeKey{" +
-            "values=" + Arrays.toString(values) +
-            '}';
+        return "CompositeKey{" + "values=" + Arrays.toString(values) + '}';
     }
 }

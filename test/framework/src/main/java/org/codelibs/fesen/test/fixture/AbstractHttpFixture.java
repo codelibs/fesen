@@ -19,7 +19,10 @@
 
 package org.codelibs.fesen.test.fixture;
 
-import com.sun.net.httpserver.HttpServer;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,10 +45,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.core.SuppressForbidden;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
+import com.sun.net.httpserver.HttpServer;
 
 /**
  * Base class for test fixtures that requires a {@link HttpServer} to work.
@@ -89,17 +89,14 @@ public abstract class AbstractHttpFixture {
 
                     // Check if this is a request made by the AntFixture
                     final String userAgent = exchange.getRequestHeaders().getFirst("User-Agent");
-                    if (userAgent != null
-                        && userAgent.startsWith("Apache Ant")
-                        && "GET".equals(exchange.getRequestMethod())
-                        && "/".equals(exchange.getRequestURI().getPath())) {
+                    if (userAgent != null && userAgent.startsWith("Apache Ant") && "GET".equals(exchange.getRequestMethod())
+                            && "/".equals(exchange.getRequestURI().getPath())) {
                         response = new Response(200, TEXT_PLAIN_CONTENT_TYPE, "OK".getBytes(UTF_8));
 
                     } else {
                         try {
                             final long requestId = requests.getAndIncrement();
                             final String method = exchange.getRequestMethod();
-
 
                             final Map<String, String> headers = new HashMap<>();
                             for (Map.Entry<String, List<String>> header : exchange.getRequestHeaders().entrySet()) {
@@ -195,11 +192,7 @@ public abstract class AbstractHttpFixture {
 
         @Override
         public String toString() {
-            return "Response{" +
-                "status=" + status +
-                ", headers=" + headers +
-                ", body=" + new String(body, UTF_8) +
-                '}';
+            return "Response{" + "status=" + status + ", headers=" + headers + ", body=" + new String(body, UTF_8) + '}';
         }
     }
 
@@ -219,8 +212,8 @@ public abstract class AbstractHttpFixture {
             this.id = id;
             this.method = Objects.requireNonNull(method);
             this.uri = Objects.requireNonNull(uri);
-            this.headers =  Objects.requireNonNull(headers);
-            this.body =  Objects.requireNonNull(body);
+            this.headers = Objects.requireNonNull(headers);
+            this.body = Objects.requireNonNull(body);
 
             final Map<String, String> params = new HashMap<>();
             if (uri.getQuery() != null && uri.getQuery().length() > 0) {
@@ -284,13 +277,8 @@ public abstract class AbstractHttpFixture {
 
         @Override
         public String toString() {
-            return "Request{" +
-                "method='" + method + '\'' +
-                ", uri=" + uri +
-                ", parameters=" + parameters +
-                ", headers=" + headers +
-                ", body=" + body +
-                '}';
+            return "Request{" + "method='" + method + '\'' + ", uri=" + uri + ", parameters=" + parameters + ", headers=" + headers
+                    + ", body=" + body + '}';
         }
     }
 

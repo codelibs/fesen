@@ -24,17 +24,16 @@ import static org.codelibs.fesen.action.support.PlainActionFuture.newFuture;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
-import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.action.support.TransportAction;
 import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.tasks.Task;
 
 public class ActionTestUtils {
 
-    private ActionTestUtils() { /* no construction */ }
+    private ActionTestUtils() {
+        /* no construction */ }
 
-    public static <Request extends ActionRequest, Response extends ActionResponse>
-    Response executeBlocking(TransportAction<Request, Response> action, Request request) {
+    public static <Request extends ActionRequest, Response extends ActionResponse> Response executeBlocking(
+            TransportAction<Request, Response> action, Request request) {
         PlainActionFuture<Response> future = newFuture();
         action.execute(request, future);
         return future.actionGet();
@@ -45,8 +44,8 @@ public class ActionTestUtils {
      *
      * This is a shim method to make execution publicly available in tests.
      */
-    public static <Request extends ActionRequest, Response extends ActionResponse>
-    void execute(TransportAction<Request, Response> action, Task task, Request request, ActionListener<Response> listener) {
+    public static <Request extends ActionRequest, Response extends ActionResponse> void execute(TransportAction<Request, Response> action,
+            Task task, Request request, ActionListener<Response> listener) {
         action.execute(task, request, listener);
     }
 

@@ -19,22 +19,22 @@
 
 package org.codelibs.fesen.action.support;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.indices.SystemIndices;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Encapsulates the logic of whether a new index should be automatically created when
@@ -43,17 +43,15 @@ import java.util.List;
 public final class AutoCreateIndex {
 
     public static final Setting<AutoCreate> AUTO_CREATE_INDEX_SETTING =
-        new Setting<>("action.auto_create_index", "true", AutoCreate::new, Property.NodeScope, Setting.Property.Dynamic);
+            new Setting<>("action.auto_create_index", "true", AutoCreate::new, Property.NodeScope, Setting.Property.Dynamic);
 
     private final boolean dynamicMappingDisabled;
     private final IndexNameExpressionResolver resolver;
     private final SystemIndices systemIndices;
     private volatile AutoCreate autoCreate;
 
-    public AutoCreateIndex(Settings settings,
-                           ClusterSettings clusterSettings,
-                           IndexNameExpressionResolver resolver,
-                           SystemIndices systemIndices) {
+    public AutoCreateIndex(Settings settings, ClusterSettings clusterSettings, IndexNameExpressionResolver resolver,
+            SystemIndices systemIndices) {
         this.resolver = resolver;
         dynamicMappingDisabled = !MapperService.INDEX_MAPPER_DYNAMIC_SETTING.get(settings);
         this.systemIndices = systemIndices;
@@ -88,8 +86,7 @@ public final class AutoCreateIndex {
             throw new IndexNotFoundException("[" + AUTO_CREATE_INDEX_SETTING.getKey() + "] is [false]", index);
         }
         if (dynamicMappingDisabled) {
-            throw new IndexNotFoundException("[" + MapperService.INDEX_MAPPER_DYNAMIC_SETTING.getKey() + "] is [false]",
-                    index);
+            throw new IndexNotFoundException("[" + MapperService.INDEX_MAPPER_DYNAMIC_SETTING.getKey() + "] is [false]", index);
         }
         // matches not set, default value of "true"
         if (autoCreate.expressions.isEmpty()) {
@@ -102,12 +99,11 @@ public final class AutoCreateIndex {
                 if (include) {
                     return true;
                 }
-                throw new IndexNotFoundException("[" + AUTO_CREATE_INDEX_SETTING.getKey() + "] contains [-"
-                        + indexExpression + "] which forbids automatic creation of the index", index);
+                throw new IndexNotFoundException("[" + AUTO_CREATE_INDEX_SETTING.getKey() + "] contains [-" + indexExpression
+                        + "] which forbids automatic creation of the index", index);
             }
         }
-        throw new IndexNotFoundException("[" + AUTO_CREATE_INDEX_SETTING.getKey() + "] ([" + autoCreate
-                + "]) doesn't match", index);
+        throw new IndexNotFoundException("[" + AUTO_CREATE_INDEX_SETTING.getKey() + "] ([" + autoCreate + "]) doesn't match", index);
     }
 
     AutoCreate getAutoCreate() {
@@ -144,7 +140,7 @@ public final class AutoCreateIndex {
                                         + "must contain an index name after [-]");
                             }
                             expression = new Tuple<>(pattern.substring(1), false);
-                        } else if(pattern.startsWith("+")) {
+                        } else if (pattern.startsWith("+")) {
                             if (pattern.length() == 1) {
                                 throw new IllegalArgumentException("Can't parse [" + value + "] for setting [action.auto_create_index] "
                                         + "must contain an index name after [+]");

@@ -99,9 +99,9 @@ public class BroadcastReplicationTests extends ESTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        MockNioTransport transport = new MockNioTransport(Settings.EMPTY, Version.CURRENT,
-            threadPool, new NetworkService(Collections.emptyList()), PageCacheRecycler.NON_RECYCLING_INSTANCE,
-            new NamedWriteableRegistry(Collections.emptyList()), circuitBreakerService);
+        MockNioTransport transport = new MockNioTransport(Settings.EMPTY, Version.CURRENT, threadPool,
+                new NetworkService(Collections.emptyList()), PageCacheRecycler.NON_RECYCLING_INSTANCE,
+                new NamedWriteableRegistry(Collections.emptyList()), circuitBreakerService);
         clusterService = createClusterService(threadPool);
         transportService = new TransportService(clusterService.getSettings(), transport, threadPool,
                 TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
@@ -146,8 +146,7 @@ public class BroadcastReplicationTests extends ESTestCase {
 
     public void testStartedPrimary() throws InterruptedException, ExecutionException {
         final String index = "test";
-        setState(clusterService, state(index, randomBoolean(),
-                ShardRoutingState.STARTED));
+        setState(clusterService, state(index, randomBoolean(), ShardRoutingState.STARTED));
         logger.debug("--> using initial state:\n{}", clusterService.state());
         PlainActionFuture<BroadcastResponse> response = PlainActionFuture.newFuture();
         broadcastReplicationAction.execute(new DummyBroadcastRequest(index), response);
@@ -178,8 +177,8 @@ public class BroadcastReplicationTests extends ESTestCase {
                 if (shardsSucceeded == 1 && randomBoolean()) {
                     //sometimes add failure (no failure means shard unavailable)
                     failures = new ReplicationResponse.ShardInfo.Failure[1];
-                    failures[0] = new ReplicationResponse.ShardInfo.Failure(shardRequests.v1(), null,
-                        new Exception("pretend shard failed"), RestStatus.GATEWAY_TIMEOUT, false);
+                    failures[0] = new ReplicationResponse.ShardInfo.Failure(shardRequests.v1(), null, new Exception("pretend shard failed"),
+                            RestStatus.GATEWAY_TIMEOUT, false);
                     failed++;
                 }
                 replicationResponse.setShardInfo(new ReplicationResponse.ShardInfo(2, shardsSucceeded, failures));
@@ -212,16 +211,16 @@ public class BroadcastReplicationTests extends ESTestCase {
         assertThat(shards.get(0), equalTo(shardId));
     }
 
-    private class TestBroadcastReplicationAction extends TransportBroadcastReplicationAction<DummyBroadcastRequest, BroadcastResponse,
-            BasicReplicationRequest, ReplicationResponse> {
+    private class TestBroadcastReplicationAction extends
+            TransportBroadcastReplicationAction<DummyBroadcastRequest, BroadcastResponse, BasicReplicationRequest, ReplicationResponse> {
         protected final Set<Tuple<ShardId, ActionListener<ReplicationResponse>>> capturedShardRequests =
-            ConcurrentCollections.newConcurrentSet();
+                ConcurrentCollections.newConcurrentSet();
 
-        TestBroadcastReplicationAction(ClusterService clusterService, TransportService transportService,
-                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+        TestBroadcastReplicationAction(ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
+                IndexNameExpressionResolver indexNameExpressionResolver,
                 TransportReplicationAction<BasicReplicationRequest, BasicReplicationRequest, ReplicationResponse> action) {
-            super("internal:test-broadcast-replication-action", DummyBroadcastRequest::new, clusterService, transportService,
-                    actionFilters, indexNameExpressionResolver, action);
+            super("internal:test-broadcast-replication-action", DummyBroadcastRequest::new, clusterService, transportService, actionFilters,
+                    indexNameExpressionResolver, action);
         }
 
         @Override
@@ -236,13 +235,13 @@ public class BroadcastReplicationTests extends ESTestCase {
 
         @Override
         protected BroadcastResponse newResponse(int successfulShards, int failedShards, int totalNumCopies,
-                                                List<DefaultShardOperationFailedException> shardFailures) {
+                List<DefaultShardOperationFailedException> shardFailures) {
             return new BroadcastResponse(totalNumCopies, successfulShards, failedShards, shardFailures);
         }
 
         @Override
         protected void shardExecute(Task task, DummyBroadcastRequest request, ShardId shardId,
-                                    ActionListener<ReplicationResponse> shardActionListener) {
+                ActionListener<ReplicationResponse> shardActionListener) {
             capturedShardRequests.add(new Tuple<>(shardId, shardActionListener));
         }
     }
@@ -253,7 +252,7 @@ public class BroadcastReplicationTests extends ESTestCase {
         Date endDate = new Date();
         long maxTime = 500;
         assertThat("this should not take longer than " + maxTime + " ms. The request hangs somewhere",
-            endDate.getTime() - beginDate.getTime(), lessThanOrEqualTo(maxTime));
+                endDate.getTime() - beginDate.getTime(), lessThanOrEqualTo(maxTime));
         return flushResponse;
     }
 

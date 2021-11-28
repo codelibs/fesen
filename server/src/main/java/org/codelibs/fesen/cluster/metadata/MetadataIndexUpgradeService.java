@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.cluster.metadata;
 
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -39,11 +44,6 @@ import org.codelibs.fesen.indices.SystemIndices;
 import org.codelibs.fesen.indices.mapper.MapperRegistry;
 import org.codelibs.fesen.script.ScriptService;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * This service is responsible for upgrading legacy index metadata to the current version
  * <p>
@@ -64,7 +64,7 @@ public class MetadataIndexUpgradeService {
     private final ScriptService scriptService;
 
     public MetadataIndexUpgradeService(Settings settings, NamedXContentRegistry xContentRegistry, MapperRegistry mapperRegistry,
-                                       IndexScopedSettings indexScopedSettings, SystemIndices systemIndices, ScriptService scriptService) {
+            IndexScopedSettings indexScopedSettings, SystemIndices systemIndices, ScriptService scriptService) {
         this.settings = settings;
         this.xContentRegistry = xContentRegistry;
         this.mapperRegistry = mapperRegistry;
@@ -113,13 +113,13 @@ public class MetadataIndexUpgradeService {
      * before they can be opened by this version of fesen.
      */
     private void checkSupportedVersion(IndexMetadata indexMetadata, Version minimumIndexCompatibilityVersion) {
-        if (indexMetadata.getState() == IndexMetadata.State.OPEN && isSupportedVersion(indexMetadata,
-            minimumIndexCompatibilityVersion) == false) {
+        if (indexMetadata.getState() == IndexMetadata.State.OPEN
+                && isSupportedVersion(indexMetadata, minimumIndexCompatibilityVersion) == false) {
             throw new IllegalStateException("The index [" + indexMetadata.getIndex() + "] was created with version ["
-                + indexMetadata.getCreationVersion() + "] but the minimum compatible version is ["
+                    + indexMetadata.getCreationVersion() + "] but the minimum compatible version is ["
 
-                + minimumIndexCompatibilityVersion + "]. It should be re-indexed in Fesen " + minimumIndexCompatibilityVersion.major
-                + ".x before upgrading to " + Version.CURRENT + ".");
+                    + minimumIndexCompatibilityVersion + "]. It should be re-indexed in Fesen " + minimumIndexCompatibilityVersion.major
+                    + ".x before upgrading to " + Version.CURRENT + ".");
         }
     }
 
@@ -145,26 +145,26 @@ public class MetadataIndexUpgradeService {
 
             IndexSettings indexSettings = new IndexSettings(indexMetadata, this.settings);
 
-            final Map<String, TriFunction<Settings, Version, ScriptService, Similarity>> similarityMap
-                    = new AbstractMap<String, TriFunction<Settings, Version, ScriptService, Similarity>>() {
-                @Override
-                public boolean containsKey(Object key) {
-                    return true;
-                }
+            final Map<String, TriFunction<Settings, Version, ScriptService, Similarity>> similarityMap =
+                    new AbstractMap<String, TriFunction<Settings, Version, ScriptService, Similarity>>() {
+                        @Override
+                        public boolean containsKey(Object key) {
+                            return true;
+                        }
 
-                @Override
-                public TriFunction<Settings, Version, ScriptService, Similarity> get(Object key) {
-                    assert key instanceof String : "key must be a string but was: " + key.getClass();
-                    return (settings, version, scriptService) -> new BM25Similarity();
-                }
+                        @Override
+                        public TriFunction<Settings, Version, ScriptService, Similarity> get(Object key) {
+                            assert key instanceof String : "key must be a string but was: " + key.getClass();
+                            return (settings, version, scriptService) -> new BM25Similarity();
+                        }
 
-                // this entrySet impl isn't fully correct but necessary as SimilarityService will iterate
-                // over all similarities
-                @Override
-                public Set<Entry<String, TriFunction<Settings, Version, ScriptService, Similarity>>> entrySet() {
-                    return Collections.emptySet();
-                }
-            };
+                        // this entrySet impl isn't fully correct but necessary as SimilarityService will iterate
+                        // over all similarities
+                        @Override
+                        public Set<Entry<String, TriFunction<Settings, Version, ScriptService, Similarity>>> entrySet() {
+                            return Collections.emptySet();
+                        }
+                    };
             SimilarityService similarityService = new SimilarityService(indexSettings, null, similarityMap);
             final NamedAnalyzer fakeDefault = new NamedAnalyzer("default", AnalyzerScope.INDEX, new Analyzer() {
                 @Override
@@ -177,7 +177,7 @@ public class MetadataIndexUpgradeService {
                 @Override
                 public NamedAnalyzer get(Object key) {
                     assert key instanceof String : "key must be a string but was: " + key.getClass();
-                    return new NamedAnalyzer((String)key, AnalyzerScope.INDEX, fakeDefault.analyzer());
+                    return new NamedAnalyzer((String) key, AnalyzerScope.INDEX, fakeDefault.analyzer());
                 }
 
                 // this entrySet impl isn't fully correct but necessary as IndexAnalyzers will iterate
@@ -187,8 +187,7 @@ public class MetadataIndexUpgradeService {
                     return Collections.emptySet();
                 }
             };
-            try (IndexAnalyzers fakeIndexAnalzyers =
-                     new IndexAnalyzers(analyzerMap, analyzerMap, analyzerMap)) {
+            try (IndexAnalyzers fakeIndexAnalzyers = new IndexAnalyzers(analyzerMap, analyzerMap, analyzerMap)) {
                 MapperService mapperService = new MapperService(indexSettings, fakeIndexAnalzyers, xContentRegistry, similarityService,
                         mapperRegistry, () -> null, () -> false, scriptService);
                 mapperService.merge(indexMetadata, MapperService.MergeReason.MAPPING_RECOVERY);
@@ -203,19 +202,18 @@ public class MetadataIndexUpgradeService {
      * Marks index as upgraded so we don't have to test it again
      */
     private IndexMetadata markAsUpgraded(IndexMetadata indexMetadata) {
-        Settings settings = Settings.builder().put(indexMetadata.getSettings())
-            .put(IndexMetadata.SETTING_VERSION_UPGRADED, Version.CURRENT).build();
+        Settings settings =
+                Settings.builder().put(indexMetadata.getSettings()).put(IndexMetadata.SETTING_VERSION_UPGRADED, Version.CURRENT).build();
         return IndexMetadata.builder(indexMetadata).settings(settings).build();
     }
 
     IndexMetadata archiveBrokenIndexSettings(IndexMetadata indexMetadata) {
         final Settings settings = indexMetadata.getSettings();
-        final Settings upgrade = indexScopedSettings.archiveUnknownOrInvalidSettings(
-            settings,
-            e -> logger.warn("{} ignoring unknown index setting: [{}] with value [{}]; archiving",
-                indexMetadata.getIndex(), e.getKey(), e.getValue()),
-            (e, ex) -> logger.warn(() -> new ParameterizedMessage("{} ignoring invalid index setting: [{}] with value [{}]; archiving",
-                indexMetadata.getIndex(), e.getKey(), e.getValue()), ex));
+        final Settings upgrade = indexScopedSettings.archiveUnknownOrInvalidSettings(settings,
+                e -> logger.warn("{} ignoring unknown index setting: [{}] with value [{}]; archiving", indexMetadata.getIndex(), e.getKey(),
+                        e.getValue()),
+                (e, ex) -> logger.warn(() -> new ParameterizedMessage("{} ignoring invalid index setting: [{}] with value [{}]; archiving",
+                        indexMetadata.getIndex(), e.getKey(), e.getValue()), ex));
         if (upgrade != settings) {
             return IndexMetadata.builder(indexMetadata).settings(upgrade).build();
         } else {

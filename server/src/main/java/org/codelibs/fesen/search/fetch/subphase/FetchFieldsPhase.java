@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.document.DocumentField;
 import org.codelibs.fesen.index.mapper.IgnoredFieldMapper;
@@ -29,11 +34,6 @@ import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A fetch sub-phase for high-level field retrieval. Given a list of fields, it
@@ -51,8 +51,8 @@ public final class FetchFieldsPhase implements FetchSubPhase {
         MapperService mapperService = fetchContext.mapperService();
         SearchLookup searchLookup = fetchContext.searchLookup();
         if (fetchContext.mapperService().documentMapper().sourceMapper().enabled() == false) {
-            throw new IllegalArgumentException("Unable to retrieve the requested [fields] since _source is disabled " +
-                "in the mappings for index [" + fetchContext.getIndexName() + "]");
+            throw new IllegalArgumentException("Unable to retrieve the requested [fields] since _source is disabled "
+                    + "in the mappings for index [" + fetchContext.getIndexName() + "]");
         }
 
         FieldFetcher fieldFetcher = FieldFetcher.create(mapperService, searchLookup, fetchFieldsContext.fields());

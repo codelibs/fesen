@@ -67,21 +67,20 @@ public class FieldCapabilitiesResponseTests extends AbstractWireSerializingTestC
     private static IndexFieldCapabilities randomFieldCaps(String fieldName) {
         Map<String, String> meta;
         switch (randomInt(2)) {
-            case 0:
-                meta = Collections.emptyMap();
-                break;
-            case 1:
-                meta = Collections.singletonMap("key", "value");
-                break;
-            default:
-                meta = new HashMap<>();
-                meta.put("key1", "value1");
-                meta.put("key2", "value2");
-                break;
+        case 0:
+            meta = Collections.emptyMap();
+            break;
+        case 1:
+            meta = Collections.singletonMap("key", "value");
+            break;
+        default:
+            meta = new HashMap<>();
+            meta.put("key1", "value1");
+            meta.put("key2", "value2");
+            break;
         }
 
-        return new IndexFieldCapabilities(fieldName, randomAlphaOfLengthBetween(5, 20),
-            randomBoolean(), randomBoolean(), meta);
+        return new IndexFieldCapabilities(fieldName, randomAlphaOfLengthBetween(5, 20), randomBoolean(), randomBoolean(), meta);
     }
 
     @Override
@@ -91,22 +90,19 @@ public class FieldCapabilitiesResponseTests extends AbstractWireSerializingTestC
         int mutation = response.get().isEmpty() ? 0 : randomIntBetween(0, 2);
 
         switch (mutation) {
-            case 0:
-                String toAdd = randomAlphaOfLength(10);
-                mutatedResponses.put(toAdd, Collections.singletonMap(
-                    randomAlphaOfLength(10),
-                    FieldCapabilitiesTests.randomFieldCaps(toAdd)));
-                break;
-            case 1:
-                String toRemove = randomFrom(mutatedResponses.keySet());
-                mutatedResponses.remove(toRemove);
-                break;
-            case 2:
-                String toReplace = randomFrom(mutatedResponses.keySet());
-                mutatedResponses.put(toReplace, Collections.singletonMap(
-                    randomAlphaOfLength(10),
-                    FieldCapabilitiesTests.randomFieldCaps(toReplace)));
-                break;
+        case 0:
+            String toAdd = randomAlphaOfLength(10);
+            mutatedResponses.put(toAdd, Collections.singletonMap(randomAlphaOfLength(10), FieldCapabilitiesTests.randomFieldCaps(toAdd)));
+            break;
+        case 1:
+            String toRemove = randomFrom(mutatedResponses.keySet());
+            mutatedResponses.remove(toRemove);
+            break;
+        case 2:
+            String toReplace = randomFrom(mutatedResponses.keySet());
+            mutatedResponses.put(toReplace,
+                    Collections.singletonMap(randomAlphaOfLength(10), FieldCapabilitiesTests.randomFieldCaps(toReplace)));
+            break;
         }
         return new FieldCapabilitiesResponse(null, mutatedResponses);
     }

@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.client;
 
-
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
@@ -38,8 +37,8 @@ public interface FesenClient {
      * @param <Response>       the response type.
      * @return A future allowing to get back the response.
      */
-    <Request extends ActionRequest, Response extends ActionResponse> ActionFuture<Response> execute(
-        ActionType<Response> action, Request request);
+    <Request extends ActionRequest, Response extends ActionResponse> ActionFuture<Response> execute(ActionType<Response> action,
+            Request request);
 
     /**
      * Executes a generic action, denoted by an {@link ActionType}.
@@ -50,8 +49,8 @@ public interface FesenClient {
      * @param <Request>        The request type.
      * @param <Response>       The response type.
      */
-    <Request extends ActionRequest, Response extends ActionResponse> void execute(
-        ActionType<Response> action, Request request, ActionListener<Response> listener);
+    <Request extends ActionRequest, Response extends ActionResponse> void execute(ActionType<Response> action, Request request,
+            ActionListener<Response> listener);
 
     /**
      * Returns the threadpool used to execute requests on this client

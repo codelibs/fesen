@@ -48,10 +48,10 @@ final class ESPolicy extends Policy {
     final Policy system;
     final PermissionCollection dynamic;
     final PermissionCollection dataPathPermission;
-    final Map<String,Policy> plugins;
+    final Map<String, Policy> plugins;
 
-    ESPolicy(Map<String, URL> codebases, PermissionCollection dynamic, Map<String,Policy> plugins, boolean filterBadDefaults,
-             PermissionCollection dataPathPermission) {
+    ESPolicy(Map<String, URL> codebases, PermissionCollection dynamic, Map<String, Policy> plugins, boolean filterBadDefaults,
+            PermissionCollection dataPathPermission) {
         this.template = Security.readPolicy(getClass().getResource(POLICY_RESOURCE), codebases);
         this.dataPathPermission = dataPathPermission;
         this.untrusted = Security.readPolicy(getClass().getResource(UNTRUSTED_RESOURCE), Collections.emptyMap());
@@ -64,7 +64,8 @@ final class ESPolicy extends Policy {
         this.plugins = plugins;
     }
 
-    @Override @SuppressForbidden(reason = "fast equals check is desired")
+    @Override
+    @SuppressForbidden(reason = "fast equals check is desired")
     public boolean implies(ProtectionDomain domain, Permission permission) {
         CodeSource codeSource = domain.getCodeSource();
         // codesource can be null when reducing privileges via doPrivileged()
@@ -92,8 +93,7 @@ final class ESPolicy extends Policy {
         // yeah right, REMOVE THIS when hadoop is fixed
         if (permission instanceof FilePermission && "<<ALL FILES>>".equals(permission.getName())) {
             for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-                if ("org.apache.hadoop.util.Shell".equals(element.getClassName()) &&
-                      "runCommand".equals(element.getMethodName())) {
+                if ("org.apache.hadoop.util.Shell".equals(element.getClassName()) && "runCommand".equals(element.getMethodName())) {
                     // we found the horrible method: the hack begins!
                     // force the hadoop code to back down, by throwing an exception that it catches.
                     rethrow(new IOException("no hadoop, you cannot do this."));
@@ -133,8 +133,7 @@ final class ESPolicy extends Policy {
         // https://bugs.openjdk.java.net/browse/JDK-8014008
         // return them a new empty permissions object so jvisualvm etc work
         for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-            if ("sun.rmi.server.LoaderHandler".equals(element.getClassName()) &&
-                    "loadClass".equals(element.getMethodName())) {
+            if ("sun.rmi.server.LoaderHandler".equals(element.getClassName()) && "loadClass".equals(element.getMethodName())) {
                 return new Permissions();
             }
         }
@@ -199,9 +198,7 @@ final class ESPolicy extends Policy {
     // "allows anyone to listen on dynamic ports"
     // specified exactly because that is what we want, and fastest since it won't imply any
     // expensive checks for the implicit "resolve"
-    private static final Permission BAD_DEFAULT_NUMBER_TWO =
-        new BadDefaultPermission(
-            new SocketPermission("localhost:0", "listen"),
+    private static final Permission BAD_DEFAULT_NUMBER_TWO = new BadDefaultPermission(new SocketPermission("localhost:0", "listen"),
             // we apply this pre-implies test because some SocketPermission#implies calls do expensive reverse-DNS resolves
             p -> p instanceof SocketPermission && p.getActions().contains("listen"));
 

@@ -67,14 +67,14 @@ public class SerialDifferenceTests extends BasePipelineAggregationTestCase<Seria
         aggBuilders.add(createTestAggregatorFactory());
         AggregationBuilder parent = mock(AggregationBuilder.class);
         when(parent.getName()).thenReturn("name");
-        assertThat(validate(parent, new SerialDiffPipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
-                "Validation Failed: 1: serial_diff aggregation [name] must have a histogram, "
-                + "date_histogram or auto_date_histogram as parent;"));
+        assertThat(validate(parent, new SerialDiffPipelineAggregationBuilder("name", "invalid_agg>metric")),
+                equalTo("Validation Failed: 1: serial_diff aggregation [name] must have a histogram, "
+                        + "date_histogram or auto_date_histogram as parent;"));
     }
 
     public void testNoParent() {
-        assertThat(validate(emptyList(), new SerialDiffPipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
-                "Validation Failed: 1: serial_diff aggregation [name] must have a histogram, "
-                + "date_histogram or auto_date_histogram as parent but doesn't have a parent;"));
+        assertThat(validate(emptyList(), new SerialDiffPipelineAggregationBuilder("name", "invalid_agg>metric")),
+                equalTo("Validation Failed: 1: serial_diff aggregation [name] must have a histogram, "
+                        + "date_histogram or auto_date_histogram as parent but doesn't have a parent;"));
     }
 }

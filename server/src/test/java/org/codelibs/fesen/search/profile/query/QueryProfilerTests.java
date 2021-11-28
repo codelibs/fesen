@@ -85,8 +85,8 @@ public class QueryProfilerTests extends ESTestCase {
         }
         reader = w.getReader();
         w.close();
-        searcher = new ContextIndexSearcher(reader, IndexSearcher.getDefaultSimilarity(),
-            IndexSearcher.getDefaultQueryCache(), ALWAYS_CACHE_POLICY, true);
+        searcher = new ContextIndexSearcher(reader, IndexSearcher.getDefaultSimilarity(), IndexSearcher.getDefaultQueryCache(),
+                ALWAYS_CACHE_POLICY, true);
     }
 
     @After
@@ -279,7 +279,7 @@ public class QueryProfilerTests extends ESTestCase {
         s.setQueryCache(null);
         Weight weight = s.createWeight(s.rewrite(new DummyQuery()), randomFrom(ScoreMode.values()), 1f);
         // exception when getting the scorer
-        expectThrows(UnsupportedOperationException.class, () ->  weight.scorer(s.getIndexReader().leaves().get(0)));
+        expectThrows(UnsupportedOperationException.class, () -> weight.scorer(s.getIndexReader().leaves().get(0)));
         // no exception, means scorerSupplier is delegated
         weight.scorerSupplier(s.getIndexReader().leaves().get(0));
         reader.close();
@@ -289,7 +289,8 @@ public class QueryProfilerTests extends ESTestCase {
     private static final QueryCachingPolicy ALWAYS_CACHE_POLICY = new QueryCachingPolicy() {
 
         @Override
-        public void onUse(Query query) {}
+        public void onUse(Query query) {
+        }
 
         @Override
         public boolean shouldCache(Query query) throws IOException {

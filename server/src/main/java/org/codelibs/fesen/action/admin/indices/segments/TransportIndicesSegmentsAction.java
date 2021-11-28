@@ -46,9 +46,8 @@ public class TransportIndicesSegmentsAction
     private final IndicesService indicesService;
 
     @Inject
-    public TransportIndicesSegmentsAction(ClusterService clusterService, TransportService transportService,
-                                          IndicesService indicesService, ActionFilters actionFilters,
-                                          IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportIndicesSegmentsAction(ClusterService clusterService, TransportService transportService, IndicesService indicesService,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(IndicesSegmentsAction.NAME, clusterService, transportService, actionFilters, indexNameExpressionResolver,
                 IndicesSegmentsRequest::new, ThreadPool.Names.MANAGEMENT);
         this.indicesService = indicesService;
@@ -79,10 +78,9 @@ public class TransportIndicesSegmentsAction
 
     @Override
     protected IndicesSegmentResponse newResponse(IndicesSegmentsRequest request, int totalShards, int successfulShards, int failedShards,
-                                                 List<ShardSegments> results, List<DefaultShardOperationFailedException> shardFailures,
-                                                 ClusterState clusterState) {
+            List<ShardSegments> results, List<DefaultShardOperationFailedException> shardFailures, ClusterState clusterState) {
         return new IndicesSegmentResponse(results.toArray(new ShardSegments[results.size()]), totalShards, successfulShards, failedShards,
-            shardFailures);
+                shardFailures);
     }
 
     @Override

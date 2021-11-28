@@ -28,8 +28,7 @@ import com.fasterxml.jackson.core.JsonParser;
 
 public class YamlXContentParser extends JsonXContentParser {
 
-    public YamlXContentParser(NamedXContentRegistry xContentRegistry,
-            DeprecationHandler deprecationHandler, JsonParser parser) {
+    public YamlXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler, parser);
     }
 

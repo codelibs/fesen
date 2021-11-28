@@ -19,8 +19,12 @@
 
 package org.codelibs.fesen.action.termvectors;
 
-import com.carrotsearch.hppc.ObjectLongHashMap;
-import com.carrotsearch.hppc.cursors.ObjectLongCursor;
+import static org.apache.lucene.util.ArrayUtil.grow;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.apache.lucene.index.BaseTermsEnum;
 import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.ImpactsEnum;
@@ -36,11 +40,8 @@ import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-
-import static org.apache.lucene.util.ArrayUtil.grow;
+import com.carrotsearch.hppc.ObjectLongHashMap;
+import com.carrotsearch.hppc.cursors.ObjectLongCursor;
 
 /**
  * This class represents the result of a {@link TermVectorsRequest}. It works
@@ -345,10 +346,10 @@ public final class TermVectorsFields extends Fields {
 
                 @Override
                 public PostingsEnum postings(PostingsEnum reuse, int flags) throws IOException {
-                    final TermVectorPostingsEnum retVal = (reuse instanceof TermVectorPostingsEnum ? (TermVectorPostingsEnum) reuse
-                            : new TermVectorPostingsEnum());
-                    return retVal.reset(hasPositions ? positions : null, hasOffsets ? startOffsets : null, hasOffsets ? endOffsets
-                            : null, hasPayloads ? payloads : null, freq);
+                    final TermVectorPostingsEnum retVal =
+                            (reuse instanceof TermVectorPostingsEnum ? (TermVectorPostingsEnum) reuse : new TermVectorPostingsEnum());
+                    return retVal.reset(hasPositions ? positions : null, hasOffsets ? startOffsets : null, hasOffsets ? endOffsets : null,
+                            hasPayloads ? payloads : null, freq);
                 }
 
                 @Override
@@ -438,8 +439,7 @@ public final class TermVectorsFields extends Fields {
 
         @Override
         public int advance(int target) throws IOException {
-            while (nextDoc() < target && doc != NO_MORE_DOCS) {
-            }
+            while (nextDoc() < target && doc != NO_MORE_DOCS) {}
             return doc;
         }
 

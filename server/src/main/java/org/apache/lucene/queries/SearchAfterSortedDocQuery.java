@@ -19,6 +19,10 @@
 
 package org.apache.lucene.queries;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.ConstantScoreWeight;
@@ -35,10 +39,6 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.Weight;
 import org.codelibs.fesen.common.lucene.Lucene;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * A {@link Query} that only matches documents that are greater than the provided {@link FieldDoc}.
  * This works only if the index is sorted according to the given search {@link Sort}.
@@ -51,8 +51,8 @@ public class SearchAfterSortedDocQuery extends Query {
 
     public SearchAfterSortedDocQuery(Sort sort, FieldDoc after) {
         if (sort.getSort().length != after.fields.length) {
-            throw new IllegalArgumentException("after doc  has " + after.fields.length + " value(s) but sort has "
-                    + sort.getSort().length + ".");
+            throw new IllegalArgumentException(
+                    "after doc  has " + after.fields.length + " value(s) but sort has " + sort.getSort().length + ".");
         }
         this.sort = Objects.requireNonNull(sort);
         this.after = after;
@@ -102,20 +102,17 @@ public class SearchAfterSortedDocQuery extends Query {
 
     @Override
     public String toString(String field) {
-        return "SearchAfterSortedDocQuery(sort=" + sort  + ", afterDoc=" + after.toString() + ")";
+        return "SearchAfterSortedDocQuery(sort=" + sort + ", afterDoc=" + after.toString() + ")";
     }
 
     @Override
     public boolean equals(Object other) {
-        return sameClassAs(other) &&
-            equalsTo(getClass().cast(other));
+        return sameClassAs(other) && equalsTo(getClass().cast(other));
     }
 
     private boolean equalsTo(SearchAfterSortedDocQuery other) {
-        return sort.equals(other.sort) &&
-            after.doc == other.after.doc &&
-            Double.compare(after.score, other.after.score) == 0 &&
-            Arrays.equals(after.fields, other.after.fields);
+        return sort.equals(other.sort) && after.doc == other.after.doc && Double.compare(after.score, other.after.score) == 0
+                && Arrays.equals(after.fields, other.after.fields);
     }
 
     @Override
@@ -127,17 +124,15 @@ public class SearchAfterSortedDocQuery extends Query {
         boolean lessThanTop(int doc) throws IOException;
     }
 
-    static TopComparator getTopComparator(FieldComparator<?>[] fieldComparators,
-                                          int[] reverseMuls,
-                                          LeafReaderContext leafReaderContext,
-                                          int topDoc) {
+    static TopComparator getTopComparator(FieldComparator<?>[] fieldComparators, int[] reverseMuls, LeafReaderContext leafReaderContext,
+            int topDoc) {
         return doc -> {
             // DVs use forward iterators so we recreate the iterator for each sort field
             // every time we need to compare a document with the <code>after<code> doc.
             // We could reuse the iterators when the comparison goes forward but
             // this should only be called a few time per segment (binary search).
             for (int i = 0; i < fieldComparators.length; i++) {
-                LeafFieldComparator comparator =  fieldComparators[i].getLeafComparator(leafReaderContext);
+                LeafFieldComparator comparator = fieldComparators[i].getLeafComparator(leafReaderContext);
                 int value = reverseMuls[i] * comparator.compareTop(doc);
                 if (value != 0) {
                     return value < 0;

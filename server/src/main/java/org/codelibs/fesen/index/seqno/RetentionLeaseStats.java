@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.seqno;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Represents retention lease stats.
@@ -111,8 +111,10 @@ public final class RetentionLeaseStats implements ToXContentFragment, Writeable 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         final RetentionLeaseStats that = (RetentionLeaseStats) o;
         return Objects.equals(retentionLeases, that.retentionLeases);
     }

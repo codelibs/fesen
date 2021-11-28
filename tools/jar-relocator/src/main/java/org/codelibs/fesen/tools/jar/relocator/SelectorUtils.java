@@ -188,8 +188,7 @@ final class SelectorUtils {
             int patLength = (patIdxTmp - patIdxStart - 1);
             int strLength = (strIdxEnd - strIdxStart + 1);
             int foundIdx = -1;
-            strLoop:
-            for (int i = 0; i <= strLength - patLength; i++) {
+            strLoop: for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     String subPat = patDirs[patIdxStart + j + 1];
                     String subStr = strDirs[strIdxStart + i + j];
@@ -316,8 +315,7 @@ final class SelectorUtils {
             int patLength = (patIdxTmp - patIdxStart - 1);
             int strLength = (strIdxEnd - strIdxStart + 1);
             int foundIdx = -1;
-            strLoop:
-            for (int i = 0; i <= strLength - patLength; i++) {
+            strLoop: for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
                     if (ch != '?' && !equals(ch, strArr[strIdxStart + i + j], isCaseSensitive)) {
@@ -356,8 +354,7 @@ final class SelectorUtils {
         }
         if (!isCaseSensitive) {
             // NOTE: Try both upper case and lower case as done by String.equalsIgnoreCase()
-            if (Character.toUpperCase(c1) == Character.toUpperCase(c2)
-                    || Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
+            if (Character.toUpperCase(c1) == Character.toUpperCase(c2) || Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
                 return true;
             }
         }

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.util.List;
 
 import org.codelibs.fesen.action.admin.cluster.remote.RemoteInfoAction;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public final class RestRemoteClusterInfoAction extends BaseRestHandler {
 

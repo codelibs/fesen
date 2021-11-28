@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.search.aggregations;
 
+import java.io.IOException;
+
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.common.lucene.ScorerAware;
-
-import java.io.IOException;
 
 /**
  * A {@link LeafBucketCollector} that delegates all calls to the sub leaf

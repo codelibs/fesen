@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksRequest;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
@@ -36,14 +43,6 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 import org.codelibs.fesen.tasks.TaskId;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Supplier;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 
 public class RestListTasksAction extends BaseRestHandler {
 
@@ -67,8 +66,7 @@ public class RestListTasksAction extends BaseRestHandler {
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
         final ListTasksRequest listTasksRequest = generateListTasksRequest(request);
         final String groupBy = request.param("group_by", "nodes");
-        return channel -> client.admin().cluster().listTasks(listTasksRequest,
-                listTasksResponseListener(nodesInCluster, groupBy, channel));
+        return channel -> client.admin().cluster().listTasks(listTasksRequest, listTasksResponseListener(nodesInCluster, groupBy, channel));
     }
 
     public static ListTasksRequest generateListTasksRequest(RestRequest request) {
@@ -92,10 +90,8 @@ public class RestListTasksAction extends BaseRestHandler {
     /**
      * Standard listener for extensions of {@link ListTasksResponse} that supports {@code group_by=nodes}.
      */
-    public static <T extends ListTasksResponse> ActionListener<T> listTasksResponseListener(
-                Supplier<DiscoveryNodes> nodesInCluster,
-                String groupBy,
-                final RestChannel channel) {
+    public static <T extends ListTasksResponse> ActionListener<T> listTasksResponseListener(Supplier<DiscoveryNodes> nodesInCluster,
+            String groupBy, final RestChannel channel) {
         if ("nodes".equals(groupBy)) {
             return new RestBuilderListener<T>(channel) {
                 @Override

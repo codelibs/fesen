@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
@@ -35,12 +41,6 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.script.ScriptType;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * A request to execute a search based on a search template.
  */
@@ -54,7 +54,8 @@ public class SearchTemplateRequest extends ActionRequest implements CompositeInd
     private String script;
     private Map<String, Object> scriptParams;
 
-    public SearchTemplateRequest() {}
+    public SearchTemplateRequest() {
+    }
 
     public SearchTemplateRequest(StreamInput in) throws IOException {
         super(in);
@@ -83,16 +84,14 @@ public class SearchTemplateRequest extends ActionRequest implements CompositeInd
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SearchTemplateRequest request1 = (SearchTemplateRequest) o;
-        return simulate == request1.simulate &&
-            explain == request1.explain &&
-            profile == request1.profile &&
-            Objects.equals(request, request1.request) &&
-            scriptType == request1.scriptType &&
-            Objects.equals(script, request1.script) &&
-            Objects.equals(scriptParams, request1.scriptParams);
+        return simulate == request1.simulate && explain == request1.explain && profile == request1.profile
+                && Objects.equals(request, request1.request) && scriptType == request1.scriptType && Objects.equals(script, request1.script)
+                && Objects.equals(scriptParams, request1.scriptParams);
     }
 
     @Override
@@ -183,9 +182,7 @@ public class SearchTemplateRequest extends ActionRequest implements CompositeInd
     private static final ObjectParser<SearchTemplateRequest, Void> PARSER;
     static {
         PARSER = new ObjectParser<>("search_template");
-        PARSER.declareField((parser, request, s) ->
-                request.setScriptParams(parser.map())
-            , PARAMS_FIELD, ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, s) -> request.setScriptParams(parser.map()), PARAMS_FIELD, ObjectParser.ValueType.OBJECT);
         PARSER.declareString((request, s) -> {
             request.setScriptType(ScriptType.STORED);
             request.setScript(s);
@@ -223,10 +220,8 @@ public class SearchTemplateRequest extends ActionRequest implements CompositeInd
             throw new UnsupportedOperationException("Unrecognized script type [" + scriptType + "].");
         }
 
-        return builder.field(PARAMS_FIELD.getPreferredName(), scriptParams)
-            .field(EXPLAIN_FIELD.getPreferredName(), explain)
-            .field(PROFILE_FIELD.getPreferredName(), profile)
-            .endObject();
+        return builder.field(PARAMS_FIELD.getPreferredName(), scriptParams).field(EXPLAIN_FIELD.getPreferredName(), explain)
+                .field(PROFILE_FIELD.getPreferredName(), profile).endObject();
     }
 
     @Override

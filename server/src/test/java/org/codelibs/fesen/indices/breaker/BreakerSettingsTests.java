@@ -29,30 +29,19 @@ import org.codelibs.fesen.test.ESTestCase;
 public class BreakerSettingsTests extends ESTestCase {
 
     public void testFromSettings() {
-        Settings clusterSettings = Settings.builder()
-            .put(BreakerSettings.breakerLimitSettingKey("foo"), "100b")
-            .put(BreakerSettings.breakerLimitSettingKey("bar"), "150b")
-            .put(BreakerSettings.breakerOverheadSettingKey("bar"), 2.5)
-            .put(BreakerSettings.breakerTypeSettingKey("bar"), CircuitBreaker.Type.MEMORY)
-            .build();
+        Settings clusterSettings = Settings.builder().put(BreakerSettings.breakerLimitSettingKey("foo"), "100b")
+                .put(BreakerSettings.breakerLimitSettingKey("bar"), "150b").put(BreakerSettings.breakerOverheadSettingKey("bar"), 2.5)
+                .put(BreakerSettings.breakerTypeSettingKey("bar"), CircuitBreaker.Type.MEMORY).build();
 
-        BreakerSettings breakerFoo = BreakerSettings.updateFromSettings(new BreakerSettings("foo",
-            10L,
-            1.2d,
-            CircuitBreaker.Type.NOOP,
-            CircuitBreaker.Durability.TRANSIENT),
-            clusterSettings);
+        BreakerSettings breakerFoo = BreakerSettings.updateFromSettings(
+                new BreakerSettings("foo", 10L, 1.2d, CircuitBreaker.Type.NOOP, CircuitBreaker.Durability.TRANSIENT), clusterSettings);
         assertThat(breakerFoo.getDurability(), equalTo(CircuitBreaker.Durability.TRANSIENT));
         assertThat(breakerFoo.getLimit(), equalTo(100L));
         assertThat(breakerFoo.getOverhead(), equalTo(1.2));
         assertThat(breakerFoo.getType(), equalTo(CircuitBreaker.Type.NOOP));
 
-        BreakerSettings breakerBar = BreakerSettings.updateFromSettings(new BreakerSettings("bar",
-            5L,
-            0.5d,
-            CircuitBreaker.Type.NOOP,
-            CircuitBreaker.Durability.PERMANENT),
-            clusterSettings);
+        BreakerSettings breakerBar = BreakerSettings.updateFromSettings(
+                new BreakerSettings("bar", 5L, 0.5d, CircuitBreaker.Type.NOOP, CircuitBreaker.Durability.PERMANENT), clusterSettings);
         assertThat(breakerBar.getDurability(), equalTo(CircuitBreaker.Durability.PERMANENT));
         assertThat(breakerBar.getLimit(), equalTo(150L));
         assertThat(breakerBar.getOverhead(), equalTo(2.5));

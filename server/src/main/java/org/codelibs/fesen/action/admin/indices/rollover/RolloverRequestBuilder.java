@@ -27,9 +27,7 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.TimeValue;
 
-
-public class RolloverRequestBuilder extends MasterNodeOperationRequestBuilder<RolloverRequest, RolloverResponse,
-    RolloverRequestBuilder> {
+public class RolloverRequestBuilder extends MasterNodeOperationRequestBuilder<RolloverRequest, RolloverResponse, RolloverRequestBuilder> {
     public RolloverRequestBuilder(FesenClient client, RolloverAction action) {
         super(client, action, new RolloverRequest());
     }
@@ -54,7 +52,7 @@ public class RolloverRequestBuilder extends MasterNodeOperationRequestBuilder<Ro
         return this;
     }
 
-    public RolloverRequestBuilder addMaxIndexSizeCondition(ByteSizeValue size){
+    public RolloverRequestBuilder addMaxIndexSizeCondition(ByteSizeValue size) {
         this.request.addMaxIndexSizeCondition(size);
         return this;
     }

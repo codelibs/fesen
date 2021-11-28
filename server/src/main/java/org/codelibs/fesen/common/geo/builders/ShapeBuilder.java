@@ -19,27 +19,6 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.geo.GeoShapeType;
-import org.codelibs.fesen.common.geo.parsers.GeoWKTParser;
-import org.codelibs.fesen.common.io.stream.NamedWriteable;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
-import org.locationtech.spatial4j.exception.InvalidShapeException;
-import org.locationtech.spatial4j.shape.Shape;
-import org.locationtech.spatial4j.shape.jts.JtsGeometry;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,11 +28,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.Assertions;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.geo.GeoShapeType;
+import org.codelibs.fesen.common.geo.parsers.GeoWKTParser;
+import org.codelibs.fesen.common.io.stream.NamedWriteable;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
+import org.locationtech.spatial4j.exception.InvalidShapeException;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
+
 /**
  * Basic class for building GeoJSON shapes like Polygons, Linestrings, etc
  */
-public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen.geometry.Geometry,
-    E extends ShapeBuilder<T, G, E>> implements NamedWriteable, ToXContentObject {
+public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen.geometry.Geometry, E extends ShapeBuilder<T, G, E>>
+        implements NamedWriteable, ToXContentObject {
 
     protected static final Logger LOGGER = LogManager.getLogger(ShapeBuilder.class);
 
@@ -105,7 +103,7 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
     protected ShapeBuilder(StreamInput in) throws IOException {
         int size = in.readVInt();
         coordinates = new ArrayList<>(size);
-        for (int i=0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             coordinates.add(readFromStream(in));
         }
     }
@@ -133,7 +131,7 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
 
     @SuppressWarnings("unchecked")
     private E thisRef() {
-        return (E)this;
+        return (E) this;
     }
 
     /**
@@ -162,7 +160,7 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
      * @param coordinates array of {@link Coordinate}s to add
      * @return this
      */
-    public E coordinates(Coordinate...coordinates) {
+    public E coordinates(Coordinate... coordinates) {
         return this.coordinates(Arrays.asList(coordinates));
     }
 
@@ -184,9 +182,9 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
      * @return Array of coordinates
      */
     protected Coordinate[] coordinates(boolean closed) {
-        Coordinate[] result = coordinates.toArray(new Coordinate[coordinates.size() + (closed?1:0)]);
-        if(closed) {
-            result[result.length-1] = result[0];
+        Coordinate[] result = coordinates.toArray(new Coordinate[coordinates.size() + (closed ? 1 : 0)]);
+        if (closed) {
+            result[result.length - 1] = result[0];
         }
         return result;
     }
@@ -407,19 +405,18 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
     }
 
     public enum Orientation {
-        LEFT,
-        RIGHT;
+        LEFT, RIGHT;
 
         public static final Orientation CLOCKWISE = Orientation.LEFT;
         public static final Orientation COUNTER_CLOCKWISE = Orientation.RIGHT;
         public static final Orientation CW = Orientation.LEFT;
         public static final Orientation CCW = Orientation.RIGHT;
 
-        public void writeTo (StreamOutput out) throws IOException {
+        public void writeTo(StreamOutput out) throws IOException {
             out.writeBoolean(this == Orientation.RIGHT);
         }
 
-        public static Orientation readFrom (StreamInput in) throws IOException {
+        public static Orientation readFrom(StreamInput in) throws IOException {
             return in.readBoolean() ? Orientation.RIGHT : Orientation.LEFT;
         }
 
@@ -430,16 +427,16 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
         public static Orientation fromString(String orientation) {
             orientation = orientation.toLowerCase(Locale.ROOT);
             switch (orientation) {
-                case "right":
-                case "counterclockwise":
-                case "ccw":
-                    return Orientation.RIGHT;
-                case "left":
-                case "clockwise":
-                case "cw":
-                    return Orientation.LEFT;
-                default:
-                    throw new IllegalArgumentException("Unknown orientation [" + orientation + "]");
+            case "right":
+            case "counterclockwise":
+            case "ccw":
+                return Orientation.RIGHT;
+            case "left":
+            case "clockwise":
+            case "cw":
+                return Orientation.LEFT;
+            default:
+                throw new IllegalArgumentException("Unknown orientation [" + orientation + "]");
             }
         }
     }
@@ -465,13 +462,13 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
      */
     protected XContentBuilder coordinatesToXcontent(XContentBuilder builder, boolean closed) throws IOException {
         builder.startArray();
-        for(Coordinate coord : coordinates) {
+        for (Coordinate coord : coordinates) {
             toXContent(builder, coord);
         }
-        if(closed) {
+        if (closed) {
             Coordinate start = coordinates.get(0);
-            Coordinate end = coordinates.get(coordinates.size()-1);
-            if(start.x != end.x || start.y != end.y) {
+            Coordinate end = coordinates.get(coordinates.size() - 1);
+            if (start.x != end.x || start.y != end.y) {
                 toXContent(builder, coordinates.get(0));
             }
         }
@@ -481,10 +478,12 @@ public abstract class ShapeBuilder<T extends Shape, G extends org.codelibs.fesen
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ShapeBuilder)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof ShapeBuilder))
+            return false;
 
-        ShapeBuilder<?,?,?> that = (ShapeBuilder<?,?,?>) o;
+        ShapeBuilder<?, ?, ?> that = (ShapeBuilder<?, ?, ?>) o;
 
         return Objects.equals(coordinates, that.coordinates);
     }

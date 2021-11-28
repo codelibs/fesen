@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.shrink;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionType;
 
 public class ResizeAction extends ActionType<ResizeResponse> {

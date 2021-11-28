@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.nested;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
-
-import java.io.IOException;
 
 public class ParsedNested extends ParsedSingleBucketAggregation implements Nested {
 

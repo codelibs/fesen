@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.index.seqno;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.codelibs.fesen.ExceptionsHelper;
@@ -41,55 +43,33 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-
 /**
  * Background global checkpoint sync action initiated when a shard goes inactive. This is needed because while we send the global checkpoint
  * on every replication operation, after the last operation completes the global checkpoint could advance but without a follow-up operation
  * the global checkpoint will never be synced to the replicas.
  */
-public class GlobalCheckpointSyncAction extends TransportReplicationAction<
-        GlobalCheckpointSyncAction.Request,
-        GlobalCheckpointSyncAction.Request,
-        ReplicationResponse> {
+public class GlobalCheckpointSyncAction
+        extends TransportReplicationAction<GlobalCheckpointSyncAction.Request, GlobalCheckpointSyncAction.Request, ReplicationResponse> {
 
     public static String ACTION_NAME = "indices:admin/seq_no/global_checkpoint_sync";
 
     @Inject
-    public GlobalCheckpointSyncAction(
-            final Settings settings,
-            final TransportService transportService,
-            final ClusterService clusterService,
-            final IndicesService indicesService,
-            final ThreadPool threadPool,
-            final ShardStateAction shardStateAction,
+    public GlobalCheckpointSyncAction(final Settings settings, final TransportService transportService, final ClusterService clusterService,
+            final IndicesService indicesService, final ThreadPool threadPool, final ShardStateAction shardStateAction,
             final ActionFilters actionFilters) {
-        super(
-                settings,
-                ACTION_NAME,
-                transportService,
-                clusterService,
-                indicesService,
-                threadPool,
-                shardStateAction,
-                actionFilters,
-                Request::new,
-                Request::new,
-                ThreadPool.Names.MANAGEMENT);
+        super(settings, ACTION_NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
+                Request::new, Request::new, ThreadPool.Names.MANAGEMENT);
     }
 
     public void updateGlobalCheckpointForShard(final ShardId shardId) {
         final ThreadContext threadContext = threadPool.getThreadContext();
         try (ThreadContext.StoredContext ignore = threadContext.stashContext()) {
             threadContext.markAsSystemContext();
-            execute(
-                    new Request(shardId),
-                    ActionListener.wrap(r -> {
-                    }, e -> {
-                        if (ExceptionsHelper.unwrap(e, AlreadyClosedException.class, IndexShardClosedException.class) == null) {
-                            logger.info(new ParameterizedMessage("{} global checkpoint sync failed", shardId), e);
-                        }
-                    }));
+            execute(new Request(shardId), ActionListener.wrap(r -> {}, e -> {
+                if (ExceptionsHelper.unwrap(e, AlreadyClosedException.class, IndexShardClosedException.class) == null) {
+                    logger.info(new ParameterizedMessage("{} global checkpoint sync failed", shardId), e);
+                }
+            }));
         }
     }
 
@@ -100,7 +80,7 @@ public class GlobalCheckpointSyncAction extends TransportReplicationAction<
 
     @Override
     protected void shardOperationOnPrimary(Request request, IndexShard indexShard,
-                                           ActionListener<PrimaryResult<Request, ReplicationResponse>> listener) {
+            ActionListener<PrimaryResult<Request, ReplicationResponse>> listener) {
         ActionListener.completeWith(listener, () -> {
             maybeSyncTranslog(indexShard);
             return new PrimaryResult<>(request, new ReplicationResponse());
@@ -116,8 +96,8 @@ public class GlobalCheckpointSyncAction extends TransportReplicationAction<
     }
 
     private void maybeSyncTranslog(final IndexShard indexShard) throws IOException {
-        if (indexShard.getTranslogDurability() == Translog.Durability.REQUEST &&
-            indexShard.getLastSyncedGlobalCheckpoint() < indexShard.getLastKnownGlobalCheckpoint()) {
+        if (indexShard.getTranslogDurability() == Translog.Durability.REQUEST
+                && indexShard.getLastSyncedGlobalCheckpoint() < indexShard.getLastKnownGlobalCheckpoint()) {
             indexShard.sync();
         }
     }
@@ -134,12 +114,8 @@ public class GlobalCheckpointSyncAction extends TransportReplicationAction<
 
         @Override
         public String toString() {
-            return "GlobalCheckpointSyncAction.Request{" +
-                    "shardId=" + shardId +
-                    ", timeout=" + timeout +
-                    ", index='" + index + '\'' +
-                    ", waitForActiveShards=" + waitForActiveShards +
-                    "}";
+            return "GlobalCheckpointSyncAction.Request{" + "shardId=" + shardId + ", timeout=" + timeout + ", index='" + index + '\''
+                    + ", waitForActiveShards=" + waitForActiveShards + "}";
         }
     }
 

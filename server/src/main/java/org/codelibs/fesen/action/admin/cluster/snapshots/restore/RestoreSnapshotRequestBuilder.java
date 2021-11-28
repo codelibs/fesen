@@ -19,20 +19,20 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.restore;
 
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Restore snapshot request builder
  */
-public class RestoreSnapshotRequestBuilder extends MasterNodeOperationRequestBuilder<RestoreSnapshotRequest,
-        RestoreSnapshotResponse, RestoreSnapshotRequestBuilder> {
+public class RestoreSnapshotRequestBuilder
+        extends MasterNodeOperationRequestBuilder<RestoreSnapshotRequest, RestoreSnapshotResponse, RestoreSnapshotRequestBuilder> {
 
     /**
      * Constructs new restore snapshot request builder
@@ -47,7 +47,6 @@ public class RestoreSnapshotRequestBuilder extends MasterNodeOperationRequestBui
     public RestoreSnapshotRequestBuilder(FesenClient client, RestoreSnapshotAction action, String repository, String name) {
         super(client, action, new RestoreSnapshotRequest(repository, name));
     }
-
 
     /**
      * Sets snapshot name
@@ -97,7 +96,6 @@ public class RestoreSnapshotRequestBuilder extends MasterNodeOperationRequestBui
         request.indicesOptions(indicesOptions);
         return this;
     }
-
 
     /**
      * Sets rename pattern that should be applied to restored indices.
@@ -217,7 +215,6 @@ public class RestoreSnapshotRequestBuilder extends MasterNodeOperationRequestBui
         request.indexSettings(source);
         return this;
     }
-
 
     /**
      * Sets the list of index settings and index settings groups that shouldn't be restored from snapshot

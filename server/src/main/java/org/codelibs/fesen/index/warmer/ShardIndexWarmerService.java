@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.warmer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.metrics.CounterMetric;
 import org.codelibs.fesen.common.metrics.MeanMetric;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.shard.AbstractIndexShardComponent;
 import org.codelibs.fesen.index.shard.ShardId;
-
-import java.util.concurrent.TimeUnit;
 
 public class ShardIndexWarmerService extends AbstractIndexShardComponent {
 

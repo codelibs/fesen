@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
+import java.util.Map;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
-
-import java.util.Map;
 
 public class FieldHighlightContext {
 
@@ -36,14 +36,8 @@ public class FieldHighlightContext {
     public final boolean forceSource;
     public final Map<String, Object> cache;
 
-    public FieldHighlightContext(String fieldName,
-                                 SearchHighlightContext.Field field,
-                                 MappedFieldType fieldType,
-                                 FetchContext context,
-                                 FetchSubPhase.HitContext hitContext,
-                                 Query query,
-                                 boolean forceSource,
-                                 Map<String, Object> cache) {
+    public FieldHighlightContext(String fieldName, SearchHighlightContext.Field field, MappedFieldType fieldType, FetchContext context,
+            FetchSubPhase.HitContext hitContext, Query query, boolean forceSource, Map<String, Object> cache) {
         this.fieldName = fieldName;
         this.field = field;
         this.fieldType = fieldType;

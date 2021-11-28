@@ -23,7 +23,6 @@ import org.codelibs.fesen.common.inject.AbstractModule;
 
 public class GatewayModule extends AbstractModule {
 
-
     @Override
     protected void configure() {
         bind(DanglingIndicesState.class).asEagerSingleton();

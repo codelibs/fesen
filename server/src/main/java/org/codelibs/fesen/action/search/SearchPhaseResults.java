@@ -33,6 +33,7 @@ abstract class SearchPhaseResults<Result extends SearchPhaseResult> {
     SearchPhaseResults(int numShards) {
         this.numShards = numShards;
     }
+
     /**
      * Returns the number of expected results this class should collect
      */
@@ -57,7 +58,8 @@ abstract class SearchPhaseResults<Result extends SearchPhaseResult> {
      */
     abstract boolean hasResult(int shardIndex);
 
-    void consumeShardFailure(int shardIndex) {}
+    void consumeShardFailure(int shardIndex) {
+    }
 
     AtomicArray<Result> getAtomicArray() {
         throw new UnsupportedOperationException();

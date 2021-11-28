@@ -43,4 +43,3 @@ public class InvalidSnapshotNameException extends SnapshotException {
     }
 
 }
-

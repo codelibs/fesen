@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.search.internal;
 
+import java.io.IOException;
+
 import org.apache.lucene.codecs.StoredFieldsReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
@@ -32,8 +34,6 @@ import org.apache.lucene.search.suggest.document.CompletionTerms;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.automaton.CompiledAutomaton;
 import org.codelibs.fesen.common.lucene.index.SequentialStoredFieldsLeafReader;
-
-import java.io.IOException;
 
 /**
  * Wraps an {@link IndexReader} with a {@link QueryCancellation}
@@ -78,6 +78,7 @@ class ExitableDirectoryReader extends FilterDirectoryReader {
     public CacheHelper getReaderCacheHelper() {
         return in.getReaderCacheHelper();
     }
+
     /**
      * Wraps a {@link FilterLeafReader} with a {@link QueryCancellation}.
      */
@@ -108,8 +109,9 @@ class ExitableDirectoryReader extends FilterDirectoryReader {
             // If we have a suggest CompletionQuery then the CompletionWeight#bulkScorer() will check that
             // the terms are instanceof CompletionTerms (not generic FilterTerms) and will throw an exception
             // if that's not the case.
-            return (queryCancellation.isEnabled() && terms instanceof CompletionTerms == false) ?
-                    new ExitableTerms(terms, queryCancellation) : terms;
+            return (queryCancellation.isEnabled() && terms instanceof CompletionTerms == false)
+                    ? new ExitableTerms(terms, queryCancellation)
+                    : terms;
         }
 
         @Override

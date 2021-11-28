@@ -51,7 +51,7 @@ public class MetricInspectionHelper {
     public static boolean hasValue(InternalScriptedMetric agg) {
         // TODO better way to know if the scripted metric received documents?
         // Could check for null too, but a script might return null on purpose...
-        return agg.aggregationsList().size() > 0 ;
+        return agg.aggregationsList().size() > 0;
     }
 
     public static boolean hasValue(InternalTDigestPercentileRanks agg) {
@@ -63,9 +63,8 @@ public class MetricInspectionHelper {
     }
 
     public static boolean hasValue(InternalTopHits agg) {
-        return (agg.getHits().getTotalHits().value == 0
-            && Double.isNaN(agg.getHits().getMaxScore())
-            && Double.isNaN(agg.getTopDocs().maxScore)) == false;
+        return (agg.getHits().getTotalHits().value == 0 && Double.isNaN(agg.getHits().getMaxScore())
+                && Double.isNaN(agg.getTopDocs().maxScore)) == false;
     }
 
     public static boolean hasValue(InternalWeightedAvg agg) {

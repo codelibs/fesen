@@ -86,7 +86,6 @@ public class EvictingQueue<T> implements Queue<T> {
         return queue.remove();
     }
 
-
     @Override
     public T poll() {
         return queue.poll();

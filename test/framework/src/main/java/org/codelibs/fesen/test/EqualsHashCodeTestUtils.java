@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.test;
 
-import java.io.IOException;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 /**
  * Utility class that encapsulates standard checks and assertions around testing the equals() and hashCode()
@@ -67,8 +67,7 @@ public class EqualsHashCodeTestUtils {
      * from the input in one aspect. The output of this call is used to check that it is not equal()
      * to the input object
      */
-    public static <T> void checkEqualsAndHashCode(T original, CopyFunction<T> copyFunction,
-            MutateFunction<T> mutationFunction) {
+    public static <T> void checkEqualsAndHashCode(T original, CopyFunction<T> copyFunction, MutateFunction<T> mutationFunction) {
         try {
             String objectName = original.getClass().getSimpleName();
             assertFalse(objectName + " is equal to null", original.equals(null));
@@ -79,8 +78,7 @@ public class EqualsHashCodeTestUtils {
                     equalTo(original.hashCode()));
             if (mutationFunction != null) {
                 T mutation = mutationFunction.mutate(original);
-                assertThat(objectName + " mutation should not be equal to original", mutation,
-                        not(equalTo(original)));
+                assertThat(objectName + " mutation should not be equal to original", mutation, not(equalTo(original)));
             }
 
             T copy = copyFunction.copy(original);

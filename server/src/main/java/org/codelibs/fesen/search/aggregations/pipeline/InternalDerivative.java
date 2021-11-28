@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.DocValueFormat;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.DocValueFormat;
 
 public class InternalDerivative extends InternalSimpleValue implements Derivative {
     private final double normalizationFactor;
@@ -103,11 +103,13 @@ public class InternalDerivative extends InternalSimpleValue implements Derivativ
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
         InternalDerivative other = (InternalDerivative) obj;
-        return Objects.equals(value, other.value)
-                && Objects.equals(normalizationFactor, other.normalizationFactor);
+        return Objects.equals(value, other.value) && Objects.equals(normalizationFactor, other.normalizationFactor);
     }
 }

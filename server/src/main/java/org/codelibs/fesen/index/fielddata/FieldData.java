@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.NumericDocValues;
@@ -26,10 +30,6 @@ import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.geo.GeoPoint;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Utility methods, similar to Lucene's {@link DocValues}.
@@ -302,6 +302,7 @@ public enum FieldData {
             public boolean advanceExact(int doc) throws IOException {
                 return values.advanceExact(doc);
             }
+
             @Override
             public void get(List<CharSequence> list) throws IOException {
                 for (int i = 0, count = values.docValueCount(); i < count; ++i) {
@@ -322,6 +323,7 @@ public enum FieldData {
             public boolean advanceExact(int doc) throws IOException {
                 return values.advanceExact(doc);
             }
+
             @Override
             public void get(List<CharSequence> list) throws IOException {
                 for (int i = 0, count = values.docValueCount(); i < count; ++i) {
@@ -345,7 +347,7 @@ public enum FieldData {
                 if (values.advanceExact(doc) == false) {
                     return false;
                 }
-                for (int i = 0; ; ++i) {
+                for (int i = 0;; ++i) {
                     if (values.nextOrd() == SortedSetDocValues.NO_MORE_ORDS) {
                         count = i;
                         break;
@@ -381,6 +383,7 @@ public enum FieldData {
             public boolean advanceExact(int doc) throws IOException {
                 return values.advanceExact(doc);
             }
+
             @Override
             public void get(List<CharSequence> list) throws IOException {
                 for (int i = 0, count = values.docValueCount(); i < count; ++i) {

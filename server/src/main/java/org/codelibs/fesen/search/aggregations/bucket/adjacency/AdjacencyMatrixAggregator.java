@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.adjacency;
 
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.Bits;
@@ -27,10 +35,10 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.Lucene;
+import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
@@ -41,14 +49,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Aggregation for adjacency matrices.
@@ -63,8 +63,7 @@ public class AdjacencyMatrixAggregator extends BucketsAggregator {
         private final QueryBuilder filter;
 
         public static final NamedObjectParser<KeyedFilter, String> PARSER =
-                (XContentParser p, String aggName, String name) ->
-                     new KeyedFilter(name, parseInnerQueryBuilder(p));
+                (XContentParser p, String aggName, String name) -> new KeyedFilter(name, parseInnerQueryBuilder(p));
 
         public KeyedFilter(String key, QueryBuilder filter) {
             if (key == null) {
@@ -129,8 +128,8 @@ public class AdjacencyMatrixAggregator extends BucketsAggregator {
     private final int totalNumIntersections;
     private final String separator;
 
-    public AdjacencyMatrixAggregator(String name, AggregatorFactories factories, String separator, String[] keys,
-            Weight[] filters, SearchContext context, Aggregator parent, Map<String, Object> metadata) throws IOException {
+    public AdjacencyMatrixAggregator(String name, AggregatorFactories factories, String separator, String[] keys, Weight[] filters,
+            SearchContext context, Aggregator parent, Map<String, Object> metadata) throws IOException {
         super(name, factories, context, parent, CardinalityUpperBound.MANY, metadata);
         this.separator = separator;
         this.keys = keys;
@@ -205,8 +204,8 @@ public class AdjacencyMatrixAggregator extends BucketsAggregator {
                 // a date-histogram where we will look for transactions over time and can expect many
                 // empty buckets.
                 if (docCount > 0) {
-                    InternalAdjacencyMatrix.InternalBucket bucket = new InternalAdjacencyMatrix.InternalBucket(keys[i],
-                            docCount, bucketSubAggs[builtBucketIndex++]);
+                    InternalAdjacencyMatrix.InternalBucket bucket =
+                            new InternalAdjacencyMatrix.InternalBucket(keys[i], docCount, bucketSubAggs[builtBucketIndex++]);
                     buckets.add(bucket);
                 }
             }
@@ -218,8 +217,8 @@ public class AdjacencyMatrixAggregator extends BucketsAggregator {
                     // Empty buckets are not returned due to potential for very sparse matrices
                     if (docCount > 0) {
                         String intersectKey = keys[i] + separator + keys[j];
-                        InternalAdjacencyMatrix.InternalBucket bucket = new InternalAdjacencyMatrix.InternalBucket(intersectKey,
-                                docCount, bucketSubAggs[builtBucketIndex++]);
+                        InternalAdjacencyMatrix.InternalBucket bucket =
+                                new InternalAdjacencyMatrix.InternalBucket(intersectKey, docCount, bucketSubAggs[builtBucketIndex++]);
                         buckets.add(bucket);
                     }
                     pos++;

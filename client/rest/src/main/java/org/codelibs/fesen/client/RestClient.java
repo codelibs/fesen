@@ -18,39 +18,9 @@
  */
 package org.codelibs.fesen.client;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.ConnectionClosedException;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.GzipCompressingEntity;
-import org.apache.http.client.entity.GzipDecompressingEntity;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.nio.client.methods.HttpAsyncMethods;
-import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
-import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -82,8 +52,39 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
+import javax.net.ssl.SSLHandshakeException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.ConnectionClosedException;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.GzipCompressingEntity;
+import org.apache.http.client.entity.GzipDecompressingEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.nio.client.methods.HttpAsyncMethods;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 
 /**
  * Client that connects to an Fesen cluster through HTTP.
@@ -120,8 +121,7 @@ public class RestClient implements Closeable {
     private final boolean compressionEnabled;
 
     RestClient(CloseableHttpAsyncClient client, Header[] defaultHeaders, List<Node> nodes, String pathPrefix,
-            FailureListener failureListener, NodeSelector nodeSelector, boolean strictDeprecationMode,
-            boolean compressionEnabled) {
+            FailureListener failureListener, NodeSelector nodeSelector, boolean strictDeprecationMode, boolean compressionEnabled) {
         this.client = client;
         this.defaultHeaders = Collections.unmodifiableList(Arrays.asList(defaultHeaders));
         this.failureListener = failureListener;
@@ -172,7 +172,7 @@ public class RestClient implements Closeable {
             port = 443;
         }
 
-        String url = decodedParts[1]  + "." + domain;
+        String url = decodedParts[1] + "." + domain;
         return builder(new HttpHost(url, port, "https"));
     }
 
@@ -219,8 +219,7 @@ public class RestClient implements Closeable {
             nodesByHost.put(node.getHost(), node);
             authCache.put(node.getHost(), new BasicScheme());
         }
-        this.nodeTuple = new NodeTuple<>(
-                Collections.unmodifiableList(new ArrayList<>(nodesByHost.values())), authCache);
+        this.nodeTuple = new NodeTuple<>(Collections.unmodifiableList(new ArrayList<>(nodesByHost.values())), authCache);
         this.blacklist.clear();
     }
 
@@ -270,14 +269,13 @@ public class RestClient implements Closeable {
         return performRequest(nextNodes(), internalRequest, null);
     }
 
-    private Response performRequest(final NodeTuple<Iterator<Node>> nodeTuple,
-                                    final InternalRequest request,
-                                    Exception previousException) throws IOException {
+    private Response performRequest(final NodeTuple<Iterator<Node>> nodeTuple, final InternalRequest request, Exception previousException)
+            throws IOException {
         RequestContext context = request.createContextForNextAttempt(nodeTuple.nodes.next(), nodeTuple.authCache);
         HttpResponse httpResponse;
         try {
             httpResponse = client.execute(context.requestProducer, context.asyncResponseConsumer, context.context, null).get();
-        } catch(Exception e) {
+        } catch (Exception e) {
             RequestLogger.logFailedRequest(logger, request.httpRequest, context.node, e);
             onFailure(context.node);
             Exception cause = extractAndWrapCause(e);
@@ -308,12 +306,9 @@ public class RestClient implements Closeable {
         RequestLogger.logResponse(logger, request.httpRequest, node.getHost(), httpResponse);
         int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-        Optional.ofNullable(httpResponse.getEntity())
-            .map(HttpEntity::getContentEncoding)
-            .map(Header::getValue)
-            .filter("gzip"::equalsIgnoreCase)
-            .map(gzipHeaderValue -> new GzipDecompressingEntity(httpResponse.getEntity()))
-            .ifPresent(httpResponse::setEntity);
+        Optional.ofNullable(httpResponse.getEntity()).map(HttpEntity::getContentEncoding).map(Header::getValue)
+                .filter("gzip"::equalsIgnoreCase).map(gzipHeaderValue -> new GzipDecompressingEntity(httpResponse.getEntity()))
+                .ifPresent(httpResponse::setEntity);
 
         Response response = new Response(request.httpRequest.getRequestLine(), node.getHost(), httpResponse);
         if (isSuccessfulResponse(statusCode) || request.ignoreErrorCodes.contains(response.getStatusLine().getStatusCode())) {
@@ -362,9 +357,8 @@ public class RestClient implements Closeable {
         }
     }
 
-    private void performRequestAsync(final NodeTuple<Iterator<Node>> nodeTuple,
-                                     final InternalRequest request,
-                                     final FailureTrackingResponseListener listener) {
+    private void performRequestAsync(final NodeTuple<Iterator<Node>> nodeTuple, final InternalRequest request,
+            final FailureTrackingResponseListener listener) {
         request.cancellable.runIfNotCancelled(() -> {
             final RequestContext context = request.createContextForNextAttempt(nodeTuple.nodes.next(), nodeTuple.authCache);
             client.execute(context.requestProducer, context.asyncResponseConsumer, context.context, new FutureCallback<HttpResponse>() {
@@ -382,7 +376,7 @@ public class RestClient implements Closeable {
                                 listener.onDefinitiveFailure(responseOrResponseException.responseException);
                             }
                         }
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         listener.onDefinitiveFailure(e);
                     }
                 }
@@ -398,7 +392,7 @@ public class RestClient implements Closeable {
                         } else {
                             listener.onDefinitiveFailure(failure);
                         }
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         listener.onDefinitiveFailure(e);
                     }
                 }
@@ -430,8 +424,8 @@ public class RestClient implements Closeable {
      * Select nodes to try and sorts them so that the first one will be tried initially, then the following ones
      * if the previous attempt failed and so on. Package private for testing.
      */
-    static Iterable<Node> selectNodes(NodeTuple<List<Node>> nodeTuple, Map<HttpHost, DeadHostState> blacklist,
-                                      AtomicInteger lastNodeIndex, NodeSelector nodeSelector) throws IOException {
+    static Iterable<Node> selectNodes(NodeTuple<List<Node>> nodeTuple, Map<HttpHost, DeadHostState> blacklist, AtomicInteger lastNodeIndex,
+            NodeSelector nodeSelector) throws IOException {
         /*
          * Sort the nodes into living and dead lists.
          */
@@ -486,8 +480,8 @@ public class RestClient implements Closeable {
                 return singletonList(Collections.min(selectedDeadNodes).node);
             }
         }
-        throw new IOException("NodeSelector [" + nodeSelector + "] rejected all nodes, "
-                + "living " + livingNodes + " and dead " + deadNodes);
+        throw new IOException(
+                "NodeSelector [" + nodeSelector + "] rejected all nodes, " + "living " + livingNodes + " and dead " + deadNodes);
     }
 
     /**
@@ -506,17 +500,16 @@ public class RestClient implements Closeable {
      * Receives as an argument the host that was used for the failed attempt.
      */
     private void onFailure(Node node) {
-        while(true) {
+        while (true) {
             DeadHostState previousDeadHostState =
-                blacklist.putIfAbsent(node.getHost(), new DeadHostState(DeadHostState.DEFAULT_TIME_SUPPLIER));
+                    blacklist.putIfAbsent(node.getHost(), new DeadHostState(DeadHostState.DEFAULT_TIME_SUPPLIER));
             if (previousDeadHostState == null) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("added [" + node + "] to blacklist");
                 }
                 break;
             }
-            if (blacklist.replace(node.getHost(), previousDeadHostState,
-                    new DeadHostState(previousDeadHostState))) {
+            if (blacklist.replace(node.getHost(), previousDeadHostState, new DeadHostState(previousDeadHostState))) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("updated [" + node + "] already in blacklist");
                 }
@@ -536,11 +529,11 @@ public class RestClient implements Closeable {
     }
 
     private static boolean isRetryStatus(int statusCode) {
-        switch(statusCode) {
-            case 502:
-            case 503:
-            case 504:
-                return true;
+        switch (statusCode) {
+        case 502:
+        case 503:
+        case 504:
+            return true;
         }
         return false;
     }
@@ -552,27 +545,27 @@ public class RestClient implements Closeable {
     }
 
     private static HttpRequestBase createHttpRequest(String method, URI uri, HttpEntity entity, boolean compressionEnabled) {
-        switch(method.toUpperCase(Locale.ROOT)) {
-            case HttpDeleteWithEntity.METHOD_NAME:
-                return addRequestBody(new HttpDeleteWithEntity(uri), entity, compressionEnabled);
-            case HttpGetWithEntity.METHOD_NAME:
-                return addRequestBody(new HttpGetWithEntity(uri), entity, compressionEnabled);
-            case HttpHead.METHOD_NAME:
-                return addRequestBody(new HttpHead(uri), entity, compressionEnabled);
-            case HttpOptions.METHOD_NAME:
-                return addRequestBody(new HttpOptions(uri), entity, compressionEnabled);
-            case HttpPatch.METHOD_NAME:
-                return addRequestBody(new HttpPatch(uri), entity, compressionEnabled);
-            case HttpPost.METHOD_NAME:
-                HttpPost httpPost = new HttpPost(uri);
-                addRequestBody(httpPost, entity, compressionEnabled);
-                return httpPost;
-            case HttpPut.METHOD_NAME:
-                return addRequestBody(new HttpPut(uri), entity, compressionEnabled);
-            case HttpTrace.METHOD_NAME:
-                return addRequestBody(new HttpTrace(uri), entity, compressionEnabled);
-            default:
-                throw new UnsupportedOperationException("http method not supported: " + method);
+        switch (method.toUpperCase(Locale.ROOT)) {
+        case HttpDeleteWithEntity.METHOD_NAME:
+            return addRequestBody(new HttpDeleteWithEntity(uri), entity, compressionEnabled);
+        case HttpGetWithEntity.METHOD_NAME:
+            return addRequestBody(new HttpGetWithEntity(uri), entity, compressionEnabled);
+        case HttpHead.METHOD_NAME:
+            return addRequestBody(new HttpHead(uri), entity, compressionEnabled);
+        case HttpOptions.METHOD_NAME:
+            return addRequestBody(new HttpOptions(uri), entity, compressionEnabled);
+        case HttpPatch.METHOD_NAME:
+            return addRequestBody(new HttpPatch(uri), entity, compressionEnabled);
+        case HttpPost.METHOD_NAME:
+            HttpPost httpPost = new HttpPost(uri);
+            addRequestBody(httpPost, entity, compressionEnabled);
+            return httpPost;
+        case HttpPut.METHOD_NAME:
+            return addRequestBody(new HttpPut(uri), entity, compressionEnabled);
+        case HttpTrace.METHOD_NAME:
+            return addRequestBody(new HttpTrace(uri), entity, compressionEnabled);
+        default:
+            throw new UnsupportedOperationException("http method not supported: " + method);
         }
     }
 
@@ -582,7 +575,7 @@ public class RestClient implements Closeable {
                 if (compressionEnabled) {
                     entity = new ContentCompressingEntity(entity);
                 }
-                ((HttpEntityEnclosingRequestBase)httpRequest).setEntity(entity);
+                ((HttpEntityEnclosingRequestBase) httpRequest).setEntity(entity);
             } else {
                 throw new UnsupportedOperationException(httpRequest.getMethod() + " with body is not supported");
             }
@@ -611,7 +604,7 @@ public class RestClient implements Closeable {
                 uriBuilder.addParameter(param.getKey(), param.getValue());
             }
             return uriBuilder.build();
-        } catch(URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
@@ -661,7 +654,8 @@ public class RestClient implements Closeable {
         /**
          * Notifies that the node provided as argument has just failed
          */
-        public void onFailure(Node node) {}
+        public void onFailure(Node node) {
+        }
     }
 
     /**
@@ -747,8 +741,8 @@ public class RestClient implements Closeable {
             this.cancellable = Cancellable.fromRequest(httpRequest);
             setHeaders(httpRequest, request.getOptions().getHeaders());
             setRequestConfig(httpRequest, request.getOptions().getRequestConfig());
-            this.warningsHandler = request.getOptions().getWarningsHandler() == null ?
-                RestClient.this.warningsHandler : request.getOptions().getWarningsHandler();
+            this.warningsHandler = request.getOptions().getWarningsHandler() == null ? RestClient.this.warningsHandler
+                    : request.getOptions().getWarningsHandler();
         }
 
         private void setHeaders(HttpRequest httpRequest, Collection<Header> requestHeaders) {
@@ -791,7 +785,7 @@ public class RestClient implements Closeable {
             //we stream the request body if the entity allows for it
             this.requestProducer = HttpAsyncMethods.create(node.getHost(), request.httpRequest);
             this.asyncResponseConsumer =
-                request.request.getOptions().getHttpAsyncResponseConsumerFactory().createHttpAsyncResponseConsumer();
+                    request.request.getOptions().getHttpAsyncResponseConsumerFactory().createHttpAsyncResponseConsumer();
             this.context = HttpClientContext.create();
             context.setAuthCache(authCache);
         }
@@ -848,12 +842,12 @@ public class RestClient implements Closeable {
             throw new RuntimeException("thread waiting for the response was interrupted", exception);
         }
         if (exception instanceof ExecutionException) {
-            ExecutionException executionException = (ExecutionException)exception;
+            ExecutionException executionException = (ExecutionException) exception;
             Throwable t = executionException.getCause() == null ? executionException : executionException.getCause();
             if (t instanceof Error) {
-                throw (Error)t;
+                throw (Error) t;
             }
-            exception = (Exception)t;
+            exception = (Exception) t;
         }
         if (exception instanceof ConnectTimeoutException) {
             ConnectTimeoutException e = new ConnectTimeoutException(exception.getMessage());
@@ -883,7 +877,7 @@ public class RestClient implements Closeable {
         if (exception instanceof IOException) {
             return new IOException(exception.getMessage(), exception);
         }
-        if (exception instanceof RuntimeException){
+        if (exception instanceof RuntimeException) {
             return new RuntimeException(exception.getMessage(), exception);
         }
         return new RuntimeException("error while performing request", exception);

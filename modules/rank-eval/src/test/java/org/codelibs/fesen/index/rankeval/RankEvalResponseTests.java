@@ -19,6 +19,23 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static java.util.Collections.singleton;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
+import static org.codelibs.fesen.test.TestSearchContext.SHARD_TARGET;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
+import java.util.function.Predicate;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.action.search.SearchPhaseExecutionException;
@@ -39,52 +56,31 @@ import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.mapper.MapperService;
-import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
-import org.codelibs.fesen.index.rankeval.RankEvalResponse;
-import org.codelibs.fesen.index.rankeval.RatedSearchHit;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchParseException;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalInt;
-import java.util.function.Predicate;
-
-import static java.util.Collections.singleton;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.TestSearchContext.SHARD_TARGET;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-import static org.hamcrest.Matchers.instanceOf;
-
 public class RankEvalResponseTests extends ESTestCase {
 
-    private static final Exception[] RANDOM_EXCEPTIONS = new Exception[] {
-            new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES)),
-            new CircuitBreakingException("Data too large", 123, 456, CircuitBreaker.Durability.PERMANENT),
-            new SearchParseException(SHARD_TARGET, "Parse failure", new XContentLocation(12, 98)),
-            new IllegalArgumentException("Closed resource", new RuntimeException("Resource")),
-            new SearchPhaseExecutionException("search", "all shards failed",
-                    new ShardSearchFailure[] { new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
-                            new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE)) }),
-            new FesenException("Parsing failed",
-                    new ParsingException(9, 42, "Wrong state", new NullPointerException("Unexpected null value"))) };
+    private static final Exception[] RANDOM_EXCEPTIONS =
+            new Exception[] { new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES)),
+                    new CircuitBreakingException("Data too large", 123, 456, CircuitBreaker.Durability.PERMANENT),
+                    new SearchParseException(SHARD_TARGET, "Parse failure", new XContentLocation(12, 98)),
+                    new IllegalArgumentException("Closed resource", new RuntimeException("Resource")),
+                    new SearchPhaseExecutionException("search", "all shards failed",
+                            new ShardSearchFailure[] { new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
+                                    new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE)) }),
+                    new FesenException("Parsing failed",
+                            new ParsingException(9, 42, "Wrong state", new NullPointerException("Unexpected null value"))) };
 
     private static RankEvalResponse createRandomResponse() {
         int numberOfRequests = randomIntBetween(0, 5);
         Map<String, EvalQueryQuality> partials = new HashMap<>(numberOfRequests);
         for (int i = 0; i < numberOfRequests; i++) {
             String id = randomAlphaOfLengthBetween(3, 10);
-            EvalQueryQuality evalQuality = new EvalQueryQuality(id,
-                    randomDoubleBetween(0.0, 1.0, true));
+            EvalQueryQuality evalQuality = new EvalQueryQuality(id, randomDoubleBetween(0.0, 1.0, true));
             int numberOfDocs = randomIntBetween(0, 5);
             List<RatedSearchHit> ratedHits = new ArrayList<>(numberOfDocs);
             for (int d = 0; d < numberOfDocs; d++) {
@@ -158,34 +154,23 @@ public class RankEvalResponseTests extends ESTestCase {
                 Collections.singletonMap("beer_query", new ParsingException(new XContentLocation(0, 0), "someMsg")));
         XContentBuilder builder = XContentFactory.contentBuilder(XContentType.JSON);
         String xContent = BytesReference.bytes(response.toXContent(builder, ToXContent.EMPTY_PARAMS)).utf8ToString();
-        assertEquals(("{" +
-                "    \"metric_score\": 0.123," +
-                "    \"details\": {" +
-                "        \"coffee_query\": {" +
-                "            \"metric_score\": 0.1," +
-                "            \"unrated_docs\": [{\"_index\":\"index\",\"_id\":\"456\"}]," +
-                "            \"hits\":[{\"hit\":{\"_index\":\"index\",\"_type\":\"_doc\",\"_id\":\"123\",\"_score\":1.0}," +
-                "                       \"rating\":5}," +
-                "                      {\"hit\":{\"_index\":\"index\",\"_type\":\"_doc\",\"_id\":\"456\",\"_score\":1.0}," +
-                "                       \"rating\":null}" +
-                "                     ]" +
-                "        }" +
-                "    }," +
-                "    \"failures\": {" +
-                "        \"beer_query\": {" +
-                "          \"error\" : {\"root_cause\": [{\"type\":\"parsing_exception\", \"reason\":\"someMsg\",\"line\":0,\"col\":0}]," +
-                "                       \"type\":\"parsing_exception\"," +
-                "                       \"reason\":\"someMsg\"," +
-                "                       \"line\":0,\"col\":0" +
-                "                      }" +
-                "        }" +
-                "    }" +
-                "}").replaceAll("\\s+", ""), xContent);
+        assertEquals(("{" + "    \"metric_score\": 0.123," + "    \"details\": {" + "        \"coffee_query\": {"
+                + "            \"metric_score\": 0.1," + "            \"unrated_docs\": [{\"_index\":\"index\",\"_id\":\"456\"}],"
+                + "            \"hits\":[{\"hit\":{\"_index\":\"index\",\"_type\":\"_doc\",\"_id\":\"123\",\"_score\":1.0},"
+                + "                       \"rating\":5},"
+                + "                      {\"hit\":{\"_index\":\"index\",\"_type\":\"_doc\",\"_id\":\"456\",\"_score\":1.0},"
+                + "                       \"rating\":null}" + "                     ]" + "        }" + "    }," + "    \"failures\": {"
+                + "        \"beer_query\": {"
+                + "          \"error\" : {\"root_cause\": [{\"type\":\"parsing_exception\", \"reason\":\"someMsg\",\"line\":0,\"col\":0}],"
+                + "                       \"type\":\"parsing_exception\"," + "                       \"reason\":\"someMsg\","
+                + "                       \"line\":0,\"col\":0" + "                      }" + "        }" + "    }" + "}")
+                        .replaceAll("\\s+", ""),
+                xContent);
     }
 
     private static RatedSearchHit searchHit(String index, int docId, Integer rating) {
-        SearchHit hit = new SearchHit(docId, docId + "", new Text(MapperService.SINGLE_MAPPING_NAME),
-            Collections.emptyMap(), Collections.emptyMap());
+        SearchHit hit = new SearchHit(docId, docId + "", new Text(MapperService.SINGLE_MAPPING_NAME), Collections.emptyMap(),
+                Collections.emptyMap());
         hit.shard(new SearchShardTarget("testnode", new ShardId(index, "uuid", 0), null, OriginalIndices.NONE));
         hit.score(1.0f);
         return new RatedSearchHit(hit, rating != null ? OptionalInt.of(rating) : OptionalInt.empty());

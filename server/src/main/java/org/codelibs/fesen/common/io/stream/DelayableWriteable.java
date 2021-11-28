@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.io.stream;
 
+import java.io.IOException;
+
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.bytes.BytesReference;
-
-import java.io.IOException;
 
 /**
  * A holder for {@link Writeable}s that delays reading the underlying object
@@ -52,6 +52,7 @@ public abstract class DelayableWriteable<T extends Writeable> implements Writeab
     public static <T extends Writeable> DelayableWriteable<T> referencing(T reference) {
         return new Referencing<>(reference);
     }
+
     /**
      * Build a {@linkplain DelayableWriteable} that copies a buffer from
      * the provided {@linkplain StreamInput} and deserializes the buffer
@@ -61,7 +62,8 @@ public abstract class DelayableWriteable<T extends Writeable> implements Writeab
         return new Serialized<>(reader, in.getVersion(), in.namedWriteableRegistry(), in.readBytesReference());
     }
 
-    private DelayableWriteable() {}
+    private DelayableWriteable() {
+    }
 
     /**
      * Returns a {@linkplain DelayableWriteable} that stores its contents
@@ -131,8 +133,8 @@ public abstract class DelayableWriteable<T extends Writeable> implements Writeab
         private final NamedWriteableRegistry registry;
         private final BytesReference serialized;
 
-        private Serialized(Writeable.Reader<T> reader, Version serializedAtVersion,
-                NamedWriteableRegistry registry, BytesReference serialized) {
+        private Serialized(Writeable.Reader<T> reader, Version serializedAtVersion, NamedWriteableRegistry registry,
+                BytesReference serialized) {
             this.reader = reader;
             this.serializedAtVersion = serializedAtVersion;
             this.registry = registry;
@@ -163,8 +165,8 @@ public abstract class DelayableWriteable<T extends Writeable> implements Writeab
         @Override
         public T expand() {
             try {
-                try (StreamInput in = registry == null ?
-                        serialized.streamInput() : new NamedWriteableAwareStreamInput(serialized.streamInput(), registry)) {
+                try (StreamInput in = registry == null ? serialized.streamInput()
+                        : new NamedWriteableAwareStreamInput(serialized.streamInput(), registry)) {
                     in.setVersion(serializedAtVersion);
                     return reader.read(in);
                 }

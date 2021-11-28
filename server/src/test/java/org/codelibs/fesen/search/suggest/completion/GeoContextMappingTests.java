@@ -50,154 +50,70 @@ import static org.hamcrest.Matchers.is;
 public class GeoContextMappingTests extends ESSingleNodeTestCase {
 
     public void testIndexingWithNoContexts() throws Exception {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1")
-                .startObject("properties").startObject("completion")
-                .field("type", "completion")
-                .startArray("contexts")
-                .startObject()
-                .field("name", "ctx")
-                .field("type", "geo")
-                .endObject()
-                .endArray()
-                .endObject().endObject()
-                .endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties").startObject("completion")
+                .field("type", "completion").startArray("contexts").startObject().field("name", "ctx").field("type", "geo").endObject()
+                .endArray().endObject().endObject().endObject().endObject();
 
         MapperService mapperService = createIndex("test", Settings.EMPTY, "type1", mapping).mapperService();
         MappedFieldType completionFieldType = mapperService.fieldType("completion");
-        ParsedDocument parsedDocument = mapperService.documentMapper().parse(new SourceToParse("test", "type1", "1",
-            BytesReference.bytes(jsonBuilder()
-                        .startObject()
-                        .startArray("completion")
-                        .startObject()
-                        .array("input", "suggestion1", "suggestion2")
-                        .field("weight", 3)
-                        .endObject()
-                        .startObject()
-                        .array("input", "suggestion3", "suggestion4")
-                        .field("weight", 4)
-                        .endObject()
-                        .startObject()
-                        .array("input", "suggestion5", "suggestion6", "suggestion7")
-                        .field("weight", 5)
-                        .endObject()
-                        .endArray()
-                        .endObject()),
-                XContentType.JSON));
+        ParsedDocument parsedDocument = mapperService.documentMapper()
+                .parse(new SourceToParse("test", "type1", "1", BytesReference.bytes(jsonBuilder().startObject().startArray("completion")
+                        .startObject().array("input", "suggestion1", "suggestion2").field("weight", 3).endObject().startObject()
+                        .array("input", "suggestion3", "suggestion4").field("weight", 4).endObject().startObject()
+                        .array("input", "suggestion5", "suggestion6", "suggestion7").field("weight", 5).endObject().endArray().endObject()),
+                        XContentType.JSON));
         IndexableField[] fields = parsedDocument.rootDoc().getFields(completionFieldType.name());
         assertContextSuggestFields(fields, 7);
     }
 
     public void testIndexingWithSimpleContexts() throws Exception {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1")
-                .startObject("properties").startObject("completion")
-                .field("type", "completion")
-                .startArray("contexts")
-                .startObject()
-                .field("name", "ctx")
-                .field("type", "geo")
-                .endObject()
-                .endArray()
-                .endObject()
-                .endObject()
-                .endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties").startObject("completion")
+                .field("type", "completion").startArray("contexts").startObject().field("name", "ctx").field("type", "geo").endObject()
+                .endArray().endObject().endObject().endObject().endObject();
 
         MapperService mapperService = createIndex("test", Settings.EMPTY, "type1", mapping).mapperService();
         MappedFieldType completionFieldType = mapperService.fieldType("completion");
-        ParsedDocument parsedDocument = mapperService.documentMapper().parse(new SourceToParse("test", "type1", "1",
-            BytesReference.bytes(jsonBuilder()
-                        .startObject()
-                        .startArray("completion")
-                        .startObject()
-                        .array("input", "suggestion5", "suggestion6", "suggestion7")
-                        .startObject("contexts")
-                        .startObject("ctx")
-                        .field("lat", 43.6624803)
-                        .field("lon", -79.3863353)
-                        .endObject()
-                        .endObject()
-                        .field("weight", 5)
-                        .endObject()
-                        .endArray()
-                        .endObject()),
-                XContentType.JSON));
+        ParsedDocument parsedDocument = mapperService.documentMapper()
+                .parse(new SourceToParse("test", "type1", "1",
+                        BytesReference.bytes(jsonBuilder().startObject().startArray("completion").startObject()
+                                .array("input", "suggestion5", "suggestion6", "suggestion7").startObject("contexts").startObject("ctx")
+                                .field("lat", 43.6624803).field("lon", -79.3863353).endObject().endObject().field("weight", 5).endObject()
+                                .endArray().endObject()),
+                        XContentType.JSON));
         IndexableField[] fields = parsedDocument.rootDoc().getFields(completionFieldType.name());
         assertContextSuggestFields(fields, 3);
     }
 
     public void testIndexingWithContextList() throws Exception {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1")
-                .startObject("properties").startObject("completion")
-                .field("type", "completion")
-                .startArray("contexts")
-                .startObject()
-                .field("name", "ctx")
-                .field("type", "geo")
-                .endObject()
-                .endArray()
-                .endObject().endObject()
-                .endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties").startObject("completion")
+                .field("type", "completion").startArray("contexts").startObject().field("name", "ctx").field("type", "geo").endObject()
+                .endArray().endObject().endObject().endObject().endObject();
 
         MapperService mapperService = createIndex("test", Settings.EMPTY, "type1", mapping).mapperService();
         MappedFieldType completionFieldType = mapperService.fieldType("completion");
-        ParsedDocument parsedDocument = mapperService.documentMapper().parse(new SourceToParse("test", "type1", "1",
-            BytesReference.bytes(jsonBuilder()
-                        .startObject()
-                            .startObject("completion")
-                                .array("input", "suggestion5", "suggestion6", "suggestion7")
-                                .startObject("contexts")
-                                    .startArray("ctx")
-                                        .startObject()
-                                            .field("lat", 43.6624803)
-                                            .field("lon", -79.3863353)
-                                        .endObject()
-                                        .startObject()
-                                            .field("lat", 43.6624718)
-                                            .field("lon", -79.3873227)
-                                        .endObject()
-                                    .endArray()
-                                .endObject()
-                                .field("weight", 5)
-                            .endObject()
-                        .endObject()),
-                XContentType.JSON));
+        ParsedDocument parsedDocument = mapperService.documentMapper()
+                .parse(new SourceToParse("test", "type1", "1", BytesReference.bytes(jsonBuilder().startObject().startObject("completion")
+                        .array("input", "suggestion5", "suggestion6", "suggestion7").startObject("contexts").startArray("ctx").startObject()
+                        .field("lat", 43.6624803).field("lon", -79.3863353).endObject().startObject().field("lat", 43.6624718)
+                        .field("lon", -79.3873227).endObject().endArray().endObject().field("weight", 5).endObject().endObject()),
+                        XContentType.JSON));
         IndexableField[] fields = parsedDocument.rootDoc().getFields(completionFieldType.name());
         assertContextSuggestFields(fields, 3);
     }
 
     public void testIndexingWithMultipleContexts() throws Exception {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1")
-                .startObject("properties").startObject("completion")
-                .field("type", "completion")
-                .startArray("contexts")
-                .startObject()
-                .field("name", "loc1")
-                .field("type", "geo")
-                .endObject()
-                .startObject()
-                .field("name", "loc2")
-                .field("type", "geo")
-                .endObject()
-                .endArray()
-                .endObject().endObject()
-                .endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties").startObject("completion")
+                .field("type", "completion").startArray("contexts").startObject().field("name", "loc1").field("type", "geo").endObject()
+                .startObject().field("name", "loc2").field("type", "geo").endObject().endArray().endObject().endObject().endObject()
+                .endObject();
 
         MapperService mapperService = createIndex("test", Settings.EMPTY, "type1", mapping).mapperService();
         MappedFieldType completionFieldType = mapperService.fieldType("completion");
-        XContentBuilder builder = jsonBuilder()
-                .startObject()
-                .startArray("completion")
-                .startObject()
-                .array("input", "suggestion5", "suggestion6", "suggestion7")
-                .field("weight", 5)
-                .startObject("contexts")
-                .array("loc1", "ezs42e44yx96")
-                .array("loc2", "wh0n9447fwrc")
-                .endObject()
-                .endObject()
-                .endArray()
-                .endObject();
-        ParsedDocument parsedDocument = mapperService.documentMapper().parse(new SourceToParse("test", "type1", "1",
-            BytesReference.bytes(builder), XContentType.JSON));
+        XContentBuilder builder = jsonBuilder().startObject().startArray("completion").startObject()
+                .array("input", "suggestion5", "suggestion6", "suggestion7").field("weight", 5).startObject("contexts")
+                .array("loc1", "ezs42e44yx96").array("loc2", "wh0n9447fwrc").endObject().endObject().endArray().endObject();
+        ParsedDocument parsedDocument = mapperService.documentMapper()
+                .parse(new SourceToParse("test", "type1", "1", BytesReference.bytes(builder), XContentType.JSON));
         IndexableField[] fields = parsedDocument.rootDoc().getFields(completionFieldType.name());
         assertContextSuggestFields(fields, 3);
     }
@@ -230,8 +146,7 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
         mapping.endObject();
         mapping.endObject();
 
-        FesenParseException ex = expectThrows(FesenParseException.class,
-            () ->  createIndex("test", Settings.EMPTY, "type1", mapping));
+        FesenParseException ex = expectThrows(FesenParseException.class, () -> createIndex("test", Settings.EMPTY, "type1", mapping));
 
         assertThat(ex.getMessage(), equalTo("field [pin] referenced in context [st] must be mapped to geo_point, found [" + type + "]"));
     }
@@ -260,8 +175,7 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
         mapping.endObject();
         mapping.endObject();
 
-        FesenParseException ex = expectThrows(FesenParseException.class,
-            () ->  createIndex("test", Settings.EMPTY, "type1", mapping));
+        FesenParseException ex = expectThrows(FesenParseException.class, () -> createIndex("test", Settings.EMPTY, "type1", mapping));
 
         assertThat(ex.getMessage(), equalTo("field [pin] referenced in context [st] is not defined in the mapping"));
     }
@@ -283,10 +197,7 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
     }
 
     public void testParsingQueryContextGeoPoint() throws Exception {
-        XContentBuilder builder = jsonBuilder().startObject()
-                .field("lat", 23.654242)
-                .field("lon", 90.047153)
-                .endObject();
+        XContentBuilder builder = jsonBuilder().startObject().field("lat", 23.654242).field("lon", 90.047153).endObject();
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));
         GeoContextMapping mapping = ContextBuilder.geo("geo").build();
         List<ContextMapping.InternalQueryContext> internalQueryContexts = mapping.parseQueryContext(parser);
@@ -302,14 +213,8 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
     }
 
     public void testParsingQueryContextObject() throws Exception {
-        XContentBuilder builder = jsonBuilder().startObject()
-                .startObject("context")
-                .field("lat", 23.654242)
-                .field("lon", 90.047153)
-                .endObject()
-                .field("boost", 10)
-                .array("neighbours", 1, 2, 3)
-                .endObject();
+        XContentBuilder builder = jsonBuilder().startObject().startObject("context").field("lat", 23.654242).field("lon", 90.047153)
+                .endObject().field("boost", 10).array("neighbours", 1, 2, 3).endObject();
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));
         GeoContextMapping mapping = ContextBuilder.geo("geo").build();
         List<ContextMapping.InternalQueryContext> internalQueryContexts = mapping.parseQueryContext(parser);
@@ -330,24 +235,10 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
     }
 
     public void testParsingQueryContextObjectArray() throws Exception {
-        XContentBuilder builder = jsonBuilder().startArray()
-                .startObject()
-                .startObject("context")
-                .field("lat", 23.654242)
-                .field("lon", 90.047153)
-                .endObject()
-                .field("boost", 10)
-                .array("neighbours", 1, 2, 3)
-                .endObject()
-                .startObject()
-                .startObject("context")
-                .field("lat", 22.337374)
-                .field("lon", 92.112583)
-                .endObject()
-                .field("boost", 2)
-                .array("neighbours", 5)
-                .endObject()
-                .endArray();
+        XContentBuilder builder = jsonBuilder().startArray().startObject().startObject("context").field("lat", 23.654242)
+                .field("lon", 90.047153).endObject().field("boost", 10).array("neighbours", 1, 2, 3).endObject().startObject()
+                .startObject("context").field("lat", 22.337374).field("lon", 92.112583).endObject().field("boost", 2).array("neighbours", 5)
+                .endObject().endArray();
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));
         GeoContextMapping mapping = ContextBuilder.geo("geo").build();
         List<ContextMapping.InternalQueryContext> internalQueryContexts = mapping.parseQueryContext(parser);
@@ -377,20 +268,9 @@ public class GeoContextMappingTests extends ESSingleNodeTestCase {
     }
 
     public void testParsingQueryContextMixed() throws Exception {
-        XContentBuilder builder = jsonBuilder().startArray()
-                .startObject()
-                .startObject("context")
-                .field("lat", 23.654242)
-                .field("lon", 90.047153)
-                .endObject()
-                .field("boost", 10)
-                .array("neighbours", 1, 2)
-                .endObject()
-                .startObject()
-                .field("lat", 22.337374)
-                .field("lon", 92.112583)
-                .endObject()
-                .endArray();
+        XContentBuilder builder = jsonBuilder().startArray().startObject().startObject("context").field("lat", 23.654242)
+                .field("lon", 90.047153).endObject().field("boost", 10).array("neighbours", 1, 2).endObject().startObject()
+                .field("lat", 22.337374).field("lon", 92.112583).endObject().endArray();
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));
         GeoContextMapping mapping = ContextBuilder.geo("geo").build();
         List<ContextMapping.InternalQueryContext> internalQueryContexts = mapping.parseQueryContext(parser);

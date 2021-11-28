@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.shards;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -28,9 +31,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
 
-import java.io.IOException;
-import java.util.Objects;
-
 public class ClusterSearchShardsRequest extends MasterNodeReadRequest<ClusterSearchShardsRequest> implements IndicesRequest.Replaceable {
 
     private String[] indices = Strings.EMPTY_ARRAY;
@@ -39,7 +39,6 @@ public class ClusterSearchShardsRequest extends MasterNodeReadRequest<ClusterSea
     @Nullable
     private String preference;
     private IndicesOptions indicesOptions = IndicesOptions.lenientExpandOpen();
-
 
     public ClusterSearchShardsRequest() {
     }

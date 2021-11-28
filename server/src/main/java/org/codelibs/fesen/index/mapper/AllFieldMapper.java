@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.search.MatchNoDocsQuery;
@@ -26,9 +29,6 @@ import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Noop mapper that ensures that mappings created in 6x that explicitly disable the _all field
@@ -76,10 +76,8 @@ public class AllFieldMapper extends MetadataFieldMapper {
         }
     }
 
-    public static final TypeParser PARSER = new ConfigurableTypeParser(
-        c -> new AllFieldMapper(new Explicit<>(false, false)),
-        c -> new Builder()
-    );
+    public static final TypeParser PARSER =
+            new ConfigurableTypeParser(c -> new AllFieldMapper(new Explicit<>(false, false)), c -> new Builder());
 
     static final class AllFieldType extends StringFieldType {
         AllFieldType() {

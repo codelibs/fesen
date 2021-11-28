@@ -46,17 +46,13 @@ public class JavaDateMathParserTests extends ESTestCase {
     private final DateFormatter formatter = DateFormatter.forPattern("date_optional_time||epoch_millis");
     private final DateMathParser parser = formatter.toDateMathParser();
 
-
     public void testRoundUpParserBasedOnList() {
-        DateFormatter formatter = new JavaDateFormatter("test", new DateTimeFormatterBuilder()
-            .appendPattern("uuuu-MM-dd")
-            .toFormatter(Locale.ROOT),
-            new DateTimeFormatterBuilder()
-                .appendPattern("uuuu-MM-dd'T'HH:mm:ss.S").appendZoneOrOffsetId().toFormatter(Locale.ROOT)
-                .withResolverStyle(ResolverStyle.STRICT),
-            new DateTimeFormatterBuilder()
-                .appendPattern("uuuu-MM-dd'T'HH:mm:ss.S").appendOffset("+HHmm", "Z").toFormatter(Locale.ROOT)
-                .withResolverStyle(ResolverStyle.STRICT));
+        DateFormatter formatter =
+                new JavaDateFormatter("test", new DateTimeFormatterBuilder().appendPattern("uuuu-MM-dd").toFormatter(Locale.ROOT),
+                        new DateTimeFormatterBuilder().appendPattern("uuuu-MM-dd'T'HH:mm:ss.S").appendZoneOrOffsetId()
+                                .toFormatter(Locale.ROOT).withResolverStyle(ResolverStyle.STRICT),
+                        new DateTimeFormatterBuilder().appendPattern("uuuu-MM-dd'T'HH:mm:ss.S").appendOffset("+HHmm", "Z")
+                                .toFormatter(Locale.ROOT).withResolverStyle(ResolverStyle.STRICT));
         Instant parsed = formatter.toDateMathParser().parse("1970-01-01T00:00:00.0+0000", () -> 0L, true, (ZoneId) null);
         assertThat(parsed.toEpochMilli(), equalTo(0L));
     }
@@ -67,7 +63,6 @@ public class JavaDateMathParserTests extends ESTestCase {
         //date_time 2 parsers
         Instant parsed = formatter.toDateMathParser().parse("1970-01-01T00:00:00.0+00:00", () -> 0L, true, (ZoneId) null);
         assertThat(parsed.toEpochMilli(), equalTo(0L));
-
 
         parsed = formatter.toDateMathParser().parse("1970-01-01T00:00:00.0+0000", () -> 0L, true, (ZoneId) null);
         assertThat(parsed.toEpochMilli(), equalTo(0L));
@@ -101,9 +96,10 @@ public class JavaDateMathParserTests extends ESTestCase {
     }
 
     public void testWeekDates() {
-        assumeFalse("won't work in jdk8 " +
-                "because SPI mechanism is not looking at classpath - needs ISOCalendarDataProvider in jre's ext/libs",
-            JavaVersion.current().equals(JavaVersion.parse("8")));
+        assumeFalse(
+                "won't work in jdk8 "
+                        + "because SPI mechanism is not looking at classpath - needs ISOCalendarDataProvider in jre's ext/libs",
+                JavaVersion.current().equals(JavaVersion.parse("8")));
 
         DateFormatter formatter = DateFormatter.forPattern("YYYY-ww");
         assertDateMathEquals(formatter.toDateMathParser(), "2016-01", "2016-01-04T23:59:59.999Z", 0, true, ZoneOffset.UTC);
@@ -251,8 +247,8 @@ public class JavaDateMathParserTests extends ESTestCase {
         DateMathParser parser = formatter.toDateMathParser();
         Instant time = parser.parse("2011-10-09+01:00", () -> 0, false, (ZoneId) null);
         assertEquals(this.parser.parse("2011-10-09T00:00:00.000+01:00", () -> 0), time);
-        time = DateFormatter.forPattern("strict_date_optional_time_nanos").toDateMathParser()
-            .parse("2011-10-09T23:59:59.999+01:00", () -> 0, false, (ZoneId) null);
+        time = DateFormatter.forPattern("strict_date_optional_time_nanos").toDateMathParser().parse("2011-10-09T23:59:59.999+01:00",
+                () -> 0, false, (ZoneId) null);
         assertEquals(this.parser.parse("2011-10-09T23:59:59.999+01:00", () -> 0), time);
     }
 
@@ -373,8 +369,8 @@ public class JavaDateMathParserTests extends ESTestCase {
         assertDateMathEquals(parser, toTest, expected, now, roundUp, timeZone);
     }
 
-    private void assertDateMathEquals(DateMathParser parser, String toTest, String expected, final long now,
-                                      boolean roundUp, ZoneId timeZone) {
+    private void assertDateMathEquals(DateMathParser parser, String toTest, String expected, final long now, boolean roundUp,
+            ZoneId timeZone) {
         long gotMillis = parser.parse(toTest, () -> now, roundUp, timeZone).toEpochMilli();
         assertDateEquals(gotMillis, toTest, expected);
     }
@@ -383,12 +379,9 @@ public class JavaDateMathParserTests extends ESTestCase {
         long expectedMillis = parser.parse(expected, () -> 0).toEpochMilli();
         if (gotMillis != expectedMillis) {
             ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(gotMillis), ZoneOffset.UTC);
-            fail("Date math not equal\n" +
-                "Original              : " + original + "\n" +
-                "Parsed                : " + formatter.format(zonedDateTime) + "\n" +
-                "Expected              : " + expected + "\n" +
-                "Expected milliseconds : " + expectedMillis + "\n" +
-                "Actual milliseconds   : " + gotMillis + "\n");
+            fail("Date math not equal\n" + "Original              : " + original + "\n" + "Parsed                : "
+                    + formatter.format(zonedDateTime) + "\n" + "Expected              : " + expected + "\n" + "Expected milliseconds : "
+                    + expectedMillis + "\n" + "Actual milliseconds   : " + gotMillis + "\n");
         }
     }
 }

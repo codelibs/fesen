@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.collect;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import com.carrotsearch.hppc.ObjectCollection;
 import com.carrotsearch.hppc.ObjectContainer;
 import com.carrotsearch.hppc.ObjectLookupContainer;
@@ -30,9 +33,6 @@ import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import com.carrotsearch.hppc.predicates.ObjectObjectPredicate;
 import com.carrotsearch.hppc.predicates.ObjectPredicate;
 import com.carrotsearch.hppc.procedures.ObjectObjectProcedure;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * An immutable map implementation based on open hash map.
@@ -128,7 +128,9 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
         final Iterator<ObjectCursor<KType>> iterator = map.keys().iterator();
         return new Iterator<KType>() {
             @Override
-            public boolean hasNext() { return iterator.hasNext(); }
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
 
             @Override
             public KType next() {
@@ -156,7 +158,9 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
         final Iterator<ObjectCursor<VType>> iterator = map.values().iterator();
         return new Iterator<VType>() {
             @Override
-            public boolean hasNext() { return iterator.hasNext(); }
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
 
             @Override
             public VType next() {
@@ -177,12 +181,15 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ImmutableOpenMap that = (ImmutableOpenMap) o;
 
-        if (!map.equals(that.map)) return false;
+        if (!map.equals(that.map))
+            return false;
 
         return true;
     }
@@ -245,8 +252,6 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
             this.map = null; // nullify the map, so any operation post build will fail! (hackish, but safest)
             return new ImmutableOpenMap<>(map);
         }
-
-
 
         /**
          * Puts all the entries in the map to the builder.

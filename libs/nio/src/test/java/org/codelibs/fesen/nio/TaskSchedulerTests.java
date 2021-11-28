@@ -19,11 +19,16 @@
 
 package org.codelibs.fesen.nio;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
-import org.codelibs.fesen.nio.TaskScheduler;
 import org.codelibs.fesen.test.ESTestCase;
 
 public class TaskSchedulerTests extends ESTestCase {

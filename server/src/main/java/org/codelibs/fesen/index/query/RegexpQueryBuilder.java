@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.query;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
@@ -38,9 +41,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.support.QueryParsers;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A Query that does fuzzy matching for a specific value.
@@ -252,12 +252,8 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
             }
         }
 
-        RegexpQueryBuilder result = new RegexpQueryBuilder(fieldName, value)
-                .flags(flagsValue)
-                .maxDeterminizedStates(maxDeterminizedStates)
-                .rewrite(rewrite)
-                .boost(boost)
-                .queryName(queryName);
+        RegexpQueryBuilder result = new RegexpQueryBuilder(fieldName, value).flags(flagsValue).maxDeterminizedStates(maxDeterminizedStates)
+                .rewrite(rewrite).boost(boost).queryName(queryName);
         result.caseInsensitive(caseInsensitive);
         return result;
     }
@@ -271,11 +267,9 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
     protected Query doToQuery(QueryShardContext context) throws QueryShardException, IOException {
         final int maxAllowedRegexLength = context.getIndexSettings().getMaxRegexLength();
         if (value.length() > maxAllowedRegexLength) {
-            throw new IllegalArgumentException(
-                "The length of regex ["  + value.length() +  "] used in the Regexp Query request has exceeded " +
-                    "the allowed maximum of [" + maxAllowedRegexLength + "]. " +
-                    "This maximum can be set by changing the [" +
-                    IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey() + "] index level setting.");
+            throw new IllegalArgumentException("The length of regex [" + value.length() + "] used in the Regexp Query request has exceeded "
+                    + "the allowed maximum of [" + maxAllowedRegexLength + "]. " + "This maximum can be set by changing the ["
+                    + IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey() + "] index level setting.");
         }
         MultiTermQuery.RewriteMethod method = QueryParsers.parseRewriteMethod(rewrite, null, LoggingDeprecationHandler.INSTANCE);
 
@@ -290,7 +284,7 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
         }
         if (query == null) {
             RegexpQuery regexpQuery = new RegexpQuery(new Term(fieldName, BytesRefs.toBytesRef(value)), sanitisedSyntaxFlag,
-                matchFlagsValue, maxDeterminizedStates);
+                    matchFlagsValue, maxDeterminizedStates);
             if (method != null) {
                 regexpQuery.setRewriteMethod(method);
             }
@@ -306,11 +300,8 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
 
     @Override
     protected boolean doEquals(RegexpQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) &&
-                Objects.equals(value, other.value) &&
-                Objects.equals(syntaxFlagsValue, other.syntaxFlagsValue) &&
-                Objects.equals(caseInsensitive, other.caseInsensitive) &&
-                Objects.equals(maxDeterminizedStates, other.maxDeterminizedStates) &&
-                Objects.equals(rewrite, other.rewrite);
+        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value)
+                && Objects.equals(syntaxFlagsValue, other.syntaxFlagsValue) && Objects.equals(caseInsensitive, other.caseInsensitive)
+                && Objects.equals(maxDeterminizedStates, other.maxDeterminizedStates) && Objects.equals(rewrite, other.rewrite);
     }
 }

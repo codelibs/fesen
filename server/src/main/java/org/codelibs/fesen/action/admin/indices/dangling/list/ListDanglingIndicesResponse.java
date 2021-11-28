@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.action.admin.indices.dangling.list;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.admin.indices.dangling.DanglingIndexInfo;
 import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
@@ -29,15 +38,6 @@ import org.codelibs.fesen.common.xcontent.StatusToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Models a response to a {@link ListDanglingIndicesRequest}. A list request queries every node in the
@@ -51,11 +51,8 @@ public class ListDanglingIndicesResponse extends BaseNodesResponse<NodeListDangl
         super(in);
     }
 
-    public ListDanglingIndicesResponse(
-        ClusterName clusterName,
-        List<NodeListDanglingIndicesResponse> nodes,
-        List<FailedNodeException> failures
-    ) {
+    public ListDanglingIndicesResponse(ClusterName clusterName, List<NodeListDanglingIndicesResponse> nodes,
+            List<FailedNodeException> failures) {
         super(clusterName, nodes, failures);
     }
 
@@ -72,10 +69,8 @@ public class ListDanglingIndicesResponse extends BaseNodesResponse<NodeListDangl
             for (DanglingIndexInfo info : nodeResponse.getDanglingIndices()) {
                 final String indexUUID = info.getIndexUUID();
 
-                final AggregatedDanglingIndexInfo aggregatedInfo = byIndexUUID.computeIfAbsent(
-                    indexUUID,
-                    (_uuid) -> new AggregatedDanglingIndexInfo(indexUUID, info.getIndexName(), info.getCreationDateMillis())
-                );
+                final AggregatedDanglingIndexInfo aggregatedInfo = byIndexUUID.computeIfAbsent(indexUUID,
+                        (_uuid) -> new AggregatedDanglingIndexInfo(indexUUID, info.getIndexName(), info.getCreationDateMillis()));
 
                 aggregatedInfo.nodeIds.add(info.getNodeId());
             }
@@ -142,10 +137,8 @@ public class ListDanglingIndicesResponse extends BaseNodesResponse<NodeListDangl
                 return false;
             }
             AggregatedDanglingIndexInfo that = (AggregatedDanglingIndexInfo) o;
-            return creationDateMillis == that.creationDateMillis
-                && indexUUID.equals(that.indexUUID)
-                && indexName.equals(that.indexName)
-                && nodeIds.equals(that.nodeIds);
+            return creationDateMillis == that.creationDateMillis && indexUUID.equals(that.indexUUID) && indexName.equals(that.indexName)
+                    && nodeIds.equals(that.nodeIds);
         }
 
         @Override
@@ -155,14 +148,9 @@ public class ListDanglingIndicesResponse extends BaseNodesResponse<NodeListDangl
 
         @Override
         public String toString() {
-            return String.format(
-                Locale.ROOT,
-                "AggregatedDanglingIndexInfo{indexUUID='%s', indexName='%s', creationDateMillis=%d, nodeIds=%s}",
-                indexUUID,
-                indexName,
-                creationDateMillis,
-                nodeIds
-            );
+            return String.format(Locale.ROOT,
+                    "AggregatedDanglingIndexInfo{indexUUID='%s', indexName='%s', creationDateMillis=%d, nodeIds=%s}", indexUUID, indexName,
+                    creationDateMillis, nodeIds);
         }
     }
 }

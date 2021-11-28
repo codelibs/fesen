@@ -63,10 +63,7 @@ package org.codelibs.fesen.common.component;
 public class Lifecycle {
 
     public enum State {
-        INITIALIZED,
-        STOPPED,
-        STARTED,
-        CLOSED
+        INITIALIZED, STOPPED, STARTED, CLOSED
     }
 
     private volatile State state = State.INITIALIZED;
@@ -121,7 +118,6 @@ public class Lifecycle {
         }
         throw new IllegalStateException("Can't move to started with unknown state");
     }
-
 
     public synchronized boolean moveToStarted() throws IllegalStateException {
         State localState = this.state;

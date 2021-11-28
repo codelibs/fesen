@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.aggregations.InternalAggregation;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
 
 /**
  * An internal implementation of {@link ValueCount}.
@@ -94,9 +94,12 @@ public class InternalValueCount extends InternalNumericMetricsAggregation.Single
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalValueCount that = (InternalValueCount) obj;
         return Objects.equals(this.value, that.value);

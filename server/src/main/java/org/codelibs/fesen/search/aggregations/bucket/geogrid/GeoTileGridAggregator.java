@@ -35,15 +35,14 @@ import org.codelibs.fesen.search.internal.SearchContext;
  */
 public class GeoTileGridAggregator extends GeoGridAggregator<InternalGeoTileGrid> {
 
-    public GeoTileGridAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource,
-                                 int requiredSize, int shardSize, SearchContext aggregationContext,
-                                 Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+    public GeoTileGridAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, int requiredSize,
+            int shardSize, SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         super(name, factories, valuesSource, requiredSize, shardSize, aggregationContext, parent, cardinality, metadata);
     }
 
     @Override
-    InternalGeoTileGrid buildAggregation(String name, int requiredSize, List<InternalGeoGridBucket> buckets,
-                                         Map<String, Object> metadata) {
+    InternalGeoTileGrid buildAggregation(String name, int requiredSize, List<InternalGeoGridBucket> buckets, Map<String, Object> metadata) {
         return new InternalGeoTileGrid(name, requiredSize, buckets, metadata);
     }
 

@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.translog;
 
-import com.carrotsearch.hppc.LongObjectHashMap;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.codelibs.fesen.index.seqno.CountedBitSet;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
+
+import com.carrotsearch.hppc.LongObjectHashMap;
 
 /**
  * A snapshot composed out of multiple snapshots

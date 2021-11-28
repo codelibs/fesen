@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.search.internal;
 
+import java.util.List;
+
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.query.ParsedQuery;
@@ -33,8 +35,6 @@ import org.codelibs.fesen.search.fetch.subphase.highlight.SearchHighlightContext
 import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
-
-import java.util.List;
 
 public class SubSearchContext extends FilteredSearchContext {
 

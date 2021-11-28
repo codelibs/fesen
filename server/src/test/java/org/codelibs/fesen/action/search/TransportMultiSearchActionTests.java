@@ -68,22 +68,20 @@ public class TransportMultiSearchActionTests extends ESTestCase {
 
     public void testParentTaskId() throws Exception {
         // Initialize dependencies of TransportMultiSearchAction
-        Settings settings = Settings.builder()
-            .put("node.name", TransportMultiSearchActionTests.class.getSimpleName())
-            .build();
+        Settings settings = Settings.builder().put("node.name", TransportMultiSearchActionTests.class.getSimpleName()).build();
         ActionFilters actionFilters = mock(ActionFilters.class);
         when(actionFilters.filters()).thenReturn(new ActionFilter[0]);
         ThreadPool threadPool = new ThreadPool(settings);
         try {
-            TransportService transportService = new TransportService(Settings.EMPTY, mock(Transport.class), threadPool,
-                TransportService.NOOP_TRANSPORT_INTERCEPTOR,
-                boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(), UUIDs.randomBase64UUID()), null,
-                Collections.emptySet()) {
-                @Override
-                public TaskManager getTaskManager() {
-                    return taskManager;
-                }
-            };
+            TransportService transportService =
+                    new TransportService(Settings.EMPTY, mock(Transport.class), threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+                            boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(), UUIDs.randomBase64UUID()),
+                            null, Collections.emptySet()) {
+                        @Override
+                        public TaskManager getTaskManager() {
+                            return taskManager;
+                        }
+                    };
             ClusterService clusterService = mock(ClusterService.class);
             when(clusterService.state()).thenReturn(ClusterState.builder(new ClusterName("test")).build());
 
@@ -109,8 +107,8 @@ public class TransportMultiSearchActionTests extends ESTestCase {
                     return localNodeId;
                 }
             };
-            TransportMultiSearchAction action =
-                new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, 10, System::nanoTime, client);
+            TransportMultiSearchAction action = new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService,
+                    10, System::nanoTime, client);
 
             PlainActionFuture<MultiSearchResponse> future = newFuture();
             action.execute(task, multiSearchRequest, future);
@@ -123,21 +121,19 @@ public class TransportMultiSearchActionTests extends ESTestCase {
 
     public void testBatchExecute() {
         // Initialize dependencies of TransportMultiSearchAction
-        Settings settings = Settings.builder()
-                .put("node.name", TransportMultiSearchActionTests.class.getSimpleName())
-                .build();
+        Settings settings = Settings.builder().put("node.name", TransportMultiSearchActionTests.class.getSimpleName()).build();
         ActionFilters actionFilters = mock(ActionFilters.class);
         when(actionFilters.filters()).thenReturn(new ActionFilter[0]);
         ThreadPool threadPool = new ThreadPool(settings);
-        TransportService transportService = new TransportService(Settings.EMPTY, mock(Transport.class), threadPool,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR,
-            boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(), UUIDs.randomBase64UUID()), null,
-            Collections.emptySet()) {
-            @Override
-            public TaskManager getTaskManager() {
-                return taskManager;
-            }
-        };
+        TransportService transportService =
+                new TransportService(Settings.EMPTY, mock(Transport.class), threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+                        boundAddress -> DiscoveryNode.createLocal(settings, boundAddress.publishAddress(), UUIDs.randomBase64UUID()), null,
+                        Collections.emptySet()) {
+                    @Override
+                    public TaskManager getTaskManager() {
+                        return taskManager;
+                    }
+                };
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(ClusterState.builder(new ClusterName("test")).build());
 
@@ -158,14 +154,14 @@ public class TransportMultiSearchActionTests extends ESTestCase {
                 requests.add(request);
                 int currentConcurrentSearches = counter.incrementAndGet();
                 if (currentConcurrentSearches > maxAllowedConcurrentSearches) {
-                    errorHolder.set(new AssertionError("Current concurrent search [" + currentConcurrentSearches +
-                        "] is higher than is allowed [" + maxAllowedConcurrentSearches + "]"));
+                    errorHolder.set(new AssertionError("Current concurrent search [" + currentConcurrentSearches
+                            + "] is higher than is allowed [" + maxAllowedConcurrentSearches + "]"));
                 }
                 final ExecutorService executorService = rarely() ? rarelyExecutor : commonExecutor;
                 executorService.execute(() -> {
                     counter.decrementAndGet();
                     listener.onResponse(new SearchResponse(InternalSearchResponse.empty(), null, 0, 0, 0, 0L,
-                        ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY));
+                            ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY));
                 });
             }
 
@@ -176,7 +172,7 @@ public class TransportMultiSearchActionTests extends ESTestCase {
         };
 
         TransportMultiSearchAction action =
-            new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, 10, System::nanoTime, client);
+                new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, 10, System::nanoTime, client);
 
         // Execute the multi search api and fail if we find an error after executing:
         try {

@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.rest.action.search;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.codelibs.fesen.action.search.MultiSearchAction;
 import org.codelibs.fesen.action.search.MultiSearchRequest;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -40,29 +52,15 @@ import org.codelibs.fesen.rest.action.RestCancellableNodeClient;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 public class RestMultiSearchAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestMultiSearchAction.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
-        " Specifying types in multi search requests is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" + " Specifying types in multi search requests is deprecated.";
 
     private static final Set<String> RESPONSE_PARAMS;
 
     static {
-        final Set<String> responseParams = new HashSet<>(
-            Arrays.asList(RestSearchAction.TYPED_KEYS_PARAM, RestSearchAction.TOTAL_HITS_AS_INT_PARAM)
-        );
+        final Set<String> responseParams =
+                new HashSet<>(Arrays.asList(RestSearchAction.TYPED_KEYS_PARAM, RestSearchAction.TOTAL_HITS_AS_INT_PARAM));
         RESPONSE_PARAMS = Collections.unmodifiableSet(responseParams);
     }
 
@@ -74,14 +72,10 @@ public class RestMultiSearchAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_msearch"),
-            new Route(POST, "/_msearch"),
-            new Route(GET, "/{index}/_msearch"),
-            new Route(POST, "/{index}/_msearch"),
-            // Deprecated typed endpoints.
-            new Route(GET, "/{index}/{type}/_msearch"),
-            new Route(POST, "/{index}/{type}/_msearch")));
+        return unmodifiableList(asList(new Route(GET, "/_msearch"), new Route(POST, "/_msearch"), new Route(GET, "/{index}/_msearch"),
+                new Route(POST, "/{index}/_msearch"),
+                // Deprecated typed endpoints.
+                new Route(GET, "/{index}/{type}/_msearch"), new Route(POST, "/{index}/{type}/_msearch")));
     }
 
     @Override
@@ -108,9 +102,8 @@ public class RestMultiSearchAction extends BaseRestHandler {
     /**
      * Parses a {@link RestRequest} body and returns a {@link MultiSearchRequest}
      */
-    public static MultiSearchRequest parseRequest(RestRequest restRequest,
-                                                  NamedWriteableRegistry namedWriteableRegistry,
-                                                  boolean allowExplicitIndex) throws IOException {
+    public static MultiSearchRequest parseRequest(RestRequest restRequest, NamedWriteableRegistry namedWriteableRegistry,
+            boolean allowExplicitIndex) throws IOException {
         MultiSearchRequest multiRequest = new MultiSearchRequest();
         IndicesOptions indicesOptions = IndicesOptions.fromRequest(restRequest, multiRequest.indicesOptions());
         multiRequest.indicesOptions(indicesOptions);
@@ -139,8 +132,7 @@ public class RestMultiSearchAction extends BaseRestHandler {
                 RestSearchAction.preparePointInTime(searchRequest, restRequest, namedWriteableRegistry);
             } else {
                 searchRequest.setCcsMinimizeRoundtrips(
-                    restRequest.paramAsBoolean("ccs_minimize_roundtrips", searchRequest.isCcsMinimizeRoundtrips())
-                );
+                        restRequest.paramAsBoolean("ccs_minimize_roundtrips", searchRequest.isCcsMinimizeRoundtrips()));
             }
             multiRequest.add(searchRequest);
         });
@@ -172,8 +164,8 @@ public class RestMultiSearchAction extends BaseRestHandler {
         final Tuple<XContentType, BytesReference> sourceTuple = request.contentOrSourceParam();
         final XContent xContent = sourceTuple.v1().xContent();
         final BytesReference data = sourceTuple.v2();
-        MultiSearchRequest.readMultiLineFormat(data, xContent, consumer, indices, indicesOptions, types, routing,
-                searchType, ccsMinimizeRoundtrips, request.getXContentRegistry(), allowExplicitIndex, deprecationLogger);
+        MultiSearchRequest.readMultiLineFormat(data, xContent, consumer, indices, indicesOptions, types, routing, searchType,
+                ccsMinimizeRoundtrips, request.getXContentRegistry(), allowExplicitIndex, deprecationLogger);
     }
 
     @Override

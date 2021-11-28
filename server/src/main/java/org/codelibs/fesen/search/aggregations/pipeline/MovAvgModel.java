@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import org.codelibs.fesen.common.io.stream.NamedWriteable;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.core.Nullable;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+
+import org.codelibs.fesen.common.io.stream.NamedWriteable;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.core.Nullable;
 
 public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment {
 
@@ -80,7 +80,7 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
      * @return                  Returns an array of doubles, since most smoothing methods operate on floating points
      */
     public double[] predict(Collection<Double> values, int numPredictions) {
-        assert(numPredictions >= 1);
+        assert (numPredictions >= 1);
 
         // If there are no values, we can't do anything.  Return an array of NaNs.
         if (values.isEmpty()) {
@@ -150,9 +150,8 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
          * @param windowSize         Size of the window for this moving avg
          * @return                   A fully built moving average model
          */
-        public abstract MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName,
-                                          int windowSize) throws ParseException;
-
+        public abstract MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize)
+                throws ParseException;
 
         /**
          * Extracts a 0-1 inclusive double from the settings map, otherwise throws an exception
@@ -177,12 +176,11 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
                     return v;
                 }
 
-                throw new ParseException("Parameter [" + name + "] must be between 0-1 inclusive.  Provided"
-                        + "value was [" + v + "]", 0);
+                throw new ParseException("Parameter [" + name + "] must be between 0-1 inclusive.  Provided" + "value was [" + v + "]", 0);
             }
 
-            throw new ParseException("Parameter [" + name + "] must be a double, type `"
-                    + value.getClass().getSimpleName() + "` provided instead", 0);
+            throw new ParseException(
+                    "Parameter [" + name + "] must be a double, type `" + value.getClass().getSimpleName() + "` provided instead", 0);
         }
 
         /**
@@ -206,8 +204,8 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
                 return ((Number) value).intValue();
             }
 
-            throw new ParseException("Parameter [" + name + "] must be an integer, type `"
-                    + value.getClass().getSimpleName() + "` provided instead", 0);
+            throw new ParseException(
+                    "Parameter [" + name + "] must be an integer, type `" + value.getClass().getSimpleName() + "` provided instead", 0);
         }
 
         /**
@@ -228,11 +226,11 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
                 return defaultValue;
             } else if (value instanceof Boolean) {
                 settings.remove(name);
-                return (Boolean)value;
+                return (Boolean) value;
             }
 
-            throw new ParseException("Parameter [" + name + "] must be a boolean, type `"
-                    + value.getClass().getSimpleName() + "` provided instead", 0);
+            throw new ParseException(
+                    "Parameter [" + name + "] must be a boolean, type `" + value.getClass().getSimpleName() + "` provided instead", 0);
         }
 
         protected void checkUnrecognizedParams(@Nullable Map<String, Object> settings) throws ParseException {
@@ -243,7 +241,3 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
     }
 
 }
-
-
-
-

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.io.IOException;
+
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-
-import java.io.IOException;
 
 /**
  * A token filter that generates unique tokens. Can remove unique tokens only on the same
@@ -84,5 +84,3 @@ class UniqueTokenFilter extends TokenFilter {
         previous.clear();
     }
 }
-
-

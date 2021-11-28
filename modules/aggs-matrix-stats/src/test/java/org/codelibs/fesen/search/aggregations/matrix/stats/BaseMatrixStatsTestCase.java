@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
+import java.util.ArrayList;
+
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
-
-import java.util.ArrayList;
 
 public abstract class BaseMatrixStatsTestCase extends ESTestCase {
     protected final int numObs = atLeast(10000);

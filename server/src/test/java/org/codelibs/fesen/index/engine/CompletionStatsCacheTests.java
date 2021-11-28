@@ -77,8 +77,7 @@ public class CompletionStatsCacheTests extends ESTestCase {
             }
         };
 
-        try (Directory directory = newDirectory();
-             IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig)) {
+        try (Directory directory = newDirectory(); IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig)) {
 
             final Document document = new Document();
             document.add(new SuggestField("suggest1", "val", 1));

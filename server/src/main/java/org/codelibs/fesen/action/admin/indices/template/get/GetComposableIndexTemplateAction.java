@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.template.get;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
@@ -30,10 +34,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 public class GetComposableIndexTemplateAction extends ActionType<GetComposableIndexTemplateAction.Response> {
 
@@ -52,7 +52,8 @@ public class GetComposableIndexTemplateAction extends ActionType<GetComposableIn
         @Nullable
         private String name;
 
-        public Request() { }
+        public Request() {
+        }
 
         public Request(@Nullable String name) {
             this.name = name;
@@ -134,8 +135,10 @@ public class GetComposableIndexTemplateAction extends ActionType<GetComposableIn
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             GetComposableIndexTemplateAction.Response that = (GetComposableIndexTemplateAction.Response) o;
             return Objects.equals(indexTemplates, that.indexTemplates);
         }

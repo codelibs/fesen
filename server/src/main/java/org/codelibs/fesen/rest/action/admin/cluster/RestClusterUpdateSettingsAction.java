@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.codelibs.fesen.action.admin.cluster.settings.ClusterUpdateSettingsRequest;
 import org.codelibs.fesen.client.Requests;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -27,14 +35,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
 
 public class RestClusterUpdateSettingsAction extends BaseRestHandler {
 
@@ -55,8 +55,8 @@ public class RestClusterUpdateSettingsAction extends BaseRestHandler {
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
         final ClusterUpdateSettingsRequest clusterUpdateSettingsRequest = Requests.clusterUpdateSettingsRequest();
         clusterUpdateSettingsRequest.timeout(request.paramAsTime("timeout", clusterUpdateSettingsRequest.timeout()));
-        clusterUpdateSettingsRequest.masterNodeTimeout(
-                request.paramAsTime("master_timeout", clusterUpdateSettingsRequest.masterNodeTimeout()));
+        clusterUpdateSettingsRequest
+                .masterNodeTimeout(request.paramAsTime("master_timeout", clusterUpdateSettingsRequest.masterNodeTimeout()));
         Map<String, Object> source;
         try (XContentParser parser = request.contentParser()) {
             source = parser.map();

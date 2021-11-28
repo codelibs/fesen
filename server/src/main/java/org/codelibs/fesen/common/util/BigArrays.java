@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.util;
 
+import java.util.Arrays;
+
 import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.RamUsageEstimator;
@@ -29,8 +31,6 @@ import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.recycler.Recycler;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
-
-import java.util.Arrays;
 
 /** Utility class to work with arrays. */
 public class BigArrays {
@@ -339,8 +339,8 @@ public class BigArrays {
 
         @Override
         public long ramBytesUsed() {
-            return SHALLOW_SIZE + RamUsageEstimator.alignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER +
-                RamUsageEstimator.NUM_BYTES_OBJECT_REF * size());
+            return SHALLOW_SIZE + RamUsageEstimator
+                    .alignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF * size());
         }
 
         @SuppressWarnings("unchecked")
@@ -373,7 +373,7 @@ public class BigArrays {
     }
 
     protected BigArrays(PageCacheRecycler recycler, @Nullable final CircuitBreakerService breakerService, String breakerName,
-                        boolean checkBreaker) {
+            boolean checkBreaker) {
         this.checkBreaker = checkBreaker;
         this.recycler = recycler;
         this.breakerService = breakerService;
@@ -437,9 +437,9 @@ public class BigArrays {
     private <T extends AbstractBigArray> T resizeInPlace(T array, long newSize) {
         final long oldMemSize = array.ramBytesUsed();
         final long oldSize = array.size();
-        assert oldMemSize == array.ramBytesEstimated(oldSize) :
-            "ram bytes used should equal that which was previously estimated: ramBytesUsed=" +
-            oldMemSize + ", ramBytesEstimated=" + array.ramBytesEstimated(oldSize);
+        assert oldMemSize == array
+                .ramBytesEstimated(oldSize) : "ram bytes used should equal that which was previously estimated: ramBytesUsed=" + oldMemSize
+                        + ", ramBytesEstimated=" + array.ramBytesEstimated(oldSize);
         final long estimatedIncreaseInBytes = array.ramBytesEstimated(newSize) - oldMemSize;
         adjustBreaker(estimatedIncreaseInBytes, false);
         array.resize(newSize);
@@ -696,12 +696,12 @@ public class BigArrays {
         return resize(array, newSize);
     }
 
-    public static class DoubleBinarySearcher extends BinarySearcher{
+    public static class DoubleBinarySearcher extends BinarySearcher {
 
         DoubleArray array;
         double searchFor;
 
-        public DoubleBinarySearcher(DoubleArray array){
+        public DoubleBinarySearcher(DoubleArray array) {
             this.array = array;
             this.searchFor = Integer.MIN_VALUE;
         }

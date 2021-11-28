@@ -21,10 +21,8 @@ package org.codelibs.fesen.action.admin.indices.template.get;
 import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 
-public class GetIndexTemplatesRequestBuilder extends MasterNodeReadOperationRequestBuilder<
-        GetIndexTemplatesRequest,
-        GetIndexTemplatesResponse,
-        GetIndexTemplatesRequestBuilder> {
+public class GetIndexTemplatesRequestBuilder extends
+        MasterNodeReadOperationRequestBuilder<GetIndexTemplatesRequest, GetIndexTemplatesResponse, GetIndexTemplatesRequestBuilder> {
 
     public GetIndexTemplatesRequestBuilder(FesenClient client, GetIndexTemplatesAction action) {
         super(client, action, new GetIndexTemplatesRequest());
@@ -34,4 +32,3 @@ public class GetIndexTemplatesRequestBuilder extends MasterNodeReadOperationRequ
         super(client, action, new GetIndexTemplatesRequest(names));
     }
 }
-

@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.index.engine;
 
+import java.io.IOException;
+import java.util.Iterator;
+
 import org.apache.lucene.codecs.FieldsProducer;
 import org.apache.lucene.index.CodecReader;
 import org.apache.lucene.index.FilterCodecReader;
@@ -33,9 +36,6 @@ import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.BytesRef;
-
-import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * This merge policy drops id field postings for all delete documents this can be

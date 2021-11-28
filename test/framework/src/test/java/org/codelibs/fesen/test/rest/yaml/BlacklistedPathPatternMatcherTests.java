@@ -18,9 +18,7 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
-
 import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.rest.yaml.BlacklistedPathPatternMatcher;
 
 public class BlacklistedPathPatternMatcherTests extends ESTestCase {
 
@@ -58,8 +56,6 @@ public class BlacklistedPathPatternMatcherTests extends ESTestCase {
         assertMatch("indices.get/*/10_basic\\,20_advanced/*foo*", "/suite/indices.get/all/10_basic,20_advanced/my_foo");
         assertMatch("indices.get/*/10_basic\\,20_advanced/*foo*", "/suite/indices.get/all/10_basic,20_advanced/foo_bar");
     }
-
-
 
     private void assertMatch(String pattern, String path) {
         BlacklistedPathPatternMatcher matcher = new BlacklistedPathPatternMatcher(pattern);

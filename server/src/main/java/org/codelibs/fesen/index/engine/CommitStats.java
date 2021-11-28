@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.index.engine;
 
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
+
 import org.apache.lucene.index.SegmentInfos;
 import org.codelibs.fesen.common.collect.MapBuilder;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
-
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
 
 /** a class the returns dynamic information with respect to the last commit point of this shard */
 public final class CommitStats implements Writeable, ToXContentFragment {
@@ -41,7 +41,7 @@ public final class CommitStats implements Writeable, ToXContentFragment {
 
     public CommitStats(SegmentInfos segmentInfos) {
         // clone the map to protect against concurrent changes
-        userData = MapBuilder.<String, String>newMapBuilder().putAll(segmentInfos.getUserData()).immutableMap();
+        userData = MapBuilder.<String, String> newMapBuilder().putAll(segmentInfos.getUserData()).immutableMap();
         // lucene calls the current generation, last generation.
         generation = segmentInfos.getLastGeneration();
         id = Base64.getEncoder().encodeToString(segmentInfos.getId());
@@ -62,7 +62,6 @@ public final class CommitStats implements Writeable, ToXContentFragment {
     public static CommitStats readOptionalCommitStatsFrom(StreamInput in) throws IOException {
         return in.readOptionalWriteable(CommitStats::new);
     }
-
 
     public Map<String, String> getUserData() {
         return userData;

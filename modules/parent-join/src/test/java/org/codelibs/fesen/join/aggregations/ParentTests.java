@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.codelibs.fesen.join.ParentJoinPlugin;
-import org.codelibs.fesen.join.aggregations.ParentAggregationBuilder;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.search.aggregations.BaseAggregationTestCase;
 import org.codelibs.fesen.test.TestGeoShapeFieldMapperPlugin;

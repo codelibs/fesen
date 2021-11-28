@@ -19,23 +19,17 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.util.Collection;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.compress.CompressedXContent;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.IndexService;
-import org.codelibs.fesen.index.mapper.DocumentMapper;
-import org.codelibs.fesen.index.mapper.DocumentMapperParser;
-import org.codelibs.fesen.index.mapper.MapperExtrasPlugin;
-import org.codelibs.fesen.index.mapper.MapperParsingException;
-import org.codelibs.fesen.index.mapper.RankFeatureMetaFieldMapper;
-import org.codelibs.fesen.index.mapper.SourceToParse;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
 import org.junit.Before;
-
-import java.util.Collection;
 
 public class RankFeatureMetaFieldMapperTests extends ESSingleNodeTestCase {
 
@@ -54,9 +48,8 @@ public class RankFeatureMetaFieldMapperTests extends ESSingleNodeTestCase {
     }
 
     public void testBasics() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type")
-                .startObject("properties").startObject("field").field("type", "rank_feature").endObject().endObject()
-                .endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("type").startObject("properties")
+                .startObject("field").field("type", "rank_feature").endObject().endObject().endObject().endObject());
 
         DocumentMapper mapper = parser.parse("type", new CompressedXContent(mapping));
 
@@ -73,9 +66,9 @@ public class RankFeatureMetaFieldMapperTests extends ESSingleNodeTestCase {
         DocumentMapper mapper = parser.parse("_doc", new CompressedXContent(mapping));
         String rfMetaField = RankFeatureMetaFieldMapper.CONTENT_TYPE;
         BytesReference bytes = BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field(rfMetaField, 0).endObject());
-        MapperParsingException e = expectThrows(MapperParsingException.class, () ->
-            mapper.parse(new SourceToParse("test", "_doc", "1", bytes, XContentType.JSON)));
-        assertTrue(
-            e.getCause().getMessage().contains("Field ["+ rfMetaField + "] is a metadata field and cannot be added inside a document."));
+        MapperParsingException e = expectThrows(MapperParsingException.class,
+                () -> mapper.parse(new SourceToParse("test", "_doc", "1", bytes, XContentType.JSON)));
+        assertTrue(e.getCause().getMessage()
+                .contains("Field [" + rfMetaField + "] is a metadata field and cannot be added inside a document."));
     }
 }

@@ -129,8 +129,8 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
         searcher.getIndexReader().close();
     }
 
-    private TopDocs getTopDocs(IndexSearcher searcher, IndexFieldData<?> indexFieldData, String missingValue,
-                                    MultiValueMode sortMode, int n, boolean reverse) throws IOException {
+    private TopDocs getTopDocs(IndexSearcher searcher, IndexFieldData<?> indexFieldData, String missingValue, MultiValueMode sortMode,
+            int n, boolean reverse) throws IOException {
         Query parentFilter = new TermQuery(new Term("__type", "parent"));
         Query childFilter = new TermQuery(new Term("__type", "child"));
         SortField sortField = indexFieldData.sortField(missingValue, sortMode, createNested(searcher, parentFilter, childFilter), reverse);
@@ -301,9 +301,9 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
         Query parentFilter = new TermQuery(new Term("__type", "parent"));
         Query childFilter = Queries.not(parentFilter);
         BytesRefFieldComparatorSource nestedComparatorSource =
-            new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
+                new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
         ToParentBlockJoinQuery query =
-            new ToParentBlockJoinQuery(new ConstantScoreQuery(childFilter), new QueryBitSetProducer(parentFilter), ScoreMode.None);
+                new ToParentBlockJoinQuery(new ConstantScoreQuery(childFilter), new QueryBitSetProducer(parentFilter), ScoreMode.None);
 
         Sort sort = new Sort(new SortField("field2", nestedComparatorSource));
         TopFieldDocs topDocs = searcher.search(query, 5, sort);
@@ -322,7 +322,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
 
         sortMode = MultiValueMode.MAX;
         nestedComparatorSource =
-            new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
+                new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
         sort = new Sort(new SortField("field2", nestedComparatorSource, true));
         topDocs = searcher.search(query, 5, sort);
         assertThat(topDocs.totalHits.value, equalTo(7L));
@@ -338,18 +338,13 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
         assertThat(topDocs.scoreDocs[4].doc, equalTo(11));
         assertThat(((BytesRef) ((FieldDoc) topDocs.scoreDocs[4]).fields[0]).utf8ToString(), equalTo("g"));
 
-
         BooleanQuery.Builder bq = new BooleanQuery.Builder();
         bq.add(parentFilter, Occur.MUST_NOT);
         bq.add(new TermQuery(new Term("filter_1", "T")), Occur.MUST);
         childFilter = bq.build();
         nestedComparatorSource =
-            new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
-        query = new ToParentBlockJoinQuery(
-                new ConstantScoreQuery(childFilter),
-                new QueryBitSetProducer(parentFilter),
-                ScoreMode.None
-        );
+                new BytesRefFieldComparatorSource(indexFieldData, null, sortMode, createNested(searcher, parentFilter, childFilter));
+        query = new ToParentBlockJoinQuery(new ConstantScoreQuery(childFilter), new QueryBitSetProducer(parentFilter), ScoreMode.None);
         sort = new Sort(new SortField("field2", nestedComparatorSource, true));
         topDocs = searcher.search(query, 5, sort);
         assertThat(topDocs.totalHits.value, equalTo(6L));
@@ -708,12 +703,8 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
             queryBuilder = new RangeQueryBuilder("chapters.read_time_seconds").to(50L);
             sortBuilder = new FieldSortBuilder("chapters.paragraphs.word_count");
             sortBuilder.setNestedSort(
-                new NestedSortBuilder("chapters")
-                    .setFilter(queryBuilder)
-                    .setNestedSort(new NestedSortBuilder("chapters.paragraphs"))
-            );
-            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None),
-                sortBuilder, queryShardContext, searcher);
+                    new NestedSortBuilder("chapters").setFilter(queryBuilder).setNestedSort(new NestedSortBuilder("chapters.paragraphs")));
+            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None), sortBuilder, queryShardContext, searcher);
             assertThat(topFields.totalHits.value, equalTo(2L));
             assertThat(searcher.doc(topFields.scoreDocs[0].doc).get("_id"), equalTo("2"));
             assertThat(((FieldDoc) topFields.scoreDocs[0]).fields[0], equalTo(76L));
@@ -721,8 +712,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
             assertThat(((FieldDoc) topFields.scoreDocs[1]).fields[0], equalTo(87L));
 
             sortBuilder.order(SortOrder.DESC);
-            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None),
-                sortBuilder, queryShardContext, searcher);
+            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None), sortBuilder, queryShardContext, searcher);
             assertThat(topFields.totalHits.value, equalTo(2L));
             assertThat(searcher.doc(topFields.scoreDocs[0].doc).get("_id"), equalTo("4"));
             assertThat(((FieldDoc) topFields.scoreDocs[0]).fields[0], equalTo(87L));
@@ -735,15 +725,9 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
             queryBuilder = new RangeQueryBuilder("chapters.read_time_seconds").to(50L);
             sortBuilder = new FieldSortBuilder("chapters.paragraphs.word_count");
             sortBuilder.setNestedSort(
-                new NestedSortBuilder("chapters")
-                    .setFilter(queryBuilder)
-                    .setNestedSort(
-                        new NestedSortBuilder("chapters.paragraphs")
-                            .setFilter(new RangeQueryBuilder("chapters.paragraphs.word_count").from(80L))
-                    )
-            );
-            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None),
-                sortBuilder, queryShardContext, searcher);
+                    new NestedSortBuilder("chapters").setFilter(queryBuilder).setNestedSort(new NestedSortBuilder("chapters.paragraphs")
+                            .setFilter(new RangeQueryBuilder("chapters.paragraphs.word_count").from(80L))));
+            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None), sortBuilder, queryShardContext, searcher);
             assertThat(topFields.totalHits.value, equalTo(2L));
             assertThat(searcher.doc(topFields.scoreDocs[0].doc).get("_id"), equalTo("4"));
             assertThat(((FieldDoc) topFields.scoreDocs[0]).fields[0], equalTo(87L));
@@ -751,8 +735,7 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
             assertThat(((FieldDoc) topFields.scoreDocs[1]).fields[0], equalTo(Long.MAX_VALUE));
 
             sortBuilder.order(SortOrder.DESC);
-            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None),
-                sortBuilder, queryShardContext, searcher);
+            topFields = search(new NestedQueryBuilder("chapters", queryBuilder, ScoreMode.None), sortBuilder, queryShardContext, searcher);
             assertThat(topFields.totalHits.value, equalTo(2L));
             assertThat(searcher.doc(topFields.scoreDocs[0].doc).get("_id"), equalTo("4"));
             assertThat(((FieldDoc) topFields.scoreDocs[0]).fields[0], equalTo(87L));
@@ -763,11 +746,9 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
         // Nested filter + Specific genre
         {
             sortBuilder = new FieldSortBuilder("chapters.paragraphs.word_count");
-            sortBuilder.setNestedSort(
-                new NestedSortBuilder("chapters")
-                    .setFilter(new RangeQueryBuilder("chapters.read_time_seconds").to(50L))
-                    .setNestedSort(new NestedSortBuilder("chapters.paragraphs"))
-            );
+            sortBuilder
+                    .setNestedSort(new NestedSortBuilder("chapters").setFilter(new RangeQueryBuilder("chapters.read_time_seconds").to(50L))
+                            .setNestedSort(new NestedSortBuilder("chapters.paragraphs")));
 
             queryBuilder = new TermQueryBuilder("genre", "romance");
             topFields = search(queryBuilder, sortBuilder, queryShardContext, searcher);
@@ -798,11 +779,9 @@ public class NestedSortingTests extends AbstractFieldDataTestCase {
     }
 
     private static TopFieldDocs search(QueryBuilder queryBuilder, FieldSortBuilder sortBuilder, QueryShardContext queryShardContext,
-                                       IndexSearcher searcher) throws IOException {
-        Query query = new BooleanQuery.Builder()
-            .add(queryBuilder.toQuery(queryShardContext), Occur.MUST)
-            .add(Queries.newNonNestedFilter(Version.CURRENT), Occur.FILTER)
-            .build();
+            IndexSearcher searcher) throws IOException {
+        Query query = new BooleanQuery.Builder().add(queryBuilder.toQuery(queryShardContext), Occur.MUST)
+                .add(Queries.newNonNestedFilter(Version.CURRENT), Occur.FILTER).build();
         Sort sort = new Sort(sortBuilder.build(queryShardContext).field);
         return searcher.search(query, 10, sort);
     }

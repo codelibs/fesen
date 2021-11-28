@@ -19,12 +19,11 @@
 
 package org.codelibs.fesen.client.sniff;
 
-import org.apache.http.HttpHost;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.sniff.NodesSniffer;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.http.HttpHost;
+import org.codelibs.fesen.client.Node;
 
 /**
  * Mock implementation of {@link NodesSniffer}. Useful to prevent any connection attempt while testing builders etc.

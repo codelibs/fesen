@@ -70,17 +70,16 @@ public class IngestStatsTests extends ESTestCase {
         return Stream.of(pipeline1Stats, pipeline2Stats, pipeline3Stats).collect(Collectors.toList());
     }
 
-    private Map<String, List<IngestStats.ProcessorStat>> createProcessorStats(List<IngestStats.PipelineStat> pipelineStats){
-        assert(pipelineStats.size() >= 2);
+    private Map<String, List<IngestStats.ProcessorStat>> createProcessorStats(List<IngestStats.PipelineStat> pipelineStats) {
+        assert (pipelineStats.size() >= 2);
         IngestStats.ProcessorStat processor1Stat = new IngestStats.ProcessorStat("processor1", "type", new IngestStats.Stats(1, 1, 1, 1));
         IngestStats.ProcessorStat processor2Stat = new IngestStats.ProcessorStat("processor2", "type", new IngestStats.Stats(2, 2, 2, 2));
-        IngestStats.ProcessorStat processor3Stat = new IngestStats.ProcessorStat("processor3", "type",
-            new IngestStats.Stats(47, 97, 197, 297));
+        IngestStats.ProcessorStat processor3Stat =
+                new IngestStats.ProcessorStat("processor3", "type", new IngestStats.Stats(47, 97, 197, 297));
         //pipeline1 -> processor1,processor2; pipeline2 -> processor3
-        return MapBuilder.<String, List<IngestStats.ProcessorStat>>newMapBuilder()
-            .put(pipelineStats.get(0).getPipelineId(), Stream.of(processor1Stat, processor2Stat).collect(Collectors.toList()))
-            .put(pipelineStats.get(1).getPipelineId(), Collections.singletonList(processor3Stat))
-            .map();
+        return MapBuilder.<String, List<IngestStats.ProcessorStat>> newMapBuilder()
+                .put(pipelineStats.get(0).getPipelineId(), Stream.of(processor1Stat, processor2Stat).collect(Collectors.toList()))
+                .put(pipelineStats.get(1).getPipelineId(), Collections.singletonList(processor3Stat)).map();
     }
 
     private IngestStats serialize(IngestStats stats) throws IOException {
@@ -91,7 +90,7 @@ public class IngestStatsTests extends ESTestCase {
     }
 
     private void assertIngestStats(IngestStats ingestStats, IngestStats serializedStats, boolean expectProcessors,
-                                   boolean expectProcessorTypes){
+            boolean expectProcessorTypes) {
         assertNotSame(ingestStats, serializedStats);
         assertNotSame(ingestStats.getTotalStats(), serializedStats.getTotalStats());
         assertNotSame(ingestStats.getPipelineStats(), serializedStats.getPipelineStats());
@@ -102,11 +101,11 @@ public class IngestStatsTests extends ESTestCase {
 
         for (IngestStats.PipelineStat serializedPipelineStat : serializedStats.getPipelineStats()) {
             assertStats(getPipelineStats(ingestStats.getPipelineStats(), serializedPipelineStat.getPipelineId()),
-                serializedPipelineStat.getStats());
+                    serializedPipelineStat.getStats());
             List<IngestStats.ProcessorStat> serializedProcessorStats =
-                serializedStats.getProcessorStats().get(serializedPipelineStat.getPipelineId());
+                    serializedStats.getProcessorStats().get(serializedPipelineStat.getPipelineId());
             List<IngestStats.ProcessorStat> processorStat = ingestStats.getProcessorStats().get(serializedPipelineStat.getPipelineId());
-            if(expectProcessors) {
+            if (expectProcessors) {
                 if (processorStat != null) {
                     Iterator<IngestStats.ProcessorStat> it = processorStat.iterator();
                     //intentionally enforcing the identical ordering
@@ -122,13 +121,14 @@ public class IngestStatsTests extends ESTestCase {
                     }
                     assertFalse(it.hasNext());
                 }
-            }else{
+            } else {
                 //pre 6.5 did not serialize any processor stats
                 assertNull(serializedProcessorStats);
             }
         }
 
     }
+
     private void assertStats(IngestStats.Stats fromObject, IngestStats.Stats fromStream) {
         assertEquals(fromObject.getIngestCount(), fromStream.getIngestCount());
         assertEquals(fromObject.getIngestFailedCount(), fromStream.getIngestFailedCount());

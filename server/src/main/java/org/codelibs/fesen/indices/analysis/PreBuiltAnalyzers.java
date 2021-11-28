@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.indices.analysis;
 
+import java.util.Locale;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -30,8 +32,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory.CachingStrategy;
 
-import java.util.Locale;
-
 public enum PreBuiltAnalyzers {
 
     STANDARD(CachingStrategy.ELASTICSEARCH) {
@@ -43,7 +43,7 @@ public enum PreBuiltAnalyzers {
         }
     },
 
-    DEFAULT(CachingStrategy.ELASTICSEARCH){
+    DEFAULT(CachingStrategy.ELASTICSEARCH) {
         @Override
         protected Analyzer create(Version version) {
             // by calling get analyzer we are ensuring reuse of the same STANDARD analyzer for DEFAULT!
@@ -95,7 +95,7 @@ public enum PreBuiltAnalyzers {
         }
     };
 
-    protected abstract  Analyzer create(Version version);
+    protected abstract Analyzer create(Version version);
 
     protected final PreBuiltCacheFactory.PreBuiltCache<Analyzer> cache;
 

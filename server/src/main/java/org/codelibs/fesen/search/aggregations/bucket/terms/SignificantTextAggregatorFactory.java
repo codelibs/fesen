@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.LongConsumer;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.DeDuplicatingTokenFilter;
@@ -36,12 +41,12 @@ import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregator;
+import org.codelibs.fesen.search.aggregations.Aggregator.SubAggCollectionMode;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
-import org.codelibs.fesen.search.aggregations.Aggregator.SubAggCollectionMode;
 import org.codelibs.fesen.search.aggregations.bucket.BucketUtils;
 import org.codelibs.fesen.search.aggregations.bucket.terms.IncludeExclude.StringFilter;
 import org.codelibs.fesen.search.aggregations.bucket.terms.MapStringTermsAggregator.CollectConsumer;
@@ -49,11 +54,6 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.TermsAggregator.Bucke
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.LongConsumer;
 
 public class SignificantTextAggregatorFactory extends AggregatorFactory {
     private static final int MEMORY_GROWTH_REPORTING_INTERVAL_BYTES = 5000;
@@ -67,26 +67,18 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
     private final SignificanceHeuristic significanceHeuristic;
     private final boolean filterDuplicateText;
 
-    public SignificantTextAggregatorFactory(String name,
-                                                IncludeExclude includeExclude,
-                                                QueryBuilder backgroundFilter,
-                                                TermsAggregator.BucketCountThresholds bucketCountThresholds,
-                                                SignificanceHeuristic significanceHeuristic,
-                                                QueryShardContext queryShardContext,
-                                                AggregatorFactory parent,
-                                                AggregatorFactories.Builder subFactoriesBuilder,
-                                                String fieldName,
-                                                String [] sourceFieldNames,
-                                                boolean filterDuplicateText,
-                                                Map<String, Object> metadata) throws IOException {
+    public SignificantTextAggregatorFactory(String name, IncludeExclude includeExclude, QueryBuilder backgroundFilter,
+            TermsAggregator.BucketCountThresholds bucketCountThresholds, SignificanceHeuristic significanceHeuristic,
+            QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+            String fieldName, String[] sourceFieldNames, boolean filterDuplicateText, Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactoriesBuilder, metadata);
 
         // Note that if the field is unmapped (its field type is null), we don't fail,
         // and just use the given field name as a placeholder.
         this.fieldType = queryShardContext.fieldMapper(fieldName);
         if (fieldType != null && fieldType.indexAnalyzer() == null) {
-            throw new IllegalArgumentException("Field [" + fieldType.name() + "] has no analyzer, but SignificantText " +
-                "requires an analyzed field");
+            throw new IllegalArgumentException(
+                    "Field [" + fieldType.name() + "] has no analyzer, but SignificantText " + "requires an analyzed field");
         }
         this.indexedFieldName = fieldType != null ? fieldType.name() : fieldName;
         this.sourceFieldNames = sourceFieldNames == null ? new String[] { indexedFieldName } : sourceFieldNames;
@@ -100,7 +92,7 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
 
     @Override
     protected Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
-                                        Map<String, Object> metadata) throws IOException {
+            Map<String, Object> metadata) throws IOException {
         BucketCountThresholds bucketCountThresholds = new BucketCountThresholds(this.bucketCountThresholds);
         if (bucketCountThresholds.getShardSize() == SignificantTextAggregationBuilder.DEFAULT_BUCKET_COUNT_THRESHOLDS.getShardSize()) {
             // The user has not made a shardSize selection.
@@ -115,35 +107,17 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
             bucketCountThresholds.setShardSize(2 * BucketUtils.suggestShardSideQueueSize(bucketCountThresholds.getRequiredSize()));
         }
 
-//        TODO - need to check with mapping that this is indeed a text field....
+        //        TODO - need to check with mapping that this is indeed a text field....
 
-        IncludeExclude.StringFilter incExcFilter = includeExclude == null ? null:
-            includeExclude.convertToStringFilter(DocValueFormat.RAW);
+        IncludeExclude.StringFilter incExcFilter = includeExclude == null ? null : includeExclude.convertToStringFilter(DocValueFormat.RAW);
 
-        MapStringTermsAggregator.CollectorSource collectorSource = new SignificantTextCollectorSource(
-            queryShardContext.lookup().source(),
-            queryShardContext.bigArrays(),
-            fieldType,
-            sourceFieldNames,
-            filterDuplicateText
-        );
+        MapStringTermsAggregator.CollectorSource collectorSource = new SignificantTextCollectorSource(queryShardContext.lookup().source(),
+                queryShardContext.bigArrays(), fieldType, sourceFieldNames, filterDuplicateText);
         SignificanceLookup lookup = new SignificanceLookup(queryShardContext, fieldType, DocValueFormat.RAW, backgroundFilter);
-        return new MapStringTermsAggregator(
-            name,
-            factories,
-            collectorSource,
-            a -> a.new SignificantTermsResults(lookup, significanceHeuristic, cardinality),
-            null,
-            DocValueFormat.RAW,
-            bucketCountThresholds,
-            incExcFilter,
-            searchContext,
-            parent,
-            SubAggCollectionMode.BREADTH_FIRST,
-            false,
-            cardinality,
-            metadata
-        );
+        return new MapStringTermsAggregator(name, factories, collectorSource,
+                a -> a.new SignificantTermsResults(lookup, significanceHeuristic, cardinality), null, DocValueFormat.RAW,
+                bucketCountThresholds, incExcFilter, searchContext, parent, SubAggCollectionMode.BREADTH_FIRST, false, cardinality,
+                metadata);
     }
 
     private static class SignificantTextCollectorSource implements MapStringTermsAggregator.CollectorSource {
@@ -153,13 +127,8 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
         private final String[] sourceFieldNames;
         private ObjectArray<DuplicateByteSequenceSpotter> dupSequenceSpotters;
 
-        SignificantTextCollectorSource(
-            SourceLookup sourceLookup,
-            BigArrays bigArrays,
-            MappedFieldType fieldType,
-            String[] sourceFieldNames,
-            boolean filterDuplicateText
-        ) {
+        SignificantTextCollectorSource(SourceLookup sourceLookup, BigArrays bigArrays, MappedFieldType fieldType, String[] sourceFieldNames,
+                boolean filterDuplicateText) {
             this.sourceLookup = sourceLookup;
             this.bigArrays = bigArrays;
             this.fieldType = fieldType;
@@ -173,13 +142,8 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
         }
 
         @Override
-        public LeafBucketCollector getLeafCollector(
-            StringFilter includeExclude,
-            LeafReaderContext ctx,
-            LeafBucketCollector sub,
-            LongConsumer addRequestCircuitBreakerBytes,
-            CollectConsumer consumer
-        ) throws IOException {
+        public LeafBucketCollector getLeafCollector(StringFilter includeExclude, LeafReaderContext ctx, LeafBucketCollector sub,
+                LongConsumer addRequestCircuitBreakerBytes, CollectConsumer consumer) throws IOException {
             return new LeafBucketCollectorBase(sub, null) {
                 private final BytesRefBuilder scratch = new BytesRefBuilder();
 
@@ -205,17 +169,15 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
 
                     try {
                         for (String sourceField : sourceFieldNames) {
-                            Iterator<String> itr = sourceLookup.extractRawValues(sourceField).stream()
-                                .map(obj -> {
-                                    if (obj == null) {
-                                        return null;
-                                    }
-                                    if (obj instanceof BytesRef) {
-                                        return fieldType.valueForDisplay(obj).toString();
-                                    }
-                                    return obj.toString();
-                                })
-                                .iterator();
+                            Iterator<String> itr = sourceLookup.extractRawValues(sourceField).stream().map(obj -> {
+                                if (obj == null) {
+                                    return null;
+                                }
+                                if (obj instanceof BytesRef) {
+                                    return fieldType.valueForDisplay(obj).toString();
+                                }
+                                return obj.toString();
+                            }).iterator();
                             Analyzer analyzer = fieldType.indexAnalyzer();
                             while (itr.hasNext()) {
                                 TokenStream ts = analyzer.tokenStream(fieldType.name(), itr.next());
@@ -227,13 +189,8 @@ public class SignificantTextAggregatorFactory extends AggregatorFactory {
                     }
                 }
 
-                private void processTokenStream(
-                    int doc,
-                    long owningBucketOrd,
-                    TokenStream ts,
-                    BytesRefHash inDocTerms,
-                    DuplicateByteSequenceSpotter spotter
-                ) throws IOException {
+                private void processTokenStream(int doc, long owningBucketOrd, TokenStream ts, BytesRefHash inDocTerms,
+                        DuplicateByteSequenceSpotter spotter) throws IOException {
                     long lastTrieSize = 0;
                     if (spotter != null) {
                         lastTrieSize = spotter.getEstimatedSizeInBytes();

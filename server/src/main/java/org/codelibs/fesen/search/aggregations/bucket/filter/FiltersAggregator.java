@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.Bits;
@@ -39,13 +46,6 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.internal.SearchContext;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 public class FiltersAggregator extends BucketsAggregator {
 
@@ -110,8 +110,7 @@ public class FiltersAggregator extends BucketsAggregator {
                 return false;
             }
             KeyedFilter other = (KeyedFilter) obj;
-            return Objects.equals(key, other.key)
-                    && Objects.equals(filter, other.filter);
+            return Objects.equals(key, other.key) && Objects.equals(filter, other.filter);
         }
     }
 
@@ -139,8 +138,7 @@ public class FiltersAggregator extends BucketsAggregator {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
-            final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
         // no need to provide deleted docs to the filter
         Weight[] filters = this.filters.get();
         final Bits[] bits = new Bits[filters.length];
@@ -167,13 +165,12 @@ public class FiltersAggregator extends BucketsAggregator {
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
         return buildAggregationsForFixedBucketCount(owningBucketOrds, keys.length + (showOtherBucket ? 1 : 0),
-            (offsetInOwningOrd, docCount, subAggregationResults) -> {
-                if (offsetInOwningOrd < keys.length) {
-                    return new InternalFilters.InternalBucket(keys[offsetInOwningOrd], docCount,
-                            subAggregationResults, keyed);
-                }
-                return new InternalFilters.InternalBucket(otherBucketKey, docCount, subAggregationResults, keyed);
-            }, buckets -> new InternalFilters(name, buckets, keyed, metadata())); 
+                (offsetInOwningOrd, docCount, subAggregationResults) -> {
+                    if (offsetInOwningOrd < keys.length) {
+                        return new InternalFilters.InternalBucket(keys[offsetInOwningOrd], docCount, subAggregationResults, keyed);
+                    }
+                    return new InternalFilters.InternalBucket(otherBucketKey, docCount, subAggregationResults, keyed);
+                }, buckets -> new InternalFilters(name, buckets, keyed, metadata()));
     }
 
     @Override

@@ -89,7 +89,7 @@ public class AggregatorBaseTests extends ESSingleNodeTestCase {
     }
 
     private Function<byte[], Number> pointReaderShim(SearchContext context, Aggregator parent, ValuesSourceConfig config)
-        throws IOException {
+            throws IOException {
         BogusAggregator aggregator = new BogusAggregator(context, parent);
         return aggregator.pointReaderIfAvailable(config);
     }
@@ -98,25 +98,17 @@ public class AggregatorBaseTests extends ESSingleNodeTestCase {
         return mock(Aggregator.class);
     }
 
-    private ValuesSourceConfig getVSConfig(
-        String fieldName,
-        NumberFieldMapper.NumberType numType,
-        boolean indexed,
-        QueryShardContext context
-    ) {
-        MappedFieldType ft
-            = new NumberFieldMapper.NumberFieldType(fieldName, numType, indexed, false, true, false, null, Collections.emptyMap());
+    private ValuesSourceConfig getVSConfig(String fieldName, NumberFieldMapper.NumberType numType, boolean indexed,
+            QueryShardContext context) {
+        MappedFieldType ft =
+                new NumberFieldMapper.NumberFieldType(fieldName, numType, indexed, false, true, false, null, Collections.emptyMap());
         return ValuesSourceConfig.resolveFieldOnly(ft, context);
     }
 
-    private ValuesSourceConfig getVSConfig(
-        String fieldName,
-        DateFieldMapper.Resolution resolution,
-        boolean indexed,
-        QueryShardContext context
-    ) {
-        MappedFieldType ft = new DateFieldMapper.DateFieldType(fieldName, indexed, false, true,
-            DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER, resolution, null, Collections.emptyMap());
+    private ValuesSourceConfig getVSConfig(String fieldName, DateFieldMapper.Resolution resolution, boolean indexed,
+            QueryShardContext context) {
+        MappedFieldType ft = new DateFieldMapper.DateFieldType(fieldName, indexed, false, true, DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER,
+                resolution, null, Collections.emptyMap());
         return ValuesSourceConfig.resolveFieldOnly(ft, context);
     }
 
@@ -128,35 +120,19 @@ public class AggregatorBaseTests extends ESSingleNodeTestCase {
 
             for (NumberFieldMapper.NumberType type : NumberFieldMapper.NumberType.values()) {
                 assertNotNull(
-                    pointReaderShim(mockSearchContext(new MatchAllDocsQuery()), null, getVSConfig("number", type, true, context))
-                );
+                        pointReaderShim(mockSearchContext(new MatchAllDocsQuery()), null, getVSConfig("number", type, true, context)));
                 assertNotNull(pointReaderShim(mockSearchContext(null), null, getVSConfig("number", type, true, context)));
                 assertNull(pointReaderShim(mockSearchContext(null), mockAggregator(), getVSConfig("number", type, true, context)));
-                assertNull(
-                    pointReaderShim(
-                        mockSearchContext(new TermQuery(new Term("foo", "bar"))),
-                        null,
-                        getVSConfig("number", type, true, context)
-                    )
-                );
+                assertNull(pointReaderShim(mockSearchContext(new TermQuery(new Term("foo", "bar"))), null,
+                        getVSConfig("number", type, true, context)));
                 assertNull(pointReaderShim(mockSearchContext(null), mockAggregator(), getVSConfig("number", type, true, context)));
                 assertNull(pointReaderShim(mockSearchContext(null), null, getVSConfig("number", type, false, context)));
             }
             for (DateFieldMapper.Resolution resolution : DateFieldMapper.Resolution.values()) {
-                assertNull(
-                    pointReaderShim(
-                        mockSearchContext(new MatchAllDocsQuery()),
-                        mockAggregator(),
-                        getVSConfig("number", resolution, true, context)
-                    )
-                );
-                assertNull(
-                    pointReaderShim(
-                        mockSearchContext(new TermQuery(new Term("foo", "bar"))),
-                        null,
-                        getVSConfig("number", resolution, true, context)
-                    )
-                );
+                assertNull(pointReaderShim(mockSearchContext(new MatchAllDocsQuery()), mockAggregator(),
+                        getVSConfig("number", resolution, true, context)));
+                assertNull(pointReaderShim(mockSearchContext(new TermQuery(new Term("foo", "bar"))), null,
+                        getVSConfig("number", resolution, true, context)));
                 assertNull(pointReaderShim(mockSearchContext(null), mockAggregator(), getVSConfig("number", resolution, true, context)));
                 assertNull(pointReaderShim(mockSearchContext(null), null, getVSConfig("number", resolution, false, context)));
             }
@@ -165,22 +141,14 @@ public class AggregatorBaseTests extends ESSingleNodeTestCase {
             byte[] scratch = new byte[8];
             LongPoint.encodeDimension(DateFieldMapper.Resolution.MILLISECONDS.convert(expected), scratch, 0);
             assertThat(
-                pointReaderShim(
-                    mockSearchContext(new MatchAllDocsQuery()),
-                    null,
-                    getVSConfig("number", DateFieldMapper.Resolution.MILLISECONDS, true, context)
-                ).apply(scratch),
-                equalTo(expected.toEpochMilli())
-            );
+                    pointReaderShim(mockSearchContext(new MatchAllDocsQuery()), null,
+                            getVSConfig("number", DateFieldMapper.Resolution.MILLISECONDS, true, context)).apply(scratch),
+                    equalTo(expected.toEpochMilli()));
             LongPoint.encodeDimension(DateFieldMapper.Resolution.NANOSECONDS.convert(expected), scratch, 0);
             assertThat(
-                pointReaderShim(
-                    mockSearchContext(new MatchAllDocsQuery()),
-                    null,
-                    getVSConfig("number", DateFieldMapper.Resolution.NANOSECONDS, true, context)
-                ).apply(scratch),
-                equalTo(expected.toEpochMilli())
-            );
+                    pointReaderShim(mockSearchContext(new MatchAllDocsQuery()), null,
+                            getVSConfig("number", DateFieldMapper.Resolution.NANOSECONDS, true, context)).apply(scratch),
+                    equalTo(expected.toEpochMilli()));
         }
     }
 }

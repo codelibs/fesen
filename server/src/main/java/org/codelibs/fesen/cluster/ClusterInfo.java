@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.cluster;
 
-import com.carrotsearch.hppc.ObjectHashSet;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
@@ -34,9 +34,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.store.StoreStats;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
+import com.carrotsearch.hppc.ObjectHashSet;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * ClusterInfo is an object representing a map of nodes to {@link DiskUsage}
@@ -53,7 +53,7 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     final ImmutableOpenMap<NodeAndPath, ReservedSpace> reservedSpace;
 
     protected ClusterInfo() {
-       this(ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of());
+        this(ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of(), ImmutableOpenMap.of());
     }
 
     /**
@@ -67,9 +67,8 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
      * @see #shardIdentifierFromRouting
      */
     public ClusterInfo(ImmutableOpenMap<String, DiskUsage> leastAvailableSpaceUsage,
-                       ImmutableOpenMap<String, DiskUsage> mostAvailableSpaceUsage, ImmutableOpenMap<String, Long> shardSizes,
-                       ImmutableOpenMap<ShardRouting, String> routingToDataPath,
-                       ImmutableOpenMap<NodeAndPath, ReservedSpace> reservedSpace) {
+            ImmutableOpenMap<String, DiskUsage> mostAvailableSpaceUsage, ImmutableOpenMap<String, Long> shardSizes,
+            ImmutableOpenMap<ShardRouting, String> routingToDataPath, ImmutableOpenMap<NodeAndPath, ReservedSpace> reservedSpace) {
         this.leastAvailableSpaceUsage = leastAvailableSpaceUsage;
         this.shardSizes = shardSizes;
         this.mostAvailableSpaceUsage = mostAvailableSpaceUsage;
@@ -117,15 +116,19 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     }
 
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        builder.startObject("nodes"); {
+        builder.startObject("nodes");
+        {
             for (ObjectObjectCursor<String, DiskUsage> c : this.leastAvailableSpaceUsage) {
-                builder.startObject(c.key); { // node
+                builder.startObject(c.key);
+                { // node
                     builder.field("node_name", c.value.getNodeName());
-                    builder.startObject("least_available"); {
+                    builder.startObject("least_available");
+                    {
                         c.value.toShortXContent(builder);
                     }
                     builder.endObject(); // end "least_available"
-                    builder.startObject("most_available"); {
+                    builder.startObject("most_available");
+                    {
                         DiskUsage most = this.mostAvailableSpaceUsage.get(c.key);
                         if (most != null) {
                             most.toShortXContent(builder);
@@ -137,21 +140,25 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
             }
         }
         builder.endObject(); // end "nodes"
-        builder.startObject("shard_sizes"); {
+        builder.startObject("shard_sizes");
+        {
             for (ObjectObjectCursor<String, Long> c : this.shardSizes) {
                 builder.humanReadableField(c.key + "_bytes", c.key, new ByteSizeValue(c.value));
             }
         }
         builder.endObject(); // end "shard_sizes"
-        builder.startObject("shard_paths"); {
+        builder.startObject("shard_paths");
+        {
             for (ObjectObjectCursor<ShardRouting, String> c : this.routingToDataPath) {
                 builder.field(c.key.toString(), c.value);
             }
         }
         builder.endObject(); // end "shard_paths"
-        builder.startArray("reserved_sizes"); {
+        builder.startArray("reserved_sizes");
+        {
             for (ObjectObjectCursor<NodeAndPath, ReservedSpace> c : this.reservedSpace) {
-                builder.startObject(); {
+                builder.startObject();
+                {
                     builder.field("node_id", c.key.nodeId);
                     builder.field("path", c.key.path);
                     c.value.toXContent(builder, params);
@@ -236,8 +243,10 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             NodeAndPath that = (NodeAndPath) o;
             return nodeId.equals(that.nodeId) && path.equals(that.path);
         }
@@ -297,11 +306,12 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             ReservedSpace that = (ReservedSpace) o;
-            return total == that.total &&
-                shardIds.equals(that.shardIds);
+            return total == that.total && shardIds.equals(that.shardIds);
         }
 
         @Override
@@ -311,7 +321,8 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
 
         void toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.field("total", total);
-            builder.startArray("shards"); {
+            builder.startArray("shards");
+            {
                 for (ObjectCursor<ShardId> shardIdCursor : shardIds) {
                     shardIdCursor.value.toXContent(builder, params);
                 }

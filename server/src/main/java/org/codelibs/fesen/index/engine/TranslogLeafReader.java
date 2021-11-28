@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.index.engine;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.FieldInfo;
@@ -42,31 +47,24 @@ import org.codelibs.fesen.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.index.mapper.Uid;
 import org.codelibs.fesen.index.translog.Translog;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Set;
-
 /**
  * Internal class that mocks a single doc read from the transaction log as a leaf reader.
  */
 public final class TranslogLeafReader extends LeafReader {
 
     private final Translog.Index operation;
-    private static final FieldInfo FAKE_SOURCE_FIELD
-        = new FieldInfo(SourceFieldMapper.NAME, 1, false, false, false, IndexOptions.NONE, DocValuesType.NONE, -1, Collections.emptyMap(),
-        0, 0, 0, false);
-    private static final FieldInfo FAKE_ROUTING_FIELD
-        = new FieldInfo(RoutingFieldMapper.NAME, 2, false, false, false, IndexOptions.NONE, DocValuesType.NONE, -1, Collections.emptyMap(),
-        0, 0, 0, false);
-    private static final FieldInfo FAKE_ID_FIELD
-        = new FieldInfo(IdFieldMapper.NAME, 3, false, false, false, IndexOptions.NONE, DocValuesType.NONE, -1, Collections.emptyMap(),
-        0, 0, 0, false);
+    private static final FieldInfo FAKE_SOURCE_FIELD = new FieldInfo(SourceFieldMapper.NAME, 1, false, false, false, IndexOptions.NONE,
+            DocValuesType.NONE, -1, Collections.emptyMap(), 0, 0, 0, false);
+    private static final FieldInfo FAKE_ROUTING_FIELD = new FieldInfo(RoutingFieldMapper.NAME, 2, false, false, false, IndexOptions.NONE,
+            DocValuesType.NONE, -1, Collections.emptyMap(), 0, 0, 0, false);
+    private static final FieldInfo FAKE_ID_FIELD = new FieldInfo(IdFieldMapper.NAME, 3, false, false, false, IndexOptions.NONE,
+            DocValuesType.NONE, -1, Collections.emptyMap(), 0, 0, 0, false);
     public static Set<String> ALL_FIELD_NAMES = Sets.newHashSet(FAKE_SOURCE_FIELD.name, FAKE_ROUTING_FIELD.name, FAKE_ID_FIELD.name);
 
     TranslogLeafReader(Translog.Index operation) {
         this.operation = operation;
     }
+
     @Override
     public CacheHelper getCoreCacheHelper() {
         throw new UnsupportedOperationException();

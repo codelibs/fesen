@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.Lucene;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 public class SearchSortValuesAndFormats implements Writeable {
     private final Object[] rawSortValues;
@@ -50,8 +50,8 @@ public class SearchSortValuesAndFormats implements Writeable {
                 // sort by _score or _doc
                 this.formattedSortValues[i] = sortValue;
             } else {
-                assert sortValue == null : "Sort values must be a BytesRef, Long, Integer, Double or Float, but got "
-                    + sortValue.getClass() + ": " + sortValue;
+                assert sortValue == null : "Sort values must be a BytesRef, Long, Integer, Double or Float, but got " + sortValue.getClass()
+                        + ": " + sortValue;
                 this.formattedSortValues[i] = sortValue;
             }
         }
@@ -89,12 +89,13 @@ public class SearchSortValuesAndFormats implements Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SearchSortValuesAndFormats that = (SearchSortValuesAndFormats) o;
-        return Arrays.equals(rawSortValues, that.rawSortValues) &&
-            Arrays.equals(formattedSortValues, that.formattedSortValues) &&
-            Arrays.equals(sortValueFormats, that.sortValueFormats);
+        return Arrays.equals(rawSortValues, that.rawSortValues) && Arrays.equals(formattedSortValues, that.formattedSortValues)
+                && Arrays.equals(sortValueFormats, that.sortValueFormats);
     }
 
     @Override

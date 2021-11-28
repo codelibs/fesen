@@ -95,8 +95,7 @@ public class LoggerMessageFormat {
         return sbuf.toString();
     }
 
-    static boolean isEscapedDelimiter(String messagePattern,
-                                      int delimiterStartIndex) {
+    static boolean isEscapedDelimiter(String messagePattern, int delimiterStartIndex) {
 
         if (delimiterStartIndex == 0) {
             return false;

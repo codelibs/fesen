@@ -24,7 +24,7 @@ import org.codelibs.fesen.action.support.single.shard.SingleShardOperationReques
 import org.codelibs.fesen.client.FesenClient;
 
 public class AnalyzeRequestBuilder
-    extends SingleShardOperationRequestBuilder<AnalyzeAction.Request, AnalyzeAction.Response, AnalyzeRequestBuilder> {
+        extends SingleShardOperationRequestBuilder<AnalyzeAction.Request, AnalyzeAction.Response, AnalyzeRequestBuilder> {
 
     public AnalyzeRequestBuilder(FesenClient client, AnalyzeAction action) {
         super(client, action, new AnalyzeAction.Request());
@@ -114,7 +114,7 @@ public class AnalyzeRequestBuilder
     /**
      * Sets attributes that will include results
      */
-    public AnalyzeRequestBuilder setAttributes(String... attributes){
+    public AnalyzeRequestBuilder setAttributes(String... attributes) {
         request.attributes(attributes);
         return this;
     }

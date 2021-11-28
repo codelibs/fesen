@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.indices;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codelibs.fesen.action.admin.indices.stats.CommonStats;
 import org.codelibs.fesen.action.admin.indices.stats.IndexShardStats;
 import org.codelibs.fesen.action.admin.indices.stats.ShardStats;
@@ -45,12 +51,6 @@ import org.codelibs.fesen.index.store.StoreStats;
 import org.codelibs.fesen.index.translog.TranslogStats;
 import org.codelibs.fesen.index.warmer.WarmerStats;
 import org.codelibs.fesen.search.suggest.completion.CompletionStats;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Global information on indices stats running on a specific node.
@@ -192,7 +192,7 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         final String level = params.param("level", "node");
         final boolean isLevelValid =
-            "indices".equalsIgnoreCase(level) || "node".equalsIgnoreCase(level) || "shards".equalsIgnoreCase(level);
+                "indices".equalsIgnoreCase(level) || "node".equalsIgnoreCase(level) || "shards".equalsIgnoreCase(level);
         if (!isLevelValid) {
             throw new IllegalArgumentException("level parameter must be one of [indices] or [node] or [shards] but was [" + level + "]");
         }

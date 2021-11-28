@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeFalse;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,14 +38,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.ssl.PemUtils;
-import org.codelibs.fesen.common.ssl.SslConfigException;
 import org.codelibs.fesen.test.ESTestCase;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.core.StringContains.containsString;
 
 public class PemUtilsTests extends ESTestCase {
 
@@ -96,8 +96,7 @@ public class PemUtilsTests extends ESTestCase {
         Key key = getKeyFromKeystore("RSA");
         assertThat(key, notNullValue());
         assertThat(key, instanceOf(PrivateKey.class));
-        PrivateKey privateKey = PemUtils.readPrivateKey(getDataPath
-            ("/certs/pem-utils/key_pkcs8_encrypted.pem"), TESTNODE_PASSWORD);
+        PrivateKey privateKey = PemUtils.readPrivateKey(getDataPath("/certs/pem-utils/key_pkcs8_encrypted.pem"), TESTNODE_PASSWORD);
         assertThat(privateKey, notNullValue());
         assertThat(privateKey, equalTo(key));
     }
@@ -146,8 +145,8 @@ public class PemUtilsTests extends ESTestCase {
         Key key = getKeyFromKeystore("DSA");
         assertThat(key, notNullValue());
         assertThat(key, instanceOf(PrivateKey.class));
-        PrivateKey privateKey = PemUtils.readPrivateKey(getDataPath("/certs/pem-utils/dsa_key_openssl_plain_with_params.pem"),
-            EMPTY_PASSWORD);
+        PrivateKey privateKey =
+                PemUtils.readPrivateKey(getDataPath("/certs/pem-utils/dsa_key_openssl_plain_with_params.pem"), EMPTY_PASSWORD);
 
         assertThat(privateKey, notNullValue());
         assertThat(privateKey, equalTo(key));
@@ -177,8 +176,8 @@ public class PemUtilsTests extends ESTestCase {
         Key key = getKeyFromKeystore("EC");
         assertThat(key, notNullValue());
         assertThat(key, instanceOf(PrivateKey.class));
-        PrivateKey privateKey = PemUtils.readPrivateKey(getDataPath("/certs/pem-utils/ec_key_openssl_plain_with_params.pem"),
-            EMPTY_PASSWORD);
+        PrivateKey privateKey =
+                PemUtils.readPrivateKey(getDataPath("/certs/pem-utils/ec_key_openssl_plain_with_params.pem"), EMPTY_PASSWORD);
 
         assertThat(privateKey, notNullValue());
         assertThat(privateKey, equalTo(key));

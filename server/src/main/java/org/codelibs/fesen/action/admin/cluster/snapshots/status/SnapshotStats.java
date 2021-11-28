@@ -19,7 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -32,8 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.core.TimeValue;
 
-import java.io.IOException;
-
 public class SnapshotStats implements Writeable, ToXContentObject {
 
     private long startTime;
@@ -45,7 +44,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
     private long totalSize;
     private long processedSize;
 
-    SnapshotStats() {}
+    SnapshotStats() {
+    }
 
     SnapshotStats(StreamInput in) throws IOException {
         startTime = in.readVLong();
@@ -61,9 +61,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
         totalSize = in.readVLong();
     }
 
-    SnapshotStats(long startTime, long time,
-                  int incrementalFileCount, int totalFileCount, int processedFileCount,
-                  long incrementalSize, long totalSize, long processedSize) {
+    SnapshotStats(long startTime, long time, int incrementalFileCount, int totalFileCount, int processedFileCount, long incrementalSize,
+            long totalSize, long processedSize) {
         this.startTime = startTime;
         this.time = time;
         assert time >= 0 : "Tried to initialize snapshot stats with negative total time [" + time + "]";
@@ -287,7 +286,7 @@ public class SnapshotStats implements Writeable, ToXContentObject {
             }
         }
         return new SnapshotStats(startTime, time, incrementalFileCount, totalFileCount, processedFileCount, incrementalSize, totalSize,
-            processedSize);
+                processedSize);
     }
 
     /**
@@ -318,24 +317,33 @@ public class SnapshotStats implements Writeable, ToXContentObject {
             // Update duration
             time = endTime - startTime;
         }
-        assert time >= 0
-            : "Update with [" + Strings.toString(stats) + "][" + updateTimestamps + "] resulted in negative total time [" + time + "]";
+        assert time >= 0 : "Update with [" + Strings.toString(stats) + "][" + updateTimestamps + "] resulted in negative total time ["
+                + time + "]";
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         SnapshotStats that = (SnapshotStats) o;
 
-        if (startTime != that.startTime) return false;
-        if (time != that.time) return false;
-        if (incrementalFileCount != that.incrementalFileCount) return false;
-        if (totalFileCount != that.totalFileCount) return false;
-        if (processedFileCount != that.processedFileCount) return false;
-        if (incrementalSize != that.incrementalSize) return false;
-        if (totalSize != that.totalSize) return false;
+        if (startTime != that.startTime)
+            return false;
+        if (time != that.time)
+            return false;
+        if (incrementalFileCount != that.incrementalFileCount)
+            return false;
+        if (totalFileCount != that.totalFileCount)
+            return false;
+        if (processedFileCount != that.processedFileCount)
+            return false;
+        if (incrementalSize != that.incrementalSize)
+            return false;
+        if (totalSize != that.totalSize)
+            return false;
         return processedSize == that.processedSize;
     }
 

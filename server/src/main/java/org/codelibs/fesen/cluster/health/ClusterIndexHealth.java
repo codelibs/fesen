@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.cluster.health;
 
+import static java.util.Collections.emptyMap;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.routing.IndexRoutingTable;
 import org.codelibs.fesen.cluster.routing.IndexShardRoutingTable;
@@ -32,19 +45,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
-import static java.util.Collections.emptyMap;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
 public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, Writeable, ToXContentFragment {
     private static final String STATUS = "status";
     private static final String NUMBER_OF_SHARDS = "number_of_shards";
@@ -57,31 +57,31 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
     private static final String SHARDS = "shards";
 
     private static final ConstructingObjectParser<ClusterIndexHealth, String> PARSER =
-            new ConstructingObjectParser<>("cluster_index_health", true,
-                    (parsedObjects, index) -> {
-                        int i = 0;
-                        int numberOfShards = (int) parsedObjects[i++];
-                        int numberOfReplicas = (int) parsedObjects[i++];
-                        int activeShards = (int) parsedObjects[i++];
-                        int relocatingShards = (int) parsedObjects[i++];
-                        int initializingShards = (int) parsedObjects[i++];
-                        int unassignedShards = (int) parsedObjects[i++];
-                        int activePrimaryShards = (int) parsedObjects[i++];
-                        String statusStr = (String) parsedObjects[i++];
-                        ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
-                        @SuppressWarnings("unchecked") List<ClusterShardHealth> shardList = (List<ClusterShardHealth>) parsedObjects[i];
-                        final Map<Integer, ClusterShardHealth> shards;
-                        if (shardList == null || shardList.isEmpty()) {
-                            shards = emptyMap();
-                        } else {
-                            shards = new HashMap<>(shardList.size());
-                            for (ClusterShardHealth shardHealth : shardList) {
-                                shards.put(shardHealth.getShardId(), shardHealth);
-                            }
-                        }
-                        return new ClusterIndexHealth(index, numberOfShards, numberOfReplicas, activeShards, relocatingShards,
-                                initializingShards, unassignedShards, activePrimaryShards, status, shards);
-                    });
+            new ConstructingObjectParser<>("cluster_index_health", true, (parsedObjects, index) -> {
+                int i = 0;
+                int numberOfShards = (int) parsedObjects[i++];
+                int numberOfReplicas = (int) parsedObjects[i++];
+                int activeShards = (int) parsedObjects[i++];
+                int relocatingShards = (int) parsedObjects[i++];
+                int initializingShards = (int) parsedObjects[i++];
+                int unassignedShards = (int) parsedObjects[i++];
+                int activePrimaryShards = (int) parsedObjects[i++];
+                String statusStr = (String) parsedObjects[i++];
+                ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
+                @SuppressWarnings("unchecked")
+                List<ClusterShardHealth> shardList = (List<ClusterShardHealth>) parsedObjects[i];
+                final Map<Integer, ClusterShardHealth> shards;
+                if (shardList == null || shardList.isEmpty()) {
+                    shards = emptyMap();
+                } else {
+                    shards = new HashMap<>(shardList.size());
+                    for (ClusterShardHealth shardHealth : shardList) {
+                        shards.put(shardHealth.getShardId(), shardHealth);
+                    }
+                }
+                return new ClusterIndexHealth(index, numberOfShards, numberOfReplicas, activeShards, relocatingShards, initializingShards,
+                        unassignedShards, activePrimaryShards, status, shards);
+            });
 
     public static final ObjectParser.NamedObjectParser<ClusterShardHealth, String> SHARD_PARSER =
             (XContentParser p, String indexIgnored, String shardId) -> ClusterShardHealth.innerFromXContent(p, Integer.valueOf(shardId));
@@ -291,35 +291,23 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
 
     @Override
     public String toString() {
-        return "ClusterIndexHealth{" +
-                "index='" + index + '\'' +
-                ", numberOfShards=" + numberOfShards +
-                ", numberOfReplicas=" + numberOfReplicas +
-                ", activeShards=" + activeShards +
-                ", relocatingShards=" + relocatingShards +
-                ", initializingShards=" + initializingShards +
-                ", unassignedShards=" + unassignedShards +
-                ", activePrimaryShards=" + activePrimaryShards +
-                ", status=" + status +
-                ", shards.size=" + (shards == null ? "null" : shards.size()) +
-                '}';
+        return "ClusterIndexHealth{" + "index='" + index + '\'' + ", numberOfShards=" + numberOfShards + ", numberOfReplicas="
+                + numberOfReplicas + ", activeShards=" + activeShards + ", relocatingShards=" + relocatingShards + ", initializingShards="
+                + initializingShards + ", unassignedShards=" + unassignedShards + ", activePrimaryShards=" + activePrimaryShards
+                + ", status=" + status + ", shards.size=" + (shards == null ? "null" : shards.size()) + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ClusterIndexHealth that = (ClusterIndexHealth) o;
-        return Objects.equals(index, that.index) &&
-                numberOfShards == that.numberOfShards &&
-                numberOfReplicas == that.numberOfReplicas &&
-                activeShards == that.activeShards &&
-                relocatingShards == that.relocatingShards &&
-                initializingShards == that.initializingShards &&
-                unassignedShards == that.unassignedShards &&
-                activePrimaryShards == that.activePrimaryShards &&
-                status == that.status &&
-                Objects.equals(shards, that.shards);
+        return Objects.equals(index, that.index) && numberOfShards == that.numberOfShards && numberOfReplicas == that.numberOfReplicas
+                && activeShards == that.activeShards && relocatingShards == that.relocatingShards
+                && initializingShards == that.initializingShards && unassignedShards == that.unassignedShards
+                && activePrimaryShards == that.activePrimaryShards && status == that.status && Objects.equals(shards, that.shards);
     }
 
     @Override

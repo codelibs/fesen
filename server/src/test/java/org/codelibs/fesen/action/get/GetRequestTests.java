@@ -26,7 +26,7 @@ import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.get.GetRequest;
 import org.codelibs.fesen.test.ESTestCase;
 
-public class GetRequestTests  extends ESTestCase {
+public class GetRequestTests extends ESTestCase {
 
     public void testValidation() {
         {

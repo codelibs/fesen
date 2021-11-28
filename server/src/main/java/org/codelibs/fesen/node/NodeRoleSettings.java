@@ -29,17 +29,9 @@ import org.codelibs.fesen.common.settings.Setting.Property;
 
 public class NodeRoleSettings {
 
-    public static final Setting<List<DiscoveryNodeRole>> NODE_ROLES_SETTING = Setting.listSetting(
-        "node.roles",
-        null,
-        DiscoveryNode::getRoleFromRoleName,
-        settings -> DiscoveryNode.getPossibleRoles()
-            .stream()
-            .filter(role -> role.isEnabledByDefault(settings))
-            .map(DiscoveryNodeRole::roleName)
-            .collect(Collectors.toList()),
-        roles -> {},
-        Property.NodeScope
-    );
+    public static final Setting<List<DiscoveryNodeRole>> NODE_ROLES_SETTING = Setting.listSetting("node.roles", null,
+            DiscoveryNode::getRoleFromRoleName, settings -> DiscoveryNode.getPossibleRoles().stream()
+                    .filter(role -> role.isEnabledByDefault(settings)).map(DiscoveryNodeRole::roleName).collect(Collectors.toList()),
+            roles -> {}, Property.NodeScope);
 
 }

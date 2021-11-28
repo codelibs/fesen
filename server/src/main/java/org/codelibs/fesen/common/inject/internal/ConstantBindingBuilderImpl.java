@@ -16,6 +16,8 @@
 
 package org.codelibs.fesen.common.inject.internal;
 
+import static java.util.Collections.emptySet;
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -25,15 +27,12 @@ import org.codelibs.fesen.common.inject.binder.AnnotatedConstantBindingBuilder;
 import org.codelibs.fesen.common.inject.binder.ConstantBindingBuilder;
 import org.codelibs.fesen.common.inject.spi.Element;
 
-import static java.util.Collections.emptySet;
-
 /**
  * Bind a constant.
  *
  * @author jessewilson@google.com (Jesse Wilson)
  */
-public final class ConstantBindingBuilderImpl<T>
-        extends AbstractBindingBuilder<T>
+public final class ConstantBindingBuilderImpl<T> extends AbstractBindingBuilder<T>
         implements AnnotatedConstantBindingBuilder, ConstantBindingBuilder {
 
     @SuppressWarnings("unchecked") // constant bindings start out with T unknown
@@ -129,8 +128,7 @@ public final class ConstantBindingBuilderImpl<T>
             binder.addError(BINDING_TO_NULL);
         }
 
-        setBinding(new InstanceBindingImpl<>(
-                base.getSource(), key, base.getScoping(), emptySet(), instanceAsT));
+        setBinding(new InstanceBindingImpl<>(base.getSource(), key, base.getScoping(), emptySet(), instanceAsT));
     }
 
     @Override

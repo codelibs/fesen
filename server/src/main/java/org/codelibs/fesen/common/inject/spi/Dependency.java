@@ -16,13 +16,13 @@
 
 package org.codelibs.fesen.common.inject.spi;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import org.codelibs.fesen.common.inject.Key;
-
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * A variable that can be resolved by an injector.
@@ -40,8 +40,7 @@ public final class Dependency<T> {
     private final boolean nullable;
     private final int parameterIndex;
 
-    Dependency(InjectionPoint injectionPoint, Key<T> key,
-               boolean nullable, int parameterIndex) {
+    Dependency(InjectionPoint injectionPoint, Key<T> key, boolean nullable, int parameterIndex) {
         this.injectionPoint = injectionPoint;
         this.key = key;
         this.nullable = nullable;
@@ -107,8 +106,7 @@ public final class Dependency<T> {
     public boolean equals(Object o) {
         if (o instanceof Dependency) {
             Dependency<?> dependency = (Dependency<?>) o;
-            return Objects.equals(injectionPoint, dependency.injectionPoint)
-                    && Objects.equals(parameterIndex, dependency.parameterIndex)
+            return Objects.equals(injectionPoint, dependency.injectionPoint) && Objects.equals(parameterIndex, dependency.parameterIndex)
                     && Objects.equals(key, dependency.key);
         } else {
             return false;

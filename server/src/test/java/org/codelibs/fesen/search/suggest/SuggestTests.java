@@ -69,11 +69,11 @@ public class SuggestTests extends ESTestCase {
     static {
         namedXContents = new ArrayList<>();
         namedXContents.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField("term"),
-                (parser, context) -> TermSuggestion.fromXContent(parser, (String)context)));
+                (parser, context) -> TermSuggestion.fromXContent(parser, (String) context)));
         namedXContents.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField("phrase"),
-                (parser, context) -> PhraseSuggestion.fromXContent(parser, (String)context)));
+                (parser, context) -> PhraseSuggestion.fromXContent(parser, (String) context)));
         namedXContents.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField("completion"),
-                (parser, context) -> CompletionSuggestion.fromXContent(parser, (String)context)));
+                (parser, context) -> CompletionSuggestion.fromXContent(parser, (String) context)));
         xContentRegistry = new NamedXContentRegistry(namedXContents);
     }
 
@@ -125,37 +125,19 @@ public class SuggestTests extends ESTestCase {
     }
 
     public void testToXContent() throws IOException {
-        PhraseSuggestion.Entry.Option option = new PhraseSuggestion.Entry.Option(new Text("someText"), new Text("somethingHighlighted"),
-            1.3f, true);
+        PhraseSuggestion.Entry.Option option =
+                new PhraseSuggestion.Entry.Option(new Text("someText"), new Text("somethingHighlighted"), 1.3f, true);
         PhraseSuggestion.Entry entry = new PhraseSuggestion.Entry(new Text("entryText"), 42, 313);
         entry.addOption(option);
         PhraseSuggestion suggestion = new PhraseSuggestion("suggestionName", 5);
         suggestion.addTerm(entry);
         Suggest suggest = new Suggest(Collections.singletonList(suggestion));
         BytesReference xContent = toXContent(suggest, XContentType.JSON, randomBoolean());
-        assertEquals(
-            stripWhitespace(
-                "{"
-                    + "  \"suggest\": {"
-                    + "    \"suggestionName\": ["
-                    + "      {"
-                    + "        \"text\": \"entryText\","
-                    + "        \"offset\": 42,"
-                    + "        \"length\": 313,"
-                    + "        \"options\": ["
-                    + "          {"
-                    + "            \"text\": \"someText\","
-                    + "            \"highlighted\": \"somethingHighlighted\","
-                    + "            \"score\": 1.3,"
-                    + "            \"collate_match\": true"
-                    + "          }"
-                    + "        ]"
-                    + "      }"
-                    + "    ]"
-                    + "  }"
-                    + "}"
-            ),
-            xContent.utf8ToString());
+        assertEquals(stripWhitespace("{" + "  \"suggest\": {" + "    \"suggestionName\": [" + "      {" + "        \"text\": \"entryText\","
+                + "        \"offset\": 42," + "        \"length\": 313," + "        \"options\": [" + "          {"
+                + "            \"text\": \"someText\"," + "            \"highlighted\": \"somethingHighlighted\","
+                + "            \"score\": 1.3," + "            \"collate_match\": true" + "          }" + "        ]" + "      }" + "    ]"
+                + "  }" + "}"), xContent.utf8ToString());
     }
 
     public void testFilter() throws Exception {
@@ -194,7 +176,6 @@ public class SuggestTests extends ESTestCase {
             assertThat(completionSuggestions.get(i).getName(), equalTo(sortedSuggestions.get(i).getName()));
         }
     }
-
 
     public void testParsingExceptionOnUnknownSuggestion() throws IOException {
         XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -237,14 +218,14 @@ public class SuggestTests extends ESTestCase {
     }
 
     public void testSerialization() throws IOException {
-        final Version bwcVersion = VersionUtils.randomVersionBetween(random(),
-            Version.CURRENT.minimumCompatibilityVersion(), Version.CURRENT);
+        final Version bwcVersion =
+                VersionUtils.randomVersionBetween(random(), Version.CURRENT.minimumCompatibilityVersion(), Version.CURRENT);
 
         final Suggest suggest = createTestItem();
         final Suggest bwcSuggest;
 
-        NamedWriteableRegistry registry = new NamedWriteableRegistry
-            (new SearchModule(Settings.EMPTY, false, emptyList()).getNamedWriteables());
+        NamedWriteableRegistry registry =
+                new NamedWriteableRegistry(new SearchModule(Settings.EMPTY, false, emptyList()).getNamedWriteables());
 
         try (BytesStreamOutput out = new BytesStreamOutput()) {
             out.setVersion(bwcVersion);

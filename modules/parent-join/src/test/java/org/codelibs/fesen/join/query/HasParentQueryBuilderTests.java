@@ -19,6 +19,22 @@
 
 package org.codelibs.fesen.join.query;
 
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+import static org.codelibs.fesen.join.query.JoinQueryBuilders.hasParentQuery;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.join.ScoreMode;
@@ -38,30 +54,12 @@ import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.index.query.TermQueryBuilder;
 import org.codelibs.fesen.index.query.WrapperQueryBuilder;
 import org.codelibs.fesen.join.ParentJoinPlugin;
-import org.codelibs.fesen.join.query.HasChildQueryBuilder;
-import org.codelibs.fesen.join.query.HasParentQueryBuilder;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.search.sort.FieldSortBuilder;
 import org.codelibs.fesen.search.sort.SortOrder;
 import org.codelibs.fesen.test.AbstractQueryTestCase;
 import org.codelibs.fesen.test.TestGeoShapeFieldMapperPlugin;
 import org.codelibs.fesen.test.VersionUtils;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.codelibs.fesen.join.query.JoinQueryBuilders.hasParentQuery;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQueryBuilder> {
     private static final String TYPE = "_doc";
@@ -77,38 +75,15 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
 
     @Override
     protected void initializeAdditionalMappings(MapperService mapperService) throws IOException {
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties")
-            .startObject("join_field")
-                .field("type", "join")
-                .startObject("relations")
-                    .field(PARENT_DOC, CHILD_DOC)
-                .endObject()
-            .endObject()
-            .startObject(TEXT_FIELD_NAME)
-                .field("type", "text")
-            .endObject()
-                .startObject(KEYWORD_FIELD_NAME)
-            .field("type", "keyword")
-            .endObject()
-            .startObject(INT_FIELD_NAME)
-                .field("type", "integer")
-            .endObject()
-            .startObject(DOUBLE_FIELD_NAME)
-                .field("type", "double")
-            .endObject()
-            .startObject(BOOLEAN_FIELD_NAME)
-                .field("type", "boolean")
-            .endObject()
-            .startObject(DATE_FIELD_NAME)
-                .field("type", "date")
-            .endObject()
-            .startObject(OBJECT_FIELD_NAME)
-                .field("type", "object")
-            .endObject()
-            .endObject().endObject().endObject();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("_doc").startObject("properties").startObject("join_field")
+                .field("type", "join").startObject("relations").field(PARENT_DOC, CHILD_DOC).endObject().endObject()
+                .startObject(TEXT_FIELD_NAME).field("type", "text").endObject().startObject(KEYWORD_FIELD_NAME).field("type", "keyword")
+                .endObject().startObject(INT_FIELD_NAME).field("type", "integer").endObject().startObject(DOUBLE_FIELD_NAME)
+                .field("type", "double").endObject().startObject(BOOLEAN_FIELD_NAME).field("type", "boolean").endObject()
+                .startObject(DATE_FIELD_NAME).field("type", "date").endObject().startObject(OBJECT_FIELD_NAME).field("type", "object")
+                .endObject().endObject().endObject().endObject();
 
-        mapperService.merge(TYPE,
-            new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
+        mapperService.merge(TYPE, new CompressedXContent(Strings.toString(mapping)), MapperService.MergeReason.MAPPING_UPDATE);
     }
 
     /**
@@ -124,9 +99,7 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
         HasParentQueryBuilder hqb = new HasParentQueryBuilder(PARENT_DOC, innerQueryBuilder, randomBoolean());
         hqb.ignoreUnmapped(randomBoolean());
         if (randomBoolean()) {
-            hqb.innerHit(new InnerHitBuilder()
-                    .setName(randomAlphaOfLengthBetween(1, 10))
-                    .setSize(randomIntBetween(0, 100))
+            hqb.innerHit(new InnerHitBuilder().setName(randomAlphaOfLengthBetween(1, 10)).setSize(randomIntBetween(0, 100))
                     .addSort(new FieldSortBuilder(KEYWORD_FIELD_NAME).order(SortOrder.ASC)));
         }
         return hqb;
@@ -164,12 +137,10 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
 
     public void testIllegalValues() throws IOException {
         QueryBuilder query = new MatchAllQueryBuilder();
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> hasParentQuery(null, query, false));
+        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> hasParentQuery(null, query, false));
         assertThat(e.getMessage(), equalTo("[has_parent] requires 'parent_type' field"));
 
-        e = expectThrows(IllegalArgumentException.class,
-                () -> hasParentQuery("foo", null, false));
+        e = expectThrows(IllegalArgumentException.class, () -> hasParentQuery("foo", null, false));
         assertThat(e.getMessage(), equalTo("[has_parent] requires 'query' field"));
 
         QueryShardContext context = createShardContext();
@@ -179,11 +150,10 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
     }
 
     public void testToQueryInnerQueryType() throws IOException {
-        String[] searchTypes = new String[]{TYPE};
+        String[] searchTypes = new String[] { TYPE };
         QueryShardContext shardContext = createShardContext();
         shardContext.setTypes(searchTypes);
-        HasParentQueryBuilder hasParentQueryBuilder = new HasParentQueryBuilder(PARENT_DOC, new IdsQueryBuilder().addIds("id"),
-                false);
+        HasParentQueryBuilder hasParentQueryBuilder = new HasParentQueryBuilder(PARENT_DOC, new IdsQueryBuilder().addIds("id"), false);
         Query query = hasParentQueryBuilder.toQuery(shardContext);
         //verify that the context types are still the same as the ones we previously set
         assertThat(shardContext.getTypes(), equalTo(searchTypes));
@@ -202,23 +172,10 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
     }
 
     public void testFromJson() throws IOException {
-        String json =
-                "{\n" +
-                "  \"has_parent\" : {\n" +
-                "    \"query\" : {\n" +
-                "      \"term\" : {\n" +
-                "        \"tag\" : {\n" +
-                "          \"value\" : \"something\",\n" +
-                "          \"boost\" : 1.0\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"parent_type\" : \"blog\",\n" +
-                "    \"score\" : true,\n" +
-                "    \"ignore_unmapped\" : false,\n" +
-                "    \"boost\" : 1.0\n" +
-                "  }\n" +
-                "}";
+        String json = "{\n" + "  \"has_parent\" : {\n" + "    \"query\" : {\n" + "      \"term\" : {\n" + "        \"tag\" : {\n"
+                + "          \"value\" : \"something\",\n" + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    },\n"
+                + "    \"parent_type\" : \"blog\",\n" + "    \"score\" : true,\n" + "    \"ignore_unmapped\" : false,\n"
+                + "    \"boost\" : 1.0\n" + "  }\n" + "}";
         HasParentQueryBuilder parsed = (HasParentQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
         assertEquals(json, "blog", parsed.type());
@@ -241,14 +198,13 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
         failingQueryBuilder.ignoreUnmapped(false);
         assertFalse(failingQueryBuilder.innerHit().isIgnoreUnmapped());
         QueryShardException e = expectThrows(QueryShardException.class, () -> failingQueryBuilder.toQuery(createShardContext()));
-        assertThat(e.getMessage(),
-                    containsString("[has_parent] join field [join_field] doesn't hold [unmapped] as a parent"));
+        assertThat(e.getMessage(), containsString("[has_parent] join field [join_field] doesn't hold [unmapped] as a parent"));
     }
 
     public void testIgnoreUnmappedWithRewrite() throws IOException {
         // WrapperQueryBuilder makes sure we always rewrite
         final HasParentQueryBuilder queryBuilder =
-            new HasParentQueryBuilder("unmapped", new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
+                new HasParentQueryBuilder("unmapped", new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
         queryBuilder.ignoreUnmapped(true);
         QueryShardContext queryShardContext = createShardContext();
         Query query = queryBuilder.rewrite(queryShardContext).toQuery(queryShardContext);
@@ -257,11 +213,11 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
     }
 
     public void testExtractInnerHitBuildersWithDuplicate() {
-        final HasParentQueryBuilder queryBuilder
-            = new HasParentQueryBuilder(CHILD_DOC, new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
+        final HasParentQueryBuilder queryBuilder =
+                new HasParentQueryBuilder(CHILD_DOC, new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
         queryBuilder.innerHit(new InnerHitBuilder("some_name"));
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-            () -> InnerHitContextBuilder.extractInnerHits(queryBuilder, Collections.singletonMap("some_name", null)));
+                () -> InnerHitContextBuilder.extractInnerHits(queryBuilder, Collections.singletonMap("some_name", null)));
         assertEquals("[inner_hits] already contains an entry for key [some_name]", e.getMessage());
     }
 
@@ -269,11 +225,9 @@ public class HasParentQueryBuilderTests extends AbstractQueryTestCase<HasParentQ
         QueryShardContext queryShardContext = mock(QueryShardContext.class);
         when(queryShardContext.allowExpensiveQueries()).thenReturn(false);
 
-        HasParentQueryBuilder queryBuilder = new HasParentQueryBuilder(
-                CHILD_DOC, new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
-        FesenException e = expectThrows(FesenException.class,
-                () -> queryBuilder.toQuery(queryShardContext));
-        assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
-                e.getMessage());
+        HasParentQueryBuilder queryBuilder =
+                new HasParentQueryBuilder(CHILD_DOC, new WrapperQueryBuilder(new MatchAllQueryBuilder().toString()), false);
+        FesenException e = expectThrows(FesenException.class, () -> queryBuilder.toQuery(queryShardContext));
+        assertEquals("[joining] queries cannot be executed when 'search.allow_expensive_queries' is set to false.", e.getMessage());
     }
 }

@@ -18,11 +18,16 @@
  */
 package org.codelibs.fesen.test;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.common.inject.Module;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.IndexModule;
@@ -34,11 +39,6 @@ import org.codelibs.fesen.index.shard.IndexShardState;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason;
 import org.codelibs.fesen.plugins.Plugin;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * This is a testing plugin that registers a generic
@@ -61,6 +61,7 @@ public final class MockIndexEventListener {
          * For tests to pass in to fail on listener invocation
          */
         public static final Setting<Boolean> INDEX_FAIL = Setting.boolSetting("index.fail", false, Property.IndexScope);
+
         @Override
         public List<Setting<?>> getSettings() {
             return Arrays.asList(INDEX_FAIL);
@@ -78,10 +79,12 @@ public final class MockIndexEventListener {
     }
 
     public static class TestEventListener implements IndexEventListener {
-        private volatile IndexEventListener delegate = new IndexEventListener() {};
+        private volatile IndexEventListener delegate = new IndexEventListener() {
+        };
 
         public void setNewDelegate(IndexEventListener listener) {
-            delegate = listener == null ? new IndexEventListener() {} : listener;
+            delegate = listener == null ? new IndexEventListener() {
+            } : listener;
         }
 
         @Override
@@ -110,8 +113,8 @@ public final class MockIndexEventListener {
         }
 
         @Override
-        public void indexShardStateChanged(IndexShard indexShard, @Nullable IndexShardState previousState,
-                IndexShardState currentState, @Nullable String reason) {
+        public void indexShardStateChanged(IndexShard indexShard, @Nullable IndexShardState previousState, IndexShardState currentState,
+                @Nullable String reason) {
             delegate.indexShardStateChanged(indexShard, previousState, currentState, reason);
         }
 

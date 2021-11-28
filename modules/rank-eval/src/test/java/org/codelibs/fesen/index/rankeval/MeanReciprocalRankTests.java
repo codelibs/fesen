@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -30,23 +40,10 @@ import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
-import org.codelibs.fesen.index.rankeval.MeanReciprocalRank;
-import org.codelibs.fesen.index.rankeval.RatedDocument;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class MeanReciprocalRankTests extends ESTestCase {
 
@@ -135,11 +132,11 @@ public class MeanReciprocalRankTests extends ESTestCase {
      */
     public void testPrecisionAtFiveRelevanceThreshold() {
         List<RatedDocument> rated = new ArrayList<>();
-        rated.add(new RatedDocument("test",  "0", 0));
-        rated.add(new RatedDocument("test",  "1", 1));
-        rated.add(new RatedDocument("test",  "2", 2));
-        rated.add(new RatedDocument("test",  "3", 3));
-        rated.add(new RatedDocument("test",  "4", 4));
+        rated.add(new RatedDocument("test", "0", 0));
+        rated.add(new RatedDocument("test", "1", 1));
+        rated.add(new RatedDocument("test", "2", 2));
+        rated.add(new RatedDocument("test", "3", 3));
+        rated.add(new RatedDocument("test", "4", 4));
         SearchHit[] hits = createSearchHits(0, 5, "test");
 
         MeanReciprocalRank reciprocalRank = new MeanReciprocalRank(2, 10);
@@ -194,8 +191,7 @@ public class MeanReciprocalRankTests extends ESTestCase {
         try (XContentParser parser = createParser(xContentType.xContent(), withRandomFields)) {
             parser.nextToken();
             parser.nextToken();
-            XContentParseException exception = expectThrows(XContentParseException.class,
-                    () -> MeanReciprocalRank.fromXContent(parser));
+            XContentParseException exception = expectThrows(XContentParseException.class, () -> MeanReciprocalRank.fromXContent(parser));
             assertThat(exception.getMessage(), containsString("[reciprocal_rank] unknown field"));
         }
     }
@@ -219,8 +215,8 @@ public class MeanReciprocalRankTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         MeanReciprocalRank original = createTestItem();
-        MeanReciprocalRank deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
-                MeanReciprocalRank::new);
+        MeanReciprocalRank deserialized =
+                ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), MeanReciprocalRank::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);

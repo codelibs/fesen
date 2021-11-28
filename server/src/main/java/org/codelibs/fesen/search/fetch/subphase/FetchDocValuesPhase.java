@@ -18,6 +18,10 @@
  */
 package org.codelibs.fesen.search.fetch.subphase;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.document.DocumentField;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
@@ -27,10 +31,6 @@ import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Fetch sub phase which pulls data from doc values.
@@ -49,12 +49,10 @@ public final class FetchDocValuesPhase implements FetchSubPhase {
             return null;
         }
 
-        if (context.docValuesContext().fields().stream()
-                .map(f -> f.format)
-                .anyMatch(USE_DEFAULT_FORMAT::equals)) {
+        if (context.docValuesContext().fields().stream().map(f -> f.format).anyMatch(USE_DEFAULT_FORMAT::equals)) {
             DEPRECATION_LOGGER.deprecate("explicit_default_format",
-                    "[" + USE_DEFAULT_FORMAT + "] is a special format that was only used to " +
-                    "ease the transition to 7.x. It has become the default and shouldn't be set explicitly anymore.");
+                    "[" + USE_DEFAULT_FORMAT + "] is a special format that was only used to "
+                            + "ease the transition to 7.x. It has become the default and shouldn't be set explicitly anymore.");
         }
 
         /*
@@ -69,10 +67,7 @@ public final class FetchDocValuesPhase implements FetchSubPhase {
                 continue;
             }
             String format = USE_DEFAULT_FORMAT.equals(fieldAndFormat.format) ? null : fieldAndFormat.format;
-            ValueFetcher fetcher = new DocValueFetcher(
-                ft.docValueFormat(format, null),
-                context.searchLookup().doc().getForField(ft)
-            );
+            ValueFetcher fetcher = new DocValueFetcher(ft.docValueFormat(format, null), context.searchLookup().doc().getForField(ft));
             fields.add(new DocValueField(fieldAndFormat.field, fetcher));
         }
 

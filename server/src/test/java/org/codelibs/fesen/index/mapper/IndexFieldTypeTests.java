@@ -56,21 +56,19 @@ public class IndexFieldTypeTests extends ESTestCase {
     public void testRegexpQuery() {
         MappedFieldType ft = IndexFieldMapper.IndexFieldType.INSTANCE;
 
-        QueryShardException e = expectThrows(QueryShardException.class, () ->
-            assertEquals(new MatchAllDocsQuery(), ft.regexpQuery("ind.x", 0, 0, 10, null, createContext())));
+        QueryShardException e = expectThrows(QueryShardException.class,
+                () -> assertEquals(new MatchAllDocsQuery(), ft.regexpQuery("ind.x", 0, 0, 10, null, createContext())));
         assertThat(e.getMessage(), containsString("Can only use regexp queries on keyword and text fields"));
     }
 
     private QueryShardContext createContext() {
-        IndexMetadata indexMetadata = IndexMetadata.builder("index")
-            .settings(Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT))
-            .numberOfShards(1)
-            .numberOfReplicas(0)
-            .build();
+        IndexMetadata indexMetadata =
+                IndexMetadata.builder("index").settings(Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT))
+                        .numberOfShards(1).numberOfReplicas(0).build();
         IndexSettings indexSettings = new IndexSettings(indexMetadata, Settings.EMPTY);
 
         Predicate<String> indexNameMatcher = pattern -> Regex.simpleMatch(pattern, "index");
-        return new QueryShardContext(0, indexSettings, null, null, null, null, null, null, xContentRegistry(), writableRegistry(),
-            null, null, System::currentTimeMillis, null, indexNameMatcher, () -> true, null);
+        return new QueryShardContext(0, indexSettings, null, null, null, null, null, null, xContentRegistry(), writableRegistry(), null,
+                null, System::currentTimeMillis, null, indexNameMatcher, () -> true, null);
     }
 }

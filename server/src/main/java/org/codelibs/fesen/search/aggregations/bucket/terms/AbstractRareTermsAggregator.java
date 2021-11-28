@@ -45,16 +45,8 @@ public abstract class AbstractRareTermsAggregator extends DeferableBucketAggrega
 
     protected MergingBucketsDeferringCollector deferringCollector;
 
-    AbstractRareTermsAggregator(
-        String name,
-        AggregatorFactories factories,
-        SearchContext context,
-        Aggregator parent,
-        Map<String, Object> metadata,
-        long maxDocCount,
-        double precision,
-        DocValueFormat format
-    ) throws IOException {
+    AbstractRareTermsAggregator(String name, AggregatorFactories factories, SearchContext context, Aggregator parent,
+            Map<String, Object> metadata, long maxDocCount, double precision, DocValueFormat format) throws IOException {
         super(name, factories, context, parent, metadata);
 
         this.maxDocCount = maxDocCount;
@@ -74,8 +66,8 @@ public abstract class AbstractRareTermsAggregator extends DeferableBucketAggrega
              * deferring execution, so we just have to throw up our hands and refuse
              */
             throw new IllegalStateException("RareTerms agg [" + name() + "] is the child of the nested agg [" + nestedAgg
-                + "], and also has a scoring child agg [" + scoringAgg + "].  This combination is not supported because " +
-                "it requires executing in [depth_first] mode, which the RareTerms agg cannot do.");
+                    + "], and also has a scoring child agg [" + scoringAgg + "].  This combination is not supported because "
+                    + "it requires executing in [depth_first] mode, which the RareTerms agg cannot do.");
         }
     }
 

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.action.admin.indices.rollover;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
 
 /**
  * Condition for maximum index docs. Evaluates to <code>true</code>

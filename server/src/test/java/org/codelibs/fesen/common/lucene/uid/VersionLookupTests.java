@@ -85,8 +85,7 @@ public class VersionLookupTests extends ESTestCase {
      */
     public void testTwoDocuments() throws Exception {
         Directory dir = newDirectory();
-        IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(Lucene.STANDARD_ANALYZER)
-                .setMergePolicy(NoMergePolicy.INSTANCE));
+        IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(Lucene.STANDARD_ANALYZER).setMergePolicy(NoMergePolicy.INSTANCE));
         Document doc = new Document();
         doc.add(new Field(IdFieldMapper.NAME, "6", IdFieldMapper.Defaults.FIELD_TYPE));
         doc.add(new NumericDocValuesField(VersionFieldMapper.NAME, 87));

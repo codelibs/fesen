@@ -47,9 +47,9 @@ public class HttpHandlingSettings {
     private final long readTimeoutMillis;
     private boolean corsEnabled;
 
-    public HttpHandlingSettings(int maxContentLength, int maxChunkSize, int maxHeaderSize, int maxInitialLineLength,
-                                boolean resetCookies, boolean compression, int compressionLevel, boolean detailedErrorsEnabled,
-                                int pipeliningMaxEvents, long readTimeoutMillis, boolean corsEnabled) {
+    public HttpHandlingSettings(int maxContentLength, int maxChunkSize, int maxHeaderSize, int maxInitialLineLength, boolean resetCookies,
+            boolean compression, int compressionLevel, boolean detailedErrorsEnabled, int pipeliningMaxEvents, long readTimeoutMillis,
+            boolean corsEnabled) {
         this.maxContentLength = maxContentLength;
         this.maxChunkSize = maxChunkSize;
         this.maxHeaderSize = maxHeaderSize;
@@ -65,16 +65,12 @@ public class HttpHandlingSettings {
 
     public static HttpHandlingSettings fromSettings(Settings settings) {
         return new HttpHandlingSettings(Math.toIntExact(SETTING_HTTP_MAX_CONTENT_LENGTH.get(settings).getBytes()),
-            Math.toIntExact(SETTING_HTTP_MAX_CHUNK_SIZE.get(settings).getBytes()),
-            Math.toIntExact(SETTING_HTTP_MAX_HEADER_SIZE.get(settings).getBytes()),
-            Math.toIntExact(SETTING_HTTP_MAX_INITIAL_LINE_LENGTH.get(settings).getBytes()),
-            SETTING_HTTP_RESET_COOKIES.get(settings),
-            SETTING_HTTP_COMPRESSION.get(settings),
-            SETTING_HTTP_COMPRESSION_LEVEL.get(settings),
-            SETTING_HTTP_DETAILED_ERRORS_ENABLED.get(settings),
-            SETTING_PIPELINING_MAX_EVENTS.get(settings),
-            SETTING_HTTP_READ_TIMEOUT.get(settings).getMillis(),
-            SETTING_CORS_ENABLED.get(settings));
+                Math.toIntExact(SETTING_HTTP_MAX_CHUNK_SIZE.get(settings).getBytes()),
+                Math.toIntExact(SETTING_HTTP_MAX_HEADER_SIZE.get(settings).getBytes()),
+                Math.toIntExact(SETTING_HTTP_MAX_INITIAL_LINE_LENGTH.get(settings).getBytes()), SETTING_HTTP_RESET_COOKIES.get(settings),
+                SETTING_HTTP_COMPRESSION.get(settings), SETTING_HTTP_COMPRESSION_LEVEL.get(settings),
+                SETTING_HTTP_DETAILED_ERRORS_ENABLED.get(settings), SETTING_PIPELINING_MAX_EVENTS.get(settings),
+                SETTING_HTTP_READ_TIMEOUT.get(settings).getMillis(), SETTING_CORS_ENABLED.get(settings));
     }
 
     public int getMaxContentLength() {

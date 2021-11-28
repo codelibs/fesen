@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.cluster;
 
+import java.util.List;
+
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 
-import java.util.List;
-
 /**
  * Used to apply state updates on nodes that are not necessarily master
  */
-public abstract class LocalClusterUpdateTask implements ClusterStateTaskConfig, ClusterStateTaskExecutor<LocalClusterUpdateTask>,
-    ClusterStateTaskListener {
+public abstract class LocalClusterUpdateTask
+        implements ClusterStateTaskConfig, ClusterStateTaskExecutor<LocalClusterUpdateTask>, ClusterStateTaskListener {
 
     private final Priority priority;
 
@@ -43,11 +43,11 @@ public abstract class LocalClusterUpdateTask implements ClusterStateTaskConfig, 
     public abstract ClusterTasksResult<LocalClusterUpdateTask> execute(ClusterState currentState) throws Exception;
 
     @Override
-    public final ClusterTasksResult<LocalClusterUpdateTask> execute(ClusterState currentState,
-                                                                    List<LocalClusterUpdateTask> tasks) throws Exception {
+    public final ClusterTasksResult<LocalClusterUpdateTask> execute(ClusterState currentState, List<LocalClusterUpdateTask> tasks)
+            throws Exception {
         assert tasks.size() == 1 && tasks.get(0) == this : "expected one-element task list containing current object but was " + tasks;
         ClusterTasksResult<LocalClusterUpdateTask> result = execute(currentState);
-        return ClusterTasksResult.<LocalClusterUpdateTask>builder().successes(tasks).build(result, currentState);
+        return ClusterTasksResult.<LocalClusterUpdateTask> builder().successes(tasks).build(result, currentState);
     }
 
     /**

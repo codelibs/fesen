@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
-import org.codelibs.fesen.ingest.common.TrimProcessor;
-
 public class TrimProcessorTests extends AbstractStringProcessorTestCase<String> {
 
     @Override

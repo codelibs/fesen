@@ -19,10 +19,12 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.io.IOException;
+
 import org.apache.lucene.analysis.CannedTokenStream;
 import org.apache.lucene.analysis.Token;
-import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
-import org.codelibs.fesen.analysis.common.RemoveDuplicatesTokenFilterFactory;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
@@ -30,34 +32,19 @@ import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 
-import java.io.IOException;
-
-import static org.hamcrest.Matchers.instanceOf;
-
 public class RemoveDuplicatesFilterFactoryTests extends ESTokenStreamTestCase {
 
     public void testRemoveDuplicatesFilter() throws IOException {
-        Settings settings = Settings.builder()
-            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-            .put("index.analysis.filter.removedups.type", "remove_duplicates")
-            .build();
+        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+                .put("index.analysis.filter.removedups.type", "remove_duplicates").build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
         TokenFilterFactory tokenFilter = analysis.tokenFilter.get("removedups");
         assertThat(tokenFilter, instanceOf(RemoveDuplicatesTokenFilterFactory.class));
 
-        CannedTokenStream cts = new CannedTokenStream(
-            new Token("a", 1, 0, 1),
-            new Token("b", 1, 2, 3),
-            new Token("c", 0, 2, 3),
-            new Token("b", 0, 2, 3),
-            new Token("d", 1, 4, 5)
-        );
+        CannedTokenStream cts = new CannedTokenStream(new Token("a", 1, 0, 1), new Token("b", 1, 2, 3), new Token("c", 0, 2, 3),
+                new Token("b", 0, 2, 3), new Token("d", 1, 4, 5));
 
-        assertTokenStreamContents(tokenFilter.create(cts), new String[]{
-            "a", "b", "c", "d"
-        }, new int[]{
-             1,   1,   0,   1
-        });
+        assertTokenStreamContents(tokenFilter.create(cts), new String[] { "a", "b", "c", "d" }, new int[] { 1, 1, 0, 1 });
     }
 
 }

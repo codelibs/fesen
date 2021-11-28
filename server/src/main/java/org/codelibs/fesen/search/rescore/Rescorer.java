@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.search.rescore;
 
+import java.io.IOException;
+
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
-
-import java.io.IOException;
 
 /**
  * A query rescorer interface used to re-rank the Top-K results of a previously
@@ -55,7 +55,7 @@ public interface Rescorer {
      * @return the explain for the given top level document ID.
      * @throws IOException if an {@link IOException} occurs
      */
-    Explanation explain(int topLevelDocId, IndexSearcher searcher, RescoreContext rescoreContext,
-                        Explanation sourceExplanation) throws IOException;
+    Explanation explain(int topLevelDocId, IndexSearcher searcher, RescoreContext rescoreContext, Explanation sourceExplanation)
+            throws IOException;
 
 }

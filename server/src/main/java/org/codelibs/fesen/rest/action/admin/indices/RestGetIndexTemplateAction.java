@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
+import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -36,30 +43,21 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
-import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
 /**
  * The REST handler for get template and head template APIs.
  */
 public class RestGetIndexTemplateAction extends BaseRestHandler {
 
-    private static final Set<String> RESPONSE_PARAMETERS = Collections.unmodifiableSet(Sets.union(
-        Collections.singleton(INCLUDE_TYPE_NAME_PARAMETER), Settings.FORMAT_PARAMS));
+    private static final Set<String> RESPONSE_PARAMETERS =
+            Collections.unmodifiableSet(Sets.union(Collections.singleton(INCLUDE_TYPE_NAME_PARAMETER), Settings.FORMAT_PARAMS));
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestGetIndexTemplateAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
-            " Specifying include_type_name in get index template requests is deprecated.";
+    public static final String TYPES_DEPRECATION_MESSAGE =
+            "[types removal]" + " Specifying include_type_name in get index template requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/_template"),
-            new Route(GET, "/_template/{name}"),
-            new Route(HEAD, "/_template/{name}")));
+        return unmodifiableList(
+                asList(new Route(GET, "/_template"), new Route(GET, "/_template/{name}"), new Route(HEAD, "/_template/{name}")));
     }
 
     @Override
@@ -80,16 +78,14 @@ public class RestGetIndexTemplateAction extends BaseRestHandler {
 
         final boolean implicitAll = getIndexTemplatesRequest.names().length == 0;
 
-        return channel ->
-                client.admin()
-                        .indices()
-                        .getTemplates(getIndexTemplatesRequest, new RestToXContentListener<GetIndexTemplatesResponse>(channel) {
-                            @Override
-                            protected RestStatus getStatus(final GetIndexTemplatesResponse response) {
-                                final boolean templateExists = response.getIndexTemplates().isEmpty() == false;
-                                return (templateExists || implicitAll) ? OK : NOT_FOUND;
-                            }
-                        });
+        return channel -> client.admin().indices().getTemplates(getIndexTemplatesRequest,
+                new RestToXContentListener<GetIndexTemplatesResponse>(channel) {
+                    @Override
+                    protected RestStatus getStatus(final GetIndexTemplatesResponse response) {
+                        final boolean templateExists = response.getIndexTemplates().isEmpty() == false;
+                        return (templateExists || implicitAll) ? OK : NOT_FOUND;
+                    }
+                });
     }
 
     @Override

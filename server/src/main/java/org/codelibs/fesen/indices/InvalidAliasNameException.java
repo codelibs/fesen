@@ -37,7 +37,7 @@ public class InvalidAliasNameException extends FesenException {
         super("Invalid alias name [{}]: {}", name, description);
     }
 
-    public InvalidAliasNameException(StreamInput in) throws IOException{
+    public InvalidAliasNameException(StreamInput in) throws IOException {
         super(in);
     }
 

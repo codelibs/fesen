@@ -66,21 +66,19 @@ public class PreVoteResponse extends TransportResponse {
 
     @Override
     public String toString() {
-        return "PreVoteResponse{" +
-            "currentTerm=" + currentTerm +
-            ", lastAcceptedTerm=" + lastAcceptedTerm +
-            ", lastAcceptedVersion=" + lastAcceptedVersion +
-            '}';
+        return "PreVoteResponse{" + "currentTerm=" + currentTerm + ", lastAcceptedTerm=" + lastAcceptedTerm + ", lastAcceptedVersion="
+                + lastAcceptedVersion + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PreVoteResponse that = (PreVoteResponse) o;
-        return currentTerm == that.currentTerm &&
-            lastAcceptedTerm == that.lastAcceptedTerm &&
-            lastAcceptedVersion == that.lastAcceptedVersion;
+        return currentTerm == that.currentTerm && lastAcceptedTerm == that.lastAcceptedTerm
+                && lastAcceptedVersion == that.lastAcceptedVersion;
     }
 
     @Override

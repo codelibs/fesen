@@ -19,18 +19,9 @@
 
 package org.codelibs.fesen.test;
 
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.DeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.test.rest.yaml.ObjectPath;
+import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomAsciiOfLength;
+import static org.codelibs.fesen.common.xcontent.ToXContent.EMPTY_PARAMS;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.createParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +34,18 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.carrotsearch.randomizedtesting.generators.RandomStrings.randomAsciiOfLength;
-import static org.codelibs.fesen.common.xcontent.ToXContent.EMPTY_PARAMS;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.createParser;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.xcontent.DeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentHelper;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.test.rest.yaml.ObjectPath;
 
 public final class XContentTestUtils {
     private XContentTestUtils() {
@@ -66,7 +66,6 @@ public final class XContentTestUtils {
             return BytesReference.bytes(builder);
         }
     }
-
 
     /**
      * Compares two maps generated from XContentObjects. The order of elements in arrays is ignored.
@@ -134,7 +133,7 @@ public final class XContentTestUtils {
             if (second instanceof Map) {
                 return differenceBetweenMapsIgnoringArrayOrder(path, (Map<String, Object>) first, (Map<String, Object>) second);
             } else {
-                return path + ": the second element is not a map (got " + second +")";
+                return path + ": the second element is not a map (got " + second + ")";
             }
         } else {
             if (first.equals(second)) {
@@ -194,8 +193,8 @@ public final class XContentTestUtils {
         List<String> insertPaths;
 
         // we can use NamedXContentRegistry.EMPTY here because we only traverse the xContent once and don't use it
-        try (XContentParser parser = createParser(NamedXContentRegistry.EMPTY,
-            DeprecationHandler.THROW_UNSUPPORTED_OPERATION, xContent, contentType)) {
+        try (XContentParser parser =
+                createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, xContent, contentType)) {
             parser.nextToken();
             List<String> possiblePaths = XContentTestUtils.getInsertPaths(parser, new Stack<>());
             if (excludeFilter == null) {
@@ -218,8 +217,8 @@ public final class XContentTestUtils {
                 }
             }
         };
-        return BytesReference.bytes(XContentTestUtils
-                .insertIntoXContent(contentType.xContent(), xContent, insertPaths, () -> randomAsciiOfLength(random, 10), value));
+        return BytesReference.bytes(XContentTestUtils.insertIntoXContent(contentType.xContent(), xContent, insertPaths,
+                () -> randomAsciiOfLength(random, 10), value));
     }
 
     /**
@@ -255,8 +254,8 @@ public final class XContentTestUtils {
      * </ul>
      */
     static List<String> getInsertPaths(XContentParser parser, Stack<String> currentPath) throws IOException {
-        assert parser.currentToken() == XContentParser.Token.START_OBJECT || parser.currentToken() == XContentParser.Token.START_ARRAY :
-            "should only be called when new objects or arrays start";
+        assert parser.currentToken() == XContentParser.Token.START_OBJECT
+                || parser.currentToken() == XContentParser.Token.START_ARRAY : "should only be called when new objects or arrays start";
         List<String> validPaths = new ArrayList<>();
         // parser.currentName() can be null for root object and unnamed objects in arrays
         if (parser.currentName() != null) {

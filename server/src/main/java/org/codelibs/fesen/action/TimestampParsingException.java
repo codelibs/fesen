@@ -43,7 +43,7 @@ public class TimestampParsingException extends FesenException {
         return timestamp;
     }
 
-    public TimestampParsingException(StreamInput in) throws IOException{
+    public TimestampParsingException(StreamInput in) throws IOException {
         super(in);
         this.timestamp = in.readOptionalString();
     }

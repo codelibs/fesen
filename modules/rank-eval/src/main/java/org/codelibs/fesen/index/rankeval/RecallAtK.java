@@ -19,13 +19,9 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.SearchHit;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,9 +30,13 @@ import java.util.OptionalInt;
 
 import javax.naming.directory.SearchResult;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.SearchHit;
 
 /**
  * Metric implementing Recall@K
@@ -88,9 +88,8 @@ public class RecallAtK implements EvaluationMetric {
     private static final ConstructingObjectParser<RecallAtK, Void> PARSER = new ConstructingObjectParser<>(NAME, args -> {
         Integer relevantRatingThreshold = (Integer) args[0];
         Integer k = (Integer) args[1];
-        return new RecallAtK(
-            relevantRatingThreshold == null ? DEFAULT_RELEVANT_RATING_THRESHOLD : relevantRatingThreshold,
-            k == null ? DEFAULT_K : k);
+        return new RecallAtK(relevantRatingThreshold == null ? DEFAULT_RELEVANT_RATING_THRESHOLD : relevantRatingThreshold,
+                k == null ? DEFAULT_K : k);
     });
 
     static {
@@ -154,8 +153,7 @@ public class RecallAtK implements EvaluationMetric {
      * @return recall at k for above {@link SearchResult} list.
      **/
     @Override
-    public EvalQueryQuality evaluate(String taskId, SearchHit[] hits,
-                                     List<RatedDocument> ratedDocs) {
+    public EvalQueryQuality evaluate(String taskId, SearchHit[] hits, List<RatedDocument> ratedDocs) {
 
         List<RatedSearchHit> ratedSearchHits = joinHitsWithRatings(hits, ratedDocs);
 
@@ -169,7 +167,7 @@ public class RecallAtK implements EvaluationMetric {
 
         int relevant = 0;
         for (RatedDocument rd : ratedDocs) {
-            if(isRelevant(rd.getRating())) {
+            if (isRelevant(rd.getRating())) {
                 relevant++;
             }
         }
@@ -194,8 +192,7 @@ public class RecallAtK implements EvaluationMetric {
             return false;
         }
         RecallAtK other = (RecallAtK) obj;
-        return Objects.equals(relevantRatingThreshold, other.relevantRatingThreshold)
-            && Objects.equals(k, other.k);
+        return Objects.equals(relevantRatingThreshold, other.relevantRatingThreshold) && Objects.equals(k, other.k);
     }
 
     @Override
@@ -221,7 +218,7 @@ public class RecallAtK implements EvaluationMetric {
         }
 
         private static final ConstructingObjectParser<Detail, Void> PARSER =
-            new ConstructingObjectParser<>(NAME, true, args -> new Detail((Integer) args[0], (Integer) args[1]));
+                new ConstructingObjectParser<>(NAME, true, args -> new Detail((Integer) args[0], (Integer) args[1]));
 
         static {
             PARSER.declareInt(constructorArg(), RELEVANT_DOCS_RETRIEVED_FIELD);
@@ -239,8 +236,7 @@ public class RecallAtK implements EvaluationMetric {
         }
 
         @Override
-        public XContentBuilder innerToXContent(XContentBuilder builder, Params params)
-            throws IOException {
+        public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
             builder.field(RELEVANT_DOCS_RETRIEVED_FIELD.getPreferredName(), relevantRetrieved);
             builder.field(RELEVANT_DOCS_FIELD.getPreferredName(), relevant);
             return builder;
@@ -268,8 +264,7 @@ public class RecallAtK implements EvaluationMetric {
                 return false;
             }
             RecallAtK.Detail other = (RecallAtK.Detail) obj;
-            return Objects.equals(relevantRetrieved, other.relevantRetrieved)
-                && Objects.equals(relevant, other.relevant);
+            return Objects.equals(relevantRetrieved, other.relevantRetrieved) && Objects.equals(relevant, other.relevant);
         }
 
         @Override

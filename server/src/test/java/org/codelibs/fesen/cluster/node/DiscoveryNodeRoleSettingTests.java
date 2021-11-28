@@ -56,18 +56,18 @@ public class DiscoveryNodeRoleSettingTests extends ESTestCase {
         final Settings legacyTrue = Settings.builder().put(role.legacySetting().getKey(), true).build();
 
         assertTrue(predicate.test(legacyTrue));
-        assertSettingDeprecationsAndWarnings(new Setting<?>[]{role.legacySetting()});
+        assertSettingDeprecationsAndWarnings(new Setting<?>[] { role.legacySetting() });
 
         assertThat(DiscoveryNode.getRolesFromSettings(legacyTrue), hasItem(role));
-        assertSettingDeprecationsAndWarnings(new Setting<?>[]{role.legacySetting()});
+        assertSettingDeprecationsAndWarnings(new Setting<?>[] { role.legacySetting() });
 
         final Settings legacyFalse = Settings.builder().put(role.legacySetting().getKey(), false).build();
 
         assertFalse(predicate.test(legacyFalse));
-        assertSettingDeprecationsAndWarnings(new Setting<?>[]{role.legacySetting()});
+        assertSettingDeprecationsAndWarnings(new Setting<?>[] { role.legacySetting() });
 
         assertThat(DiscoveryNode.getRolesFromSettings(legacyFalse), not(hasItem(role)));
-        assertSettingDeprecationsAndWarnings(new Setting<?>[]{role.legacySetting()});
+        assertSettingDeprecationsAndWarnings(new Setting<?>[] { role.legacySetting() });
 
         assertTrue(predicate.test(onlyRole(role)));
         assertThat(DiscoveryNode.getRolesFromSettings(onlyRole(role)), hasItem(role));
@@ -78,7 +78,7 @@ public class DiscoveryNodeRoleSettingTests extends ESTestCase {
         final Settings settings = Settings.builder().put(onlyRole(role)).put(role.legacySetting().getKey(), randomBoolean()).build();
         final IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> DiscoveryNode.getRolesFromSettings(settings));
         assertThat(e.getMessage(), startsWith("can not explicitly configure node roles and use legacy role setting"));
-        assertSettingDeprecationsAndWarnings(new Setting<?>[]{role.legacySetting()});
+        assertSettingDeprecationsAndWarnings(new Setting<?>[] { role.legacySetting() });
     }
 
 }

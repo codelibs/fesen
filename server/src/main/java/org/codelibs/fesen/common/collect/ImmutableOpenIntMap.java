@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.collect;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import com.carrotsearch.hppc.IntCollection;
 import com.carrotsearch.hppc.IntContainer;
 import com.carrotsearch.hppc.IntLookupContainer;
@@ -32,9 +35,6 @@ import com.carrotsearch.hppc.cursors.ObjectCursor;
 import com.carrotsearch.hppc.predicates.IntObjectPredicate;
 import com.carrotsearch.hppc.predicates.IntPredicate;
 import com.carrotsearch.hppc.procedures.IntObjectProcedure;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * An immutable map implementation based on open hash map.
@@ -175,12 +175,15 @@ public final class ImmutableOpenIntMap<VType> implements Iterable<IntObjectCurso
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ImmutableOpenIntMap that = (ImmutableOpenIntMap) o;
 
-        if (!map.equals(that.map)) return false;
+        if (!map.equals(that.map))
+            return false;
 
         return true;
     }

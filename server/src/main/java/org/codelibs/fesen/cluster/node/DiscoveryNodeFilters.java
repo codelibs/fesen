@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.cluster.node;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.network.InetAddresses;
 import org.codelibs.fesen.common.network.NetworkAddress;
@@ -27,16 +32,10 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.transport.TransportAddress;
 import org.codelibs.fesen.core.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 public class DiscoveryNodeFilters {
 
     public enum OpType {
-        AND,
-        OR
+        AND, OR
     }
 
     /**
@@ -101,12 +100,11 @@ public class DiscoveryNodeFilters {
         }
 
         Map<String, String[]> newFilters = original.filters.entrySet().stream()
-            // Remove all entries that start with "_tier", as these will be handled elsewhere
-            .filter(entry -> {
-                String attr = entry.getKey();
-                return attr != null && attr.startsWith("_tier") == false;
-            })
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                // Remove all entries that start with "_tier", as these will be handled elsewhere
+                .filter(entry -> {
+                    String attr = entry.getKey();
+                    return attr != null && attr.startsWith("_tier") == false;
+                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (newFilters.size() == 0) {
             return null;

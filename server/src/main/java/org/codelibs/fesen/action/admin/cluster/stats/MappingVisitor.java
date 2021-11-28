@@ -24,7 +24,8 @@ import java.util.function.Consumer;
 
 final class MappingVisitor {
 
-    private MappingVisitor() {}
+    private MappingVisitor() {
+    }
 
     static void visitMapping(Map<String, ?> mapping, Consumer<Map<String, ?>> fieldMappingConsumer) {
         Object properties = mapping.get("properties");

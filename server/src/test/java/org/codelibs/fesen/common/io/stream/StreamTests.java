@@ -85,7 +85,7 @@ public class StreamTests extends ESTestCase {
         final Set<Byte> set = IntStream.range(Byte.MIN_VALUE, Byte.MAX_VALUE).mapToObj(v -> (byte) v).collect(Collectors.toSet());
         set.remove((byte) 0);
         set.remove((byte) 1);
-        final byte[] corruptBytes = new byte[]{randomFrom(set)};
+        final byte[] corruptBytes = new byte[] { randomFrom(set) };
         final BytesReference corrupt = new BytesArray(corruptBytes);
         final IllegalStateException e = expectThrows(IllegalStateException.class, () -> corrupt.streamInput().readBoolean());
         final String message = String.format(Locale.ROOT, "unexpected byte [0x%02x]", corruptBytes[0]);
@@ -120,7 +120,7 @@ public class StreamTests extends ESTestCase {
         set.remove((byte) 0);
         set.remove((byte) 1);
         set.remove((byte) 2);
-        final byte[] corruptBytes = new byte[]{randomFrom(set)};
+        final byte[] corruptBytes = new byte[] { randomFrom(set) };
         final BytesReference corrupt = new BytesArray(corruptBytes);
         final IllegalStateException e = expectThrows(IllegalStateException.class, () -> corrupt.streamInput().readOptionalBoolean());
         final String message = String.format(Locale.ROOT, "unexpected byte [0x%02x]", corruptBytes[0]);
@@ -138,17 +138,12 @@ public class StreamTests extends ESTestCase {
     }
 
     public void testSpecificVLongSerialization() throws IOException {
-        List<Tuple<Long, byte[]>> values =
-            Arrays.asList(
-                new Tuple<>(0L, new byte[]{0}),
-                new Tuple<>(-1L, new byte[]{1}),
-                new Tuple<>(1L, new byte[]{2}),
-                new Tuple<>(-2L, new byte[]{3}),
-                new Tuple<>(2L, new byte[]{4}),
-                new Tuple<>(Long.MIN_VALUE, new byte[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, 1}),
-                new Tuple<>(Long.MAX_VALUE, new byte[]{-2, -1, -1, -1, -1, -1, -1, -1, -1, 1})
+        List<Tuple<Long, byte[]>> values = Arrays.asList(new Tuple<>(0L, new byte[] { 0 }), new Tuple<>(-1L, new byte[] { 1 }),
+                new Tuple<>(1L, new byte[] { 2 }), new Tuple<>(-2L, new byte[] { 3 }), new Tuple<>(2L, new byte[] { 4 }),
+                new Tuple<>(Long.MIN_VALUE, new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, 1 }),
+                new Tuple<>(Long.MAX_VALUE, new byte[] { -2, -1, -1, -1, -1, -1, -1, -1, -1, 1 })
 
-            );
+        );
         for (Tuple<Long, byte[]> value : values) {
             BytesStreamOutput out = new BytesStreamOutput();
             out.writeZLong(value.v1());
@@ -221,18 +216,18 @@ public class StreamTests extends ESTestCase {
             array[i] = randomByte();
         }
         stream.writeByteArray(array);
-        InputStreamStreamInput streamInput = new InputStreamStreamInput(StreamInput.wrap(BytesReference.toBytes(stream.bytes())), array
-            .length - 1);
+        InputStreamStreamInput streamInput =
+                new InputStreamStreamInput(StreamInput.wrap(BytesReference.toBytes(stream.bytes())), array.length - 1);
         expectThrows(EOFException.class, streamInput::readByteArray);
-        streamInput = new InputStreamStreamInput(StreamInput.wrap(BytesReference.toBytes(stream.bytes())), BytesReference.toBytes(stream
-            .bytes()).length);
+        streamInput = new InputStreamStreamInput(StreamInput.wrap(BytesReference.toBytes(stream.bytes())),
+                BytesReference.toBytes(stream.bytes()).length);
 
         assertArrayEquals(array, streamInput.readByteArray());
     }
 
     public void testWritableArrays() throws IOException {
         final String[] strings = generateRandomStringArray(10, 10, false, true);
-        WriteableString[] sourceArray = Arrays.stream(strings).<WriteableString>map(WriteableString::new).toArray(WriteableString[]::new);
+        WriteableString[] sourceArray = Arrays.stream(strings).<WriteableString> map(WriteableString::new).toArray(WriteableString[]::new);
         WriteableString[] targetArray;
         BytesStreamOutput out = new BytesStreamOutput();
 
@@ -296,8 +291,10 @@ public class StreamTests extends ESTestCase {
 
             @Override
             public boolean equals(final Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (this == o)
+                    return true;
+                if (o == null || getClass() != o.getClass())
+                    return false;
                 final FooBar that = (FooBar) o;
                 return foo == that.foo && bar == that.bar;
             }
@@ -309,16 +306,15 @@ public class StreamTests extends ESTestCase {
 
         }
 
-        runWriteReadCollectionTest(
-                () -> new FooBar(randomInt(), randomInt()), StreamOutput::writeCollection, in -> in.readList(FooBar::new));
+        runWriteReadCollectionTest(() -> new FooBar(randomInt(), randomInt()), StreamOutput::writeCollection,
+                in -> in.readList(FooBar::new));
     }
 
     public void testStringCollection() throws IOException {
         runWriteReadCollectionTest(() -> randomUnicodeOfLength(16), StreamOutput::writeStringCollection, StreamInput::readStringList);
     }
 
-    private <T> void runWriteReadCollectionTest(
-            final Supplier<T> supplier,
+    private <T> void runWriteReadCollectionTest(final Supplier<T> supplier,
             final CheckedBiConsumer<StreamOutput, Collection<T>, IOException> writer,
             final CheckedFunction<StreamInput, Collection<T>, IOException> reader) throws IOException {
         final int length = randomIntBetween(0, 10);
@@ -452,7 +448,8 @@ public class StreamTests extends ESTestCase {
         assertGenericRoundtrip(new LinkedHashSet<>(list));
     }
 
-    private static class Unwriteable {}
+    private static class Unwriteable {
+    }
 
     private void assertNotWriteable(Object o, Class<?> type) {
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> StreamOutput.checkWriteable(o));
@@ -482,12 +479,12 @@ public class StreamTests extends ESTestCase {
     }
 
     public void testObjectArrayIsWriteable() throws IOException {
-        StreamOutput.checkWriteable(new Object[] {"a", "b"});
-        assertNotWriteable(new Object[] {new Unwriteable()}, Unwriteable.class);
+        StreamOutput.checkWriteable(new Object[] { "a", "b" });
+        assertNotWriteable(new Object[] { new Unwriteable() }, Unwriteable.class);
     }
 
     private void assertSerialization(CheckedConsumer<StreamOutput, IOException> outputAssertions,
-                                     CheckedConsumer<StreamInput, IOException> inputAssertions) throws IOException {
+            CheckedConsumer<StreamInput, IOException> inputAssertions) throws IOException {
         try (BytesStreamOutput output = new BytesStreamOutput()) {
             outputAssertions.accept(output);
             final BytesReference bytesReference = output.bytes();

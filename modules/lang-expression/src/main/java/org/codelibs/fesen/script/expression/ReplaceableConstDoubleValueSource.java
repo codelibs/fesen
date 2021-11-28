@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.script.expression;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValues;
 import org.apache.lucene.search.DoubleValuesSource;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
-
-import java.io.IOException;
 
 /**
  * A {@link DoubleValuesSource} which has a stub {@link DoubleValues} that holds a dynamically replaceable constant double.
@@ -50,7 +50,7 @@ final class ReplaceableConstDoubleValueSource extends DoubleValuesSource {
     @Override
     public Explanation explain(LeafReaderContext ctx, int docId, Explanation scoreExplanation) throws IOException {
         if (fv.advanceExact(docId))
-            return Explanation.match((float)fv.doubleValue(), "ReplaceableConstDoubleValues");
+            return Explanation.match((float) fv.doubleValue(), "ReplaceableConstDoubleValues");
         else
             return Explanation.noMatch("ReplaceableConstDoubleValues");
     }

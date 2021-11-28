@@ -29,7 +29,6 @@ import org.junit.Before;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class RestAddVotingConfigExclusionActionTests extends RestActionTestCase {
 
     private RestAddVotingConfigExclusionAction action;
@@ -43,14 +42,11 @@ public class RestAddVotingConfigExclusionActionTests extends RestActionTestCase 
     public void testResolveVotingConfigExclusionsRequest() {
         Map<String, String> params = new HashMap<>();
         params.put("node_name", "node-1,node-2,node-3");
-        RestRequest deprecatedRequest = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.PUT)
-            .withPath("/_cluster/voting_config_exclusions")
-            .withParams(params)
-            .build();
+        RestRequest deprecatedRequest = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.PUT)
+                .withPath("/_cluster/voting_config_exclusions").withParams(params).build();
 
         AddVotingConfigExclusionsRequest addVotingConfigExclusionsRequest = action.resolveVotingConfigExclusionsRequest(deprecatedRequest);
-        String[] expected = {"node-1","node-2", "node-3"};
+        String[] expected = { "node-1", "node-2", "node-3" };
         assertArrayEquals(expected, addVotingConfigExclusionsRequest.getNodeDescriptions());
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeIds());
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeNames());
@@ -60,14 +56,11 @@ public class RestAddVotingConfigExclusionActionTests extends RestActionTestCase 
     public void testResolveVotingConfigExclusionsRequestNodeIds() {
         Map<String, String> params = new HashMap<>();
         params.put("node_ids", "node-1,node-2,node-3");
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                                                .withMethod(RestRequest.Method.PUT)
-                                                .withPath("/_cluster/voting_config_exclusions")
-                                                .withParams(params)
-                                                .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.PUT)
+                .withPath("/_cluster/voting_config_exclusions").withParams(params).build();
 
         AddVotingConfigExclusionsRequest addVotingConfigExclusionsRequest = action.resolveVotingConfigExclusionsRequest(request);
-        String[] expected = {"node-1","node-2", "node-3"};
+        String[] expected = { "node-1", "node-2", "node-3" };
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeDescriptions());
         assertArrayEquals(expected, addVotingConfigExclusionsRequest.getNodeIds());
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeNames());
@@ -76,14 +69,11 @@ public class RestAddVotingConfigExclusionActionTests extends RestActionTestCase 
     public void testResolveVotingConfigExclusionsRequestNodeNames() {
         Map<String, String> params = new HashMap<>();
         params.put("node_names", "node-1,node-2,node-3");
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                                                .withMethod(RestRequest.Method.PUT)
-                                                .withPath("/_cluster/voting_config_exclusions")
-                                                .withParams(params)
-                                                .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.PUT)
+                .withPath("/_cluster/voting_config_exclusions").withParams(params).build();
 
         AddVotingConfigExclusionsRequest addVotingConfigExclusionsRequest = action.resolveVotingConfigExclusionsRequest(request);
-        String[] expected = {"node-1","node-2", "node-3"};
+        String[] expected = { "node-1", "node-2", "node-3" };
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeDescriptions());
         assertArrayEquals(Strings.EMPTY_ARRAY, addVotingConfigExclusionsRequest.getNodeIds());
         assertArrayEquals(expected, addVotingConfigExclusionsRequest.getNodeNames());

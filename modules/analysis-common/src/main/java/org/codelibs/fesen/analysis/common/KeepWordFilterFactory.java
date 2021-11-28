@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.util.List;
+
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.KeepWordFilter;
@@ -29,8 +31,6 @@ import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
 import org.codelibs.fesen.index.analysis.StopTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
-
-import java.util.List;
 
 /**
  * A {@link TokenFilterFactory} for {@link KeepWordFilter}. This filter only
@@ -67,8 +67,8 @@ public class KeepWordFilterFactory extends AbstractTokenFilterFactory {
         final String keepWordsPath = settings.get(KEEP_WORDS_PATH_KEY, null);
         if ((arrayKeepWords == null && keepWordsPath == null) || (arrayKeepWords != null && keepWordsPath != null)) {
             // we don't allow both or none
-            throw new IllegalArgumentException("keep requires either `" + KEEP_WORDS_KEY + "` or `"
-                    + KEEP_WORDS_PATH_KEY + "` to be configured");
+            throw new IllegalArgumentException(
+                    "keep requires either `" + KEEP_WORDS_KEY + "` or `" + KEEP_WORDS_PATH_KEY + "` to be configured");
         }
         if (settings.get(ENABLE_POS_INC_KEY) != null) {
             throw new IllegalArgumentException(ENABLE_POS_INC_KEY + " is not supported anymore. Please fix your analysis chain");

@@ -18,6 +18,8 @@
  */
 package org.codelibs.fesen.repositories;
 
+import java.io.IOException;
+
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.blobstore.DeleteResult;
@@ -28,12 +30,10 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
-import java.io.IOException;
-
 public final class RepositoryCleanupResult implements Writeable, ToXContentObject {
 
     public static final ObjectParser<RepositoryCleanupResult, Void> PARSER =
-        new ObjectParser<>(RepositoryCleanupResult.class.getName(), true, RepositoryCleanupResult::new);
+            new ObjectParser<>(RepositoryCleanupResult.class.getName(), true, RepositoryCleanupResult::new);
 
     private static final String DELETED_BLOBS = "deleted_blobs";
 

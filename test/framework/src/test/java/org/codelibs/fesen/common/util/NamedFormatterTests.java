@@ -19,16 +19,15 @@
 
 package org.codelibs.fesen.common.util;
 
-import org.codelibs.fesen.common.util.NamedFormatter;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class NamedFormatterTests extends ESTestCase {
     @Rule
@@ -47,10 +46,7 @@ public class NamedFormatterTests extends ESTestCase {
         values.put("name", "world");
         values.put("second_name", "fred");
 
-        assertThat(
-            NamedFormatter.format("Hello, %(name) and %(second_name)!", values),
-            equalTo("Hello, world and fred!")
-        );
+        assertThat(NamedFormatter.format("Hello, %(name) and %(second_name)!", values), equalTo("Hello, world and fred!"));
     }
 
     public void testEscapedPatternsAreNotFormatted() {

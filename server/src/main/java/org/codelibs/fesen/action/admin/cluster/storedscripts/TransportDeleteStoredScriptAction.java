@@ -42,10 +42,9 @@ public class TransportDeleteStoredScriptAction extends TransportMasterNodeAction
 
     @Inject
     public TransportDeleteStoredScriptAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-                                             ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                             ScriptService scriptService) {
-        super(DeleteStoredScriptAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                DeleteStoredScriptRequest::new, indexNameExpressionResolver);
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, ScriptService scriptService) {
+        super(DeleteStoredScriptAction.NAME, transportService, clusterService, threadPool, actionFilters, DeleteStoredScriptRequest::new,
+                indexNameExpressionResolver);
         this.scriptService = scriptService;
     }
 
@@ -60,8 +59,8 @@ public class TransportDeleteStoredScriptAction extends TransportMasterNodeAction
     }
 
     @Override
-    protected void masterOperation(DeleteStoredScriptRequest request, ClusterState state,
-                                   ActionListener<AcknowledgedResponse> listener) throws Exception {
+    protected void masterOperation(DeleteStoredScriptRequest request, ClusterState state, ActionListener<AcknowledgedResponse> listener)
+            throws Exception {
         scriptService.deleteStoredScript(clusterService, request, listener);
     }
 

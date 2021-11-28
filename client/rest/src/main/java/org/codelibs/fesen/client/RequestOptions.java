@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * The portion of an HTTP request to Fesen that can be
@@ -38,8 +38,8 @@ public final class RequestOptions {
     /**
      * Default request options.
      */
-    public static final RequestOptions DEFAULT = new Builder(
-            Collections.emptyList(), HeapBufferedResponseConsumerFactory.DEFAULT, null, null).build();
+    public static final RequestOptions DEFAULT =
+            new Builder(Collections.emptyList(), HeapBufferedResponseConsumerFactory.DEFAULT, null, null).build();
 
     private final List<Header> headers;
     private final HttpAsyncResponseConsumerFactory httpAsyncResponseConsumerFactory;
@@ -123,12 +123,14 @@ public final class RequestOptions {
             }
         }
         if (httpAsyncResponseConsumerFactory != HttpAsyncResponseConsumerFactory.DEFAULT) {
-            if (comma) b.append(", ");
+            if (comma)
+                b.append(", ");
             comma = true;
             b.append("consumerFactory=").append(httpAsyncResponseConsumerFactory);
         }
         if (warningsHandler != null) {
-            if (comma) b.append(", ");
+            if (comma)
+                b.append(", ");
             comma = true;
             b.append("warningsHandler=").append(warningsHandler);
         }
@@ -145,8 +147,7 @@ public final class RequestOptions {
         }
 
         RequestOptions other = (RequestOptions) obj;
-        return headers.equals(other.headers)
-                && httpAsyncResponseConsumerFactory.equals(other.httpAsyncResponseConsumerFactory)
+        return headers.equals(other.headers) && httpAsyncResponseConsumerFactory.equals(other.httpAsyncResponseConsumerFactory)
                 && Objects.equals(warningsHandler, other.warningsHandler);
     }
 
@@ -252,8 +253,7 @@ public final class RequestOptions {
             }
             if (other instanceof ReqHeader) {
                 Header otherHeader = (Header) other;
-                return Objects.equals(getName(), otherHeader.getName()) &&
-                        Objects.equals(getValue(), otherHeader.getValue());
+                return Objects.equals(getName(), otherHeader.getName()) && Objects.equals(getValue(), otherHeader.getValue());
             }
             return false;
         }

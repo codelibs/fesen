@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-
 /**
  * Specialization of {@link IndexFieldData} for geo points.
  */

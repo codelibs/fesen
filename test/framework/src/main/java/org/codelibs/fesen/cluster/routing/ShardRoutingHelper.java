@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import org.codelibs.fesen.cluster.routing.RecoverySource;
-import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.cluster.routing.ShardRoutingState;
-import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.cluster.routing.RecoverySource.SnapshotRecoverySource;
 
 /**
@@ -51,9 +47,9 @@ public class ShardRoutingHelper {
     }
 
     public static ShardRouting initWithSameId(ShardRouting copy, RecoverySource recoverySource) {
-        return new ShardRouting(copy.shardId(), copy.currentNodeId(), copy.relocatingNodeId(),
-            copy.primary(), ShardRoutingState.INITIALIZING, recoverySource, new UnassignedInfo(UnassignedInfo.Reason.REINITIALIZED, null),
-            copy.allocationId(), copy.getExpectedShardSize());
+        return new ShardRouting(copy.shardId(), copy.currentNodeId(), copy.relocatingNodeId(), copy.primary(),
+                ShardRoutingState.INITIALIZING, recoverySource, new UnassignedInfo(UnassignedInfo.Reason.REINITIALIZED, null),
+                copy.allocationId(), copy.getExpectedShardSize());
     }
 
     public static ShardRouting moveToUnassigned(ShardRouting routing, UnassignedInfo info) {
@@ -62,6 +58,6 @@ public class ShardRoutingHelper {
 
     public static ShardRouting newWithRestoreSource(ShardRouting routing, SnapshotRecoverySource recoverySource) {
         return new ShardRouting(routing.shardId(), routing.currentNodeId(), routing.relocatingNodeId(), routing.primary(), routing.state(),
-            recoverySource, routing.unassignedInfo(), routing.allocationId(), routing.getExpectedShardSize());
+                recoverySource, routing.unassignedInfo(), routing.allocationId(), routing.getExpectedShardSize());
     }
 }

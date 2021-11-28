@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.search.fetch.subphase.FetchFieldsPhase;
 import org.codelibs.fesen.search.lookup.SourceLookup;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * A helper class for fetching field values during the {@link FetchFieldsPhase}. Each {@link MappedFieldType}
@@ -49,5 +49,6 @@ public interface ValueFetcher {
     /**
      * Update the leaf reader used to fetch values.
      */
-    default void setNextReader(LeafReaderContext context) {}
+    default void setNextReader(LeafReaderContext context) {
+    }
 }

@@ -23,7 +23,6 @@ import static org.codelibs.fesen.action.ValidateActions.addValidationError;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.MasterNodeReadRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;

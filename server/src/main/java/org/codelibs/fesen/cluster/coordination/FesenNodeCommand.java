@@ -18,9 +18,14 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.store.LockObtainFailedException;
@@ -49,29 +54,20 @@ import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.env.NodeMetadata;
 import org.codelibs.fesen.gateway.PersistedClusterStateService;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Objects;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
     private static final Logger logger = LogManager.getLogger(FesenNodeCommand.class);
     protected static final String DELIMITER = "------------------------------------------------------------------------\n";
-    static final String STOP_WARNING_MSG =
-            DELIMITER +
-                    "\n" +
-                    "    WARNING: Fesen MUST be stopped before running this tool." +
-                    "\n";
+    static final String STOP_WARNING_MSG = DELIMITER + "\n" + "    WARNING: Fesen MUST be stopped before running this tool." + "\n";
     protected static final String FAILED_TO_OBTAIN_NODE_LOCK_MSG = "failed to lock node's directory, is Fesen still running?";
     protected static final String ABORTED_BY_USER_MSG = "aborted by user";
     final OptionSpec<Integer> nodeOrdinalOption;
     static final String NO_NODE_FOLDER_FOUND_MSG = "no node folder is found in data folder(s), node has not been started yet?";
     static final String NO_NODE_METADATA_FOUND_MSG = "no node meta data is found, node has not been started yet?";
-    protected static final String CS_MISSING_MSG =
-        "cluster state is empty, cluster has never been bootstrapped?";
+    protected static final String CS_MISSING_MSG = "cluster state is empty, cluster has never been bootstrapped?";
 
     // fake the registry here, as command-line tools are not loading plugins, and ensure that it preserves the parsed XContent
     public static final NamedXContentRegistry namedXContentRegistry = new NamedXContentRegistry(ClusterModule.getNamedXWriteables()) {
@@ -112,8 +108,7 @@ public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
 
     public FesenNodeCommand(String description) {
         super(description);
-        nodeOrdinalOption = parser.accepts("ordinal", "Optional node ordinal, 0 if not specified")
-                .withRequiredArg().ofType(Integer.class);
+        nodeOrdinalOption = parser.accepts("ordinal", "Optional node ordinal, 0 if not specified").withRequiredArg().ofType(Integer.class);
     }
 
     public static PersistedClusterStateService createPersistedClusterStateService(Settings settings, Path[] dataPaths) throws IOException {
@@ -124,18 +119,15 @@ public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
 
         String nodeId = nodeMetadata.nodeId();
         return new PersistedClusterStateService(dataPaths, nodeId, namedXContentRegistry, BigArrays.NON_RECYCLING_INSTANCE,
-            new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), () -> 0L);
+                new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), () -> 0L);
     }
 
     public static ClusterState clusterState(Environment environment, PersistedClusterStateService.OnDiskState onDiskState) {
-        return ClusterState.builder(ClusterName.CLUSTER_NAME_SETTING.get(environment.settings()))
-            .version(onDiskState.lastAcceptedVersion)
-            .metadata(onDiskState.metadata)
-            .build();
+        return ClusterState.builder(ClusterName.CLUSTER_NAME_SETTING.get(environment.settings())).version(onDiskState.lastAcceptedVersion)
+                .metadata(onDiskState.metadata).build();
     }
 
-    public static Tuple<Long, ClusterState> loadTermAndClusterState(PersistedClusterStateService psf,
-                                                                    Environment env) throws IOException {
+    public static Tuple<Long, ClusterState> loadTermAndClusterState(PersistedClusterStateService psf, Environment env) throws IOException {
         final PersistedClusterStateService.OnDiskState bestOnDiskState = psf.loadBestOnDiskState();
         if (bestOnDiskState.empty()) {
             throw new FesenException(CS_MISSING_MSG);
@@ -150,8 +142,7 @@ public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
             nodeOrdinal = 0;
         }
         try (NodeEnvironment.NodeLock lock = new NodeEnvironment.NodeLock(nodeOrdinal, logger, env, Files::exists)) {
-            final Path[] dataPaths =
-                    Arrays.stream(lock.getNodePaths()).filter(Objects::nonNull).map(p -> p.path).toArray(Path[]::new);
+            final Path[] dataPaths = Arrays.stream(lock.getNodePaths()).filter(Objects::nonNull).map(p -> p.path).toArray(Path[]::new);
             if (dataPaths.length == 0) {
                 throw new FesenException(NO_NODE_FOLDER_FOUND_MSG);
             }
@@ -187,7 +178,6 @@ public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
         return true;
     }
 
-
     /**
      * Process the paths. Locks for the paths is held during this method invocation.
      * @param terminal the terminal to use for messages
@@ -196,7 +186,7 @@ public abstract class FesenNodeCommand extends EnvironmentAwareCommand {
      * @param env the env of the node to process
      */
     protected abstract void processNodePaths(Terminal terminal, Path[] dataPaths, int nodeLockId, OptionSet options, Environment env)
-        throws IOException, UserException;
+            throws IOException, UserException;
 
     protected NodeEnvironment.NodePath[] toNodePaths(Path[] dataPaths) {
         return Arrays.stream(dataPaths).map(FesenNodeCommand::createNodePath).toArray(NodeEnvironment.NodePath[]::new);

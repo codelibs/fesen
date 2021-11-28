@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import javax.net.ssl.SSLSession;
-
-import org.codelibs.fesen.core.Nullable;
-
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -34,6 +30,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.net.ssl.SSLSession;
+
+import org.codelibs.fesen.core.Nullable;
 
 public class SslDiagnostics {
 
@@ -157,15 +157,12 @@ public class SslDiagnostics {
      * @param trustedIssuers A Map of DN to Certificate, for the issuers that were trusted in the context in which this failure occurred
      *                       (see {@link javax.net.ssl.X509TrustManager#getAcceptedIssuers()})
      */
-    public static String getTrustDiagnosticFailure(X509Certificate[] chain, PeerType peerType, SSLSession session,
-                                                   String contextName, @Nullable Map<String, List<X509Certificate>> trustedIssuers) {
+    public static String getTrustDiagnosticFailure(X509Certificate[] chain, PeerType peerType, SSLSession session, String contextName,
+            @Nullable Map<String, List<X509Certificate>> trustedIssuers) {
         final String peerAddress = Optional.ofNullable(session).map(SSLSession::getPeerHost).orElse("<unknown host>");
 
-        final StringBuilder message = new StringBuilder("failed to establish trust with ")
-            .append(peerType.name().toLowerCase(Locale.ROOT))
-            .append(" at [")
-            .append(peerAddress)
-            .append("]; ");
+        final StringBuilder message = new StringBuilder("failed to establish trust with ").append(peerType.name().toLowerCase(Locale.ROOT))
+                .append(" at [").append(peerAddress).append("]; ");
 
         if (chain == null || chain.length == 0) {
             message.append("the ").append(peerType.name().toLowerCase(Locale.ROOT)).append(" did not provide a certificate");
@@ -174,12 +171,8 @@ public class SslDiagnostics {
 
         final X509Certificate peerCert = chain[0];
 
-        message.append("the ")
-            .append(peerType.name().toLowerCase(Locale.ROOT))
-            .append(" provided a certificate with subject name [")
-            .append(peerCert.getSubjectX500Principal().getName())
-            .append("] and ")
-            .append(fingerprintDescription(peerCert));
+        message.append("the ").append(peerType.name().toLowerCase(Locale.ROOT)).append(" provided a certificate with subject name [")
+                .append(peerCert.getSubjectX500Principal().getName()).append("] and ").append(fingerprintDescription(peerCert));
 
         if (peerType == PeerType.SERVER) {
             try {
@@ -192,8 +185,7 @@ public class SslDiagnostics {
                         message.append("; the certificate does not have any DNS/IP subject alternative names");
                     } else {
                         message.append("; the certificate has subject alternative names [")
-                            .append(hostnames.stream().collect(Collectors.joining(",")))
-                            .append("]");
+                                .append(hostnames.stream().collect(Collectors.joining(","))).append("]");
                     }
                 }
             } catch (CertificateParsingException e) {
@@ -202,16 +194,14 @@ public class SslDiagnostics {
         }
 
         if (isSelfIssued(peerCert)) {
-            message.append("; the certificate is ")
-                .append(describeSelfIssuedCertificate(peerCert, contextName, trustedIssuers));
+            message.append("; the certificate is ").append(describeSelfIssuedCertificate(peerCert, contextName, trustedIssuers));
         } else {
             final String issuerName = peerCert.getIssuerX500Principal().getName();
             message.append("; the certificate is issued by [").append(issuerName).append("]");
             if (chain.length == 1) {
-                message.append(" but the ")
-                    .append(peerType.name().toLowerCase(Locale.ROOT))
-                    .append(" did not provide a copy of the issuing certificate in the certificate chain")
-                .append(describeIssuerTrust(contextName, trustedIssuers, peerCert, issuerName));
+                message.append(" but the ").append(peerType.name().toLowerCase(Locale.ROOT))
+                        .append(" did not provide a copy of the issuing certificate in the certificate chain")
+                        .append(describeIssuerTrust(contextName, trustedIssuers, peerCert, issuerName));
             }
         }
 
@@ -219,10 +209,8 @@ public class SslDiagnostics {
             message.append("; the certificate is ");
             // skip index-0, that's the peer cert.
             for (int i = 1; i < chain.length; i++) {
-                message.append("signed by (subject [")
-                    .append(chain[i].getSubjectX500Principal().getName())
-                    .append("] ")
-                    .append(fingerprintDescription(chain[i]));
+                message.append("signed by (subject [").append(chain[i].getSubjectX500Principal().getName()).append("] ")
+                        .append(fingerprintDescription(chain[i]));
 
                 if (trustedIssuers != null) {
                     if (resolveCertificateTrust(trustedIssuers, chain[i]).isTrusted()) {
@@ -236,10 +224,9 @@ public class SslDiagnostics {
                 message.append("which is ").append(describeSelfIssuedCertificate(root, contextName, trustedIssuers));
             } else {
                 final String rootIssuer = root.getIssuerX500Principal().getName();
-                message.append("which is issued by [")
-                    .append(rootIssuer)
-                    .append("] (but that issuer certificate was not provided in the chain)")
-                    .append(describeIssuerTrust(contextName, trustedIssuers, root, rootIssuer));
+                message.append("which is issued by [").append(rootIssuer)
+                        .append("] (but that issuer certificate was not provided in the chain)")
+                        .append(describeIssuerTrust(contextName, trustedIssuers, root, rootIssuer));
 
             }
         }
@@ -247,60 +234,41 @@ public class SslDiagnostics {
     }
 
     private static CharSequence describeIssuerTrust(String contextName, @Nullable Map<String, List<X509Certificate>> trustedIssuers,
-                                                    X509Certificate certificate, String issuerName) {
+            X509Certificate certificate, String issuerName) {
         if (trustedIssuers == null) {
             return "";
         }
         StringBuilder message = new StringBuilder();
         final IssuerTrust trust = checkIssuerTrust(trustedIssuers, certificate);
         if (trust.isVerified()) {
-            message.append("; the issuing ")
-                .append(trust.issuerCerts.size() == 1 ? "certificate": "certificates")
-                .append(" with ")
-                .append(fingerprintDescription(trust.issuerCerts))
-                .append(" ")
-                .append(trust.issuerCerts.size() == 1 ? "is": "are")
-                .append(" trusted in this ssl context ([")
-                .append(contextName)
-                .append("])");
+            message.append("; the issuing ").append(trust.issuerCerts.size() == 1 ? "certificate" : "certificates").append(" with ")
+                    .append(fingerprintDescription(trust.issuerCerts)).append(" ").append(trust.issuerCerts.size() == 1 ? "is" : "are")
+                    .append(" trusted in this ssl context ([").append(contextName).append("])");
         } else if (trust.foundCertificateForDn()) {
-            message.append("; this ssl context ([")
-                .append(contextName)
-                .append("]) trusts [")
-                .append(trust.issuerCerts.size())
-                .append("] ").append(trust.issuerCerts.size() == 1 ? "certificate" : "certificates")
-                .append(" with subject name [")
-                .append(issuerName)
-                .append("] and ")
-                .append(fingerprintDescription(trust.issuerCerts))
-                .append(" but the signatures do not match");
+            message.append("; this ssl context ([").append(contextName).append("]) trusts [").append(trust.issuerCerts.size()).append("] ")
+                    .append(trust.issuerCerts.size() == 1 ? "certificate" : "certificates").append(" with subject name [")
+                    .append(issuerName).append("] and ").append(fingerprintDescription(trust.issuerCerts))
+                    .append(" but the signatures do not match");
         } else {
-            message.append("; this ssl context ([")
-                .append(contextName)
-                .append("]) is not configured to trust that issuer");
+            message.append("; this ssl context ([").append(contextName).append("]) is not configured to trust that issuer");
         }
         return message;
     }
 
     private static CharSequence describeSelfIssuedCertificate(X509Certificate certificate, String contextName,
-                                                              @Nullable Map<String, List<X509Certificate>> trustedIssuers) {
+            @Nullable Map<String, List<X509Certificate>> trustedIssuers) {
         final StringBuilder message = new StringBuilder();
         final CertificateTrust trust = resolveCertificateTrust(trustedIssuers, certificate);
         message.append("self-issued; the [").append(certificate.getIssuerX500Principal().getName()).append("] certificate ")
-            .append(trust.isTrusted() ? "is" : "is not")
-            .append(" trusted in this ssl context ([").append(contextName).append("])");
+                .append(trust.isTrusted() ? "is" : "is not").append(" trusted in this ssl context ([").append(contextName).append("])");
         if (trust.isTrusted()) {
             if (trust.isSameCertificate() == false) {
                 if (trust.trustedCertificates.size() == 1) {
-                    message.append(" because we trust a certificate with ")
-                        .append(fingerprintDescription(trust.trustedCertificates.get(0)))
-                        .append(" for the same public key");
+                    message.append(" because we trust a certificate with ").append(fingerprintDescription(trust.trustedCertificates.get(0)))
+                            .append(" for the same public key");
                 } else {
-                    message.append(" because we trust [")
-                        .append(trust.trustedCertificates.size())
-                        .append("] certificates with ")
-                        .append(fingerprintDescription(trust.trustedCertificates))
-                        .append(" for the same public key");
+                    message.append(" because we trust [").append(trust.trustedCertificates.size()).append("] certificates with ")
+                            .append(fingerprintDescription(trust.trustedCertificates)).append(" for the same public key");
                 }
             }
         } else {
@@ -308,16 +276,12 @@ public class SslDiagnostics {
                 if (trust.trustedCertificates.size() == 1) {
                     final X509Certificate match = trust.trustedCertificates.get(0);
                     message.append("; this ssl context does trust a certificate with subject [")
-                        .append(match.getSubjectX500Principal().getName())
-                        .append("] but the trusted certificate has ")
-                        .append(fingerprintDescription(match));
+                            .append(match.getSubjectX500Principal().getName()).append("] but the trusted certificate has ")
+                            .append(fingerprintDescription(match));
                 } else {
-                    message.append("; this ssl context does trust [")
-                        .append(trust.trustedCertificates.size())
-                        .append("] certificates with subject [")
-                        .append(certificate.getSubjectX500Principal().getName())
-                        .append("] but those certificates have ")
-                        .append(fingerprintDescription(trust.trustedCertificates));
+                    message.append("; this ssl context does trust [").append(trust.trustedCertificates.size())
+                            .append("] certificates with subject [").append(certificate.getSubjectX500Principal().getName())
+                            .append("] but those certificates have ").append(fingerprintDescription(trust.trustedCertificates));
                 }
             }
         }
@@ -333,9 +297,8 @@ public class SslDiagnostics {
         if (index != -1) {
             return CertificateTrust.sameCertificate(trustedCerts.get(index));
         }
-        final List<X509Certificate> sameKey = trustedCerts.stream()
-            .filter(c -> c.getPublicKey().equals(cert.getPublicKey()))
-            .collect(Collectors.toList());
+        final List<X509Certificate> sameKey =
+                trustedCerts.stream().filter(c -> c.getPublicKey().equals(cert.getPublicKey())).collect(Collectors.toList());
         if (sameKey.isEmpty() == false) {
             return CertificateTrust.samePublicKey(sameKey);
         } else {

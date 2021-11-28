@@ -18,7 +18,16 @@
  */
 package org.codelibs.fesen.test.junit.listeners;
 
-import com.carrotsearch.randomizedtesting.ReproduceErrorMessageBuilder;
+import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_ITERATIONS;
+import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_PREFIX;
+import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_TESTCLASS;
+import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_TESTMETHOD;
+import static org.codelibs.fesen.test.rest.yaml.ESClientYamlSuiteTestCase.REST_TESTS_BLACKLIST;
+import static org.codelibs.fesen.test.rest.yaml.ESClientYamlSuiteTestCase.REST_TESTS_SUITE;
+
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.Constants;
@@ -33,15 +42,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-import java.util.Locale;
-import java.util.TimeZone;
-
-import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_ITERATIONS;
-import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_PREFIX;
-import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_TESTCLASS;
-import static com.carrotsearch.randomizedtesting.SysGlobals.SYSPROP_TESTMETHOD;
-import static org.codelibs.fesen.test.rest.yaml.ESClientYamlSuiteTestCase.REST_TESTS_BLACKLIST;
-import static org.codelibs.fesen.test.rest.yaml.ESClientYamlSuiteTestCase.REST_TESTS_SUITE;
+import com.carrotsearch.randomizedtesting.ReproduceErrorMessageBuilder;
 
 /**
  * A {@link RunListener} that emits a command you can use to re-run a failing test with the failing random seed to
@@ -165,8 +166,8 @@ public class ReproduceInfoPrinter extends RunListener {
                 // these properties only make sense for integration tests
                 appendProperties(ESIntegTestCase.TESTS_ENABLE_MOCK_MODULES);
             }
-            appendProperties("tests.assertion.disabled", "tests.security.manager", "tests.nightly", "tests.jvms",
-                             "tests.client.ratio", "tests.heap.size", "tests.bwc", "tests.bwc.version", "build.snapshot");
+            appendProperties("tests.assertion.disabled", "tests.security.manager", "tests.nightly", "tests.jvms", "tests.client.ratio",
+                    "tests.heap.size", "tests.bwc", "tests.bwc.version", "build.snapshot");
             if (System.getProperty("tests.jvm.argline") != null && !System.getProperty("tests.jvm.argline").isEmpty()) {
                 appendOpt("tests.jvm.argline", "\"" + System.getProperty("tests.jvm.argline") + "\"");
             }

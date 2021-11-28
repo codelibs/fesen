@@ -97,7 +97,7 @@ public class CommandTests extends ESTestCase {
     public void testHelp() throws Exception {
         NoopCommand command = new NoopCommand();
         MockTerminal terminal = new MockTerminal();
-        String[] args = {"-h"};
+        String[] args = { "-h" };
         int status = command.main(args, terminal);
         String output = terminal.getOutput();
         assertEquals(output, ExitCodes.OK, status);
@@ -106,7 +106,7 @@ public class CommandTests extends ESTestCase {
         assertFalse(command.executed);
 
         command = new NoopCommand();
-        String[] args2 = {"--help"};
+        String[] args2 = { "--help" };
         status = command.main(args2, terminal);
         output = terminal.getOutput();
         assertEquals(output, ExitCodes.OK, status);
@@ -118,7 +118,7 @@ public class CommandTests extends ESTestCase {
     public void testUnknownOptions() throws Exception {
         NoopCommand command = new NoopCommand();
         MockTerminal terminal = new MockTerminal();
-        String[] args = {"-Z"};
+        String[] args = { "-Z" };
         int status = command.main(args, terminal);
         String output = terminal.getOutput();
         String error = terminal.getErrorOutput();
@@ -129,7 +129,7 @@ public class CommandTests extends ESTestCase {
         assertFalse(command.executed);
 
         command = new NoopCommand();
-        String[] args2 = {"--foobar"};
+        String[] args2 = { "--foobar" };
         status = command.main(args2, terminal);
         output = terminal.getOutput();
         error = terminal.getErrorOutput();
@@ -143,18 +143,18 @@ public class CommandTests extends ESTestCase {
     public void testVerbositySilentAndVerbose() throws Exception {
         MockTerminal terminal = new MockTerminal();
         NoopCommand command = new NoopCommand();
-        String[] args = {"-v", "-s"};
+        String[] args = { "-v", "-s" };
         OptionException e = expectThrows(OptionException.class, () -> {
             command.mainWithoutErrorHandling(args, terminal);
         });
         assertTrue(e.getMessage(),
-            e.getMessage().contains("Option(s) [v/verbose] are unavailable given other options on the command line"));
+                e.getMessage().contains("Option(s) [v/verbose] are unavailable given other options on the command line"));
     }
 
     public void testSilentVerbosity() throws Exception {
         MockTerminal terminal = new MockTerminal();
         NoopCommand command = new NoopCommand();
-        String[] args = {"-s"};
+        String[] args = { "-s" };
         command.main(args, terminal);
         String output = terminal.getOutput();
         assertTrue(output, output.contains("Silent output"));
@@ -173,7 +173,7 @@ public class CommandTests extends ESTestCase {
     public void testVerboseVerbosity() throws Exception {
         MockTerminal terminal = new MockTerminal();
         NoopCommand command = new NoopCommand();
-        String[] args = {"-v"};
+        String[] args = { "-v" };
         command.main(args, terminal);
         String output = terminal.getOutput();
         assertTrue(output, output.contains("Verbose output"));

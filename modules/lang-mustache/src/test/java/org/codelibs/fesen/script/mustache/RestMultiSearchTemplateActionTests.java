@@ -18,16 +18,15 @@
  */
 package org.codelibs.fesen.script.mustache;
 
+import java.nio.charset.StandardCharsets;
+
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.rest.RestRequest;
-import org.codelibs.fesen.script.mustache.RestMultiSearchTemplateAction;
 import org.codelibs.fesen.test.rest.FakeRestRequest;
 import org.codelibs.fesen.test.rest.RestActionTestCase;
 import org.junit.Before;
-
-import java.nio.charset.StandardCharsets;
 
 public class RestMultiSearchTemplateActionTests extends RestActionTestCase {
 
@@ -37,15 +36,11 @@ public class RestMultiSearchTemplateActionTests extends RestActionTestCase {
     }
 
     public void testTypeInPath() {
-        String content = "{ \"index\": \"some_index\" } \n" +
-            "{\"source\": {\"query\" : {\"match_all\" :{}}}} \n";
+        String content = "{ \"index\": \"some_index\" } \n" + "{\"source\": {\"query\" : {\"match_all\" :{}}}} \n";
         BytesArray bytesContent = new BytesArray(content.getBytes(StandardCharsets.UTF_8));
 
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.GET)
-            .withPath("/some_index/some_type/_msearch/template")
-            .withContent(bytesContent, XContentType.JSON)
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
+                .withPath("/some_index/some_type/_msearch/template").withContent(bytesContent, XContentType.JSON).build();
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);
 
@@ -54,14 +49,11 @@ public class RestMultiSearchTemplateActionTests extends RestActionTestCase {
     }
 
     public void testTypeInBody() {
-        String content = "{ \"index\": \"some_index\", \"type\": \"some_type\" } \n" +
-            "{\"source\": {\"query\" : {\"match_all\" :{}}}} \n";
+        String content = "{ \"index\": \"some_index\", \"type\": \"some_type\" } \n" + "{\"source\": {\"query\" : {\"match_all\" :{}}}} \n";
         BytesArray bytesContent = new BytesArray(content.getBytes(StandardCharsets.UTF_8));
 
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withPath("/some_index/_msearch/template")
-            .withContent(bytesContent, XContentType.JSON)
-            .build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/some_index/_msearch/template")
+                .withContent(bytesContent, XContentType.JSON).build();
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteVerifier((arg1, arg2) -> null);
 

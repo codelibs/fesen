@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.metrics.ParsedSingleValueNumericMetricsAggregation;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class ParsedBucketMetricValue extends ParsedSingleValueNumericMetricsAggregation implements BucketMetricValue {
 
@@ -57,8 +57,8 @@ public class ParsedBucketMetricValue extends ParsedSingleValueNumericMetricsAggr
         return builder;
     }
 
-    private static final ObjectParser<ParsedBucketMetricValue, Void> PARSER = new ObjectParser<>(
-            ParsedBucketMetricValue.class.getSimpleName(), true, ParsedBucketMetricValue::new);
+    private static final ObjectParser<ParsedBucketMetricValue, Void> PARSER =
+            new ObjectParser<>(ParsedBucketMetricValue.class.getSimpleName(), true, ParsedBucketMetricValue::new);
 
     static {
         declareSingleValueFields(PARSER, Double.NEGATIVE_INFINITY);

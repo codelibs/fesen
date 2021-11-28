@@ -109,6 +109,7 @@ public class FieldDataTests extends ESTestCase {
             public boolean advanceExact(int doc) throws IOException {
                 return true;
             }
+
             @Override
             public double doubleValue() {
                 return value;
@@ -147,18 +148,18 @@ public class FieldDataTests extends ESTestCase {
         return new AbstractNumericDocValues() {
 
             int docID = -1;
-            
+
             @Override
             public int docID() {
                 return docID;
             }
-            
+
             @Override
             public boolean advanceExact(int target) throws IOException {
                 docID = target;
                 return target < values.length && values[target] != null;
             }
-            
+
             @Override
             public long longValue() throws IOException {
                 return values[docID];
@@ -193,13 +194,13 @@ public class FieldDataTests extends ESTestCase {
         return new NumericDoubleValues() {
 
             int docID = -1;
-            
+
             @Override
             public boolean advanceExact(int target) throws IOException {
                 docID = target;
                 return target < values.length && values[target] != null;
             }
-            
+
             @Override
             public double doubleValue() throws IOException {
                 return values[docID];

@@ -19,7 +19,10 @@
 
 package org.codelibs.fesen.action.admin.indices.dangling.delete;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.FesenException;
@@ -49,9 +52,7 @@ import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * Implements the deletion of a dangling index. When handling a {@link DeleteDanglingIndexAction},
@@ -65,24 +66,11 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
     private final NodeClient nodeClient;
 
     @Inject
-    public TransportDeleteDanglingIndexAction(
-        TransportService transportService,
-        ClusterService clusterService,
-        ThreadPool threadPool,
-        ActionFilters actionFilters,
-        IndexNameExpressionResolver indexNameExpressionResolver,
-        Settings settings,
-        NodeClient nodeClient
-    ) {
-        super(
-            DeleteDanglingIndexAction.NAME,
-            transportService,
-            clusterService,
-            threadPool,
-            actionFilters,
-            DeleteDanglingIndexRequest::new,
-            indexNameExpressionResolver
-        );
+    public TransportDeleteDanglingIndexAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Settings settings,
+            NodeClient nodeClient) {
+        super(DeleteDanglingIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, DeleteDanglingIndexRequest::new,
+                indexNameExpressionResolver);
         this.settings = settings;
         this.nodeClient = nodeClient;
     }
@@ -98,11 +86,8 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
     }
 
     @Override
-    protected void masterOperation(
-        DeleteDanglingIndexRequest deleteRequest,
-        ClusterState state,
-        ActionListener<AcknowledgedResponse> deleteListener
-    ) throws Exception {
+    protected void masterOperation(DeleteDanglingIndexRequest deleteRequest, ClusterState state,
+            ActionListener<AcknowledgedResponse> deleteListener) throws Exception {
         findDanglingIndex(deleteRequest.getIndexUUID(), new ActionListener<Index>() {
             @Override
             public void onResponse(Index indexToDelete) {
@@ -131,21 +116,19 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
 
                 final String taskSource = "delete-dangling-index [" + indexName + "] [" + indexUUID + "]";
 
-                clusterService.submitStateUpdateTask(
-                    taskSource,
-                    new AckedClusterStateUpdateTask<AcknowledgedResponse>(deleteRequest, clusterStateUpdatedListener) {
+                clusterService.submitStateUpdateTask(taskSource,
+                        new AckedClusterStateUpdateTask<AcknowledgedResponse>(deleteRequest, clusterStateUpdatedListener) {
 
-                        @Override
-                        protected AcknowledgedResponse newResponse(boolean acknowledged) {
-                            return new AcknowledgedResponse(acknowledged);
-                        }
+                            @Override
+                            protected AcknowledgedResponse newResponse(boolean acknowledged) {
+                                return new AcknowledgedResponse(acknowledged);
+                            }
 
-                        @Override
-                        public ClusterState execute(final ClusterState currentState) {
-                            return deleteDanglingIndex(currentState, indexToDelete);
-                        }
-                    }
-                );
+                            @Override
+                            public ClusterState execute(final ClusterState currentState) {
+                                return deleteDanglingIndex(currentState, indexToDelete);
+                            }
+                        });
             }
 
             @Override
@@ -161,13 +144,8 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
 
         for (ObjectObjectCursor<String, IndexMetadata> each : metaData.indices()) {
             if (indexToDelete.getUUID().equals(each.value.getIndexUUID())) {
-                throw new IllegalArgumentException(
-                    "Refusing to delete dangling index "
-                        + indexToDelete
-                        + " as an index with UUID ["
-                        + indexToDelete.getUUID()
-                        + "] already exists in the cluster state"
-                );
+                throw new IllegalArgumentException("Refusing to delete dangling index " + indexToDelete + " as an index with UUID ["
+                        + indexToDelete.getUUID() + "] already exists in the cluster state");
             }
         }
 
@@ -180,9 +158,8 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
 
         Metadata.Builder metaDataBuilder = Metadata.builder(metaData);
 
-        final IndexGraveyard newGraveyard = IndexGraveyard.builder(metaDataBuilder.indexGraveyard())
-            .addTombstone(indexToDelete)
-            .build(settings);
+        final IndexGraveyard newGraveyard =
+                IndexGraveyard.builder(metaDataBuilder.indexGraveyard()).addTombstone(indexToDelete).build(settings);
         metaDataBuilder.indexGraveyard(newGraveyard);
 
         return ClusterState.builder(currentState).metadata(metaDataBuilder.build()).build();
@@ -194,47 +171,42 @@ public class TransportDeleteDanglingIndexAction extends TransportMasterNodeActio
     }
 
     private void findDanglingIndex(String indexUUID, ActionListener<Index> listener) {
-        this.nodeClient.execute(
-            ListDanglingIndicesAction.INSTANCE,
-            new ListDanglingIndicesRequest(indexUUID),
-            new ActionListener<ListDanglingIndicesResponse>() {
-                @Override
-                public void onResponse(ListDanglingIndicesResponse response) {
-                    if (response.hasFailures()) {
-                        final String nodeIds = response.failures()
-                            .stream()
-                            .map(FailedNodeException::nodeId)
-                            .collect(Collectors.joining(","));
-                        FesenException e = new FesenException("Failed to query nodes [" + nodeIds + "]");
+        this.nodeClient.execute(ListDanglingIndicesAction.INSTANCE, new ListDanglingIndicesRequest(indexUUID),
+                new ActionListener<ListDanglingIndicesResponse>() {
+                    @Override
+                    public void onResponse(ListDanglingIndicesResponse response) {
+                        if (response.hasFailures()) {
+                            final String nodeIds =
+                                    response.failures().stream().map(FailedNodeException::nodeId).collect(Collectors.joining(","));
+                            FesenException e = new FesenException("Failed to query nodes [" + nodeIds + "]");
 
-                        for (FailedNodeException failure : response.failures()) {
-                            logger.error("Failed to query node [" + failure.nodeId() + "]", failure);
-                            e.addSuppressed(failure);
+                            for (FailedNodeException failure : response.failures()) {
+                                logger.error("Failed to query node [" + failure.nodeId() + "]", failure);
+                                e.addSuppressed(failure);
+                            }
+
+                            listener.onFailure(e);
+                            return;
                         }
 
-                        listener.onFailure(e);
-                        return;
-                    }
+                        final List<NodeListDanglingIndicesResponse> nodes = response.getNodes();
 
-                    final List<NodeListDanglingIndicesResponse> nodes = response.getNodes();
-
-                    for (NodeListDanglingIndicesResponse nodeResponse : nodes) {
-                        for (DanglingIndexInfo each : nodeResponse.getDanglingIndices()) {
-                            if (each.getIndexUUID().equals(indexUUID)) {
-                                listener.onResponse(new Index(each.getIndexName(), each.getIndexUUID()));
-                                return;
+                        for (NodeListDanglingIndicesResponse nodeResponse : nodes) {
+                            for (DanglingIndexInfo each : nodeResponse.getDanglingIndices()) {
+                                if (each.getIndexUUID().equals(indexUUID)) {
+                                    listener.onResponse(new Index(each.getIndexName(), each.getIndexUUID()));
+                                    return;
+                                }
                             }
                         }
+
+                        listener.onFailure(new IllegalArgumentException("No dangling index found for UUID [" + indexUUID + "]"));
                     }
 
-                    listener.onFailure(new IllegalArgumentException("No dangling index found for UUID [" + indexUUID + "]"));
-                }
-
-                @Override
-                public void onFailure(Exception exp) {
-                    listener.onFailure(exp);
-                }
-            }
-        );
+                    @Override
+                    public void onFailure(Exception exp) {
+                        listener.onFailure(exp);
+                    }
+                });
     }
 }

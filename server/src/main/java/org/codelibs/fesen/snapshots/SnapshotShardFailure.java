@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.snapshots;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
@@ -32,9 +35,6 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.snapshots.IndexShardSnapshotFailedException;
 import org.codelibs.fesen.rest.RestStatus;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Stores information about failures that occurred during shard snapshotting process
@@ -99,16 +99,12 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
 
     @Override
     public String toString() {
-        return "SnapshotShardFailure{" +
-            "shardId=" + shardId +
-            ", reason='" + reason + '\'' +
-            ", nodeId='" + nodeId + '\'' +
-            ", status=" + status +
-            '}';
+        return "SnapshotShardFailure{" + "shardId=" + shardId + ", reason='" + reason + '\'' + ", nodeId='" + nodeId + '\'' + ", status="
+                + status + '}';
     }
 
     static final ConstructingObjectParser<SnapshotShardFailure, Void> SNAPSHOT_SHARD_FAILURE_PARSER =
-        new ConstructingObjectParser<>("shard_failure", true, SnapshotShardFailure::constructSnapshotShardFailure);
+            new ConstructingObjectParser<>("shard_failure", true, SnapshotShardFailure::constructSnapshotShardFailure);
 
     static {
         SNAPSHOT_SHARD_FAILURE_PARSER.declareString(ConstructingObjectParser.constructorArg(), new ParseField("index"));
@@ -147,7 +143,6 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
             nonNullReason = "";
         }
 
-
         RestStatus restStatus;
         if (status != null) {
             restStatus = RestStatus.valueOf(status);
@@ -185,15 +180,15 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SnapshotShardFailure that = (SnapshotShardFailure) o;
         // customized to account for discrepancies in shardId/Index toXContent/fromXContent related to uuid
-        return shardId.id() == that.shardId.id() &&
-            shardId.getIndexName().equals(shardId.getIndexName()) &&
-            Objects.equals(reason, that.reason) &&
-            Objects.equals(nodeId, that.nodeId) &&
-            status.getStatus() == that.status.getStatus();
+        return shardId.id() == that.shardId.id() && shardId.getIndexName().equals(shardId.getIndexName())
+                && Objects.equals(reason, that.reason) && Objects.equals(nodeId, that.nodeId)
+                && status.getStatus() == that.status.getStatus();
     }
 
     @Override

@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.common.compress;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.zip.CRC32;
+import java.util.zip.CheckedOutputStream;
+
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.Streams;
@@ -29,13 +36,6 @@ import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.zip.CRC32;
-import java.util.zip.CheckedOutputStream;
 
 /**
  * Similar class to the {@link String} class except that it internally stores
@@ -149,8 +149,10 @@ public final class CompressedXContent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         CompressedXContent that = (CompressedXContent) o;
 

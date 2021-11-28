@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskRequest;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.core.TimeValue;
@@ -26,12 +32,6 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 import org.codelibs.fesen.tasks.TaskId;
-
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestGetTaskAction extends BaseRestHandler {
 

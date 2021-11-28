@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Scorable;
@@ -26,9 +29,6 @@ import org.codelibs.fesen.Version;
 import org.codelibs.fesen.script.ExplainableScoreScript;
 import org.codelibs.fesen.script.ScoreScript;
 import org.codelibs.fesen.script.Script;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class ScriptScoreFunction extends ScoreFunction {
 
@@ -97,12 +97,8 @@ public class ScriptScoreFunction extends ScoreFunction {
                     double score = score(docId, subQueryScore.getValue().floatValue());
                     // info about params already included in sScript
                     String explanation = "script score function, computed with script:\"" + sScript + "\"";
-                    Explanation scoreExp = Explanation.match(
-                        subQueryScore.getValue(), "_score: ",
-                        subQueryScore);
-                    return Explanation.match(
-                        (float) score, explanation,
-                        scoreExp);
+                    Explanation scoreExp = Explanation.match(subQueryScore.getValue(), "_score: ", subQueryScore);
+                    return Explanation.match((float) score, explanation, scoreExp);
                 }
                 return exp;
             }

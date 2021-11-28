@@ -191,18 +191,18 @@ public class AsyncIOProcessorTests extends ESTestCase {
         AtomicInteger notified = new AtomicInteger(0);
 
         CountDownLatch writeDelay = new CountDownLatch(1);
-        AsyncIOProcessor<Object> processor = new AsyncIOProcessor<Object>(logger, scaledRandomIntBetween(threadCount - 1, 2024),
-            threadContext) {
-            @Override
-            protected void write(List<Tuple<Object, Consumer<Exception>>> candidates) throws IOException {
-                try {
-                    assertTrue(writeDelay.await(10, TimeUnit.SECONDS));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                received.addAndGet(candidates.size());
-            }
-        };
+        AsyncIOProcessor<Object> processor =
+                new AsyncIOProcessor<Object>(logger, scaledRandomIntBetween(threadCount - 1, 2024), threadContext) {
+                    @Override
+                    protected void write(List<Tuple<Object, Consumer<Exception>>> candidates) throws IOException {
+                        try {
+                            assertTrue(writeDelay.await(10, TimeUnit.SECONDS));
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        received.addAndGet(candidates.size());
+                    }
+                };
 
         // first thread blocks, the rest should be non blocking.
         CountDownLatch nonBlockingDone = new CountDownLatch(randomIntBetween(0, threadCount - 1));
@@ -217,7 +217,7 @@ public class AsyncIOProcessorTests extends ESTestCase {
                 threadContext.addResponseHeader(testHeader, response);
                 processor.put(new Object(), (e) -> {
                     assertEquals(Collections.singletonMap(testHeader, Collections.singletonList(response)),
-                        threadContext.getResponseHeaders());
+                            threadContext.getResponseHeaders());
                     notified.incrementAndGet();
                 });
                 nonBlockingDone.countDown();

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.store;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Objects;
+
 import org.apache.lucene.codecs.CodecUtil;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
@@ -26,10 +30,6 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.store.ByteArrayIndexInput;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Objects;
 
 public class StoreFileMetadata implements Writeable {
 
@@ -110,8 +110,10 @@ public class StoreFileMetadata implements Writeable {
     public boolean hashEqualsContents() {
         if (hash.length == length) {
             try {
-                final boolean checksumsMatch = Store.digestToString(CodecUtil.retrieveChecksum(
-                    new ByteArrayIndexInput("store_file", hash.bytes, hash.offset, hash.length))).equals(checksum);
+                final boolean checksumsMatch = Store
+                        .digestToString(
+                                CodecUtil.retrieveChecksum(new ByteArrayIndexInput("store_file", hash.bytes, hash.offset, hash.length)))
+                        .equals(checksum);
                 assert checksumsMatch : "Checksums did not match for [" + this + "] which has a hash of [" + hash + "]";
                 return checksumsMatch;
             } catch (Exception e) {
@@ -138,7 +140,7 @@ public class StoreFileMetadata implements Writeable {
 
     @Override
     public String toString() {
-        return "name [" + name + "], length [" + length + "], checksum [" + checksum + "], writtenBy [" + writtenBy + "]" ;
+        return "name [" + name + "], length [" + length + "], checksum [" + checksum + "], writtenBy [" + writtenBy + "]";
     }
 
     /**

@@ -27,7 +27,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 
 public final class RemoteInfoRequest extends ActionRequest {
 
-    public RemoteInfoRequest() {}
+    public RemoteInfoRequest() {
+    }
 
     RemoteInfoRequest(StreamInput in) throws IOException {
         super(in);

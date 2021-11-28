@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.index.engine;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SegmentReader;
@@ -26,12 +32,6 @@ import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.lucene.index.FesenDirectoryReader;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiConsumer;
 
 /**
  * A refresh listener that tracks the amount of memory used by segments in the accounting circuit breaker.

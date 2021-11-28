@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.common.settings;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,11 +33,7 @@ import java.util.Map;
 import org.codelibs.fesen.cli.Command;
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.CreateKeyStoreCommand;
-import org.codelibs.fesen.common.settings.KeyStoreWrapper;
 import org.codelibs.fesen.env.Environment;
-
-import static org.hamcrest.Matchers.containsString;
 
 public class CreateKeyStoreCommandTests extends KeyStoreCommandTestCase {
 

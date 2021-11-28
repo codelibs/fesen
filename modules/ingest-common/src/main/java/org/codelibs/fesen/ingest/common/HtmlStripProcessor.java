@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import org.apache.lucene.analysis.charfilter.HTMLStripCharFilter;
-import org.codelibs.fesen.FesenException;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
+
+import org.apache.lucene.analysis.charfilter.HTMLStripCharFilter;
+import org.codelibs.fesen.FesenException;
 
 public final class HtmlStripProcessor extends AbstractStringProcessor<String> {
 
@@ -67,7 +67,7 @@ public final class HtmlStripProcessor extends AbstractStringProcessor<String> {
 
         @Override
         protected HtmlStripProcessor newProcessor(String tag, String description, Map<String, Object> config, String field,
-                                             boolean ignoreMissing, String targetField) {
+                boolean ignoreMissing, String targetField) {
             return new HtmlStripProcessor(tag, description, field, ignoreMissing, targetField);
         }
     }

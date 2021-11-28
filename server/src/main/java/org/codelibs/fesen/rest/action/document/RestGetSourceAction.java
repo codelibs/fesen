@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.rest.action.document;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.get.GetRequest;
@@ -36,32 +46,19 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
 /**
  * The REST handler for get source and head source APIs.
  */
 public class RestGetSourceAction extends BaseRestHandler {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestGetSourceAction.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Specifying types in get_source and exist_source"
-            + "requests is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE =
+            "[types removal] Specifying types in get_source and exist_source" + "requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(
-            new Route(GET, "/{index}/_source/{id}"),
-            new Route(HEAD, "/{index}/_source/{id}"),
-            new Route(GET, "/{index}/{type}/{id}/_source"),
-            new Route(HEAD, "/{index}/{type}/{id}/_source")));
+        return unmodifiableList(asList(new Route(GET, "/{index}/_source/{id}"), new Route(HEAD, "/{index}/_source/{id}"),
+                new Route(GET, "/{index}/{type}/{id}/_source"), new Route(HEAD, "/{index}/{type}/{id}/_source")));
     }
 
     @Override

@@ -19,6 +19,28 @@
 
 package org.codelibs.fesen.test;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
+import static org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation.countInnerBucket;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
@@ -43,10 +65,10 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.SearchModule;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.MultiBucketConsumerService;
-import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
+import org.codelibs.fesen.search.aggregations.MultiBucketConsumerService;
 import org.codelibs.fesen.search.aggregations.MultiBucketConsumerService.MultiBucketConsumer;
+import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 import org.codelibs.fesen.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.bucket.adjacency.ParsedAdjacencyMatrix;
 import org.codelibs.fesen.search.aggregations.bucket.composite.CompositeAggregationBuilder;
@@ -149,31 +171,9 @@ import org.codelibs.fesen.search.aggregations.pipeline.ParsedSimpleValue;
 import org.codelibs.fesen.search.aggregations.pipeline.ParsedStatsBucket;
 import org.codelibs.fesen.search.aggregations.pipeline.PercentilesBucketPipelineAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator;
+import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.search.aggregations.pipeline.StatsBucketPipelineAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.pipeline.SumBucketPipelineAggregationBuilder;
-import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation.countInnerBucket;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 /**
  * Implementors of this test case should be aware that the aggregation under test needs to be registered
@@ -309,8 +309,8 @@ public abstract class InternalAggregationTestCase<T extends InternalAggregation>
      */
     protected List<NamedWriteableRegistry.Entry> getNamedWriteables() {
         SearchPlugin plugin = registerPlugin();
-        SearchModule searchModule
-            = new SearchModule(Settings.EMPTY, false, plugin == null ? emptyList() : Collections.singletonList(plugin));
+        SearchModule searchModule =
+                new SearchModule(Settings.EMPTY, false, plugin == null ? emptyList() : Collections.singletonList(plugin));
         List<NamedWriteableRegistry.Entry> entries = new ArrayList<>(searchModule.getNamedWriteables());
 
         // Modules/plugins may have extra namedwriteables that are not added by agg specs
@@ -375,8 +375,8 @@ public abstract class InternalAggregationTestCase<T extends InternalAggregation>
             List<InternalAggregation> toPartialReduce = toReduce.subList(0, r);
             // Sort aggs so that unmapped come last.  This mimicks the behavior of InternalAggregations.reduce()
             toPartialReduce.sort(INTERNAL_AGG_COMPARATOR);
-            InternalAggregation.ReduceContext context = InternalAggregation.ReduceContext.forPartialReduction(
-                    bigArrays, mockScriptService, () -> PipelineAggregator.PipelineTree.EMPTY);
+            InternalAggregation.ReduceContext context = InternalAggregation.ReduceContext.forPartialReduction(bigArrays, mockScriptService,
+                    () -> PipelineAggregator.PipelineTree.EMPTY);
             @SuppressWarnings("unchecked")
             T reduced = (T) toPartialReduce.get(0).reduce(toPartialReduce, context);
             int initialBucketCount = 0;
@@ -397,10 +397,10 @@ public abstract class InternalAggregationTestCase<T extends InternalAggregation>
             toReduce = new ArrayList<>(toReduce.subList(r, inputs.size()));
             toReduce.add(reduced);
         }
-        MultiBucketConsumer bucketConsumer = new MultiBucketConsumer(DEFAULT_MAX_BUCKETS,
-            new NoneCircuitBreakerService().getBreaker(CircuitBreaker.REQUEST));
-        InternalAggregation.ReduceContext context = InternalAggregation.ReduceContext.forFinalReduction(
-                bigArrays, mockScriptService, bucketConsumer, PipelineTree.EMPTY);
+        MultiBucketConsumer bucketConsumer =
+                new MultiBucketConsumer(DEFAULT_MAX_BUCKETS, new NoneCircuitBreakerService().getBreaker(CircuitBreaker.REQUEST));
+        InternalAggregation.ReduceContext context =
+                InternalAggregation.ReduceContext.forFinalReduction(bigArrays, mockScriptService, bucketConsumer, PipelineTree.EMPTY);
         @SuppressWarnings("unchecked")
         T reduced = (T) inputs.get(0).reduce(toReduce, context);
         doAssertReducedMultiBucketConsumer(reduced, bucketConsumer);
@@ -410,7 +410,6 @@ public abstract class InternalAggregationTestCase<T extends InternalAggregation>
     protected void doAssertReducedMultiBucketConsumer(Aggregation agg, MultiBucketConsumerService.MultiBucketConsumer bucketConsumer) {
         InternalAggregationTestCase.assertMultiBucketConsumer(agg, bucketConsumer);
     }
-
 
     /**
      * overwrite in tests that need it
@@ -525,8 +524,8 @@ public abstract class InternalAggregationTestCase<T extends InternalAggregation>
     protected abstract void assertFromXContent(T aggregation, ParsedAggregation parsedAggregation) throws IOException;
 
     @SuppressWarnings("unchecked")
-    protected <P extends ParsedAggregation> P parseAndAssert(final InternalAggregation aggregation,
-                                                             final boolean shuffled, final boolean addRandomFields) throws IOException {
+    protected <P extends ParsedAggregation> P parseAndAssert(final InternalAggregation aggregation, final boolean shuffled,
+            final boolean addRandomFields) throws IOException {
 
         final ToXContent.Params params = new ToXContent.MapParams(singletonMap(RestSearchAction.TYPED_KEYS_PARAM, "true"));
         final XContentType xContentType = randomFrom(XContentType.values());

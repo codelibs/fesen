@@ -96,23 +96,19 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
     @Before
     public void setupForTest() {
         final MockTransport transport = new MockTransport();
-        transportService = transport.createTransportService(Settings.EMPTY, threadPool,
-            TransportService.NOOP_TRANSPORT_INTERCEPTOR, boundTransportAddress -> localNode, null, emptySet());
+        transportService = transport.createTransportService(Settings.EMPTY, threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+                boundTransportAddress -> localNode, null, emptySet());
 
         new TransportClearVotingConfigExclusionsAction(transportService, clusterService, threadPool, new ActionFilters(emptySet()),
-            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY))); // registers action
+                new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY))); // registers action
 
         transportService.start();
         transportService.acceptIncomingRequests();
 
-        final ClusterState.Builder builder = builder(new ClusterName("cluster"))
-            .nodes(new Builder().add(localNode).add(otherNode1).add(otherNode2)
-                .localNodeId(localNode.getId()).masterNodeId(localNode.getId()));
-        builder.metadata(Metadata.builder()
-                .coordinationMetadata(CoordinationMetadata.builder()
-                        .addVotingConfigExclusion(otherNode1Exclusion)
-                        .addVotingConfigExclusion(otherNode2Exclusion)
-                .build()));
+        final ClusterState.Builder builder = builder(new ClusterName("cluster")).nodes(new Builder().add(localNode).add(otherNode1)
+                .add(otherNode2).localNodeId(localNode.getId()).masterNodeId(localNode.getId()));
+        builder.metadata(Metadata.builder().coordinationMetadata(CoordinationMetadata.builder()
+                .addVotingConfigExclusion(otherNode1Exclusion).addVotingConfigExclusion(otherNode2Exclusion).build()));
         setState(clusterService, builder);
     }
 
@@ -122,13 +118,11 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
 
         final ClearVotingConfigExclusionsRequest clearVotingConfigExclusionsRequest = new ClearVotingConfigExclusionsRequest();
         clearVotingConfigExclusionsRequest.setWaitForRemoval(false);
-        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME,
-            clearVotingConfigExclusionsRequest,
-            expectSuccess(r -> {
-                responseHolder.set(r);
-                countDownLatch.countDown();
-            })
-        );
+        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME, clearVotingConfigExclusionsRequest,
+                expectSuccess(r -> {
+                    responseHolder.set(r);
+                    countDownLatch.countDown();
+                }));
 
         assertTrue(countDownLatch.await(30, TimeUnit.SECONDS));
         assertNotNull(responseHolder.get());
@@ -141,13 +135,11 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
 
         final ClearVotingConfigExclusionsRequest clearVotingConfigExclusionsRequest = new ClearVotingConfigExclusionsRequest();
         clearVotingConfigExclusionsRequest.setTimeout(TimeValue.timeValueMillis(100));
-        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME,
-            clearVotingConfigExclusionsRequest,
-            expectError(e -> {
-                responseHolder.set(e);
-                countDownLatch.countDown();
-            })
-        );
+        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME, clearVotingConfigExclusionsRequest,
+                expectError(e -> {
+                    responseHolder.set(e);
+                    countDownLatch.countDown();
+                }));
 
         assertTrue(countDownLatch.await(30, TimeUnit.SECONDS));
         assertThat(clusterService.getClusterApplierService().state().getVotingConfigExclusions(),
@@ -155,20 +147,18 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
         final Throwable rootCause = responseHolder.get().getRootCause();
         assertThat(rootCause, instanceOf(FesenTimeoutException.class));
         assertThat(rootCause.getMessage(),
-            startsWith("timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. ["));
+                startsWith("timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. ["));
     }
 
     public void testSucceedsIfNodesAreRemovedWhileWaiting() throws InterruptedException {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final SetOnce<ClearVotingConfigExclusionsResponse> responseHolder = new SetOnce<>();
 
-        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME,
-            new ClearVotingConfigExclusionsRequest(),
-            expectSuccess(r -> {
-                responseHolder.set(r);
-                countDownLatch.countDown();
-            })
-        );
+        transportService.sendRequest(localNode, ClearVotingConfigExclusionsAction.NAME, new ClearVotingConfigExclusionsRequest(),
+                expectSuccess(r -> {
+                    responseHolder.set(r);
+                    countDownLatch.countDown();
+                }));
 
         final ClusterState.Builder builder = builder(clusterService.state());
         builder.nodes(DiscoveryNodes.builder(clusterService.state().nodes()).remove(otherNode1).remove(otherNode2));
@@ -179,7 +169,7 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
     }
 
     private TransportResponseHandler<ClearVotingConfigExclusionsResponse> expectSuccess(
-        Consumer<ClearVotingConfigExclusionsResponse> onResponse) {
+            Consumer<ClearVotingConfigExclusionsResponse> onResponse) {
         return responseHandler(onResponse, e -> {
             throw new AssertionError("unexpected", e);
         });
@@ -192,7 +182,7 @@ public class TransportClearVotingConfigExclusionsActionTests extends ESTestCase 
     }
 
     private TransportResponseHandler<ClearVotingConfigExclusionsResponse> responseHandler(
-        Consumer<ClearVotingConfigExclusionsResponse> onResponse, Consumer<TransportException> onException) {
+            Consumer<ClearVotingConfigExclusionsResponse> onResponse, Consumer<TransportException> onException) {
         return new TransportResponseHandler<ClearVotingConfigExclusionsResponse>() {
             @Override
             public void handleResponse(ClearVotingConfigExclusionsResponse response) {

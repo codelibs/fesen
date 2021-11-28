@@ -19,23 +19,6 @@
 
 package org.codelibs.fesen.ingest.geoip;
 
-import com.maxmind.db.NoCache;
-import com.maxmind.db.NodeCache;
-import com.maxmind.db.Reader;
-import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.model.AbstractResponse;
-
-import org.codelibs.fesen.common.cache.Cache;
-import org.codelibs.fesen.common.cache.CacheBuilder;
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.plugins.IngestPlugin;
-import org.codelibs.fesen.plugins.Plugin;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -52,11 +35,27 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable {
-    public static final Setting<Long> CACHE_SIZE =
-        Setting.longSetting("ingest.geoip.cache_size", 1000, 0, Setting.Property.NodeScope);
+import org.codelibs.fesen.common.cache.Cache;
+import org.codelibs.fesen.common.cache.CacheBuilder;
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.plugins.IngestPlugin;
+import org.codelibs.fesen.plugins.Plugin;
 
-    static String[] DEFAULT_DATABASE_FILENAMES = new String[]{"GeoLite2-ASN.mmdb", "GeoLite2-City.mmdb", "GeoLite2-Country.mmdb"};
+import com.maxmind.db.NoCache;
+import com.maxmind.db.NodeCache;
+import com.maxmind.db.Reader;
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.model.AbstractResponse;
+
+public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable {
+    public static final Setting<Long> CACHE_SIZE = Setting.longSetting("ingest.geoip.cache_size", 1000, 0, Setting.Property.NodeScope);
+
+    static String[] DEFAULT_DATABASE_FILENAMES = new String[] { "GeoLite2-ASN.mmdb", "GeoLite2-City.mmdb", "GeoLite2-Country.mmdb" };
 
     private Map<String, DatabaseReaderLazyLoader> databaseReaders;
 
@@ -131,17 +130,15 @@ public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable
     }
 
     private static DatabaseReaderLazyLoader createLoader(Path databasePath, boolean loadDatabaseOnHeap) {
-        return new DatabaseReaderLazyLoader(
-                databasePath,
-                () -> {
-                    DatabaseReader.Builder builder = createDatabaseBuilder(databasePath).withCache(NoCache.getInstance());
-                    if (loadDatabaseOnHeap) {
-                        builder.fileMode(Reader.FileMode.MEMORY);
-                    } else {
-                        builder.fileMode(Reader.FileMode.MEMORY_MAPPED);
-                    }
-                    return builder.build();
-                });
+        return new DatabaseReaderLazyLoader(databasePath, () -> {
+            DatabaseReader.Builder builder = createDatabaseBuilder(databasePath).withCache(NoCache.getInstance());
+            if (loadDatabaseOnHeap) {
+                builder.fileMode(Reader.FileMode.MEMORY);
+            } else {
+                builder.fileMode(Reader.FileMode.MEMORY_MAPPED);
+            }
+            return builder.build();
+        });
     }
 
     private static void assertDatabaseExistence(final Path path, final boolean exists) throws IOException {
@@ -179,11 +176,11 @@ public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable
             if (maxSize < 0) {
                 throw new IllegalArgumentException("geoip max cache size must be 0 or greater");
             }
-            this.cache = CacheBuilder.<CacheKey<?>, AbstractResponse>builder().setMaximumWeight(maxSize).build();
+            this.cache = CacheBuilder.<CacheKey<?>, AbstractResponse> builder().setMaximumWeight(maxSize).build();
         }
 
         <T extends AbstractResponse> T putIfAbsent(InetAddress ip, Class<T> responseType,
-                                                   Function<InetAddress, AbstractResponse> retrieveFunction) {
+                Function<InetAddress, AbstractResponse> retrieveFunction) {
 
             //can't use cache.computeIfAbsent due to the elevated permissions for the jackson (run via the cache loader)
             CacheKey<T> cacheKey = new CacheKey<>(ip, responseType);
@@ -202,13 +199,13 @@ public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable
             return responseType.cast(cache.get(cacheKey));
         }
 
-         /**
-         * The key to use for the cache. Since this cache can span multiple geoip processors that all use different databases, the response
-         * type is needed to be included in the cache key. For example, if we only used the IP address as the key the City and ASN the same
-         * IP may be in both with different values and we need to cache both. The response type scopes the IP to the correct database
-         * provides a means to safely cast the return objects.
-         * @param <T> The AbstractResponse type used to scope the key and cast the result.
-         */
+        /**
+        * The key to use for the cache. Since this cache can span multiple geoip processors that all use different databases, the response
+        * type is needed to be included in the cache key. For example, if we only used the IP address as the key the City and ASN the same
+        * IP may be in both with different values and we need to cache both. The response type scopes the IP to the correct database
+        * provides a means to safely cast the return objects.
+        * @param <T> The AbstractResponse type used to scope the key and cast the result.
+        */
         private static class CacheKey<T extends AbstractResponse> {
 
             private final InetAddress ip;
@@ -222,11 +219,12 @@ public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, Closeable
             //generated
             @Override
             public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (this == o)
+                    return true;
+                if (o == null || getClass() != o.getClass())
+                    return false;
                 CacheKey<?> cacheKey = (CacheKey<?>) o;
-                return Objects.equals(ip, cacheKey.ip) &&
-                    Objects.equals(responseType, cacheKey.responseType);
+                return Objects.equals(ip, cacheKey.ip) && Objects.equals(responseType, cacheKey.responseType);
             }
 
             //generated

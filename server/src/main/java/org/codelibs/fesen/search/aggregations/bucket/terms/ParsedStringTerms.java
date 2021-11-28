@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
+import java.io.IOException;
+import java.nio.CharBuffer;
+
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-
-import java.io.IOException;
-import java.nio.CharBuffer;
 
 public class ParsedStringTerms extends ParsedTerms {
 
@@ -81,13 +81,13 @@ public class ParsedStringTerms extends ParsedTerms {
 
         static ParsedBucket fromXContent(XContentParser parser) throws IOException {
             return parseTermsBucketXContent(parser, ParsedBucket::new, (p, bucket) -> {
-                    CharBuffer cb = p.charBufferOrNull();
-                    if (cb == null) {
-                        bucket.key = null;
-                    } else {
-                        bucket.key = new BytesRef(cb);
-                    }
-                });
+                CharBuffer cb = p.charBufferOrNull();
+                if (cb == null) {
+                    bucket.key = null;
+                } else {
+                    bucket.key = new BytesRef(cb);
+                }
+            });
         }
     }
 }

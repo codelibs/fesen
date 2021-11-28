@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster.dangling;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -27,9 +30,6 @@ import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions;
-
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestListDanglingIndicesAction extends BaseRestHandler {
     @Override
@@ -45,8 +45,7 @@ public class RestListDanglingIndicesAction extends BaseRestHandler {
     @Override
     public BaseRestHandler.RestChannelConsumer prepareRequest(final RestRequest request, NodeClient client) throws IOException {
         final ListDanglingIndicesRequest danglingIndicesRequest = new ListDanglingIndicesRequest();
-        return channel -> client.admin()
-            .cluster()
-            .listDanglingIndices(danglingIndicesRequest, new RestActions.NodesResponseRestListener<>(channel));
+        return channel -> client.admin().cluster().listDanglingIndices(danglingIndicesRequest,
+                new RestActions.NodesResponseRestListener<>(channel));
     }
 }

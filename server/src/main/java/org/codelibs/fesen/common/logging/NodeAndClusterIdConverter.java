@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.logging;
 
+import java.util.Locale;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.pattern.ConverterKeys;
@@ -26,14 +28,12 @@ import org.apache.logging.log4j.core.pattern.LogEventPatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.lucene.util.SetOnce;
 
-import java.util.Locale;
-
 /**
  * Pattern converter to format the node_and_cluster_id variable into JSON fields <code>node.id</code> and <code>cluster.uuid</code>.
  * Keeping those two fields together assures that they will be atomically set and become visible in logs at the same time.
  */
 @Plugin(category = PatternConverter.CATEGORY, name = "NodeAndClusterIdConverter")
-@ConverterKeys({"node_and_cluster_id"})
+@ConverterKeys({ "node_and_cluster_id" })
 public final class NodeAndClusterIdConverter extends LogEventPatternConverter {
     private static final SetOnce<String> nodeAndClusterId = new SetOnce<>();
 
@@ -56,7 +56,7 @@ public final class NodeAndClusterIdConverter extends LogEventPatternConverter {
      * @param clusterUUID a clusterId received from cluster state update
      */
     public static void setNodeIdAndClusterId(String nodeId, String clusterUUID) {
-         nodeAndClusterId.set(formatIds(clusterUUID, nodeId));
+        nodeAndClusterId.set(formatIds(clusterUUID, nodeId));
     }
 
     /**

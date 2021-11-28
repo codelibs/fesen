@@ -114,8 +114,8 @@ public class FesenExceptionTests extends ESTestCase {
 
     public void testGuessRootCause() {
         {
-            FesenException exception = new FesenException("foo", new FesenException("bar",
-                    new IndexNotFoundException("foo", new RuntimeException("foobar"))));
+            FesenException exception =
+                    new FesenException("foo", new FesenException("bar", new IndexNotFoundException("foo", new RuntimeException("foobar"))));
             FesenException[] rootCauses = exception.guessRootCauses();
             assertEquals(rootCauses.length, 1);
             assertEquals(FesenException.getExceptionName(rootCauses[0]), "index_not_found_exception");
@@ -124,8 +124,8 @@ public class FesenExceptionTests extends ESTestCase {
                     new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE));
             ShardSearchFailure failure1 = new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo", "_na_", 2), null, OriginalIndices.NONE));
-            SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed",
-                    new ShardSearchFailure[]{failure, failure1});
+            SearchPhaseExecutionException ex =
+                    new SearchPhaseExecutionException("search", "all shards failed", new ShardSearchFailure[] { failure, failure1 });
             if (randomBoolean()) {
                 rootCauses = (randomBoolean() ? new RemoteTransportException("remoteboom", ex) : ex).guessRootCauses();
             } else {
@@ -140,15 +140,14 @@ public class FesenExceptionTests extends ESTestCase {
             assertEquals("foo", rootCauses[0].getMessage());
         }
         {
-            ShardSearchFailure failure = new ShardSearchFailure(
-                    new ParsingException(1, 2, "foobar", null),
+            ShardSearchFailure failure = new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE));
             ShardSearchFailure failure1 = new ShardSearchFailure(new QueryShardException(new Index("foo1", "_na_"), "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo1", "_na_", 1), null, OriginalIndices.NONE));
             ShardSearchFailure failure2 = new ShardSearchFailure(new QueryShardException(new Index("foo1", "_na_"), "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo1", "_na_", 2), null, OriginalIndices.NONE));
             SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed",
-                    new ShardSearchFailure[]{failure, failure1, failure2});
+                    new ShardSearchFailure[] { failure, failure1, failure2 });
             final FesenException[] rootCauses = ex.guessRootCauses();
             assertEquals(rootCauses.length, 2);
             assertEquals(FesenException.getExceptionName(rootCauses[0]), "parsing_exception");
@@ -170,8 +169,8 @@ public class FesenExceptionTests extends ESTestCase {
         }
 
         {
-            final FesenException[] foobars = FesenException.guessRootCauses(
-                new RemoteTransportException("abc", new IllegalArgumentException("foobar")));
+            final FesenException[] foobars =
+                    FesenException.guessRootCauses(new RemoteTransportException("abc", new IllegalArgumentException("foobar")));
             assertEquals(foobars.length, 1);
             assertThat(foobars[0], instanceOf(FesenException.class));
             assertEquals("foobar", foobars[0].getMessage());
@@ -207,14 +206,14 @@ public class FesenExceptionTests extends ESTestCase {
             ShardSearchFailure failure1 = new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo", "_na_", 2), null, OriginalIndices.NONE));
             SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed",
-                    randomBoolean() ? failure1.getCause() : failure.getCause(), new ShardSearchFailure[]{failure, failure1});
+                    randomBoolean() ? failure1.getCause() : failure.getCause(), new ShardSearchFailure[] { failure, failure1 });
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.startObject();
             ex.toXContent(builder, ToXContent.EMPTY_PARAMS);
             builder.endObject();
-            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\",\"phase\":\"search\"," +
-                    "\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\",\"reason\":" +
-                    "{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}}]}";
+            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\",\"phase\":\"search\","
+                    + "\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\",\"reason\":"
+                    + "{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}}]}";
             assertEquals(expected, Strings.toString(builder));
         }
         {
@@ -225,16 +224,16 @@ public class FesenExceptionTests extends ESTestCase {
             ShardSearchFailure failure2 = new ShardSearchFailure(new QueryShardException(new Index("foo1", "_na_"), "foobar", null),
                     new SearchShardTarget("node_1", new ShardId("foo1", "_na_", 2), null, OriginalIndices.NONE));
             SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed",
-                    new ShardSearchFailure[]{failure, failure1, failure2});
+                    new ShardSearchFailure[] { failure, failure1, failure2 });
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.startObject();
             ex.toXContent(builder, ToXContent.EMPTY_PARAMS);
             builder.endObject();
-            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\"," +
-                    "\"phase\":\"search\",\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\"," +
-                    "\"reason\":{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}},{\"shard\":1," +
-                    "\"index\":\"foo1\",\"node\":\"node_1\",\"reason\":{\"type\":\"query_shard_exception\",\"reason\":\"foobar\"," +
-                    "\"index_uuid\":\"_na_\",\"index\":\"foo1\"}}]}";
+            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\","
+                    + "\"phase\":\"search\",\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\","
+                    + "\"reason\":{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}},{\"shard\":1,"
+                    + "\"index\":\"foo1\",\"node\":\"node_1\",\"reason\":{\"type\":\"query_shard_exception\",\"reason\":\"foobar\","
+                    + "\"index_uuid\":\"_na_\",\"index\":\"foo1\"}}]}";
             assertEquals(expected, Strings.toString(builder));
         }
         {
@@ -244,16 +243,16 @@ public class FesenExceptionTests extends ESTestCase {
                     new SearchShardTarget("node_1", new ShardId("foo", "_na_", 2), null, OriginalIndices.NONE));
             NullPointerException nullPointerException = new NullPointerException();
             SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed", nullPointerException,
-                    new ShardSearchFailure[]{failure, failure1});
+                    new ShardSearchFailure[] { failure, failure1 });
             assertEquals(nullPointerException, ex.getCause());
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.startObject();
             ex.toXContent(builder, ToXContent.EMPTY_PARAMS);
             builder.endObject();
-            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\"," +
-                    "\"phase\":\"search\",\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\"," +
-                    "\"reason\":{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}}]," +
-                    "\"caused_by\":{\"type\":\"null_pointer_exception\",\"reason\":null}}";
+            String expected = "{\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\","
+                    + "\"phase\":\"search\",\"grouped\":true,\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\","
+                    + "\"reason\":{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}}],"
+                    + "\"caused_by\":{\"type\":\"null_pointer_exception\",\"reason\":null}}";
             assertEquals(expected, Strings.toString(builder));
         }
     }
@@ -280,18 +279,18 @@ public class FesenExceptionTests extends ESTestCase {
 
     public void testGetRootCause() {
         Exception root = new RuntimeException("foobar");
-        FesenException exception = new FesenException("foo", new FesenException("bar",
-                new IllegalArgumentException("index is closed", root)));
+        FesenException exception =
+                new FesenException("foo", new FesenException("bar", new IllegalArgumentException("index is closed", root)));
         assertEquals(root, exception.getRootCause());
         assertTrue(contains(exception, RuntimeException.class));
         assertFalse(contains(exception, EOFException.class));
     }
 
     public void testToString() {
-        FesenException exception = new FesenException("foo", new FesenException("bar",
-                new IllegalArgumentException("index is closed", new RuntimeException("foobar"))));
-        assertEquals("FesenException[foo]; nested: FesenException[bar]; nested: IllegalArgumentException" +
-                "[index is closed]; nested: RuntimeException[foobar];", exception.toString());
+        FesenException exception = new FesenException("foo",
+                new FesenException("bar", new IllegalArgumentException("index is closed", new RuntimeException("foobar"))));
+        assertEquals("FesenException[foo]; nested: FesenException[bar]; nested: IllegalArgumentException"
+                + "[index is closed]; nested: RuntimeException[foobar];", exception.toString());
     }
 
     public void testToXContent() throws IOException {
@@ -301,40 +300,42 @@ public class FesenExceptionTests extends ESTestCase {
         }
         {
             FesenException e = new IndexShardRecoveringException(new ShardId("_test", "_0", 5));
-            assertExceptionAsJson(e, "{\"type\":\"index_shard_recovering_exception\"," +
-                    "\"reason\":\"CurrentState[RECOVERING] Already recovering\",\"index_uuid\":\"_0\"," +
-                    "\"shard\":\"5\",\"index\":\"_test\"}");
+            assertExceptionAsJson(e,
+                    "{\"type\":\"index_shard_recovering_exception\","
+                            + "\"reason\":\"CurrentState[RECOVERING] Already recovering\",\"index_uuid\":\"_0\","
+                            + "\"shard\":\"5\",\"index\":\"_test\"}");
         }
         {
-            FesenException e = new BroadcastShardOperationFailedException(new ShardId("_index", "_uuid", 12), "foo",
-                    new IllegalStateException("bar"));
+            FesenException e =
+                    new BroadcastShardOperationFailedException(new ShardId("_index", "_uuid", 12), "foo", new IllegalStateException("bar"));
             assertExceptionAsJson(e, "{\"type\":\"illegal_state_exception\",\"reason\":\"bar\"}");
         }
         {
             FesenException e = new FesenException(new IllegalArgumentException("foo"));
-            assertExceptionAsJson(e, "{\"type\":\"exception\",\"reason\":\"java.lang.IllegalArgumentException: foo\"," +
-                    "\"caused_by\":{\"type\":\"illegal_argument_exception\",\"reason\":\"foo\"}}");
+            assertExceptionAsJson(e, "{\"type\":\"exception\",\"reason\":\"java.lang.IllegalArgumentException: foo\","
+                    + "\"caused_by\":{\"type\":\"illegal_argument_exception\",\"reason\":\"foo\"}}");
         }
         {
-            FesenException e = new SearchParseException(SHARD_TARGET, "foo", new XContentLocation(1,0));
+            FesenException e = new SearchParseException(SHARD_TARGET, "foo", new XContentLocation(1, 0));
             assertExceptionAsJson(e, "{\"type\":\"search_parse_exception\",\"reason\":\"foo\",\"line\":1,\"col\":0}");
         }
         {
             FesenException ex = new FesenException("foo",
                     new FesenException("bar", new IllegalArgumentException("index is closed", new RuntimeException("foobar"))));
-            assertExceptionAsJson(ex, "{\"type\":\"exception\",\"reason\":\"foo\",\"caused_by\":{\"type\":\"exception\"," +
-                    "\"reason\":\"bar\",\"caused_by\":{\"type\":\"illegal_argument_exception\",\"reason\":\"index is closed\"," +
-                    "\"caused_by\":{\"type\":\"runtime_exception\",\"reason\":\"foobar\"}}}}");
+            assertExceptionAsJson(ex,
+                    "{\"type\":\"exception\",\"reason\":\"foo\",\"caused_by\":{\"type\":\"exception\","
+                            + "\"reason\":\"bar\",\"caused_by\":{\"type\":\"illegal_argument_exception\",\"reason\":\"index is closed\","
+                            + "\"caused_by\":{\"type\":\"runtime_exception\",\"reason\":\"foobar\"}}}}");
         }
         {
             FesenException e = new FesenException("foo", new IllegalStateException("bar"));
-            assertExceptionAsJson(e, "{\"type\":\"exception\",\"reason\":\"foo\"," +
-                    "\"caused_by\":{\"type\":\"illegal_state_exception\",\"reason\":\"bar\"}}");
+            assertExceptionAsJson(e, "{\"type\":\"exception\",\"reason\":\"foo\","
+                    + "\"caused_by\":{\"type\":\"illegal_state_exception\",\"reason\":\"bar\"}}");
 
             // Test the same exception but with the "rest.exception.stacktrace.skip" parameter disabled: the stack_trace must be present
             // in the JSON. Since the stack can be large, it only checks the beginning of the JSON.
-            ToXContent.Params params = new ToXContent.MapParams(
-                    Collections.singletonMap(FesenException.REST_EXCEPTION_SKIP_STACK_TRACE, "false"));
+            ToXContent.Params params =
+                    new ToXContent.MapParams(Collections.singletonMap(FesenException.REST_EXCEPTION_SKIP_STACK_TRACE, "false"));
             String actual;
             try (XContentBuilder builder = XContentBuilder.builder(XContentType.JSON.xContent())) {
                 builder.startObject();
@@ -342,11 +343,11 @@ public class FesenExceptionTests extends ESTestCase {
                 builder.endObject();
                 actual = Strings.toString(builder);
             }
-            assertThat(actual, startsWith("{\"type\":\"exception\",\"reason\":\"foo\"," +
-                    "\"caused_by\":{\"type\":\"illegal_state_exception\",\"reason\":\"bar\"," +
-                    "\"stack_trace\":\"java.lang.IllegalStateException: bar" +
-                    (Constants.WINDOWS ? "\\r\\n" : "\\n") +
-                    "\\tat org.codelibs.fesen."));
+            assertThat(actual,
+                    startsWith("{\"type\":\"exception\",\"reason\":\"foo\","
+                            + "\"caused_by\":{\"type\":\"illegal_state_exception\",\"reason\":\"bar\","
+                            + "\"stack_trace\":\"java.lang.IllegalStateException: bar" + (Constants.WINDOWS ? "\\r\\n" : "\\n")
+                            + "\\tat org.codelibs.fesen."));
         }
     }
 
@@ -367,7 +368,7 @@ public class FesenExceptionTests extends ESTestCase {
         }
 
         { // test equivalence
-            FesenException ex =  new RemoteTransportException("foobar", new FileNotFoundException("foo not found"));
+            FesenException ex = new RemoteTransportException("foobar", new FileNotFoundException("foo not found"));
             String toXContentString = Strings.toString(ex);
             String throwableString = Strings.toString((builder, params) -> {
                 FesenException.generateThrowableXContent(builder, params, ex);
@@ -384,46 +385,26 @@ public class FesenExceptionTests extends ESTestCase {
             ex.addMetadata("es.test2", "value2");
             ex.addHeader("test", "some value");
             ex.addHeader("test_multi", "some value", "another value");
-            String expected = "{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2," +
-                    "\"test1\":\"value1\",\"test2\":\"value2\"," +
-                    "\"header\":{\"test_multi\":" +
-                    "[\"some value\",\"another value\"],\"test\":\"some value\"}}";
+            String expected = "{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2,"
+                    + "\"test1\":\"value1\",\"test2\":\"value2\"," + "\"header\":{\"test_multi\":"
+                    + "[\"some value\",\"another value\"],\"test\":\"some value\"}}";
             assertExceptionAsJson(ex, expected);
         }
     }
 
     public void testToXContentWithHeadersAndMetadata() throws IOException {
-        FesenException e = new FesenException("foo",
-            new FesenException("bar",
-                new FesenException("baz",
-                    new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES)))));
+        FesenException e = new FesenException("foo", new FesenException("bar",
+                new FesenException("baz", new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES)))));
         e.addHeader("foo_0", "0");
         e.addHeader("foo_1", "1");
         e.addMetadata("es.metadata_foo_0", "foo_0");
         e.addMetadata("es.metadata_foo_1", "foo_1");
 
-        final String expectedJson = "{"
-            + "\"type\":\"exception\","
-            + "\"reason\":\"foo\","
-            + "\"metadata_foo_0\":\"foo_0\","
-            + "\"metadata_foo_1\":\"foo_1\","
-            + "\"caused_by\":{"
-                + "\"type\":\"exception\","
-                + "\"reason\":\"bar\","
-                + "\"caused_by\":{"
-                    + "\"type\":\"exception\","
-                    + "\"reason\":\"baz\","
-                    + "\"caused_by\":{"
-                        + "\"type\":\"cluster_block_exception\","
-                        + "\"reason\":\"blocked by: [SERVICE_UNAVAILABLE/2/no master];\""
-                    + "}"
-                + "}"
-            + "},"
-            + "\"header\":{"
-                    + "\"foo_0\":\"0\","
-                    + "\"foo_1\":\"1\""
-                + "}"
-        + "}";
+        final String expectedJson = "{" + "\"type\":\"exception\"," + "\"reason\":\"foo\"," + "\"metadata_foo_0\":\"foo_0\","
+                + "\"metadata_foo_1\":\"foo_1\"," + "\"caused_by\":{" + "\"type\":\"exception\"," + "\"reason\":\"bar\","
+                + "\"caused_by\":{" + "\"type\":\"exception\"," + "\"reason\":\"baz\"," + "\"caused_by\":{"
+                + "\"type\":\"cluster_block_exception\"," + "\"reason\":\"blocked by: [SERVICE_UNAVAILABLE/2/no master];\"" + "}" + "}"
+                + "}," + "\"header\":{" + "\"foo_0\":\"0\"," + "\"foo_1\":\"1\"" + "}" + "}";
 
         assertExceptionAsJson(e, expectedJson);
 
@@ -457,12 +438,8 @@ public class FesenExceptionTests extends ESTestCase {
 
     public void testFromXContent() throws IOException {
         final XContent xContent = randomFrom(XContentType.values()).xContent();
-        XContentBuilder builder = XContentBuilder.builder(xContent)
-                                                    .startObject()
-                                                        .field("type", "foo")
-                                                        .field("reason", "something went wrong")
-                                                        .field("stack_trace", "...")
-                                                    .endObject();
+        XContentBuilder builder = XContentBuilder.builder(xContent).startObject().field("type", "foo")
+                .field("reason", "something went wrong").field("stack_trace", "...").endObject();
 
         builder = shuffleXContent(builder);
         FesenException parsed;
@@ -479,9 +456,7 @@ public class FesenExceptionTests extends ESTestCase {
 
     public void testFromXContentWithCause() throws IOException {
         FesenException e = new FesenException("foo",
-                new FesenException("bar",
-                        new FesenException("baz",
-                                new RoutingMissingException("_test", "_type", "_id"))));
+                new FesenException("bar", new FesenException("baz", new RoutingMissingException("_test", "_type", "_id"))));
 
         final XContent xContent = randomFrom(XContentType.values()).xContent();
         XContentBuilder builder = XContentBuilder.builder(xContent).startObject().value(e).endObject();
@@ -585,31 +560,14 @@ public class FesenExceptionTests extends ESTestCase {
         // of other types than list of strings.
         BytesReference originalBytes;
         try (XContentBuilder builder = XContentBuilder.builder(xContent)) {
-            builder.startObject()
-                    .field("metadata_int", 1)
-                    .array("metadata_array_of_ints", new int[]{8, 13, 21})
-                    .field("reason", "Custom reason")
-                    .array("metadata_array_of_boolean", new boolean[]{false, false})
-                    .startArray("metadata_array_of_objects")
-                        .startObject()
-                            .field("object_array_one", "value_one")
-                        .endObject()
-                        .startObject()
-                            .field("object_array_two", "value_two")
-                        .endObject()
-                    .endArray()
-                    .field("type", "custom_exception")
-                    .field("metadata_long", 1L)
-                    .array("metadata_array_of_longs", new long[]{2L, 3L, 5L})
-                    .field("metadata_other", "some metadata")
-                    .startObject("header")
-                        .field("header_string", "some header")
-                        .array("header_array_of_strings", new String[]{"foo", "bar", "baz"})
-                    .endObject()
-                    .startObject("metadata_object")
-                        .field("object_field", "value")
-                    .endObject()
-            .endObject();
+            builder.startObject().field("metadata_int", 1).array("metadata_array_of_ints", new int[] { 8, 13, 21 })
+                    .field("reason", "Custom reason").array("metadata_array_of_boolean", new boolean[] { false, false })
+                    .startArray("metadata_array_of_objects").startObject().field("object_array_one", "value_one").endObject().startObject()
+                    .field("object_array_two", "value_two").endObject().endArray().field("type", "custom_exception")
+                    .field("metadata_long", 1L).array("metadata_array_of_longs", new long[] { 2L, 3L, 5L })
+                    .field("metadata_other", "some metadata").startObject("header").field("header_string", "some header")
+                    .array("header_array_of_strings", new String[] { "foo", "bar", "baz" }).endObject().startObject("metadata_object")
+                    .field("object_field", "value").endObject().endObject();
             try (XContentBuilder shuffledBuilder = shuffleXContent(builder)) {
                 originalBytes = BytesReference.bytes(shuffledBuilder);
             }
@@ -742,106 +700,105 @@ public class FesenExceptionTests extends ESTestCase {
         FesenException suppressed;
 
         switch (randomIntBetween(0, 6)) {
-            case 0: // Simple fesen exception without cause
-                failure = new NoNodeAvailableException("A");
+        case 0: // Simple fesen exception without cause
+            failure = new NoNodeAvailableException("A");
 
-                expected = new FesenException("Fesen exception [type=no_node_available_exception, reason=A]");
-                expected.addSuppressed(new FesenException("Fesen exception [type=no_node_available_exception, reason=A]"));
-                break;
+            expected = new FesenException("Fesen exception [type=no_node_available_exception, reason=A]");
+            expected.addSuppressed(new FesenException("Fesen exception [type=no_node_available_exception, reason=A]"));
+            break;
 
-            case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
-                failure = new ParsingException(3, 2, "B", null);
-                ((FesenException) failure).addHeader("header_name", "0", "1");
-                expected = new FesenException("Fesen exception [type=parsing_exception, reason=B]");
-                expected.addHeader("header_name", "0", "1");
-                suppressed = new FesenException("Fesen exception [type=parsing_exception, reason=B]");
-                suppressed.addHeader("header_name", "0", "1");
-                expected.addSuppressed(suppressed);
-                break;
+        case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
+            failure = new ParsingException(3, 2, "B", null);
+            ((FesenException) failure).addHeader("header_name", "0", "1");
+            expected = new FesenException("Fesen exception [type=parsing_exception, reason=B]");
+            expected.addHeader("header_name", "0", "1");
+            suppressed = new FesenException("Fesen exception [type=parsing_exception, reason=B]");
+            suppressed.addHeader("header_name", "0", "1");
+            expected.addSuppressed(suppressed);
+            break;
 
-            case 2: // Fesen exception with a cause, headers and parsable metadata
-                failureCause = new NullPointerException("var is null");
-                failure = new ScriptException("C", failureCause, singletonList("stack"), "test", "painless");
-                ((FesenException) failure).addHeader("script_name", "my_script");
+        case 2: // Fesen exception with a cause, headers and parsable metadata
+            failureCause = new NullPointerException("var is null");
+            failure = new ScriptException("C", failureCause, singletonList("stack"), "test", "painless");
+            ((FesenException) failure).addHeader("script_name", "my_script");
 
-                expectedCause = new FesenException("Fesen exception [type=null_pointer_exception, reason=var is null]");
-                expected = new FesenException("Fesen exception [type=script_exception, reason=C]", expectedCause);
-                expected.addHeader("script_name", "my_script");
-                expected.addMetadata("es.lang", "painless");
-                expected.addMetadata("es.script", "test");
-                expected.addMetadata("es.script_stack", "stack");
-                suppressed = new FesenException("Fesen exception [type=script_exception, reason=C]");
-                suppressed.addHeader("script_name", "my_script");
-                suppressed.addMetadata("es.lang", "painless");
-                suppressed.addMetadata("es.script", "test");
-                suppressed.addMetadata("es.script_stack", "stack");
-                expected.addSuppressed(suppressed);
-                break;
+            expectedCause = new FesenException("Fesen exception [type=null_pointer_exception, reason=var is null]");
+            expected = new FesenException("Fesen exception [type=script_exception, reason=C]", expectedCause);
+            expected.addHeader("script_name", "my_script");
+            expected.addMetadata("es.lang", "painless");
+            expected.addMetadata("es.script", "test");
+            expected.addMetadata("es.script_stack", "stack");
+            suppressed = new FesenException("Fesen exception [type=script_exception, reason=C]");
+            suppressed.addHeader("script_name", "my_script");
+            suppressed.addMetadata("es.lang", "painless");
+            suppressed.addMetadata("es.script", "test");
+            suppressed.addMetadata("es.script_stack", "stack");
+            expected.addSuppressed(suppressed);
+            break;
 
-            case 3: // JDK exception without cause
-                failure = new IllegalStateException("D");
+        case 3: // JDK exception without cause
+            failure = new IllegalStateException("D");
 
-                expected = new FesenException("Fesen exception [type=illegal_state_exception, reason=D]");
-                suppressed = new FesenException("Fesen exception [type=illegal_state_exception, reason=D]");
-                expected.addSuppressed(suppressed);
-                break;
+            expected = new FesenException("Fesen exception [type=illegal_state_exception, reason=D]");
+            suppressed = new FesenException("Fesen exception [type=illegal_state_exception, reason=D]");
+            expected.addSuppressed(suppressed);
+            break;
 
-            case 4: // JDK exception with cause
-                failureCause = new RoutingMissingException("idx", "type", "id");
-                failure = new RuntimeException("E", failureCause);
+        case 4: // JDK exception with cause
+            failureCause = new RoutingMissingException("idx", "type", "id");
+            failure = new RuntimeException("E", failureCause);
 
-                expectedCause = new FesenException("Fesen exception [type=routing_missing_exception, " +
-                        "reason=routing is required for [idx]/[type]/[id]]");
-                expectedCause.addMetadata("es.index", "idx");
-                expectedCause.addMetadata("es.index_uuid", "_na_");
-                expected = new FesenException("Fesen exception [type=runtime_exception, reason=E]", expectedCause);
-                suppressed = new FesenException("Fesen exception [type=runtime_exception, reason=E]");
-                expected.addSuppressed(suppressed);
-                break;
+            expectedCause = new FesenException(
+                    "Fesen exception [type=routing_missing_exception, " + "reason=routing is required for [idx]/[type]/[id]]");
+            expectedCause.addMetadata("es.index", "idx");
+            expectedCause.addMetadata("es.index_uuid", "_na_");
+            expected = new FesenException("Fesen exception [type=runtime_exception, reason=E]", expectedCause);
+            suppressed = new FesenException("Fesen exception [type=runtime_exception, reason=E]");
+            expected.addSuppressed(suppressed);
+            break;
 
-            case 5: // Wrapped exception with cause
-                failureCause = new FileAlreadyExistsException("File exists");
-                failure = new BroadcastShardOperationFailedException(new ShardId("_index", "_uuid", 5), "F", failureCause);
+        case 5: // Wrapped exception with cause
+            failureCause = new FileAlreadyExistsException("File exists");
+            failure = new BroadcastShardOperationFailedException(new ShardId("_index", "_uuid", 5), "F", failureCause);
 
-                expected = new FesenException("Fesen exception [type=file_already_exists_exception, reason=File exists]");
-                suppressed = new FesenException("Fesen exception [type=file_already_exists_exception, reason=File exists]");
-                expected.addSuppressed(suppressed);
-                break;
+            expected = new FesenException("Fesen exception [type=file_already_exists_exception, reason=File exists]");
+            suppressed = new FesenException("Fesen exception [type=file_already_exists_exception, reason=File exists]");
+            expected.addSuppressed(suppressed);
+            break;
 
-            case 6: // SearchPhaseExecutionException with cause and multiple failures
-                DiscoveryNode node = new DiscoveryNode("node_g", buildNewFakeTransportAddress(), Version.CURRENT);
-                failureCause = new NodeClosedException(node);
-                failureCause = new NoShardAvailableActionException(new ShardId("_index_g", "_uuid_g", 6), "node_g", failureCause);
-                ShardSearchFailure[] shardFailures = new ShardSearchFailure[]{
-                        new ShardSearchFailure(new ParsingException(0, 0, "Parsing g", null),
-                                new SearchShardTarget("node_g", new ShardId(new Index("_index_g", "_uuid_g"), 61), null,
-                                    OriginalIndices.NONE)), new ShardSearchFailure(new RepositoryException("repository_g", "Repo"),
-                                new SearchShardTarget("node_g", new ShardId(new Index("_index_g", "_uuid_g"), 62), null,
-                                    OriginalIndices.NONE)), new ShardSearchFailure(
-                                        new SearchContextMissingException(new ShardSearchContextId(UUIDs.randomBase64UUID(), 0L)), null)
-                };
-                failure = new SearchPhaseExecutionException("phase_g", "G", failureCause, shardFailures);
+        case 6: // SearchPhaseExecutionException with cause and multiple failures
+            DiscoveryNode node = new DiscoveryNode("node_g", buildNewFakeTransportAddress(), Version.CURRENT);
+            failureCause = new NodeClosedException(node);
+            failureCause = new NoShardAvailableActionException(new ShardId("_index_g", "_uuid_g", 6), "node_g", failureCause);
+            ShardSearchFailure[] shardFailures =
+                    new ShardSearchFailure[] {
+                            new ShardSearchFailure(new ParsingException(0, 0, "Parsing g", null),
+                                    new SearchShardTarget("node_g", new ShardId(new Index("_index_g", "_uuid_g"), 61), null,
+                                            OriginalIndices.NONE)),
+                            new ShardSearchFailure(new RepositoryException("repository_g", "Repo"),
+                                    new SearchShardTarget("node_g", new ShardId(new Index("_index_g", "_uuid_g"), 62), null,
+                                            OriginalIndices.NONE)),
+                            new ShardSearchFailure(
+                                    new SearchContextMissingException(new ShardSearchContextId(UUIDs.randomBase64UUID(), 0L)), null) };
+            failure = new SearchPhaseExecutionException("phase_g", "G", failureCause, shardFailures);
 
-                expectedCause = new FesenException("Fesen exception [type=node_closed_exception, " +
-                        "reason=node closed " + node + "]");
-                expectedCause = new FesenException("Fesen exception [type=no_shard_available_action_exception, " +
-                        "reason=node_g]", expectedCause);
-                expectedCause.addMetadata("es.index", "_index_g");
-                expectedCause.addMetadata("es.index_uuid", "_uuid_g");
-                expectedCause.addMetadata("es.shard", "6");
+            expectedCause = new FesenException("Fesen exception [type=node_closed_exception, " + "reason=node closed " + node + "]");
+            expectedCause =
+                    new FesenException("Fesen exception [type=no_shard_available_action_exception, " + "reason=node_g]", expectedCause);
+            expectedCause.addMetadata("es.index", "_index_g");
+            expectedCause.addMetadata("es.index_uuid", "_uuid_g");
+            expectedCause.addMetadata("es.shard", "6");
 
-                expected = new FesenException("Fesen exception [type=search_phase_execution_exception, " +
-                        "reason=G]", expectedCause);
-                expected.addMetadata("es.phase", "phase_g");
+            expected = new FesenException("Fesen exception [type=search_phase_execution_exception, " + "reason=G]", expectedCause);
+            expected.addMetadata("es.phase", "phase_g");
 
-                expected.addSuppressed(new FesenException("Fesen exception [type=parsing_exception, reason=Parsing g]"));
-                expected.addSuppressed(new FesenException("Fesen exception [type=repository_exception, " +
-                        "reason=[repository_g] Repo]"));
-                expected.addSuppressed(new FesenException("Fesen exception [type=search_context_missing_exception, " +
-                        "reason=No search context found for id [0]]"));
-                break;
-            default:
-                throw new UnsupportedOperationException("Failed to generate randomized failure");
+            expected.addSuppressed(new FesenException("Fesen exception [type=parsing_exception, reason=Parsing g]"));
+            expected.addSuppressed(new FesenException("Fesen exception [type=repository_exception, " + "reason=[repository_g] Repo]"));
+            expected.addSuppressed(new FesenException(
+                    "Fesen exception [type=search_context_missing_exception, " + "reason=No search context found for id [0]]"));
+            break;
+        default:
+            throw new UnsupportedOperationException("Failed to generate randomized failure");
         }
 
         Exception finalFailure = failure;
@@ -925,46 +882,41 @@ public class FesenExceptionTests extends ESTestCase {
 
         int type = randomIntBetween(0, 5);
         switch (type) {
-            case 0:
-                actual = new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES));
-                expected = new FesenException("Fesen exception [type=cluster_block_exception, " +
-                        "reason=blocked by: [SERVICE_UNAVAILABLE/2/no master];]");
-                break;
-            case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
-                actual = new ParsingException(3, 2, "Unknown identifier", null);
-                expected = new FesenException("Fesen exception [type=parsing_exception, reason=Unknown identifier]");
-                break;
-            case 2:
-                actual = new SearchParseException(SHARD_TARGET, "Parse failure", new XContentLocation(12, 98));
-                expected = new FesenException("Fesen exception [type=search_parse_exception, reason=Parse failure]");
-                break;
-            case 3:
-                actual = new IllegalArgumentException("Closed resource", new RuntimeException("Resource"));
-                expected = new FesenException("Fesen exception [type=illegal_argument_exception, reason=Closed resource]",
-                                new FesenException("Fesen exception [type=runtime_exception, reason=Resource]"));
-                break;
-            case 4:
-                actual = new SearchPhaseExecutionException("search", "all shards failed",
-                            new ShardSearchFailure[]{
-                                    new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
-                                            new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE))
-                            });
-                expected = new FesenException("Fesen exception [type=search_phase_execution_exception, " +
-                        "reason=all shards failed]");
-                expected.addMetadata("es.phase", "search");
-                break;
-            case 5:
-                actual = new FesenException("Parsing failed",
-                            new ParsingException(9, 42, "Wrong state",
-                                new NullPointerException("Unexpected null value")));
+        case 0:
+            actual = new ClusterBlockException(singleton(NoMasterBlockService.NO_MASTER_BLOCK_WRITES));
+            expected = new FesenException(
+                    "Fesen exception [type=cluster_block_exception, " + "reason=blocked by: [SERVICE_UNAVAILABLE/2/no master];]");
+            break;
+        case 1: // Simple fesen exception with headers (other metadata of type number are not parsed)
+            actual = new ParsingException(3, 2, "Unknown identifier", null);
+            expected = new FesenException("Fesen exception [type=parsing_exception, reason=Unknown identifier]");
+            break;
+        case 2:
+            actual = new SearchParseException(SHARD_TARGET, "Parse failure", new XContentLocation(12, 98));
+            expected = new FesenException("Fesen exception [type=search_parse_exception, reason=Parse failure]");
+            break;
+        case 3:
+            actual = new IllegalArgumentException("Closed resource", new RuntimeException("Resource"));
+            expected = new FesenException("Fesen exception [type=illegal_argument_exception, reason=Closed resource]",
+                    new FesenException("Fesen exception [type=runtime_exception, reason=Resource]"));
+            break;
+        case 4:
+            actual = new SearchPhaseExecutionException("search", "all shards failed",
+                    new ShardSearchFailure[] { new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
+                            new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE)) });
+            expected = new FesenException("Fesen exception [type=search_phase_execution_exception, " + "reason=all shards failed]");
+            expected.addMetadata("es.phase", "search");
+            break;
+        case 5:
+            actual = new FesenException("Parsing failed",
+                    new ParsingException(9, 42, "Wrong state", new NullPointerException("Unexpected null value")));
 
-                FesenException expectedCause = new FesenException("Fesen exception [type=parsing_exception, " +
-                        "reason=Wrong state]", new FesenException("Fesen exception [type=null_pointer_exception, " +
-                        "reason=Unexpected null value]"));
-                expected = new FesenException("Fesen exception [type=exception, reason=Parsing failed]", expectedCause);
-                break;
-            default:
-                throw new UnsupportedOperationException("No randomized exceptions generated for type [" + type + "]");
+            FesenException expectedCause = new FesenException("Fesen exception [type=parsing_exception, " + "reason=Wrong state]",
+                    new FesenException("Fesen exception [type=null_pointer_exception, " + "reason=Unexpected null value]"));
+            expected = new FesenException("Fesen exception [type=exception, reason=Parsing failed]", expectedCause);
+            break;
+        default:
+            throw new UnsupportedOperationException("No randomized exceptions generated for type [" + type + "]");
         }
 
         if (actual instanceof FesenException) {

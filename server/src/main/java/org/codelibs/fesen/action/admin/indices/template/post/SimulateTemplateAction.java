@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.indices.template.post;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.ValidateActions;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.action.support.master.MasterNodeReadRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * An action for simulating the complete composed settings of the specified
@@ -52,7 +52,8 @@ public class SimulateTemplateAction extends ActionType<SimulateIndexTemplateResp
         @Nullable
         private PutComposableIndexTemplateAction.Request indexTemplateRequest;
 
-        public Request() { }
+        public Request() {
+        }
 
         public Request(String templateName) {
             if (templateName == null) {
@@ -88,9 +89,8 @@ public class SimulateTemplateAction extends ActionType<SimulateIndexTemplateResp
                 validationException = indexTemplateRequest.validateIndexTemplate(validationException);
             }
             if (templateName == null && indexTemplateRequest == null) {
-                validationException =
-                    ValidateActions.addValidationError("either index name or index template body must be specified for simulation",
-                        validationException);
+                validationException = ValidateActions.addValidationError(
+                        "either index name or index template body must be specified for simulation", validationException);
             }
             return validationException;
         }
@@ -124,8 +124,7 @@ public class SimulateTemplateAction extends ActionType<SimulateIndexTemplateResp
                 return false;
             }
             Request that = (Request) o;
-            return templateName.equals(that.templateName) &&
-                Objects.equals(indexTemplateRequest, that.indexTemplateRequest);
+            return templateName.equals(that.templateName) && Objects.equals(indexTemplateRequest, that.indexTemplateRequest);
         }
 
         @Override

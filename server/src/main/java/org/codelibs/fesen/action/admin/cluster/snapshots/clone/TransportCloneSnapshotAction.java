@@ -44,9 +44,8 @@ public final class TransportCloneSnapshotAction extends TransportMasterNodeActio
     private final SnapshotsService snapshotsService;
 
     @Inject
-    public TransportCloneSnapshotAction(TransportService transportService, ClusterService clusterService,
-                                        ThreadPool threadPool, SnapshotsService snapshotsService, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportCloneSnapshotAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            SnapshotsService snapshotsService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(CloneSnapshotAction.NAME, transportService, clusterService, threadPool, actionFilters, CloneSnapshotRequest::new,
                 indexNameExpressionResolver);
         this.snapshotsService = snapshotsService;

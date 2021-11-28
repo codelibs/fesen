@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.search.suggest;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.index.query.QueryShardContext;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class SuggestionSearchContext {
 
@@ -126,17 +126,8 @@ public class SuggestionSearchContext {
 
         @Override
         public String toString() {
-            return "[" +
-                       "text=" + text +
-                       ",field=" + field +
-                       ",prefix=" + prefix +
-                       ",regex=" + regex +
-                       ",size=" + size +
-                       ",shardSize=" + shardSize +
-                       ",suggester=" + suggester +
-                       ",analyzer=" + analyzer +
-                       ",shardContext=" + shardContext +
-                   "]";
+            return "[" + "text=" + text + ",field=" + field + ",prefix=" + prefix + ",regex=" + regex + ",size=" + size + ",shardSize="
+                    + shardSize + ",suggester=" + suggester + ",analyzer=" + analyzer + ",shardContext=" + shardContext + "]";
         }
     }
 

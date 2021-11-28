@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.action.admin.indices.settings.put;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -31,17 +42,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Request for an update index settings action
@@ -217,11 +217,8 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
             return false;
         }
         UpdateSettingsRequest that = (UpdateSettingsRequest) o;
-        return masterNodeTimeout.equals(that.masterNodeTimeout)
-                && timeout.equals(that.timeout)
-                && Objects.equals(settings, that.settings)
-                && Objects.equals(indicesOptions, that.indicesOptions)
-                && Objects.equals(preserveExisting, that.preserveExisting)
+        return masterNodeTimeout.equals(that.masterNodeTimeout) && timeout.equals(that.timeout) && Objects.equals(settings, that.settings)
+                && Objects.equals(indicesOptions, that.indicesOptions) && Objects.equals(preserveExisting, that.preserveExisting)
                 && Arrays.equals(indices, that.indices);
     }
 

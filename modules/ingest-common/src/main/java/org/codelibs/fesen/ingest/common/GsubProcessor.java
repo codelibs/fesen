@@ -37,7 +37,7 @@ public final class GsubProcessor extends AbstractStringProcessor<String> {
     private final String replacement;
 
     GsubProcessor(String tag, String description, String field, Pattern pattern, String replacement, boolean ignoreMissing,
-                  String targetField) {
+            String targetField) {
         super(tag, description, ignoreMissing, targetField, field);
         this.pattern = pattern;
         this.replacement = replacement;
@@ -69,7 +69,7 @@ public final class GsubProcessor extends AbstractStringProcessor<String> {
 
         @Override
         protected GsubProcessor newProcessor(String processorTag, String description, Map<String, Object> config, String field,
-                                             boolean ignoreMissing, String targetField) {
+                boolean ignoreMissing, String targetField) {
             String pattern = readStringProperty(TYPE, processorTag, config, "pattern");
             String replacement = readStringProperty(TYPE, processorTag, config, "replacement");
             Pattern searchPattern;

@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -26,13 +33,6 @@ import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class InternalFilters extends InternalMultiBucketAggregation<InternalFilters, InternalFilters.InternalBucket> implements Filters {
     public static class InternalBucket extends InternalMultiBucketAggregation.InternalBucket implements Filters.Bucket {
@@ -108,9 +108,7 @@ public class InternalFilters extends InternalMultiBucketAggregation<InternalFilt
                 return false;
             }
             InternalBucket that = (InternalBucket) other;
-            return Objects.equals(key, that.key)
-                    && Objects.equals(keyed,  that.keyed)
-                    && Objects.equals(docCount, that.docCount)
+            return Objects.equals(key, that.key) && Objects.equals(keyed, that.keyed) && Objects.equals(docCount, that.docCount)
                     && Objects.equals(aggregations, that.aggregations);
         }
 
@@ -256,13 +254,15 @@ public class InternalFilters extends InternalMultiBucketAggregation<InternalFilt
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (super.equals(obj) == false) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (super.equals(obj) == false)
+            return false;
 
         InternalFilters that = (InternalFilters) obj;
-        return Objects.equals(buckets, that.buckets)
-                && Objects.equals(keyed, that.keyed);
+        return Objects.equals(buckets, that.buckets) && Objects.equals(keyed, that.keyed);
     }
 
 }

@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
@@ -27,14 +34,6 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Calculate a triple exponential weighted moving average
@@ -225,15 +224,15 @@ public class HoltWintersModel extends MovAvgModel {
     public MovAvgModel neighboringModel() {
         double newValue = Math.random();
         switch ((int) (Math.random() * 3)) {
-            case 0:
-                return new HoltWintersModel(newValue, beta, gamma, period, seasonalityType, pad);
-            case 1:
-                return new HoltWintersModel(alpha, newValue, gamma, period, seasonalityType, pad);
-            case 2:
-                return new HoltWintersModel(alpha, beta, newValue, period, seasonalityType, pad);
-            default:
-                assert (false): "Random value fell outside of range [0-2]";
-                return new HoltWintersModel(newValue, beta, gamma, period, seasonalityType, pad); // This should never technically happen...
+        case 0:
+            return new HoltWintersModel(newValue, beta, gamma, period, seasonalityType, pad);
+        case 1:
+            return new HoltWintersModel(alpha, newValue, gamma, period, seasonalityType, pad);
+        case 2:
+            return new HoltWintersModel(alpha, beta, newValue, period, seasonalityType, pad);
+        default:
+            assert (false) : "Random value fell outside of range [0-2]";
+            return new HoltWintersModel(newValue, beta, gamma, period, seasonalityType, pad); // This should never technically happen...
         }
     }
 
@@ -277,8 +276,8 @@ public class HoltWintersModel extends MovAvgModel {
      * @return       Returns a Double containing the moving avg for the window
      */
     public double[] next(Collection<Double> values, int numForecasts) {
-        return MovingFunctions.holtWintersForecast(values.stream().mapToDouble(Double::doubleValue).toArray(),
-            alpha, beta, gamma, period, padding, seasonalityType.equals(SeasonalityType.MULTIPLICATIVE), numForecasts);
+        return MovingFunctions.holtWintersForecast(values.stream().mapToDouble(Double::doubleValue).toArray(), alpha, beta, gamma, period,
+                padding, seasonalityType.equals(SeasonalityType.MULTIPLICATIVE), numForecasts);
     }
 
     @Override
@@ -310,11 +309,11 @@ public class HoltWintersModel extends MovAvgModel {
                 Object value = settings.get("type");
                 if (value != null) {
                     if (value instanceof String) {
-                        seasonalityType = SeasonalityType.parse((String)value);
+                        seasonalityType = SeasonalityType.parse((String) value);
                         settings.remove("type");
                     } else {
-                        throw new ParseException("Parameter [type] must be a String, type `"
-                                + value.getClass().getSimpleName() + "` provided instead", 0);
+                        throw new ParseException(
+                                "Parameter [type] must be a String, type `" + value.getClass().getSimpleName() + "` provided instead", 0);
                     }
                 }
             }
@@ -335,9 +334,8 @@ public class HoltWintersModel extends MovAvgModel {
     protected void validate(long window, String aggregationName) {
         super.validate(window, aggregationName);
         if (window < 2 * period) {
-            throw new IllegalArgumentException("Field [window] must be at least twice as large as the period when " +
-                "using Holt-Winters.  Value provided was [" + window + "], which is less than (2*period) == "
-                + (2 * period));
+            throw new IllegalArgumentException("Field [window] must be at least twice as large as the period when "
+                    + "using Holt-Winters.  Value provided was [" + window + "], which is less than (2*period) == " + (2 * period));
         }
     }
 
@@ -355,11 +353,8 @@ public class HoltWintersModel extends MovAvgModel {
             return false;
         }
         HoltWintersModel other = (HoltWintersModel) obj;
-        return Objects.equals(alpha, other.alpha)
-                && Objects.equals(beta, other.beta)
-                && Objects.equals(gamma, other.gamma)
-                && Objects.equals(period, other.period)
-                && Objects.equals(seasonalityType, other.seasonalityType)
+        return Objects.equals(alpha, other.alpha) && Objects.equals(beta, other.beta) && Objects.equals(gamma, other.gamma)
+                && Objects.equals(period, other.period) && Objects.equals(seasonalityType, other.seasonalityType)
                 && Objects.equals(pad, other.pad);
     }
 
@@ -442,4 +437,3 @@ public class HoltWintersModel extends MovAvgModel {
         }
     }
 }
-

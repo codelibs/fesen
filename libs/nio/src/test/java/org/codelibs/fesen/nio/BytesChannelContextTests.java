@@ -19,24 +19,10 @@
 
 package org.codelibs.fesen.nio;
 
-import org.codelibs.fesen.common.util.PageCacheRecycler;
-import org.codelibs.fesen.core.CheckedFunction;
-import org.codelibs.fesen.nio.BytesChannelContext;
-import org.codelibs.fesen.nio.BytesWriteHandler;
-import org.codelibs.fesen.nio.Config;
-import org.codelibs.fesen.nio.FlushReadyWrite;
-import org.codelibs.fesen.nio.InboundChannelBuffer;
-import org.codelibs.fesen.nio.NioSelector;
-import org.codelibs.fesen.nio.NioSocketChannel;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -44,6 +30,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import org.codelibs.fesen.common.util.PageCacheRecycler;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 public class BytesChannelContextTests extends ESTestCase {
 
@@ -124,7 +121,6 @@ public class BytesChannelContextTests extends ESTestCase {
             return bytes.length;
         });
 
-
         when(readConsumer.apply(channelBuffer)).thenReturn(0);
 
         assertEquals(messageLength, context.read());
@@ -169,7 +165,7 @@ public class BytesChannelContextTests extends ESTestCase {
     public void testQueuedWriteIsFlushedInFlushCall() throws Exception {
         assertFalse(context.readyForFlush());
 
-        ByteBuffer[] buffers = {ByteBuffer.allocate(10)};
+        ByteBuffer[] buffers = { ByteBuffer.allocate(10) };
 
         FlushReadyWrite flushOperation = mock(FlushReadyWrite.class);
         context.queueWriteOperation(flushOperation);
@@ -195,7 +191,7 @@ public class BytesChannelContextTests extends ESTestCase {
         assertTrue(context.readyForFlush());
 
         when(flushOperation.isFullyFlushed()).thenReturn(false);
-        when(flushOperation.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] {ByteBuffer.allocate(3)});
+        when(flushOperation.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] { ByteBuffer.allocate(3) });
         context.flushChannel();
 
         verify(listener, times(0)).accept(null, null);
@@ -209,8 +205,8 @@ public class BytesChannelContextTests extends ESTestCase {
         BiConsumer<Void, Exception> listener2 = mock(BiConsumer.class);
         FlushReadyWrite flushOperation1 = mock(FlushReadyWrite.class);
         FlushReadyWrite flushOperation2 = mock(FlushReadyWrite.class);
-        when(flushOperation1.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] {ByteBuffer.allocate(3)});
-        when(flushOperation2.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] {ByteBuffer.allocate(3)});
+        when(flushOperation1.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] { ByteBuffer.allocate(3) });
+        when(flushOperation2.getBuffersToWrite(anyInt())).thenReturn(new ByteBuffer[] { ByteBuffer.allocate(3) });
         when(flushOperation1.getListener()).thenReturn(listener);
         when(flushOperation2.getListener()).thenReturn(listener2);
 
@@ -238,7 +234,7 @@ public class BytesChannelContextTests extends ESTestCase {
     public void testWhenIOExceptionThrownListenerIsCalled() throws IOException {
         assertFalse(context.readyForFlush());
 
-        ByteBuffer[] buffers = {ByteBuffer.allocate(10)};
+        ByteBuffer[] buffers = { ByteBuffer.allocate(10) };
         FlushReadyWrite flushOperation = mock(FlushReadyWrite.class);
         context.queueWriteOperation(flushOperation);
 
@@ -255,7 +251,7 @@ public class BytesChannelContextTests extends ESTestCase {
     }
 
     public void testWriteIOExceptionMeansChannelReadyToClose() throws IOException {
-        ByteBuffer[] buffers = {ByteBuffer.allocate(10)};
+        ByteBuffer[] buffers = { ByteBuffer.allocate(10) };
         FlushReadyWrite flushOperation = mock(FlushReadyWrite.class);
         context.queueWriteOperation(flushOperation);
 

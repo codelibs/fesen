@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.common.geo.GeoBoundingBox;
 import org.codelibs.fesen.common.geo.GeoUtils;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -32,17 +35,12 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFact
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 
-import java.io.IOException;
-import java.util.Map;
-
 public class GeoHashGridAggregationBuilder extends GeoGridAggregationBuilder {
     public static final String NAME = "geohash_grid";
     public static final int DEFAULT_PRECISION = 5;
     public static final int DEFAULT_MAX_NUM_CELLS = 10000;
-    public static final ValuesSourceRegistry.RegistryKey<GeoGridAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        GeoGridAggregatorSupplier.class
-    );
+    public static final ValuesSourceRegistry.RegistryKey<GeoGridAggregatorSupplier> REGISTRY_KEY =
+            new ValuesSourceRegistry.RegistryKey<>(NAME, GeoGridAggregatorSupplier.class);
 
     public static final ObjectParser<GeoHashGridAggregationBuilder, String> PARSER =
             createParser(NAME, GeoUtils::parsePrecision, GeoHashGridAggregationBuilder::new);
@@ -69,17 +67,15 @@ public class GeoHashGridAggregationBuilder extends GeoGridAggregationBuilder {
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory createFactory(
-        String name, ValuesSourceConfig config, int precision, int requiredSize, int shardSize,
-            GeoBoundingBox geoBoundingBox, QueryShardContext queryShardContext,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
-            Map<String, Object> metadata) throws IOException {
-        return new GeoHashGridAggregatorFactory(name, config, precision, requiredSize, shardSize, geoBoundingBox,
-            queryShardContext, parent, subFactoriesBuilder, metadata);
+    protected ValuesSourceAggregatorFactory createFactory(String name, ValuesSourceConfig config, int precision, int requiredSize,
+            int shardSize, GeoBoundingBox geoBoundingBox, QueryShardContext queryShardContext, AggregatorFactory parent,
+            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
+        return new GeoHashGridAggregatorFactory(name, config, precision, requiredSize, shardSize, geoBoundingBox, queryShardContext, parent,
+                subFactoriesBuilder, metadata);
     }
 
     private GeoHashGridAggregationBuilder(GeoHashGridAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-                                          Map<String, Object> metadata) {
+            Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 

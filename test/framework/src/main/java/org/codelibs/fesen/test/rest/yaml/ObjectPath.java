@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.util.EntityUtils;
 import org.codelibs.fesen.client.Response;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -28,11 +33,6 @@ import org.codelibs.fesen.common.xcontent.XContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Holds an object and allows to extract specific values from it given their path
@@ -49,8 +49,8 @@ public class ObjectPath {
     }
 
     public static ObjectPath createFromXContent(XContent xContent, BytesReference input) throws IOException {
-        try (XContentParser parser = xContent
-                .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input.streamInput())) {
+        try (XContentParser parser =
+                xContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, input.streamInput())) {
             if (parser.nextToken() == XContentParser.Token.START_ARRAY) {
                 return new ObjectPath(parser.listOrderedMap());
             }
@@ -62,7 +62,6 @@ public class ObjectPath {
         this.object = object;
     }
 
-
     /**
      * A utility method that creates an {@link ObjectPath} via {@link #ObjectPath(Object)} returns
      * the result of calling {@link #evaluate(String)} on it.
@@ -70,7 +69,6 @@ public class ObjectPath {
     public static <T> T evaluate(Object object, String path) throws IOException {
         return new ObjectPath(object).evaluate(path, Stash.EMPTY);
     }
-
 
     /**
      * Returns the object corresponding to the provided path if present, null otherwise
@@ -92,7 +90,7 @@ public class ObjectPath {
                 return null;
             }
         }
-        return (T)object;
+        return (T) object;
     }
 
     @SuppressWarnings("unchecked")
@@ -121,8 +119,8 @@ public class ObjectPath {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("element was a list, but [" + key + "] was not numeric", e);
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("element was a list with " + list.size() +
-                        " elements, but [" + key + "] was out of bounds", e);
+                throw new IllegalArgumentException(
+                        "element was a list with " + list.size() + " elements, but [" + key + "] was out of bounds", e);
             }
         }
 

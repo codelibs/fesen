@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.script;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -34,12 +40,6 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * {@link ScriptMetadata} is used to store user-defined scripts
@@ -113,8 +113,8 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
         }
 
         ScriptMetadataDiff(StreamInput in) throws IOException {
-            pipelines = DiffableUtils.readJdkMapDiff(in, DiffableUtils.getStringKeySerializer(),
-                StoredScriptSource::new, StoredScriptSource::readDiffFrom);
+            pipelines = DiffableUtils.readJdkMapDiff(in, DiffableUtils.getStringKeySerializer(), StoredScriptSource::new,
+                    StoredScriptSource::readDiffFrom);
         }
 
         @Override
@@ -197,74 +197,72 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
 
         while (token != Token.END_OBJECT) {
             switch (token) {
-                case FIELD_NAME:
-                    id = parser.currentName();
-                    break;
-                case VALUE_STRING:
-                    if (id == null) {
-                        throw new ParsingException(parser.getTokenLocation(),
-                            "unexpected token [" + token + "], expected [<id>, <code>, {]");
-                    }
-
-                    int split = id.indexOf('#');
-                    String lang;
-
-                    if (split == -1) {
-                        throw new IllegalArgumentException("illegal stored script id [" + id + "], does not contain lang");
-                    } else {
-                        lang = id.substring(0, split);
-                        id = id.substring(split + 1);
-                        source = new StoredScriptSource(lang, parser.text(), Collections.emptyMap());
-
-                        if (source.getSource().isEmpty()) {
-                            if (source.getLang().equals(Script.DEFAULT_TEMPLATE_LANG)) {
-                                deprecationLogger.deprecate("empty_templates", "empty templates should no longer be used");
-                            } else {
-                                deprecationLogger.deprecate("empty_scripts", "empty scripts should no longer be used");
-                            }
-                        }
-                    }
-
-                    exists = scripts.get(id);
-
-                    if (exists == null) {
-                        scripts.put(id, source);
-                    } else if (exists.getLang().equals(lang) == false) {
-                        throw new IllegalArgumentException("illegal stored script, id [" + id + "] used for multiple scripts with " +
-                            "different languages [" + exists.getLang() + "] and [" + lang + "]; scripts using the old namespace " +
-                            "of [lang#id] as a stored script id will have to be updated to use only the new namespace of [id]");
-                    }
-
-                    id = null;
-
-                    break;
-                case START_OBJECT:
-                    if (id == null) {
-                        throw new ParsingException(parser.getTokenLocation(),
-                            "unexpected token [" + token + "], expected [<id>, <code>, {]");
-                    }
-
-                    exists = scripts.get(id);
-                    source = StoredScriptSource.fromXContent(parser, true);
-
-                    if (exists == null) {
-                        // due to a bug (https://github.com/elastic/elasticsearch/issues/47593)
-                        // scripts may have been retained during upgrade that include the old-style
-                        // id of lang#id; these scripts are unreachable after 7.0, so they are dropped
-                        if (id.contains("#") == false) {
-                            scripts.put(id, source);
-                        }
-                    } else if (exists.getLang().equals(source.getLang()) == false) {
-                        throw new IllegalArgumentException("illegal stored script, id [" + id + "] used for multiple scripts with " +
-                            "different languages [" + exists.getLang() + "] and [" + source.getLang() + "]; scripts using the old " +
-                            "namespace of [lang#id] as a stored script id will have to be updated to use only the new namespace of [id]");
-                    }
-
-                    id = null;
-
-                    break;
-                default:
+            case FIELD_NAME:
+                id = parser.currentName();
+                break;
+            case VALUE_STRING:
+                if (id == null) {
                     throw new ParsingException(parser.getTokenLocation(), "unexpected token [" + token + "], expected [<id>, <code>, {]");
+                }
+
+                int split = id.indexOf('#');
+                String lang;
+
+                if (split == -1) {
+                    throw new IllegalArgumentException("illegal stored script id [" + id + "], does not contain lang");
+                } else {
+                    lang = id.substring(0, split);
+                    id = id.substring(split + 1);
+                    source = new StoredScriptSource(lang, parser.text(), Collections.emptyMap());
+
+                    if (source.getSource().isEmpty()) {
+                        if (source.getLang().equals(Script.DEFAULT_TEMPLATE_LANG)) {
+                            deprecationLogger.deprecate("empty_templates", "empty templates should no longer be used");
+                        } else {
+                            deprecationLogger.deprecate("empty_scripts", "empty scripts should no longer be used");
+                        }
+                    }
+                }
+
+                exists = scripts.get(id);
+
+                if (exists == null) {
+                    scripts.put(id, source);
+                } else if (exists.getLang().equals(lang) == false) {
+                    throw new IllegalArgumentException("illegal stored script, id [" + id + "] used for multiple scripts with "
+                            + "different languages [" + exists.getLang() + "] and [" + lang + "]; scripts using the old namespace "
+                            + "of [lang#id] as a stored script id will have to be updated to use only the new namespace of [id]");
+                }
+
+                id = null;
+
+                break;
+            case START_OBJECT:
+                if (id == null) {
+                    throw new ParsingException(parser.getTokenLocation(), "unexpected token [" + token + "], expected [<id>, <code>, {]");
+                }
+
+                exists = scripts.get(id);
+                source = StoredScriptSource.fromXContent(parser, true);
+
+                if (exists == null) {
+                    // due to a bug (https://github.com/elastic/elasticsearch/issues/47593)
+                    // scripts may have been retained during upgrade that include the old-style
+                    // id of lang#id; these scripts are unreachable after 7.0, so they are dropped
+                    if (id.contains("#") == false) {
+                        scripts.put(id, source);
+                    }
+                } else if (exists.getLang().equals(source.getLang()) == false) {
+                    throw new IllegalArgumentException("illegal stored script, id [" + id + "] used for multiple scripts with "
+                            + "different languages [" + exists.getLang() + "] and [" + source.getLang() + "]; scripts using the old "
+                            + "namespace of [lang#id] as a stored script id will have to be updated to use only the new namespace of [id]");
+                }
+
+                id = null;
+
+                break;
+            default:
+                throw new ParsingException(parser.getTokenLocation(), "unexpected token [" + token + "], expected [<id>, <code>, {]");
             }
 
             token = parser.nextToken();
@@ -313,8 +311,6 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
         }
     }
 
-
-
     /**
      * This will write XContent from {@link ScriptMetadata}.  The following format will be written:
      *
@@ -338,7 +334,7 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
 
     @Override
     public Diff<Metadata.Custom> diff(Metadata.Custom before) {
-        return new ScriptMetadataDiff((ScriptMetadata)before, this);
+        return new ScriptMetadataDiff((ScriptMetadata) before, this);
     }
 
     @Override
@@ -372,10 +368,12 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        ScriptMetadata that = (ScriptMetadata)o;
+        ScriptMetadata that = (ScriptMetadata) o;
 
         return scripts.equals(that.scripts);
 
@@ -388,8 +386,6 @@ public final class ScriptMetadata implements Metadata.Custom, Writeable, ToXCont
 
     @Override
     public String toString() {
-        return "ScriptMetadata{" +
-            "scripts=" + scripts +
-            '}';
+        return "ScriptMetadata{" + "scripts=" + scripts + '}';
     }
 }

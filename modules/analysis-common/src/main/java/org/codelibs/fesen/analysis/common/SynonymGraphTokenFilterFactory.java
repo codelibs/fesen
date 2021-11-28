@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.analysis.common;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
@@ -31,13 +34,9 @@ import org.codelibs.fesen.index.analysis.CharFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenizerFactory;
 
-import java.util.List;
-import java.util.function.Function;
-
 public class SynonymGraphTokenFilterFactory extends SynonymTokenFilterFactory {
 
-    SynonymGraphTokenFilterFactory(IndexSettings indexSettings, Environment env,
-                                     String name, Settings settings) {
+    SynonymGraphTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, env, name, settings);
     }
 
@@ -48,8 +47,7 @@ public class SynonymGraphTokenFilterFactory extends SynonymTokenFilterFactory {
 
     @Override
     public TokenFilterFactory getChainAwareTokenFilterFactory(TokenizerFactory tokenizer, List<CharFilterFactory> charFilters,
-                                                              List<TokenFilterFactory> previousTokenFilters,
-                                                              Function<String, TokenFilterFactory> allFilters) {
+            List<TokenFilterFactory> previousTokenFilters, Function<String, TokenFilterFactory> allFilters) {
         final Analyzer analyzer = buildSynonymAnalyzer(tokenizer, charFilters, previousTokenFilters, allFilters);
         final SynonymMap synonyms = buildSynonyms(analyzer, getRulesFromSettings(environment));
         final String name = name();

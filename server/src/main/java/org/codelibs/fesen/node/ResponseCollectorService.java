@@ -131,8 +131,8 @@ public final class ResponseCollectorService implements ClusterStateListener {
         }
 
         ComputedNodeStats(int clientNum, NodeStatistics nodeStats) {
-            this(nodeStats.nodeId, clientNum,
-                    (int) nodeStats.queueSize.getAverage(), nodeStats.responseTime.getAverage(), nodeStats.serviceTime);
+            this(nodeStats.nodeId, clientNum, (int) nodeStats.queueSize.getAverage(), nodeStats.responseTime.getAverage(),
+                    nodeStats.serviceTime);
         }
 
         ComputedNodeStats(StreamInput in) throws IOException {
@@ -212,10 +212,8 @@ public final class ResponseCollectorService implements ClusterStateListener {
         final ExponentiallyWeightedMovingAverage responseTime;
         double serviceTime;
 
-        NodeStatistics(String nodeId,
-                       ExponentiallyWeightedMovingAverage queueSizeEWMA,
-                       ExponentiallyWeightedMovingAverage responseTimeEWMA,
-                       double serviceTimeEWMA) {
+        NodeStatistics(String nodeId, ExponentiallyWeightedMovingAverage queueSizeEWMA, ExponentiallyWeightedMovingAverage responseTimeEWMA,
+                double serviceTimeEWMA) {
             this.nodeId = nodeId;
             this.queueSize = queueSizeEWMA;
             this.responseTime = responseTimeEWMA;

@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.search.suggest.completion;
 
-import org.apache.lucene.search.suggest.document.TopSuggestDocsCollector;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.lucene.search.suggest.document.TopSuggestDocsCollector;
 
 /**
  *

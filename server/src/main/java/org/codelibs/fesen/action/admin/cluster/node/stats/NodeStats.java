@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.stats;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -43,9 +46,6 @@ import org.codelibs.fesen.script.ScriptCacheStats;
 import org.codelibs.fesen.script.ScriptStats;
 import org.codelibs.fesen.threadpool.ThreadPoolStats;
 import org.codelibs.fesen.transport.TransportStats;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Node statistics (dynamic, changes depending on when created).
@@ -132,16 +132,12 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
         }
     }
 
-    public NodeStats(DiscoveryNode node, long timestamp, @Nullable NodeIndicesStats indices,
-                     @Nullable OsStats os, @Nullable ProcessStats process, @Nullable JvmStats jvm, @Nullable ThreadPoolStats threadPool,
-                     @Nullable FsInfo fs, @Nullable TransportStats transport, @Nullable HttpStats http,
-                     @Nullable AllCircuitBreakerStats breaker,
-                     @Nullable ScriptStats scriptStats,
-                     @Nullable DiscoveryStats discoveryStats,
-                     @Nullable IngestStats ingestStats,
-                     @Nullable AdaptiveSelectionStats adaptiveSelectionStats,
-                     @Nullable ScriptCacheStats scriptCacheStats,
-                     @Nullable IndexingPressureStats indexingPressureStats) {
+    public NodeStats(DiscoveryNode node, long timestamp, @Nullable NodeIndicesStats indices, @Nullable OsStats os,
+            @Nullable ProcessStats process, @Nullable JvmStats jvm, @Nullable ThreadPoolStats threadPool, @Nullable FsInfo fs,
+            @Nullable TransportStats transport, @Nullable HttpStats http, @Nullable AllCircuitBreakerStats breaker,
+            @Nullable ScriptStats scriptStats, @Nullable DiscoveryStats discoveryStats, @Nullable IngestStats ingestStats,
+            @Nullable AdaptiveSelectionStats adaptiveSelectionStats, @Nullable ScriptCacheStats scriptCacheStats,
+            @Nullable IndexingPressureStats indexingPressureStats) {
         super(node);
         this.timestamp = timestamp;
         this.indices = indices;

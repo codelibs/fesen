@@ -19,23 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import org.codelibs.fesen.action.ActionRequest;
-import org.codelibs.fesen.action.delete.DeleteRequest;
-import org.codelibs.fesen.action.index.IndexRequest;
-import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction;
-import org.codelibs.fesen.index.reindex.AbstractBulkIndexByScrollRequest;
-import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
-import org.codelibs.fesen.index.reindex.ScrollableHitSource;
-import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction.OpType;
-import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction.RequestWrapper;
-import org.codelibs.fesen.script.ScriptService;
-import org.codelibs.fesen.script.UpdateScript;
-import org.junit.Before;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
@@ -43,9 +26,20 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractAsyncBulkByScrollActionScriptTestCase<
-                Request extends AbstractBulkIndexByScrollRequest<Request>,
-                Response extends BulkByScrollResponse>
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import org.codelibs.fesen.action.ActionRequest;
+import org.codelibs.fesen.action.delete.DeleteRequest;
+import org.codelibs.fesen.action.index.IndexRequest;
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction.OpType;
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction.RequestWrapper;
+import org.codelibs.fesen.script.ScriptService;
+import org.codelibs.fesen.script.UpdateScript;
+import org.junit.Before;
+
+public abstract class AbstractAsyncBulkByScrollActionScriptTestCase<Request extends AbstractBulkIndexByScrollRequest<Request>, Response extends BulkByScrollResponse>
         extends AbstractAsyncBulkByScrollActionTestCase<Request, Response> {
 
     protected ScriptService scriptService;
@@ -108,8 +102,8 @@ public abstract class AbstractAsyncBulkByScrollActionScriptTestCase<
     }
 
     public void testSetOpTypeUnknown() throws Exception {
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> applyScript((Map<String, Object> ctx) -> ctx.put("op", "unknown")));
+        IllegalArgumentException e =
+                expectThrows(IllegalArgumentException.class, () -> applyScript((Map<String, Object> ctx) -> ctx.put("op", "unknown")));
         assertThat(e.getMessage(), equalTo("Operation type [unknown] not allowed, only [noop, index, delete] are allowed"));
     }
 

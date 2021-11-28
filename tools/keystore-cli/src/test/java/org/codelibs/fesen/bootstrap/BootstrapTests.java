@@ -18,17 +18,11 @@
  */
 package org.codelibs.fesen.bootstrap;
 
-import org.codelibs.fesen.bootstrap.Bootstrap;
-import org.codelibs.fesen.common.settings.KeyStoreCommandTestCase;
-import org.codelibs.fesen.common.settings.KeyStoreWrapper;
-import org.codelibs.fesen.common.settings.SecureSettings;
-import org.codelibs.fesen.common.settings.SecureString;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.After;
-import org.junit.Before;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,7 +34,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.common.settings.KeyStoreCommandTestCase;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.common.settings.SecureSettings;
+import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.After;
+import org.junit.Before;
 
 public class BootstrapTests extends ESTestCase {
     Environment env;
@@ -91,22 +94,16 @@ public class BootstrapTests extends ESTestCase {
     public void testPassphraseTooLong() throws Exception {
         byte[] source = "hellohello!\n".getBytes(StandardCharsets.UTF_8);
         try (InputStream stream = new ByteArrayInputStream(source)) {
-            expectThrows(
-                RuntimeException.class,
-                "Password exceeded maximum length of 10",
-                () -> Bootstrap.readPassphrase(stream, MAX_PASSPHRASE_LENGTH)
-            );
+            expectThrows(RuntimeException.class, "Password exceeded maximum length of 10",
+                    () -> Bootstrap.readPassphrase(stream, MAX_PASSPHRASE_LENGTH));
         }
     }
 
     public void testNoPassPhraseProvided() throws Exception {
         byte[] source = "\r\n".getBytes(StandardCharsets.UTF_8);
         try (InputStream stream = new ByteArrayInputStream(source)) {
-            expectThrows(
-                RuntimeException.class,
-                "Keystore passphrase required but none provided.",
-                () -> Bootstrap.readPassphrase(stream, MAX_PASSPHRASE_LENGTH)
-            );
+            expectThrows(RuntimeException.class, "Keystore passphrase required but none provided.",
+                    () -> Bootstrap.readPassphrase(stream, MAX_PASSPHRASE_LENGTH));
         }
     }
 

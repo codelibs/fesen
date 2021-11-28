@@ -18,7 +18,7 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import static org.codelibs.fesen.search.aggregations.MultiBucketConsumerService.MultiBucketConsumer;
+import org.codelibs.fesen.search.aggregations.MultiBucketConsumerService.MultiBucketConsumer;
 
 /**
  * The aggregation context that is part of the search context.

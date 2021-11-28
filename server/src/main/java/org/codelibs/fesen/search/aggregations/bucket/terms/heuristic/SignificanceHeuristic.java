@@ -41,8 +41,8 @@ public abstract class SignificanceHeuristic implements NamedWriteable, ToXConten
     protected void checkFrequencyValidity(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize,
             String scoreFunctionName) {
         if (subsetFreq < 0 || subsetSize < 0 || supersetFreq < 0 || supersetSize < 0) {
-            throw new IllegalArgumentException("Frequencies of subset and superset must be positive in " + scoreFunctionName +
-                    ".getScore()");
+            throw new IllegalArgumentException(
+                    "Frequencies of subset and superset must be positive in " + scoreFunctionName + ".getScore()");
         }
         if (subsetFreq > subsetSize) {
             throw new IllegalArgumentException("subsetFreq > subsetSize, in " + scoreFunctionName);

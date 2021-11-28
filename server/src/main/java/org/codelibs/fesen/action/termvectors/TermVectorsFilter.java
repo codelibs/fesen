@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.action.termvectors;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Term;
@@ -26,11 +31,6 @@ import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.util.BytesRef;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class TermVectorsFilter {
     public static final int DEFAULT_MAX_QUERY_TERMS = 25;

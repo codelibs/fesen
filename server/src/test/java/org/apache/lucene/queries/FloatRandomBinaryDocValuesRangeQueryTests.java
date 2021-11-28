@@ -43,16 +43,16 @@ public class FloatRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryD
 
     private float nextFloatInternal() {
         switch (random().nextInt(5)) {
-            case 0:
-                return Float.NEGATIVE_INFINITY;
-            case 1:
-                return Float.POSITIVE_INFINITY;
-            default:
-                if (random().nextBoolean()) {
-                    return random().nextFloat();
-                } else {
-                    return (random().nextInt(15) - 7) / 3f;
-                }
+        case 0:
+            return Float.NEGATIVE_INFINITY;
+        case 1:
+            return Float.POSITIVE_INFINITY;
+        default:
+            if (random().nextBoolean()) {
+                return random().nextFloat();
+            } else {
+                return (random().nextInt(15) - 7) / 3f;
+            }
         }
     }
 
@@ -99,13 +99,13 @@ public class FloatRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryD
 
         @Override
         protected boolean isDisjoint(Range o) {
-            FloatTestRange other = (FloatTestRange)o;
+            FloatTestRange other = (FloatTestRange) o;
             return this.min > other.max || this.max < other.min;
         }
 
         @Override
         protected boolean isWithin(Range o) {
-            FloatTestRange other = (FloatTestRange)o;
+            FloatTestRange other = (FloatTestRange) o;
             if ((this.min >= other.min && this.max <= other.max) == false) {
                 // not within:
                 return false;

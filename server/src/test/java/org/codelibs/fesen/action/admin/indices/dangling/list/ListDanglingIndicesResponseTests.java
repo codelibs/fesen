@@ -62,9 +62,8 @@ public class ListDanglingIndicesResponseTests extends ESTestCase {
         final DiscoveryNode node = mock(DiscoveryNode.class);
         when(node.getId()).thenReturn("some-node-id");
 
-        final List<DanglingIndexInfo> danglingIndexInfo = singletonList(
-            new DanglingIndexInfo("some-node-id", "some-index", UUID_1, 123456L)
-        );
+        final List<DanglingIndexInfo> danglingIndexInfo =
+                singletonList(new DanglingIndexInfo("some-node-id", "some-index", UUID_1, 123456L));
         final List<NodeListDanglingIndicesResponse> nodes = singletonList(new NodeListDanglingIndicesResponse(node, danglingIndexInfo));
 
         final List<AggregatedDanglingIndexInfo> aggregated = new ArrayList<>(resultsByIndexUUID(nodes));
@@ -87,10 +86,8 @@ public class ListDanglingIndicesResponseTests extends ESTestCase {
 
         final List<DanglingIndexInfo> danglingIndexInfo1 = singletonList(new DanglingIndexInfo("node-id-1", "some-index", UUID_1, 123456L));
         final List<DanglingIndexInfo> danglingIndexInfo2 = singletonList(new DanglingIndexInfo("node-id-2", "some-index", UUID_1, 123456L));
-        final List<NodeListDanglingIndicesResponse> nodes = asList(
-            new NodeListDanglingIndicesResponse(node1, danglingIndexInfo1),
-            new NodeListDanglingIndicesResponse(node2, danglingIndexInfo2)
-        );
+        final List<NodeListDanglingIndicesResponse> nodes = asList(new NodeListDanglingIndicesResponse(node1, danglingIndexInfo1),
+                new NodeListDanglingIndicesResponse(node2, danglingIndexInfo2));
 
         final List<AggregatedDanglingIndexInfo> aggregated = new ArrayList<>(resultsByIndexUUID(nodes));
         assertThat(aggregated, hasSize(1));
@@ -109,10 +106,8 @@ public class ListDanglingIndicesResponseTests extends ESTestCase {
         final DiscoveryNode node1 = mock(DiscoveryNode.class);
         when(node1.getId()).thenReturn("node-id-1");
 
-        final List<DanglingIndexInfo> danglingIndexInfo = asList(
-            new DanglingIndexInfo("node-id-1", "some-index", UUID_1, 123456L),
-            new DanglingIndexInfo("node-id-1", "some-other-index", UUID_2, 7891011L)
-        );
+        final List<DanglingIndexInfo> danglingIndexInfo = asList(new DanglingIndexInfo("node-id-1", "some-index", UUID_1, 123456L),
+                new DanglingIndexInfo("node-id-1", "some-other-index", UUID_2, 7891011L));
 
         final List<NodeListDanglingIndicesResponse> nodes = singletonList(new NodeListDanglingIndicesResponse(node1, danglingIndexInfo));
 
@@ -138,13 +133,10 @@ public class ListDanglingIndicesResponseTests extends ESTestCase {
         when(node2.getId()).thenReturn("node-id-2");
 
         final List<DanglingIndexInfo> danglingIndexInfo1 = singletonList(new DanglingIndexInfo("node-id-1", "some-index", UUID_1, 123456L));
-        final List<DanglingIndexInfo> danglingIndexInfo2 = singletonList(
-            new DanglingIndexInfo("node-id-2", "some-other-index", UUID_2, 7891011L)
-        );
-        final List<NodeListDanglingIndicesResponse> nodes = asList(
-            new NodeListDanglingIndicesResponse(node1, danglingIndexInfo1),
-            new NodeListDanglingIndicesResponse(node2, danglingIndexInfo2)
-        );
+        final List<DanglingIndexInfo> danglingIndexInfo2 =
+                singletonList(new DanglingIndexInfo("node-id-2", "some-other-index", UUID_2, 7891011L));
+        final List<NodeListDanglingIndicesResponse> nodes = asList(new NodeListDanglingIndicesResponse(node1, danglingIndexInfo1),
+                new NodeListDanglingIndicesResponse(node2, danglingIndexInfo2));
 
         final List<AggregatedDanglingIndexInfo> aggregated = new ArrayList<>(resultsByIndexUUID(nodes));
         assertThat(aggregated, hasSize(2));

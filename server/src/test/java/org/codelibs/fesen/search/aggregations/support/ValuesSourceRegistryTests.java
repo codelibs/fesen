@@ -41,32 +41,13 @@ public class ValuesSourceRegistryTests extends ESTestCase {
         when(mockAggScriptFactory.newFactory(Mockito.any(), Mockito.any())).thenReturn(mock(AggregationScript.LeafFactory.class));
         when(queryShardContext.compile(Mockito.any(), Mockito.any())).thenReturn(mockAggScriptFactory);
 
-        ValuesSourceConfig fieldOnly = ValuesSourceConfig.resolve(
-            queryShardContext,
-            null,
-            "field",
-            null,
-            null,
-            null,
-            null,
-            CoreValuesSourceType.BYTES
-        );
+        ValuesSourceConfig fieldOnly =
+                ValuesSourceConfig.resolve(queryShardContext, null, "field", null, null, null, null, CoreValuesSourceType.BYTES);
 
-        ValuesSourceConfig scriptOnly = ValuesSourceConfig.resolve(
-            queryShardContext,
-            null,
-            null,
-            mockScript("fakeScript"),
-            null,
-            null,
-            null,
-            CoreValuesSourceType.BYTES
-        );
+        ValuesSourceConfig scriptOnly = ValuesSourceConfig.resolve(queryShardContext, null, null, mockScript("fakeScript"), null, null,
+                null, CoreValuesSourceType.BYTES);
         ValuesSourceRegistry.RegistryKey key = new ValuesSourceRegistry.RegistryKey("bogus", HistogramAggregatorSupplier.class);
-        ValuesSourceRegistry registry = new ValuesSourceRegistry(
-            Collections.singletonMap(key, Collections.emptyList()),
-            null
-        );
+        ValuesSourceRegistry registry = new ValuesSourceRegistry(Collections.singletonMap(key, Collections.emptyList()), null);
         expectThrows(IllegalArgumentException.class, () -> registry.getAggregator(key, fieldOnly));
         expectThrows(IllegalArgumentException.class, () -> registry.getAggregator(key, scriptOnly));
     }

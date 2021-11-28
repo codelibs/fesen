@@ -22,7 +22,6 @@ package org.codelibs.fesen.indices.recovery;
 import java.io.IOException;
 
 import org.codelibs.fesen.Version;
-import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.index.shard.ShardId;

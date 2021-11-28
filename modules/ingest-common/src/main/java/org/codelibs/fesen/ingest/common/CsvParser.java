@@ -60,37 +60,37 @@ final class CsvParser {
         length = line.length();
         for (currentIndex = 0; currentIndex < length; currentIndex++) {
             switch (state) {
-                case START:
-                    if (processStart()) {
-                        return;
-                    }
-                    break;
-                case UNQUOTED:
-                    if (processUnquoted()) {
-                        return;
-                    }
-                    break;
-                case QUOTED:
-                    processQuoted();
-                    break;
-                case QUOTED_END:
-                    if (processQuotedEnd()) {
-                        return;
-                    }
-                    break;
+            case START:
+                if (processStart()) {
+                    return;
+                }
+                break;
+            case UNQUOTED:
+                if (processUnquoted()) {
+                    return;
+                }
+                break;
+            case QUOTED:
+                processQuoted();
+                break;
+            case QUOTED_END:
+                if (processQuotedEnd()) {
+                    return;
+                }
+                break;
             }
         }
 
         //we've reached end of string, we need to handle last field
         switch (state) {
-            case UNQUOTED:
-                setField(length);
-                break;
-            case QUOTED_END:
-                setField(length - 1);
-                break;
-            case QUOTED:
-                throw new IllegalArgumentException("Unmatched quote");
+        case UNQUOTED:
+            setField(length);
+            break;
+        case QUOTED_END:
+            setField(length - 1);
+            break;
+        case QUOTED:
+            throw new IllegalArgumentException("Unmatched quote");
         }
     }
 

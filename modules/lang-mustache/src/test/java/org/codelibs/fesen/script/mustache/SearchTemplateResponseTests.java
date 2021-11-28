@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.function.Predicate;
+
 import org.apache.lucene.search.TotalHits;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.search.ShardSearchFailure;
@@ -29,17 +35,10 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.script.mustache.SearchTemplateResponse;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchHits;
 import org.codelibs.fesen.search.internal.InternalSearchResponse;
 import org.codelibs.fesen.test.AbstractXContentTestCase;
-
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.function.Predicate;
 
 public class SearchTemplateResponseTests extends AbstractXContentTestCase<SearchTemplateResponse> {
 
@@ -70,20 +69,14 @@ public class SearchTemplateResponseTests extends AbstractXContentTestCase<Search
         int skippedShards = randomIntBetween(0, totalShards);
         InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
 
-        return new SearchResponse(internalSearchResponse, null, totalShards, successfulShards,
-            skippedShards, tookInMillis, ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY);
+        return new SearchResponse(internalSearchResponse, null, totalShards, successfulShards, skippedShards, tookInMillis,
+                ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY);
     }
 
     private static BytesReference createSource() {
         try {
-            XContentBuilder source = XContentFactory.jsonBuilder()
-                .startObject()
-                    .startObject("query")
-                        .startObject("match")
-                            .field(randomAlphaOfLength(5), randomAlphaOfLength(10))
-                        .endObject()
-                    .endObject()
-                .endObject();
+            XContentBuilder source = XContentFactory.jsonBuilder().startObject().startObject("query").startObject("match")
+                    .field(randomAlphaOfLength(5), randomAlphaOfLength(10)).endObject().endObject().endObject();
             return BytesReference.bytes(source);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -134,35 +127,19 @@ public class SearchTemplateResponseTests extends AbstractXContentTestCase<Search
     public void testSourceToXContent() throws IOException {
         SearchTemplateResponse response = new SearchTemplateResponse();
 
-        XContentBuilder source = XContentFactory.jsonBuilder()
-            .startObject()
-                .startObject("query")
-                    .startObject("terms")
-                        .field("status", new String[]{"pending", "published"})
-                    .endObject()
-                .endObject()
-            .endObject();
+        XContentBuilder source = XContentFactory.jsonBuilder().startObject().startObject("query").startObject("terms")
+                .field("status", new String[] { "pending", "published" }).endObject().endObject().endObject();
         response.setSource(BytesReference.bytes(source));
 
         XContentType contentType = randomFrom(XContentType.values());
-        XContentBuilder expectedResponse = XContentFactory.contentBuilder(contentType)
-            .startObject()
-                .startObject("template_output")
-                    .startObject("query")
-                        .startObject("terms")
-                            .field("status", new String[]{"pending", "published"})
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .endObject();
+        XContentBuilder expectedResponse = XContentFactory.contentBuilder(contentType).startObject().startObject("template_output")
+                .startObject("query").startObject("terms").field("status", new String[] { "pending", "published" }).endObject().endObject()
+                .endObject().endObject();
 
         XContentBuilder actualResponse = XContentFactory.contentBuilder(contentType);
         response.toXContent(actualResponse, ToXContent.EMPTY_PARAMS);
 
-        assertToXContentEquivalent(
-            BytesReference.bytes(expectedResponse),
-            BytesReference.bytes(actualResponse),
-            contentType);
+        assertToXContentEquivalent(BytesReference.bytes(expectedResponse), BytesReference.bytes(actualResponse), contentType);
     }
 
     public void testSearchResponseToXContent() throws IOException {
@@ -171,46 +148,23 @@ public class SearchTemplateResponseTests extends AbstractXContentTestCase<Search
         SearchHit[] hits = new SearchHit[] { hit };
 
         InternalSearchResponse internalSearchResponse = new InternalSearchResponse(
-            new SearchHits(hits, new TotalHits(100, TotalHits.Relation.EQUAL_TO), 1.5f), null, null, null, false, null, 1);
-        SearchResponse searchResponse = new SearchResponse(internalSearchResponse, null,
-            0, 0, 0, 0, ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY);
+                new SearchHits(hits, new TotalHits(100, TotalHits.Relation.EQUAL_TO), 1.5f), null, null, null, false, null, 1);
+        SearchResponse searchResponse =
+                new SearchResponse(internalSearchResponse, null, 0, 0, 0, 0, ShardSearchFailure.EMPTY_ARRAY, SearchResponse.Clusters.EMPTY);
 
         SearchTemplateResponse response = new SearchTemplateResponse();
         response.setResponse(searchResponse);
 
         XContentType contentType = randomFrom(XContentType.values());
-        XContentBuilder expectedResponse = XContentFactory.contentBuilder(contentType)
-            .startObject()
-                .field("took", 0)
-                .field("timed_out", false)
-                .startObject("_shards")
-                    .field("total", 0)
-                    .field("successful", 0)
-                    .field("skipped", 0)
-                    .field("failed", 0)
-                .endObject()
-                .startObject("hits")
-                    .startObject("total")
-                        .field("value", 100)
-                        .field("relation", "eq")
-                    .endObject()
-                    .field("max_score", 1.5F)
-                    .startArray("hits")
-                        .startObject()
-                            .field("_type", "type")
-                            .field("_id", "id")
-                            .field("_score", 2.0F)
-                        .endObject()
-                    .endArray()
-                .endObject()
-            .endObject();
+        XContentBuilder expectedResponse = XContentFactory.contentBuilder(contentType).startObject().field("took", 0)
+                .field("timed_out", false).startObject("_shards").field("total", 0).field("successful", 0).field("skipped", 0)
+                .field("failed", 0).endObject().startObject("hits").startObject("total").field("value", 100).field("relation", "eq")
+                .endObject().field("max_score", 1.5F).startArray("hits").startObject().field("_type", "type").field("_id", "id")
+                .field("_score", 2.0F).endObject().endArray().endObject().endObject();
 
         XContentBuilder actualResponse = XContentFactory.contentBuilder(contentType);
         response.toXContent(actualResponse, ToXContent.EMPTY_PARAMS);
 
-        assertToXContentEquivalent(
-            BytesReference.bytes(expectedResponse),
-            BytesReference.bytes(actualResponse),
-            contentType);
+        assertToXContentEquivalent(BytesReference.bytes(expectedResponse), BytesReference.bytes(actualResponse), contentType);
     }
 }

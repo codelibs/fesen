@@ -18,7 +18,6 @@
  */
 package org.codelibs.fesen.cluster;
 
-
 import java.io.IOException;
 
 import org.codelibs.fesen.FesenException;

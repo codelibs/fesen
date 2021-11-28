@@ -28,9 +28,7 @@ import org.codelibs.fesen.test.ESTestCase;
 public class ResizableBlockingQueueTests extends ESTestCase {
 
     public void testAdjustCapacity() throws Exception {
-        ResizableBlockingQueue<Runnable> queue =
-                new ResizableBlockingQueue<>(ConcurrentCollections.<Runnable>newBlockingQueue(),
-                        100);
+        ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>(ConcurrentCollections.<Runnable> newBlockingQueue(), 100);
 
         assertThat(queue.capacity(), equalTo(100));
         // Queue size already equal to desired capacity

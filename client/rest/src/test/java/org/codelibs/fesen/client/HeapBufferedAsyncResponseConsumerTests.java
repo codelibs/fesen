@@ -19,6 +19,21 @@
 
 package org.codelibs.fesen.client;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,24 +47,6 @@ import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.IOControl;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
-import org.codelibs.fesen.client.HeapBufferedAsyncResponseConsumer;
-import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory;
-import org.codelibs.fesen.client.RestClientTestCase;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class HeapBufferedAsyncResponseConsumerTests extends RestClientTestCase {
 
@@ -92,12 +89,12 @@ public class HeapBufferedAsyncResponseConsumerTests extends RestClientTestCase {
     public void testConfiguredBufferLimit() throws Exception {
         try {
             new HeapBufferedAsyncResponseConsumer(randomIntBetween(Integer.MIN_VALUE, 0));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertEquals("bufferLimit must be greater than 0", e.getMessage());
         }
         try {
             new HeapBufferedAsyncResponseConsumer(0);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertEquals("bufferLimit must be greater than 0", e.getMessage());
         }
         int bufferLimit = randomIntBetween(1, MAX_TEST_BUFFER_SIZE - 100);
@@ -144,9 +141,10 @@ public class HeapBufferedAsyncResponseConsumerTests extends RestClientTestCase {
         contentLength.set(randomLongBetween(bufferLimit + 1, MAX_TEST_BUFFER_SIZE));
         try {
             consumer.onEntityEnclosed(entity, ContentType.APPLICATION_JSON);
-        } catch(ContentTooLongException e) {
-            assertEquals("entity content is too long [" + entity.getContentLength() +
-                    "] for the configured buffer limit [" + bufferLimit + "]", e.getMessage());
+        } catch (ContentTooLongException e) {
+            assertEquals(
+                    "entity content is too long [" + entity.getContentLength() + "] for the configured buffer limit [" + bufferLimit + "]",
+                    e.getMessage());
         }
     }
 }

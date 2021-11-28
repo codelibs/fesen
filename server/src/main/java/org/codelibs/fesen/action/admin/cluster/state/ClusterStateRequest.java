@@ -19,7 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.state;
 
-import org.codelibs.fesen.Version;
+import java.io.IOException;
+
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -28,8 +29,6 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
-
-import java.io.IOException;
 
 public class ClusterStateRequest extends MasterNodeReadRequest<ClusterStateRequest> implements IndicesRequest.Replaceable {
 
@@ -186,8 +185,8 @@ public class ClusterStateRequest extends MasterNodeReadRequest<ClusterStateReque
 
     public ClusterStateRequest waitForMetadataVersion(long waitForMetadataVersion) {
         if (waitForMetadataVersion < 1) {
-            throw new IllegalArgumentException("provided waitForMetadataVersion should be >= 1, but instead is [" +
-                waitForMetadataVersion + "]");
+            throw new IllegalArgumentException(
+                    "provided waitForMetadataVersion should be >= 1, but instead is [" + waitForMetadataVersion + "]");
         }
         this.waitForMetadataVersion = waitForMetadataVersion;
         return this;

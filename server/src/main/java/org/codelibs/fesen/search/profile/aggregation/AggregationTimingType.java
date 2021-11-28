@@ -22,12 +22,7 @@ package org.codelibs.fesen.search.profile.aggregation;
 import java.util.Locale;
 
 public enum AggregationTimingType {
-    INITIALIZE,
-    BUILD_LEAF_COLLECTOR,
-    COLLECT,
-    POST_COLLECTION,
-    BUILD_AGGREGATION,
-    REDUCE;
+    INITIALIZE, BUILD_LEAF_COLLECTOR, COLLECT, POST_COLLECTION, BUILD_AGGREGATION, REDUCE;
 
     @Override
     public String toString() {

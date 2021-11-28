@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.cancel;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.TaskOperationFailure;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
@@ -29,24 +32,19 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.tasks.TaskInfo;
 
-import java.io.IOException;
-import java.util.List;
-
-
 /**
  * Returns the list of tasks that were cancelled
  */
 public class CancelTasksResponse extends ListTasksResponse {
 
     private static final ConstructingObjectParser<CancelTasksResponse, Void> PARSER =
-        setupParser("cancel_tasks_response", CancelTasksResponse::new);
+            setupParser("cancel_tasks_response", CancelTasksResponse::new);
 
     public CancelTasksResponse(StreamInput in) throws IOException {
         super(in);
     }
 
-    public CancelTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures, List<? extends FesenException>
-        nodeFailures) {
+    public CancelTasksResponse(List<TaskInfo> tasks, List<TaskOperationFailure> taskFailures, List<? extends FesenException> nodeFailures) {
         super(tasks, taskFailures, nodeFailures);
     }
 

@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.repositories;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.core.TimeValue;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -30,6 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.core.TimeValue;
 
 public final class RepositoriesStatsArchive {
     private static final Logger logger = LogManager.getLogger(RepositoriesStatsArchive.class);
@@ -39,9 +39,7 @@ public final class RepositoriesStatsArchive {
     private final LongSupplier relativeTimeSupplier;
     private final Deque<ArchiveEntry> archive = new ArrayDeque<>();
 
-    public RepositoriesStatsArchive(TimeValue retentionPeriod,
-                                    int maxCapacity,
-                                    LongSupplier relativeTimeSupplier) {
+    public RepositoriesStatsArchive(TimeValue retentionPeriod, int maxCapacity, LongSupplier relativeTimeSupplier) {
         this.retentionPeriod = retentionPeriod;
         this.maxCapacity = maxCapacity;
         this.relativeTimeSupplier = relativeTimeSupplier;
@@ -54,8 +52,8 @@ public final class RepositoriesStatsArchive {
      * @return {@code true} if the repository stats were archived, {@code false} otherwise.
      */
     synchronized boolean archive(final RepositoryStatsSnapshot repositoryStats) {
-        assert containsRepositoryStats(repositoryStats) == false
-            : "A repository with ephemeral id " + repositoryStats.getRepositoryInfo().ephemeralId + " is already archived";
+        assert containsRepositoryStats(repositoryStats) == false : "A repository with ephemeral id "
+                + repositoryStats.getRepositoryInfo().ephemeralId + " is already archived";
         assert repositoryStats.isArchived();
 
         evict();
@@ -100,9 +98,8 @@ public final class RepositoriesStatsArchive {
     }
 
     private boolean containsRepositoryStats(RepositoryStatsSnapshot repositoryStats) {
-        return archive.stream()
-            .anyMatch(entry ->
-                entry.repositoryStatsSnapshot.getRepositoryInfo().ephemeralId.equals(repositoryStats.getRepositoryInfo().ephemeralId));
+        return archive.stream().anyMatch(entry -> entry.repositoryStatsSnapshot.getRepositoryInfo().ephemeralId
+                .equals(repositoryStats.getRepositoryInfo().ephemeralId));
     }
 
     private static class ArchiveEntry {

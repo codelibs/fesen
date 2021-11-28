@@ -19,19 +19,16 @@
 
 package org.codelibs.fesen.index.reindex;
 
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
-import org.codelibs.fesen.index.reindex.RestUpdateByQueryAction;
-import org.codelibs.fesen.index.reindex.UpdateByQueryRequest;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.search.RestSearchAction;
 import org.codelibs.fesen.test.rest.FakeRestRequest;
 import org.codelibs.fesen.test.rest.RestActionTestCase;
 import org.junit.Before;
-
-import java.io.IOException;
-
-import static java.util.Collections.emptyList;
 
 public class RestUpdateByQueryActionTests extends RestActionTestCase {
 
@@ -43,11 +40,9 @@ public class RestUpdateByQueryActionTests extends RestActionTestCase {
         controller().registerHandler(action);
     }
 
-    public void testTypeInPath() throws IOException  {
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-            .withMethod(RestRequest.Method.POST)
-            .withPath("/some_index/some_type/_update_by_query")
-            .build();
+    public void testTypeInPath() throws IOException {
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.POST)
+                .withPath("/some_index/some_type/_update_by_query").build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteLocallyVerifier((arg1, arg2) -> null);
@@ -57,7 +52,7 @@ public class RestUpdateByQueryActionTests extends RestActionTestCase {
         // checks the type in the URL is propagated correctly to the request object
         // only works after the request is dispatched, so its params are filled from url.
         UpdateByQueryRequest ubqRequest = action.buildRequest(request, DEFAULT_NAMED_WRITABLE_REGISTRY);
-        assertArrayEquals(new String[]{"some_type"}, ubqRequest.getDocTypes());
+        assertArrayEquals(new String[] { "some_type" }, ubqRequest.getDocTypes());
 
         // RestUpdateByQueryAction itself doesn't check for a deprecated type usage
         // checking here for a deprecation from its internal search request

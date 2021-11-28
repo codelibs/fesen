@@ -28,10 +28,8 @@ import org.codelibs.fesen.cluster.health.ClusterHealthStatus;
 /**
  * Request builder for {@link IndicesShardStoresRequest}
  */
-public class IndicesShardStoreRequestBuilder extends MasterNodeReadOperationRequestBuilder<
-        IndicesShardStoresRequest,
-        IndicesShardStoresResponse,
-        IndicesShardStoreRequestBuilder> {
+public class IndicesShardStoreRequestBuilder extends
+        MasterNodeReadOperationRequestBuilder<IndicesShardStoresRequest, IndicesShardStoresResponse, IndicesShardStoreRequestBuilder> {
 
     public IndicesShardStoreRequestBuilder(FesenClient client, ActionType<IndicesShardStoresResponse> action, String... indices) {
         super(client, action, new IndicesShardStoresRequest(indices));
