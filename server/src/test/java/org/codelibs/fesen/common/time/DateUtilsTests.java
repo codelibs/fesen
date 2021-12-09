@@ -48,7 +48,8 @@ import static org.hamcrest.Matchers.is;
 public class DateUtilsTests extends ESTestCase {
     private static final Set<String> IGNORE = new HashSet<>(Arrays.asList(
         "Eire", "Europe/Dublin", // dublin timezone in joda does not account for DST
-        "Asia/Qostanay" // this has been added in joda 2.10.2 but is not part of the JDK 12.0.1 tzdata yet
+        "Asia/Qostanay", // this has been added in joda 2.10.2 but is not part of the JDK 12.0.1 tzdata yet
+        "Pacific/Enderbury", "Pacific/Kanton", "Pacific/Niue", "America/Godthab", "America/Nuuk", "Australia/Currie"
     ));
 
     public void testTimezoneIds() {

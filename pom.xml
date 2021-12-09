@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen</groupId>
 	<artifactId>fesen-parent</artifactId>
-	<version>0.15.1-SNAPSHOT</version>
+	<version>0.16.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Fess Search Engine Project</name>
 	<description>This project provides Search Engine Software.</description>
@@ -76,7 +76,7 @@
 	</modules>
 	<properties>
 		<elasticsearch.version>7.10.3</elasticsearch.version>
-		<lucene.version>8.9.0</lucene.version>
+		<lucene.version>8.10.1</lucene.version>
 		<checkstyle.version>8.20</checkstyle.version>
 		<spatial4j.version>0.7</spatial4j.version>
 		<jts.version>1.15.0</jts.version>
