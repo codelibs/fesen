@@ -283,7 +283,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>${jackson.version}</version>
+			<version>${joda.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -319,7 +319,7 @@
 		<dependency>
 			<groupId>org.locationtech.spatial4j</groupId>
 			<artifactId>spatial4j</artifactId>
-			<version>0.7</version>
+			<version>${spatial4j.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -331,7 +331,7 @@
 		<dependency>
 			<groupId>org.locationtech.jts</groupId>
 			<artifactId>jts-core</artifactId>
-			<version>1.15.0</version>
+			<version>${jts.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -343,7 +343,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.14.1</version>
+			<version>${log4j.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -355,7 +355,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.14.1</version>
+			<version>${log4j.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -367,7 +367,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>jna</artifactId>
-			<version>5.5.0</version>
+			<version>${jna.version}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
