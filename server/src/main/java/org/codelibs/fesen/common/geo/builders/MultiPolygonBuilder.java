@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.XShapeCollection;
 import org.codelibs.fesen.common.geo.parsers.GeoWKTParser;
@@ -36,6 +30,12 @@ import org.codelibs.fesen.geometry.MultiPolygon;
 import org.codelibs.fesen.geometry.Polygon;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.spatial4j.shape.Shape;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, MultiPolygonBuilder> {
 
@@ -140,7 +140,7 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
         builder.field(ShapeParser.FIELD_TYPE.getPreferredName(), TYPE.shapeName());
         builder.field(ShapeParser.FIELD_ORIENTATION.getPreferredName(), orientation.name().toLowerCase(Locale.ROOT));
         builder.startArray(ShapeParser.FIELD_COORDINATES.getPreferredName());
-        for (PolygonBuilder polygon : polygons) {
+        for(PolygonBuilder polygon : polygons) {
             builder.startArray();
             polygon.coordinatesArray(builder, params);
             builder.endArray();
@@ -157,7 +157,8 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
     @Override
     public int numDimensions() {
         if (polygons == null || polygons.isEmpty()) {
-            throw new IllegalStateException("unable to get number of dimensions, " + "Polygons have not yet been initialized");
+            throw new IllegalStateException("unable to get number of dimensions, " +
+                "Polygons have not yet been initialized");
         }
         return polygons.get(0).numDimensions();
     }
@@ -167,9 +168,9 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
 
         List<Shape> shapes = new ArrayList<>(this.polygons.size());
 
-        if (wrapdateline) {
+        if(wrapdateline) {
             for (PolygonBuilder polygon : this.polygons) {
-                for (Coordinate[][] part : polygon.coordinates()) {
+                for(Coordinate[][] part : polygon.coordinates()) {
                     shapes.add(jtsGeometry(PolygonBuilder.polygonS4J(FACTORY, part)));
                 }
             }
@@ -185,7 +186,7 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
         //note: ShapeCollection is probably faster than a Multi* geom.
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     public MultiPolygon buildGeometry() {
         List<Polygon> shapes = new ArrayList<>(this.polygons.size());
@@ -195,7 +196,7 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
             if (poly instanceof List) {
                 shapes.addAll((List<Polygon>) poly);
             } else {
-                shapes.add((Polygon) poly);
+                shapes.add((Polygon)poly);
             }
         }
         if (shapes.isEmpty()) {
@@ -218,6 +219,7 @@ public class MultiPolygonBuilder extends ShapeBuilder<Shape, MultiPolygon, Multi
             return false;
         }
         MultiPolygonBuilder other = (MultiPolygonBuilder) obj;
-        return Objects.equals(polygons, other.polygons) && Objects.equals(orientation, other.orientation);
+        return Objects.equals(polygons, other.polygons) &&
+                Objects.equals(orientation, other.orientation);
     }
 }

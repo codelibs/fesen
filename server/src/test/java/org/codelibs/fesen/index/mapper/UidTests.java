@@ -43,7 +43,10 @@ public class UidTests extends ESTestCase {
         }
 
         int idStart = loc + 1;
-        return new BytesRef[] { new BytesRef(uid.bytes, uid.offset, loc - uid.offset), new BytesRef(uid.bytes, idStart, limit - idStart) };
+        return new BytesRef[] {
+            new BytesRef(uid.bytes, uid.offset, loc - uid.offset),
+            new BytesRef(uid.bytes, idStart, limit - idStart)
+        };
     }
 
     public void testIsURLBase64WithoutPadding() {
@@ -103,7 +106,7 @@ public class UidTests extends ESTestCase {
                 slicedCopy.length = encoded.length;
                 System.arraycopy(encoded.bytes, encoded.offset, slicedCopy.bytes, slicedCopy.offset, encoded.length);
                 assertArrayEquals(Arrays.copyOfRange(encoded.bytes, encoded.offset, encoded.offset + encoded.length),
-                        Arrays.copyOfRange(slicedCopy.bytes, slicedCopy.offset, slicedCopy.offset + slicedCopy.length));
+                    Arrays.copyOfRange(slicedCopy.bytes, slicedCopy.offset, slicedCopy.offset + slicedCopy.length));
                 encoded = slicedCopy;
             }
             return Uid.decodeId(encoded.bytes, encoded.offset, encoded.length);

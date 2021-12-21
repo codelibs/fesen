@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.codelibs.fesen.common.util.ByteUtils;
 
+
 /**
  * MurmurHash3 hashing functions.
  */
@@ -47,7 +48,8 @@ public enum MurmurHash3 {
                 return false;
             }
             Hash128 that = (Hash128) other;
-            return Objects.equals(this.h1, that.h1) && Objects.equals(this.h2, that.h2);
+            return Objects.equals(this.h1, that.h1)
+                && Objects.equals(this.h2, that.h2);
         }
 
         @Override
@@ -120,45 +122,45 @@ public enum MurmurHash3 {
         long k2 = 0;
 
         switch (length & 15) {
-        case 15:
-            k2 ^= (key[offset + 14] & 0xFFL) << 48;
-        case 14:
-            k2 ^= (key[offset + 13] & 0xFFL) << 40;
-        case 13:
-            k2 ^= (key[offset + 12] & 0xFFL) << 32;
-        case 12:
-            k2 ^= (key[offset + 11] & 0xFFL) << 24;
-        case 11:
-            k2 ^= (key[offset + 10] & 0xFFL) << 16;
-        case 10:
-            k2 ^= (key[offset + 9] & 0xFFL) << 8;
-        case 9:
-            k2 ^= (key[offset + 8] & 0xFFL) << 0;
-            k2 *= C2;
-            k2 = Long.rotateLeft(k2, 33);
-            k2 *= C1;
-            h2 ^= k2;
+            case 15:
+                k2 ^= (key[offset + 14] & 0xFFL) << 48;
+            case 14:
+                k2 ^= (key[offset + 13] & 0xFFL) << 40;
+            case 13:
+                k2 ^= (key[offset + 12] & 0xFFL) << 32;
+            case 12:
+                k2 ^= (key[offset + 11] & 0xFFL) << 24;
+            case 11:
+                k2 ^= (key[offset + 10] & 0xFFL) << 16;
+            case 10:
+                k2 ^= (key[offset + 9] & 0xFFL) << 8;
+            case 9:
+                k2 ^= (key[offset + 8] & 0xFFL) << 0;
+                k2 *= C2;
+                k2 = Long.rotateLeft(k2, 33);
+                k2 *= C1;
+                h2 ^= k2;
 
-        case 8:
-            k1 ^= (key[offset + 7] & 0xFFL) << 56;
-        case 7:
-            k1 ^= (key[offset + 6] & 0xFFL) << 48;
-        case 6:
-            k1 ^= (key[offset + 5] & 0xFFL) << 40;
-        case 5:
-            k1 ^= (key[offset + 4] & 0xFFL) << 32;
-        case 4:
-            k1 ^= (key[offset + 3] & 0xFFL) << 24;
-        case 3:
-            k1 ^= (key[offset + 2] & 0xFFL) << 16;
-        case 2:
-            k1 ^= (key[offset + 1] & 0xFFL) << 8;
-        case 1:
-            k1 ^= (key[offset] & 0xFFL);
-            k1 *= C1;
-            k1 = Long.rotateLeft(k1, 31);
-            k1 *= C2;
-            h1 ^= k1;
+            case 8:
+                k1 ^= (key[offset + 7] & 0xFFL) << 56;
+            case 7:
+                k1 ^= (key[offset + 6] & 0xFFL) << 48;
+            case 6:
+                k1 ^= (key[offset + 5] & 0xFFL) << 40;
+            case 5:
+                k1 ^= (key[offset + 4] & 0xFFL) << 32;
+            case 4:
+                k1 ^= (key[offset + 3] & 0xFFL) << 24;
+            case 3:
+                k1 ^= (key[offset + 2] & 0xFFL) << 16;
+            case 2:
+                k1 ^= (key[offset + 1] & 0xFFL) << 8;
+            case 1:
+                k1 ^= (key[offset] & 0xFFL);
+                k1 *= C1;
+                k1 = Long.rotateLeft(k1, 31);
+                k1 *= C2;
+                h1 ^= k1;
         }
 
         h1 ^= length;

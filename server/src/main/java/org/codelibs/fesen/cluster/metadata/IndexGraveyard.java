@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.NamedDiff;
@@ -45,6 +35,16 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.Index;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A collection of tombstones for explicitly marking indices as deleted in the cluster state.
@@ -64,8 +64,9 @@ public final class IndexGraveyard implements Metadata.Custom {
      * deletions while a node was offline, when it comes back online, it will have
      * missed index deletions that it may need to process.
      */
-    public static final Setting<Integer> SETTING_MAX_TOMBSTONES = Setting.intSetting("cluster.indices.tombstones.size", 500, // the default maximum number of tombstones
-            Setting.Property.NodeScope);
+    public static final Setting<Integer> SETTING_MAX_TOMBSTONES = Setting.intSetting("cluster.indices.tombstones.size",
+                                                                                     500, // the default maximum number of tombstones
+                                                                                     Setting.Property.NodeScope);
 
     public static final String TYPE = "index-graveyard";
     private static final ParseField TOMBSTONES_FIELD = new ParseField("tombstones");
@@ -103,7 +104,7 @@ public final class IndexGraveyard implements Metadata.Custom {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof IndexGraveyard) && Objects.equals(tombstones, ((IndexGraveyard) obj).tombstones);
+        return (obj instanceof IndexGraveyard) && Objects.equals(tombstones, ((IndexGraveyard)obj).tombstones);
     }
 
     @Override
@@ -315,8 +316,8 @@ public final class IndexGraveyard implements Metadata.Custom {
         public IndexGraveyard apply(final Metadata.Custom previous) {
             final IndexGraveyard old = (IndexGraveyard) previous;
             if (removedCount > old.tombstones.size()) {
-                throw new IllegalStateException(
-                        "IndexGraveyardDiff cannot remove [" + removedCount + "] entries from [" + old.tombstones.size() + "] tombstones.");
+                throw new IllegalStateException("IndexGraveyardDiff cannot remove [" + removedCount + "] entries from [" +
+                                                old.tombstones.size() + "] tombstones.");
             }
             final List<Tombstone> newTombstones = new ArrayList<>(old.tombstones.subList(removedCount, old.tombstones.size()));
             for (Tombstone tombstone : added) {

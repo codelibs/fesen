@@ -19,17 +19,20 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.mock;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.TransportUpdateByQueryAction;
+import org.codelibs.fesen.index.reindex.UpdateByQueryRequest;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.transport.TransportService;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.mock;
 
 public class UpdateByQueryWithScriptTests
         extends AbstractAsyncBulkByScrollActionScriptTestCase<UpdateByQueryRequest, BulkByScrollResponse> {
@@ -41,8 +44,8 @@ public class UpdateByQueryWithScriptTests
          * more. The point of have many is that they should all present the same
          * error message to the user, not some ClassCastException.
          */
-        Object[] options = new Object[] { "cat", new Object(), 123, new Date(), Math.PI };
-        for (String ctxVar : new String[] { "_index", "_type", "_id", "_version", "_routing" }) {
+        Object[] options = new Object[] {"cat", new Object(), 123, new Date(), Math.PI};
+        for (String ctxVar: new String[] {"_index", "_type", "_id", "_version", "_routing"}) {
             try {
                 applyScript((Map<String, Object> ctx) -> ctx.put(ctxVar, randomFrom(options)));
             } catch (IllegalArgumentException e) {
@@ -60,7 +63,7 @@ public class UpdateByQueryWithScriptTests
     protected TransportUpdateByQueryAction.AsyncIndexBySearchAction action(ScriptService scriptService, UpdateByQueryRequest request) {
         TransportService transportService = mock(TransportService.class);
         TransportUpdateByQueryAction transportAction = new TransportUpdateByQueryAction(threadPool,
-                new ActionFilters(Collections.emptySet()), null, transportService, scriptService, null);
+            new ActionFilters(Collections.emptySet()), null, transportService, scriptService, null);
         return new TransportUpdateByQueryAction.AsyncIndexBySearchAction(task, logger, null, threadPool, scriptService, request,
                 ClusterState.EMPTY_STATE, listener());
     }

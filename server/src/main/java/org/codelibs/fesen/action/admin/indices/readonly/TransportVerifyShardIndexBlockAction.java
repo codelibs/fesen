@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.readonly;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -46,14 +43,17 @@ import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * Action used to verify whether shards have properly applied a given index block,
  * and are no longer executing any operations in violation of that block. This action
  * requests all operation permits of the shard in order to wait for all write operations
  * to complete.
  */
-public class TransportVerifyShardIndexBlockAction extends
-        TransportReplicationAction<TransportVerifyShardIndexBlockAction.ShardRequest, TransportVerifyShardIndexBlockAction.ShardRequest, ReplicationResponse> {
+public class TransportVerifyShardIndexBlockAction extends TransportReplicationAction<
+    TransportVerifyShardIndexBlockAction.ShardRequest, TransportVerifyShardIndexBlockAction.ShardRequest, ReplicationResponse> {
 
     public static final String NAME = AddIndexBlockAction.NAME + "[s]";
     public static final ActionType<ReplicationResponse> TYPE = new ActionType<>(NAME, ReplicationResponse::new);
@@ -61,10 +61,11 @@ public class TransportVerifyShardIndexBlockAction extends
 
     @Inject
     public TransportVerifyShardIndexBlockAction(final Settings settings, final TransportService transportService,
-            final ClusterService clusterService, final IndicesService indicesService, final ThreadPool threadPool,
-            final ShardStateAction stateAction, final ActionFilters actionFilters) {
-        super(settings, NAME, transportService, clusterService, indicesService, threadPool, stateAction, actionFilters, ShardRequest::new,
-                ShardRequest::new, ThreadPool.Names.MANAGEMENT);
+                                                final ClusterService clusterService, final IndicesService indicesService,
+                                                final ThreadPool threadPool, final ShardStateAction stateAction,
+                                                final ActionFilters actionFilters) {
+        super(settings, NAME, transportService, clusterService, indicesService, threadPool, stateAction, actionFilters,
+            ShardRequest::new, ShardRequest::new, ThreadPool.Names.MANAGEMENT);
     }
 
     @Override
@@ -73,15 +74,19 @@ public class TransportVerifyShardIndexBlockAction extends
     }
 
     @Override
-    protected void acquirePrimaryOperationPermit(final IndexShard primary, final ShardRequest request,
-            final ActionListener<Releasable> onAcquired) {
+    protected void acquirePrimaryOperationPermit(final IndexShard primary,
+                                                 final ShardRequest request,
+                                                 final ActionListener<Releasable> onAcquired) {
         primary.acquireAllPrimaryOperationsPermits(onAcquired, request.timeout());
     }
 
     @Override
-    protected void acquireReplicaOperationPermit(final IndexShard replica, final ShardRequest request,
-            final ActionListener<Releasable> onAcquired, final long primaryTerm, final long globalCheckpoint,
-            final long maxSeqNoOfUpdateOrDeletes) {
+    protected void acquireReplicaOperationPermit(final IndexShard replica,
+                                                 final ShardRequest request,
+                                                 final ActionListener<Releasable> onAcquired,
+                                                 final long primaryTerm,
+                                                 final long globalCheckpoint,
+                                                 final long maxSeqNoOfUpdateOrDeletes) {
         replica.acquireAllReplicaOperationsPermits(primaryTerm, globalCheckpoint, maxSeqNoOfUpdateOrDeletes, onAcquired, request.timeout());
     }
 
@@ -105,8 +110,8 @@ public class TransportVerifyShardIndexBlockAction extends
     private void executeShardOperation(final ShardRequest request, final IndexShard indexShard) {
         final ShardId shardId = indexShard.shardId();
         if (indexShard.getActiveOperationsCount() != IndexShard.OPERATIONS_BLOCKED) {
-            throw new IllegalStateException(
-                    "index shard " + shardId + " is not blocking all operations while waiting for block " + request.clusterBlock());
+            throw new IllegalStateException("index shard " + shardId +
+                " is not blocking all operations while waiting for block " + request.clusterBlock());
         }
 
         final ClusterBlocks clusterBlocks = clusterService.state().blocks();
@@ -128,7 +133,7 @@ public class TransportVerifyShardIndexBlockAction extends
     class VerifyShardReadOnlyActionReplicasProxy extends ReplicasProxy {
         @Override
         public void markShardCopyAsStaleIfNeeded(final ShardId shardId, final String allocationId, final long primaryTerm,
-                final ActionListener<Void> listener) {
+                                                 final ActionListener<Void> listener) {
             shardStateAction.remoteShardFailed(shardId, allocationId, primaryTerm, true, "mark copy as stale", null, listener);
         }
     }

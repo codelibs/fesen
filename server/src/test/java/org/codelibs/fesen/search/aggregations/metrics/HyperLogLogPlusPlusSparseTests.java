@@ -46,12 +46,13 @@ import static org.mockito.Mockito.when;
 
 public class HyperLogLogPlusPlusSparseTests extends ESTestCase {
 
-    public void testBasic() {
+    public void testBasic()  {
         final int p = randomIntBetween(MIN_PRECISION, MAX_PRECISION);
-        HyperLogLogPlusPlusSparse sparse = new HyperLogLogPlusPlusSparse(p, BigArrays.NON_RECYCLING_INSTANCE, 10, 1);
+        HyperLogLogPlusPlusSparse sparse  = new HyperLogLogPlusPlusSparse(p, BigArrays.NON_RECYCLING_INSTANCE, 10, 1);
         AbstractLinearCounting.HashesIterator iterator = sparse.getLinearCounting(randomIntBetween(1, 10));
         assertEquals(0, iterator.size());
-        IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () -> sparse.getHyperLogLog(randomIntBetween(1, 10)));
+        IllegalArgumentException ex =
+            expectThrows(IllegalArgumentException.class, () -> sparse.getHyperLogLog(randomIntBetween(1, 10)));
         assertThat(ex.getMessage(), Matchers.containsString("Implementation does not support HLL structures"));
     }
 
@@ -60,7 +61,7 @@ public class HyperLogLogPlusPlusSparseTests extends ESTestCase {
         final HyperLogLogPlusPlus single = new HyperLogLogPlusPlus(p, BigArrays.NON_RECYCLING_INSTANCE, 0);
         final int numBuckets = randomIntBetween(2, 100);
         final int numValues = randomIntBetween(1, 100000);
-        final int maxValue = randomIntBetween(1, randomBoolean() ? 1000 : 1000000);
+        final int maxValue = randomIntBetween(1, randomBoolean() ? 1000: 1000000);
         for (int i = 0; i < numValues; ++i) {
             final int n = randomInt(maxValue);
             final long hash = BitMixer.mix64(n);
@@ -92,8 +93,8 @@ public class HyperLogLogPlusPlusSparseTests extends ESTestCase {
         }
     }
 
-    private void checkEquivalence(AbstractHyperLogLogPlusPlus first, int firstBucket, AbstractHyperLogLogPlusPlus second,
-            int secondBucket) {
+    private void checkEquivalence(AbstractHyperLogLogPlusPlus first, int firstBucket,
+                                  AbstractHyperLogLogPlusPlus second, int secondBucket) {
         assertEquals(first.hashCode(firstBucket), second.hashCode(secondBucket));
         assertEquals(first.cardinality(firstBucket), second.cardinality(0));
         assertTrue(first.equals(firstBucket, second, secondBucket));
@@ -106,7 +107,6 @@ public class HyperLogLogPlusPlusSparseTests extends ESTestCase {
         CircuitBreakerService breakerService = mock(CircuitBreakerService.class);
         when(breakerService.getBreaker(CircuitBreaker.REQUEST)).thenReturn(new NoopCircuitBreaker(CircuitBreaker.REQUEST) {
             private int countDown = whenToBreak;
-
             @Override
             public double addEstimateBytesAndMaybeBreak(long bytes, String label) throws CircuitBreakingException {
                 if (countDown-- == 0) {

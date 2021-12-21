@@ -18,12 +18,12 @@
  */
 package org.codelibs.fesen.discovery;
 
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
+
+import java.util.Set;
 
 /**
  * Allows to wait for all nodes to reply to the publish of a new cluster state

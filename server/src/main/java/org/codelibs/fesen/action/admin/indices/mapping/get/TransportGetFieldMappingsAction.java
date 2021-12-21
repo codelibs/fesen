@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +34,9 @@ import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.TransportService;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+
 public class TransportGetFieldMappingsAction extends HandledTransportAction<GetFieldMappingsRequest, GetFieldMappingsResponse> {
 
     private final ClusterService clusterService;
@@ -45,8 +45,8 @@ public class TransportGetFieldMappingsAction extends HandledTransportAction<GetF
 
     @Inject
     public TransportGetFieldMappingsAction(TransportService transportService, ClusterService clusterService,
-            TransportGetFieldMappingsIndexAction shardAction, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                           TransportGetFieldMappingsIndexAction shardAction,
+                                           ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(GetFieldMappingsAction.NAME, transportService, actionFilters, GetFieldMappingsRequest::new);
         this.clusterService = clusterService;
         this.shardAction = shardAction;

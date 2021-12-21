@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import java.io.IOException;
-import java.util.function.LongUnaryOperator;
-
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSelector;
@@ -40,6 +37,9 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
 
+import java.io.IOException;
+import java.util.function.LongUnaryOperator;
+
 /**
  * Base class for numeric field data.
  */
@@ -48,15 +48,16 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
      * The type of number.
      */
     public enum NumericType {
-        BOOLEAN(false, SortField.Type.LONG, CoreValuesSourceType.BOOLEAN), BYTE(false, SortField.Type.LONG,
-                CoreValuesSourceType.NUMERIC), SHORT(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC), INT(false,
-                        SortField.Type.LONG,
-                        CoreValuesSourceType.NUMERIC), LONG(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC), DATE(false,
-                                SortField.Type.LONG, CoreValuesSourceType.DATE), DATE_NANOSECONDS(false, SortField.Type.LONG,
-                                        CoreValuesSourceType.DATE), HALF_FLOAT(true, SortField.Type.LONG,
-                                                CoreValuesSourceType.NUMERIC), FLOAT(true, SortField.Type.FLOAT,
-                                                        CoreValuesSourceType.NUMERIC), DOUBLE(true, SortField.Type.DOUBLE,
-                                                                CoreValuesSourceType.NUMERIC);
+        BOOLEAN(false, SortField.Type.LONG, CoreValuesSourceType.BOOLEAN),
+        BYTE(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC),
+        SHORT(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC),
+        INT(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC),
+        LONG(false, SortField.Type.LONG, CoreValuesSourceType.NUMERIC),
+        DATE(false, SortField.Type.LONG, CoreValuesSourceType.DATE),
+        DATE_NANOSECONDS(false, SortField.Type.LONG, CoreValuesSourceType.DATE),
+        HALF_FLOAT(true, SortField.Type.LONG, CoreValuesSourceType.NUMERIC),
+        FLOAT(true, SortField.Type.FLOAT, CoreValuesSourceType.NUMERIC),
+        DOUBLE(true, SortField.Type.DOUBLE, CoreValuesSourceType.NUMERIC);
 
         private final boolean floatingPoint;
         private final ValuesSourceType valuesSourceType;
@@ -71,7 +72,6 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
         public final boolean isFloatingPoint() {
             return floatingPoint;
         }
-
         public final ValuesSourceType getValuesSourceType() {
             return valuesSourceType;
         }
@@ -87,8 +87,13 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
      * Values are casted to the provided <code>targetNumericType</code> type if it doesn't
      * match the field's <code>numericType</code>.
      */
-    public final SortField sortField(NumericType targetNumericType, Object missingValue, MultiValueMode sortMode, Nested nested,
-            boolean reverse) {
+    public final SortField sortField(
+        NumericType targetNumericType,
+        Object missingValue,
+        MultiValueMode sortMode,
+        Nested nested,
+        boolean reverse
+    ) {
         XFieldComparatorSource source = comparatorSource(targetNumericType, missingValue, sortMode, nested);
 
         /*
@@ -98,13 +103,15 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
          * 3. We Aren't using max or min to resolve the duplicates.
          * 4. We have to cast the results to another type.
          */
-        if (sortRequiresCustomComparator() || nested != null || (sortMode != MultiValueMode.MAX && sortMode != MultiValueMode.MIN)
+        if (sortRequiresCustomComparator()
+                || nested != null
+                || (sortMode != MultiValueMode.MAX && sortMode != MultiValueMode.MIN)
                 || targetNumericType != getNumericType()) {
             return new SortField(getFieldName(), source, reverse);
         }
 
-        SortedNumericSelector.Type selectorType =
-                sortMode == MultiValueMode.MAX ? SortedNumericSelector.Type.MAX : SortedNumericSelector.Type.MIN;
+        SortedNumericSelector.Type selectorType = sortMode == MultiValueMode.MAX ?
+            SortedNumericSelector.Type.MAX : SortedNumericSelector.Type.MIN;
         SortField sortField = new SortedNumericSortField(getFieldName(), getNumericType().sortFieldType, reverse, selectorType);
         sortField.setMissingValue(source.missingObject(missingValue, reverse));
         return sortField;
@@ -127,10 +134,10 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
      * casting the values if their native type doesn't match.
      */
     public final BucketedSort newBucketedSort(NumericType targetNumericType, BigArrays bigArrays, @Nullable Object missingValue,
-            MultiValueMode sortMode, Nested nested, SortOrder sortOrder, DocValueFormat format, int bucketSize,
-            BucketedSort.ExtraData extra) {
-        return comparatorSource(targetNumericType, missingValue, sortMode, nested).newBucketedSort(bigArrays, sortOrder, format, bucketSize,
-                extra);
+            MultiValueMode sortMode, Nested nested, SortOrder sortOrder, DocValueFormat format,
+            int bucketSize, BucketedSort.ExtraData extra) {
+        return comparatorSource(targetNumericType, missingValue, sortMode, nested)
+                .newBucketedSort(bigArrays, sortOrder, format, bucketSize, extra);
     }
 
     @Override
@@ -142,8 +149,12 @@ public abstract class IndexNumericFieldData implements IndexFieldData<LeafNumeri
     /**
      * Build a {@link XFieldComparatorSource} matching the parameters.
      */
-    private XFieldComparatorSource comparatorSource(NumericType targetNumericType, @Nullable Object missingValue, MultiValueMode sortMode,
-            Nested nested) {
+    private XFieldComparatorSource comparatorSource(
+        NumericType targetNumericType,
+        @Nullable Object missingValue,
+        MultiValueMode sortMode,
+        Nested nested
+    ) {
         switch (targetNumericType) {
         case HALF_FLOAT:
         case FLOAT:

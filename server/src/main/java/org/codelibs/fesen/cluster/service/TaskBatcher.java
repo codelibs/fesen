@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.cluster.service;
 
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.Priority;
+import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
+import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,13 +36,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.util.concurrent.EsRejectedExecutionException;
-import org.codelibs.fesen.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Batching support for {@link PrioritizedEsThreadPoolExecutor}
@@ -58,23 +58,24 @@ public abstract class TaskBatcher {
             return;
         }
         final BatchedTask firstTask = tasks.get(0);
-        assert tasks.stream().allMatch(
-                t -> t.batchingKey == firstTask.batchingKey) : "tasks submitted in a batch should share the same batching key: " + tasks;
+        assert tasks.stream().allMatch(t -> t.batchingKey == firstTask.batchingKey) :
+            "tasks submitted in a batch should share the same batching key: " + tasks;
         // convert to an identity map to check for dups based on task identity
-        final Map<Object, BatchedTask> tasksIdentity =
-                tasks.stream().collect(Collectors.toMap(BatchedTask::getTask, Function.identity(), (a, b) -> {
-                    throw new IllegalStateException("cannot add duplicate task: " + a);
-                }, IdentityHashMap::new));
+        final Map<Object, BatchedTask> tasksIdentity = tasks.stream().collect(Collectors.toMap(
+            BatchedTask::getTask,
+            Function.identity(),
+            (a, b) -> { throw new IllegalStateException("cannot add duplicate task: " + a); },
+            IdentityHashMap::new));
 
         synchronized (tasksPerBatchingKey) {
-            LinkedHashSet<BatchedTask> existingTasks =
-                    tasksPerBatchingKey.computeIfAbsent(firstTask.batchingKey, k -> new LinkedHashSet<>(tasks.size()));
+            LinkedHashSet<BatchedTask> existingTasks = tasksPerBatchingKey.computeIfAbsent(firstTask.batchingKey,
+                k -> new LinkedHashSet<>(tasks.size()));
             for (BatchedTask existing : existingTasks) {
                 // check that there won't be two tasks with the same identity for the same batching key
                 BatchedTask duplicateTask = tasksIdentity.get(existing.getTask());
                 if (duplicateTask != null) {
-                    throw new IllegalStateException("task [" + duplicateTask.describeTasks(Collections.singletonList(existing))
-                            + "] with source [" + duplicateTask.source + "] is already queued");
+                    throw new IllegalStateException("task [" + duplicateTask.describeTasks(
+                        Collections.singletonList(existing)) + "] with source [" + duplicateTask.source + "] is already queued");
                 }
             }
             existingTasks.addAll(tasks);
@@ -98,8 +99,8 @@ public abstract class TaskBatcher {
         if (toRemove.isEmpty() == false) {
             BatchedTask firstTask = toRemove.get(0);
             Object batchingKey = firstTask.batchingKey;
-            assert tasks.stream().allMatch(
-                    t -> t.batchingKey == batchingKey) : "tasks submitted in a batch should share the same batching key: " + tasks;
+            assert tasks.stream().allMatch(t -> t.batchingKey == batchingKey) :
+                "tasks submitted in a batch should share the same batching key: " + tasks;
             synchronized (tasksPerBatchingKey) {
                 LinkedHashSet<BatchedTask> existingTasks = tasksPerBatchingKey.get(batchingKey);
                 if (existingTasks != null) {

@@ -19,14 +19,13 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedTrustManager;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.X509ExtendedTrustManager;
 
 /**
  * A {@link SslTrustConfig} that trusts all certificates. Used when {@link SslVerificationMode#isCertificateVerificationEnabled()} is

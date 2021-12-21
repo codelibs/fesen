@@ -19,25 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_ALL;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_NUMBERS;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_WORDS;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.GENERATE_NUMBER_PARTS;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.GENERATE_WORD_PARTS;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.PRESERVE_ORIGINAL;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.SPLIT_ON_CASE_CHANGE;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.SPLIT_ON_NUMERICS;
-import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
@@ -51,15 +32,36 @@ import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_ALL;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_NUMBERS;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.CATENATE_WORDS;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.GENERATE_NUMBER_PARTS;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.GENERATE_WORD_PARTS;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.PRESERVE_ORIGINAL;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.SPLIT_ON_CASE_CHANGE;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.SPLIT_ON_NUMERICS;
+import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+
 public class WordDelimiterTokenFilterFactory extends AbstractTokenFilterFactory {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(WordDelimiterTokenFilterFactory.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER =
+            DeprecationLogger.getLogger(WordDelimiterTokenFilterFactory.class);
 
     private final byte[] charTypeTable;
     private final int flags;
     private final CharArraySet protoWords;
 
-    public WordDelimiterTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public WordDelimiterTokenFilterFactory(IndexSettings indexSettings, Environment env,
+            String name, Settings settings) {
         super(indexSettings, name, settings);
 
         // Sample Format for the type table:
@@ -101,16 +103,20 @@ public class WordDelimiterTokenFilterFactory extends AbstractTokenFilterFactory 
 
     @Override
     public TokenStream create(TokenStream tokenStream) {
-        return new WordDelimiterFilter(tokenStream, charTypeTable, flags, protoWords);
+         return new WordDelimiterFilter(tokenStream,
+                     charTypeTable,
+                     flags,
+                     protoWords);
     }
 
     @Override
     public TokenFilterFactory getSynonymFilter() {
         if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
             throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-        } else {
-            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters",
-                    "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
+        }
+        else {
+            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters", "Token filter [" + name()
+                + "] will not be usable to parse synonyms after v7.0");
             return this;
         }
     }
@@ -137,14 +143,16 @@ public class WordDelimiterTokenFilterFactory extends AbstractTokenFilterFactory 
             String lhs = parseString(m.group(1).trim());
             Byte rhs = parseType(m.group(2).trim());
             if (lhs.length() != 1)
-                throw new RuntimeException("Invalid Mapping Rule : [" + rule + "]. Only a single character is allowed.");
+                throw new RuntimeException("Invalid Mapping Rule : ["
+                        + rule + "]. Only a single character is allowed.");
             if (rhs == null)
                 throw new RuntimeException("Invalid Mapping Rule : [" + rule + "]. Illegal type.");
             typeMap.put(lhs.charAt(0), rhs);
         }
 
         // ensure the table is always at least as big as DEFAULT_WORD_DELIM_TABLE for performance
-        byte types[] = new byte[Math.max(typeMap.lastKey() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.length)];
+        byte types[] = new byte[Math.max(
+                typeMap.lastKey() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.length)];
         for (int i = 0; i < types.length; i++)
             types[i] = WordDelimiterIterator.getType(i);
         for (Map.Entry<Character, Byte> mapping : typeMap.entrySet())
@@ -181,30 +189,30 @@ public class WordDelimiterTokenFilterFactory extends AbstractTokenFilterFactory 
                     throw new RuntimeException("Invalid escaped char in [" + s + "]");
                 c = s.charAt(readPos++);
                 switch (c) {
-                case '\\':
-                    c = '\\';
-                    break;
-                case 'n':
-                    c = '\n';
-                    break;
-                case 't':
-                    c = '\t';
-                    break;
-                case 'r':
-                    c = '\r';
-                    break;
-                case 'b':
-                    c = '\b';
-                    break;
-                case 'f':
-                    c = '\f';
-                    break;
-                case 'u':
-                    if (readPos + 3 >= len)
-                        throw new RuntimeException("Invalid escaped char in [" + s + "]");
-                    c = (char) Integer.parseInt(s.substring(readPos, readPos + 4), 16);
-                    readPos += 4;
-                    break;
+                    case '\\':
+                        c = '\\';
+                        break;
+                    case 'n':
+                        c = '\n';
+                        break;
+                    case 't':
+                        c = '\t';
+                        break;
+                    case 'r':
+                        c = '\r';
+                        break;
+                    case 'b':
+                        c = '\b';
+                        break;
+                    case 'f':
+                        c = '\f';
+                        break;
+                    case 'u':
+                        if (readPos + 3 >= len)
+                            throw new RuntimeException("Invalid escaped char in [" + s + "]");
+                        c = (char) Integer.parseInt(s.substring(readPos, readPos + 4), 16);
+                        readPos += 4;
+                        break;
                 }
             }
             out[writePos++] = c;

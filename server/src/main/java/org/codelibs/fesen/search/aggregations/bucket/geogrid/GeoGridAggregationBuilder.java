@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -35,14 +30,19 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.bucket.BucketUtils;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationBuilder<GeoGridAggregationBuilder> {
     /* recognized field names in JSON */
@@ -55,22 +55,24 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
     protected int shardSize;
     private GeoBoundingBox geoBoundingBox = new GeoBoundingBox(new GeoPoint(Double.NaN, Double.NaN), new GeoPoint(Double.NaN, Double.NaN));
 
+
     @FunctionalInterface
     protected interface PrecisionParser {
         int parse(XContentParser parser) throws IOException;
     }
 
-    public static <T extends GeoGridAggregationBuilder> ObjectParser<T, String> createParser(String name, PrecisionParser precisionParser,
-            Function<String, T> ctor) {
+    public static <T extends GeoGridAggregationBuilder> ObjectParser<T, String> createParser(
+            String name, PrecisionParser precisionParser, Function<String, T> ctor) {
         ObjectParser<T, String> parser = ObjectParser.fromBuilder(name, ctor);
         ValuesSourceAggregationBuilder.declareFields(parser, false, false, false);
         parser.declareField((p, builder, context) -> builder.precision(precisionParser.parse(p)), FIELD_PRECISION,
-                org.codelibs.fesen.common.xcontent.ObjectParser.ValueType.INT);
+            org.codelibs.fesen.common.xcontent.ObjectParser.ValueType.INT);
         parser.declareInt(GeoGridAggregationBuilder::size, FIELD_SIZE);
         parser.declareInt(GeoGridAggregationBuilder::shardSize, FIELD_SHARD_SIZE);
         parser.declareField((p, builder, context) -> {
-            builder.setGeoBoundingBox(GeoBoundingBox.parseBoundingBox(p));
-        }, GeoBoundingBox.BOUNDS_FIELD, org.codelibs.fesen.common.xcontent.ObjectParser.ValueType.OBJECT);
+                builder.setGeoBoundingBox(GeoBoundingBox.parseBoundingBox(p));
+            },
+            GeoBoundingBox.BOUNDS_FIELD, org.codelibs.fesen.common.xcontent.ObjectParser.ValueType.OBJECT);
         return parser;
     }
 
@@ -124,9 +126,11 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
     /**
      * Creates a new instance of the {@link ValuesSourceAggregatorFactory}-derived class specific to the geo aggregation.
      */
-    protected abstract ValuesSourceAggregatorFactory createFactory(String name, ValuesSourceConfig config, int precision, int requiredSize,
-            int shardSize, GeoBoundingBox geoBoundingBox, QueryShardContext queryShardContext, AggregatorFactory parent,
-            Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException;
+    protected abstract ValuesSourceAggregatorFactory createFactory(
+        String name, ValuesSourceConfig config, int precision, int requiredSize, int shardSize,
+        GeoBoundingBox geoBoundingBox, QueryShardContext queryShardContext, AggregatorFactory parent,
+        Builder subFactoriesBuilder, Map<String, Object> metadata
+    ) throws IOException;
 
     public int precision() {
         return precision;
@@ -134,7 +138,8 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
 
     public GeoGridAggregationBuilder size(int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("[size] must be greater than 0. Found [" + size + "] in [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[size] must be greater than 0. Found [" + size + "] in [" + name + "]");
         }
         this.requiredSize = size;
         return this;
@@ -146,11 +151,12 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
 
     public GeoGridAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
-            throw new IllegalArgumentException("[shardSize] must be greater than 0. Found [" + shardSize + "] in [" + name + "]");
-        }
+            throw new IllegalArgumentException(
+                    "[shardSize] must be greater than 0. Found [" + shardSize + "] in [" + name + "]");
+            }
         this.shardSize = shardSize;
         return this;
-    }
+        }
 
     public int shardSize() {
         return shardSize;
@@ -172,8 +178,10 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, Builder subFactoriesBuilder) throws IOException {
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                       ValuesSourceConfig config,
+                                                       AggregatorFactory parent, Builder subFactoriesBuilder)
+                    throws IOException {
         int shardSize = this.shardSize;
 
         int requiredSize = this.requiredSize;
@@ -211,15 +219,14 @@ public abstract class GeoGridAggregationBuilder extends ValuesSourceAggregationB
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         GeoGridAggregationBuilder other = (GeoGridAggregationBuilder) obj;
-        return precision == other.precision && requiredSize == other.requiredSize && shardSize == other.shardSize
-                && Objects.equals(geoBoundingBox, other.geoBoundingBox);
+        return precision == other.precision
+            && requiredSize == other.requiredSize
+            && shardSize == other.shardSize
+            && Objects.equals(geoBoundingBox, other.geoBoundingBox);
     }
 
     @Override

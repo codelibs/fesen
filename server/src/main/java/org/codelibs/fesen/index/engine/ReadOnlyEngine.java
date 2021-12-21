@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.index.engine;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexCommit;
 import org.apache.lucene.index.IndexWriter;
@@ -51,6 +41,16 @@ import org.codelibs.fesen.index.translog.TranslogDeletionPolicy;
 import org.codelibs.fesen.index.translog.TranslogStats;
 import org.codelibs.fesen.search.suggest.completion.CompletionStats;
 import org.codelibs.fesen.transport.Transports;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * A basic read-only engine that allows switching a shard to be true read-only temporarily or permanently.
@@ -91,7 +91,7 @@ public class ReadOnlyEngine extends Engine {
      * @param requireCompleteHistory indicates whether this engine permits an incomplete history (i.e. LCP &lt; MSN)
      */
     public ReadOnlyEngine(EngineConfig config, SeqNoStats seqNoStats, TranslogStats translogStats, boolean obtainLock,
-            Function<DirectoryReader, DirectoryReader> readerWrapperFunction, boolean requireCompleteHistory) {
+                          Function<DirectoryReader, DirectoryReader> readerWrapperFunction, boolean requireCompleteHistory) {
         super(config);
         this.refreshListener = new RamAccountingRefreshListener(engineConfig.getCircuitBreakerService());
         this.requireCompleteHistory = requireCompleteHistory;
@@ -145,11 +145,12 @@ public class ReadOnlyEngine extends Engine {
         // created after the refactoring of the Close Index API and its TransportVerifyShardBeforeCloseAction
         // that guarantee that all operations have been flushed to Lucene.
         final Version indexVersionCreated = engineConfig.getIndexSettings().getIndexVersionCreated();
-        if (indexVersionCreated.onOrAfter(Version.V_7_2_0) || (seqNoStats.getGlobalCheckpoint() != SequenceNumbers.UNASSIGNED_SEQ_NO)) {
+        if (indexVersionCreated.onOrAfter(Version.V_7_2_0) ||
+            (seqNoStats.getGlobalCheckpoint() != SequenceNumbers.UNASSIGNED_SEQ_NO && indexVersionCreated.onOrAfter(Version.V_6_7_0))) {
             assert assertMaxSeqNoEqualsToGlobalCheckpoint(seqNoStats.getMaxSeqNo(), seqNoStats.getGlobalCheckpoint());
             if (seqNoStats.getMaxSeqNo() != seqNoStats.getGlobalCheckpoint()) {
                 throw new IllegalStateException("Maximum sequence number [" + seqNoStats.getMaxSeqNo()
-                        + "] from last commit does not match global checkpoint [" + seqNoStats.getGlobalCheckpoint() + "]");
+                    + "] from last commit does not match global checkpoint [" + seqNoStats.getGlobalCheckpoint() + "]");
             }
         }
     }
@@ -170,7 +171,7 @@ public class ReadOnlyEngine extends Engine {
     }
 
     protected final FesenDirectoryReader wrapReader(DirectoryReader reader,
-            Function<DirectoryReader, DirectoryReader> readerWrapperFunction) throws IOException {
+                                                    Function<DirectoryReader, DirectoryReader> readerWrapperFunction) throws IOException {
         if (engineConfig.getIndexSettings().isSoftDeleteEnabled()) {
             reader = new SoftDeletesDirectoryReaderWrapper(reader, Lucene.SOFT_DELETES_FIELD);
         }
@@ -197,7 +198,8 @@ public class ReadOnlyEngine extends Engine {
     }
 
     private static SeqNoStats buildSeqNoStats(EngineConfig config, SegmentInfos infos) {
-        final SequenceNumbers.CommitInfo seqNoStats = SequenceNumbers.loadSeqNoInfoFromLuceneCommit(infos.userData.entrySet());
+        final SequenceNumbers.CommitInfo seqNoStats =
+            SequenceNumbers.loadSeqNoInfoFromLuceneCommit(infos.userData.entrySet());
         long maxSeqNo = seqNoStats.maxSeqNo;
         long localCheckpoint = seqNoStats.localCheckpoint;
         return new SeqNoStats(maxSeqNo, localCheckpoint, config.getGlobalCheckpointSupplier().getAsLong());
@@ -209,14 +211,16 @@ public class ReadOnlyEngine extends Engine {
             throw new IllegalStateException("commit doesn't contain translog unique id");
         }
         final TranslogConfig translogConfig = config.getTranslogConfig();
-        final TranslogDeletionPolicy translogDeletionPolicy =
-                new TranslogDeletionPolicy(config.getIndexSettings().getTranslogRetentionSize().getBytes(),
-                        config.getIndexSettings().getTranslogRetentionAge().getMillis(),
-                        config.getIndexSettings().getTranslogRetentionTotalFiles());
+        final TranslogDeletionPolicy translogDeletionPolicy = new TranslogDeletionPolicy(
+            config.getIndexSettings().getTranslogRetentionSize().getBytes(),
+            config.getIndexSettings().getTranslogRetentionAge().getMillis(),
+            config.getIndexSettings().getTranslogRetentionTotalFiles()
+        );
         final long localCheckpoint = Long.parseLong(infos.getUserData().get(SequenceNumbers.LOCAL_CHECKPOINT_KEY));
         translogDeletionPolicy.setLocalCheckpointOfSafeCommit(localCheckpoint);
         try (Translog translog = new Translog(translogConfig, translogUuid, translogDeletionPolicy, config.getGlobalCheckpointSupplier(),
-                config.getPrimaryTermSupplier(), seqNo -> {})) {
+            config.getPrimaryTermSupplier(), seqNo -> {})
+        ) {
             return translog.stats();
         }
     }
@@ -295,7 +299,7 @@ public class ReadOnlyEngine extends Engine {
 
     @Override
     public Translog.Snapshot newChangesSnapshot(String source, MapperService mapperService, long fromSeqNo, long toSeqNo,
-            boolean requiredFullRange) throws IOException {
+                                                boolean requiredFullRange) throws IOException {
         if (engineConfig.getIndexSettings().isSoftDeleteEnabled() == false) {
             throw new IllegalStateException("accessing changes snapshot requires soft-deletes enabled");
         }
@@ -303,20 +307,20 @@ public class ReadOnlyEngine extends Engine {
     }
 
     @Override
-    public Translog.Snapshot readHistoryOperations(String reason, HistorySource historySource, MapperService mapperService,
-            long startingSeqNo) {
+    public Translog.Snapshot readHistoryOperations(String reason, HistorySource historySource,
+                                                   MapperService mapperService, long startingSeqNo) {
         return newEmptySnapshot();
     }
 
     @Override
-    public int estimateNumberOfHistoryOperations(String reason, HistorySource historySource, MapperService mapperService,
-            long startingSeqNo) {
+    public int estimateNumberOfHistoryOperations(String reason, HistorySource historySource,
+                                                 MapperService mapperService, long startingSeqNo) {
         return 0;
     }
 
     @Override
-    public boolean hasCompleteOperationHistory(String reason, HistorySource historySource, MapperService mapperService,
-            long startingSeqNo) {
+    public boolean hasCompleteOperationHistory(String reason, HistorySource historySource,
+                                               MapperService mapperService, long startingSeqNo) {
         // we can do operation-based recovery if we don't have to replay any operation.
         return startingSeqNo > seqNoStats.getMaxSeqNo();
     }
@@ -333,7 +337,7 @@ public class ReadOnlyEngine extends Engine {
 
     @Override
     public Translog.Location getTranslogLastWriteLocation() {
-        return new Translog.Location(0, 0, 0);
+        return new Translog.Location(0,0,0);
     }
 
     @Override
@@ -393,8 +397,8 @@ public class ReadOnlyEngine extends Engine {
     }
 
     @Override
-    public void forceMerge(boolean flush, int maxNumSegments, boolean onlyExpungeDeletes, boolean upgrade,
-            boolean upgradeOnlyAncientSegments, String forceMergeUUID) {
+    public void forceMerge(boolean flush, int maxNumSegments, boolean onlyExpungeDeletes,
+                           boolean upgrade, boolean upgradeOnlyAncientSegments, String forceMergeUUID) {
     }
 
     @Override
@@ -508,8 +512,8 @@ public class ReadOnlyEngine extends Engine {
 
     @Override
     public void advanceMaxSeqNoOfUpdatesOrDeletes(long maxSeqNoOfUpdatesOnPrimary) {
-        assert maxSeqNoOfUpdatesOnPrimary <= getMaxSeqNoOfUpdatesOrDeletes() : maxSeqNoOfUpdatesOnPrimary + ">"
-                + getMaxSeqNoOfUpdatesOrDeletes();
+        assert maxSeqNoOfUpdatesOnPrimary <= getMaxSeqNoOfUpdatesOrDeletes() :
+            maxSeqNoOfUpdatesOnPrimary + ">" + getMaxSeqNoOfUpdatesOrDeletes();
     }
 
     protected static DirectoryReader openDirectory(Directory directory, boolean wrapSoftDeletes) throws IOException {

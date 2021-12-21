@@ -45,14 +45,14 @@ public class InetAddresses {
                 hasDot = true;
             } else if (c == ':') {
                 if (hasDot) {
-                    return null; // Colons must not appear after dots.
+                    return null;  // Colons must not appear after dots.
                 }
                 hasColon = true;
             } else if (c == '%') {
                 percentIndex = i;
                 break; // Everything after a '%' is ignored (it's a Scope ID)
             } else if (Character.digit(c, 16) == -1) {
-                return null; // Everything else must be a decimal or hex digit.
+                return null;  // Everything else must be a decimal or hex digit.
             }
         }
 
@@ -65,10 +65,10 @@ public class InetAddresses {
                 }
             }
             if (percentIndex == ipString.length() - 1) {
-                return null; // Filter out strings that end in % and have an empty scope ID.
+                return null;  // Filter out strings that end in % and have an empty scope ID.
             }
             if (percentIndex != -1) {
-                ipString = ipString.substring(0, percentIndex);
+               ipString = ipString.substring(0, percentIndex);
             }
             return textToNumericFormatV6(ipString);
         } else if (hasDot) {
@@ -132,23 +132,23 @@ public class InetAddresses {
         for (int i = 1; i < parts.length - 1; i++) {
             if (parts[i].length() == 0) {
                 if (skipIndex >= 0) {
-                    return null; // Can't have more than one ::
+                    return null;  // Can't have more than one ::
                 }
                 skipIndex = i;
             }
         }
 
-        int partsHi; // Number of parts to copy from above/before the "::"
-        int partsLo; // Number of parts to copy from below/after the "::"
+        int partsHi;  // Number of parts to copy from above/before the "::"
+        int partsLo;  // Number of parts to copy from below/after the "::"
         if (skipIndex >= 0) {
             // If we found a "::", then check if it also covers the endpoints.
             partsHi = skipIndex;
             partsLo = parts.length - skipIndex - 1;
             if (parts[0].length() == 0 && --partsHi != 0) {
-                return null; // ^: requires ^::
+                return null;  // ^: requires ^::
             }
             if (parts[parts.length - 1].length() == 0 && --partsLo != 0) {
-                return null; // :$ requires ::$
+                return null;  // :$ requires ::$
             }
         } else {
             // Otherwise, allocate the entire address to partsHi.  The endpoints
@@ -255,7 +255,7 @@ public class InetAddresses {
         byte[] bytes = ip.getAddress();
         int[] hextets = new int[IPV6_PART_COUNT];
         for (int i = 0; i < hextets.length; i++) {
-            hextets[i] = (bytes[2 * i] & 255) << 8 | bytes[2 * i + 1] & 255;
+            hextets[i] =  (bytes[2 * i] & 255) << 8 | bytes[2 * i + 1] & 255;
         }
         compressLongestRunOfZeroes(hextets);
         return hextetsToIPv6String(hextets);
@@ -302,12 +302,12 @@ public class InetAddresses {
      * @param hextets {@code int[]} array of eight 16-bit hextets, or -1s
      */
     private static String hextetsToIPv6String(int[] hextets) {
-        /*
-         * While scanning the array, handle these state transitions:
-         *   start->num => "num"     start->gap => "::"
-         *   num->num   => ":num"    num->gap   => "::"
-         *   gap->num   => "num"     gap->gap   => ""
-         */
+    /*
+     * While scanning the array, handle these state transitions:
+     *   start->num => "num"     start->gap => "::"
+     *   num->num   => ":num"    num->gap   => "::"
+     *   gap->num   => "num"     gap->gap   => ""
+     */
         StringBuilder buf = new StringBuilder(39);
         boolean lastWasNumber = false;
         for (int i = 0; i < hextets.length; i++) {
@@ -380,14 +380,14 @@ public class InetAddresses {
             final String addressString = fields[0];
             final InetAddress address = forString(addressString);
             if (addressString.contains(":") && address.getAddress().length == 4) {
-                throw new IllegalArgumentException("CIDR notation is not allowed with IPv6-mapped IPv4 address [" + addressString
-                        + " as it introduces ambiguity as to whether the prefix length should be interpreted as a v4 prefix length or a"
-                        + " v6 prefix length");
+                throw new IllegalArgumentException("CIDR notation is not allowed with IPv6-mapped IPv4 address [" + addressString +
+                        " as it introduces ambiguity as to whether the prefix length should be interpreted as a v4 prefix length or a" +
+                        " v6 prefix length");
             }
             final int prefixLength = Integer.parseInt(fields[1]);
             if (prefixLength < 0 || prefixLength > 8 * address.getAddress().length) {
-                throw new IllegalArgumentException("Illegal prefix length [" + prefixLength + "] in [" + maskedAddress
-                        + "]. Must be 0-32 for IPv4 ranges, 0-128 for IPv6 ranges");
+                throw new IllegalArgumentException("Illegal prefix length [" + prefixLength + "] in [" + maskedAddress +
+                        "]. Must be 0-32 for IPv4 ranges, 0-128 for IPv6 ranges");
             }
             return new Tuple<>(address, prefixLength);
         } else {
@@ -401,6 +401,10 @@ public class InetAddresses {
      * See {@link #toAddrString} for details on how the address is represented.
      */
     public static String toCidrString(InetAddress address, int prefixLength) {
-        return new StringBuilder().append(toAddrString(address)).append("/").append(prefixLength).toString();
+        return new StringBuilder()
+            .append(toAddrString(address))
+            .append("/")
+            .append(prefixLength)
+            .toString();
     }
 }

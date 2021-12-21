@@ -18,6 +18,7 @@
  */
 package org.codelibs.fesen.index.shard;
 
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CompositeReaderContext;

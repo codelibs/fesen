@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.get;
 
-import static java.util.Collections.singletonMap;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetadata;
@@ -56,6 +47,15 @@ import org.codelibs.fesen.indices.TypeMissingException;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import static java.util.Collections.singletonMap;
+
 /**
  * Transport action used to retrieve the mappings related to fields that belong to a specific index
  */
@@ -69,8 +69,8 @@ public class TransportGetFieldMappingsIndexAction
 
     @Inject
     public TransportGetFieldMappingsIndexAction(ClusterService clusterService, TransportService transportService,
-            IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                                IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
+                                                IndexNameExpressionResolver indexNameExpressionResolver) {
         super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
                 GetFieldMappingsIndexRequest::new, ThreadPool.Names.MANAGEMENT);
         this.clusterService = clusterService;
@@ -100,9 +100,12 @@ public class TransportGetFieldMappingsIndexAction
         DocumentMapper mapper = indexService.mapperService().documentMapper();
         Collection<String> typeIntersection;
         if (request.types().length == 0) {
-            typeIntersection = mapper == null ? Collections.emptySet() : Collections.singleton(mapper.type());
+            typeIntersection = mapper == null
+                    ? Collections.emptySet()
+                    : Collections.singleton(mapper.type());
         } else {
-            typeIntersection = mapper != null && Regex.simpleMatch(request.types(), mapper.type()) ? Collections.singleton(mapper.type())
+            typeIntersection = mapper != null && Regex.simpleMatch(request.types(), mapper.type())
+                    ? Collections.singleton(mapper.type())
                     : Collections.emptySet();
             if (typeIntersection.isEmpty()) {
                 throw new TypeMissingException(shardId.getIndex(), request.types());
@@ -168,7 +171,8 @@ public class TransportGetFieldMappingsIndexAction
     };
 
     private static Map<String, FieldMappingMetadata> findFieldMappingsByType(Predicate<String> fieldPredicate,
-            DocumentMapper documentMapper, GetFieldMappingsIndexRequest request) {
+                                                                             DocumentMapper documentMapper,
+                                                                             GetFieldMappingsIndexRequest request) {
         Map<String, FieldMappingMetadata> fieldMappings = new HashMap<>();
         final MappingLookup allFieldMappers = documentMapper.mappers();
         for (String field : request.fields()) {
@@ -179,7 +183,8 @@ public class TransportGetFieldMappingsIndexAction
             } else if (Regex.isSimpleMatchPattern(field)) {
                 for (Mapper fieldMapper : allFieldMappers) {
                     if (Regex.simpleMatch(field, fieldMapper.name())) {
-                        addFieldMapper(fieldPredicate, fieldMapper.name(), fieldMapper, fieldMappings, request.includeDefaults());
+                        addFieldMapper(fieldPredicate,  fieldMapper.name(),
+                                fieldMapper, fieldMappings, request.includeDefaults());
                     }
                 }
             } else {
@@ -195,8 +200,9 @@ public class TransportGetFieldMappingsIndexAction
         return Collections.unmodifiableMap(fieldMappings);
     }
 
-    private static void addFieldMapper(Predicate<String> fieldPredicate, String field, Mapper fieldMapper,
-            Map<String, FieldMappingMetadata> fieldMappings, boolean includeDefaults) {
+    private static void addFieldMapper(Predicate<String> fieldPredicate,
+                                       String field, Mapper fieldMapper, Map<String, FieldMappingMetadata> fieldMappings,
+                                       boolean includeDefaults) {
         if (fieldMappings.containsKey(field)) {
             return;
         }

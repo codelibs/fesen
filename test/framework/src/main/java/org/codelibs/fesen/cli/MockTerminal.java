@@ -27,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codelibs.fesen.cli.Terminal;
+
 /**
  * A terminal for tests which captures all output, and
  * can be plugged with fake input.

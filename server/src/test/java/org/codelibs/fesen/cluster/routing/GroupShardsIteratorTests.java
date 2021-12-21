@@ -145,11 +145,11 @@ public class GroupShardsIteratorTests extends ESTestCase {
                 for (String uuid : uuids) {
                     ShardId shardId = new ShardId(index, uuid, i);
                     SearchShardIterator shardIterator = new SearchShardIterator(null, shardId,
-                            GroupShardsIteratorTests.randomShardRoutings(shardId), OriginalIndicesTests.randomOriginalIndices());
+                        GroupShardsIteratorTests.randomShardRoutings(shardId), OriginalIndicesTests.randomOriginalIndices());
                     sorted.add(shardIterator);
                     for (String cluster : clusters) {
                         SearchShardIterator remoteIterator = new SearchShardIterator(cluster, shardId,
-                                GroupShardsIteratorTests.randomShardRoutings(shardId), OriginalIndicesTests.randomOriginalIndices());
+                            GroupShardsIteratorTests.randomShardRoutings(shardId), OriginalIndicesTests.randomOriginalIndices());
                         sorted.add(remoteIterator);
                     }
                 }

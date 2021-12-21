@@ -42,12 +42,12 @@ public final class SetProcessor extends AbstractProcessor {
     private final ValueSource value;
     private final boolean ignoreEmptyValue;
 
-    SetProcessor(String tag, String description, TemplateScript.Factory field, ValueSource value) {
+    SetProcessor(String tag, String description, TemplateScript.Factory field, ValueSource value)  {
         this(tag, description, field, value, true, false);
     }
 
     SetProcessor(String tag, String description, TemplateScript.Factory field, ValueSource value, boolean overrideEnabled,
-            boolean ignoreEmptyValue) {
+                 boolean ignoreEmptyValue) {
         super(tag, description);
         this.overrideEnabled = overrideEnabled;
         this.field = field;
@@ -93,14 +93,20 @@ public final class SetProcessor extends AbstractProcessor {
         }
 
         @Override
-        public SetProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
-                Map<String, Object> config) throws Exception {
+        public SetProcessor create(Map<String, Processor.Factory> registry, String processorTag,
+                                   String description, Map<String, Object> config) throws Exception {
             String field = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "field");
             Object value = ConfigurationUtils.readObject(TYPE, processorTag, config, "value");
             boolean overrideEnabled = ConfigurationUtils.readBooleanProperty(TYPE, processorTag, config, "override", true);
-            TemplateScript.Factory compiledTemplate = ConfigurationUtils.compileTemplate(TYPE, processorTag, "field", field, scriptService);
+            TemplateScript.Factory compiledTemplate = ConfigurationUtils.compileTemplate(TYPE, processorTag,
+                "field", field, scriptService);
             boolean ignoreEmptyValue = ConfigurationUtils.readBooleanProperty(TYPE, processorTag, config, "ignore_empty_value", false);
-            return new SetProcessor(processorTag, description, compiledTemplate, ValueSource.wrap(value, scriptService), overrideEnabled,
+            return new SetProcessor(
+                    processorTag,
+                    description,
+                    compiledTemplate,
+                    ValueSource.wrap(value, scriptService),
+                    overrideEnabled,
                     ignoreEmptyValue);
         }
     }

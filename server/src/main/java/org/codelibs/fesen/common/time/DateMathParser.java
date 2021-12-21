@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common.time;
 
+import org.joda.time.DateTimeZone;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.function.LongSupplier;
-
-import org.joda.time.DateTimeZone;
 
 /**
  * An abstraction over date math parsing to allow different implementation for joda and java time.

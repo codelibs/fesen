@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.Version;
@@ -32,6 +27,11 @@ import org.codelibs.fesen.action.support.replication.ReplicationRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.index.shard.ShardId;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class BulkShardRequest extends ReplicatedWriteRequest<BulkShardRequest> implements Accountable {
 
@@ -92,7 +92,7 @@ public class BulkShardRequest extends ReplicatedWriteRequest<BulkShardRequest> i
         StringBuilder b = new StringBuilder("BulkShardRequest [");
         b.append(shardId).append("] containing [");
         if (items.length > 1) {
-            b.append(items.length).append("] requests");
+          b.append(items.length).append("] requests");
         } else {
             b.append(items[0].request()).append("]");
         }

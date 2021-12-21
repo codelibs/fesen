@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.lucene.search.join.ScoreMode;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.geo.GeoPoint;
@@ -36,6 +32,10 @@ import org.codelibs.fesen.index.query.functionscore.ScoreFunctionBuilder;
 import org.codelibs.fesen.index.query.functionscore.ScriptScoreQueryBuilder;
 import org.codelibs.fesen.indices.TermsLookup;
 import org.codelibs.fesen.script.Script;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Utility class to create search queries.
@@ -84,7 +84,7 @@ public final class QueryBuilders {
     public static MultiMatchQueryBuilder multiMatchQuery(Object text, String... fieldNames) {
         return new MultiMatchQueryBuilder(text, fieldNames); // BOOLEAN is the default
     }
-
+    
     /**
      * Creates a text query with type "BOOL_PREFIX" for the provided field name and text.
      *
@@ -94,7 +94,7 @@ public final class QueryBuilders {
     public static MatchBoolPrefixQueryBuilder matchBoolPrefixQuery(String name, Object text) {
         return new MatchBoolPrefixQueryBuilder(name, text);
     }
-
+    
     /**
      * Creates a text query with type "PHRASE" for the provided field name and text.
      *
@@ -283,6 +283,7 @@ public final class QueryBuilders {
         return new WildcardQueryBuilder(name, query);
     }
 
+
     /**
      * A Query that matches documents containing terms with a specified regular expression.
      *
@@ -430,7 +431,7 @@ public final class QueryBuilders {
      * @return the function score query
      */
     public static FunctionScoreQueryBuilder functionScoreQuery(QueryBuilder queryBuilder,
-            FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctionBuilders) {
+                                                               FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctionBuilders) {
         return new FunctionScoreQueryBuilder(queryBuilder, filterFunctionBuilders);
     }
 
@@ -472,6 +473,7 @@ public final class QueryBuilders {
     public static ScriptScoreQueryBuilder scriptScoreQuery(QueryBuilder queryBuilder, Script script) {
         return new ScriptScoreQueryBuilder(queryBuilder, script);
     }
+
 
     /**
      * A more like this query that finds documents that are "like" the provided texts or documents
@@ -632,6 +634,7 @@ public final class QueryBuilders {
     public static ScriptQueryBuilder scriptQuery(Script script) {
         return new ScriptQueryBuilder(script);
     }
+
 
     /**
      * A filter to filter based on a specific distance from a specific geo location / point.

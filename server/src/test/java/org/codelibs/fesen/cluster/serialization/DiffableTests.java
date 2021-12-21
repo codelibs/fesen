@@ -114,7 +114,7 @@ public class DiffableTests extends ESTestCase {
             protected MapDiff readDiff(StreamInput in) throws IOException {
                 return useProtoForDiffableSerialization
                         ? DiffableUtils.readImmutableOpenMapDiff(in, keySerializer,
-                                new DiffableUtils.DiffableValueReader<>(TestDiffable::readFrom, TestDiffable::readDiffFrom))
+                        new DiffableUtils.DiffableValueReader<>(TestDiffable::readFrom, TestDiffable::readDiffFrom))
                         : DiffableUtils.readImmutableOpenMapDiff(in, keySerializer, diffableValueSerializer());
             }
         }.execute();
@@ -205,8 +205,9 @@ public class DiffableTests extends ESTestCase {
         protected final Set<Integer> keysToAdd = Sets.difference(randomPositiveIntSet(), keys);
         protected final Set<Integer> keysUnchanged = Sets.difference(keysThatAreNotRemoved, keysToOverride);
 
-        protected final DiffableUtils.KeySerializer<Integer> keySerializer =
-                randomBoolean() ? DiffableUtils.getIntKeySerializer() : DiffableUtils.getVIntKeySerializer();
+        protected final DiffableUtils.KeySerializer<Integer> keySerializer = randomBoolean()
+                ? DiffableUtils.getIntKeySerializer()
+                : DiffableUtils.getVIntKeySerializer();
 
         protected final boolean useProtoForDiffableSerialization = randomBoolean();
 
@@ -357,7 +358,7 @@ public class DiffableTests extends ESTestCase {
 
         @Override
         protected ImmutableOpenMap<Integer, V> createMap(Map values) {
-            return ImmutableOpenMap.<Integer, V> builder().putAll(values).build();
+            return ImmutableOpenMap.<Integer, V>builder().putAll(values).build();
         }
 
         @Override
@@ -371,11 +372,12 @@ public class DiffableTests extends ESTestCase {
         }
     }
 
+
     abstract class ImmutableOpenIntMapDriver<V> extends MapDriver<ImmutableOpenIntMap<V>, V> {
 
         @Override
         protected ImmutableOpenIntMap<V> createMap(Map values) {
-            return ImmutableOpenIntMap.<V> builder().putAll(values).build();
+            return ImmutableOpenIntMap.<V>builder().putAll(values).build();
         }
 
         @Override
@@ -444,10 +446,8 @@ public class DiffableTests extends ESTestCase {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             TestDiffable that = (TestDiffable) o;
 

@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -35,10 +27,27 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.uid.Versions;
 import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.AbstractBulkIndexByScrollRequest;
+import org.codelibs.fesen.index.reindex.DeleteByQueryRequest;
+import org.codelibs.fesen.index.reindex.ReindexAction;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.RemoteInfo;
+import org.codelibs.fesen.index.reindex.RethrottleRequest;
+import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
+import org.codelibs.fesen.index.reindex.UpdateByQueryRequest;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptType;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.lucene.util.TestUtil.randomSimpleString;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 /**
  * Round trip tests for all {@link Writeable} things declared in this plugin.
@@ -61,11 +70,22 @@ public class RoundTripTests extends ESTestCase {
             }
             TimeValue socketTimeout = parseTimeValue(randomPositiveTimeValue(), "socketTimeout");
             TimeValue connectTimeout = parseTimeValue(randomPositiveTimeValue(), "connectTimeout");
-            reindex.setRemoteInfo(new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), port, null, query, username, password,
-                    headers, socketTimeout, connectTimeout));
+            reindex.setRemoteInfo(
+                new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), port, null,
+                    query, username, password, headers, socketTimeout, connectTimeout));
         }
         ReindexRequest tripped = new ReindexRequest(toInputByteStream(reindex));
         assertRequestEquals(reindex, tripped);
+
+        // Try slices=auto with a version that doesn't support it, which should fail
+        reindex.setSlices(AbstractBulkByScrollRequest.AUTO_SLICES);
+        Exception e = expectThrows(IllegalArgumentException.class, () -> toInputByteStream(Version.V_6_0_0_alpha1, reindex));
+        assertEquals("Slices set as \"auto\" are not supported before version [6.1.0]. Found version [6.0.0-alpha1]", e.getMessage());
+
+        // Try regular slices with a version that doesn't support slices=auto, which should succeed
+        reindex.setSlices(between(1, Integer.MAX_VALUE));
+        tripped = new ReindexRequest(toInputByteStream(reindex));
+        assertRequestEquals(Version.V_6_0_0_alpha1, reindex, tripped);
     }
 
     public void testUpdateByQueryRequest() throws IOException {
@@ -77,6 +97,11 @@ public class RoundTripTests extends ESTestCase {
         UpdateByQueryRequest tripped = new UpdateByQueryRequest(toInputByteStream(update));
         assertRequestEquals(update, tripped);
         assertEquals(update.getPipeline(), tripped.getPipeline());
+
+        // Try slices=auto with a version that doesn't support it, which should fail
+        update.setSlices(AbstractBulkByScrollRequest.AUTO_SLICES);
+        Exception e = expectThrows(IllegalArgumentException.class, () -> toInputByteStream(Version.V_6_0_0_alpha1, update));
+        assertEquals("Slices set as \"auto\" are not supported before version [6.1.0]. Found version [6.0.0-alpha1]", e.getMessage());
 
         // Try regular slices with a version that doesn't support slices=auto, which should succeed
         update.setSlices(between(1, Integer.MAX_VALUE));
@@ -90,6 +115,11 @@ public class RoundTripTests extends ESTestCase {
         randomRequest(delete);
         DeleteByQueryRequest tripped = new DeleteByQueryRequest(toInputByteStream(delete));
         assertRequestEquals(delete, tripped);
+
+        // Try slices=auto with a version that doesn't support it, which should fail
+        delete.setSlices(AbstractBulkByScrollRequest.AUTO_SLICES);
+        Exception e = expectThrows(IllegalArgumentException.class, () -> toInputByteStream(Version.V_6_0_0_alpha1, delete));
+        assertEquals("Slices set as \"auto\" are not supported before version [6.1.0]. Found version [6.0.0-alpha1]", e.getMessage());
 
         // Try regular slices with a version that doesn't support slices=auto, which should succeed
         delete.setSlices(between(1, Integer.MAX_VALUE));
@@ -141,7 +171,8 @@ public class RoundTripTests extends ESTestCase {
         }
     }
 
-    private void assertRequestEquals(AbstractBulkIndexByScrollRequest<?> request, AbstractBulkIndexByScrollRequest<?> tripped) {
+    private void assertRequestEquals(AbstractBulkIndexByScrollRequest<?> request,
+            AbstractBulkIndexByScrollRequest<?> tripped) {
         assertRequestEquals((AbstractBulkByScrollRequest<?>) request, (AbstractBulkByScrollRequest<?>) tripped);
         assertEquals(request.getScript(), tripped.getScript());
     }

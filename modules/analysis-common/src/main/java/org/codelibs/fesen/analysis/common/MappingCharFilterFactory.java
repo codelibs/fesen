@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.Reader;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.lucene.analysis.charfilter.MappingCharFilter;
 import org.apache.lucene.analysis.charfilter.NormalizeCharMap;
 import org.codelibs.fesen.common.settings.Settings;
@@ -32,6 +27,11 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractCharFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
 import org.codelibs.fesen.index.analysis.NormalizingCharFilterFactory;
+
+import java.io.Reader;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MappingCharFilterFactory extends AbstractCharFilterFactory implements NormalizingCharFilterFactory {
 
@@ -87,30 +87,30 @@ public class MappingCharFilterFactory extends AbstractCharFilterFactory implemen
                     throw new RuntimeException("Invalid escaped char in [" + s + "]");
                 c = s.charAt(readPos++);
                 switch (c) {
-                case '\\':
-                    c = '\\';
-                    break;
-                case 'n':
-                    c = '\n';
-                    break;
-                case 't':
-                    c = '\t';
-                    break;
-                case 'r':
-                    c = '\r';
-                    break;
-                case 'b':
-                    c = '\b';
-                    break;
-                case 'f':
-                    c = '\f';
-                    break;
-                case 'u':
-                    if (readPos + 3 >= len)
-                        throw new RuntimeException("Invalid escaped char in [" + s + "]");
-                    c = (char) Integer.parseInt(s.substring(readPos, readPos + 4), 16);
-                    readPos += 4;
-                    break;
+                    case '\\':
+                        c = '\\';
+                        break;
+                    case 'n':
+                        c = '\n';
+                        break;
+                    case 't':
+                        c = '\t';
+                        break;
+                    case 'r':
+                        c = '\r';
+                        break;
+                    case 'b':
+                        c = '\b';
+                        break;
+                    case 'f':
+                        c = '\f';
+                        break;
+                    case 'u':
+                        if (readPos + 3 >= len)
+                            throw new RuntimeException("Invalid escaped char in [" + s + "]");
+                        c = (char) Integer.parseInt(s.substring(readPos, readPos + 4), 16);
+                        readPos += 4;
+                        break;
                 }
             }
             out[writePos++] = c;

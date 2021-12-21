@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.HdrHistogram.DoubleHistogram;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
@@ -37,6 +34,9 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 abstract class AbstractHDRPercentilesAggregator extends NumericMetricsAggregator.MultiValue {
 
     private static int indexOfKey(double[] keys, double key) {
@@ -50,8 +50,9 @@ abstract class AbstractHDRPercentilesAggregator extends NumericMetricsAggregator
     protected final int numberOfSignificantValueDigits;
     protected final boolean keyed;
 
-    AbstractHDRPercentilesAggregator(String name, ValuesSource valuesSource, SearchContext context, Aggregator parent, double[] keys,
-            int numberOfSignificantValueDigits, boolean keyed, DocValueFormat formatter, Map<String, Object> metadata) throws IOException {
+    AbstractHDRPercentilesAggregator(String name, ValuesSource valuesSource, SearchContext context, Aggregator parent,
+            double[] keys, int numberOfSignificantValueDigits, boolean keyed, DocValueFormat formatter,
+            Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         this.valuesSource = valuesSource;
         this.keyed = keyed;
@@ -67,13 +68,14 @@ abstract class AbstractHDRPercentilesAggregator extends NumericMetricsAggregator
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
+            final LeafBucketCollector sub) throws IOException {
         if (valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }
         final BigArrays bigArrays = context.bigArrays();
 
-        final SortedNumericDoubleValues values = ((ValuesSource.Numeric) valuesSource).doubleValues(ctx);
+        final SortedNumericDoubleValues values = ((ValuesSource.Numeric)valuesSource).doubleValues(ctx);
         return new LeafBucketCollectorBase(sub, values) {
             @Override
             public void collect(int doc, long bucket) throws IOException {

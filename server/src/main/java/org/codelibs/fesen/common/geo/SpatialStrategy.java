@@ -26,7 +26,8 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 
 public enum SpatialStrategy implements Writeable {
 
-    TERM("term"), RECURSIVE("recursive");
+    TERM("term"),
+    RECURSIVE("recursive");
 
     private final String strategyName;
 

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import java.util.function.LongConsumer;
-
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.InPlaceMergeSorter;
 import org.apache.lucene.util.Sorter;
+
+import java.util.function.LongConsumer;
 
 /**
  * Base class for building {@link SortedNumericDocValues} instances based on unsorted content.

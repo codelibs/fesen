@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.xcontent;
 
+import com.fasterxml.jackson.dataformat.cbor.CBORConstants;
+import com.fasterxml.jackson.dataformat.smile.SmileConstants;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,9 +30,6 @@ import org.codelibs.fesen.common.xcontent.cbor.CborXContent;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.common.xcontent.smile.SmileXContent;
 import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
-
-import com.fasterxml.jackson.dataformat.cbor.CBORConstants;
-import com.fasterxml.jackson.dataformat.smile.SmileConstants;
 
 /**
  * A one stop to use {@link org.codelibs.fesen.common.xcontent.XContent} and {@link XContentBuilder}.
@@ -154,7 +154,9 @@ public class XContentFactory {
             return XContentType.JSON;
         }
         // Should we throw a failure here? Smile idea is to use it in bytes....
-        if (length > 2 && first == SmileConstants.HEADER_BYTE_1 && content.charAt(1) == SmileConstants.HEADER_BYTE_2
+        if (length > 2
+                && first == SmileConstants.HEADER_BYTE_1
+                && content.charAt(1) == SmileConstants.HEADER_BYTE_2
                 && content.charAt(2) == SmileConstants.HEADER_BYTE_3) {
             return XContentType.SMILE;
         }
@@ -296,7 +298,9 @@ public class XContentFactory {
         if (first == '{') {
             return XContentType.JSON;
         }
-        if (length > 2 && first == SmileConstants.HEADER_BYTE_1 && bytes[offset + 1] == SmileConstants.HEADER_BYTE_2
+        if (length > 2
+                && first == SmileConstants.HEADER_BYTE_1
+                && bytes[offset + 1] == SmileConstants.HEADER_BYTE_2
                 && bytes[offset + 2] == SmileConstants.HEADER_BYTE_3) {
             return XContentType.SMILE;
         }

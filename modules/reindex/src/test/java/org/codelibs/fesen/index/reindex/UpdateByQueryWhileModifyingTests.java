@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy.IMMEDIATE;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.equalTo;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,6 +26,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.codelibs.fesen.action.get.GetResponse;
 import org.codelibs.fesen.action.index.IndexRequestBuilder;
 import org.codelibs.fesen.index.engine.VersionConflictEngineException;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+
+import static org.apache.lucene.util.TestUtil.randomSimpleString;
+import static org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy.IMMEDIATE;
+import static org.hamcrest.Matchers.either;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Mutates a document while update-by-query-ing it and asserts that the mutation
@@ -50,8 +51,8 @@ public class UpdateByQueryWhileModifyingTests extends ReindexTestCase {
             while (keepUpdating.get()) {
                 try {
                     BulkByScrollResponse response = updateByQuery().source("test").refresh(true).abortOnVersionConflict(false).get();
-                    assertThat(response,
-                            matcher().updated(either(equalTo(0L)).or(equalTo(1L))).versionConflicts(either(equalTo(0L)).or(equalTo(1L))));
+                    assertThat(response, matcher().updated(either(equalTo(0L)).or(equalTo(1L)))
+                            .versionConflicts(either(equalTo(0L)).or(equalTo(1L))));
                 } catch (Exception e) {
                     failure.set(e);
                 }
@@ -64,8 +65,8 @@ public class UpdateByQueryWhileModifyingTests extends ReindexTestCase {
                 GetResponse get = client().prepareGet("test", "test", "test").get();
                 assertEquals(value.get(), get.getSource().get("test"));
                 value.set(randomSimpleString(random()));
-                IndexRequestBuilder index =
-                        client().prepareIndex("test", "test", "test").setSource("test", value.get()).setRefreshPolicy(IMMEDIATE);
+                IndexRequestBuilder index = client().prepareIndex("test", "test", "test").setSource("test", value.get())
+                        .setRefreshPolicy(IMMEDIATE);
                 /*
                  * Update by query changes the document so concurrent
                  * indexes might get version conflict exceptions so we just

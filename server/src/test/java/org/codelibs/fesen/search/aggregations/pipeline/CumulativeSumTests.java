@@ -52,14 +52,14 @@ public class CumulativeSumTests extends BasePipelineAggregationTestCase<Cumulati
         AggregationBuilder parent = mock(AggregationBuilder.class);
         when(parent.getName()).thenReturn("name");
 
-        assertThat(validate(parent, new CumulativeSumPipelineAggregationBuilder("name", "invalid_agg>metric")),
-                equalTo("Validation Failed: 1: cumulative_sum aggregation [name] must have a histogram, date_histogram "
-                        + "or auto_date_histogram as parent;"));
+        assertThat(validate(parent, new CumulativeSumPipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
+                "Validation Failed: 1: cumulative_sum aggregation [name] must have a histogram, date_histogram "
+                + "or auto_date_histogram as parent;"));
     }
 
     public void testNoParent() throws IOException {
-        assertThat(validate(emptyList(), new CumulativeSumPipelineAggregationBuilder("name", "invalid_agg>metric")),
-                equalTo("Validation Failed: 1: cumulative_sum aggregation [name] must have a histogram, date_histogram "
-                        + "or auto_date_histogram as parent but doesn't have a parent;"));
+        assertThat(validate(emptyList(), new CumulativeSumPipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
+                "Validation Failed: 1: cumulative_sum aggregation [name] must have a histogram, date_histogram "
+                + "or auto_date_histogram as parent but doesn't have a parent;"));
     }
 }

@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
-import static java.util.Objects.requireNonNull;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.tasks.TaskResult;
+
+import java.io.IOException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Returns the list of tasks currently running on the nodes

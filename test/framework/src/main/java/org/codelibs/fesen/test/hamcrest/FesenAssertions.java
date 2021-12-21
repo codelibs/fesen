@@ -18,46 +18,12 @@
  */
 package org.codelibs.fesen.test.hamcrest;
 
-import static org.apache.lucene.util.LuceneTestCase.expectThrows;
-import static org.apache.lucene.util.LuceneTestCase.expectThrowsAnyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthRequestBuilder;
@@ -97,6 +63,40 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import static org.apache.lucene.util.LuceneTestCase.expectThrows;
+import static org.apache.lucene.util.LuceneTestCase.expectThrowsAnyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class FesenAssertions {
 
     public static void assertAcked(AcknowledgedRequestBuilder<?, ?, ?> builder) {
@@ -126,7 +126,7 @@ public class FesenAssertions {
     public static void assertAcked(CreateIndexResponse response) {
         assertThat(response.getClass().getSimpleName() + " failed - not acked", response.isAcknowledged(), equalTo(true));
         assertTrue(response.getClass().getSimpleName() + " failed - index creation acked but not all shards were started",
-                response.isShardsAcknowledged());
+            response.isShardsAcknowledged());
     }
 
     /**
@@ -145,8 +145,8 @@ public class FesenAssertions {
      *
      * */
     public static void assertBlocked(BroadcastResponse replicatedBroadcastResponse) {
-        assertThat("all shard requests should have failed", replicatedBroadcastResponse.getFailedShards(),
-                equalTo(replicatedBroadcastResponse.getTotalShards()));
+        assertThat("all shard requests should have failed",
+                replicatedBroadcastResponse.getFailedShards(), equalTo(replicatedBroadcastResponse.getTotalShards()));
         for (DefaultShardOperationFailedException exception : replicatedBroadcastResponse.getShardFailures()) {
             ClusterBlockException clusterBlockException =
                     (ClusterBlockException) ExceptionsHelper.unwrap(exception.getCause(), ClusterBlockException.class);
@@ -197,7 +197,7 @@ public class FesenAssertions {
         assertBlocked(builder, expectedBlock != null ? expectedBlock.id() : null);
     }
 
-    private static boolean checkRetryableBlock(Set<ClusterBlock> clusterBlocks) {
+    private static boolean checkRetryableBlock(Set<ClusterBlock> clusterBlocks){
         // check only retryable blocks exist in the set
         for (ClusterBlock clusterBlock : clusterBlocks) {
             if (clusterBlock.id() != IndexMetadata.INDEX_READ_ONLY_ALLOW_DELETE_BLOCK.id()) {
@@ -209,8 +209,9 @@ public class FesenAssertions {
 
     public static String formatShardStatus(BroadcastResponse response) {
         StringBuilder msg = new StringBuilder();
-        msg.append(" Total shards: ").append(response.getTotalShards()).append(" Successful shards: ")
-                .append(response.getSuccessfulShards()).append(" & ").append(response.getFailedShards()).append(" shard failures:");
+        msg.append(" Total shards: ").append(response.getTotalShards())
+           .append(" Successful shards: ").append(response.getSuccessfulShards())
+           .append(" & ").append(response.getFailedShards()).append(" shard failures:");
         for (DefaultShardOperationFailedException failure : response.getShardFailures()) {
             msg.append("\n ").append(failure);
         }
@@ -219,8 +220,9 @@ public class FesenAssertions {
 
     public static String formatShardStatus(SearchResponse response) {
         StringBuilder msg = new StringBuilder();
-        msg.append(" Total shards: ").append(response.getTotalShards()).append(" Successful shards: ")
-                .append(response.getSuccessfulShards()).append(" & ").append(response.getFailedShards()).append(" shard failures:");
+        msg.append(" Total shards: ").append(response.getTotalShards())
+           .append(" Successful shards: ").append(response.getSuccessfulShards())
+           .append(" & ").append(response.getFailedShards()).append(" shard failures:");
         for (ShardSearchFailure failure : response.getShardFailures()) {
             msg.append("\n ").append(failure);
         }
@@ -236,8 +238,10 @@ public class FesenAssertions {
 
         Set<String> idsSet = new HashSet<>(Arrays.asList(ids));
         for (SearchHit hit : searchResponse.getHits()) {
-            assertThat("id [" + hit.getId() + "] was found in search results but wasn't expected (type [" + hit.getType() + "], index ["
-                    + hit.getIndex() + "])" + shardStatus, idsSet.remove(hit.getId()), equalTo(true));
+            assertThat(
+                    "id [" + hit.getId() + "] was found in search results but wasn't expected (type [" + hit.getType()
+                        + "], index [" + hit.getIndex() + "])" + shardStatus, idsSet.remove(hit.getId()),
+                    equalTo(true));
         }
         assertThat("Some expected ids were not found in search results: " + Arrays.toString(idsSet.toArray(new String[idsSet.size()])) + "."
                 + shardStatus, idsSet.size(), equalTo(0));
@@ -265,13 +269,14 @@ public class FesenAssertions {
     public static void assertHitCount(SearchResponse countResponse, long expectedHitCount) {
         final TotalHits totalHits = countResponse.getHits().getTotalHits();
         if (totalHits.relation != TotalHits.Relation.EQUAL_TO || totalHits.value != expectedHitCount) {
-            fail("Count is " + totalHits + " but " + expectedHitCount + " was expected. " + formatShardStatus(countResponse));
+            fail("Count is " + totalHits + " but " + expectedHitCount
+                    + " was expected. " + formatShardStatus(countResponse));
         }
     }
 
     public static void assertExists(GetResponse response) {
-        String message = String.format(Locale.ROOT, "Expected %s/%s/%s to exist, but does not", response.getIndex(), response.getType(),
-                response.getId());
+        String message = String.format(Locale.ROOT, "Expected %s/%s/%s to exist, but does not",
+                response.getIndex(), response.getType(), response.getId());
         assertThat(message, response.isExists(), is(true));
     }
 
@@ -304,11 +309,13 @@ public class FesenAssertions {
     }
 
     public static void assertFailures(SearchResponse searchResponse) {
-        assertThat("Expected at least one shard failure, got none", searchResponse.getShardFailures().length, greaterThan(0));
+        assertThat("Expected at least one shard failure, got none",
+                searchResponse.getShardFailures().length, greaterThan(0));
     }
 
     public static void assertNoFailures(BulkResponse response) {
-        assertThat("Unexpected ShardFailures: " + response.buildFailureMessage(), response.hasFailures(), is(false));
+        assertThat("Unexpected ShardFailures: " + response.buildFailureMessage(),
+                response.hasFailures(), is(false));
     }
 
     public static void assertFailures(SearchRequestBuilder searchRequestBuilder, RestStatus restStatus, Matcher<String> reasonMatcher) {
@@ -339,20 +346,22 @@ public class FesenAssertions {
 
     public static void assertAllSuccessful(BroadcastResponse response) {
         assertNoFailures(response);
-        assertThat("Expected all shards successful", response.getSuccessfulShards(), equalTo(response.getTotalShards()));
+        assertThat("Expected all shards successful",
+                response.getSuccessfulShards(), equalTo(response.getTotalShards()));
     }
 
     public static void assertAllSuccessful(SearchResponse response) {
         assertNoFailures(response);
-        assertThat("Expected all shards successful", response.getSuccessfulShards(), equalTo(response.getTotalShards()));
+        assertThat("Expected all shards successful",
+                response.getSuccessfulShards(), equalTo(response.getTotalShards()));
     }
 
     public static void assertHighlight(SearchResponse resp, int hit, String field, int fragment, Matcher<String> matcher) {
         assertHighlight(resp, hit, field, fragment, greaterThan(fragment), matcher);
     }
 
-    public static void assertHighlight(SearchResponse resp, int hit, String field, int fragment, int totalFragments,
-            Matcher<String> matcher) {
+    public static void assertHighlight(SearchResponse resp, int hit, String field, int fragment,
+            int totalFragments, Matcher<String> matcher) {
         assertHighlight(resp, hit, field, fragment, equalTo(totalFragments), matcher);
     }
 
@@ -364,15 +373,15 @@ public class FesenAssertions {
         assertHighlight(hit, field, fragment, equalTo(totalFragments), matcher);
     }
 
-    private static void assertHighlight(SearchResponse resp, int hit, String field, int fragment, Matcher<Integer> fragmentsMatcher,
-            Matcher<String> matcher) {
+    private static void assertHighlight(SearchResponse resp, int hit, String field, int fragment,
+            Matcher<Integer> fragmentsMatcher, Matcher<String> matcher) {
         assertNoFailures(resp);
         assertThat("not enough hits", resp.getHits().getHits().length, greaterThan(hit));
         assertHighlight(resp.getHits().getHits()[hit], field, fragment, fragmentsMatcher, matcher);
     }
 
-    private static void assertHighlight(SearchHit hit, String field, int fragment, Matcher<Integer> fragmentsMatcher,
-            Matcher<String> matcher) {
+    private static void assertHighlight(SearchHit hit, String field, int fragment,
+            Matcher<Integer> fragmentsMatcher, Matcher<String> matcher) {
         assertThat(hit.getHighlightFields(), hasKey(field));
         assertThat(hit.getHighlightFields().get(field).fragments().length, fragmentsMatcher);
         assertThat(hit.getHighlightFields().get(field).fragments()[fragment].string(), matcher);
@@ -497,7 +506,7 @@ public class FesenAssertions {
     }
 
     public static Function<SearchHit, Object> fieldFromSource(String fieldName) {
-        return (response) -> response.getSourceAsMap().get(fieldName);
+        return (response) ->  response.getSourceAsMap().get(fieldName);
     }
 
     public static <T extends Query> T assertBooleanSubQuery(Query query, Class<T> subqueryType, int i) {
@@ -527,7 +536,7 @@ public class FesenAssertions {
      * Run the request from a given builder and check that it throws an exception of the right type, with a given {@link RestStatus}
      */
     public static <E extends Throwable> void assertRequestBuilderThrows(ActionRequestBuilder<?, ?> builder, Class<E> exceptionClass,
-            RestStatus status) {
+                                                                        RestStatus status) {
         assertFutureThrows(builder.execute(), exceptionClass, status);
     }
 
@@ -537,7 +546,7 @@ public class FesenAssertions {
      * @param extraInfo extra information to add to the failure message
      */
     public static <E extends Throwable> void assertRequestBuilderThrows(ActionRequestBuilder<?, ?> builder, Class<E> exceptionClass,
-            String extraInfo) {
+                                                                        String extraInfo) {
         assertFutureThrows(builder.execute(), exceptionClass, extraInfo);
     }
 
@@ -572,7 +581,7 @@ public class FesenAssertions {
      * @param extraInfo      extra information to add to the failure message. Can be null.
      */
     public static <E extends Throwable> void assertFutureThrows(ActionFuture<?> future, Class<E> exceptionClass,
-            @Nullable RestStatus status, @Nullable String extraInfo) {
+                                                                @Nullable RestStatus status, @Nullable String extraInfo) {
         extraInfo = extraInfo == null || extraInfo.isEmpty() ? "" : extraInfo + ": ";
         extraInfo += "expected a " + exceptionClass + " exception to be thrown";
 
@@ -657,11 +666,11 @@ public class FesenAssertions {
         //Note that byte[] holding binary values need special treatment as they need to be properly compared item per item.
         Map<String, Object> actualMap = null;
         Map<String, Object> expectedMap = null;
-        try (XContentParser actualParser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, actual.streamInput())) {
+        try (XContentParser actualParser = xContentType.xContent()
+                .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, actual.streamInput())) {
             actualMap = actualParser.map();
-            try (XContentParser expectedParser = xContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
-                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, expected.streamInput())) {
+            try (XContentParser expectedParser = xContentType.xContent()
+                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, expected.streamInput())) {
                 expectedMap = expectedParser.map();
                 try {
                     assertMapEquals(expectedMap, actualMap);

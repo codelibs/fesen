@@ -57,14 +57,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
 public class ShardSearchRequestTests extends AbstractSearchTestCase {
-    private static final IndexMetadata BASE_METADATA =
-            IndexMetadata.builder("test").settings(Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build())
-                    .numberOfShards(1).numberOfReplicas(1).build();
+    private static final IndexMetadata BASE_METADATA = IndexMetadata.builder("test").settings(Settings.builder()
+        .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build())
+        .numberOfShards(1).numberOfReplicas(1).build();
 
     public void testSerialization() throws Exception {
         ShardSearchRequest shardSearchTransportRequest = createShardSearchRequest();
         ShardSearchRequest deserializedRequest =
-                copyWriteable(shardSearchTransportRequest, namedWriteableRegistry, ShardSearchRequest::new);
+            copyWriteable(shardSearchTransportRequest, namedWriteableRegistry, ShardSearchRequest::new);
         assertEquals(shardSearchTransportRequest, deserializedRequest);
     }
 
@@ -73,6 +73,18 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
             ShardSearchRequest shardSearchTransportRequest = createShardSearchRequest();
             ShardSearchRequest clone = new ShardSearchRequest(shardSearchTransportRequest);
             assertEquals(shardSearchTransportRequest, clone);
+        }
+    }
+
+    public void testAllowPartialResultsSerializationPre7_0_0() throws IOException {
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, VersionUtils.getPreviousVersion(Version.V_7_0_0));
+        ShardSearchRequest shardSearchTransportRequest = createShardSearchRequest();
+        ShardSearchRequest deserializedRequest =
+            copyWriteable(shardSearchTransportRequest, namedWriteableRegistry, ShardSearchRequest::new, version);
+        if (version.before(Version.V_6_3_0)) {
+            assertFalse(deserializedRequest.allowPartialSearchResults());
+        } else {
+            assertEquals(shardSearchTransportRequest.allowPartialSearchResults(), deserializedRequest.allowPartialSearchResults());
         }
     }
 
@@ -96,8 +108,8 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
             }
         }
         ShardSearchRequest req = new ShardSearchRequest(new OriginalIndices(searchRequest), searchRequest, shardId,
-                randomIntBetween(1, 100), filteringAliases, randomBoolean() ? 1.0f : randomFloat(), Math.abs(randomLong()),
-                randomAlphaOfLengthBetween(3, 10), routings, shardSearchContextId, keepAlive);
+            randomIntBetween(1, 100), filteringAliases, randomBoolean() ? 1.0f : randomFloat(),
+            Math.abs(randomLong()), randomAlphaOfLengthBetween(3, 10), routings, shardSearchContextId, keepAlive);
         req.canReturnNullResponseIfMatchNoDocs(randomBoolean());
         if (randomBoolean()) {
             req.setBottomSortValues(SearchSortValuesAndFormatsTests.randomInstance());
@@ -117,17 +129,18 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
 
         assertEquals(aliasFilter(indexMetadata, "cats"), QueryBuilders.termQuery("animal", "cat"));
         assertEquals(aliasFilter(indexMetadata, "cats", "dogs"), QueryBuilders.boolQuery().should(QueryBuilders.termQuery("animal", "cat"))
-                .should(QueryBuilders.termQuery("animal", "dog")));
+            .should(QueryBuilders.termQuery("animal", "dog")));
 
         // Non-filtering alias should turn off all filters because filters are ORed
-        assertThat(aliasFilter(indexMetadata, "all"), nullValue());
+        assertThat(aliasFilter(indexMetadata,"all"), nullValue());
         assertThat(aliasFilter(indexMetadata, "cats", "all"), nullValue());
         assertThat(aliasFilter(indexMetadata, "all", "cats"), nullValue());
 
         indexMetadata = add(indexMetadata, "cats", filter(termQuery("animal", "feline")));
         indexMetadata = add(indexMetadata, "dogs", filter(termQuery("animal", "canine")));
-        assertEquals(aliasFilter(indexMetadata, "dogs", "cats"), QueryBuilders.boolQuery()
-                .should(QueryBuilders.termQuery("animal", "canine")).should(QueryBuilders.termQuery("animal", "feline")));
+        assertEquals(aliasFilter(indexMetadata, "dogs", "cats"),QueryBuilders.boolQuery()
+            .should(QueryBuilders.termQuery("animal", "canine"))
+            .should(QueryBuilders.termQuery("animal", "feline")));
     }
 
     public void testRemovedAliasFilter() throws Exception {
@@ -168,7 +181,8 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
         assertEquals(orig.indexBoost(), copy.indexBoost(), 0.0f);
         assertEquals(orig.getClusterAlias(), copy.getClusterAlias());
         assertEquals(orig.allowPartialSearchResults(), copy.allowPartialSearchResults());
-        assertEquals(orig.canReturnNullResponseIfMatchNoDocs(), orig.canReturnNullResponseIfMatchNoDocs());
+        assertEquals(orig.canReturnNullResponseIfMatchNoDocs(),
+            orig.canReturnNullResponseIfMatchNoDocs());
     }
 
     public static CompressedXContent filter(QueryBuilder filterBuilder) throws IOException {
@@ -189,8 +203,8 @@ public class ShardSearchRequestTests extends AbstractSearchTestCase {
     public QueryBuilder aliasFilter(IndexMetadata indexMetadata, String... aliasNames) {
         return ShardSearchRequest.parseAliasFilter(bytes -> {
             try (InputStream inputStream = bytes.streamInput();
-                    XContentParser parser = XContentFactory.xContentType(inputStream).xContent().createParser(xContentRegistry(),
-                            DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inputStream)) {
+                 XContentParser parser = XContentFactory.xContentType(inputStream).xContent()
+                         .createParser(xContentRegistry(), DeprecationHandler.THROW_UNSUPPORTED_OPERATION, inputStream)) {
                 return parseInnerQueryBuilder(parser);
             }
         }, indexMetadata, aliasNames);

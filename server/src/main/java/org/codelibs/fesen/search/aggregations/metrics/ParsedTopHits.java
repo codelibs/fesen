@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.SearchHits;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
+import java.io.IOException;
 
 public class ParsedTopHits extends ParsedAggregation implements TopHits {
 

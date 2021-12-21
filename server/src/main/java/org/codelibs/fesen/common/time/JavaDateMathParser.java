@@ -80,13 +80,13 @@ public class JavaDateMathParser implements DateMathParser {
         return parseMath(mathString, time, roundUpProperty, timeZone);
     }
 
-    private Instant parseMath(final String mathString, final Instant time, final boolean roundUpProperty, ZoneId timeZone)
-            throws FesenParseException {
+    private Instant parseMath(final String mathString, final Instant time, final boolean roundUpProperty,
+                           ZoneId timeZone) throws FesenParseException {
         if (timeZone == null) {
             timeZone = ZoneOffset.UTC;
         }
         ZonedDateTime dateTime = ZonedDateTime.ofInstant(time, timeZone);
-        for (int i = 0; i < mathString.length();) {
+        for (int i = 0; i < mathString.length(); ) {
             char c = mathString.charAt(i++);
             final boolean round;
             final int sign;
@@ -128,79 +128,79 @@ public class JavaDateMathParser implements DateMathParser {
             }
             char unit = mathString.charAt(i++);
             switch (unit) {
-            case 'y':
-                if (round) {
-                    dateTime = dateTime.withDayOfYear(1).with(LocalTime.MIN);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusYears(1);
+                case 'y':
+                    if (round) {
+                        dateTime = dateTime.withDayOfYear(1).with(LocalTime.MIN);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusYears(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusYears(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusYears(sign * num);
-                }
-                break;
-            case 'M':
-                if (round) {
-                    dateTime = dateTime.withDayOfMonth(1).with(LocalTime.MIN);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusMonths(1);
+                    break;
+                case 'M':
+                    if (round) {
+                        dateTime = dateTime.withDayOfMonth(1).with(LocalTime.MIN);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusMonths(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusMonths(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusMonths(sign * num);
-                }
-                break;
-            case 'w':
-                if (round) {
-                    dateTime = dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusWeeks(1);
+                    break;
+                case 'w':
+                    if (round) {
+                        dateTime = dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusWeeks(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusWeeks(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusWeeks(sign * num);
-                }
-                break;
-            case 'd':
-                if (round) {
-                    dateTime = dateTime.with(LocalTime.MIN);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusDays(1);
+                    break;
+                case 'd':
+                    if (round) {
+                        dateTime = dateTime.with(LocalTime.MIN);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusDays(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusDays(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusDays(sign * num);
-                }
-                break;
-            case 'h':
-            case 'H':
-                if (round) {
-                    dateTime = dateTime.withMinute(0).withSecond(0).withNano(0);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusHours(1);
+                    break;
+                case 'h':
+                case 'H':
+                    if (round) {
+                        dateTime = dateTime.withMinute(0).withSecond(0).withNano(0);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusHours(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusHours(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusHours(sign * num);
-                }
-                break;
-            case 'm':
-                if (round) {
-                    dateTime = dateTime.withSecond(0).withNano(0);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusMinutes(1);
+                    break;
+                case 'm':
+                    if (round) {
+                        dateTime = dateTime.withSecond(0).withNano(0);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusMinutes(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusMinutes(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusMinutes(sign * num);
-                }
-                break;
-            case 's':
-                if (round) {
-                    dateTime = dateTime.withNano(0);
-                    if (roundUpProperty) {
-                        dateTime = dateTime.plusSeconds(1);
+                    break;
+                case 's':
+                    if (round) {
+                        dateTime = dateTime.withNano(0);
+                        if (roundUpProperty) {
+                            dateTime = dateTime.plusSeconds(1);
+                        }
+                    } else {
+                        dateTime = dateTime.plusSeconds(sign * num);
                     }
-                } else {
-                    dateTime = dateTime.plusSeconds(sign * num);
-                }
-                break;
-            default:
-                throw new FesenParseException("unit [{}] not supported for date math [{}]", unit, mathString);
+                    break;
+                default:
+                    throw new FesenParseException("unit [{}] not supported for date math [{}]", unit, mathString);
             }
             if (round && roundUpProperty) {
                 // subtract 1 millisecond to get the largest inclusive value
@@ -229,7 +229,8 @@ public class JavaDateMathParser implements DateMathParser {
                 return DateFormatters.from(accessor).withZoneSameLocal(timeZone).toInstant();
             }
         } catch (IllegalArgumentException | DateTimeParseException e) {
-            throw new FesenParseException("failed to parse date field [{}] with format [{}]: [{}]", e, value, format, e.getMessage());
+            throw new FesenParseException("failed to parse date field [{}] with format [{}]: [{}]",
+                e, value, format, e.getMessage());
         }
     }
 }

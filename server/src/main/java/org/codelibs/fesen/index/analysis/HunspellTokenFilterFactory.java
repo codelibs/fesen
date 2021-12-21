@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.index.analysis;
 
-import java.util.Locale;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.hunspell.Dictionary;
 import org.apache.lucene.analysis.hunspell.HunspellStemFilter;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.indices.analysis.HunspellService;
+
+import java.util.Locale;
 
 public class HunspellTokenFilterFactory extends AbstractTokenFilterFactory {
 

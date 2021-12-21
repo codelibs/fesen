@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.env;
 
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -34,12 +40,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-
 /**
  * The environment of where things exists.
  */
@@ -53,9 +53,10 @@ public class Environment {
     public static final Setting<String> PATH_HOME_SETTING = Setting.simpleString("path.home", Property.NodeScope);
     public static final Setting<List<String>> PATH_DATA_SETTING =
             Setting.listSetting("path.data", Collections.emptyList(), Function.identity(), Property.NodeScope);
-    public static final Setting<String> PATH_LOGS_SETTING = new Setting<>("path.logs", "", Function.identity(), Property.NodeScope);
+    public static final Setting<String> PATH_LOGS_SETTING =
+            new Setting<>("path.logs", "", Function.identity(), Property.NodeScope);
     public static final Setting<List<String>> PATH_REPO_SETTING =
-            Setting.listSetting("path.repo", Collections.emptyList(), Function.identity(), Property.NodeScope);
+        Setting.listSetting("path.repo", Collections.emptyList(), Function.identity(), Property.NodeScope);
     public static final Setting<String> PATH_SHARED_DATA_SETTING = Setting.simpleString("path.shared_data", Property.NodeScope);
     public static final Setting<String> PIDFILE_SETTING = Setting.simpleString("pidfile", Property.Deprecated, Property.NodeScope);
     public static final Setting<String> NODE_PIDFILE_SETTING = Setting.simpleString("node.pidfile", PIDFILE_SETTING, Property.NodeScope);
@@ -123,7 +124,7 @@ public class Environment {
                     dataFiles[i] = PathUtils.get(dataPaths.get(i)).toAbsolutePath().normalize();
                 }
             } else {
-                dataFiles = new Path[] { homeFile.resolve("data") };
+                dataFiles = new Path[]{homeFile.resolve("data")};
             }
         } else {
             if (dataPaths.isEmpty()) {
@@ -172,8 +173,9 @@ public class Environment {
         finalSettings.put(PATH_HOME_SETTING.getKey(), homeFile);
         finalSettings.put(PATH_LOGS_SETTING.getKey(), logsFile.toString());
         if (PATH_REPO_SETTING.exists(settings)) {
-            finalSettings.putList(Environment.PATH_REPO_SETTING.getKey(),
-                    Arrays.stream(repoFiles).map(Path::toString).collect(Collectors.toList()));
+            finalSettings.putList(
+                Environment.PATH_REPO_SETTING.getKey(),
+                Arrays.stream(repoFiles).map(Path::toString).collect(Collectors.toList()));
         }
         if (PATH_SHARED_DATA_SETTING.exists(settings)) {
             assert sharedDataFile != null;

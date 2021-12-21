@@ -51,18 +51,18 @@ public class RandomQueryBuilder {
      */
     public static QueryBuilder createQuery(Random r) {
         switch (RandomNumbers.randomIntBetween(r, 0, 3)) {
-        case 0:
-            return new MatchAllQueryBuilderTests().createTestQueryBuilder();
-        case 1:
-            return new TermQueryBuilderTests().createTestQueryBuilder();
-        case 2:
-            // We make sure this query has no types to avoid deprecation warnings in the
-            // tests that use this method.
-            return new IdsQueryBuilderTests().createTestQueryBuilder().types(Strings.EMPTY_ARRAY);
-        case 3:
-            return createMultiTermQuery(r);
-        default:
-            throw new UnsupportedOperationException();
+            case 0:
+                return new MatchAllQueryBuilderTests().createTestQueryBuilder();
+            case 1:
+                return new TermQueryBuilderTests().createTestQueryBuilder();
+            case 2:
+                // We make sure this query has no types to avoid deprecation warnings in the
+                // tests that use this method.
+                return new IdsQueryBuilderTests().createTestQueryBuilder().types(Strings.EMPTY_ARRAY);
+            case 3:
+                return createMultiTermQuery(r);
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -76,24 +76,25 @@ public class RandomQueryBuilder {
         // see issue #12123 for discussion
         MultiTermQueryBuilder multiTermQueryBuilder;
         String fieldName = randomFrom(TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME);
-        switch (RandomNumbers.randomIntBetween(r, 0, 3)) {
-        case 0:
-            RangeQueryBuilder stringRangeQuery = new RangeQueryBuilder(fieldName);
-            stringRangeQuery.from("a" + RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
-            stringRangeQuery.to("z" + RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
-            multiTermQueryBuilder = stringRangeQuery;
-            break;
-        case 1:
-            multiTermQueryBuilder = new PrefixQueryBuilderTests().createTestQueryBuilder();
-            break;
-        case 2:
-            multiTermQueryBuilder = new WildcardQueryBuilderTests().createTestQueryBuilder();
-            break;
-        case 3:
-            multiTermQueryBuilder = new FuzzyQueryBuilder(fieldName, RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
-            break;
-        default:
-            throw new UnsupportedOperationException();
+        switch(RandomNumbers.randomIntBetween(r, 0, 3)) {
+            case 0:
+                RangeQueryBuilder stringRangeQuery = new RangeQueryBuilder(fieldName);
+                stringRangeQuery.from("a" + RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
+                stringRangeQuery.to("z" + RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
+                multiTermQueryBuilder = stringRangeQuery;
+                break;
+            case 1:
+                multiTermQueryBuilder = new PrefixQueryBuilderTests().createTestQueryBuilder();
+                break;
+            case 2:
+                multiTermQueryBuilder = new WildcardQueryBuilderTests().createTestQueryBuilder();
+                break;
+            case 3:
+                multiTermQueryBuilder = new FuzzyQueryBuilder(fieldName,
+                        RandomStrings.randomAsciiOfLengthBetween(r, 1, 10));
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         if (r.nextBoolean()) {
             multiTermQueryBuilder.boost(2.0f / RandomNumbers.randomIntBetween(r, 1, 20));

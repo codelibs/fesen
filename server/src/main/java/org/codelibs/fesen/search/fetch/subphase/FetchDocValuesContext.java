@@ -31,18 +31,20 @@ import org.codelibs.fesen.index.mapper.MapperService;
 public class FetchDocValuesContext {
     private final List<FieldAndFormat> fields;
 
-    public static FetchDocValuesContext create(MapperService mapperService, List<FieldAndFormat> fieldPatterns) {
+    public static FetchDocValuesContext create(MapperService mapperService,
+                                               List<FieldAndFormat> fieldPatterns) {
         List<FieldAndFormat> fields = new ArrayList<>();
         for (FieldAndFormat field : fieldPatterns) {
             Collection<String> fieldNames = mapperService.simpleMatchToFullName(field.field);
-            for (String fieldName : fieldNames) {
+            for (String fieldName: fieldNames) {
                 fields.add(new FieldAndFormat(fieldName, field.format));
             }
         }
         int maxAllowedDocvalueFields = mapperService.getIndexSettings().getMaxDocvalueFields();
         if (fields.size() > maxAllowedDocvalueFields) {
-            throw new IllegalArgumentException("Trying to retrieve too many docvalue_fields. Must be less than or equal to: ["
-                    + maxAllowedDocvalueFields + "] but was [" + fields.size() + "]. This limit can be set by changing the ["
+            throw new IllegalArgumentException(
+                "Trying to retrieve too many docvalue_fields. Must be less than or equal to: [" + maxAllowedDocvalueFields
+                    + "] but was [" + fields.size() + "]. This limit can be set by changing the ["
                     + IndexSettings.MAX_DOCVALUE_FIELDS_SEARCH_SETTING.getKey() + "] index level setting.");
         }
 

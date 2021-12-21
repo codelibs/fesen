@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.plugin.repository.url;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.settings.Setting;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -34,18 +29,26 @@ import org.codelibs.fesen.plugins.RepositoryPlugin;
 import org.codelibs.fesen.repositories.Repository;
 import org.codelibs.fesen.repositories.url.URLRepository;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class URLRepositoryPlugin extends Plugin implements RepositoryPlugin {
 
     @Override
     public List<Setting<?>> getSettings() {
-        return Arrays.asList(URLRepository.ALLOWED_URLS_SETTING, URLRepository.REPOSITORIES_URL_SETTING,
-                URLRepository.SUPPORTED_PROTOCOLS_SETTING);
+        return Arrays.asList(
+            URLRepository.ALLOWED_URLS_SETTING,
+            URLRepository.REPOSITORIES_URL_SETTING,
+            URLRepository.SUPPORTED_PROTOCOLS_SETTING
+        );
     }
 
     @Override
     public Map<String, Repository.Factory> getRepositories(Environment env, NamedXContentRegistry namedXContentRegistry,
-            ClusterService clusterService, RecoverySettings recoverySettings) {
+                                                           ClusterService clusterService, RecoverySettings recoverySettings) {
         return Collections.singletonMap(URLRepository.TYPE,
-                metadata -> new URLRepository(metadata, env, namedXContentRegistry, clusterService, recoverySettings));
+            metadata -> new URLRepository(metadata, env, namedXContentRegistry, clusterService, recoverySettings));
     }
 }

@@ -34,3 +34,4 @@
  * by the {@link org.codelibs.fesen.index.mapper.MapperService} class.
  */
 package org.codelibs.fesen.index.mapper;
+

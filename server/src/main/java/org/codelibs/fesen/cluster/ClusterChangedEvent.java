@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.cluster;
 
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,16 +31,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.codelibs.fesen.cluster.metadata.IndexGraveyard;
-import org.codelibs.fesen.cluster.metadata.IndexGraveyard.IndexGraveyardDiff;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.metadata.Metadata;
+import org.codelibs.fesen.cluster.metadata.IndexGraveyard.IndexGraveyardDiff;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.gateway.GatewayService;
 import org.codelibs.fesen.index.Index;
-
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 /**
  * An event received by the local node, signaling that the cluster state has changed.
@@ -124,7 +124,7 @@ public class ClusterChangedEvent {
                 created.add(index);
             }
         }
-        return created == null ? Collections.<String> emptyList() : created;
+        return created == null ? Collections.<String>emptyList() : created;
     }
 
     /**
@@ -294,7 +294,7 @@ public class ClusterChangedEvent {
             }
         }
 
-        return deleted == null ? Collections.<Index> emptyList() : new ArrayList<>(deleted);
+        return deleted == null ? Collections.<Index>emptyList() : new ArrayList<>(deleted);
     }
 
     private List<Index> indicesDeletedFromTombstones() {

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.HOUR_OF_DAY;
-import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.NANO_OF_SECOND;
-import static java.time.temporal.ChronoField.SECOND_OF_DAY;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -42,6 +35,13 @@ import java.util.function.Function;
 import org.codelibs.fesen.common.time.DateFormatter;
 import org.codelibs.fesen.common.time.DateFormatters;
 
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.NANO_OF_SECOND;
+import static java.time.temporal.ChronoField.SECOND_OF_DAY;
+
 enum DateFormat {
     Iso8601 {
         @Override
@@ -49,7 +49,8 @@ enum DateFormat {
             return (date) -> {
                 TemporalAccessor accessor = DateFormatter.forPattern("iso8601").parse(date);
                 //even though locale could be set to en-us, Locale.ROOT (following iso8601 calendar data rules) should be used
-                return DateFormatters.from(accessor, Locale.ROOT, timezone).withZoneSameInstant(timezone);
+                return DateFormatters.from(accessor, Locale.ROOT, timezone)
+                                                .withZoneSameInstant(timezone);
             };
 
         }
@@ -79,18 +80,19 @@ enum DateFormat {
             long base = Long.parseLong(date.substring(1, 16), 16);
             // 1356138046000
             long rest = Long.parseLong(date.substring(16, 24), 16);
-            return ((base * 1000) - 10000) + (rest / 1000000);
+            return ((base * 1000) - 10000) + (rest/1000000);
         }
     },
     Java {
         private final List<ChronoField> FIELDS =
-                Arrays.asList(NANO_OF_SECOND, SECOND_OF_DAY, MINUTE_OF_DAY, HOUR_OF_DAY, DAY_OF_MONTH, MONTH_OF_YEAR);
+            Arrays.asList(NANO_OF_SECOND, SECOND_OF_DAY, MINUTE_OF_DAY, HOUR_OF_DAY, DAY_OF_MONTH, MONTH_OF_YEAR);
 
         @Override
         Function<String, ZonedDateTime> getFunction(String format, ZoneId zoneId, Locale locale) {
             boolean isUtc = ZoneOffset.UTC.equals(zoneId);
 
-            DateFormatter dateFormatter = DateFormatter.forPattern(format).withLocale(locale);
+            DateFormatter dateFormatter = DateFormatter.forPattern(format)
+                .withLocale(locale);
             // if UTC zone is set here, the time zone specified in the format will be ignored, leading to wrong dates
             if (isUtc == false) {
                 dateFormatter = dateFormatter.withZone(zoneId);
@@ -100,8 +102,9 @@ enum DateFormat {
                 TemporalAccessor accessor = formatter.parse(text);
                 // if there is no year nor year-of-era, we fall back to the current one and
                 // fill the rest of the date up with the parsed date
-                if (accessor.isSupported(ChronoField.YEAR) == false && accessor.isSupported(ChronoField.YEAR_OF_ERA) == false
-                        && accessor.isSupported(WeekFields.of(locale).weekOfWeekBasedYear()) == false) {
+                if (accessor.isSupported(ChronoField.YEAR) == false
+                    && accessor.isSupported(ChronoField.YEAR_OF_ERA) == false
+                    && accessor.isSupported(WeekFields.of(locale).weekOfWeekBasedYear()) == false) {
                     int year = LocalDate.now(ZoneOffset.UTC).getYear();
                     ZonedDateTime newTime = Instant.EPOCH.atZone(ZoneOffset.UTC).withYear(year);
                     for (ChronoField field : FIELDS) {
@@ -126,16 +129,16 @@ enum DateFormat {
 
     static DateFormat fromString(String format) {
         switch (format) {
-        case "ISO8601":
-            return Iso8601;
-        case "UNIX":
-            return Unix;
-        case "UNIX_MS":
-            return UnixMs;
-        case "TAI64N":
-            return Tai64n;
-        default:
-            return Java;
+            case "ISO8601":
+                return Iso8601;
+            case "UNIX":
+                return Unix;
+            case "UNIX_MS":
+                return UnixMs;
+            case "TAI64N":
+                return Tai64n;
+            default:
+                return Java;
         }
     }
 }

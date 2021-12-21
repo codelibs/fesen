@@ -72,11 +72,13 @@ public class MultiGetResponseTests extends ESTestCase {
         MultiGetItemResponse[] items = new MultiGetItemResponse[randomIntBetween(0, 128)];
         for (int i = 0; i < items.length; i++) {
             if (randomBoolean()) {
-                items[i] = new MultiGetItemResponse(new GetResponse(new GetResult(randomAlphaOfLength(4), randomAlphaOfLength(4),
-                        randomAlphaOfLength(4), 0, 1, randomNonNegativeLong(), true, null, null, null)), null);
+                items[i] = new MultiGetItemResponse(new GetResponse(new GetResult(
+                        randomAlphaOfLength(4), randomAlphaOfLength(4), randomAlphaOfLength(4), 0, 1, randomNonNegativeLong(),
+                        true, null, null, null
+                )), null);
             } else {
-                items[i] = new MultiGetItemResponse(null, new MultiGetResponse.Failure(randomAlphaOfLength(4), randomAlphaOfLength(4),
-                        randomAlphaOfLength(4), new RuntimeException(randomAlphaOfLength(4))));
+                items[i] = new MultiGetItemResponse(null, new MultiGetResponse.Failure(randomAlphaOfLength(4),
+                        randomAlphaOfLength(4), randomAlphaOfLength(4), new RuntimeException(randomAlphaOfLength(4))));
             }
         }
         return new MultiGetResponse(items);

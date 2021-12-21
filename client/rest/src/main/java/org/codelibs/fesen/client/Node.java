@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.client;
 
+import org.apache.http.HttpHost;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.http.HttpHost;
 
 /**
  * Metadata about an {@link HttpHost} running Fesen.
@@ -65,7 +65,8 @@ public class Node {
      * {@code host} are nullable and implementations of {@link NodeSelector}
      * need to decide what to do in their absence.
      */
-    public Node(HttpHost host, Set<HttpHost> boundHosts, String name, String version, Roles roles, Map<String, List<String>> attributes) {
+    public Node(HttpHost host, Set<HttpHost> boundHosts, String name, String version,
+            Roles roles, Map<String, List<String>> attributes) {
         if (host == null) {
             throw new IllegalArgumentException("host cannot be null");
         }
@@ -158,9 +159,12 @@ public class Node {
             return false;
         }
         Node other = (Node) obj;
-        return host.equals(other.host) && Objects.equals(boundHosts, other.boundHosts) && Objects.equals(name, other.name)
-                && Objects.equals(version, other.version) && Objects.equals(roles, other.roles)
-                && Objects.equals(attributes, other.attributes);
+        return host.equals(other.host)
+            && Objects.equals(boundHosts, other.boundHosts)
+            && Objects.equals(name, other.name)
+            && Objects.equals(version, other.version)
+            && Objects.equals(roles, other.roles)
+            && Objects.equals(attributes, other.attributes);
     }
 
     @Override
@@ -185,14 +189,12 @@ public class Node {
         public boolean isMasterEligible() {
             return roles.contains("master");
         }
-
         /**
          * Teturns whether or not the node stores data.
          */
         public boolean isData() {
             return roles.contains("data");
         }
-
         /**
          * Teturns whether or not the node runs ingest pipelines.
          */

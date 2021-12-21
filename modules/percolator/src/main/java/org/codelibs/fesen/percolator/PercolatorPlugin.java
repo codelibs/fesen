@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.percolator;
 
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,9 @@ import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+
 public class PercolatorPlugin extends Plugin implements MapperPlugin, SearchPlugin {
     @Override
     public List<QuerySpec<?>> getQueries() {
@@ -41,7 +41,10 @@ public class PercolatorPlugin extends Plugin implements MapperPlugin, SearchPlug
 
     @Override
     public List<FetchSubPhase> getFetchSubPhases(FetchPhaseConstructionContext context) {
-        return Arrays.asList(new PercolatorMatchedSlotSubFetchPhase(), new PercolatorHighlightSubFetchPhase(context.getHighlighters()));
+        return Arrays.asList(
+            new PercolatorMatchedSlotSubFetchPhase(),
+            new PercolatorHighlightSubFetchPhase(context.getHighlighters())
+        );
     }
 
     @Override

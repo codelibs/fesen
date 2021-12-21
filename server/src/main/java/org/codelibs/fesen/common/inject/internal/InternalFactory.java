@@ -56,5 +56,6 @@ public interface InternalFactory<T> {
      * @throws org.codelibs.fesen.common.inject.internal.ErrorsException
      *          if a value cannot be provided
      */
-    T get(Errors errors, InternalContext context, Dependency<?> dependency) throws ErrorsException;
+    T get(Errors errors, InternalContext context, Dependency<?> dependency)
+            throws ErrorsException;
 }

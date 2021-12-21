@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.snapshots.blobstore;
 
+import org.apache.lucene.store.RateLimiter;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Supplier;
-
-import org.apache.lucene.store.RateLimiter;
 
 /**
  * Rate limiting wrapper for InputStream

@@ -78,6 +78,5 @@ public class NoopCircuitBreaker implements CircuitBreaker {
     }
 
     @Override
-    public void setLimitAndOverhead(long limit, double overhead) {
-    }
+    public void setLimitAndOverhead(long limit, double overhead) { }
 }

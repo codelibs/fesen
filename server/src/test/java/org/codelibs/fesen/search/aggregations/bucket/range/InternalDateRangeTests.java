@@ -46,9 +46,9 @@ public class InternalDateRangeTests extends InternalRangeTestCase<InternalDateRa
         super.setUp();
         format = randomNumericDocValueFormat();
 
-        Function<DateTime, DateTime> interval =
-                randomFrom(dateTime -> dateTime.plusSeconds(1), dateTime -> dateTime.plusMinutes(1), dateTime -> dateTime.plusHours(1),
-                        dateTime -> dateTime.plusDays(1), dateTime -> dateTime.plusMonths(1), dateTime -> dateTime.plusYears(1));
+        Function<DateTime, DateTime> interval = randomFrom(dateTime -> dateTime.plusSeconds(1), dateTime -> dateTime.plusMinutes(1),
+                dateTime -> dateTime.plusHours(1), dateTime -> dateTime.plusDays(1), dateTime -> dateTime.plusMonths(1), dateTime ->
+                        dateTime.plusYears(1));
 
         final int numRanges = randomNumberOfBuckets();
         final List<Tuple<Double, Double>> listOfRanges = new ArrayList<>(numRanges);
@@ -76,8 +76,10 @@ public class InternalDateRangeTests extends InternalRangeTestCase<InternalDateRa
     }
 
     @Override
-    protected InternalDateRange createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggregations,
-            boolean keyed) {
+    protected InternalDateRange createTestInstance(String name,
+                                                   Map<String, Object> metadata,
+                                                   InternalAggregations aggregations,
+                                                   boolean keyed) {
         final List<InternalDateRange.Bucket> buckets = new ArrayList<>();
         for (int i = 0; i < dateRanges.size(); ++i) {
             Tuple<Double, Double> range = dateRanges.get(i);

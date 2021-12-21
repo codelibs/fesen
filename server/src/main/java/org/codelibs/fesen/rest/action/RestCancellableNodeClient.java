@@ -69,7 +69,9 @@ public class RestCancellableNodeClient extends FilterClient {
      * Returns the number of tasks tracked globally.
      */
     static int getNumTasks() {
-        return httpChannels.values().stream().mapToInt(CloseListener::getNumTasks).sum();
+        return httpChannels.values().stream()
+            .mapToInt(CloseListener::getNumTasks)
+            .sum();
     }
 
     /**
@@ -81,36 +83,39 @@ public class RestCancellableNodeClient extends FilterClient {
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action, Request request,
-            ActionListener<Response> listener) {
+    public <Request extends ActionRequest, Response extends ActionResponse> void doExecute(
+        ActionType<Response> action, Request request, ActionListener<Response> listener) {
         CloseListener closeListener = httpChannels.computeIfAbsent(httpChannel, channel -> new CloseListener());
         TaskHolder taskHolder = new TaskHolder();
-        Task task = client.executeLocally(action, request, new ActionListener<Response>() {
-            @Override
-            public void onResponse(Response response) {
-                try {
-                    closeListener.unregisterTask(taskHolder);
-                } finally {
-                    listener.onResponse(response);
+        Task task = client.executeLocally(action, request,
+            new ActionListener<Response>() {
+                @Override
+                public void onResponse(Response response) {
+                    try {
+                        closeListener.unregisterTask(taskHolder);
+                    } finally {
+                        listener.onResponse(response);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Exception e) {
-                try {
-                    closeListener.unregisterTask(taskHolder);
-                } finally {
-                    listener.onFailure(e);
+                @Override
+                public void onFailure(Exception e) {
+                    try {
+                        closeListener.unregisterTask(taskHolder);
+                    } finally {
+                        listener.onFailure(e);
+                    }
                 }
-            }
-        });
+            });
         final TaskId taskId = new TaskId(client.getLocalNodeId(), task.getId());
         closeListener.registerTask(taskHolder, taskId);
         closeListener.maybeRegisterChannel(httpChannel);
     }
 
     private void cancelTask(TaskId taskId) {
-        CancelTasksRequest req = new CancelTasksRequest().setTaskId(taskId).setReason("channel closed");
+        CancelTasksRequest req = new CancelTasksRequest()
+            .setTaskId(taskId)
+            .setReason("channel closed");
         // force the origin to execute the cancellation as a system user
         new OriginSettingClient(client, TASKS_ORIGIN).admin().cluster().cancelTasks(req, ActionListener.wrap(() -> {}));
     }

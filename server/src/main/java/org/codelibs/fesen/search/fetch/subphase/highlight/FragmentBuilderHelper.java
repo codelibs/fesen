@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
@@ -34,13 +31,16 @@ import org.codelibs.fesen.index.analysis.NamedAnalyzer;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Simple helper class for {@link FastVectorHighlighter} {@link FragmentsBuilder} implementations.
  */
 public final class FragmentBuilderHelper {
 
     private FragmentBuilderHelper() {
-        // no instance
+      // no instance
     }
 
     /**
@@ -65,9 +65,8 @@ public final class FragmentBuilderHelper {
                     return FragmentBuilderHelper.compare(startOffset, startOffset2);
                 }
             });
-            return new WeightedFragInfo(
-                    Math.min(fragInfo.getSubInfos().get(0).getTermsOffsets().get(0).getStartOffset(), fragInfo.getStartOffset()),
-                    fragInfo.getEndOffset(), subInfos, fragInfo.getTotalBoost());
+            return new WeightedFragInfo(Math.min(fragInfo.getSubInfos().get(0).getTermsOffsets().get(0).getStartOffset(),
+                    fragInfo.getStartOffset()), fragInfo.getEndOffset(), subInfos, fragInfo.getTotalBoost());
         } else {
             return fragInfo;
         }

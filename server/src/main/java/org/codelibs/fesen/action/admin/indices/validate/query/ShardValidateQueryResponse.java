@@ -34,11 +34,11 @@ import org.codelibs.fesen.index.shard.ShardId;
 class ShardValidateQueryResponse extends BroadcastShardResponse {
 
     private boolean valid;
-
+    
     private String explanation;
 
     private String error;
-
+    
     ShardValidateQueryResponse(StreamInput in) throws IOException {
         super(in);
         valid = in.readBoolean();
@@ -56,11 +56,11 @@ class ShardValidateQueryResponse extends BroadcastShardResponse {
     public boolean isValid() {
         return this.valid;
     }
-
+    
     public String getExplanation() {
         return explanation;
     }
-
+    
     public String getError() {
         return error;
     }

@@ -67,8 +67,10 @@ public class NumberFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         checker.registerConflictCheck("index", b -> b.field("index", false));
         checker.registerConflictCheck("store", b -> b.field("store", true));
         checker.registerConflictCheck("null_value", b -> b.field("null_value", 1));
-        checker.registerUpdateCheck(b -> b.field("coerce", false), m -> assertFalse(((NumberFieldMapper) m).coerce()));
-        checker.registerUpdateCheck(b -> b.field("ignore_malformed", true), m -> assertTrue(((NumberFieldMapper) m).ignoreMalformed()));
+        checker.registerUpdateCheck(b -> b.field("coerce", false),
+            m -> assertFalse(((NumberFieldMapper) m).coerce()));
+        checker.registerUpdateCheck(b -> b.field("ignore_malformed", true),
+            m -> assertTrue(((NumberFieldMapper) m).ignoreMalformed()));
     }
 
     protected void writeFieldValue(XContentBuilder builder) throws IOException {
@@ -199,8 +201,9 @@ public class NumberFieldMapperTests extends AbstractNumericFieldMapperTestCase {
         SourceToParse malformed = source(b -> b.startObject("field").field("foo", "bar").endObject());
         for (String type : types()) {
             for (Boolean ignoreMalformed : new Boolean[] { true, false }) {
-                DocumentMapper mapper =
-                        createDocumentMapper(fieldMapping(b -> b.field("type", type).field("ignore_malformed", ignoreMalformed)));
+                DocumentMapper mapper = createDocumentMapper(
+                    fieldMapping(b -> b.field("type", type).field("ignore_malformed", ignoreMalformed))
+                );
                 MapperParsingException e = expectThrows(MapperParsingException.class, () -> mapper.parse(malformed));
                 assertThat(e.getCause().getMessage(), containsString("Current token"));
                 assertThat(e.getCause().getMessage(), containsString("not numeric, can not use numeric value accessors"));
@@ -230,56 +233,58 @@ public class NumberFieldMapperTests extends AbstractNumericFieldMapperTestCase {
     }
 
     public void testOutOfRangeValues() throws IOException {
-        final List<OutOfRangeSpec> inputs = Arrays.asList(OutOfRangeSpec.of(NumberType.BYTE, "128", "is out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.SHORT, "32768", "is out of range for a short"),
-                OutOfRangeSpec.of(NumberType.INTEGER, "2147483648", "is out of range for an integer"),
-                OutOfRangeSpec.of(NumberType.LONG, "9223372036854775808", "out of range for a long"),
-                OutOfRangeSpec.of(NumberType.LONG, "1e999999999", "out of range for a long"),
+        final List<OutOfRangeSpec> inputs = Arrays.asList(
+            OutOfRangeSpec.of(NumberType.BYTE, "128", "is out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.SHORT, "32768", "is out of range for a short"),
+            OutOfRangeSpec.of(NumberType.INTEGER, "2147483648", "is out of range for an integer"),
+            OutOfRangeSpec.of(NumberType.LONG, "9223372036854775808", "out of range for a long"),
+            OutOfRangeSpec.of(NumberType.LONG, "1e999999999", "out of range for a long"),
 
-                OutOfRangeSpec.of(NumberType.BYTE, "-129", "is out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.SHORT, "-32769", "is out of range for a short"),
-                OutOfRangeSpec.of(NumberType.INTEGER, "-2147483649", "is out of range for an integer"),
-                OutOfRangeSpec.of(NumberType.LONG, "-9223372036854775809", "out of range for a long"),
-                OutOfRangeSpec.of(NumberType.LONG, "-1e999999999", "out of range for a long"),
+            OutOfRangeSpec.of(NumberType.BYTE, "-129", "is out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.SHORT, "-32769", "is out of range for a short"),
+            OutOfRangeSpec.of(NumberType.INTEGER, "-2147483649", "is out of range for an integer"),
+            OutOfRangeSpec.of(NumberType.LONG, "-9223372036854775809", "out of range for a long"),
+            OutOfRangeSpec.of(NumberType.LONG, "-1e999999999", "out of range for a long"),
 
-                OutOfRangeSpec.of(NumberType.BYTE, 128, "is out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.SHORT, 32768, "out of range of Java short"),
-                OutOfRangeSpec.of(NumberType.INTEGER, 2147483648L, " out of range of int"),
-                OutOfRangeSpec.of(NumberType.LONG, new BigInteger("9223372036854775808"), "out of range of long"),
+            OutOfRangeSpec.of(NumberType.BYTE, 128, "is out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.SHORT, 32768, "out of range of Java short"),
+            OutOfRangeSpec.of(NumberType.INTEGER, 2147483648L, " out of range of int"),
+            OutOfRangeSpec.of(NumberType.LONG, new BigInteger("9223372036854775808"), "out of range of long"),
 
-                OutOfRangeSpec.of(NumberType.BYTE, -129, "is out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.SHORT, -32769, "out of range of Java short"),
-                OutOfRangeSpec.of(NumberType.INTEGER, -2147483649L, " out of range of int"),
-                OutOfRangeSpec.of(NumberType.LONG, new BigInteger("-9223372036854775809"), "out of range of long"),
+            OutOfRangeSpec.of(NumberType.BYTE, -129, "is out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.SHORT, -32769, "out of range of Java short"),
+            OutOfRangeSpec.of(NumberType.INTEGER, -2147483649L, " out of range of int"),
+            OutOfRangeSpec.of(NumberType.LONG, new BigInteger("-9223372036854775809"), "out of range of long"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, "65520", "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, "3.4028235E39", "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, "1.7976931348623157E309", "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, "65520", "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, "3.4028235E39", "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, "1.7976931348623157E309", "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, "-65520", "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, "-3.4028235E39", "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, "-1.7976931348623157E309", "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, "-65520", "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, "-3.4028235E39", "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, "-1.7976931348623157E309", "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NaN, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.NaN, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.NaN, "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NaN, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.NaN, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.NaN, "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.POSITIVE_INFINITY, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.POSITIVE_INFINITY, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.POSITIVE_INFINITY, "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.POSITIVE_INFINITY, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.POSITIVE_INFINITY, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.POSITIVE_INFINITY, "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NEGATIVE_INFINITY, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.NEGATIVE_INFINITY, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.NEGATIVE_INFINITY, "[double] supports only finite values"));
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NEGATIVE_INFINITY, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.NEGATIVE_INFINITY, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.NEGATIVE_INFINITY, "[double] supports only finite values")
+        );
 
-        for (OutOfRangeSpec item : inputs) {
+        for(OutOfRangeSpec item: inputs) {
             DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", item.type.typeName())));
             try {
                 mapper.parse(source(item::write));
                 fail("Mapper parsing exception expected for [" + item.type + "] with value [" + item.value + "]");
             } catch (MapperParsingException e) {
-                assertThat("Incorrect error message for [" + item.type + "] with value [" + item.value + "]", e.getCause().getMessage(),
-                        containsString(item.message));
+                assertThat("Incorrect error message for [" + item.type + "] with value [" + item.value + "]",
+                    e.getCause().getMessage(), containsString(item.message));
             }
         }
 
@@ -293,8 +298,9 @@ public class NumberFieldMapperTests extends AbstractNumericFieldMapperTestCase {
 
     public void testLongIndexingOutOfRange() throws Exception {
         DocumentMapper mapper = createDocumentMapper(fieldMapping(b -> b.field("type", "long").field("ignore_malformed", true)));
-        ParsedDocument doc =
-                mapper.parse(source(b -> b.rawField("field", new BytesArray("9223372036854775808").streamInput(), XContentType.JSON)));
+        ParsedDocument doc = mapper.parse(
+            source(b -> b.rawField("field", new BytesArray("9223372036854775808").streamInput(), XContentType.JSON))
+        );
         assertEquals(0, doc.rootDoc().getFields("field").length);
     }
 }

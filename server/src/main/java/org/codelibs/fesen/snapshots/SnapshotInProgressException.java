@@ -44,3 +44,4 @@ public class SnapshotInProgressException extends FesenException {
         return RestStatus.BAD_REQUEST;
     }
 }
+

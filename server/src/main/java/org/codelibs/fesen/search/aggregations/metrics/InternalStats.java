@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class InternalStats extends InternalNumericMetricsAggregation.MultiValue implements Stats {
     enum Metrics {
@@ -45,7 +45,7 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
     protected final double sum;
 
     public InternalStats(String name, long count, double sum, double min, double max, DocValueFormat formatter,
-            Map<String, Object> metadata) {
+                         Map<String, Object> metadata) {
         super(name, metadata);
         this.count = count;
         this.sum = sum;
@@ -133,18 +133,13 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
     public double value(String name) {
         Metrics metrics = Metrics.valueOf(name);
         switch (metrics) {
-        case min:
-            return this.min;
-        case max:
-            return this.max;
-        case avg:
-            return this.getAvg();
-        case count:
-            return this.count;
-        case sum:
-            return this.sum;
-        default:
-            throw new IllegalArgumentException("Unknown value [" + name + "] in common stats aggregation");
+            case min: return this.min;
+            case max: return this.max;
+            case avg: return this.getAvg();
+            case count: return this.count;
+            case sum: return this.sum;
+            default:
+                throw new IllegalArgumentException("Unknown value [" + name + "] in common stats aggregation");
         }
     }
 
@@ -214,15 +209,14 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalStats other = (InternalStats) obj;
-        return count == other.count && Double.compare(min, other.min) == 0 && Double.compare(max, other.max) == 0
-                && Double.compare(sum, other.sum) == 0;
+        return count == other.count &&
+            Double.compare(min, other.min) == 0 &&
+            Double.compare(max, other.max) == 0 &&
+            Double.compare(sum, other.sum) == 0;
     }
 }

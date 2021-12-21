@@ -22,8 +22,8 @@ package org.codelibs.fesen.action.admin.cluster.stats;
 import org.codelibs.fesen.action.support.nodes.NodesOperationRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 
-public class ClusterStatsRequestBuilder
-        extends NodesOperationRequestBuilder<ClusterStatsRequest, ClusterStatsResponse, ClusterStatsRequestBuilder> {
+public class ClusterStatsRequestBuilder extends NodesOperationRequestBuilder<ClusterStatsRequest,
+        ClusterStatsResponse, ClusterStatsRequestBuilder> {
 
     public ClusterStatsRequestBuilder(FesenClient client, ClusterStatsAction action) {
         super(client, action, new ClusterStatsRequest());

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.lucene.search.ReferenceManager;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.BytesRef;
@@ -32,6 +26,12 @@ import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.common.util.concurrent.KeyedLock;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /** Maps _uid value to its version information. */
 final class LiveVersionMap implements ReferenceManager.RefreshListener, Accountable {
@@ -116,6 +116,7 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
         boolean needsSafeAccess;
         final boolean previousMapsNeededSafeAccess;
 
+
         Maps(VersionLookup current, VersionLookup old, boolean previousMapsNeededSafeAccess) {
             this.current = current;
             this.old = old;
@@ -123,7 +124,8 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
         }
 
         Maps() {
-            this(new VersionLookup(ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency()), VersionLookup.EMPTY, false);
+            this(new VersionLookup(ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency()),
+                VersionLookup.EMPTY, false);
         }
 
         boolean isSafeAccessMode() {
@@ -133,8 +135,8 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
         boolean shouldInheritSafeAccess() {
             final boolean mapHasNotSeenAnyOperations = current.isEmpty() && current.isUnsafe() == false;
             return needsSafeAccess
-                    // we haven't seen any ops and map before needed it so we maintain it
-                    || (mapHasNotSeenAnyOperations && previousMapsNeededSafeAccess);
+                // we haven't seen any ops and map before needed it so we maintain it
+                || (mapHasNotSeenAnyOperations && previousMapsNeededSafeAccess);
         }
 
         /**
@@ -142,7 +144,7 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
          */
         Maps buildTransitionMap() {
             return new Maps(new VersionLookup(ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency(current.size())), current,
-                    shouldInheritSafeAccess());
+                shouldInheritSafeAccess());
         }
 
         /**
@@ -203,14 +205,14 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
      * instances).
      */
     private static final long BASE_BYTES_PER_BYTESREF =
-            // shallow memory usage of the BytesRef object
-            RamUsageEstimator.shallowSizeOfInstance(BytesRef.class) +
+        // shallow memory usage of the BytesRef object
+        RamUsageEstimator.shallowSizeOfInstance(BytesRef.class) +
             // header of the byte[] array
-                    RamUsageEstimator.NUM_BYTES_ARRAY_HEADER +
-                    // with an alignment size (-XX:ObjectAlignmentInBytes) of 8 (default),
-                    // there could be between 0 and 7 lost bytes, so we account for 3
-                    // lost bytes on average
-                    3;
+            RamUsageEstimator.NUM_BYTES_ARRAY_HEADER +
+            // with an alignment size (-XX:ObjectAlignmentInBytes) of 8 (default),
+            // there could be between 0 and 7 lost bytes, so we account for 3
+            // lost bytes on average
+            3;
 
     /**
      * Bytes used by having CHM point to a key/value.
@@ -353,7 +355,7 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
         }
         if (accountRam != 0) {
             long v = ramBytesUsedTombstones.addAndGet(accountRam);
-            assert v >= 0 : "bytes=" + v;
+            assert v >= 0: "bytes=" + v;
         }
     }
 
@@ -472,7 +474,8 @@ final class LiveVersionMap implements ReferenceManager.RefreshListener, Accounta
     }
 
     boolean assertKeyedLockHeldByCurrentThread(BytesRef uid) {
-        assert keyedLock.isHeldByCurrentThread(uid) : "Thread [" + Thread.currentThread().getName() + "], uid [" + uid.utf8ToString() + "]";
+        assert keyedLock.isHeldByCurrentThread(uid) : "Thread [" + Thread.currentThread().getName() +
+            "], uid [" + uid.utf8ToString() + "]";
         return true;
     }
 }

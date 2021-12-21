@@ -19,9 +19,32 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.Matchers.containsString;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.index.query.MatchAllQueryBuilder;
+import org.codelibs.fesen.index.query.QueryBuilder;
+import org.codelibs.fesen.index.rankeval.DiscountedCumulativeGain;
+import org.codelibs.fesen.index.rankeval.EvaluationMetric;
+import org.codelibs.fesen.index.rankeval.MeanReciprocalRank;
+import org.codelibs.fesen.index.rankeval.PrecisionAtK;
+import org.codelibs.fesen.index.rankeval.RankEvalPlugin;
+import org.codelibs.fesen.index.rankeval.RankEvalSpec;
+import org.codelibs.fesen.index.rankeval.RatedDocument;
+import org.codelibs.fesen.index.rankeval.RatedRequest;
+import org.codelibs.fesen.index.rankeval.RecallAtK;
+import org.codelibs.fesen.index.rankeval.RankEvalSpec.ScriptWithId;
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.script.ScriptType;
+import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,23 +58,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.index.query.MatchAllQueryBuilder;
-import org.codelibs.fesen.index.query.QueryBuilder;
-import org.codelibs.fesen.index.rankeval.RankEvalSpec.ScriptWithId;
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.script.ScriptType;
-import org.codelibs.fesen.search.builder.SearchSourceBuilder;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.Matchers.containsString;
 
 public class RankEvalSpecTests extends ESTestCase {
 
@@ -71,9 +80,11 @@ public class RankEvalSpecTests extends ESTestCase {
     }
 
     static RankEvalSpec createTestItem() {
-        Supplier<EvaluationMetric> metric =
-                randomFrom(Arrays.asList(() -> PrecisionAtKTests.createTestItem(), () -> RecallAtKTests.createTestItem(),
-                        () -> MeanReciprocalRankTests.createTestItem(), () -> DiscountedCumulativeGainTests.createTestItem()));
+        Supplier<EvaluationMetric> metric = randomFrom(Arrays.asList(
+                () -> PrecisionAtKTests.createTestItem(),
+                () -> RecallAtKTests.createTestItem(),
+                () -> MeanReciprocalRankTests.createTestItem(),
+                () -> DiscountedCumulativeGainTests.createTestItem()));
 
         List<RatedRequest> ratedRequests = null;
         Collection<ScriptWithId> templates = null;
@@ -96,12 +107,12 @@ public class RankEvalSpecTests extends ESTestCase {
 
             Map<String, Object> templateParams = new HashMap<>();
             templateParams.put("key", "value");
-            RatedRequest ratedRequest =
-                    new RatedRequest("id", Arrays.asList(RatedDocumentTests.createRatedDocument()), templateParams, "templateId");
+            RatedRequest ratedRequest = new RatedRequest("id", Arrays.asList(RatedDocumentTests.createRatedDocument()), templateParams,
+                    "templateId");
             ratedRequests = Arrays.asList(ratedRequest);
         } else {
-            RatedRequest ratedRequest =
-                    new RatedRequest("id", Arrays.asList(RatedDocumentTests.createRatedDocument()), new SearchSourceBuilder());
+            RatedRequest ratedRequest = new RatedRequest("id", Arrays.asList(RatedDocumentTests.createRatedDocument()),
+                    new SearchSourceBuilder());
             ratedRequests = Arrays.asList(ratedRequest);
         }
         RankEvalSpec spec = new RankEvalSpec(ratedRequests, metric.get(), templates);

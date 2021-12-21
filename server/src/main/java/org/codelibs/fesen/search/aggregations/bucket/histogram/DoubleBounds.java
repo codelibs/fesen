@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Represent hard_bounds and extended_bounds in histogram aggregations.
@@ -48,11 +48,11 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
 
     static {
         InstantiatingObjectParser.Builder<DoubleBounds, Void> parser =
-                InstantiatingObjectParser.builder("double_bounds", false, DoubleBounds.class);
+            InstantiatingObjectParser.builder("double_bounds", false, DoubleBounds.class);
         parser.declareField(optionalConstructorArg(), p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? null : p.doubleValue(),
-                MIN_FIELD, ObjectParser.ValueType.DOUBLE_OR_NULL);
+            MIN_FIELD, ObjectParser.ValueType.DOUBLE_OR_NULL);
         parser.declareField(optionalConstructorArg(), p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? null : p.doubleValue(),
-                MAX_FIELD, ObjectParser.ValueType.DOUBLE_OR_NULL);
+            MAX_FIELD, ObjectParser.ValueType.DOUBLE_OR_NULL);
         PARSER = parser.build();
     }
 
@@ -122,7 +122,8 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
             return false;
         }
         DoubleBounds other = (DoubleBounds) obj;
-        return Objects.equals(min, other.min) && Objects.equals(max, other.max);
+        return Objects.equals(min, other.min)
+                && Objects.equals(max, other.max);
     }
 
     public Double getMin() {

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.common.xcontent.cbor;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import java.io.OutputStream;
 import java.util.Set;
 
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContentGenerator;
-
-import com.fasterxml.jackson.core.JsonGenerator;
 
 public class CborXContentGenerator extends JsonXContentGenerator {
 

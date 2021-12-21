@@ -43,7 +43,9 @@ public class GetScriptLanguageResponseTests extends AbstractSerializingTestCase<
     @Override
     protected GetScriptLanguageResponse createTestInstance() {
         if (randomBoolean()) {
-            return new GetScriptLanguageResponse(new ScriptLanguagesInfo(Collections.emptySet(), Collections.emptyMap()));
+            return new GetScriptLanguageResponse(
+                new ScriptLanguagesInfo(Collections.emptySet(), Collections.emptyMap())
+            );
         }
         return new GetScriptLanguageResponse(randomInstance());
     }
@@ -54,49 +56,50 @@ public class GetScriptLanguageResponseTests extends AbstractSerializingTestCase<
     }
 
     @Override
-    protected Writeable.Reader<GetScriptLanguageResponse> instanceReader() {
-        return GetScriptLanguageResponse::new;
-    }
+    protected Writeable.Reader<GetScriptLanguageResponse> instanceReader() {  return GetScriptLanguageResponse::new; }
 
     @Override
     protected GetScriptLanguageResponse mutateInstance(GetScriptLanguageResponse instance) throws IOException {
         switch (randomInt(2)) {
-        case 0:
-            // mutate typesAllowed
-            return new GetScriptLanguageResponse(
-                    new ScriptLanguagesInfo(mutateStringSet(instance.info.typesAllowed), instance.info.languageContexts));
-        case 1:
-            // Add language
-            String language = randomValueOtherThanMany(instance.info.languageContexts::containsKey,
-                    () -> randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH));
-            Map<String, Set<String>> languageContexts = new HashMap<>();
-            instance.info.languageContexts.forEach(languageContexts::put);
-            languageContexts.put(language, randomStringSet(randomIntBetween(1, MAX_VALUES)));
-            return new GetScriptLanguageResponse(new ScriptLanguagesInfo(instance.info.typesAllowed, languageContexts));
-        default:
-            // Mutate languageContexts
-            Map<String, Set<String>> lc = new HashMap<>();
-            if (instance.info.languageContexts.size() == 0) {
-                lc.put(randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH), randomStringSet(randomIntBetween(1, MAX_VALUES)));
-            } else {
-                int toModify = randomInt(instance.info.languageContexts.size() - 1);
-                List<String> keys = new ArrayList<>(instance.info.languageContexts.keySet());
-                for (int i = 0; i < keys.size(); i++) {
-                    String key = keys.get(i);
-                    Set<String> value = instance.info.languageContexts.get(keys.get(i));
-                    if (i == toModify) {
-                        value = mutateStringSet(instance.info.languageContexts.get(keys.get(i)));
+            case 0:
+                // mutate typesAllowed
+                return new GetScriptLanguageResponse(
+                    new ScriptLanguagesInfo(mutateStringSet(instance.info.typesAllowed), instance.info.languageContexts)
+                );
+            case 1:
+                // Add language
+                String language = randomValueOtherThanMany(
+                    instance.info.languageContexts::containsKey,
+                    () -> randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH)
+                );
+                Map<String,Set<String>> languageContexts = new HashMap<>();
+                instance.info.languageContexts.forEach(languageContexts::put);
+                languageContexts.put(language, randomStringSet(randomIntBetween(1, MAX_VALUES)));
+                return new GetScriptLanguageResponse(new ScriptLanguagesInfo(instance.info.typesAllowed, languageContexts));
+            default:
+                // Mutate languageContexts
+                Map<String,Set<String>> lc = new HashMap<>();
+                if (instance.info.languageContexts.size() == 0) {
+                    lc.put(randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH), randomStringSet(randomIntBetween(1, MAX_VALUES)));
+                } else {
+                    int toModify = randomInt(instance.info.languageContexts.size()-1);
+                    List<String> keys = new ArrayList<>(instance.info.languageContexts.keySet());
+                    for (int i=0; i<keys.size(); i++) {
+                        String key = keys.get(i);
+                        Set<String> value = instance.info.languageContexts.get(keys.get(i));
+                        if (i == toModify) {
+                            value = mutateStringSet(instance.info.languageContexts.get(keys.get(i)));
+                        }
+                        lc.put(key, value);
                     }
-                    lc.put(key, value);
                 }
-            }
-            return new GetScriptLanguageResponse(new ScriptLanguagesInfo(instance.info.typesAllowed, lc));
+                return new GetScriptLanguageResponse(new ScriptLanguagesInfo(instance.info.typesAllowed, lc));
         }
     }
 
     private static ScriptLanguagesInfo randomInstance() {
-        Map<String, Set<String>> contexts = new HashMap<>();
-        for (String context : randomStringSet(randomIntBetween(1, MAX_VALUES))) {
+        Map<String,Set<String>> contexts = new HashMap<>();
+        for (String context: randomStringSet(randomIntBetween(1, MAX_VALUES))) {
             contexts.put(context, randomStringSet(randomIntBetween(1, MAX_VALUES)));
         }
         return new ScriptLanguagesInfo(randomStringSet(randomInt(MAX_VALUES)), contexts);

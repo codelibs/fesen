@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -42,6 +32,16 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.bucket.nested.NestedAggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 public class CompositeAggregationBuilder extends AbstractAggregationBuilder<CompositeAggregationBuilder> {
     public static final String NAME = "composite";
 
@@ -49,14 +49,15 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
     public static final ParseField SIZE_FIELD_NAME = new ParseField("size");
     public static final ParseField SOURCES_FIELD_NAME = new ParseField("sources");
 
-    public static final ConstructingObjectParser<CompositeAggregationBuilder, String> PARSER =
-            new ConstructingObjectParser<>(NAME, false, (args, name) -> {
+    public static final ConstructingObjectParser<CompositeAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
+            NAME, false, (args, name) -> {
                 @SuppressWarnings("unchecked")
                 List<CompositeValuesSourceBuilder<?>> sources = (List<CompositeValuesSourceBuilder<?>>) args[0];
                 return new CompositeAggregationBuilder(name, sources);
             });
     static {
-        PARSER.declareObjectArray(constructorArg(), (p, c) -> CompositeValuesSourceParserHelper.fromXContent(p), SOURCES_FIELD_NAME);
+        PARSER.declareObjectArray(constructorArg(),
+            (p, c) -> CompositeValuesSourceParserHelper.fromXContent(p), SOURCES_FIELD_NAME);
         PARSER.declareInt(CompositeAggregationBuilder::size, SIZE_FIELD_NAME);
         PARSER.declareObject(CompositeAggregationBuilder::aggregateAfter, (p, context) -> p.map(), AFTER_FIELD_NAME);
     }
@@ -79,8 +80,8 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         this.sources = sources;
     }
 
-    protected CompositeAggregationBuilder(CompositeAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected CompositeAggregationBuilder(CompositeAggregationBuilder clone,
+                                          AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.sources = new ArrayList<>(clone.sources);
         this.after = clone.after;
@@ -204,11 +205,11 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
 
     @Override
     protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent,
-            AggregatorFactories.Builder subfactoriesBuilder) throws IOException {
+                                        AggregatorFactories.Builder subfactoriesBuilder) throws IOException {
         AggregatorFactory invalid = checkParentIsNullOrNested(parent);
         if (invalid != null) {
-            throw new IllegalArgumentException("[composite] aggregation cannot be used with a parent aggregation of" + " type: ["
-                    + invalid.getClass().getSimpleName() + "]");
+            throw new IllegalArgumentException("[composite] aggregation cannot be used with a parent aggregation of" +
+                " type: [" + invalid.getClass().getSimpleName() + "]");
         }
         CompositeValuesSourceConfig[] configs = new CompositeValuesSourceConfig[sources.size()];
         for (int i = 0; i < configs.length; i++) {
@@ -220,7 +221,8 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         final CompositeKey afterKey;
         if (after != null) {
             if (after.size() != configs.length) {
-                throw new IllegalArgumentException("[after] has " + after.size() + " value(s) but [sources] has " + sources.size());
+                throw new IllegalArgumentException("[after] has " + after.size() +
+                    " value(s) but [sources] has " + sources.size());
             }
             Comparable[] values = new Comparable[sources.size()];
             for (int i = 0; i < sources.size(); i++) {
@@ -234,23 +236,25 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
                 } else if (obj instanceof Comparable) {
                     values[i] = (Comparable) obj;
                 } else {
-                    throw new IllegalArgumentException("Invalid value for [after." + sources.get(i).name() + "], expected comparable, got ["
-                            + (obj == null ? "null" : obj.getClass().getSimpleName()) + "]");
+                    throw new IllegalArgumentException("Invalid value for [after." + sources.get(i).name() +
+                        "], expected comparable, got [" + (obj == null ? "null" :  obj.getClass().getSimpleName()) + "]");
                 }
             }
             afterKey = new CompositeKey(values);
         } else {
             afterKey = null;
         }
-        return new CompositeAggregationFactory(name, queryShardContext, parent, subfactoriesBuilder, metadata, size, configs, afterKey);
+        return new CompositeAggregationFactory(name, queryShardContext, parent, subfactoriesBuilder, metadata, size,
+            configs, afterKey);
     }
+
 
     @Override
     protected XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         builder.field(SIZE_FIELD_NAME.getPreferredName(), size);
         builder.startArray(SOURCES_FIELD_NAME.getPreferredName());
-        for (CompositeValuesSourceBuilder<?> source : sources) {
+        for (CompositeValuesSourceBuilder<?> source: sources) {
             CompositeValuesSourceParserHelper.toXContent(source, builder, params);
         }
         builder.endArray();
@@ -268,13 +272,12 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         CompositeAggregationBuilder other = (CompositeAggregationBuilder) obj;
-        return size == other.size && Objects.equals(sources, other.sources) && Objects.equals(after, other.after);
+        return size == other.size &&
+            Objects.equals(sources, other.sources) &&
+            Objects.equals(after, other.after);
     }
 }

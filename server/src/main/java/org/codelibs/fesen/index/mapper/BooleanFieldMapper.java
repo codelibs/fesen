@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.SortedNumericDocValuesField;
@@ -45,6 +37,14 @@ import org.codelibs.fesen.index.fielddata.plain.SortedNumericIndexFieldData;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A field mapper for boolean fields.
@@ -75,12 +75,13 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
 
     public static class Builder extends ParametrizedFieldMapper.Builder {
 
-        private final Parameter<Boolean> docValues = Parameter.docValuesParam(m -> toType(m).hasDocValues, true);
+        private final Parameter<Boolean> docValues = Parameter.docValuesParam(m -> toType(m).hasDocValues,  true);
         private final Parameter<Boolean> indexed = Parameter.indexParam(m -> toType(m).indexed, true);
         private final Parameter<Boolean> stored = Parameter.storeParam(m -> toType(m).stored, false);
 
         private final Parameter<Boolean> nullValue = new Parameter<>("null_value", false, () -> null,
-                (n, c, o) -> o == null ? null : XContentMapValues.nodeBooleanValue(o), m -> toType(m).nullValue).acceptsNull();
+            (n, c, o) -> o == null ? null : XContentMapValues.nodeBooleanValue(o), m -> toType(m).nullValue)
+            .acceptsNull();
 
         private final Parameter<Float> boost = Parameter.boostParam();
         private final Parameter<Map<String, String>> meta = Parameter.metaParam();
@@ -96,8 +97,8 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
 
         @Override
         public BooleanFieldMapper build(BuilderContext context) {
-            MappedFieldType ft = new BooleanFieldType(buildFullName(context), indexed.getValue(), stored.getValue(), docValues.getValue(),
-                    nullValue.getValue(), meta.getValue());
+            MappedFieldType ft = new BooleanFieldType(buildFullName(context), indexed.getValue(), stored.getValue(),
+                docValues.getValue(), nullValue.getValue(), meta.getValue());
             ft.setBoost(boost.getValue());
             return new BooleanFieldMapper(name, ft, multiFieldsBuilder.build(this, context), copyTo.build(), this);
         }
@@ -109,8 +110,8 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
 
         private final Boolean nullValue;
 
-        public BooleanFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues, Boolean nullValue,
-                Map<String, String> meta) {
+        public BooleanFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues,
+                                Boolean nullValue, Map<String, String> meta) {
             super(name, isSearchable, isStored, hasDocValues, TextSearchInfo.SIMPLE_MATCH_ONLY, meta);
             this.nullValue = nullValue;
         }
@@ -162,12 +163,13 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
                 sValue = value.toString();
             }
             switch (sValue) {
-            case "true":
-                return Values.TRUE;
-            case "false":
-                return Values.FALSE;
-            default:
-                throw new IllegalArgumentException("Can't parse boolean value [" + sValue + "], expected [true] or [false]");
+                case "true":
+                    return Values.TRUE;
+                case "false":
+                    return Values.FALSE;
+                default:
+                    throw new IllegalArgumentException("Can't parse boolean value [" +
+                                    sValue + "], expected [true] or [false]");
             }
         }
 
@@ -176,7 +178,7 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
             if (value == null) {
                 return null;
             }
-            switch (value.toString()) {
+            switch(value.toString()) {
             case "F":
                 return false;
             case "T":
@@ -198,8 +200,8 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
                 throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName() + "] does not support custom formats");
             }
             if (timeZone != null) {
-                throw new IllegalArgumentException(
-                        "Field [" + name() + "] of type [" + typeName() + "] does not support custom time zones");
+                throw new IllegalArgumentException("Field [" + name() + "] of type [" + typeName()
+                    + "] does not support custom time zones");
             }
             return DocValueFormat.BOOLEAN;
         }
@@ -207,8 +209,10 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
         @Override
         public Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, QueryShardContext context) {
             failIfNotIndexed();
-            return new TermRangeQuery(name(), lowerTerm == null ? null : indexedValueForSearch(lowerTerm),
-                    upperTerm == null ? null : indexedValueForSearch(upperTerm), includeLower, includeUpper);
+            return new TermRangeQuery(name(),
+                lowerTerm == null ? null : indexedValueForSearch(lowerTerm),
+                upperTerm == null ? null : indexedValueForSearch(upperTerm),
+                includeLower, includeUpper);
         }
     }
 
@@ -217,8 +221,8 @@ public class BooleanFieldMapper extends ParametrizedFieldMapper {
     private final boolean hasDocValues;
     private final boolean stored;
 
-    protected BooleanFieldMapper(String simpleName, MappedFieldType mappedFieldType, MultiFields multiFields, CopyTo copyTo,
-            Builder builder) {
+    protected BooleanFieldMapper(String simpleName, MappedFieldType mappedFieldType,
+                                 MultiFields multiFields, CopyTo copyTo, Builder builder) {
         super(simpleName, mappedFieldType, multiFields, copyTo);
         this.nullValue = builder.nullValue.getValue();
         this.stored = builder.stored.getValue();

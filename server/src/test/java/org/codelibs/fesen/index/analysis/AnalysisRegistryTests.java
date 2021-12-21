@@ -99,13 +99,17 @@ public class AnalysisRegistryTests extends ESTestCase {
     }
 
     private static IndexSettings indexSettingsOfCurrentVersion(Settings.Builder settings) {
-        return IndexSettingsModule.newIndexSettings("index", settings.put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
+        return IndexSettingsModule.newIndexSettings("index", settings
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .build());
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings.builder()
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+                .build();
         emptyRegistry = emptyAnalysisRegistry(settings);
         // Module loaded to register in-built normalizers for testing
         AnalysisModule module = new AnalysisModule(TestEnvironment.newEnvironment(settings), singletonList(new MockAnalysisPlugin()));
@@ -114,8 +118,11 @@ public class AnalysisRegistryTests extends ESTestCase {
 
     public void testDefaultAnalyzers() throws IOException {
         Version version = VersionUtils.randomVersion(random());
-        Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings
+            .builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, version)
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
         IndexAnalyzers indexAnalyzers = emptyRegistry.build(idxSettings);
         assertThat(indexAnalyzers.getDefaultIndexAnalyzer().analyzer(), instanceOf(StandardAnalyzer.class));
@@ -127,7 +134,8 @@ public class AnalysisRegistryTests extends ESTestCase {
         Version version = VersionUtils.randomVersion(random());
         Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version).build();
         IndexAnalyzers indexAnalyzers = emptyRegistry.build(IndexSettingsModule.newIndexSettings("index", settings),
-                singletonMap("default", analyzerProvider("default")), emptyMap(), emptyMap(), emptyMap(), emptyMap());
+            singletonMap("default", analyzerProvider("default"))
+                , emptyMap(), emptyMap(), emptyMap(), emptyMap());
         assertThat(indexAnalyzers.getDefaultIndexAnalyzer().analyzer(), instanceOf(EnglishAnalyzer.class));
         assertThat(indexAnalyzers.getDefaultSearchAnalyzer().analyzer(), instanceOf(EnglishAnalyzer.class));
         assertThat(indexAnalyzers.getDefaultSearchQuoteAnalyzer().analyzer(), instanceOf(EnglishAnalyzer.class));
@@ -162,6 +170,7 @@ public class AnalysisRegistryTests extends ESTestCase {
         assertEquals("analyzer [default] contains filters [my_filter] that are not allowed to run in all mode.", ex.getMessage());
     }
 
+
     public void testNameClashNormalizer() throws IOException {
 
         // Test out-of-the-box normalizer works OK.
@@ -172,17 +181,19 @@ public class AnalysisRegistryTests extends ESTestCase {
         // Test that a name clash with a custom normalizer will favour the index's normalizer rather than the out-of-the-box
         // one of the same name. (However this "feature" will be removed with https://github.com/elastic/elasticsearch/issues/22263 )
         Settings settings = Settings.builder()
-                // Deliberately bad choice of normalizer name for the job it does.
-                .put("index.analysis.normalizer.lowercase.type", "custom").putList("index.analysis.normalizer.lowercase.filter", "reverse")
-                .build();
+            // Deliberately bad choice of normalizer name for the job it does.
+            .put("index.analysis.normalizer.lowercase.type", "custom")
+            .putList("index.analysis.normalizer.lowercase.filter", "reverse")
+            .build();
 
         indexAnalyzers = nonEmptyRegistry.build(IndexSettingsModule.newIndexSettings("index", settings));
         assertNotNull(indexAnalyzers.getNormalizer("lowercase"));
-        assertThat(indexAnalyzers.getNormalizer("lowercase").normalize("field", "AbC").utf8ToString(), equalTo("CbA"));
+        assertThat(indexAnalyzers.getNormalizer("lowercase").normalize("field","AbC").utf8ToString(), equalTo("CbA"));
     }
 
+
     public void testOverrideDefaultIndexAnalyzerIsUnsupported() {
-        Version version = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
+        Version version = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0_alpha1, Version.CURRENT);
         Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version).build();
         AnalyzerProvider<?> defaultIndex = new PreBuiltAnalyzerProvider("default_index", AnalyzerScope.INDEX, new EnglishAnalyzer());
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
@@ -206,8 +217,10 @@ public class AnalysisRegistryTests extends ESTestCase {
      */
     public void testConfigureCamelCaseTokenFilter() throws IOException {
         Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
-        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put("index.analysis.filter.testFilter.type", "mock").put("index.analysis.filter.test_filter.type", "mock")
+        Settings indexSettings = Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put("index.analysis.filter.testFilter.type", "mock")
+                .put("index.analysis.filter.test_filter.type", "mock")
                 .put("index.analysis.analyzer.custom_analyzer_with_camel_case.tokenizer", "standard")
                 .putList("index.analysis.analyzer.custom_analyzer_with_camel_case.filter", "lowercase", "testFilter")
                 .put("index.analysis.analyzer.custom_analyzer_with_snake_case.tokenizer", "standard")
@@ -237,8 +250,8 @@ public class AnalysisRegistryTests extends ESTestCase {
                 return singletonMap("mock", MockFactory::new);
             }
         };
-        IndexAnalyzers indexAnalyzers = new AnalysisModule(TestEnvironment.newEnvironment(settings), singletonList(plugin))
-                .getAnalysisRegistry().build(idxSettings);
+        IndexAnalyzers indexAnalyzers = new AnalysisModule(TestEnvironment.newEnvironment(settings),
+                singletonList(plugin)).getAnalysisRegistry().build(idxSettings);
 
         // This shouldn't contain English stopwords
         try (NamedAnalyzer custom_analyser = indexAnalyzers.get("custom_analyzer_with_camel_case")) {
@@ -271,7 +284,8 @@ public class AnalysisRegistryTests extends ESTestCase {
 
     public void testBuiltInAnalyzersAreCached() throws IOException {
         Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
-        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
+        Settings indexSettings = Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
         IndexAnalyzers indexAnalyzers = emptyAnalysisRegistry(settings).build(idxSettings);
         IndexAnalyzers otherIndexAnalyzers = emptyAnalysisRegistry(settings).build(idxSettings);
@@ -284,10 +298,13 @@ public class AnalysisRegistryTests extends ESTestCase {
 
     public void testNoTypeOrTokenizerErrorMessage() throws IOException {
         Version version = VersionUtils.randomVersion(random());
-        Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, version)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .putList("index.analysis.analyzer.test_analyzer.filter", new String[] { "lowercase", "stop", "shingle" })
-                .putList("index.analysis.analyzer.test_analyzer.char_filter", new String[] { "html_strip" }).build();
+        Settings settings = Settings
+            .builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, version)
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .putList("index.analysis.analyzer.test_analyzer.filter", new String[] {"lowercase", "stop", "shingle"})
+            .putList("index.analysis.analyzer.test_analyzer.char_filter", new String[] {"html_strip"})
+            .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> emptyAnalysisRegistry(settings).build(idxSettings));
@@ -301,10 +318,12 @@ public class AnalysisRegistryTests extends ESTestCase {
     }
 
     public void testEnsureCloseInvocationProperlyDelegated() throws IOException {
-        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings.builder()
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
         PreBuiltAnalyzerProviderFactory mock = mock(PreBuiltAnalyzerProviderFactory.class);
-        AnalysisRegistry registry = new AnalysisRegistry(TestEnvironment.newEnvironment(settings), emptyMap(), emptyMap(), emptyMap(),
-                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), Collections.singletonMap("key", mock));
+        AnalysisRegistry registry = new AnalysisRegistry(TestEnvironment.newEnvironment(settings), emptyMap(), emptyMap(),
+            emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), Collections.singletonMap("key", mock));
 
         registry.close();
         verify(mock).close();
@@ -381,41 +400,52 @@ public class AnalysisRegistryTests extends ESTestCase {
         };
 
         Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
-        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put("index.analysis.filter.deprecated.type", "deprecated").put("index.analysis.analyzer.custom.tokenizer", "standard")
-                .putList("index.analysis.analyzer.custom.filter", "lowercase", "deprecated").build();
+        Settings indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put("index.analysis.filter.deprecated.type", "deprecated")
+            .put("index.analysis.analyzer.custom.tokenizer", "standard")
+            .putList("index.analysis.analyzer.custom.filter", "lowercase", "deprecated")
+            .build();
 
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
-        new AnalysisModule(TestEnvironment.newEnvironment(settings), singletonList(plugin)).getAnalysisRegistry().build(idxSettings);
+        new AnalysisModule(TestEnvironment.newEnvironment(settings),
+            singletonList(plugin)).getAnalysisRegistry().build(idxSettings);
 
         // We should only get a warning from the token filter that is referenced in settings
         assertWarnings("Using deprecated token filter [deprecated]");
 
-        indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, VersionUtils.getPreviousVersion())
-                .put("index.analysis.filter.deprecated.type", "deprecated_normalizer")
-                .putList("index.analysis.normalizer.custom.filter", "lowercase", "deprecated_normalizer")
-                .put("index.analysis.filter.deprecated.type", "deprecated").put("index.analysis.filter.exception.type", "exception")
-                .put("index.analysis.analyzer.custom.tokenizer", "standard")
-                // exception will not throw because we're not on Version.CURRENT
-                .putList("index.analysis.analyzer.custom.filter", "lowercase", "deprecated", "exception").build();
+        indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, VersionUtils.getPreviousVersion())
+            .put("index.analysis.filter.deprecated.type", "deprecated_normalizer")
+            .putList("index.analysis.normalizer.custom.filter", "lowercase", "deprecated_normalizer")
+            .put("index.analysis.filter.deprecated.type", "deprecated")
+            .put("index.analysis.filter.exception.type", "exception")
+            .put("index.analysis.analyzer.custom.tokenizer", "standard")
+            // exception will not throw because we're not on Version.CURRENT
+            .putList("index.analysis.analyzer.custom.filter", "lowercase", "deprecated", "exception")
+            .build();
         idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
-        new AnalysisModule(TestEnvironment.newEnvironment(settings), singletonList(plugin)).getAnalysisRegistry().build(idxSettings);
+        new AnalysisModule(TestEnvironment.newEnvironment(settings),
+            singletonList(plugin)).getAnalysisRegistry().build(idxSettings);
 
         // We should only get a warning from the normalizer, because we're on a version where 'deprecated'
         // works fine
         assertWarnings("Using deprecated token filter [deprecated_normalizer]");
 
-        indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put("index.analysis.filter.exception.type", "exception").put("index.analysis.analyzer.custom.tokenizer", "standard")
-                // exception will not throw because we're not on Version.LATEST
-                .putList("index.analysis.analyzer.custom.filter", "lowercase", "exception").build();
+        indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put("index.analysis.filter.exception.type", "exception")
+            .put("index.analysis.analyzer.custom.tokenizer", "standard")
+            // exception will not throw because we're not on Version.LATEST
+            .putList("index.analysis.analyzer.custom.filter", "lowercase", "exception")
+            .build();
         IndexSettings exceptionSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> {
-            new AnalysisModule(TestEnvironment.newEnvironment(settings), singletonList(plugin)).getAnalysisRegistry()
-                    .build(exceptionSettings);
+            new AnalysisModule(TestEnvironment.newEnvironment(settings),
+                singletonList(plugin)).getAnalysisRegistry().build(exceptionSettings);
         });
         assertEquals("Cannot use token filter [exception]", e.getMessage());
 

@@ -19,22 +19,25 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.singletonMap;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.RestReindexAction;
 import org.codelibs.fesen.rest.RestRequest.Method;
 import org.codelibs.fesen.test.rest.FakeRestRequest;
 import org.codelibs.fesen.test.rest.RestActionTestCase;
 import org.junit.Before;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static java.util.Collections.singletonMap;
 
 public class RestReindexActionTests extends RestActionTestCase {
 
@@ -49,15 +52,12 @@ public class RestReindexActionTests extends RestActionTestCase {
     public void testPipelineQueryParameterIsError() throws IOException {
         FakeRestRequest.Builder request = new FakeRestRequest.Builder(xContentRegistry());
         try (XContentBuilder body = JsonXContent.contentBuilder().prettyPrint()) {
-            body.startObject();
-            {
-                body.startObject("source");
-                {
+            body.startObject(); {
+                body.startObject("source"); {
                     body.field("index", "source");
                 }
                 body.endObject();
-                body.startObject("dest");
-                {
+                body.startObject("dest"); {
                     body.field("index", "dest");
                 }
                 body.endObject();
@@ -66,8 +66,8 @@ public class RestReindexActionTests extends RestActionTestCase {
             request.withContent(BytesReference.bytes(body), body.contentType());
         }
         request.withParams(singletonMap("pipeline", "doesn't matter"));
-        Exception e = expectThrows(IllegalArgumentException.class,
-                () -> action.buildRequest(request.build(), new NamedWriteableRegistry(Collections.emptyList())));
+        Exception e = expectThrows(IllegalArgumentException.class, () ->
+            action.buildRequest(request.build(), new NamedWriteableRegistry(Collections.emptyList())));
 
         assertEquals("_reindex doesn't support [pipeline] as a query parameter. Specify it in the [dest] object instead.", e.getMessage());
     }
@@ -92,8 +92,9 @@ public class RestReindexActionTests extends RestActionTestCase {
      * test deprecation is logged if one or more types are used in source search request inside reindex
      */
     public void testTypeInSource() throws IOException {
-        FakeRestRequest.Builder requestBuilder =
-                new FakeRestRequest.Builder(xContentRegistry()).withMethod(Method.POST).withPath("/_reindex");
+        FakeRestRequest.Builder requestBuilder = new FakeRestRequest.Builder(xContentRegistry())
+                .withMethod(Method.POST)
+                .withPath("/_reindex");
         XContentBuilder b = JsonXContent.contentBuilder().startObject();
         {
             b.startObject("source");
@@ -116,8 +117,9 @@ public class RestReindexActionTests extends RestActionTestCase {
      * test deprecation is logged if a type is used in the destination index request inside reindex
      */
     public void testTypeInDestination() throws IOException {
-        FakeRestRequest.Builder requestBuilder =
-                new FakeRestRequest.Builder(xContentRegistry()).withMethod(Method.POST).withPath("/_reindex");
+        FakeRestRequest.Builder requestBuilder = new FakeRestRequest.Builder(xContentRegistry())
+                .withMethod(Method.POST)
+                .withPath("/_reindex");
         XContentBuilder b = JsonXContent.contentBuilder().startObject();
         {
             b.startObject("dest");

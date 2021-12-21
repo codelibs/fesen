@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 /**
  * Represents the decision taken for the allocation of a single shard.  If
@@ -42,12 +42,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
  */
 public final class ShardAllocationDecision implements ToXContentFragment, Writeable {
     public static final ShardAllocationDecision NOT_TAKEN =
-            new ShardAllocationDecision(AllocateUnassignedDecision.NOT_TAKEN, MoveDecision.NOT_TAKEN);
+        new ShardAllocationDecision(AllocateUnassignedDecision.NOT_TAKEN, MoveDecision.NOT_TAKEN);
 
     private final AllocateUnassignedDecision allocateDecision;
     private final MoveDecision moveDecision;
 
-    public ShardAllocationDecision(AllocateUnassignedDecision allocateDecision, MoveDecision moveDecision) {
+    public ShardAllocationDecision(AllocateUnassignedDecision allocateDecision,
+                                   MoveDecision moveDecision) {
         this.allocateDecision = allocateDecision;
         this.moveDecision = moveDecision;
     }

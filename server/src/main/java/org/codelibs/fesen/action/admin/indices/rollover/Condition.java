@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.action.admin.indices.rollover;
 
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+
+import java.util.Objects;
 
 /**
  * Base class for rollover request conditions
@@ -57,7 +57,8 @@ public abstract class Condition<T> implements NamedWriteable, ToXContentFragment
             return false;
         }
         Condition<?> condition = (Condition<?>) o;
-        return Objects.equals(value, condition.value) && Objects.equals(name, condition.name);
+        return Objects.equals(value, condition.value) &&
+                Objects.equals(name, condition.name);
     }
 
     @Override

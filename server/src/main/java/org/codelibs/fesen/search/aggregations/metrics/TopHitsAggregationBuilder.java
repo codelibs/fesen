@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -44,8 +34,8 @@ import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationInitializationException;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder.ScriptField;
 import org.codelibs.fesen.search.fetch.StoredFieldsContext;
@@ -58,6 +48,16 @@ import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.sort.SortBuilder;
 import org.codelibs.fesen.search.sort.SortBuilders;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHitsAggregationBuilder> {
     public static final String NAME = "top_hits";
@@ -80,7 +80,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         super(name);
     }
 
-    protected TopHitsAggregationBuilder(TopHitsAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
+    protected TopHitsAggregationBuilder(TopHitsAggregationBuilder clone,
+                                        Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.from = clone.from;
         this.size = clone.size;
@@ -89,15 +90,16 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         this.seqNoAndPrimaryTerm = clone.seqNoAndPrimaryTerm;
         this.trackScores = clone.trackScores;
         this.sorts = clone.sorts == null ? null : new ArrayList<>(clone.sorts);
-        this.highlightBuilder = clone.highlightBuilder == null ? null
-                : new HighlightBuilder(clone.highlightBuilder, clone.highlightBuilder.highlightQuery(), clone.highlightBuilder.fields());
-        this.storedFieldsContext = clone.storedFieldsContext == null ? null : new StoredFieldsContext(clone.storedFieldsContext);
+        this.highlightBuilder = clone.highlightBuilder == null ? null :
+            new HighlightBuilder(clone.highlightBuilder, clone.highlightBuilder.highlightQuery(), clone.highlightBuilder.fields());
+        this.storedFieldsContext = clone.storedFieldsContext == null ? null :
+            new StoredFieldsContext(clone.storedFieldsContext);
         this.docValueFields = clone.docValueFields == null ? null : new ArrayList<>(clone.docValueFields);
         this.fetchFields = clone.fetchFields == null ? null : new ArrayList<>(clone.fetchFields);
         this.scriptFields = clone.scriptFields == null ? null : new HashSet<>(clone.scriptFields);
-        this.fetchSourceContext = clone.fetchSourceContext == null ? null
-                : new FetchSourceContext(clone.fetchSourceContext.fetchSource(), clone.fetchSourceContext.includes(),
-                        clone.fetchSourceContext.excludes());
+        this.fetchSourceContext = clone.fetchSourceContext == null ? null :
+            new FetchSourceContext(clone.fetchSourceContext.fetchSource(), clone.fetchSourceContext.includes(),
+                clone.fetchSourceContext.excludes());
     }
 
     @Override
@@ -139,7 +141,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         }
         trackScores = in.readBoolean();
         version = in.readBoolean();
-        seqNoAndPrimaryTerm = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_7_0)) {
+            seqNoAndPrimaryTerm = in.readBoolean();
+        }
 
         if (in.getVersion().onOrAfter(Version.V_7_10_0)) {
             if (in.readBoolean()) {
@@ -173,7 +177,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         }
         out.writeBoolean(trackScores);
         out.writeBoolean(version);
-        out.writeBoolean(seqNoAndPrimaryTerm);
+        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
+            out.writeBoolean(seqNoAndPrimaryTerm);
+        }
 
         if (out.getVersion().onOrAfter(Version.V_7_10_0)) {
             out.writeBoolean(fetchFields != null);
@@ -268,7 +274,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
             throw new IllegalArgumentException("[sort] must not be null: [" + name + "]");
         }
         if (sorts == null) {
-            sorts = new ArrayList<>();
+                sorts = new ArrayList<>();
         }
         sorts.add(sort);
         return this;
@@ -320,7 +326,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      * every hit
      */
     public TopHitsAggregationBuilder fetchSource(boolean fetch) {
-        FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
+        FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext
+            : FetchSourceContext.FETCH_SOURCE;
         this.fetchSourceContext = new FetchSourceContext(fetch, fetchSourceContext.includes(), fetchSourceContext.excludes());
         return this;
     }
@@ -356,7 +363,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      *            pattern to filter the returned _source
      */
     public TopHitsAggregationBuilder fetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
-        FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
+        FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext
+            : FetchSourceContext.FETCH_SOURCE;
         this.fetchSourceContext = new FetchSourceContext(fetchSourceContext.fetchSource(), includes, excludes);
         return this;
     }
@@ -597,8 +605,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     @Override
     public TopHitsAggregationBuilder subAggregations(Builder subFactories) {
-        throw new AggregationInitializationException(
-                "Aggregator [" + name + "] of type [" + getType() + "] cannot accept sub-aggregations");
+        throw new AggregationInitializationException("Aggregator [" + name + "] of type ["
+                + getType() + "] cannot accept sub-aggregations");
     }
 
     @Override
@@ -612,10 +620,12 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         long innerResultWindow = from() + size();
         int maxInnerResultWindow = queryShardContext.getMapperService().getIndexSettings().getMaxInnerResultWindow();
         if (innerResultWindow > maxInnerResultWindow) {
-            throw new IllegalArgumentException("Top hits result window is too large, the top hits aggregator [" + name
-                    + "]'s from + size must be less " + "than or equal to: [" + maxInnerResultWindow + "] but was [" + innerResultWindow
-                    + "]. This limit can be set by changing the [" + IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey()
-                    + "] index level setting.");
+            throw new IllegalArgumentException(
+                "Top hits result window is too large, the top hits aggregator [" + name + "]'s from + size must be less " +
+                    "than or equal to: [" + maxInnerResultWindow + "] but was [" + innerResultWindow +
+                    "]. This limit can be set by changing the [" + IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey() +
+                    "] index level setting."
+            );
         }
 
         List<ScriptFieldsContext.ScriptField> scriptFields = new ArrayList<>();
@@ -623,8 +633,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
             for (ScriptField field : this.scriptFields) {
                 FieldScript.Factory factory = queryShardContext.compile(field.script(), FieldScript.CONTEXT);
                 FieldScript.LeafFactory searchScript = factory.newFactory(field.script().getParams(), queryShardContext.lookup());
-                scriptFields.add(new org.codelibs.fesen.search.fetch.subphase.ScriptFieldsContext.ScriptField(field.fieldName(),
-                        searchScript, field.ignoreFailure()));
+                scriptFields.add(new org.codelibs.fesen.search.fetch.subphase.ScriptFieldsContext.ScriptField(
+                    field.fieldName(), searchScript, field.ignoreFailure()));
             }
         }
 
@@ -635,8 +645,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
             optionalSort = SortBuilder.buildSort(sorts, queryShardContext);
         }
         return new TopHitsAggregatorFactory(name, from, size, explain, version, seqNoAndPrimaryTerm, trackScores, optionalSort,
-                highlightBuilder, storedFieldsContext, docValueFields, fetchFields, scriptFields, fetchSourceContext, queryShardContext,
-                parent, subfactoriesBuilder, metadata);
+            highlightBuilder, storedFieldsContext, docValueFields, fetchFields, scriptFields, fetchSourceContext, queryShardContext, parent,
+            subfactoriesBuilder, metadata);
     }
 
     @Override
@@ -680,7 +690,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         if (sorts != null) {
             builder.startArray(SearchSourceBuilder.SORT_FIELD.getPreferredName());
             for (SortBuilder<?> sort : sorts) {
-                sort.toXContent(builder, params);
+                    sort.toXContent(builder, params);
             }
             builder.endArray();
         }
@@ -718,7 +728,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
                     factory.fetchSource(FetchSourceContext.fromXContent(parser));
                 } else if (SearchSourceBuilder.STORED_FIELDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     factory.storedFieldsContext =
-                            StoredFieldsContext.fromXContent(SearchSourceBuilder.STORED_FIELDS_FIELD.getPreferredName(), parser);
+                        StoredFieldsContext.fromXContent(SearchSourceBuilder.STORED_FIELDS_FIELD.getPreferredName(), parser);
                 } else if (SearchSourceBuilder.SORT_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     factory.sort(parser.text());
                 } else {
@@ -783,7 +793,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
                 if (SearchSourceBuilder.STORED_FIELDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     factory.storedFieldsContext =
-                            StoredFieldsContext.fromXContent(SearchSourceBuilder.STORED_FIELDS_FIELD.getPreferredName(), parser);
+                        StoredFieldsContext.fromXContent(SearchSourceBuilder.STORED_FIELDS_FIELD.getPreferredName(), parser);
                 } else if (SearchSourceBuilder.DOCVALUE_FIELDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                         FieldAndFormat ff = FieldAndFormat.fromXContent(parser);
@@ -813,24 +823,29 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         TopHitsAggregationBuilder that = (TopHitsAggregationBuilder) o;
-        return from == that.from && size == that.size && explain == that.explain && version == that.version
-                && seqNoAndPrimaryTerm == that.seqNoAndPrimaryTerm && trackScores == that.trackScores && Objects.equals(sorts, that.sorts)
-                && Objects.equals(highlightBuilder, that.highlightBuilder) && Objects.equals(storedFieldsContext, that.storedFieldsContext)
-                && Objects.equals(docValueFields, that.docValueFields) && Objects.equals(fetchFields, that.fetchFields)
-                && Objects.equals(scriptFields, that.scriptFields) && Objects.equals(fetchSourceContext, that.fetchSourceContext);
+        return from == that.from &&
+            size == that.size &&
+            explain == that.explain &&
+            version == that.version &&
+            seqNoAndPrimaryTerm == that.seqNoAndPrimaryTerm &&
+            trackScores == that.trackScores &&
+            Objects.equals(sorts, that.sorts) &&
+            Objects.equals(highlightBuilder, that.highlightBuilder) &&
+            Objects.equals(storedFieldsContext, that.storedFieldsContext) &&
+            Objects.equals(docValueFields, that.docValueFields) &&
+            Objects.equals(fetchFields, that.fetchFields) &&
+            Objects.equals(scriptFields, that.scriptFields) &&
+            Objects.equals(fetchSourceContext, that.fetchSourceContext);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), from, size, explain, version, seqNoAndPrimaryTerm, trackScores, sorts, highlightBuilder,
-                storedFieldsContext, docValueFields, fetchFields, scriptFields, fetchSourceContext);
+            storedFieldsContext, docValueFields, fetchFields, scriptFields, fetchSourceContext);
     }
 
     @Override

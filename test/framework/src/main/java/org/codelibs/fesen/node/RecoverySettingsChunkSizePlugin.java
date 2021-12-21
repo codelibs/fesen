@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.node;
 
-import static java.util.Collections.singletonList;
-
 import java.util.List;
 
 import org.codelibs.fesen.common.settings.Setting;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.plugins.Plugin;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Marker plugin that will trigger {@link MockNode} making {@link #CHUNK_SIZE_SETTING} dynamic.

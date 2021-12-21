@@ -17,10 +17,8 @@
  * under the License.
  */
 
-package org.codelibs.fesen.search;
 
-import java.io.IOException;
-import java.util.Locale;
+package org.codelibs.fesen.search;
 
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.DocValues;
@@ -43,6 +41,9 @@ import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 
+import java.io.IOException;
+import java.util.Locale;
+
 /**
  * Defines what values to pick in the case a document contains multiple values for a particular field.
  */
@@ -62,7 +63,7 @@ public enum MultiValueMode implements Writeable {
         }
 
         @Override
-        protected long pick(SortedNumericDocValues values, long missingValue, DocIdSetIterator docItr, int startDoc, int endDoc,
+        protected long pick(SortedNumericDocValues values, long missingValue, DocIdSetIterator docItr, int startDoc, int endDoc, 
                 int maxChildren) throws IOException {
             int totalCount = 0;
             long totalValue = 0;
@@ -783,8 +784,8 @@ public enum MultiValueMode implements Writeable {
      */
     public SortedDocValues select(final SortedSetDocValues values) {
         if (values.getValueCount() >= Integer.MAX_VALUE) {
-            throw new UnsupportedOperationException(
-                    "fields containing more than " + (Integer.MAX_VALUE - 1) + " unique terms are unsupported");
+            throw new UnsupportedOperationException("fields containing more than " + (Integer.MAX_VALUE - 1) +
+                    " unique terms are unsupported");
         }
 
         final SortedDocValues singleton = DocValues.unwrapSingleton(values);

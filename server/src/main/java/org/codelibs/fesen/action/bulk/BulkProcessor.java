@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import java.io.Closeable;
-import java.util.Objects;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.DocWriteRequest;
 import org.codelibs.fesen.action.delete.DeleteRequest;
@@ -43,6 +34,15 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.io.Closeable;
+import java.util.Objects;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * A bulk processor is a thread safe bulk processing class, allowing to easily set when to "flush" a new bulk request
@@ -97,8 +97,8 @@ public class BulkProcessor implements Closeable {
         private String globalRouting;
         private String globalPipeline;
 
-        private Builder(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, Listener listener, Scheduler flushScheduler,
-                Scheduler retryScheduler, Runnable onClose) {
+        private Builder(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, Listener listener,
+                        Scheduler flushScheduler, Scheduler retryScheduler, Runnable onClose) {
             this.consumer = consumer;
             this.listener = listener;
             this.flushScheduler = flushScheduler;
@@ -185,12 +185,14 @@ public class BulkProcessor implements Closeable {
          * Builds a new bulk processor.
          */
         public BulkProcessor build() {
-            return new BulkProcessor(consumer, backoffPolicy, listener, concurrentRequests, bulkActions, bulkSize, flushInterval,
-                    flushScheduler, retryScheduler, onClose, createBulkRequestWithGlobalDefaults());
+            return new BulkProcessor(consumer, backoffPolicy, listener, concurrentRequests, bulkActions,
+                bulkSize, flushInterval, flushScheduler, retryScheduler, onClose, createBulkRequestWithGlobalDefaults());
         }
 
         private Supplier<BulkRequest> createBulkRequestWithGlobalDefaults() {
-            return () -> new BulkRequest(globalIndex, globalType).pipeline(globalPipeline).routing(globalRouting);
+            return () -> new BulkRequest(globalIndex, globalType)
+                .pipeline(globalPipeline)
+                .routing(globalRouting);
         }
     }
 
@@ -207,6 +209,7 @@ public class BulkProcessor implements Closeable {
         Objects.requireNonNull(listener, "listener");
         return new Builder(client::bulk, listener, flushScheduler, retryScheduler, onClose);
     }
+
 
     /**
      * @param client The client that executes the bulk operations
@@ -234,16 +237,19 @@ public class BulkProcessor implements Closeable {
         Objects.requireNonNull(listener, "listener");
         final ScheduledThreadPoolExecutor flushScheduledThreadPoolExecutor = Scheduler.initScheduler(Settings.EMPTY);
         final ScheduledThreadPoolExecutor retryScheduledThreadPoolExecutor = Scheduler.initScheduler(Settings.EMPTY);
-        return new Builder(consumer, listener, buildScheduler(flushScheduledThreadPoolExecutor),
-                buildScheduler(retryScheduledThreadPoolExecutor), () -> {
-                    Scheduler.terminate(flushScheduledThreadPoolExecutor, 10, TimeUnit.SECONDS);
-                    Scheduler.terminate(retryScheduledThreadPoolExecutor, 10, TimeUnit.SECONDS);
-                });
+        return new Builder(consumer, listener,
+            buildScheduler(flushScheduledThreadPoolExecutor),
+            buildScheduler(retryScheduledThreadPoolExecutor),
+            () ->
+            {
+                Scheduler.terminate(flushScheduledThreadPoolExecutor, 10, TimeUnit.SECONDS);
+                Scheduler.terminate(retryScheduledThreadPoolExecutor, 10, TimeUnit.SECONDS);
+            });
     }
 
     private static Scheduler buildScheduler(ScheduledThreadPoolExecutor scheduledThreadPoolExecutor) {
-        return (command, delay, executor) -> Scheduler
-                .wrapAsScheduledCancellable(scheduledThreadPoolExecutor.schedule(command, delay.millis(), TimeUnit.MILLISECONDS));
+        return (command, delay, executor) ->
+            Scheduler.wrapAsScheduledCancellable(scheduledThreadPoolExecutor.schedule(command, delay.millis(), TimeUnit.MILLISECONDS));
     }
 
     private final int bulkActions;
@@ -262,8 +268,8 @@ public class BulkProcessor implements Closeable {
     private final ReentrantLock lock = new ReentrantLock();
 
     BulkProcessor(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, BackoffPolicy backoffPolicy, Listener listener,
-            int concurrentRequests, int bulkActions, ByteSizeValue bulkSize, @Nullable TimeValue flushInterval, Scheduler flushScheduler,
-            Scheduler retryScheduler, Runnable onClose, Supplier<BulkRequest> bulkRequestSupplier) {
+                  int concurrentRequests, int bulkActions, ByteSizeValue bulkSize, @Nullable TimeValue flushInterval,
+                  Scheduler flushScheduler, Scheduler retryScheduler, Runnable onClose, Supplier<BulkRequest> bulkRequestSupplier) {
         this.bulkActions = bulkActions;
         this.bulkSize = bulkSize.getBytes();
         this.bulkRequest = bulkRequestSupplier.get();
@@ -279,10 +285,10 @@ public class BulkProcessor implements Closeable {
      */
     @Deprecated
     BulkProcessor(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, BackoffPolicy backoffPolicy, Listener listener,
-            int concurrentRequests, int bulkActions, ByteSizeValue bulkSize, @Nullable TimeValue flushInterval, Scheduler scheduler,
-            Runnable onClose, Supplier<BulkRequest> bulkRequestSupplier) {
-        this(consumer, backoffPolicy, listener, concurrentRequests, bulkActions, bulkSize, flushInterval, scheduler, scheduler, onClose,
-                bulkRequestSupplier);
+                  int concurrentRequests, int bulkActions, ByteSizeValue bulkSize, @Nullable TimeValue flushInterval,
+                  Scheduler scheduler, Runnable onClose, Supplier<BulkRequest> bulkRequestSupplier) {
+        this(consumer, backoffPolicy, listener, concurrentRequests, bulkActions, bulkSize, flushInterval,
+            scheduler, scheduler, onClose, bulkRequestSupplier );
     }
 
     /**
@@ -387,8 +393,8 @@ public class BulkProcessor implements Closeable {
     /**
      * Adds the data from the bytes to be processed by the bulk processor
      */
-    public BulkProcessor add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType, XContentType xContentType)
-            throws Exception {
+    public BulkProcessor add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType,
+                             XContentType xContentType) throws Exception {
         return add(data, defaultIndex, defaultType, null, xContentType);
     }
 
@@ -396,12 +402,14 @@ public class BulkProcessor implements Closeable {
      * Adds the data from the bytes to be processed by the bulk processor
      */
     public BulkProcessor add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType,
-            @Nullable String defaultPipeline, XContentType xContentType) throws Exception {
+                                          @Nullable String defaultPipeline,
+                                          XContentType xContentType) throws Exception {
         Tuple<BulkRequest, Long> bulkRequestToExecute = null;
         lock.lock();
         try {
             ensureOpen();
-            bulkRequest.add(data, defaultIndex, defaultType, null, null, defaultPipeline, null, true, xContentType);
+            bulkRequest.add(data, defaultIndex, defaultType, null, null, defaultPipeline, null,
+                true, xContentType);
             bulkRequestToExecute = newBulkRequestIfNeeded();
         } finally {
             lock.unlock();
@@ -431,18 +439,18 @@ public class BulkProcessor implements Closeable {
     }
 
     // needs to be executed under a lock
-    private Tuple<BulkRequest, Long> newBulkRequestIfNeeded() {
+    private Tuple<BulkRequest,Long> newBulkRequestIfNeeded(){
         ensureOpen();
         if (!isOverTheLimit()) {
             return null;
         }
         final BulkRequest bulkRequest = this.bulkRequest;
         this.bulkRequest = bulkRequestSupplier.get();
-        return new Tuple<>(bulkRequest, executionIdGen.incrementAndGet());
+        return new Tuple<>(bulkRequest,executionIdGen.incrementAndGet()) ;
     }
 
     // may be executed without a lock
-    private void execute(BulkRequest bulkRequest, long executionId) {
+    private void execute(BulkRequest bulkRequest, long executionId ){
         this.bulkRequestHandler.execute(bulkRequest, executionId);
     }
 

@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.common.geo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.geo.builders.CircleBuilder;
 import org.codelibs.fesen.common.geo.builders.CoordinatesBuilder;
@@ -42,20 +36,28 @@ import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry.Entry;
 import org.codelibs.fesen.common.unit.DistanceUnit;
 import org.locationtech.jts.geom.Coordinate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Enumeration that lists all {@link GeoShapeType}s that can be parsed and indexed
  */
 public enum GeoShapeType {
     POINT("point") {
         @Override
-        public PointBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation, boolean coerce) {
+        public PointBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             return new PointBuilder().coordinate(validate(coordinates, coerce).coordinate);
         }
 
         @Override
         CoordinateNode validate(CoordinateNode coordinates, boolean coerce) {
             if (coordinates.isEmpty()) {
-                throw new FesenParseException("invalid number of points (0) provided when expecting a single coordinate ([lat, lng])");
+                throw new FesenParseException(
+                    "invalid number of points (0) provided when expecting a single coordinate ([lat, lng])");
             } else if (coordinates.children != null) {
                 throw new FesenParseException("multipoint data provided when single point data expected.");
             }
@@ -64,8 +66,8 @@ public enum GeoShapeType {
     },
     MULTIPOINT("multipoint") {
         @Override
-        public MultiPointBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public MultiPointBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder();
             for (CoordinateNode node : coordinates.children) {
@@ -78,11 +80,11 @@ public enum GeoShapeType {
         CoordinateNode validate(CoordinateNode coordinates, boolean coerce) {
             if (coordinates.children == null || coordinates.children.isEmpty()) {
                 if (coordinates.coordinate != null) {
-                    throw new FesenParseException("single coordinate found when expecting an array of "
-                            + "coordinates. change type to point or change data to an array of >0 coordinates");
+                    throw new FesenParseException("single coordinate found when expecting an array of " +
+                        "coordinates. change type to point or change data to an array of >0 coordinates");
                 }
-                throw new FesenParseException(
-                        "no data provided for multipoint object when expecting " + ">0 points (e.g., [[lat, lng]] or [[lat, lng], ...])");
+                throw new FesenParseException("no data provided for multipoint object when expecting " +
+                    ">0 points (e.g., [[lat, lng]] or [[lat, lng], ...])");
             } else {
                 for (CoordinateNode point : coordinates.children) {
                     POINT.validate(point, coerce);
@@ -94,8 +96,8 @@ public enum GeoShapeType {
     },
     LINESTRING("linestring") {
         @Override
-        public LineStringBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public LineStringBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             CoordinatesBuilder line = new CoordinatesBuilder();
             for (CoordinateNode node : coordinates.children) {
@@ -108,15 +110,15 @@ public enum GeoShapeType {
         CoordinateNode validate(CoordinateNode coordinates, boolean coerce) {
             if (coordinates.children.size() < 2) {
                 throw new FesenParseException("invalid number of points in LineString (found [{}] - must be >= 2)",
-                        coordinates.children.size());
+                    coordinates.children.size());
             }
             return coordinates;
         }
     },
     MULTILINESTRING("multilinestring") {
         @Override
-        public MultiLineStringBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public MultiLineStringBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             MultiLineStringBuilder multiline = new MultiLineStringBuilder();
             for (CoordinateNode node : coordinates.children) {
@@ -129,19 +131,19 @@ public enum GeoShapeType {
         CoordinateNode validate(CoordinateNode coordinates, boolean coerce) {
             if (coordinates.children.size() < 1) {
                 throw new FesenParseException("invalid number of lines in MultiLineString (found [{}] - must be >= 1)",
-                        coordinates.children.size());
+                    coordinates.children.size());
             }
             return coordinates;
         }
     },
     POLYGON("polygon") {
         @Override
-        public PolygonBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public PolygonBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             // build shell
-            LineStringBuilder shell =
-                    LineStringBuilder.class.cast(LINESTRING.getBuilder(coordinates.children.get(0), radius, orientation, coerce));
+            LineStringBuilder shell = LineStringBuilder.class.cast(LINESTRING.getBuilder(coordinates.children.get(0),
+                radius, orientation, coerce));
             // build polygon with shell and holes
             PolygonBuilder polygon = new PolygonBuilder(shell, orientation);
             for (int i = 1; i < coordinates.children.size(); ++i) {
@@ -155,18 +157,19 @@ public enum GeoShapeType {
         void validateLinearRing(CoordinateNode coordinates, boolean coerce) {
             if (coordinates.children == null || coordinates.children.isEmpty()) {
                 String error = "Invalid LinearRing found.";
-                error += (coordinates.coordinate == null) ? " No coordinate array provided"
-                        : " Found a single coordinate when expecting a coordinate array";
+                error += (coordinates.coordinate == null) ?
+                    " No coordinate array provided" : " Found a single coordinate when expecting a coordinate array";
                 throw new FesenParseException(error);
             }
 
             int numValidPts = coerce ? 3 : 4;
             if (coordinates.children.size() < numValidPts) {
                 throw new FesenParseException("invalid number of points in LinearRing (found [{}] - must be >= [{}])",
-                        coordinates.children.size(), numValidPts);
+                    coordinates.children.size(), numValidPts);
             }
             // close linear ring iff coerce is set and ring is open, otherwise throw parse exception
-            if (!coordinates.children.get(0).coordinate.equals(coordinates.children.get(coordinates.children.size() - 1).coordinate)) {
+            if (!coordinates.children.get(0).coordinate.equals(
+                coordinates.children.get(coordinates.children.size() - 1).coordinate)) {
                 if (coerce) {
                     coordinates.children.add(coordinates.children.get(0));
                 } else {
@@ -184,7 +187,8 @@ public enum GeoShapeType {
              * represented as a GeoJSON geometry type, it is referred to in the Polygon geometry type definition.
              */
             if (coordinates.children == null || coordinates.children.isEmpty()) {
-                throw new FesenParseException("invalid LinearRing provided for type polygon. Linear ring must be an array of coordinates");
+                throw new FesenParseException(
+                    "invalid LinearRing provided for type polygon. Linear ring must be an array of coordinates");
             }
             for (CoordinateNode ring : coordinates.children) {
                 validateLinearRing(ring, coerce);
@@ -195,8 +199,8 @@ public enum GeoShapeType {
     },
     MULTIPOLYGON("multipolygon") {
         @Override
-        public MultiPolygonBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public MultiPolygonBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             MultiPolygonBuilder polygons = new MultiPolygonBuilder(orientation);
             for (CoordinateNode node : coordinates.children) {
@@ -213,8 +217,8 @@ public enum GeoShapeType {
     },
     ENVELOPE("envelope") {
         @Override
-        public EnvelopeBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public EnvelopeBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             validate(coordinates, coerce);
             // verify coordinate bounds, correct if necessary
             Coordinate uL = coordinates.children.get(0).coordinate;
@@ -227,8 +231,8 @@ public enum GeoShapeType {
             // validate the coordinate array for envelope type
             if (coordinates.children.size() != 2) {
                 throw new FesenParseException(
-                        "invalid number of points [{}] provided for geo_shape [{}] when expecting an array of 2 coordinates",
-                        coordinates.children.size(), GeoShapeType.ENVELOPE.shapename);
+                    "invalid number of points [{}] provided for geo_shape [{}] when expecting an array of 2 coordinates",
+                    coordinates.children.size(), GeoShapeType.ENVELOPE.shapename);
             }
             return coordinates;
         }
@@ -240,7 +244,8 @@ public enum GeoShapeType {
     },
     CIRCLE("circle") {
         @Override
-        public CircleBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation, boolean coerce) {
+        public CircleBuilder getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             return new CircleBuilder().center(coordinates.coordinate).radius(radius);
 
         }
@@ -253,8 +258,8 @@ public enum GeoShapeType {
     },
     GEOMETRYCOLLECTION("geometrycollection") {
         @Override
-        public ShapeBuilder<?, ?, ?> getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius, Orientation orientation,
-                boolean coerce) {
+        public ShapeBuilder<?, ?, ?> getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
+                                       Orientation orientation, boolean coerce) {
             // noop, handled in parser
             return null;
         }
@@ -290,12 +295,11 @@ public enum GeoShapeType {
         if (shapeTypeMap.containsKey(typename)) {
             return shapeTypeMap.get(typename);
         }
-        throw new IllegalArgumentException("unknown geo_shape [" + geoshapename + "]");
+        throw new IllegalArgumentException("unknown geo_shape ["+geoshapename+"]");
     }
 
     public abstract ShapeBuilder<?, ?, ?> getBuilder(CoordinateNode coordinates, DistanceUnit.Distance radius,
-            ShapeBuilder.Orientation orientation, boolean coerce);
-
+                                            ShapeBuilder.Orientation orientation, boolean coerce);
     abstract CoordinateNode validate(CoordinateNode coordinates, boolean coerce);
 
     /** wkt shape name */

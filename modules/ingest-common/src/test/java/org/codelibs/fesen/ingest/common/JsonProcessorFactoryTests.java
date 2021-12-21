@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.common.JsonProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class JsonProcessorFactoryTests extends ESTestCase {
 
@@ -72,7 +73,8 @@ public class JsonProcessorFactoryTests extends ESTestCase {
     public void testCreateWithMissingField() throws Exception {
         Map<String, Object> config = new HashMap<>();
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenParseException.class, () -> FACTORY.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenParseException.class,
+            () -> FACTORY.create(null, processorTag, null, config));
         assertThat(exception.getMessage(), equalTo("[field] required property is missing"));
     }
 
@@ -83,8 +85,8 @@ public class JsonProcessorFactoryTests extends ESTestCase {
         config.put("field", randomField);
         config.put("target_field", randomTargetField);
         config.put("add_to_root", true);
-        FesenException exception =
-                expectThrows(FesenParseException.class, () -> FACTORY.create(null, randomAlphaOfLength(10), null, config));
+        FesenException exception = expectThrows(FesenParseException.class,
+            () -> FACTORY.create(null, randomAlphaOfLength(10), null, config));
         assertThat(exception.getMessage(), equalTo("[target_field] Cannot set a target field while also setting `add_to_root` to true"));
     }
 }

@@ -19,8 +19,15 @@
 
 package org.codelibs.fesen.common;
 
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
+import org.apache.lucene.util.BytesRefBuilder;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.util.CollectionUtils;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,15 +44,8 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import org.apache.lucene.util.BytesRefBuilder;
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.util.CollectionUtils;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.core.Nullable;
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
 
 public class Strings {
 
@@ -90,28 +90,26 @@ public class Strings {
 
             char ch = s.charAt(pos++);
             if (ch == '\\') {
-                if (!decode)
-                    sb.append(ch);
-                if (pos >= end)
-                    break; // ERROR, or let it go?
+                if (!decode) sb.append(ch);
+                if (pos >= end) break;  // ERROR, or let it go?
                 ch = s.charAt(pos++);
                 if (decode) {
                     switch (ch) {
-                    case 'n':
-                        ch = '\n';
-                        break;
-                    case 't':
-                        ch = '\t';
-                        break;
-                    case 'r':
-                        ch = '\r';
-                        break;
-                    case 'b':
-                        ch = '\b';
-                        break;
-                    case 'f':
-                        ch = '\f';
-                        break;
+                        case 'n':
+                            ch = '\n';
+                            break;
+                        case 't':
+                            ch = '\t';
+                            break;
+                        case 'r':
+                            ch = '\r';
+                            break;
+                        case 'b':
+                            ch = '\b';
+                            break;
+                        case 'f':
+                            ch = '\f';
+                            break;
                     }
                 }
             }
@@ -125,6 +123,7 @@ public class Strings {
 
         return lst;
     }
+
 
     //---------------------------------------------------------------------
     // General convenience methods for working with Strings
@@ -172,6 +171,7 @@ public class Strings {
         return hasLength((CharSequence) str);
     }
 
+
     /**
      * Check that the given CharSequence is either <code>null</code> or of length 0.
      * Note: Will return <code>false</code> for a CharSequence that purely consists of whitespace.
@@ -188,6 +188,7 @@ public class Strings {
     public static boolean isEmpty(CharSequence str) {
         return !hasLength(str);
     }
+
 
     /**
      * Check whether the given CharSequence has actual text.
@@ -331,6 +332,7 @@ public class Strings {
         return sb.toString();
     }
 
+
     //---------------------------------------------------------------------
     // Convenience methods for working with formatted Strings
     //---------------------------------------------------------------------
@@ -372,8 +374,8 @@ public class Strings {
         return sb.toString();
     }
 
-    public static final Set<Character> INVALID_FILENAME_CHARS =
-            unmodifiableSet(newHashSet('\\', '/', '*', '?', '"', '<', '>', '|', ' ', ','));
+    public static final Set<Character> INVALID_FILENAME_CHARS = unmodifiableSet(
+            newHashSet('\\', '/', '*', '?', '"', '<', '>', '|', ' ', ','));
 
     public static boolean validFileName(String fileName) {
         for (int i = 0; i < fileName.length(); i++) {
@@ -417,8 +419,7 @@ public class Strings {
      * @return the set of tokens
      */
     public static Set<String> tokenizeByCommaToSet(final String s) {
-        if (s == null)
-            return Collections.emptySet();
+        if (s == null) return Collections.emptySet();
         return tokenizeToCollection(s, ",", HashSet::new);
     }
 
@@ -430,10 +431,8 @@ public class Strings {
      * @see String#split(String)
      */
     public static String[] splitStringByCommaToArray(final String s) {
-        if (s == null || s.isEmpty())
-            return Strings.EMPTY_ARRAY;
-        else
-            return s.split(",");
+        if (s == null || s.isEmpty()) return Strings.EMPTY_ARRAY;
+        else return s.split(",");
     }
 
     /**
@@ -456,7 +455,7 @@ public class Strings {
         }
         String beforeDelimiter = toSplit.substring(0, offset);
         String afterDelimiter = toSplit.substring(offset + delimiter.length());
-        return new String[] { beforeDelimiter, afterDelimiter };
+        return new String[]{beforeDelimiter, afterDelimiter};
     }
 
     /**
@@ -493,8 +492,8 @@ public class Strings {
      * @return the tokens
      * @see java.util.StringTokenizer
      */
-    private static <T extends Collection<String>> T tokenizeToCollection(final String s, final String delimiters,
-            final Supplier<T> supplier) {
+    private static <T extends Collection<String>> T tokenizeToCollection(
+            final String s, final String delimiters, final Supplier<T> supplier) {
         if (s == null) {
             return null;
         }
@@ -544,7 +543,7 @@ public class Strings {
             return EMPTY_ARRAY;
         }
         if (delimiter == null) {
-            return new String[] { str };
+            return new String[]{str};
         }
         List<String> result = new ArrayList<>();
         if ("".equals(delimiter)) {
@@ -721,6 +720,7 @@ public class Strings {
         return Arrays.copyOf(spare.bytes(), spare.length());
     }
 
+
     /**
      * Return substring(beginIndex, endIndex) that is impervious to string length.
      */
@@ -880,7 +880,7 @@ public class Strings {
             return sb.toString();
         }
     }
-
+    
     public static String toLowercaseAscii(String in) {
         StringBuilder out = new StringBuilder();
         Iterator<Integer> iter = in.codePoints().iterator();
@@ -893,5 +893,5 @@ public class Strings {
             }
         }
         return out.toString();
-    }
+    }    
 }

@@ -19,18 +19,7 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesRequest;
 import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesResponse;
@@ -50,7 +39,18 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
 
 /**
  * The REST handler for get alias and head alias APIs.
@@ -59,9 +59,15 @@ public class RestGetAliasesAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_alias"), new Route(GET, "/_aliases"), new Route(GET, "/_alias/{name}"),
-                new Route(HEAD, "/_alias/{name}"), new Route(GET, "/{index}/_alias"), new Route(HEAD, "/{index}/_alias"),
-                new Route(GET, "/{index}/_alias/{name}"), new Route(HEAD, "/{index}/_alias/{name}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_alias"),
+            new Route(GET, "/_aliases"),
+            new Route(GET, "/_alias/{name}"),
+            new Route(HEAD, "/_alias/{name}"),
+            new Route(GET, "/{index}/_alias"),
+            new Route(HEAD, "/{index}/_alias"),
+            new Route(GET, "/{index}/_alias/{name}"),
+            new Route(HEAD, "/{index}/_alias/{name}")));
     }
 
     @Override
@@ -70,7 +76,8 @@ public class RestGetAliasesAction extends BaseRestHandler {
     }
 
     static RestResponse buildRestResponse(boolean aliasesExplicitlyRequested, String[] requestedAliases,
-            ImmutableOpenMap<String, List<AliasMetadata>> responseAliasMap, XContentBuilder builder) throws Exception {
+                                          ImmutableOpenMap<String, List<AliasMetadata>> responseAliasMap,
+                                          XContentBuilder builder) throws Exception {
         final Set<String> indicesToDisplay = new HashSet<>();
         final Set<String> returnedAliasNames = new HashSet<>();
         for (final ObjectObjectCursor<String, List<AliasMetadata>> cursor : responseAliasMap) {

@@ -30,7 +30,7 @@ import java.util.Map;
 public class InternalSamplerTests extends InternalSingleBucketAggregationTestCase<InternalSampler> {
     @Override
     protected InternalSampler createTestInstance(String name, long docCount, InternalAggregations aggregations,
-            Map<String, Object> metadata) {
+                                                 Map<String, Object> metadata) {
         return new InternalSampler(name, docCount, aggregations, metadata);
     }
 
@@ -38,6 +38,7 @@ public class InternalSamplerTests extends InternalSingleBucketAggregationTestCas
     protected void extraAssertReduced(InternalSampler reduced, List<InternalSampler> inputs) {
         // Nothing extra to assert
     }
+
 
     @Override
     protected Class<? extends ParsedSingleBucketAggregation> implementationClass() {

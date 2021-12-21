@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.indices.flush;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +27,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.index.shard.ShardId;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Result for all copies of a shard
@@ -74,8 +74,10 @@ public class ShardsSyncedFlushResult implements Writeable {
     /**
      * success constructor
      */
-    public ShardsSyncedFlushResult(ShardId shardId, String syncId, int totalShards,
-            Map<ShardRouting, SyncedFlushService.ShardSyncedFlushResponse> shardResponses) {
+    public ShardsSyncedFlushResult(ShardId shardId,
+                                   String syncId,
+                                   int totalShards,
+                                   Map<ShardRouting, SyncedFlushService.ShardSyncedFlushResponse> shardResponses) {
         this.failureReason = null;
         this.shardResponses = unmodifiableMap(new HashMap<>(shardResponses));
         this.syncId = syncId;

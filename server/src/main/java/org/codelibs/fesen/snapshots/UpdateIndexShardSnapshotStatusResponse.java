@@ -27,10 +27,8 @@ class UpdateIndexShardSnapshotStatusResponse extends ActionResponse {
 
     public static final UpdateIndexShardSnapshotStatusResponse INSTANCE = new UpdateIndexShardSnapshotStatusResponse();
 
-    private UpdateIndexShardSnapshotStatusResponse() {
-    }
+    private UpdateIndexShardSnapshotStatusResponse() {}
 
     @Override
-    public void writeTo(StreamOutput out) throws IOException {
-    }
+    public void writeTo(StreamOutput out) throws IOException {}
 }

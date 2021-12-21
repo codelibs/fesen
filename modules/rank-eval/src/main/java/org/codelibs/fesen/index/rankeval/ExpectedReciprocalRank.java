@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.OptionalInt;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -37,6 +27,16 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.SearchHit;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
 
 /**
  * Implementation of the Expected Reciprocal Rank metric described in:<p>
@@ -124,6 +124,7 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
         return this.unknownDocRating;
     }
 
+
     @Override
     public OptionalInt forcedSearchSize() {
         return OptionalInt.of(k);
@@ -175,12 +176,14 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
     private static final ParseField K_FIELD = new ParseField("k");
     private static final ParseField UNKNOWN_DOC_RATING_FIELD = new ParseField("unknown_doc_rating");
     private static final ParseField MAX_RELEVANCE_FIELD = new ParseField("maximum_relevance");
-    private static final ConstructingObjectParser<ExpectedReciprocalRank, Void> PARSER =
-            new ConstructingObjectParser<>("dcg", false, args -> {
+    private static final ConstructingObjectParser<ExpectedReciprocalRank, Void> PARSER = new ConstructingObjectParser<>("dcg", false,
+            args -> {
                 int maxRelevance = (Integer) args[0];
                 Integer optK = (Integer) args[2];
-                return new ExpectedReciprocalRank(maxRelevance, (Integer) args[1], optK == null ? DEFAULT_K : optK);
+                return new ExpectedReciprocalRank(maxRelevance, (Integer) args[1],
+                        optK == null ? DEFAULT_K : optK);
             });
+
 
     static {
         PARSER.declareInt(constructorArg(), MAX_RELEVANCE_FIELD);
@@ -215,7 +218,9 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
             return false;
         }
         ExpectedReciprocalRank other = (ExpectedReciprocalRank) obj;
-        return this.k == other.k && this.maxRelevance == other.maxRelevance && Objects.equals(unknownDocRating, other.unknownDocRating);
+        return this.k == other.k &&
+                this.maxRelevance == other.maxRelevance
+                && Objects.equals(unknownDocRating, other.unknownDocRating);
     }
 
     @Override
@@ -237,7 +242,8 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
         }
 
         @Override
-        public String getMetricName() {
+        public
+        String getMetricName() {
             return NAME;
         }
 
@@ -293,3 +299,4 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
         }
     }
 }
+

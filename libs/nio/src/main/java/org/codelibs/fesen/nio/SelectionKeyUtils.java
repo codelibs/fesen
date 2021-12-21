@@ -24,8 +24,7 @@ import java.nio.channels.SelectionKey;
 
 public final class SelectionKeyUtils {
 
-    private SelectionKeyUtils() {
-    }
+    private SelectionKeyUtils() {}
 
     /**
      * Adds an interest in writes for this selection key while maintaining other interests.
@@ -87,6 +86,7 @@ public final class SelectionKeyUtils {
     public static void setAcceptInterested(SelectionKey selectionKey) throws CancelledKeyException {
         selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_ACCEPT);
     }
+
 
     /**
      * Checks for an interest in writes for this selection key.

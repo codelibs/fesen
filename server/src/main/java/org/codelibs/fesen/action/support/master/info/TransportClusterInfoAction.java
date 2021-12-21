@@ -34,9 +34,9 @@ import org.codelibs.fesen.transport.TransportService;
 public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequest<Request>, Response extends ActionResponse>
         extends TransportMasterNodeReadAction<Request, Response> {
 
-    public TransportClusterInfoAction(String actionName, TransportService transportService, ClusterService clusterService,
-            ThreadPool threadPool, ActionFilters actionFilters, Writeable.Reader<Request> request,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportClusterInfoAction(String actionName, TransportService transportService,
+                                      ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+                                      Writeable.Reader<Request> request, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(actionName, transportService, clusterService, threadPool, actionFilters, request, indexNameExpressionResolver);
     }
 
@@ -49,7 +49,7 @@ public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequ
     @Override
     protected ClusterBlockException checkBlock(Request request, ClusterState state) {
         return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_READ,
-                indexNameExpressionResolver.concreteIndexNames(state, request));
+            indexNameExpressionResolver.concreteIndexNames(state, request));
     }
 
     @Override
@@ -59,5 +59,5 @@ public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequ
     }
 
     protected abstract void doMasterOperation(Request request, String[] concreteIndices, ClusterState state,
-            ActionListener<Response> listener);
+                                              ActionListener<Response> listener);
 }

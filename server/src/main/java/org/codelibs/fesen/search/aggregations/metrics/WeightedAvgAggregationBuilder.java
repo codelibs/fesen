@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -33,8 +29,8 @@ import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.MultiValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.MultiValuesSourceAggregatorFactory;
@@ -44,6 +40,10 @@ import org.codelibs.fesen.search.aggregations.support.ValueType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationBuilder.LeafOnly<WeightedAvgAggregationBuilder> {
     public static final String NAME = "weighted_avg";
@@ -110,9 +110,12 @@ public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationB
     }
 
     @Override
-    protected MultiValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, Map<String, ValuesSourceConfig> configs,
-            Map<String, QueryBuilder> filters, DocValueFormat format, AggregatorFactory parent, Builder subFactoriesBuilder)
-            throws IOException {
+    protected MultiValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                            Map<String, ValuesSourceConfig> configs,
+                                                            Map<String, QueryBuilder> filters,
+                                                            DocValueFormat format,
+                                                            AggregatorFactory parent,
+                                                            Builder subFactoriesBuilder) throws IOException {
         return new WeightedAvgAggregatorFactory(name, configs, format, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

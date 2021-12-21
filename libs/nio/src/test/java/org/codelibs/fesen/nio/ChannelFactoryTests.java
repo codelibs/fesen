@@ -19,13 +19,16 @@
 
 package org.codelibs.fesen.nio;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.nio.ChannelFactory;
+import org.codelibs.fesen.nio.Config;
+import org.codelibs.fesen.nio.NioSelector;
+import org.codelibs.fesen.nio.NioServerSocketChannel;
+import org.codelibs.fesen.nio.NioSocketChannel;
+import org.codelibs.fesen.nio.SocketChannelContext;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -33,10 +36,11 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.After;
-import org.junit.Before;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ChannelFactoryTests extends ESTestCase {
 
@@ -142,7 +146,7 @@ public class ChannelFactoryTests extends ESTestCase {
 
         @Override
         public NioServerSocketChannel createServerChannel(NioSelector selector, ServerSocketChannel channel,
-                Config.ServerSocket socketConfig) {
+                                                          Config.ServerSocket socketConfig) {
             return new NioServerSocketChannel(channel);
         }
 

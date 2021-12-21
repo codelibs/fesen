@@ -19,21 +19,21 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.putRepositoryRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.cluster.repositories.put.PutRepositoryRequest;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.putRepositoryRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
 
 /**
  * Registers repositories
@@ -42,7 +42,9 @@ public class RestPutRepositoryAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/_snapshot/{repository}"), new Route(PUT, "/_snapshot/{repository}")));
+        return unmodifiableList(asList(
+            new Route(POST, "/_snapshot/{repository}"),
+            new Route(PUT, "/_snapshot/{repository}")));
     }
 
     @Override

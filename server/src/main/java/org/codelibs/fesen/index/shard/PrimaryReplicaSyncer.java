@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.index.shard;
 
-import static java.util.Objects.requireNonNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -51,6 +42,15 @@ import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskManager;
 import org.codelibs.fesen.transport.TransportService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.Objects.requireNonNull;
 
 public class PrimaryReplicaSyncer {
 
@@ -91,8 +91,8 @@ public class PrimaryReplicaSyncer {
             // Even though those calls are not concurrent, snapshot.next() uses non-synchronized state and is not multi-thread-compatible
             // Also fail the resync early if the shard is shutting down
             snapshot = indexShard.getHistoryOperations("resync",
-                    indexShard.indexSettings.isSoftDeleteEnabled() ? Engine.HistorySource.INDEX : Engine.HistorySource.TRANSLOG,
-                    startingSeqNo);
+                indexShard.indexSettings.isSoftDeleteEnabled() ? Engine.HistorySource.INDEX : Engine.HistorySource.TRANSLOG,
+                startingSeqNo);
             final Translog.Snapshot originalSnapshot = snapshot;
             final Translog.Snapshot wrappedSnapshot = new Translog.Snapshot() {
                 @Override
@@ -142,7 +142,7 @@ public class PrimaryReplicaSyncer {
             // that the auto_id_timestamp of every operation in the snapshot is at most this value.
             final long maxSeenAutoIdTimestamp = indexShard.getMaxSeenAutoIdTimestamp();
             resync(shardId, indexShard.routingEntry().allocationId().getId(), indexShard.getPendingPrimaryTerm(), wrappedSnapshot,
-                    startingSeqNo, maxSeqNo, maxSeenAutoIdTimestamp, resyncListener);
+                startingSeqNo, maxSeqNo, maxSeenAutoIdTimestamp, resyncListener);
         } catch (Exception e) {
             try {
                 IOUtils.close(snapshot);
@@ -155,7 +155,7 @@ public class PrimaryReplicaSyncer {
     }
 
     private void resync(final ShardId shardId, final String primaryAllocationId, final long primaryTerm, final Translog.Snapshot snapshot,
-            long startingSeqNo, long maxSeqNo, long maxSeenAutoIdTimestamp, ActionListener<ResyncTask> listener) {
+                        long startingSeqNo, long maxSeqNo, long maxSeenAutoIdTimestamp, ActionListener<ResyncTask> listener) {
         ResyncRequest request = new ResyncRequest(shardId, primaryAllocationId);
         ResyncTask resyncTask = (ResyncTask) taskManager.register("transport", "resync", request); // it's not transport :-)
         ActionListener<Void> wrappedListener = new ActionListener<Void>() {
@@ -175,7 +175,7 @@ public class PrimaryReplicaSyncer {
         };
         try {
             new SnapshotSender(syncAction, resyncTask, shardId, primaryAllocationId, primaryTerm, snapshot, chunkSize.bytesAsInt(),
-                    startingSeqNo, maxSeqNo, maxSeenAutoIdTimestamp, wrappedListener).run();
+                startingSeqNo, maxSeqNo, maxSeenAutoIdTimestamp, wrappedListener).run();
         } catch (Exception e) {
             wrappedListener.onFailure(e);
         }
@@ -183,7 +183,7 @@ public class PrimaryReplicaSyncer {
 
     public interface SyncAction {
         void sync(ResyncReplicationRequest request, Task parentTask, String primaryAllocationId, long primaryTerm,
-                ActionListener<ResyncReplicationResponse> listener);
+                  ActionListener<ResyncReplicationResponse> listener);
     }
 
     static class SnapshotSender extends AbstractRunnable implements ActionListener<ResyncReplicationResponse> {
@@ -205,8 +205,8 @@ public class PrimaryReplicaSyncer {
         private final AtomicBoolean closed = new AtomicBoolean();
 
         SnapshotSender(SyncAction syncAction, ResyncTask task, ShardId shardId, String primaryAllocationId, long primaryTerm,
-                Translog.Snapshot snapshot, int chunkSizeInBytes, long startingSeqNo, long maxSeqNo, long maxSeenAutoIdTimestamp,
-                ActionListener<Void> listener) {
+                       Translog.Snapshot snapshot, int chunkSizeInBytes, long startingSeqNo, long maxSeqNo,
+                       long maxSeenAutoIdTimestamp, ActionListener<Void> listener) {
             this.logger = PrimaryReplicaSyncer.logger;
             this.syncAction = syncAction;
             this.task = task;
@@ -267,9 +267,9 @@ public class PrimaryReplicaSyncer {
             if (!operations.isEmpty() || trimmedAboveSeqNo != SequenceNumbers.UNASSIGNED_SEQ_NO) {
                 task.setPhase("sending_ops");
                 ResyncReplicationRequest request =
-                        new ResyncReplicationRequest(shardId, trimmedAboveSeqNo, maxSeenAutoIdTimestamp, operations.toArray(EMPTY_ARRAY));
+                    new ResyncReplicationRequest(shardId, trimmedAboveSeqNo, maxSeenAutoIdTimestamp, operations.toArray(EMPTY_ARRAY));
                 logger.trace("{} sending batch of [{}][{}] (total sent: [{}], skipped: [{}])", shardId, operations.size(),
-                        new ByteSizeValue(size), totalSentOps.get(), totalSkippedOps.get());
+                    new ByteSizeValue(size), totalSentOps.get(), totalSkippedOps.get());
                 firstMessage.set(false);
                 syncAction.sync(request, task, primaryAllocationId, primaryTerm, this);
             } else if (closed.compareAndSet(false, true)) {
@@ -423,21 +423,17 @@ public class PrimaryReplicaSyncer {
                 return Strings.toString(this);
             }
 
+
             @Override
             public boolean equals(Object o) {
-                if (this == o)
-                    return true;
-                if (o == null || getClass() != o.getClass())
-                    return false;
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
 
                 Status status = (Status) o;
 
-                if (totalOperations != status.totalOperations)
-                    return false;
-                if (resyncedOperations != status.resyncedOperations)
-                    return false;
-                if (skippedOperations != status.skippedOperations)
-                    return false;
+                if (totalOperations != status.totalOperations) return false;
+                if (resyncedOperations != status.resyncedOperations) return false;
+                if (skippedOperations != status.skippedOperations) return false;
                 return phase.equals(status.phase);
             }
 

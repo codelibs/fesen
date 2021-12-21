@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.core.CheckedFunction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,8 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.core.CheckedFunction;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 public class NamedXContentRegistry {
     /**
@@ -62,7 +62,6 @@ public class NamedXContentRegistry {
             this.name = Objects.requireNonNull(name);
             this.parser = Objects.requireNonNull((p, c) -> parser.apply(p));
         }
-
         /**
          * Creates a new entry which can be stored by the registry.
          * Prefer {@link Entry#Entry(Class, ParseField, CheckedFunction)} unless you need a context to carry around while parsing.
@@ -100,9 +99,9 @@ public class NamedXContentRegistry {
             for (String name : entry.name.getAllNamesIncludedDeprecated()) {
                 Object old = parsers.put(name, entry);
                 if (old != null) {
-                    throw new IllegalArgumentException(
-                            "NamedXContent [" + currentCategory.getName() + "][" + entry.name + "]" + " is already registered for ["
-                                    + old.getClass().getName() + "]," + " cannot register [" + entry.parser.getClass().getName() + "]");
+                    throw new IllegalArgumentException("NamedXContent [" + currentCategory.getName() + "][" + entry.name + "]" +
+                        " is already registered for [" + old.getClass().getName() + "]," +
+                        " cannot register [" + entry.parser.getClass().getName() + "]");
                 }
             }
         }

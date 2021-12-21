@@ -19,21 +19,21 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.OptionalInt;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.search.SearchHit;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.OptionalInt;
 
 /**
  * Combines a {@link SearchHit} with a document rating.
@@ -70,7 +70,8 @@ public class RatedSearchHit implements Writeable, ToXContentObject {
     }
 
     @Override
-    public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
+    public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params)
+            throws IOException {
         builder.startObject();
         builder.field("hit", (ToXContent) searchHit);
         builder.field("rating", rating.isPresent() ? rating.getAsInt() : null);
@@ -80,8 +81,8 @@ public class RatedSearchHit implements Writeable, ToXContentObject {
 
     private static final ParseField HIT_FIELD = new ParseField("hit");
     private static final ParseField RATING_FIELD = new ParseField("rating");
-    private static final ConstructingObjectParser<RatedSearchHit, Void> PARSER =
-            new ConstructingObjectParser<>("rated_hit", true, a -> new RatedSearchHit((SearchHit) a[0], (OptionalInt) a[1]));
+    private static final ConstructingObjectParser<RatedSearchHit, Void> PARSER = new ConstructingObjectParser<>("rated_hit", true,
+            a -> new RatedSearchHit((SearchHit) a[0], (OptionalInt) a[1]));
 
     static {
         PARSER.declareObject(ConstructingObjectParser.constructorArg(), (p, c) -> SearchHit.fromXContent(p), HIT_FIELD);
@@ -103,7 +104,8 @@ public class RatedSearchHit implements Writeable, ToXContentObject {
             return false;
         }
         RatedSearchHit other = (RatedSearchHit) obj;
-        return Objects.equals(rating, other.rating) && Objects.equals(searchHit, other.searchHit);
+        return Objects.equals(rating, other.rating)
+                && Objects.equals(searchHit, other.searchHit);
     }
 
     @Override

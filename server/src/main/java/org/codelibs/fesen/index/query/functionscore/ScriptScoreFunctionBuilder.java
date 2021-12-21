@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -33,6 +30,9 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.script.ScoreScript;
 import org.codelibs.fesen.script.Script;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A function that uses a script to compute or influence the score of documents
@@ -94,14 +94,15 @@ public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScore
         try {
             ScoreScript.Factory factory = context.compile(script, ScoreScript.CONTEXT);
             ScoreScript.LeafFactory searchScript = factory.newFactory(script.getParams(), context.lookup());
-            return new ScriptScoreFunction(script, searchScript, context.index().getName(), context.getShardId(),
-                    context.indexVersionCreated());
+            return new ScriptScoreFunction(script, searchScript,
+                context.index().getName(), context.getShardId(), context.indexVersionCreated());
         } catch (Exception e) {
             throw new QueryShardException(context, "script_score: the script could not be loaded", e);
         }
     }
 
-    public static ScriptScoreFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
+    public static ScriptScoreFunctionBuilder fromXContent(XContentParser parser)
+            throws IOException, ParsingException {
         Script script = null;
         String currentFieldName = null;
         XContentParser.Token token;

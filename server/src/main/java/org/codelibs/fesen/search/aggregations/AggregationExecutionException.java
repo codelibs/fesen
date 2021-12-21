@@ -36,7 +36,7 @@ public class AggregationExecutionException extends FesenException {
         super(msg, cause);
     }
 
-    public AggregationExecutionException(StreamInput in) throws IOException {
+    public AggregationExecutionException(StreamInput in) throws IOException{
         super(in);
     }
 }

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.plugins;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharFilter;
 import org.apache.lucene.analysis.TokenFilter;
@@ -42,6 +35,13 @@ import org.codelibs.fesen.index.analysis.PreConfiguredTokenizer;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenizerFactory;
 import org.codelibs.fesen.indices.analysis.AnalysisModule.AnalysisProvider;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 /**
  * An additional extension point for {@link Plugin}s that extends Fesen's analysis functionality. To add an additional

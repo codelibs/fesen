@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.settings.put;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -42,6 +40,8 @@ import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+
 public class TransportUpdateSettingsAction extends TransportMasterNodeAction<UpdateSettingsRequest, AcknowledgedResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportUpdateSettingsAction.class);
@@ -49,11 +49,11 @@ public class TransportUpdateSettingsAction extends TransportMasterNodeAction<Upd
     private final MetadataUpdateSettingsService updateSettingsService;
 
     @Inject
-    public TransportUpdateSettingsAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            MetadataUpdateSettingsService updateSettingsService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportUpdateSettingsAction(TransportService transportService, ClusterService clusterService,
+                                         ThreadPool threadPool, MetadataUpdateSettingsService updateSettingsService,
+                                         ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(UpdateSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, UpdateSettingsRequest::new,
-                indexNameExpressionResolver);
+            indexNameExpressionResolver);
         this.updateSettingsService = updateSettingsService;
     }
 
@@ -70,14 +70,14 @@ public class TransportUpdateSettingsAction extends TransportMasterNodeAction<Upd
         if (globalBlock != null) {
             return globalBlock;
         }
-        if (request.settings().size() == 1 && // we have to allow resetting these settings otherwise users can't unblock an index
-                IndexMetadata.INDEX_BLOCKS_METADATA_SETTING.exists(request.settings())
-                || IndexMetadata.INDEX_READ_ONLY_SETTING.exists(request.settings())
-                || IndexMetadata.INDEX_BLOCKS_READ_ONLY_ALLOW_DELETE_SETTING.exists(request.settings())) {
+        if (request.settings().size() == 1 &&  // we have to allow resetting these settings otherwise users can't unblock an index
+            IndexMetadata.INDEX_BLOCKS_METADATA_SETTING.exists(request.settings())
+            || IndexMetadata.INDEX_READ_ONLY_SETTING.exists(request.settings())
+            || IndexMetadata.INDEX_BLOCKS_READ_ONLY_ALLOW_DELETE_SETTING.exists(request.settings())) {
             return null;
         }
         return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_WRITE,
-                indexNameExpressionResolver.concreteIndexNames(state, request));
+            indexNameExpressionResolver.concreteIndexNames(state, request));
     }
 
     @Override
@@ -87,11 +87,14 @@ public class TransportUpdateSettingsAction extends TransportMasterNodeAction<Upd
 
     @Override
     protected void masterOperation(final UpdateSettingsRequest request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         final Index[] concreteIndices = indexNameExpressionResolver.concreteIndices(state, request);
         UpdateSettingsClusterStateUpdateRequest clusterStateUpdateRequest = new UpdateSettingsClusterStateUpdateRequest()
-                .indices(concreteIndices).settings(request.settings()).setPreserveExisting(request.isPreserveExisting())
-                .ackTimeout(request.timeout()).masterNodeTimeout(request.masterNodeTimeout());
+                .indices(concreteIndices)
+                .settings(request.settings())
+                .setPreserveExisting(request.isPreserveExisting())
+                .ackTimeout(request.timeout())
+                .masterNodeTimeout(request.masterNodeTimeout());
 
         updateSettingsService.updateSettings(clusterStateUpdateRequest, new ActionListener<ClusterStateUpdateResponse>() {
             @Override

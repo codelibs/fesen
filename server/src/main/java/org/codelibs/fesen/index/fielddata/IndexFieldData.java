@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
@@ -46,6 +44,8 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.NestedSortBuilder;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
 
 /**
  * Thread-safe utility class that allows to get per-segment values via the
@@ -82,8 +82,8 @@ public interface IndexFieldData<FD extends LeafFieldData> {
     /**
      * Build a sort implementation specialized for aggregations.
      */
-    BucketedSort newBucketedSort(BigArrays bigArrays, @Nullable Object missingValue, MultiValueMode sortMode, Nested nested,
-            SortOrder sortOrder, DocValueFormat format, int bucketSize, BucketedSort.ExtraData extra);
+    BucketedSort newBucketedSort(BigArrays bigArrays, @Nullable Object missingValue, MultiValueMode sortMode,
+            Nested nested, SortOrder sortOrder, DocValueFormat format, int bucketSize, BucketedSort.ExtraData extra);
 
     // we need this extended source we we have custom comparators to reuse our field data
     // in this case, we need to reduce type that will be used when search results are reduced
@@ -133,9 +133,7 @@ public interface IndexFieldData<FD extends LeafFieldData> {
                 return innerQuery;
             }
 
-            public NestedSortBuilder getNestedSort() {
-                return nestedSort;
-            }
+            public NestedSortBuilder getNestedSort() { return nestedSort; }
 
             /**
              * Get a {@link BitDocIdSet} that matches the root documents.
@@ -241,8 +239,8 @@ public interface IndexFieldData<FD extends LeafFieldData> {
         /**
          * Create a {@linkplain BucketedSort} which is useful for sorting inside of aggregations.
          */
-        public abstract BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
-                BucketedSort.ExtraData extra);
+        public abstract BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
+                int bucketSize, BucketedSort.ExtraData extra);
     }
 
     interface Builder {

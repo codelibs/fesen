@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -38,6 +28,16 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
@@ -57,7 +57,7 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
     private static final ParseField VOTING_CONFIG_EXCLUSIONS_FIELD = new ParseField("voting_config_exclusions");
 
     private static long term(Object[] termAndConfigs) {
-        return (long) termAndConfigs[0];
+        return (long)termAndConfigs[0];
     }
 
     @SuppressWarnings("unchecked")
@@ -78,9 +78,10 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
         return votingTombstones;
     }
 
-    private static final ConstructingObjectParser<CoordinationMetadata, Void> PARSER =
-            new ConstructingObjectParser<>("coordination_metadata", fields -> new CoordinationMetadata(term(fields),
-                    lastCommittedConfig(fields), lastAcceptedConfig(fields), votingConfigExclusions(fields)));
+    private static final ConstructingObjectParser<CoordinationMetadata, Void> PARSER = new ConstructingObjectParser<>(
+            "coordination_metadata",
+            fields -> new CoordinationMetadata(term(fields), lastCommittedConfig(fields),
+                    lastAcceptedConfig(fields), votingConfigExclusions(fields)));
     static {
         PARSER.declareLong(ConstructingObjectParser.constructorArg(), TERM_PARSE_FIELD);
         PARSER.declareStringArray(ConstructingObjectParser.constructorArg(), LAST_COMMITTED_CONFIGURATION_FIELD);
@@ -89,7 +90,7 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
     }
 
     public CoordinationMetadata(long term, VotingConfiguration lastCommittedConfiguration, VotingConfiguration lastAcceptedConfiguration,
-            Set<VotingConfigExclusion> votingConfigExclusions) {
+                                Set<VotingConfigExclusion> votingConfigExclusions) {
         this.term = term;
         this.lastCommittedConfiguration = lastCommittedConfiguration;
         this.lastAcceptedConfiguration = lastAcceptedConfiguration;
@@ -121,10 +122,11 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        return builder.field(TERM_PARSE_FIELD.getPreferredName(), term)
-                .field(LAST_COMMITTED_CONFIGURATION_FIELD.getPreferredName(), lastCommittedConfiguration)
-                .field(LAST_ACCEPTED_CONFIGURATION_FIELD.getPreferredName(), lastAcceptedConfiguration)
-                .field(VOTING_CONFIG_EXCLUSIONS_FIELD.getPreferredName(), votingConfigExclusions);
+        return builder
+            .field(TERM_PARSE_FIELD.getPreferredName(), term)
+            .field(LAST_COMMITTED_CONFIGURATION_FIELD.getPreferredName(), lastCommittedConfiguration)
+            .field(LAST_ACCEPTED_CONFIGURATION_FIELD.getPreferredName(), lastAcceptedConfiguration)
+            .field(VOTING_CONFIG_EXCLUSIONS_FIELD.getPreferredName(), votingConfigExclusions);
     }
 
     public static CoordinationMetadata fromXContent(XContentParser parser) throws IOException {
@@ -149,19 +151,14 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof CoordinationMetadata))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof CoordinationMetadata)) return false;
 
         CoordinationMetadata that = (CoordinationMetadata) o;
 
-        if (term != that.term)
-            return false;
-        if (!lastCommittedConfiguration.equals(that.lastCommittedConfiguration))
-            return false;
-        if (!lastAcceptedConfiguration.equals(that.lastAcceptedConfiguration))
-            return false;
+        if (term != that.term) return false;
+        if (!lastCommittedConfiguration.equals(that.lastCommittedConfiguration)) return false;
+        if (!lastAcceptedConfiguration.equals(that.lastAcceptedConfiguration)) return false;
         return votingConfigExclusions.equals(that.votingConfigExclusions);
     }
 
@@ -176,8 +173,12 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
     @Override
     public String toString() {
-        return "CoordinationMetadata{" + "term=" + term + ", lastCommittedConfiguration=" + lastCommittedConfiguration
-                + ", lastAcceptedConfiguration=" + lastAcceptedConfiguration + ", votingConfigExclusions=" + votingConfigExclusions + '}';
+        return "CoordinationMetadata{" +
+            "term=" + term +
+            ", lastCommittedConfiguration=" + lastCommittedConfiguration +
+            ", lastAcceptedConfiguration=" + lastAcceptedConfiguration +
+            ", votingConfigExclusions=" + votingConfigExclusions +
+            '}';
     }
 
     public static class Builder {
@@ -272,7 +273,9 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
         }
 
         private static final ConstructingObjectParser<VotingConfigExclusion, Void> PARSER = new ConstructingObjectParser<>(
-                "voting_config_exclusion", nodeIdAndName -> new VotingConfigExclusion(nodeId(nodeIdAndName), nodeName(nodeIdAndName)));
+                "voting_config_exclusion",
+                nodeIdAndName -> new VotingConfigExclusion(nodeId(nodeIdAndName), nodeName(nodeIdAndName))
+        );
 
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), NODE_ID_PARSE_FIELD);
@@ -285,18 +288,19 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-            return builder.startObject().field(NODE_ID_PARSE_FIELD.getPreferredName(), nodeId)
-                    .field(NODE_NAME_PARSE_FIELD.getPreferredName(), nodeName).endObject();
+            return builder.startObject()
+                    .field(NODE_ID_PARSE_FIELD.getPreferredName(), nodeId)
+                    .field(NODE_NAME_PARSE_FIELD.getPreferredName(), nodeName)
+                    .endObject();
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             VotingConfigExclusion that = (VotingConfigExclusion) o;
-            return Objects.equals(nodeId, that.nodeId) && Objects.equals(nodeName, that.nodeName);
+            return Objects.equals(nodeId, that.nodeId) &&
+                    Objects.equals(nodeName, that.nodeName);
         }
 
         @Override
@@ -322,8 +326,8 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
     public static class VotingConfiguration implements Writeable, ToXContentFragment {
 
         public static final VotingConfiguration EMPTY_CONFIG = new VotingConfiguration(Collections.emptySet());
-        public static final VotingConfiguration MUST_JOIN_ELECTED_MASTER =
-                new VotingConfiguration(Collections.singleton("_must_join_elected_master_"));
+        public static final VotingConfiguration MUST_JOIN_ELECTED_MASTER = new VotingConfiguration(Collections.singleton(
+                "_must_join_elected_master_"));
 
         private final Set<String> nodeIds;
 
@@ -357,10 +361,8 @@ public class CoordinationMetadata implements Writeable, ToXContentFragment {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             VotingConfiguration that = (VotingConfiguration) o;
             return Objects.equals(nodeIds, that.nodeIds);
         }

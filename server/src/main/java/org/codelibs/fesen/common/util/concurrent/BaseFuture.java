@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
+import org.codelibs.fesen.cluster.service.ClusterApplierService;
+import org.codelibs.fesen.cluster.service.MasterService;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.Transports;
+
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -26,12 +32,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
-
-import org.codelibs.fesen.cluster.service.ClusterApplierService;
-import org.codelibs.fesen.cluster.service.MasterService;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.transport.Transports;
 
 public abstract class BaseFuture<V> implements Future<V> {
 
@@ -59,7 +59,8 @@ public abstract class BaseFuture<V> implements Future<V> {
      * @throws CancellationException {@inheritDoc}
      */
     @Override
-    public V get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException {
+    public V get(long timeout, TimeUnit unit) throws InterruptedException,
+            TimeoutException, ExecutionException {
         assert timeout <= 0 || blockingAllowed();
         return sync.get(unit.toNanos(timeout));
     }
@@ -88,9 +89,10 @@ public abstract class BaseFuture<V> implements Future<V> {
 
     // protected so that it can be overridden in specific instances
     protected boolean blockingAllowed() {
-        return Transports.assertNotTransportThread(BLOCKING_OP_REASON) && ThreadPool.assertNotScheduleThread(BLOCKING_OP_REASON)
-                && ClusterApplierService.assertNotClusterStateUpdateThread(BLOCKING_OP_REASON)
-                && MasterService.assertNotMasterUpdateThread(BLOCKING_OP_REASON);
+        return Transports.assertNotTransportThread(BLOCKING_OP_REASON) &&
+            ThreadPool.assertNotScheduleThread(BLOCKING_OP_REASON) &&
+            ClusterApplierService.assertNotClusterStateUpdateThread(BLOCKING_OP_REASON) &&
+            MasterService.assertNotMasterUpdateThread(BLOCKING_OP_REASON);
     }
 
     @Override
@@ -165,9 +167,9 @@ public abstract class BaseFuture<V> implements Future<V> {
 
         // we want to notify the listeners we have with errors as well, as it breaks
         // how we work in ES in terms of using assertions
-        //        if (throwable instanceof Error) {
-        //            throw (Error) throwable;
-        //        }
+//        if (throwable instanceof Error) {
+//            throw (Error) throwable;
+//        }
         return result;
     }
 
@@ -233,7 +235,8 @@ public abstract class BaseFuture<V> implements Future<V> {
          * {@link TimeoutException} if the timer expires, otherwise behaves like
          * {@link #get()}.
          */
-        V get(long nanos) throws TimeoutException, CancellationException, ExecutionException, InterruptedException {
+        V get(long nanos) throws TimeoutException, CancellationException,
+                ExecutionException, InterruptedException {
 
             // Attempt to acquire the shared lock with a timeout.
             if (!tryAcquireSharedNanos(-1, nanos)) {
@@ -249,7 +252,8 @@ public abstract class BaseFuture<V> implements Future<V> {
          * was cancelled, or a {@link ExecutionException} if the task completed with
          * an error.
          */
-        V get() throws CancellationException, ExecutionException, InterruptedException {
+        V get() throws CancellationException, ExecutionException,
+                InterruptedException {
 
             // Acquire the shared lock allowing interruption.
             acquireSharedInterruptibly(-1);
@@ -264,18 +268,19 @@ public abstract class BaseFuture<V> implements Future<V> {
         private V getValue() throws CancellationException, ExecutionException {
             int state = getState();
             switch (state) {
-            case COMPLETED:
-                if (exception != null) {
-                    throw new ExecutionException(exception);
-                } else {
-                    return value;
-                }
+                case COMPLETED:
+                    if (exception != null) {
+                        throw new ExecutionException(exception);
+                    } else {
+                        return value;
+                    }
 
-            case CANCELLED:
-                throw new CancellationException("Task was cancelled.");
+                case CANCELLED:
+                    throw new CancellationException("Task was cancelled.");
 
-            default:
-                throw new IllegalStateException("Error, synchronizer in invalid state: " + state);
+                default:
+                    throw new IllegalStateException(
+                            "Error, synchronizer in invalid state: " + state);
             }
         }
 
@@ -325,7 +330,8 @@ public abstract class BaseFuture<V> implements Future<V> {
          * @param t          the exception to set as the result of the computation.
          * @param finalState the state to transition to.
          */
-        private boolean complete(@Nullable V v, @Nullable Throwable t, int finalState) {
+        private boolean complete(@Nullable V v, @Nullable Throwable t,
+                                 int finalState) {
             boolean doCompletion = compareAndSetState(RUNNING, COMPLETING);
             if (doCompletion) {
                 // If this thread successfully transitioned to COMPLETING, set the value

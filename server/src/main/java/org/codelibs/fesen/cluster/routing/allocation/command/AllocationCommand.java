@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.command;
 
-import java.util.Optional;
-
 import org.codelibs.fesen.cluster.routing.allocation.RerouteExplanation;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.network.NetworkModule;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
+
+import java.util.Optional;
 
 /**
  * A command to move shards in some way.

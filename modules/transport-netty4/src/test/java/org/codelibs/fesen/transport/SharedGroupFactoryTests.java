@@ -22,6 +22,7 @@ package org.codelibs.fesen.transport;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.http.netty4.Netty4HttpServerTransport;
 import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.transport.SharedGroupFactory;
 
 public final class SharedGroupFactoryTests extends ESTestCase {
 
@@ -48,8 +49,9 @@ public final class SharedGroupFactoryTests extends ESTestCase {
     }
 
     public void testNonSharedEventLoops() throws Exception {
-        Settings settings =
-                Settings.builder().put(Netty4HttpServerTransport.SETTING_HTTP_WORKER_COUNT.getKey(), randomIntBetween(1, 10)).build();
+        Settings settings = Settings.builder()
+            .put(Netty4HttpServerTransport.SETTING_HTTP_WORKER_COUNT.getKey(), randomIntBetween(1, 10))
+            .build();
         SharedGroupFactory sharedGroupFactory = new SharedGroupFactory(settings);
         SharedGroupFactory.SharedGroup httpGroup = sharedGroupFactory.getHttpGroup();
         SharedGroupFactory.SharedGroup transportGroup = sharedGroupFactory.getTransportGroup();

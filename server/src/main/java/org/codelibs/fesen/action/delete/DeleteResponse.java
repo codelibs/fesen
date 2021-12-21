@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.action.delete;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.DocWriteResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
 
 /**
  * The response of the delete action.

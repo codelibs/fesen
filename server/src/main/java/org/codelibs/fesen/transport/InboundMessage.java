@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.transport;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.bytes.ReleasableBytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import java.io.IOException;
 
 public class InboundMessage implements Releasable {
 

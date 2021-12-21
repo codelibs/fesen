@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.search;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.core.Nullable;
@@ -33,12 +27,17 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.search.SearchModule;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Helpers to extract and expand field names and boosts
  */
 public final class QueryParserHelper {
-    private QueryParserHelper() {
-    }
+    private QueryParserHelper() {}
 
     /**
      * Convert a list of field names encoded with optional boosts to a map that associates
@@ -54,7 +53,7 @@ public final class QueryParserHelper {
             float boost = 1.0f;
             if (boostIndex != -1) {
                 fieldName = field.substring(0, boostIndex);
-                boost = Float.parseFloat(field.substring(boostIndex + 1));
+                boost = Float.parseFloat(field.substring(boostIndex+1));
             } else {
                 fieldName = field;
             }
@@ -67,7 +66,8 @@ public final class QueryParserHelper {
         return fieldsAndWeights;
     }
 
-    public static Map<String, Float> resolveMappingFields(QueryShardContext context, Map<String, Float> fieldsAndWeights) {
+    public static Map<String, Float> resolveMappingFields(QueryShardContext context,
+                                                          Map<String, Float> fieldsAndWeights) {
         return resolveMappingFields(context, fieldsAndWeights, null);
     }
 
@@ -80,7 +80,9 @@ public final class QueryParserHelper {
      *                    The original name of the field is kept if adding the suffix to the field name does not point to a valid field
      *                    in the mapping.
      */
-    static Map<String, Float> resolveMappingFields(QueryShardContext context, Map<String, Float> fieldsAndWeights, String fieldSuffix) {
+    static Map<String, Float> resolveMappingFields(QueryShardContext context,
+                                                          Map<String, Float> fieldsAndWeights,
+                                                          String fieldSuffix) {
         Map<String, Float> resolvedFields = new HashMap<>();
         for (Map.Entry<String, Float> fieldEntry : fieldsAndWeights.entrySet()) {
             boolean allField = Regex.isMatchAllPattern(fieldEntry.getKey());
@@ -113,8 +115,8 @@ public final class QueryParserHelper {
      *                    The original name of the field is kept if adding the suffix to the field name does not point to a valid field
      *                    in the mapping.
      */
-    static Map<String, Float> resolveMappingField(QueryShardContext context, String fieldOrPattern, float weight, boolean acceptAllTypes,
-            boolean acceptMetadataField, String fieldSuffix) {
+    static Map<String, Float> resolveMappingField(QueryShardContext context, String fieldOrPattern, float weight,
+                                                         boolean acceptAllTypes, boolean acceptMetadataField, String fieldSuffix) {
         Set<String> allFields = context.simpleMatchToIndexNames(fieldOrPattern);
         Map<String, Float> fields = new HashMap<>();
 

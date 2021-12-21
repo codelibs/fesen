@@ -40,15 +40,21 @@ public class RestGetIndicesActionTests extends RestActionTestCase {
     public void testIncludeTypeNamesWarning() throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put(INCLUDE_TYPE_NAME_PARAMETER, randomFrom("true", "false"));
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET).withPath("/some_index")
-                .withParams(params).build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+            .withMethod(RestRequest.Method.GET)
+            .withPath("/some_index")
+            .withParams(params)
+            .build();
 
         RestGetIndicesAction handler = new RestGetIndicesAction();
         handler.prepareRequest(request, mock(NodeClient.class));
         assertWarnings(RestGetIndicesAction.TYPES_DEPRECATION_MESSAGE);
 
         // the same request without the parameter should pass without warning
-        request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET).withPath("/some_index").build();
+        request = new FakeRestRequest.Builder(xContentRegistry())
+                .withMethod(RestRequest.Method.GET)
+                .withPath("/some_index")
+                .build();
         handler.prepareRequest(request, mock(NodeClient.class));
     }
 
@@ -58,8 +64,11 @@ public class RestGetIndicesActionTests extends RestActionTestCase {
     public void testIncludeTypeNamesWarningExists() throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put(INCLUDE_TYPE_NAME_PARAMETER, randomFrom("true", "false"));
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.HEAD).withPath("/some_index")
-                .withParams(params).build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+            .withMethod(RestRequest.Method.HEAD)
+            .withPath("/some_index")
+            .withParams(params)
+            .build();
 
         RestGetIndicesAction handler = new RestGetIndicesAction();
         handler.prepareRequest(request, mock(NodeClient.class));

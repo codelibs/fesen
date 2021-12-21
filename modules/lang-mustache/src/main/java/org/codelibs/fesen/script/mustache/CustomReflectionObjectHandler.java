@@ -19,18 +19,19 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import com.github.mustachejava.reflect.ReflectionObjectHandler;
+
 import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.util.iterable.Iterables;
 
-import com.github.mustachejava.reflect.ReflectionObjectHandler;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 final class CustomReflectionObjectHandler extends ReflectionObjectHandler {
 

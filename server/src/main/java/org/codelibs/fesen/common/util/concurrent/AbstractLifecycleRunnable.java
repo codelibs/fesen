@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.common.util.concurrent;
 
-import java.util.Objects;
-
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.component.Lifecycle;
+
+import java.util.Objects;
 
 /**
  * {@code AbstractLifecycleRunnable} is a service-lifecycle aware {@link AbstractRunnable}.

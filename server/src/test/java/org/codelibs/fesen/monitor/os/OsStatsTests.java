@@ -41,10 +41,16 @@ public class OsStatsTests extends ESTestCase {
         OsStats.Mem mem = new OsStats.Mem(memTotal, randomLongBetween(0, memTotal));
         long swapTotal = randomNonNegativeLong();
         OsStats.Swap swap = new OsStats.Swap(swapTotal, randomLongBetween(0, swapTotal));
-        OsStats.Cgroup cgroup = new OsStats.Cgroup(randomAlphaOfLength(8), randomNonNegativeLong(), randomAlphaOfLength(8),
-                randomNonNegativeLong(), randomNonNegativeLong(),
-                new OsStats.Cgroup.CpuStat(randomNonNegativeLong(), randomNonNegativeLong(), randomNonNegativeLong()),
-                randomAlphaOfLength(8), Long.toString(randomNonNegativeLong()), Long.toString(randomNonNegativeLong()));
+        OsStats.Cgroup cgroup = new OsStats.Cgroup(
+            randomAlphaOfLength(8),
+            randomNonNegativeLong(),
+            randomAlphaOfLength(8),
+            randomNonNegativeLong(),
+            randomNonNegativeLong(),
+            new OsStats.Cgroup.CpuStat(randomNonNegativeLong(), randomNonNegativeLong(), randomNonNegativeLong()),
+            randomAlphaOfLength(8),
+            Long.toString(randomNonNegativeLong()),
+            Long.toString(randomNonNegativeLong()));
         OsStats osStats = new OsStats(System.currentTimeMillis(), cpu, mem, swap, cgroup);
 
         try (BytesStreamOutput out = new BytesStreamOutput()) {
@@ -63,12 +69,15 @@ public class OsStatsTests extends ESTestCase {
                 assertEquals(osStats.getCgroup().getCpuControlGroup(), deserializedOsStats.getCgroup().getCpuControlGroup());
                 assertEquals(osStats.getCgroup().getCpuCfsPeriodMicros(), deserializedOsStats.getCgroup().getCpuCfsPeriodMicros());
                 assertEquals(osStats.getCgroup().getCpuCfsQuotaMicros(), deserializedOsStats.getCgroup().getCpuCfsQuotaMicros());
-                assertEquals(osStats.getCgroup().getCpuStat().getNumberOfElapsedPeriods(),
-                        deserializedOsStats.getCgroup().getCpuStat().getNumberOfElapsedPeriods());
-                assertEquals(osStats.getCgroup().getCpuStat().getNumberOfTimesThrottled(),
-                        deserializedOsStats.getCgroup().getCpuStat().getNumberOfTimesThrottled());
-                assertEquals(osStats.getCgroup().getCpuStat().getTimeThrottledNanos(),
-                        deserializedOsStats.getCgroup().getCpuStat().getTimeThrottledNanos());
+                assertEquals(
+                    osStats.getCgroup().getCpuStat().getNumberOfElapsedPeriods(),
+                    deserializedOsStats.getCgroup().getCpuStat().getNumberOfElapsedPeriods());
+                assertEquals(
+                    osStats.getCgroup().getCpuStat().getNumberOfTimesThrottled(),
+                    deserializedOsStats.getCgroup().getCpuStat().getNumberOfTimesThrottled());
+                assertEquals(
+                    osStats.getCgroup().getCpuStat().getTimeThrottledNanos(),
+                    deserializedOsStats.getCgroup().getCpuStat().getTimeThrottledNanos());
                 assertEquals(osStats.getCgroup().getMemoryLimitInBytes(), deserializedOsStats.getCgroup().getMemoryLimitInBytes());
                 assertEquals(osStats.getCgroup().getMemoryUsageInBytes(), deserializedOsStats.getCgroup().getMemoryUsageInBytes());
             }

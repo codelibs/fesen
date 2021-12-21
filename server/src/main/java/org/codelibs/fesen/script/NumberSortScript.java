@@ -20,7 +20,6 @@ package org.codelibs.fesen.script;
 
 import java.io.IOException;
 import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 

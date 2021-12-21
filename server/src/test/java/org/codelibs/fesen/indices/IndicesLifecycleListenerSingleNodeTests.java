@@ -129,14 +129,14 @@ public class IndicesLifecycleListenerSingleNodeTests extends ESSingleNodeTestCas
             ShardRouting newRouting = shardRouting;
             String nodeId = newRouting.currentNodeId();
             UnassignedInfo unassignedInfo = new UnassignedInfo(UnassignedInfo.Reason.INDEX_CREATED, "boom");
-            newRouting = newRouting.moveToUnassigned(unassignedInfo).updateUnassigned(unassignedInfo,
-                    RecoverySource.EmptyStoreRecoverySource.INSTANCE);
+            newRouting = newRouting.moveToUnassigned(unassignedInfo)
+                .updateUnassigned(unassignedInfo, RecoverySource.EmptyStoreRecoverySource.INSTANCE);
             newRouting = ShardRoutingHelper.initialize(newRouting, nodeId);
             IndexShard shard = index.createShard(newRouting, s -> {}, RetentionLeaseSyncer.EMPTY);
             IndexShardTestCase.updateRoutingEntry(shard, newRouting);
             assertEquals(5, counter.get());
-            final DiscoveryNode localNode =
-                    new DiscoveryNode("foo", buildNewFakeTransportAddress(), emptyMap(), emptySet(), Version.CURRENT);
+            final DiscoveryNode localNode = new DiscoveryNode("foo", buildNewFakeTransportAddress(),
+                    emptyMap(), emptySet(), Version.CURRENT);
             shard.markAsRecovering("store", new RecoveryState(newRouting, localNode, null));
             IndexShardTestCase.recoverFromStore(shard);
             newRouting = ShardRoutingHelper.moveToStarted(newRouting);

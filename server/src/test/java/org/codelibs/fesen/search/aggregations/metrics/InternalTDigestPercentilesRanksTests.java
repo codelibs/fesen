@@ -33,8 +33,8 @@ import org.codelibs.fesen.search.aggregations.metrics.TDigestState;
 public class InternalTDigestPercentilesRanksTests extends InternalPercentilesRanksTestCase<InternalTDigestPercentileRanks> {
 
     @Override
-    protected InternalTDigestPercentileRanks createTestInstance(String name, Map<String, Object> metadata, boolean keyed,
-            DocValueFormat format, double[] percents, double[] values) {
+    protected InternalTDigestPercentileRanks createTestInstance(String name, Map<String, Object> metadata,
+                                                                boolean keyed, DocValueFormat format, double[] percents, double[] values) {
         final TDigestState state = new TDigestState(100);
         Arrays.stream(values).forEach(state::add);
 

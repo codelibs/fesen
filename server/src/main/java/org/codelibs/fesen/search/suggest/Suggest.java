@@ -18,19 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.util.CollectionUtil;
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.Version;
@@ -56,6 +43,19 @@ import org.codelibs.fesen.search.suggest.completion.CompletionSuggestion;
 import org.codelibs.fesen.search.suggest.phrase.PhraseSuggestion;
 import org.codelibs.fesen.search.suggest.term.TermSuggestion;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 /**
  * Top level suggest result, containing the result for each suggestion.
  */
@@ -69,7 +69,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             return cmp;
         }
         return first.getText().compareTo(second.getText());
-    };
+     };
 
     private final List<Suggestion<? extends Entry<? extends Option>>> suggestions;
     private final boolean hasScoreDocs;
@@ -94,17 +94,17 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 Suggestion<? extends Entry<? extends Option>> suggestion;
                 final int type = in.readVInt();
                 switch (type) {
-                case TermSuggestion.TYPE:
-                    suggestion = new TermSuggestion(in);
-                    break;
-                case CompletionSuggestion.TYPE:
-                    suggestion = new CompletionSuggestion(in);
-                    break;
-                case PhraseSuggestion.TYPE:
-                    suggestion = new PhraseSuggestion(in);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown suggestion type with ordinal " + type);
+                    case TermSuggestion.TYPE:
+                        suggestion = new TermSuggestion(in);
+                        break;
+                    case CompletionSuggestion.TYPE:
+                        suggestion = new CompletionSuggestion(in);
+                        break;
+                    case PhraseSuggestion.TYPE:
+                        suggestion = new PhraseSuggestion(in);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown suggestion type with ordinal " + type);
                 }
                 suggestions.add(suggestion);
             }
@@ -135,7 +135,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         if (suggestions.isEmpty() || name == null) {
             return null;
         } else if (suggestions.size() == 1) {
-            return (T) (name.equals(suggestions.get(0).name) ? suggestions.get(0) : null);
+          return (T) (name.equals(suggestions.get(0).name) ? suggestions.get(0) : null);
         } else if (this.suggestMap == null) {
             suggestMap = new HashMap<>();
             for (Suggest.Suggestion<? extends Entry<? extends Option>> item : suggestions) {
@@ -210,8 +210,8 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                     suggestionClass = suggestion.getClass();
                 } else if (suggestionClass != suggestion.getClass()) {
                     throw new IllegalArgumentException(
-                            "detected mixed suggestion results, due to querying on old and new completion suggester,"
-                                    + " query on a single completion suggester version");
+                        "detected mixed suggestion results, due to querying on old and new completion suggester," +
+                        " query on a single completion suggester version");
                 }
             }
             Suggestion reduce = value.get(0).reduce(value);
@@ -225,8 +225,10 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
      * @return only suggestions of type <code>suggestionType</code> contained in this {@link Suggest} instance
      */
     public <T extends Suggestion> List<T> filter(Class<T> suggestionType) {
-        return suggestions.stream().filter(suggestion -> suggestion.getClass() == suggestionType).map(suggestion -> (T) suggestion)
-                .collect(Collectors.toList());
+         return suggestions.stream()
+            .filter(suggestion -> suggestion.getClass() == suggestionType)
+            .map(suggestion -> (T) suggestion)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -337,10 +339,10 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             List<T> currentEntries = new ArrayList<>();
             for (int i = 0; i < size; i++) {
                 for (Suggestion<T> suggestion : toReduce) {
-                    if (suggestion.entries.size() != size) {
-                        throw new IllegalStateException("Can't merge suggest result, this might be caused by suggest calls "
-                                + "across multiple indices with different analysis chains. Suggest entries have different sizes actual ["
-                                + suggestion.entries.size() + "] expected [" + size + "]");
+                    if(suggestion.entries.size() != size) {
+                        throw new IllegalStateException("Can't merge suggest result, this might be caused by suggest calls " +
+                                "across multiple indices with different analysis chains. Suggest entries have different sizes actual [" +
+                                suggestion.entries.size() + "] expected [" + size +"]");
                     }
                     assert suggestion.name.equals(leader.name);
                     currentEntries.add(suggestion.entries.get(i));
@@ -417,8 +419,9 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             }
 
             Suggestion otherSuggestion = (Suggestion) other;
-            return Objects.equals(name, otherSuggestion.name) && Objects.equals(size, otherSuggestion.size)
-                    && Objects.equals(entries, otherSuggestion.entries);
+            return Objects.equals(name, otherSuggestion.name)
+                && Objects.equals(size, otherSuggestion.size)
+                && Objects.equals(entries, otherSuggestion.entries);
         }
 
         @Override
@@ -435,7 +438,8 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         }
 
         protected static <E extends Suggestion.Entry<?>> void parseEntries(XContentParser parser, Suggestion<E> suggestion,
-                CheckedFunction<XContentParser, E, IOException> entryParser) throws IOException {
+                                                                           CheckedFunction<XContentParser, E, IOException> entryParser)
+                throws IOException {
             ensureExpectedToken(XContentParser.Token.START_ARRAY, parser.currentToken(), parser);
             while ((parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                 suggestion.addTerm(entryParser.apply(parser));
@@ -464,8 +468,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 this.length = length;
             }
 
-            protected Entry() {
-            }
+            protected Entry() {}
 
             public Entry(StreamInput in) throws IOException {
                 text = in.readText();
@@ -501,9 +504,9 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 Entry<O> leader = toReduce.get(0);
                 for (Entry<O> entry : toReduce) {
                     if (!leader.text.equals(entry.text)) {
-                        throw new IllegalStateException("Can't merge suggest entries, this might be caused by suggest calls "
-                                + "across multiple indices with different analysis chains. Suggest entries have different text actual ["
-                                + entry.text + "] expected [" + leader.text + "]");
+                        throw new IllegalStateException("Can't merge suggest entries, this might be caused by suggest calls " +
+                                "across multiple indices with different analysis chains. Suggest entries have different text actual [" +
+                                entry.text + "] expected [" + leader.text +"]");
                     }
                     assert leader.offset == entry.offset;
                     assert leader.length == entry.length;
@@ -518,7 +521,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                     }
                 }
                 leader.options.clear();
-                for (O option : entries.keySet()) {
+                for (O option: entries.keySet()) {
                     leader.addOption(option);
                 }
                 return leader;
@@ -582,8 +585,10 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 }
 
                 Entry<?> entry = (Entry<?>) o;
-                return Objects.equals(length, entry.length) && Objects.equals(offset, entry.offset) && Objects.equals(text, entry.text)
-                        && Objects.equals(options, entry.options);
+                return Objects.equals(length, entry.length)
+                    && Objects.equals(offset, entry.offset)
+                    && Objects.equals(text, entry.text)
+                    && Objects.equals(options, entry.options);
             }
 
             @Override

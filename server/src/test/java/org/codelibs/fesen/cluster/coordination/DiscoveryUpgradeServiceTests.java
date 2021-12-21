@@ -29,8 +29,8 @@ import org.codelibs.fesen.test.ESTestCase;
 
 public class DiscoveryUpgradeServiceTests extends ESTestCase {
     public void testCreateDiscoveryNodeWithImpossiblyHighId() {
-        final DiscoveryNode discoveryNode =
-                new DiscoveryNode(UUIDs.randomBase64UUID(random()), buildNewFakeTransportAddress(), Version.CURRENT);
+        final DiscoveryNode discoveryNode
+            = new DiscoveryNode(UUIDs.randomBase64UUID(random()), buildNewFakeTransportAddress(), Version.CURRENT);
         final DiscoveryNode fakeNode = DiscoveryUpgradeService.createDiscoveryNodeWithImpossiblyHighId(discoveryNode);
         assertThat(discoveryNode.getId(), lessThan(fakeNode.getId()));
         assertThat(UUIDs.randomBase64UUID(random()), lessThan(fakeNode.getId()));

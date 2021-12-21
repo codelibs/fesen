@@ -52,7 +52,8 @@ class FieldTypeLookup implements Iterable<MappedFieldType> {
         this(Collections.emptyList(), Collections.emptyList());
     }
 
-    FieldTypeLookup(Collection<FieldMapper> fieldMappers, Collection<FieldAliasMapper> fieldAliasMappers) {
+    FieldTypeLookup(Collection<FieldMapper> fieldMappers,
+                    Collection<FieldAliasMapper> fieldAliasMappers) {
         Map<String, DynamicKeyFieldMapper> dynamicKeyMappers = new HashMap<>();
 
         for (FieldMapper fieldMapper : fieldMappers) {
@@ -138,8 +139,9 @@ class FieldTypeLookup implements Iterable<MappedFieldType> {
             }
         }
 
-        return fieldToCopiedFields.containsKey(resolvedField) ? fieldToCopiedFields.get(resolvedField)
-                : org.codelibs.fesen.core.Set.of(resolvedField);
+        return fieldToCopiedFields.containsKey(resolvedField)
+            ? fieldToCopiedFields.get(resolvedField)
+            : org.codelibs.fesen.core.Set.of(resolvedField);
     }
 
     @Override

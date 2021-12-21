@@ -99,17 +99,13 @@ public class JoinRequest extends TransportRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof JoinRequest))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof JoinRequest)) return false;
 
         JoinRequest that = (JoinRequest) o;
 
-        if (minimumTerm != that.minimumTerm)
-            return false;
-        if (!sourceNode.equals(that.sourceNode))
-            return false;
+        if (minimumTerm != that.minimumTerm) return false;
+        if (!sourceNode.equals(that.sourceNode)) return false;
         return optionalJoin.equals(that.optionalJoin);
     }
 
@@ -120,6 +116,10 @@ public class JoinRequest extends TransportRequest {
 
     @Override
     public String toString() {
-        return "JoinRequest{" + "sourceNode=" + sourceNode + ", minimumTerm=" + minimumTerm + ", optionalJoin=" + optionalJoin + '}';
+        return "JoinRequest{" +
+            "sourceNode=" + sourceNode +
+            ", minimumTerm=" + minimumTerm +
+            ", optionalJoin=" + optionalJoin +
+            '}';
     }
 }

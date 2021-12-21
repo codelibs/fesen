@@ -19,26 +19,6 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static org.junit.Assert.fail;
-
-import java.io.Closeable;
-import java.net.SocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.codelibs.fesen.common.unit.ByteSizeUnit;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.core.Tuple;
-import org.codelibs.fesen.tasks.Task;
-import org.codelibs.fesen.transport.NettyAllocator;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -62,6 +42,26 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 import io.netty.handler.codec.http.HttpVersion;
+
+import org.codelibs.fesen.common.unit.ByteSizeUnit;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.core.Tuple;
+import org.codelibs.fesen.tasks.Task;
+import org.codelibs.fesen.transport.NettyAllocator;
+
+import java.io.Closeable;
+import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.junit.Assert.fail;
 
 /**
  * Tiny helper to send http requests over netty.
@@ -87,8 +87,10 @@ class Netty4HttpClient implements Closeable {
     private final Bootstrap clientBootstrap;
 
     Netty4HttpClient() {
-        clientBootstrap = new Bootstrap().channel(NettyAllocator.getChannelType())
-                .option(ChannelOption.ALLOCATOR, NettyAllocator.getAllocator()).group(new NioEventLoopGroup(1));
+        clientBootstrap = new Bootstrap()
+            .channel(NettyAllocator.getChannelType())
+            .option(ChannelOption.ALLOCATOR, NettyAllocator.getAllocator())
+            .group(new NioEventLoopGroup(1));
     }
 
     public List<FullHttpResponse> get(SocketAddress remoteAddress, String... uris) throws InterruptedException {
@@ -103,7 +105,7 @@ class Netty4HttpClient implements Closeable {
     }
 
     public final Collection<FullHttpResponse> post(SocketAddress remoteAddress, List<Tuple<String, CharSequence>> urisAndBodies)
-            throws InterruptedException {
+        throws InterruptedException {
         return processRequestsWithBody(HttpMethod.POST, remoteAddress, urisAndBodies);
     }
 
@@ -114,12 +116,12 @@ class Netty4HttpClient implements Closeable {
     }
 
     public final Collection<FullHttpResponse> put(SocketAddress remoteAddress, List<Tuple<String, CharSequence>> urisAndBodies)
-            throws InterruptedException {
+        throws InterruptedException {
         return processRequestsWithBody(HttpMethod.PUT, remoteAddress, urisAndBodies);
     }
 
-    private List<FullHttpResponse> processRequestsWithBody(HttpMethod method, SocketAddress remoteAddress,
-            List<Tuple<String, CharSequence>> urisAndBodies) throws InterruptedException {
+    private List<FullHttpResponse> processRequestsWithBody(HttpMethod method, SocketAddress remoteAddress, List<Tuple<String,
+        CharSequence>> urisAndBodies) throws InterruptedException {
         List<HttpRequest> requests = new ArrayList<>(urisAndBodies.size());
         for (Tuple<String, CharSequence> uriAndBody : urisAndBodies) {
             ByteBuf content = Unpooled.copiedBuffer(uriAndBody.v2(), StandardCharsets.UTF_8);
@@ -132,8 +134,9 @@ class Netty4HttpClient implements Closeable {
         return sendRequests(remoteAddress, requests);
     }
 
-    private synchronized List<FullHttpResponse> sendRequests(final SocketAddress remoteAddress, final Collection<HttpRequest> requests)
-            throws InterruptedException {
+    private synchronized List<FullHttpResponse> sendRequests(
+        final SocketAddress remoteAddress,
+        final Collection<HttpRequest> requests) throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(requests.size());
         final List<FullHttpResponse> content = Collections.synchronizedList(new ArrayList<>(requests.size()));
 

@@ -67,16 +67,25 @@ public class MovFnAggrgatorTests extends AggregatorTestCase {
     private static final String INSTANT_FIELD = "instant";
     private static final String VALUE_FIELD = "value_field";
 
-    private static final List<String> datasetTimes =
-            Arrays.asList("2017-01-01T01:07:45", "2017-01-02T03:43:34", "2017-01-03T04:11:00", "2017-01-04T05:11:31", "2017-01-05T08:24:05",
-                    "2017-01-06T13:09:32", "2017-01-07T13:47:43", "2017-01-08T16:14:34", "2017-01-09T17:09:50", "2017-01-10T22:55:46");
+    private static final List<String> datasetTimes = Arrays.asList(
+        "2017-01-01T01:07:45",
+        "2017-01-02T03:43:34",
+        "2017-01-03T04:11:00",
+        "2017-01-04T05:11:31",
+        "2017-01-05T08:24:05",
+        "2017-01-06T13:09:32",
+        "2017-01-07T13:47:43",
+        "2017-01-08T16:14:34",
+        "2017-01-09T17:09:50",
+        "2017-01-10T22:55:46");
 
-    private static final List<Integer> datasetValues = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    private static final List<Integer> datasetValues = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
 
     @Override
     protected ScriptService getMockScriptService() {
         MockScriptEngine scriptEngine = new MockScriptEngine(MockScriptEngine.NAME,
-                Collections.singletonMap("test", script -> MovingFunctions.max((double[]) script.get("_values"))), Collections.emptyMap());
+            Collections.singletonMap("test", script -> MovingFunctions.max((double[]) script.get("_values"))),
+            Collections.emptyMap());
         Map<String, ScriptEngine> engines = Collections.singletonMap(scriptEngine.getType(), scriptEngine);
 
         return new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
@@ -93,7 +102,7 @@ public class MovFnAggrgatorTests extends AggregatorTestCase {
     }
 
     public void testWideWindow() throws IOException {
-        check(50, 100, Arrays.asList(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0));
+        check(50, 100,Arrays.asList(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0));
     }
 
     private void check(int shift, int window, List<Double> expected) throws IOException {
@@ -109,13 +118,16 @@ public class MovFnAggrgatorTests extends AggregatorTestCase {
 
         executeTestCase(query, aggBuilder, histogram -> {
             List<? extends Histogram.Bucket> buckets = histogram.getBuckets();
-            List<Double> actual = buckets.stream().map(bucket -> ((InternalSimpleValue) (bucket.getAggregations().get("mov_fn"))).value())
-                    .collect(Collectors.toList());
+            List<Double> actual = buckets.stream()
+                .map(bucket -> ((InternalSimpleValue) (bucket.getAggregations().get("mov_fn"))).value())
+                .collect(Collectors.toList());
             assertThat(actual, equalTo(expected));
         });
     }
 
-    private void executeTestCase(Query query, DateHistogramAggregationBuilder aggBuilder, Consumer<Histogram> verify) throws IOException {
+    private void executeTestCase(Query query,
+                                 DateHistogramAggregationBuilder aggBuilder,
+                                 Consumer<Histogram> verify) throws IOException {
 
         try (Directory directory = newDirectory()) {
             try (RandomIndexWriter indexWriter = new RandomIndexWriter(random(), directory)) {
@@ -136,10 +148,12 @@ public class MovFnAggrgatorTests extends AggregatorTestCase {
                 IndexSearcher indexSearcher = newSearcher(indexReader, true, true);
 
                 DateFieldMapper.DateFieldType fieldType = new DateFieldMapper.DateFieldType(aggBuilder.field());
-                MappedFieldType valueFieldType = new NumberFieldMapper.NumberFieldType("value_field", NumberFieldMapper.NumberType.LONG);
+                MappedFieldType valueFieldType
+                    = new NumberFieldMapper.NumberFieldType("value_field", NumberFieldMapper.NumberType.LONG);
 
                 InternalDateHistogram histogram;
-                histogram = searchAndReduce(indexSearcher, query, aggBuilder, 1000, new MappedFieldType[] { fieldType, valueFieldType });
+                histogram = searchAndReduce(indexSearcher, query, aggBuilder, 1000,
+                    new MappedFieldType[]{fieldType, valueFieldType});
                 verify.accept(histogram);
             }
         }

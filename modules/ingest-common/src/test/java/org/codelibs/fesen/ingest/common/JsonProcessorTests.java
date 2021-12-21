@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
@@ -34,7 +26,16 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.JsonProcessor;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 public class JsonProcessorTests extends ESTestCase {
 
@@ -64,8 +65,8 @@ public class JsonProcessorTests extends ESTestCase {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random(), document);
 
         Exception exception = expectThrows(IllegalArgumentException.class, () -> jsonProcessor.execute(ingestDocument));
-        assertThat(exception.getCause().getMessage(), containsString(
-                "Unrecognized token 'blah': " + "was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"));
+        assertThat(exception.getCause().getMessage(), containsString("Unrecognized token 'blah': " +
+            "was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"));
     }
 
     public void testByteArray() {
@@ -75,8 +76,12 @@ public class JsonProcessorTests extends ESTestCase {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random(), document);
 
         Exception exception = expectThrows(IllegalArgumentException.class, () -> jsonProcessor.execute(ingestDocument));
-        assertThat(exception.getCause().getMessage(), containsString(
-                "Unrecognized token 'B': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"));
+        assertThat(
+            exception.getCause().getMessage(),
+            containsString(
+                "Unrecognized token 'B': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"
+            )
+        );
     }
 
     public void testNull() throws Exception {

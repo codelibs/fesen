@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.Collections;
-
 import org.codelibs.fesen.Version;
+import org.codelibs.fesen.analysis.common.AnalysisPredicateScript;
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -36,16 +36,23 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
+import java.util.Collections;
+
 public class ScriptedConditionTokenFilterTests extends ESTokenStreamTestCase {
 
     public void testSimpleCondition() throws Exception {
-        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
-        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put("index.analysis.filter.cond.type", "condition")
-                .put("index.analysis.filter.cond.script.source", "token.getPosition() > 1")
-                .putList("index.analysis.filter.cond.filter", "uppercase").put("index.analysis.analyzer.myAnalyzer.type", "custom")
-                .put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
-                .putList("index.analysis.analyzer.myAnalyzer.filter", "cond").build();
+        Settings settings = Settings.builder()
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
+        Settings indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put("index.analysis.filter.cond.type", "condition")
+            .put("index.analysis.filter.cond.script.source", "token.getPosition() > 1")
+            .putList("index.analysis.filter.cond.filter", "uppercase")
+            .put("index.analysis.analyzer.myAnalyzer.type", "custom")
+            .put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
+            .putList("index.analysis.analyzer.myAnalyzer.filter", "cond")
+            .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
         AnalysisPredicateScript.Factory factory = () -> new AnalysisPredicateScript() {
@@ -56,7 +63,7 @@ public class ScriptedConditionTokenFilterTests extends ESTokenStreamTestCase {
         };
 
         @SuppressWarnings("unchecked")
-        ScriptService scriptService = new ScriptService(indexSettings, Collections.emptyMap(), Collections.emptyMap()) {
+        ScriptService scriptService = new ScriptService(indexSettings, Collections.emptyMap(), Collections.emptyMap()){
             @Override
             public <FactoryType> FactoryType compile(Script script, ScriptContext<FactoryType> context) {
                 assertEquals(context, AnalysisPredicateScript.CONTEXT);
@@ -67,13 +74,16 @@ public class ScriptedConditionTokenFilterTests extends ESTokenStreamTestCase {
 
         CommonAnalysisPlugin plugin = new CommonAnalysisPlugin();
         plugin.createComponents(null, null, null, null, scriptService, null, null, null, null, null, null);
-        AnalysisModule module = new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(plugin));
+        AnalysisModule module
+            = new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(plugin));
 
         IndexAnalyzers analyzers = module.getAnalysisRegistry().build(idxSettings);
 
         try (NamedAnalyzer analyzer = analyzers.get("myAnalyzer")) {
             assertNotNull(analyzer);
-            assertAnalyzesTo(analyzer, "Vorsprung Durch Technik", new String[] { "Vorsprung", "Durch", "TECHNIK" });
+            assertAnalyzesTo(analyzer, "Vorsprung Durch Technik", new String[]{
+                "Vorsprung", "Durch", "TECHNIK"
+            });
         }
 
     }

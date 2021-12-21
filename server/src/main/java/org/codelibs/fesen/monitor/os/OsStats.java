@@ -19,18 +19,19 @@
 
 package org.codelibs.fesen.monitor.os;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class OsStats implements Writeable, ToXContentFragment {
 
@@ -69,9 +70,7 @@ public class OsStats implements Writeable, ToXContentFragment {
         return timestamp;
     }
 
-    public Cpu getCpu() {
-        return cpu;
-    }
+    public Cpu getCpu() { return cpu; }
 
     public Mem getMem() {
         return mem;
@@ -425,9 +424,16 @@ public class OsStats implements Writeable, ToXContentFragment {
             return memoryUsageInBytes;
         }
 
-        public Cgroup(final String cpuAcctControlGroup, final long cpuAcctUsageNanos, final String cpuControlGroup,
-                final long cpuCfsPeriodMicros, final long cpuCfsQuotaMicros, final CpuStat cpuStat, final String memoryControlGroup,
-                final String memoryLimitInBytes, final String memoryUsageInBytes) {
+        public Cgroup(
+            final String cpuAcctControlGroup,
+            final long cpuAcctUsageNanos,
+            final String cpuControlGroup,
+            final long cpuCfsPeriodMicros,
+            final long cpuCfsQuotaMicros,
+            final CpuStat cpuStat,
+            final String memoryControlGroup,
+            final String memoryLimitInBytes,
+            final String memoryUsageInBytes) {
             this.cpuAcctControlGroup = Objects.requireNonNull(cpuAcctControlGroup);
             this.cpuAcctUsageNanos = cpuAcctUsageNanos;
             this.cpuControlGroup = Objects.requireNonNull(cpuControlGroup);
@@ -446,9 +452,15 @@ public class OsStats implements Writeable, ToXContentFragment {
             cpuCfsPeriodMicros = in.readLong();
             cpuCfsQuotaMicros = in.readLong();
             cpuStat = new CpuStat(in);
-            memoryControlGroup = in.readOptionalString();
-            memoryLimitInBytes = in.readOptionalString();
-            memoryUsageInBytes = in.readOptionalString();
+            if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+                memoryControlGroup = in.readOptionalString();
+                memoryLimitInBytes = in.readOptionalString();
+                memoryUsageInBytes = in.readOptionalString();
+            } else {
+                memoryControlGroup = null;
+                memoryLimitInBytes = null;
+                memoryUsageInBytes = null;
+            }
         }
 
         @Override
@@ -459,9 +471,11 @@ public class OsStats implements Writeable, ToXContentFragment {
             out.writeLong(cpuCfsPeriodMicros);
             out.writeLong(cpuCfsQuotaMicros);
             cpuStat.writeTo(out);
-            out.writeOptionalString(memoryControlGroup);
-            out.writeOptionalString(memoryLimitInBytes);
-            out.writeOptionalString(memoryUsageInBytes);
+            if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+                out.writeOptionalString(memoryControlGroup);
+                out.writeOptionalString(memoryLimitInBytes);
+                out.writeOptionalString(memoryUsageInBytes);
+            }
         }
 
         @Override

@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.metrics.ParsedPercentiles;
 import org.codelibs.fesen.search.aggregations.metrics.Percentiles;
+
+import java.io.IOException;
+import java.util.Map.Entry;
 
 public class ParsedPercentilesBucket extends ParsedPercentiles implements Percentiles {
 
@@ -39,8 +39,8 @@ public class ParsedPercentilesBucket extends ParsedPercentiles implements Percen
     public double percentile(double percent) throws IllegalArgumentException {
         Double value = percentiles.get(percent);
         if (value == null) {
-            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not"
-                    + " one of the computed percentiles. Available keys are: " + percentiles.keySet());
+            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not" +
+                    " one of the computed percentiles. Available keys are: " + percentiles.keySet());
         }
         return value;
     }

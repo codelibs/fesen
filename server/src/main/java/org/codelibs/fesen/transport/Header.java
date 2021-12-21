@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.transport;
 
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.core.Tuple;
 
 public class Header {
 
@@ -107,11 +107,15 @@ public class Header {
         this.headers = ThreadContext.readHeadersFromStream(input);
 
         if (isRequest()) {
-            final String[] featuresFound = input.readStringArray();
-            if (featuresFound.length == 0) {
-                features = Collections.emptySet();
+            if (version.onOrAfter(Version.V_6_3_0)) {
+                final String[] featuresFound = input.readStringArray();
+                if (featuresFound.length == 0) {
+                    features = Collections.emptySet();
+                } else {
+                    features = Collections.unmodifiableSet(new TreeSet<>(Arrays.asList(featuresFound)));
+                }
             } else {
-                features = Collections.unmodifiableSet(new TreeSet<>(Arrays.asList(featuresFound)));
+                features = Collections.emptySet();
             }
             this.actionName = input.readString();
         } else {

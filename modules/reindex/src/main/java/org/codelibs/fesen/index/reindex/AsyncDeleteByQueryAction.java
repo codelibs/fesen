@@ -23,6 +23,10 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.client.ParentTaskAssigningClient;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.DeleteByQueryRequest;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
@@ -31,8 +35,9 @@ import org.codelibs.fesen.threadpool.ThreadPool;
  */
 public class AsyncDeleteByQueryAction extends AbstractAsyncBulkByScrollAction<DeleteByQueryRequest, TransportDeleteByQueryAction> {
 
-    public AsyncDeleteByQueryAction(BulkByScrollTask task, Logger logger, ParentTaskAssigningClient client, ThreadPool threadPool,
-            DeleteByQueryRequest request, ScriptService scriptService, ActionListener<BulkByScrollResponse> listener) {
+    public AsyncDeleteByQueryAction(BulkByScrollTask task, Logger logger, ParentTaskAssigningClient client,
+                                    ThreadPool threadPool, DeleteByQueryRequest request, ScriptService scriptService,
+                                    ActionListener<BulkByScrollResponse> listener) {
         super(task, false, true, logger, client, threadPool, request, listener, scriptService, null);
     }
 

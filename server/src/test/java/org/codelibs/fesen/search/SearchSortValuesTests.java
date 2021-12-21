@@ -55,7 +55,7 @@ public class SearchSortValuesTests extends AbstractSerializingTestCase<SearchSor
             for (int i = 0; i < size; i++) {
                 Object sortValue = randomSortValue(xContentType, transportSerialization);
                 //make sure that BytesRef are not provided as formatted values
-                sortValue = sortValue instanceof BytesRef ? DocValueFormat.RAW.format((BytesRef) sortValue) : sortValue;
+                sortValue = sortValue instanceof BytesRef ? DocValueFormat.RAW.format((BytesRef)sortValue) : sortValue;
                 values[i] = sortValue;
             }
             return new SearchSortValues(values);
@@ -69,8 +69,12 @@ public class SearchSortValuesTests extends AbstractSerializingTestCase<SearchSor
     }
 
     private static DocValueFormat randomDocValueFormat() {
-        return randomFrom(DocValueFormat.BOOLEAN, DocValueFormat.RAW, DocValueFormat.IP, DocValueFormat.BINARY, DocValueFormat.GEOHASH,
-                DocValueFormat.GEOTILE);
+        return randomFrom(DocValueFormat.BOOLEAN,
+            DocValueFormat.RAW,
+            DocValueFormat.IP,
+            DocValueFormat.BINARY,
+            DocValueFormat.GEOHASH,
+            DocValueFormat.GEOTILE);
     }
 
     @Override
@@ -102,12 +106,12 @@ public class SearchSortValuesTests extends AbstractSerializingTestCase<SearchSor
 
     @Override
     protected String[] getShuffleFieldsExceptions() {
-        return new String[] { "sort" };
+        return new String[]{"sort"};
     }
 
     public void testToXContent() throws IOException {
         {
-            SearchSortValues sortValues = new SearchSortValues(new Object[] { 1, "foo", 3.0 });
+            SearchSortValues sortValues = new SearchSortValues(new Object[]{ 1, "foo", 3.0});
             XContentBuilder builder = JsonXContent.contentBuilder();
             builder.startObject();
             sortValues.toXContent(builder, ToXContent.EMPTY_PARAMS);

@@ -19,11 +19,10 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.X509ExtendedKeyManager;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.net.ssl.X509ExtendedKeyManager;
 
 /**
  * A {@link SslKeyConfig} that does nothing (provides a null key manager)

@@ -28,7 +28,8 @@ public interface AnnotatedBindingBuilder<T> extends LinkedBindingBuilder<T> {
     /**
      * See the EDSL examples at {@link org.codelibs.fesen.common.inject.Binder}.
      */
-    LinkedBindingBuilder<T> annotatedWith(Class<? extends Annotation> annotationType);
+    LinkedBindingBuilder<T> annotatedWith(
+            Class<? extends Annotation> annotationType);
 
     /**
      * See the EDSL examples at {@link org.codelibs.fesen.common.inject.Binder}.

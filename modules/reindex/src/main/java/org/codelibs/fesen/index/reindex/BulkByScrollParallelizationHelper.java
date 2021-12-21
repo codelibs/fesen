@@ -35,6 +35,10 @@ import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.mapper.IdFieldMapper;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.LeaderBulkByScrollTaskState;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.search.slice.SliceBuilder;
 import org.codelibs.fesen.tasks.TaskId;
@@ -46,8 +50,7 @@ class BulkByScrollParallelizationHelper {
 
     static final int AUTO_SLICE_CEILING = 20;
 
-    private BulkByScrollParallelizationHelper() {
-    }
+    private BulkByScrollParallelizationHelper() {}
 
     /**
      * Takes an action created by a {@link BulkByScrollTask} and runs it with regard to whether the request is sliced or not.
@@ -61,9 +64,14 @@ class BulkByScrollParallelizationHelper {
      *
      * This method is equivalent to calling {@link #initTaskState} followed by {@link #executeSlicedAction}
      */
-    static <Request extends AbstractBulkByScrollRequest<Request>> void startSlicedAction(Request request, BulkByScrollTask task,
-            ActionType<BulkByScrollResponse> action, ActionListener<BulkByScrollResponse> listener, Client client, DiscoveryNode node,
-            Runnable workerAction) {
+    static <Request extends AbstractBulkByScrollRequest<Request>> void startSlicedAction(
+        Request request,
+        BulkByScrollTask task,
+        ActionType<BulkByScrollResponse> action,
+        ActionListener<BulkByScrollResponse> listener,
+        Client client,
+        DiscoveryNode node,
+        Runnable workerAction) {
         initTaskState(task, request, client, new ActionListener<Void>() {
             @Override
             public void onResponse(Void aVoid) {
@@ -87,9 +95,14 @@ class BulkByScrollParallelizationHelper {
      *
      * This method can only be called after the task state is initialized {@link #initTaskState}.
      */
-    static <Request extends AbstractBulkByScrollRequest<Request>> void executeSlicedAction(BulkByScrollTask task, Request request,
-            ActionType<BulkByScrollResponse> action, ActionListener<BulkByScrollResponse> listener, Client client, DiscoveryNode node,
-            Runnable workerAction) {
+    static <Request extends AbstractBulkByScrollRequest<Request>> void executeSlicedAction(
+        BulkByScrollTask task,
+        Request request,
+        ActionType<BulkByScrollResponse> action,
+        ActionListener<BulkByScrollResponse> listener,
+        Client client,
+        DiscoveryNode node,
+        Runnable workerAction) {
         if (task.isLeader()) {
             sendSubRequests(client, action, node.getId(), task, request, listener);
         } else if (task.isWorker()) {
@@ -107,8 +120,11 @@ class BulkByScrollParallelizationHelper {
      * unsliced. This method does not execute the action. In order to execute the action see
      * {@link #executeSlicedAction}
      */
-    static <Request extends AbstractBulkByScrollRequest<Request>> void initTaskState(BulkByScrollTask task, Request request, Client client,
-            ActionListener<Void> listener) {
+    static <Request extends AbstractBulkByScrollRequest<Request>> void initTaskState(
+        BulkByScrollTask task,
+        Request request,
+        Client client,
+        ActionListener<Void> listener) {
         int configuredSlices = request.getSlices();
         if (configuredSlices == AbstractBulkByScrollRequest.AUTO_SLICES) {
             ClusterSearchShardsRequest shardsRequest = new ClusterSearchShardsRequest();
@@ -131,8 +147,10 @@ class BulkByScrollParallelizationHelper {
         }
     }
 
-    private static <Request extends AbstractBulkByScrollRequest<Request>> void setWorkerCount(Request request, BulkByScrollTask task,
-            int slices) {
+    private static <Request extends AbstractBulkByScrollRequest<Request>> void setWorkerCount(
+        Request request,
+        BulkByScrollTask task,
+        int slices) {
         if (slices > 1) {
             task.setWorkerCount(slices);
         } else {
@@ -143,15 +161,22 @@ class BulkByScrollParallelizationHelper {
     }
 
     private static int countSlicesBasedOnShards(ClusterSearchShardsResponse response) {
-        Map<Index, Integer> countsByIndex = Arrays.stream(response.getGroups())
-                .collect(Collectors.toMap(group -> group.getShardId().getIndex(), group -> 1, (sum, term) -> sum + term));
+        Map<Index, Integer> countsByIndex = Arrays.stream(response.getGroups()).collect(Collectors.toMap(
+            group -> group.getShardId().getIndex(),
+            group -> 1,
+            (sum, term) -> sum + term
+        ));
         Set<Integer> counts = new HashSet<>(countsByIndex.values());
         int leastShards = counts.isEmpty() ? 1 : Collections.min(counts);
         return Math.min(leastShards, AUTO_SLICE_CEILING);
     }
 
-    private static <Request extends AbstractBulkByScrollRequest<Request>> void sendSubRequests(Client client,
-            ActionType<BulkByScrollResponse> action, String localNodeId, BulkByScrollTask task, Request request,
+    private static <Request extends AbstractBulkByScrollRequest<Request>> void sendSubRequests(
+            Client client,
+            ActionType<BulkByScrollResponse> action,
+            String localNodeId,
+            BulkByScrollTask task,
+            Request request,
             ActionListener<BulkByScrollResponse> listener) {
 
         LeaderBulkByScrollTaskState worker = task.getLeaderState();
@@ -160,9 +185,9 @@ class BulkByScrollParallelizationHelper {
         for (final SearchRequest slice : sliceIntoSubRequests(request.getSearchRequest(), IdFieldMapper.NAME, totalSlices)) {
             // TODO move the request to the correct node. maybe here or somehow do it as part of startup for reindex in general....
             Request requestForSlice = request.forSlice(parentTaskId, slice, totalSlices);
-            ActionListener<BulkByScrollResponse> sliceListener =
-                    ActionListener.wrap(r -> worker.onSliceResponse(listener, slice.source().slice().getId(), r),
-                            e -> worker.onSliceFailure(listener, slice.source().slice().getId(), e));
+            ActionListener<BulkByScrollResponse> sliceListener = ActionListener.wrap(
+                    r -> worker.onSliceResponse(listener, slice.source().slice().getId(), r),
+                    e -> worker.onSliceFailure(listener, slice.source().slice().getId(), e));
             client.execute(action, requestForSlice, sliceListener);
         }
     }

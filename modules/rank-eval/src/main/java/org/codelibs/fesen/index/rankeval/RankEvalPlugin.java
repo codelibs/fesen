@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
@@ -39,6 +33,12 @@ import org.codelibs.fesen.plugins.ActionPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.rest.RestController;
 import org.codelibs.fesen.rest.RestHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class RankEvalPlugin extends Plugin implements ActionPlugin {
 
@@ -62,15 +62,15 @@ public class RankEvalPlugin extends Plugin implements ActionPlugin {
         namedWriteables.add(new NamedWriteableRegistry.Entry(EvaluationMetric.class, MeanReciprocalRank.NAME, MeanReciprocalRank::new));
         namedWriteables.add(
                 new NamedWriteableRegistry.Entry(EvaluationMetric.class, DiscountedCumulativeGain.NAME, DiscountedCumulativeGain::new));
-        namedWriteables
-                .add(new NamedWriteableRegistry.Entry(EvaluationMetric.class, ExpectedReciprocalRank.NAME, ExpectedReciprocalRank::new));
+        namedWriteables.add(
+                new NamedWriteableRegistry.Entry(EvaluationMetric.class, ExpectedReciprocalRank.NAME, ExpectedReciprocalRank::new));
         namedWriteables.add(new NamedWriteableRegistry.Entry(MetricDetail.class, PrecisionAtK.NAME, PrecisionAtK.Detail::new));
         namedWriteables.add(new NamedWriteableRegistry.Entry(MetricDetail.class, RecallAtK.NAME, RecallAtK.Detail::new));
         namedWriteables.add(new NamedWriteableRegistry.Entry(MetricDetail.class, MeanReciprocalRank.NAME, MeanReciprocalRank.Detail::new));
         namedWriteables.add(
                 new NamedWriteableRegistry.Entry(MetricDetail.class, DiscountedCumulativeGain.NAME, DiscountedCumulativeGain.Detail::new));
-        namedWriteables
-                .add(new NamedWriteableRegistry.Entry(MetricDetail.class, ExpectedReciprocalRank.NAME, ExpectedReciprocalRank.Detail::new));
+        namedWriteables.add(
+                new NamedWriteableRegistry.Entry(MetricDetail.class, ExpectedReciprocalRank.NAME, ExpectedReciprocalRank.Detail::new));
         return namedWriteables;
     }
 

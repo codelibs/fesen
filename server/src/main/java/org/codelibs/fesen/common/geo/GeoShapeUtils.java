@@ -32,15 +32,16 @@ public class GeoShapeUtils {
 
     public static org.apache.lucene.geo.Polygon toLucenePolygon(Polygon polygon) {
         org.apache.lucene.geo.Polygon[] holes = new org.apache.lucene.geo.Polygon[polygon.getNumberOfHoles()];
-        for (int i = 0; i < holes.length; i++) {
+        for(int i = 0; i<holes.length; i++) {
             holes[i] = new org.apache.lucene.geo.Polygon(polygon.getHole(i).getY(), polygon.getHole(i).getX());
         }
         return new org.apache.lucene.geo.Polygon(polygon.getPolygon().getY(), polygon.getPolygon().getX(), holes);
     }
 
     public static org.apache.lucene.geo.Polygon toLucenePolygon(Rectangle r) {
-        return new org.apache.lucene.geo.Polygon(new double[] { r.getMinLat(), r.getMinLat(), r.getMaxLat(), r.getMaxLat(), r.getMinLat() },
-                new double[] { r.getMinLon(), r.getMaxLon(), r.getMaxLon(), r.getMinLon(), r.getMinLon() });
+        return new org.apache.lucene.geo.Polygon(
+            new double[]{r.getMinLat(), r.getMinLat(), r.getMaxLat(), r.getMaxLat(), r.getMinLat()},
+            new double[]{r.getMinLon(), r.getMaxLon(), r.getMaxLon(), r.getMinLon(), r.getMinLon()});
     }
 
     public static org.apache.lucene.geo.Rectangle toLuceneRectangle(Rectangle r) {

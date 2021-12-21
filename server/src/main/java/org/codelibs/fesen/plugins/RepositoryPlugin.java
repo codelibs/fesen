@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.plugins;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.repositories.Repository;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * An extension point for {@link Plugin} implementations to add custom snapshot repositories.
@@ -42,7 +42,7 @@ public interface RepositoryPlugin {
      * the value is a factory to construct the {@link Repository} interface.
      */
     default Map<String, Repository.Factory> getRepositories(Environment env, NamedXContentRegistry namedXContentRegistry,
-            ClusterService clusterService, RecoverySettings recoverySettings) {
+                                                            ClusterService clusterService, RecoverySettings recoverySettings) {
         return Collections.emptyMap();
     }
 
@@ -56,7 +56,7 @@ public interface RepositoryPlugin {
      * the value is a factory to construct the {@link Repository} interface.
      */
     default Map<String, Repository.Factory> getInternalRepositories(Environment env, NamedXContentRegistry namedXContentRegistry,
-            ClusterService clusterService, RecoverySettings recoverySettings) {
+                                                                    ClusterService clusterService, RecoverySettings recoverySettings) {
         return Collections.emptyMap();
     }
 

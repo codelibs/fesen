@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.client;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -51,6 +40,21 @@ import org.apache.http.message.BasicStatusLine;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.codelibs.fesen.client.HttpDeleteWithEntity;
+import org.codelibs.fesen.client.HttpGetWithEntity;
+import org.codelibs.fesen.client.RequestLogger;
+import org.codelibs.fesen.client.RestClientTestCase;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class RequestLoggerTests extends RestClientTestCase {
     public void testTraceRequest() throws IOException, URISyntaxException {
@@ -70,26 +74,26 @@ public class RequestLoggerTests extends RestClientTestCase {
             expected += " -d '" + requestBody + "'";
             HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
             HttpEntity entity;
-            switch (randomIntBetween(0, 4)) {
-            case 0:
-                entity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
-                break;
-            case 1:
-                entity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes(StandardCharsets.UTF_8)),
+            switch(randomIntBetween(0, 4)) {
+                case 0:
+                    entity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
+                    break;
+                case 1:
+                    entity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes(StandardCharsets.UTF_8)),
                         ContentType.APPLICATION_JSON);
-                break;
-            case 2:
-                entity = new NStringEntity(requestBody, ContentType.APPLICATION_JSON);
-                break;
-            case 3:
-                entity = new NByteArrayEntity(requestBody.getBytes(StandardCharsets.UTF_8), ContentType.APPLICATION_JSON);
-                break;
-            case 4:
-                // Evil entity without a charset
-                entity = new StringEntity(requestBody, ContentType.create("application/json", (Charset) null));
-                break;
-            default:
-                throw new UnsupportedOperationException();
+                    break;
+                case 2:
+                    entity = new NStringEntity(requestBody, ContentType.APPLICATION_JSON);
+                    break;
+                case 3:
+                    entity = new NByteArrayEntity(requestBody.getBytes(StandardCharsets.UTF_8), ContentType.APPLICATION_JSON);
+                    break;
+                case 4:
+                    // Evil entity without a charset
+                    entity = new StringEntity(requestBody, ContentType.create("application/json", (Charset) null));
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
             }
             enclosingRequest.setEntity(entity);
         }
@@ -122,14 +126,14 @@ public class RequestLoggerTests extends RestClientTestCase {
             expected += "\n#   \"field\": \"value\"";
             expected += "\n# }";
             HttpEntity entity;
-            switch (randomIntBetween(0, 2)) {
+            switch(randomIntBetween(0, 2)) {
             case 0:
                 entity = new StringEntity(responseBody, ContentType.APPLICATION_JSON);
                 break;
             case 1:
                 //test a non repeatable entity
                 entity = new InputStreamEntity(new ByteArrayInputStream(responseBody.getBytes(StandardCharsets.UTF_8)),
-                        ContentType.APPLICATION_JSON);
+                    ContentType.APPLICATION_JSON);
                 break;
             case 2:
                 // Evil entity without a charset
@@ -169,25 +173,25 @@ public class RequestLoggerTests extends RestClientTestCase {
 
     private static HttpUriRequest randomHttpRequest(URI uri) {
         int requestType = randomIntBetween(0, 7);
-        switch (requestType) {
-        case 0:
-            return new HttpGetWithEntity(uri);
-        case 1:
-            return new HttpPost(uri);
-        case 2:
-            return new HttpPut(uri);
-        case 3:
-            return new HttpDeleteWithEntity(uri);
-        case 4:
-            return new HttpHead(uri);
-        case 5:
-            return new HttpTrace(uri);
-        case 6:
-            return new HttpOptions(uri);
-        case 7:
-            return new HttpPatch(uri);
-        default:
-            throw new UnsupportedOperationException();
+        switch(requestType) {
+            case 0:
+                return new HttpGetWithEntity(uri);
+            case 1:
+                return new HttpPost(uri);
+            case 2:
+                return new HttpPut(uri);
+            case 3:
+                return new HttpDeleteWithEntity(uri);
+            case 4:
+                return new HttpHead(uri);
+            case 5:
+                return new HttpTrace(uri);
+            case 6:
+                return new HttpOptions(uri);
+            case 7:
+                return new HttpPatch(uri);
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 }

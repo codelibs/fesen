@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodeHotThreads;
 import org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
 import org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
@@ -40,40 +32,69 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestNodesHotThreadsAction extends BaseRestHandler {
 
-    private static final String formatDeprecatedMessageWithoutNodeID =
-            "[%s] is a deprecated endpoint. " + "Please use [/_nodes/hot_threads] instead.";
-    private static final String formatDeprecatedMessageWithNodeID =
-            "[%s] is a deprecated endpoint. " + "Please use [/_nodes/{nodeId}/hot_threads] instead.";
-    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_HOT_THREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithoutNodeID, "/_cluster/nodes/hot_threads");
-    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOT_THREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithNodeID, "/_cluster/nodes/{nodeId}/hot_threads");
-    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_HOTTHREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithoutNodeID, "/_cluster/nodes/hotthreads");
-    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOTTHREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithNodeID, "/_cluster/nodes/{nodeId}/hotthreads");
-    private static final String DEPRECATED_MESSAGE_NODES_HOTTHREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithoutNodeID, "/_nodes/hotthreads");
-    private static final String DEPRECATED_MESSAGE_NODES_NODEID_HOTTHREADS =
-            String.format(Locale.ROOT, formatDeprecatedMessageWithNodeID, "/_nodes/{nodeId}/hotthreads");
+    private static final String formatDeprecatedMessageWithoutNodeID = "[%s] is a deprecated endpoint. " +
+        "Please use [/_nodes/hot_threads] instead.";
+    private static final String formatDeprecatedMessageWithNodeID = "[%s] is a deprecated endpoint. " +
+        "Please use [/_nodes/{nodeId}/hot_threads] instead.";
+    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_HOT_THREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithoutNodeID,
+        "/_cluster/nodes/hot_threads"
+    );
+    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOT_THREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithNodeID,
+        "/_cluster/nodes/{nodeId}/hot_threads"
+    );
+    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_HOTTHREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithoutNodeID,
+        "/_cluster/nodes/hotthreads"
+    );
+    private static final String DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOTTHREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithNodeID,
+        "/_cluster/nodes/{nodeId}/hotthreads"
+    );
+    private static final String DEPRECATED_MESSAGE_NODES_HOTTHREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithoutNodeID,
+        "/_nodes/hotthreads"
+    );
+    private static final String DEPRECATED_MESSAGE_NODES_NODEID_HOTTHREADS = String.format(Locale.ROOT,
+        formatDeprecatedMessageWithNodeID,
+        "/_nodes/{nodeId}/hotthreads"
+    );
 
     @Override
     public List<DeprecatedRoute> deprecatedRoutes() {
-        return unmodifiableList(
-                asList(new DeprecatedRoute(GET, "/_cluster/nodes/hot_threads", DEPRECATED_MESSAGE_CLUSTER_NODES_HOT_THREADS),
-                        new DeprecatedRoute(GET, "/_cluster/nodes/{nodeId}/hot_threads",
-                                DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOT_THREADS),
-                        new DeprecatedRoute(GET, "/_cluster/nodes/hotthreads", DEPRECATED_MESSAGE_CLUSTER_NODES_HOTTHREADS),
-                        new DeprecatedRoute(GET, "/_cluster/nodes/{nodeId}/hotthreads", DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOTTHREADS),
-                        new DeprecatedRoute(GET, "/_nodes/hotthreads", DEPRECATED_MESSAGE_NODES_HOTTHREADS),
-                        new DeprecatedRoute(GET, "/_nodes/{nodeId}/hotthreads", DEPRECATED_MESSAGE_NODES_NODEID_HOTTHREADS)));
+        return unmodifiableList(asList(
+            new DeprecatedRoute(GET, "/_cluster/nodes/hot_threads",
+                    DEPRECATED_MESSAGE_CLUSTER_NODES_HOT_THREADS),
+            new DeprecatedRoute(GET, "/_cluster/nodes/{nodeId}/hot_threads",
+                    DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOT_THREADS),
+            new DeprecatedRoute(GET, "/_cluster/nodes/hotthreads",
+                    DEPRECATED_MESSAGE_CLUSTER_NODES_HOTTHREADS),
+            new DeprecatedRoute(GET, "/_cluster/nodes/{nodeId}/hotthreads",
+                    DEPRECATED_MESSAGE_CLUSTER_NODES_NODEID_HOTTHREADS),
+            new DeprecatedRoute(GET, "/_nodes/hotthreads",
+                    DEPRECATED_MESSAGE_NODES_HOTTHREADS),
+            new DeprecatedRoute(GET, "/_nodes/{nodeId}/hotthreads",
+                    DEPRECATED_MESSAGE_NODES_NODEID_HOTTHREADS)
+        ));
     }
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_nodes/hot_threads"), new Route(GET, "/_nodes/{nodeId}/hot_threads")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_nodes/hot_threads"),
+            new Route(GET, "/_nodes/{nodeId}/hot_threads")
+        ));
     }
 
     @Override
@@ -91,7 +112,8 @@ public class RestNodesHotThreadsAction extends BaseRestHandler {
         nodesHotThreadsRequest.interval(TimeValue.parseTimeValue(request.param("interval"), nodesHotThreadsRequest.interval(), "interval"));
         nodesHotThreadsRequest.snapshots(request.paramAsInt("snapshots", nodesHotThreadsRequest.snapshots()));
         nodesHotThreadsRequest.timeout(request.param("timeout"));
-        return channel -> client.admin().cluster().nodesHotThreads(nodesHotThreadsRequest,
+        return channel -> client.admin().cluster().nodesHotThreads(
+                nodesHotThreadsRequest,
                 new RestResponseListener<NodesHotThreadsResponse>(channel) {
                     @Override
                     public RestResponse buildResponse(NodesHotThreadsResponse response) throws Exception {

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import static org.codelibs.fesen.script.mustache.TransportSearchTemplateAction.convert;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.search.MultiSearchRequest;
 import org.codelibs.fesen.action.search.MultiSearchResponse;
@@ -37,6 +32,11 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.TransportService;
 
+import static org.codelibs.fesen.script.mustache.TransportSearchTemplateAction.convert;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransportMultiSearchTemplateAction extends HandledTransportAction<MultiSearchTemplateRequest, MultiSearchTemplateResponse> {
 
     private final ScriptService scriptService;
@@ -45,7 +45,7 @@ public class TransportMultiSearchTemplateAction extends HandledTransportAction<M
 
     @Inject
     public TransportMultiSearchTemplateAction(TransportService transportService, ActionFilters actionFilters, ScriptService scriptService,
-            NamedXContentRegistry xContentRegistry, NodeClient client) {
+                                              NamedXContentRegistry xContentRegistry, NodeClient client) {
         super(MultiSearchTemplateAction.NAME, transportService, actionFilters, MultiSearchTemplateRequest::new);
         this.scriptService = scriptService;
         this.xContentRegistry = xContentRegistry;

@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.common;
 
+
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

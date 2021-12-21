@@ -55,7 +55,7 @@ public class MoreLikeThisQueryTests extends ESTestCase {
         IndexReader reader = DirectoryReader.open(indexWriter);
         IndexSearcher searcher = new IndexSearcher(reader);
 
-        MoreLikeThisQuery mltQuery = new MoreLikeThisQuery("lucene", new String[] { "text" }, Lucene.STANDARD_ANALYZER);
+        MoreLikeThisQuery mltQuery = new MoreLikeThisQuery("lucene", new String[]{"text"}, Lucene.STANDARD_ANALYZER);
         mltQuery.setLikeText("lucene");
         mltQuery.setMinTermFrequency(1);
         mltQuery.setMinDocFreq(1);
@@ -68,11 +68,11 @@ public class MoreLikeThisQueryTests extends ESTestCase {
 
     public void testValidateMaxQueryTerms() {
         IllegalArgumentException e1 = expectThrows(IllegalArgumentException.class,
-                () -> new MoreLikeThisQuery("lucene", new String[] { "text" }, Lucene.STANDARD_ANALYZER).setMaxQueryTerms(0));
+            () ->  new MoreLikeThisQuery("lucene", new String[]{"text"}, Lucene.STANDARD_ANALYZER).setMaxQueryTerms(0));
         assertThat(e1.getMessage(), containsString("requires 'maxQueryTerms' to be greater than 0"));
 
         IllegalArgumentException e2 = expectThrows(IllegalArgumentException.class,
-                () -> new MoreLikeThisQuery("lucene", new String[] { "text" }, Lucene.STANDARD_ANALYZER).setMaxQueryTerms(-3));
+            () -> new MoreLikeThisQuery("lucene", new String[]{"text"}, Lucene.STANDARD_ANALYZER).setMaxQueryTerms(-3));
         assertThat(e2.getMessage(), containsString("requires 'maxQueryTerms' to be greater than 0"));
     }
 

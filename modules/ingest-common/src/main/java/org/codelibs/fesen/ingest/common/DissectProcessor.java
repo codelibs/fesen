@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import java.util.Map;
-
 import org.codelibs.fesen.dissect.DissectParser;
 import org.codelibs.fesen.ingest.AbstractProcessor;
 import org.codelibs.fesen.ingest.ConfigurationUtils;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.Processor;
+
+import java.util.Map;
 
 public final class DissectProcessor extends AbstractProcessor {
 
@@ -67,7 +67,7 @@ public final class DissectProcessor extends AbstractProcessor {
 
         @Override
         public DissectProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
-                Map<String, Object> config) {
+                                       Map<String, Object> config) {
             String field = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "field");
             String pattern = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "pattern");
             String appendSeparator = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "append_separator", "");

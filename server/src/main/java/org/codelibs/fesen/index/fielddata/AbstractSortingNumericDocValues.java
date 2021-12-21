@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata;
 
+import org.apache.lucene.search.DocIdSetIterator;
+
 import java.io.IOException;
 import java.util.function.LongConsumer;
-
-import org.apache.lucene.search.DocIdSetIterator;
 
 /**
  * Base implementation that throws an {@link IOException} for the

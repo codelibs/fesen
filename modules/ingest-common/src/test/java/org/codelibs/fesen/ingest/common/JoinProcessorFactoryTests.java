@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.common.JoinProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class JoinProcessorFactoryTests extends ESTestCase {
 

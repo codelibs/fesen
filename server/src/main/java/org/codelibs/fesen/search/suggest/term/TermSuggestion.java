@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.term;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -38,6 +32,12 @@ import org.codelibs.fesen.search.suggest.SortBy;
 import org.codelibs.fesen.search.suggest.Suggest;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion.Entry.Option;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * The suggestion responses corresponding with the suggestions in the request.
@@ -156,7 +156,8 @@ public class TermSuggestion extends Suggestion<TermSuggestion.Entry> {
 
     @Override
     public boolean equals(Object other) {
-        return super.equals(other) && Objects.equals(sort, ((TermSuggestion) other).sort);
+        return super.equals(other)
+            && Objects.equals(sort, ((TermSuggestion) other).sort);
     }
 
     @Override
@@ -173,8 +174,7 @@ public class TermSuggestion extends Suggestion<TermSuggestion.Entry> {
             super(text, offset, length);
         }
 
-        private Entry() {
-        }
+        private Entry() {}
 
         public Entry(StreamInput in) throws IOException {
             super(in);
@@ -248,8 +248,9 @@ public class TermSuggestion extends Suggestion<TermSuggestion.Entry> {
                 return builder;
             }
 
-            private static final ConstructingObjectParser<Option, Void> PARSER =
-                    new ConstructingObjectParser<>("TermSuggestionOptionParser", true, args -> {
+            private static final ConstructingObjectParser<Option, Void> PARSER = new ConstructingObjectParser<>(
+                    "TermSuggestionOptionParser", true,
+                    args -> {
                         Text text = new Text((String) args[0]);
                         int freq = (Integer) args[1];
                         float score = (Float) args[2];

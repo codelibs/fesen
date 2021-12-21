@@ -103,8 +103,8 @@ public class Scopes {
     /**
      * Scopes an internal factory.
      */
-    static <T> InternalFactory<? extends T> scope(Key<T> key, InjectorImpl injector, InternalFactory<? extends T> creator,
-            Scoping scoping) {
+    static <T> InternalFactory<? extends T> scope(Key<T> key, InjectorImpl injector,
+                                                  InternalFactory<? extends T> creator, Scoping scoping) {
 
         if (scoping.isNoScope()) {
             return creator;
@@ -113,8 +113,10 @@ public class Scopes {
         Scope scope = scoping.getScopeInstance();
 
         // TODO: use diamond operator once JI-9019884 is fixed
-        Provider<T> scoped = scope.scope(key, new ProviderToInternalFactoryAdapter<T>(injector, creator));
-        return new InternalFactoryToProviderAdapter<>(Initializables.<Provider<? extends T>> of(scoped));
+        Provider<T> scoped
+                = scope.scope(key, new ProviderToInternalFactoryAdapter<T>(injector, creator));
+        return new InternalFactoryToProviderAdapter<>(
+                Initializables.<Provider<? extends T>>of(scoped));
     }
 
     /**

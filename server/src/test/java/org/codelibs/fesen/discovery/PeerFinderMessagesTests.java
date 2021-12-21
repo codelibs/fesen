@@ -44,18 +44,19 @@ public class PeerFinderMessagesTests extends ESTestCase {
 
     public void testPeersRequestEqualsHashCodeSerialization() {
         final PeersRequest initialPeersRequest = new PeersRequest(createNode(randomAlphaOfLength(10)),
-                Arrays.stream(generateRandomStringArray(10, 10, false)).map(this::createNode).collect(Collectors.toList()));
+            Arrays.stream(generateRandomStringArray(10, 10, false)).map(this::createNode).collect(Collectors.toList()));
 
         // Note: the explicit cast of the CopyFunction is needed for some IDE (specifically Eclipse 4.8.0) to infer the right type
         EqualsHashCodeTestUtils.checkEqualsAndHashCode(initialPeersRequest,
-                (CopyFunction<PeersRequest>) publishRequest -> copyWriteable(publishRequest, writableRegistry(), PeersRequest::new), in -> {
-                    final List<DiscoveryNode> discoveryNodes = new ArrayList<>(in.getKnownPeers());
-                    if (randomBoolean()) {
-                        return new PeersRequest(createNode(randomAlphaOfLength(10)), discoveryNodes);
-                    } else {
-                        return new PeersRequest(in.getSourceNode(), modifyDiscoveryNodesList(in.getKnownPeers(), true));
-                    }
-                });
+                (CopyFunction<PeersRequest>) publishRequest -> copyWriteable(publishRequest, writableRegistry(), PeersRequest::new),
+            in -> {
+                final List<DiscoveryNode> discoveryNodes = new ArrayList<>(in.getKnownPeers());
+                if (randomBoolean()) {
+                    return new PeersRequest(createNode(randomAlphaOfLength(10)), discoveryNodes);
+                } else {
+                    return new PeersRequest(in.getSourceNode(), modifyDiscoveryNodesList(in.getKnownPeers(), true));
+                }
+            });
     }
 
     public void testPeersResponseEqualsHashCodeSerialization() {
@@ -66,35 +67,36 @@ public class PeerFinderMessagesTests extends ESTestCase {
             initialPeersResponse = new PeersResponse(Optional.of(createNode(randomAlphaOfLength(10))), emptyList(), initialTerm);
         } else {
             initialPeersResponse = new PeersResponse(Optional.empty(),
-                    Arrays.stream(generateRandomStringArray(10, 10, false, false)).map(this::createNode).collect(Collectors.toList()),
-                    initialTerm);
+                Arrays.stream(generateRandomStringArray(10, 10, false, false)).map(this::createNode).collect(Collectors.toList()),
+                initialTerm);
         }
 
         // Note: the explicit cast of the CopyFunction is needed for some IDE (specifically Eclipse 4.8.0) to infer the right type
         EqualsHashCodeTestUtils.checkEqualsAndHashCode(initialPeersResponse,
                 (CopyFunction<PeersResponse>) publishResponse -> copyWriteable(publishResponse, writableRegistry(), PeersResponse::new),
-                in -> {
-                    final long term = in.getTerm();
-                    if (randomBoolean()) {
-                        return new PeersResponse(in.getMasterNode(), in.getKnownPeers(),
-                                randomValueOtherThan(term, ESTestCase::randomNonNegativeLong));
-                    } else {
-                        if (in.getMasterNode().isPresent()) {
-                            if (randomBoolean()) {
-                                return new PeersResponse(Optional.of(createNode(randomAlphaOfLength(10))), in.getKnownPeers(), term);
-                            } else {
-                                return new PeersResponse(Optional.empty(), singletonList(createNode(randomAlphaOfLength(10))), term);
-                            }
+            in -> {
+                final long term = in.getTerm();
+                if (randomBoolean()) {
+                    return new PeersResponse(in.getMasterNode(), in.getKnownPeers(),
+                        randomValueOtherThan(term, ESTestCase::randomNonNegativeLong));
+                } else {
+                    if (in.getMasterNode().isPresent()) {
+                        if (randomBoolean()) {
+                            return new PeersResponse(Optional.of(createNode(randomAlphaOfLength(10))), in.getKnownPeers(), term);
                         } else {
-                            if (randomBoolean()) {
-                                return new PeersResponse(Optional.of(createNode(randomAlphaOfLength(10))), emptyList(), term);
-                            } else {
-                                return new PeersResponse(in.getMasterNode(), modifyDiscoveryNodesList(in.getKnownPeers(), false), term);
-                            }
+                            return new PeersResponse(Optional.empty(), singletonList(createNode(randomAlphaOfLength(10))), term);
+                        }
+                    } else {
+                        if (randomBoolean()) {
+                            return new PeersResponse(Optional.of(createNode(randomAlphaOfLength(10))), emptyList(), term);
+                        } else {
+                            return new PeersResponse(in.getMasterNode(), modifyDiscoveryNodesList(in.getKnownPeers(), false), term);
                         }
                     }
-                });
+                }
+            });
     }
+
 
     private List<DiscoveryNode> modifyDiscoveryNodesList(Collection<DiscoveryNode> originalNodes, boolean allowEmpty) {
         final List<DiscoveryNode> discoveryNodes = new ArrayList<>(originalNodes);

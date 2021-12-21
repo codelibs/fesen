@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.index.shard;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.index.engine.Engine;
+
+import java.util.List;
 
 /**
  * An indexing listener for indexing, delete, events.
@@ -42,16 +42,14 @@ public interface IndexingOperationListener {
      * related failures. See {@link #postIndex(ShardId, Engine.Index, Exception)}
      * for engine level failures
      */
-    default void postIndex(ShardId shardId, Engine.Index index, Engine.IndexResult result) {
-    }
+    default void postIndex(ShardId shardId, Engine.Index index, Engine.IndexResult result) {}
 
     /**
      * Called after the indexing operation occurred with engine level exception.
      * See {@link #postIndex(ShardId, Engine.Index, Engine.IndexResult)} for document
      * related failures
      */
-    default void postIndex(ShardId shardId, Engine.Index index, Exception ex) {
-    }
+    default void postIndex(ShardId shardId, Engine.Index index, Exception ex) {}
 
     /**
      * Called before the delete occurs.
@@ -60,27 +58,26 @@ public interface IndexingOperationListener {
         return delete;
     }
 
+
     /**
      * Called after the delete operation occurred. Note that this is
      * also called when deleting a document did not succeed due to document
      * related failures. See {@link #postDelete(ShardId, Engine.Delete, Exception)}
      * for engine level failures
      */
-    default void postDelete(ShardId shardId, Engine.Delete delete, Engine.DeleteResult result) {
-    }
+    default void postDelete(ShardId shardId, Engine.Delete delete, Engine.DeleteResult result) {}
 
     /**
      * Called after the delete operation occurred with engine level exception.
      * See {@link #postDelete(ShardId, Engine.Delete, Engine.DeleteResult)} for document
      * related failures
      */
-    default void postDelete(ShardId shardId, Engine.Delete delete, Exception ex) {
-    }
+    default void postDelete(ShardId shardId, Engine.Delete delete, Exception ex) {}
 
     /**
      * A Composite listener that multiplexes calls to each of the listeners methods.
      */
-    final class CompositeListener implements IndexingOperationListener {
+    final class CompositeListener implements IndexingOperationListener{
         private final List<IndexingOperationListener> listeners;
         private final Logger logger;
 

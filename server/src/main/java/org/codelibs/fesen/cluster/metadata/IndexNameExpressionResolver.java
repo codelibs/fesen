@@ -19,26 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.Spliterators;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -62,6 +42,26 @@ import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.indices.IndexClosedException;
 import org.codelibs.fesen.indices.InvalidIndexNameException;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.Spliterators;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 public class IndexNameExpressionResolver {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(IndexNameExpressionResolver.class);
 
@@ -72,7 +72,7 @@ public class IndexNameExpressionResolver {
     private final DateMathExpressionResolver dateMathExpressionResolver = new DateMathExpressionResolver();
     private final WildcardExpressionResolver wildcardExpressionResolver = new WildcardExpressionResolver();
     private final List<ExpressionResolver> expressionResolvers =
-            org.codelibs.fesen.core.List.of(dateMathExpressionResolver, wildcardExpressionResolver);
+        org.codelibs.fesen.core.List.of(dateMathExpressionResolver, wildcardExpressionResolver);
 
     private final ThreadContext threadContext;
 
@@ -85,8 +85,8 @@ public class IndexNameExpressionResolver {
      * are encapsulated in the specified request.
      */
     public String[] concreteIndexNames(ClusterState state, IndicesRequest request) {
-        Context context =
-                new Context(state, request.indicesOptions(), false, false, request.includeDataStreams(), isSystemIndexAccessAllowed());
+        Context context = new Context(state, request.indicesOptions(), false, false, request.includeDataStreams(),
+            isSystemIndexAccessAllowed());
         return concreteIndexNames(context, request.indices());
     }
 
@@ -103,8 +103,8 @@ public class IndexNameExpressionResolver {
      * are encapsulated in the specified request and resolves data streams.
      */
     public Index[] concreteIndices(ClusterState state, IndicesRequest request) {
-        Context context =
-                new Context(state, request.indicesOptions(), false, false, request.includeDataStreams(), isSystemIndexAccessAllowed());
+        Context context = new Context(state, request.indicesOptions(), false, false, request.includeDataStreams(),
+            isSystemIndexAccessAllowed());
         return concreteIndices(context, request.indices());
     }
 
@@ -140,14 +140,16 @@ public class IndexNameExpressionResolver {
         // Allow system index access - they'll be filtered out below as there's no such thing (yet) as system data streams
         Context context = new Context(state, options, false, false, true, true, true);
         if (indexExpressions == null || indexExpressions.length == 0) {
-            indexExpressions = new String[] { "*" };
+            indexExpressions = new String[]{"*"};
         }
 
         List<String> dataStreams = wildcardExpressionResolver.resolve(context, Arrays.asList(indexExpressions));
-        return ((dataStreams == null) ? org.codelibs.fesen.core.List.<String> of() : dataStreams).stream()
-                .map(x -> state.metadata().getIndicesLookup().get(x)).filter(Objects::nonNull)
-                .filter(ia -> ia.getType() == IndexAbstraction.Type.DATA_STREAM).map(IndexAbstraction::getName)
-                .collect(Collectors.toList());
+        return ((dataStreams == null) ? org.codelibs.fesen.core.List.<String>of() : dataStreams).stream()
+            .map(x -> state.metadata().getIndicesLookup().get(x))
+            .filter(Objects::nonNull)
+            .filter(ia -> ia.getType() == IndexAbstraction.Type.DATA_STREAM)
+            .map(IndexAbstraction::getName)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -168,7 +170,8 @@ public class IndexNameExpressionResolver {
     }
 
     public Index[] concreteIndices(ClusterState state, IndicesOptions options, boolean includeDataStreams, String... indexExpressions) {
-        Context context = new Context(state, options, false, false, includeDataStreams, isSystemIndexAccessAllowed());
+        Context context = new Context(state, options, false, false, includeDataStreams,
+            isSystemIndexAccessAllowed());
         return concreteIndices(context, indexExpressions);
     }
 
@@ -186,7 +189,7 @@ public class IndexNameExpressionResolver {
      */
     public Index[] concreteIndices(ClusterState state, IndicesRequest request, long startTime) {
         Context context = new Context(state, request.indicesOptions(), startTime, false, false, request.includeDataStreams(), false,
-                isSystemIndexAccessAllowed());
+            isSystemIndexAccessAllowed());
         return concreteIndices(context, request.indices());
     }
 
@@ -201,7 +204,7 @@ public class IndexNameExpressionResolver {
 
     Index[] concreteIndices(Context context, String... indexExpressions) {
         if (indexExpressions == null || indexExpressions.length == 0) {
-            indexExpressions = new String[] { Metadata.ALL };
+            indexExpressions = new String[]{Metadata.ALL};
         }
         Metadata metadata = context.getState().metadata();
         IndicesOptions options = context.getOptions();
@@ -219,12 +222,12 @@ public class IndexNameExpressionResolver {
                 IndexNotFoundException infe;
                 if (indexExpressions.length == 1) {
                     if (indexExpressions[0].equals(Metadata.ALL)) {
-                        infe = new IndexNotFoundException("no indices exist", (String) null);
+                        infe = new IndexNotFoundException("no indices exist", (String)null);
                     } else {
-                        infe = new IndexNotFoundException((String) null);
+                        infe = new IndexNotFoundException((String)null);
                     }
                 } else {
-                    infe = new IndexNotFoundException((String) null);
+                    infe = new IndexNotFoundException((String)null);
                 }
                 infe.setResources("index_expression", indexExpressions);
                 throw infe;
@@ -237,7 +240,7 @@ public class IndexNameExpressionResolver {
         final Set<Index> concreteIndices = new HashSet<>(expressions.size());
         for (String expression : expressions) {
             IndexAbstraction indexAbstraction = metadata.getIndicesLookup().get(expression);
-            if (indexAbstraction == null) {
+            if (indexAbstraction == null ) {
                 if (failNoIndices) {
                     IndexNotFoundException infe;
                     if (expression.equals(Metadata.ALL)) {
@@ -256,7 +259,8 @@ public class IndexNameExpressionResolver {
                 } else {
                     continue;
                 }
-            } else if (indexAbstraction.getType() == IndexAbstraction.Type.DATA_STREAM && context.includeDataStreams() == false) {
+            } else if (indexAbstraction.getType() == IndexAbstraction.Type.DATA_STREAM &&
+                        context.includeDataStreams() == false) {
                 excludedDataStreams = true;
                 continue;
             }
@@ -264,9 +268,9 @@ public class IndexNameExpressionResolver {
             if (indexAbstraction.getType() == IndexAbstraction.Type.ALIAS && context.isResolveToWriteIndex()) {
                 IndexMetadata writeIndex = indexAbstraction.getWriteIndex();
                 if (writeIndex == null) {
-                    throw new IllegalArgumentException("no write index is defined for alias [" + indexAbstraction.getName() + "]."
-                            + " The write index may be explicitly disabled using is_write_index=false or the alias points to multiple"
-                            + " indices without one being designated as a write index");
+                    throw new IllegalArgumentException("no write index is defined for alias [" + indexAbstraction.getName() + "]." +
+                        " The write index may be explicitly disabled using is_write_index=false or the alias points to multiple" +
+                        " indices without one being designated as a write index");
                 }
                 if (addIndex(writeIndex, context)) {
                     concreteIndices.add(writeIndex.getIndex());
@@ -283,9 +287,9 @@ public class IndexNameExpressionResolver {
                     for (IndexMetadata indexMetadata : indexAbstraction.getIndices()) {
                         indexNames[i++] = indexMetadata.getIndex().getName();
                     }
-                    throw new IllegalArgumentException(indexAbstraction.getType().getDisplayName() + " [" + expression
-                            + "] has more than one index associated with it " + Arrays.toString(indexNames)
-                            + ", can't execute a single index op");
+                    throw new IllegalArgumentException(indexAbstraction.getType().getDisplayName() + " [" + expression +
+                        "] has more than one index associated with it " + Arrays.toString(indexNames) +
+                        ", can't execute a single index op");
                 }
 
                 for (IndexMetadata index : indexAbstraction.getIndices()) {
@@ -297,7 +301,7 @@ public class IndexNameExpressionResolver {
         }
 
         if (options.allowNoIndices() == false && concreteIndices.isEmpty()) {
-            IndexNotFoundException infe = new IndexNotFoundException((String) null);
+            IndexNotFoundException infe = new IndexNotFoundException((String)null);
             infe.setResources("index_expression", indexExpressions);
             if (excludedDataStreams) {
                 // Allows callers to handle IndexNotFoundException differently based on whether data streams were excluded.
@@ -311,14 +315,16 @@ public class IndexNameExpressionResolver {
 
     private void checkSystemIndexAccess(Context context, Metadata metadata, Set<Index> concreteIndices, String[] originalPatterns) {
         if (context.isSystemIndexAccessAllowed() == false) {
-            final List<String> resolvedSystemIndices =
-                    concreteIndices.stream().map(metadata::index).filter(IndexMetadata::isSystem).map(i -> i.getIndex().getName()).sorted() // reliable order for testing
-                            .collect(Collectors.toList());
+            final List<String> resolvedSystemIndices = concreteIndices.stream()
+                .map(metadata::index)
+                .filter(IndexMetadata::isSystem)
+                .map(i -> i.getIndex().getName())
+                .sorted() // reliable order for testing
+                .collect(Collectors.toList());
             if (resolvedSystemIndices.isEmpty() == false) {
                 deprecationLogger.deprecate("open_system_index_access",
-                        "this request accesses system indices: {}, but in a future major version, direct access to system "
-                                + "indices will be prevented by default",
-                        resolvedSystemIndices);
+                    "this request accesses system indices: {}, but in a future major version, direct access to system " +
+                        "indices will be prevented by default", resolvedSystemIndices);
             }
         }
     }
@@ -347,8 +353,8 @@ public class IndexNameExpressionResolver {
     }
 
     private static IllegalArgumentException aliasesNotSupportedException(String expression) {
-        return new IllegalArgumentException(
-                "The provided expression [" + expression + "] matches an " + "alias, specify the corresponding concrete indices instead.");
+        return new IllegalArgumentException("The provided expression [" + expression + "] matches an " +
+                "alias, specify the corresponding concrete indices instead.");
     }
 
     /**
@@ -367,8 +373,8 @@ public class IndexNameExpressionResolver {
         String indexExpression = CollectionUtils.isEmpty(request.indices()) ? null : request.indices()[0];
         Index[] indices = concreteIndices(state, request.indicesOptions(), indexExpression);
         if (indices.length != 1) {
-            throw new IllegalArgumentException(
-                    "unable to return a single index as the index and options" + " provided got resolved to multiple indices");
+            throw new IllegalArgumentException("unable to return a single index as the index and options" +
+                " provided got resolved to multiple indices");
         }
         return indices[0];
     }
@@ -401,10 +407,11 @@ public class IndexNameExpressionResolver {
      * @return the write index obtained as a result of the index resolution or null if no index
      */
     public Index concreteWriteIndex(ClusterState state, IndicesOptions options, String index, boolean allowNoIndices,
-            boolean includeDataStreams) {
+                                    boolean includeDataStreams) {
         IndicesOptions combinedOptions = IndicesOptions.fromOptions(options.ignoreUnavailable(), allowNoIndices,
-                options.expandWildcardsOpen(), options.expandWildcardsClosed(), options.expandWildcardsHidden(),
-                options.allowAliasesToMultipleIndices(), options.forbidClosedIndices(), options.ignoreAliases(), options.ignoreThrottled());
+            options.expandWildcardsOpen(), options.expandWildcardsClosed(), options.expandWildcardsHidden(),
+            options.allowAliasesToMultipleIndices(), options.forbidClosedIndices(), options.ignoreAliases(),
+            options.ignoreThrottled());
 
         Context context = new Context(state, combinedOptions, false, true, includeDataStreams, isSystemIndexAccessAllowed());
         Index[] indices = concreteIndices(context, index);
@@ -412,8 +419,8 @@ public class IndexNameExpressionResolver {
             return null;
         }
         if (indices.length != 1) {
-            throw new IllegalArgumentException(
-                    "The index expression [" + index + "] and options provided did not point to a single write-index");
+            throw new IllegalArgumentException("The index expression [" + index +
+                "] and options provided did not point to a single write-index");
         }
         return indices[0];
     }
@@ -497,11 +504,15 @@ public class IndexNameExpressionResolver {
         if (iterateIndexAliases(indexAliases.size(), resolvedExpressions.size())) {
             // faster to iterate indexAliases
             aliasCandidates = StreamSupport.stream(Spliterators.spliteratorUnknownSize(indexAliases.values().iterator(), 0), false)
-                    .map(cursor -> cursor.value).filter(aliasMetadata -> resolvedExpressions.contains(aliasMetadata.alias()))
+                    .map(cursor -> cursor.value)
+                    .filter(aliasMetadata -> resolvedExpressions.contains(aliasMetadata.alias()))
                     .toArray(AliasMetadata[]::new);
         } else {
             // faster to iterate resolvedExpressions
-            aliasCandidates = resolvedExpressions.stream().map(indexAliases::get).filter(Objects::nonNull).toArray(AliasMetadata[]::new);
+            aliasCandidates = resolvedExpressions.stream()
+                    .map(indexAliases::get)
+                    .filter(Objects::nonNull)
+                    .toArray(AliasMetadata[]::new);
         }
 
         List<String> aliases = null;
@@ -710,21 +721,21 @@ public class IndexNameExpressionResolver {
         Context(ClusterState state, IndicesOptions options, boolean preserveAliases, boolean resolveToWriteIndex,
                 boolean includeDataStreams, boolean isSystemIndexAccessAllowed) {
             this(state, options, System.currentTimeMillis(), preserveAliases, resolveToWriteIndex, includeDataStreams, false,
-                    isSystemIndexAccessAllowed);
+                isSystemIndexAccessAllowed);
         }
 
         Context(ClusterState state, IndicesOptions options, boolean preserveAliases, boolean resolveToWriteIndex,
                 boolean includeDataStreams, boolean preserveDataStreams, boolean isSystemIndexAccessAllowed) {
             this(state, options, System.currentTimeMillis(), preserveAliases, resolveToWriteIndex, includeDataStreams, preserveDataStreams,
-                    isSystemIndexAccessAllowed);
+                isSystemIndexAccessAllowed);
         }
 
         Context(ClusterState state, IndicesOptions options, long startTime, boolean isSystemIndexAccessAllowed) {
-            this(state, options, startTime, false, false, false, false, isSystemIndexAccessAllowed);
+           this(state, options, startTime, false, false, false, false, isSystemIndexAccessAllowed);
         }
 
         protected Context(ClusterState state, IndicesOptions options, long startTime, boolean preserveAliases, boolean resolveToWriteIndex,
-                boolean includeDataStreams, boolean preserveDataStreams, boolean isSystemIndexAccessAllowed) {
+                          boolean includeDataStreams, boolean preserveDataStreams, boolean isSystemIndexAccessAllowed) {
             this.state = state;
             this.options = options;
             this.startTime = startTime;
@@ -811,13 +822,14 @@ public class IndexNameExpressionResolver {
                 List<String> resolvedExpressions = resolveEmptyOrTrivialWildcard(options, metadata);
                 if (context.includeDataStreams()) {
                     final IndexMetadata.State excludeState = excludeState(options);
-                    final Map<String, IndexAbstraction> dataStreamsAbstractions = metadata.getIndicesLookup().entrySet().stream()
-                            .filter(entry -> entry.getValue().getType() == IndexAbstraction.Type.DATA_STREAM)
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    final Map<String, IndexAbstraction> dataStreamsAbstractions = metadata.getIndicesLookup().entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue().getType() == IndexAbstraction.Type.DATA_STREAM)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                     // dedup backing indices if expand hidden indices option is true
                     Set<String> resolvedIncludingDataStreams = new HashSet<>(resolvedExpressions);
                     resolvedIncludingDataStreams.addAll(expand(context, excludeState, dataStreamsAbstractions,
-                            expressions.isEmpty() ? "_all" : expressions.get(0), options.expandWildcardsHidden()));
+                        expressions.isEmpty() ? "_all" : expressions.get(0), options.expandWildcardsHidden()));
                     return new ArrayList<>(resolvedIncludingDataStreams);
                 }
                 return resolvedExpressions;
@@ -829,7 +841,7 @@ public class IndexNameExpressionResolver {
                 return expressions;
             }
             if (result.isEmpty() && !options.allowNoIndices()) {
-                IndexNotFoundException infe = new IndexNotFoundException((String) null);
+                IndexNotFoundException infe = new IndexNotFoundException((String)null);
                 infe.setResources("index_or_alias", expressions.toArray(new String[0]));
                 throw infe;
             }
@@ -870,8 +882,8 @@ public class IndexNameExpressionResolver {
                             throw indexNotFoundException(expression);
                         } else if (indexAbstraction.getType() == IndexAbstraction.Type.ALIAS && options.ignoreAliases()) {
                             throw aliasesNotSupportedException(expression);
-                        } else if (indexAbstraction.getType() == IndexAbstraction.Type.DATA_STREAM
-                                && context.includeDataStreams() == false) {
+                        } else if (indexAbstraction.getType() == IndexAbstraction.Type.DATA_STREAM &&
+                            context.includeDataStreams() == false) {
                             throw indexNotFoundException(expression);
                         }
                     }
@@ -973,11 +985,12 @@ public class IndexNameExpressionResolver {
         private static Map<String, IndexAbstraction> otherWildcard(Context context, Metadata metadata, String expression) {
             final String pattern = expression;
             return filterIndicesLookup(context, metadata.getIndicesLookup(), e -> Regex.simpleMatch(pattern, e.getKey()),
-                    context.getOptions());
+                context.getOptions());
         }
 
         private static Map<String, IndexAbstraction> filterIndicesLookup(Context context, SortedMap<String, IndexAbstraction> indicesLookup,
-                Predicate<? super Map.Entry<String, IndexAbstraction>> filter, IndicesOptions options) {
+                                                                         Predicate<? super Map.Entry<String, IndexAbstraction>> filter,
+                                                                         IndicesOptions options) {
             boolean shouldConsumeStream = false;
             Stream<Map.Entry<String, IndexAbstraction>> stream = indicesLookup.entrySet().stream();
             if (options.ignoreAliases()) {
@@ -1000,7 +1013,7 @@ public class IndexNameExpressionResolver {
         }
 
         private static Set<String> expand(Context context, IndexMetadata.State excludeState, Map<String, IndexAbstraction> matches,
-                String expression, boolean includeHidden) {
+                                          String expression, boolean includeHidden) {
             Set<String> expand = new HashSet<>();
             for (Map.Entry<String, IndexAbstraction> entry : matches.entrySet()) {
                 String aliasOrIndexName = entry.getKey();
@@ -1029,8 +1042,8 @@ public class IndexNameExpressionResolver {
         }
 
         private boolean isEmptyOrTrivialWildcard(List<String> expressions) {
-            return expressions.isEmpty() || (expressions.size() == 1
-                    && (Metadata.ALL.equals(expressions.get(0)) || Regex.isMatchAllPattern(expressions.get(0))));
+            return expressions.isEmpty() || (expressions.size() == 1 && (Metadata.ALL.equals(expressions.get(0)) ||
+                Regex.isMatchAllPattern(expressions.get(0))));
         }
 
         private static List<String> resolveEmptyOrTrivialWildcard(IndicesOptions options, Metadata metadata) {
@@ -1103,101 +1116,98 @@ public class IndexNameExpressionResolver {
                 }
                 if (inPlaceHolder) {
                     switch (c) {
-                    case LEFT_BOUND:
-                        if (inDateFormat && escapedChar) {
-                            inPlaceHolderSb.append(c);
-                        } else if (!inDateFormat) {
-                            inDateFormat = true;
-                            inPlaceHolderSb.append(c);
-                        } else {
-                            throw new FesenParseException(
-                                    "invalid dynamic name expression [{}]." + " invalid character in placeholder at position [{}]",
-                                    new String(text, from, length), i);
-                        }
-                        break;
-
-                    case RIGHT_BOUND:
-                        if (inDateFormat && escapedChar) {
-                            inPlaceHolderSb.append(c);
-                        } else if (inDateFormat) {
-                            inDateFormat = false;
-                            inPlaceHolderSb.append(c);
-                        } else {
-                            String inPlaceHolderString = inPlaceHolderSb.toString();
-                            int dateTimeFormatLeftBoundIndex = inPlaceHolderString.indexOf(LEFT_BOUND);
-                            String mathExpression;
-                            String dateFormatterPattern;
-                            DateFormatter dateFormatter;
-                            final ZoneId timeZone;
-                            if (dateTimeFormatLeftBoundIndex < 0) {
-                                mathExpression = inPlaceHolderString;
-                                dateFormatter = DEFAULT_DATE_FORMATTER;
-                                timeZone = ZoneOffset.UTC;
+                        case LEFT_BOUND:
+                            if (inDateFormat && escapedChar) {
+                                inPlaceHolderSb.append(c);
+                            } else if (!inDateFormat) {
+                                inDateFormat = true;
+                                inPlaceHolderSb.append(c);
                             } else {
-                                if (inPlaceHolderString.lastIndexOf(RIGHT_BOUND) != inPlaceHolderString.length() - 1) {
-                                    throw new FesenParseException(
-                                            "invalid dynamic name expression [{}]. missing closing `}`" + " for date math format",
-                                            inPlaceHolderString);
-                                }
-                                if (dateTimeFormatLeftBoundIndex == inPlaceHolderString.length() - 2) {
-                                    throw new FesenParseException("invalid dynamic name expression [{}]. missing date format",
-                                            inPlaceHolderString);
-                                }
-                                mathExpression = inPlaceHolderString.substring(0, dateTimeFormatLeftBoundIndex);
-                                String patternAndTZid =
-                                        inPlaceHolderString.substring(dateTimeFormatLeftBoundIndex + 1, inPlaceHolderString.length() - 1);
-                                int formatPatternTimeZoneSeparatorIndex = patternAndTZid.indexOf(TIME_ZONE_BOUND);
-                                if (formatPatternTimeZoneSeparatorIndex != -1) {
-                                    dateFormatterPattern = patternAndTZid.substring(0, formatPatternTimeZoneSeparatorIndex);
-                                    timeZone = DateUtils.of(patternAndTZid.substring(formatPatternTimeZoneSeparatorIndex + 1));
-                                } else {
-                                    dateFormatterPattern = patternAndTZid;
-                                    timeZone = ZoneOffset.UTC;
-                                }
-                                dateFormatter = DateFormatter.forPattern(dateFormatterPattern);
+                                throw new FesenParseException("invalid dynamic name expression [{}]." +
+                                    " invalid character in placeholder at position [{}]", new String(text, from, length), i);
                             }
+                            break;
 
-                            DateFormatter formatter = dateFormatter.withZone(timeZone);
-                            DateMathParser dateMathParser = formatter.toDateMathParser();
-                            Instant instant = dateMathParser.parse(mathExpression, context::getStartTime, false, timeZone);
+                        case RIGHT_BOUND:
+                            if (inDateFormat && escapedChar) {
+                                inPlaceHolderSb.append(c);
+                            } else if (inDateFormat) {
+                                inDateFormat = false;
+                                inPlaceHolderSb.append(c);
+                            } else {
+                                String inPlaceHolderString = inPlaceHolderSb.toString();
+                                int dateTimeFormatLeftBoundIndex = inPlaceHolderString.indexOf(LEFT_BOUND);
+                                String mathExpression;
+                                String dateFormatterPattern;
+                                DateFormatter dateFormatter;
+                                final ZoneId timeZone;
+                                if (dateTimeFormatLeftBoundIndex < 0) {
+                                    mathExpression = inPlaceHolderString;
+                                    dateFormatter = DEFAULT_DATE_FORMATTER;
+                                    timeZone = ZoneOffset.UTC;
+                                } else {
+                                    if (inPlaceHolderString.lastIndexOf(RIGHT_BOUND) != inPlaceHolderString.length() - 1) {
+                                        throw new FesenParseException("invalid dynamic name expression [{}]. missing closing `}`" +
+                                            " for date math format", inPlaceHolderString);
+                                    }
+                                    if (dateTimeFormatLeftBoundIndex == inPlaceHolderString.length() - 2) {
+                                        throw new FesenParseException("invalid dynamic name expression [{}]. missing date format",
+                                            inPlaceHolderString);
+                                    }
+                                    mathExpression = inPlaceHolderString.substring(0, dateTimeFormatLeftBoundIndex);
+                                    String patternAndTZid =
+                                        inPlaceHolderString.substring(dateTimeFormatLeftBoundIndex + 1, inPlaceHolderString.length() - 1);
+                                    int formatPatternTimeZoneSeparatorIndex = patternAndTZid.indexOf(TIME_ZONE_BOUND);
+                                    if (formatPatternTimeZoneSeparatorIndex != -1) {
+                                        dateFormatterPattern = patternAndTZid.substring(0, formatPatternTimeZoneSeparatorIndex);
+                                        timeZone = DateUtils.of(patternAndTZid.substring(formatPatternTimeZoneSeparatorIndex + 1));
+                                    } else {
+                                        dateFormatterPattern = patternAndTZid;
+                                        timeZone = ZoneOffset.UTC;
+                                    }
+                                    dateFormatter = DateFormatter.forPattern(dateFormatterPattern);
+                                }
 
-                            String time = formatter.format(instant);
-                            beforePlaceHolderSb.append(time);
-                            inPlaceHolderSb = new StringBuilder();
-                            inPlaceHolder = false;
-                        }
-                        break;
+                                DateFormatter formatter = dateFormatter.withZone(timeZone);
+                                DateMathParser dateMathParser = formatter.toDateMathParser();
+                                Instant instant = dateMathParser.parse(mathExpression, context::getStartTime, false, timeZone);
 
-                    default:
-                        inPlaceHolderSb.append(c);
+                                String time = formatter.format(instant);
+                                beforePlaceHolderSb.append(time);
+                                inPlaceHolderSb = new StringBuilder();
+                                inPlaceHolder = false;
+                            }
+                            break;
+
+                        default:
+                            inPlaceHolderSb.append(c);
                     }
                 } else {
                     switch (c) {
-                    case LEFT_BOUND:
-                        if (escapedChar) {
-                            beforePlaceHolderSb.append(c);
-                        } else {
-                            inPlaceHolder = true;
-                        }
-                        break;
+                        case LEFT_BOUND:
+                            if (escapedChar) {
+                                beforePlaceHolderSb.append(c);
+                            } else {
+                                inPlaceHolder = true;
+                            }
+                            break;
 
-                    case RIGHT_BOUND:
-                        if (!escapedChar) {
-                            throw new FesenParseException(
-                                    "invalid dynamic name expression [{}]."
-                                            + " invalid character at position [{}]. `{` and `}` are reserved characters and"
-                                            + " should be escaped when used as part of the index name using `\\` (e.g. `\\{text\\}`)",
+                        case RIGHT_BOUND:
+                            if (!escapedChar) {
+                                throw new FesenParseException("invalid dynamic name expression [{}]." +
+                                    " invalid character at position [{}]. `{` and `}` are reserved characters and" +
+                                    " should be escaped when used as part of the index name using `\\` (e.g. `\\{text\\}`)",
                                     new String(text, from, length), i);
-                        }
-                    default:
-                        beforePlaceHolderSb.append(c);
+                            }
+                        default:
+                            beforePlaceHolderSb.append(c);
                     }
                 }
             }
 
             if (inPlaceHolder) {
                 throw new FesenParseException("invalid dynamic name expression [{}]. date math placeholder is open ended",
-                        new String(text, from, length));
+                    new String(text, from, length));
             }
             if (beforePlaceHolderSb.length() == 0) {
                 throw new FesenParseException("nothing captured");

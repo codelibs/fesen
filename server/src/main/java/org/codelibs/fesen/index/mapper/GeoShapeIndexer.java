@@ -17,13 +17,8 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.index.mapper;
-
-import static org.codelibs.fesen.common.geo.GeoUtils.normalizePoint;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.lucene.document.LatLonShape;
 import org.apache.lucene.index.IndexableField;
@@ -44,6 +39,12 @@ import org.codelibs.fesen.geometry.MultiPolygon;
 import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.Polygon;
 import org.codelibs.fesen.geometry.Rectangle;
+
+import static org.codelibs.fesen.common.geo.GeoUtils.normalizePoint;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class that converts geometries into Lucene-compatible form for indexing in a geo_shape field.
@@ -150,7 +151,7 @@ public class GeoShapeIndexer implements AbstractGeometryFieldMapper.Indexer<Geom
 
             @Override
             public Geometry visit(Point point) {
-                double[] latlon = new double[] { point.getX(), point.getY() };
+                double[] latlon = new double[]{point.getX(), point.getY()};
                 normalizePoint(latlon);
                 return new Point(latlon[0], latlon[1]);
             }
@@ -233,7 +234,7 @@ public class GeoShapeIndexer implements AbstractGeometryFieldMapper.Indexer<Geom
 
         @Override
         public Void visit(MultiPoint multiPoint) {
-            for (Point point : multiPoint) {
+            for(Point point : multiPoint) {
                 visit(point);
             }
             return null;
@@ -241,7 +242,7 @@ public class GeoShapeIndexer implements AbstractGeometryFieldMapper.Indexer<Geom
 
         @Override
         public Void visit(MultiPolygon multiPolygon) {
-            for (Polygon polygon : multiPolygon) {
+            for(Polygon polygon : multiPolygon) {
                 visit(polygon);
             }
             return null;

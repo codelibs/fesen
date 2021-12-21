@@ -96,8 +96,8 @@ public enum SslVerificationMode {
         final SslVerificationMode mode = LOOKUP.get(value.toLowerCase(Locale.ROOT));
         if (mode == null) {
             final String allowedValues = LOOKUP.keySet().stream().collect(Collectors.joining(","));
-            throw new SslConfigException("could not resolve ssl client verification mode, unknown value [" + value
-                    + "], recognised values are [" + allowedValues + "]");
+            throw new SslConfigException("could not resolve ssl client verification mode, unknown value ["
+                + value + "], recognised values are [" + allowedValues + "]");
         }
         return mode;
     }

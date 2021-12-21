@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.percolator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.document.BinaryRange;
 import org.apache.lucene.index.PrefixCodedTerms;
 import org.apache.lucene.index.Term;
@@ -53,6 +43,18 @@ import org.apache.lucene.util.automaton.ByteRunAutomaton;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.lucene.search.function.FunctionScoreQuery;
 import org.codelibs.fesen.index.query.DateRangeIncludingNowQuery;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 final class QueryAnalyzer {
 
@@ -92,13 +94,15 @@ final class QueryAnalyzer {
         return builder.getResult();
     }
 
-    private static final Set<Class<?>> verifiedQueries =
-            new HashSet<>(Arrays.asList(TermQuery.class, TermInSetQuery.class, SynonymQuery.class, SpanTermQuery.class, SpanOrQuery.class,
-                    BooleanQuery.class, DisjunctionMaxQuery.class, ConstantScoreQuery.class, BoostQuery.class, BlendedTermQuery.class));
+    private static final Set<Class<?>> verifiedQueries = new HashSet<>(Arrays.asList(
+        TermQuery.class, TermInSetQuery.class, SynonymQuery.class, SpanTermQuery.class, SpanOrQuery.class,
+        BooleanQuery.class, DisjunctionMaxQuery.class, ConstantScoreQuery.class, BoostQuery.class,
+        BlendedTermQuery.class
+    ));
 
     private static boolean isVerified(Query query) {
         if (query instanceof FunctionScoreQuery) {
-            return ((FunctionScoreQuery) query).getMinScore() == null;
+            return ((FunctionScoreQuery)query).getMinScore() == null;
         }
         for (Class<?> cls : verifiedQueries) {
             if (cls.isAssignableFrom(query.getClass())) {
@@ -145,7 +149,7 @@ final class QueryAnalyzer {
                 result = partialResults.get(0);
             } else {
                 result = conjunction ? handleConjunction(partialResults, version)
-                        : handleDisjunction(partialResults, minimumShouldMatch, version);
+                    : handleDisjunction(partialResults, minimumShouldMatch, version);
             }
             if (verified == false) {
                 result = result.unverify();
@@ -173,7 +177,7 @@ final class QueryAnalyzer {
             if (parent instanceof BooleanQuery) {
                 BooleanQuery bq = (BooleanQuery) parent;
                 if (bq.getMinimumNumberShouldMatch() == 0
-                        && bq.clauses().stream().anyMatch(c -> c.getOccur() == Occur.MUST || c.getOccur() == Occur.FILTER)) {
+                    && bq.clauses().stream().anyMatch(c -> c.getOccur() == Occur.MUST || c.getOccur() == Occur.FILTER)) {
                     return QueryVisitor.EMPTY_VISITOR;
                 }
                 minimumShouldMatch = bq.getMinimumNumberShouldMatch();
@@ -188,11 +192,14 @@ final class QueryAnalyzer {
         public void visitLeaf(Query query) {
             if (query instanceof MatchAllDocsQuery) {
                 terms.add(new Result(true, true));
-            } else if (query instanceof MatchNoDocsQuery) {
+            }
+            else if (query instanceof MatchNoDocsQuery) {
                 terms.add(Result.MATCH_NONE);
-            } else if (query instanceof PointRangeQuery) {
-                terms.add(pointRangeQuery((PointRangeQuery) query));
-            } else {
+            }
+            else if (query instanceof PointRangeQuery) {
+                terms.add(pointRangeQuery((PointRangeQuery)query));
+            }
+            else {
                 terms.add(Result.UNKNOWN);
             }
         }
@@ -202,6 +209,14 @@ final class QueryAnalyzer {
             boolean verified = isVerified(query);
             Set<QueryExtraction> qe = Arrays.stream(terms).map(QueryExtraction::new).collect(Collectors.toSet());
             if (qe.size() > 0) {
+                if (version.before(Version.V_6_1_0) && conjunction) {
+                    Optional<QueryExtraction> longest = qe.stream()
+                        .filter(q -> q.term != null)
+                        .max(Comparator.comparingInt(q -> q.term.bytes().length));
+                    if (longest.isPresent()) {
+                        qe = Collections.singleton(longest.get());
+                    }
+                }
                 this.terms.add(new Result(verified, qe, conjunction ? qe.size() : 1));
             }
         }
@@ -240,8 +255,8 @@ final class QueryAnalyzer {
 
         byte[] interval = new byte[16];
         NumericUtils.subtract(16, 0, prepad(upperPoint), prepad(lowerPoint), interval);
-        return new Result(false, Collections.singleton(new QueryExtraction(new Range(query.getField(), lowerPoint, upperPoint, interval))),
-                1);
+        return new Result(false, Collections.singleton(new QueryExtraction(
+            new Range(query.getField(), lowerPoint, upperPoint, interval))), 1);
     }
 
     private static byte[] prepad(byte[] original) {
@@ -262,71 +277,85 @@ final class QueryAnalyzer {
         if (conjunctionsWithUnknowns.size() == 1) {
             return conjunctionsWithUnknowns.get(0);
         }
-        for (Result subResult : conjunctions) {
-            if (subResult.isMatchNoDocs()) {
-                return subResult;
-            }
-        }
-
-        int msm = 0;
-        boolean verified = conjunctionsWithUnknowns.size() == conjunctions.size();
-        boolean matchAllDocs = true;
-        Set<QueryExtraction> extractions = new HashSet<>();
-        Set<String> seenRangeFields = new HashSet<>();
-        for (Result result : conjunctions) {
-
-            int resultMsm = result.minimumShouldMatch;
-            for (QueryExtraction queryExtraction : result.extractions) {
-                if (queryExtraction.range != null) {
-                    // In case of range queries each extraction does not simply increment the
-                    // minimum_should_match for that percolator query like for a term based extraction,
-                    // so that can lead to more false positives for percolator queries with range queries
-                    // than term based queries.
-                    // This is because the way number fields are extracted from the document to be
-                    // percolated.  Per field a single range is extracted and if a percolator query has two or
-                    // more range queries on the same field, then the minimum should match can be higher than clauses
-                    // in the CoveringQuery. Therefore right now the minimum should match is only incremented once per
-                    // number field when processing the percolator query at index time.
-                    // For multiple ranges within a single extraction (ie from an existing conjunction or disjunction)
-                    // then this will already have been taken care of, so we only check against fieldnames from
-                    // previously processed extractions, and don't add to the seenRangeFields list until all
-                    // extractions from this result are processed
-                    if (seenRangeFields.contains(queryExtraction.range.fieldName)) {
-                        resultMsm = Math.max(0, resultMsm - 1);
-                        verified = false;
-                    }
-                } else {
-                    // In case that there are duplicate term query extractions we need to be careful with
-                    // incrementing msm, because that could lead to valid matches not becoming candidate matches:
-                    // query: (field:val1 AND field:val2) AND (field:val2 AND field:val3)
-                    // doc: field: val1 val2 val3
-                    // So lets be protective and decrease the msm:
-                    if (extractions.contains(queryExtraction)) {
-                        resultMsm = Math.max(0, resultMsm - 1);
-                        verified = false;
-                    }
+        if (version.onOrAfter(Version.V_6_1_0)) {
+            for (Result subResult : conjunctions) {
+                if (subResult.isMatchNoDocs()) {
+                    return subResult;
                 }
             }
-            msm += resultMsm;
 
-            // add range fields from this Result to the seenRangeFields set so that minimumShouldMatch is correctly
-            // calculated for subsequent Results
-            result.extractions.stream().map(e -> e.range).filter(Objects::nonNull).map(e -> e.fieldName).forEach(seenRangeFields::add);
+            int msm = 0;
+            boolean verified = conjunctionsWithUnknowns.size() == conjunctions.size();
+            boolean matchAllDocs = true;
+            Set<QueryExtraction> extractions = new HashSet<>();
+            Set<String> seenRangeFields = new HashSet<>();
+            for (Result result : conjunctions) {
 
-            if (result.verified == false
+                int resultMsm = result.minimumShouldMatch;
+                for (QueryExtraction queryExtraction : result.extractions) {
+                    if (queryExtraction.range != null) {
+                        // In case of range queries each extraction does not simply increment the
+                        // minimum_should_match for that percolator query like for a term based extraction,
+                        // so that can lead to more false positives for percolator queries with range queries
+                        // than term based queries.
+                        // This is because the way number fields are extracted from the document to be
+                        // percolated.  Per field a single range is extracted and if a percolator query has two or
+                        // more range queries on the same field, then the minimum should match can be higher than clauses
+                        // in the CoveringQuery. Therefore right now the minimum should match is only incremented once per
+                        // number field when processing the percolator query at index time.
+                        // For multiple ranges within a single extraction (ie from an existing conjunction or disjunction)
+                        // then this will already have been taken care of, so we only check against fieldnames from
+                        // previously processed extractions, and don't add to the seenRangeFields list until all
+                        // extractions from this result are processed
+                        if (seenRangeFields.contains(queryExtraction.range.fieldName)) {
+                            resultMsm = Math.max(0, resultMsm - 1);
+                            verified = false;
+                        }
+                    } else {
+                        // In case that there are duplicate term query extractions we need to be careful with
+                        // incrementing msm, because that could lead to valid matches not becoming candidate matches:
+                        // query: (field:val1 AND field:val2) AND (field:val2 AND field:val3)
+                        // doc: field: val1 val2 val3
+                        // So lets be protective and decrease the msm:
+                        if (extractions.contains(queryExtraction)) {
+                            resultMsm = Math.max(0, resultMsm - 1);
+                            verified = false;
+                        }
+                    }
+                }
+                msm += resultMsm;
+
+                // add range fields from this Result to the seenRangeFields set so that minimumShouldMatch is correctly
+                // calculated for subsequent Results
+                result.extractions.stream()
+                    .map(e -> e.range)
+                    .filter(Objects::nonNull)
+                    .map(e -> e.fieldName)
+                    .forEach(seenRangeFields::add);
+
+                if (result.verified == false
                     // If some inner extractions are optional, the result can't be verified
                     || result.minimumShouldMatch < result.extractions.size()) {
-                verified = false;
+                    verified = false;
 
+                }
+                matchAllDocs &= result.matchAllDocs;
+                extractions.addAll(result.extractions);
             }
-            matchAllDocs &= result.matchAllDocs;
-            extractions.addAll(result.extractions);
-        }
 
-        if (matchAllDocs) {
-            return new Result(matchAllDocs, verified);
+            if (matchAllDocs) {
+                return new Result(matchAllDocs, verified);
+            } else {
+                return new Result(verified, extractions, msm);
+            }
+
+
         } else {
-            return new Result(verified, extractions, msm);
+            Result bestClause = null;
+            for (Result result : conjunctions) {
+                bestClause = selectBestResult(result, bestClause);
+            }
+            return bestClause;
         }
     }
 
@@ -339,7 +368,12 @@ final class QueryAnalyzer {
         }
         // Keep track of the msm for each clause:
         List<Integer> clauses = new ArrayList<>(disjunctions.size());
-        boolean verified = true;
+        boolean verified;
+        if (version.before(Version.V_6_1_0)) {
+            verified = requiredShouldClauses <= 1;
+        } else {
+            verified = true;
+        }
         int numMatchAllClauses = 0;
         boolean hasRangeExtractions = false;
 
@@ -386,12 +420,16 @@ final class QueryAnalyzer {
         boolean matchAllDocs = numMatchAllClauses > 0 && numMatchAllClauses >= requiredShouldClauses;
 
         int msm = 0;
-        if (// Having ranges would mean we need to juggle with the msm and that complicates this logic a lot,
+        if (version.onOrAfter(Version.V_6_1_0) &&
+            // Having ranges would mean we need to juggle with the msm and that complicates this logic a lot,
             // so for now lets not do it.
-        hasRangeExtractions == false) {
+            hasRangeExtractions == false) {
             // Figure out what the combined msm is for this disjunction:
             // (sum the lowest required clauses, otherwise we're too strict and queries may not match)
-            clauses = clauses.stream().filter(val -> val > 0).sorted().collect(Collectors.toList());
+            clauses = clauses.stream()
+                .filter(val -> val > 0)
+                .sorted()
+                .collect(Collectors.toList());
 
             // When there are duplicated query extractions, percolator can no longer reliably determine msm across this disjunction
             if (hasDuplicateTerms) {
@@ -484,8 +522,8 @@ final class QueryAnalyzer {
     private static int minTermLength(Set<QueryExtraction> extractions) {
         // In case there are only range extractions, then we return Integer.MIN_VALUE,
         // so that selectBestExtraction(...) we are likely to prefer the extractions that contains at least a single extraction
-        if (extractions.stream().filter(queryExtraction -> queryExtraction.term != null).count() == 0
-                && extractions.stream().filter(queryExtraction -> queryExtraction.range != null).count() > 0) {
+        if (extractions.stream().filter(queryExtraction -> queryExtraction.term != null).count() == 0 &&
+                extractions.stream().filter(queryExtraction -> queryExtraction.range != null).count() > 0) {
             return Integer.MIN_VALUE;
         }
 
@@ -564,7 +602,7 @@ final class QueryAnalyzer {
             return matchAllDocs == false && extractions.isEmpty();
         }
 
-        static final Result UNKNOWN = new Result(false, false, Collections.emptySet(), 0) {
+        static final Result UNKNOWN = new Result(false, false, Collections.emptySet(), 0){
             @Override
             boolean isUnknown() {
                 return true;
@@ -618,12 +656,11 @@ final class QueryAnalyzer {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             QueryExtraction queryExtraction = (QueryExtraction) o;
-            return Objects.equals(term, queryExtraction.term) && Objects.equals(range, queryExtraction.range);
+            return Objects.equals(term, queryExtraction.term) &&
+                Objects.equals(range, queryExtraction.range);
         }
 
         @Override
@@ -633,7 +670,10 @@ final class QueryAnalyzer {
 
         @Override
         public String toString() {
-            return "QueryExtraction{" + "term=" + term + ",range=" + range + '}';
+            return "QueryExtraction{" +
+                "term=" + term +
+                ",range=" + range +
+                '}';
         }
     }
 
@@ -654,13 +694,12 @@ final class QueryAnalyzer {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Range range = (Range) o;
-            return Objects.equals(fieldName, range.fieldName) && Arrays.equals(lowerPoint, range.lowerPoint)
-                    && Arrays.equals(upperPoint, range.upperPoint);
+            return Objects.equals(fieldName, range.fieldName) &&
+                Arrays.equals(lowerPoint, range.lowerPoint) &&
+                Arrays.equals(upperPoint, range.upperPoint);
         }
 
         @Override
@@ -674,7 +713,10 @@ final class QueryAnalyzer {
 
         @Override
         public String toString() {
-            return "Range{" + ", fieldName='" + fieldName + '\'' + ", interval=" + interval + '}';
+            return "Range{" +
+                ", fieldName='" + fieldName + '\'' +
+                ", interval=" + interval +
+                '}';
         }
     }
 

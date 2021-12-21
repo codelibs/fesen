@@ -21,8 +21,8 @@ package org.codelibs.fesen.common.io.stream;
 
 import java.io.IOException;
 
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.rest.RestStatus;
 
 /**

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -35,6 +28,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.gateway.MetadataStateFormat;
 import org.codelibs.fesen.index.Index;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class represents the manifest file, which is the entry point for reading meta data from disk.
@@ -91,13 +91,13 @@ public class Manifest implements ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Manifest manifest = (Manifest) o;
-        return currentTerm == manifest.currentTerm && clusterStateVersion == manifest.clusterStateVersion
-                && globalGeneration == manifest.globalGeneration && Objects.equals(indexGenerations, manifest.indexGenerations);
+        return currentTerm == manifest.currentTerm &&
+               clusterStateVersion == manifest.clusterStateVersion &&
+               globalGeneration == manifest.globalGeneration &&
+               Objects.equals(indexGenerations, manifest.indexGenerations);
     }
 
     @Override
@@ -107,8 +107,12 @@ public class Manifest implements ToXContentFragment {
 
     @Override
     public String toString() {
-        return "Manifest{" + "currentTerm=" + currentTerm + ", clusterStateVersion=" + clusterStateVersion + ", globalGeneration="
-                + globalGeneration + ", indexGenerations=" + indexGenerations + '}';
+        return "Manifest{" +
+                "currentTerm=" + currentTerm +
+                ", clusterStateVersion=" + clusterStateVersion +
+                ", globalGeneration=" + globalGeneration +
+                ", indexGenerations=" + indexGenerations +
+                '}';
     }
 
     private static final String MANIFEST_FILE_PREFIX = "manifest-";
@@ -126,6 +130,7 @@ public class Manifest implements ToXContentFragment {
             return Manifest.fromXContent(parser);
         }
     };
+
 
     /*
      * Code below this comment is for XContent parsing/generation
@@ -150,8 +155,9 @@ public class Manifest implements ToXContentFragment {
     }
 
     private List<IndexEntry> indexEntryList() {
-        return indexGenerations.entrySet().stream().map(entry -> new IndexEntry(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        return indexGenerations.entrySet().stream().
+                map(entry -> new IndexEntry(entry.getKey(), entry.getValue())).
+                collect(Collectors.toList());
     }
 
     private static long currentTerm(Object[] manifestFields) {
@@ -172,9 +178,11 @@ public class Manifest implements ToXContentFragment {
         return listOfIndices.stream().collect(Collectors.toMap(IndexEntry::getIndex, IndexEntry::getGeneration));
     }
 
-    private static final ConstructingObjectParser<Manifest, Void> PARSER =
-            new ConstructingObjectParser<>("manifest", manifestFields -> new Manifest(currentTerm(manifestFields),
-                    clusterStateVersion(manifestFields), generation(manifestFields), indices(manifestFields)));
+    private static final ConstructingObjectParser<Manifest, Void> PARSER = new ConstructingObjectParser<>(
+            "manifest",
+            manifestFields ->
+                    new Manifest(currentTerm(manifestFields), clusterStateVersion(manifestFields), generation(manifestFields),
+                            indices(manifestFields)));
 
     static {
         PARSER.declareLong(ConstructingObjectParser.constructorArg(), CURRENT_TERM_PARSE_FIELD);
@@ -204,12 +212,13 @@ public class Manifest implements ToXContentFragment {
         private static final ParseField INDEX_GENERATION_PARSE_FIELD = new ParseField("generation");
         private static final ParseField INDEX_PARSE_FIELD = new ParseField("index");
 
-        static final ConstructingObjectParser<IndexEntry, Void> INDEX_ENTRY_PARSER = new ConstructingObjectParser<>("indexEntry",
+        static final ConstructingObjectParser<IndexEntry, Void> INDEX_ENTRY_PARSER = new ConstructingObjectParser<>(
+                "indexEntry",
                 indexAndGeneration -> new IndexEntry((Index) indexAndGeneration[0], (long) indexAndGeneration[1]));
 
         static {
-            INDEX_ENTRY_PARSER.declareField(ConstructingObjectParser.constructorArg(), Index::fromXContent, INDEX_PARSE_FIELD,
-                    ObjectParser.ValueType.OBJECT);
+            INDEX_ENTRY_PARSER.declareField(ConstructingObjectParser.constructorArg(),
+                    Index::fromXContent, INDEX_PARSE_FIELD, ObjectParser.ValueType.OBJECT);
             INDEX_ENTRY_PARSER.declareLong(ConstructingObjectParser.constructorArg(), INDEX_GENERATION_PARSE_FIELD);
         }
 
@@ -239,3 +248,4 @@ public class Manifest implements ToXContentFragment {
         }
     }
 }
+

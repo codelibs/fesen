@@ -24,6 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+
 /**
  * Processor used for testing, keeps track of how many times it is invoked and
  * accepts a {@link Consumer} of {@link IngestDocument} to be called when executed.
@@ -45,9 +48,7 @@ public class TestProcessor implements Processor {
     }
 
     public TestProcessor(String tag, String type, String description, RuntimeException e) {
-        this(tag, type, description, (Consumer<IngestDocument>) i -> {
-            throw e;
-        });
+        this(tag, type, description, (Consumer<IngestDocument>) i -> { throw e; });
     }
 
     public TestProcessor(String tag, String type, String description, Consumer<IngestDocument> ingestDocumentConsumer) {
@@ -91,8 +92,8 @@ public class TestProcessor implements Processor {
 
     public static final class Factory implements Processor.Factory {
         @Override
-        public TestProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
-                Map<String, Object> config) throws Exception {
+        public TestProcessor create(Map<String, Processor.Factory> registry, String processorTag,
+                                    String description, Map<String, Object> config) throws Exception {
             return new TestProcessor(processorTag, "test-processor", description, ingestDocument -> {});
         }
     }

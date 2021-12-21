@@ -169,6 +169,7 @@ public class FilterPathTests extends ESTestCase {
         assertThat(filterPath.getSegment(), is(emptyString()));
         assertSame(filterPath, FilterPath.EMPTY);
 
+
         input = "w\\.0.0\\.t";
 
         filterPaths = FilterPath.compile(singleton(input));

@@ -268,7 +268,7 @@ public abstract class AbstractStringFieldDataTestCase extends AbstractFieldDataI
         IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(writer));
         SortField sortField = indexFieldData.sortField(missingValue, MultiValueMode.MIN, null, reverse);
         TopFieldDocs topDocs =
-                searcher.search(new MatchAllDocsQuery(), randomBoolean() ? numDocs : randomIntBetween(10, numDocs), new Sort(sortField));
+            searcher.search(new MatchAllDocsQuery(), randomBoolean() ? numDocs : randomIntBetween(10, numDocs), new Sort(sortField));
         assertEquals(numDocs, topDocs.totalHits.value);
         BytesRef previousValue = reverse ? UnicodeUtil.BIG_TERM : new BytesRef();
         for (int i = 0; i < topDocs.scoreDocs.length; ++i) {
@@ -323,7 +323,7 @@ public abstract class AbstractStringFieldDataTestCase extends AbstractFieldDataI
         IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(writer));
         SortField sortField = indexFieldData.sortField(first ? "_first" : "_last", MultiValueMode.MIN, null, reverse);
         TopFieldDocs topDocs =
-                searcher.search(new MatchAllDocsQuery(), randomBoolean() ? numDocs : randomIntBetween(10, numDocs), new Sort(sortField));
+            searcher.search(new MatchAllDocsQuery(), randomBoolean() ? numDocs : randomIntBetween(10, numDocs), new Sort(sortField));
         assertEquals(numDocs, topDocs.totalHits.value);
         BytesRef previousValue = first ? null : reverse ? UnicodeUtil.BIG_TERM : new BytesRef();
         for (int i = 0; i < topDocs.scoreDocs.length; ++i) {
@@ -411,9 +411,10 @@ public abstract class AbstractStringFieldDataTestCase extends AbstractFieldDataI
         Query parentFilter = new TermQuery(new Term("type", "parent"));
         Query childFilter = Queries.not(parentFilter);
         Nested nested = createNested(searcher, parentFilter, childFilter);
-        BytesRefFieldComparatorSource nestedComparatorSource = new BytesRefFieldComparatorSource(fieldData, missingValue, sortMode, nested);
+        BytesRefFieldComparatorSource nestedComparatorSource =
+            new BytesRefFieldComparatorSource(fieldData, missingValue, sortMode, nested);
         ToParentBlockJoinQuery query =
-                new ToParentBlockJoinQuery(new ConstantScoreQuery(childFilter), new QueryBitSetProducer(parentFilter), ScoreMode.None);
+            new ToParentBlockJoinQuery(new ConstantScoreQuery(childFilter), new QueryBitSetProducer(parentFilter), ScoreMode.None);
         Sort sort = new Sort(new SortField("text", nestedComparatorSource));
         TopFieldDocs topDocs = searcher.search(query, randomIntBetween(1, numParents), sort);
         assertTrue(topDocs.scoreDocs.length > 0);

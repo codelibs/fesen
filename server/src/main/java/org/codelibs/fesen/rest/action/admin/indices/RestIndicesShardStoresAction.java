@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.indices.shards.IndicesShardStoresAction;
 import org.codelibs.fesen.action.admin.indices.shards.IndicesShardStoresRequest;
 import org.codelibs.fesen.action.admin.indices.shards.IndicesShardStoresResponse;
@@ -40,6 +32,14 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
 /**
  * Rest action for {@link IndicesShardStoresAction}
  */
@@ -47,7 +47,9 @@ public class RestIndicesShardStoresAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_shard_stores"), new Route(GET, "/{index}/_shard_stores")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_shard_stores"),
+            new Route(GET, "/{index}/_shard_stores")));
     }
 
     @Override
@@ -62,16 +64,20 @@ public class RestIndicesShardStoresAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
-        IndicesShardStoresRequest indicesShardStoresRequest =
-                new IndicesShardStoresRequest(Strings.splitStringByCommaToArray(request.param("index")));
+        IndicesShardStoresRequest indicesShardStoresRequest = new IndicesShardStoresRequest(
+                Strings.splitStringByCommaToArray(request.param("index")));
         if (request.hasParam("status")) {
             indicesShardStoresRequest.shardStatuses(Strings.splitStringByCommaToArray(request.param("status")));
         }
         indicesShardStoresRequest.indicesOptions(IndicesOptions.fromRequest(request, indicesShardStoresRequest.indicesOptions()));
-        return channel -> client.admin().indices().shardStores(indicesShardStoresRequest,
-                new RestBuilderListener<IndicesShardStoresResponse>(channel) {
+        return channel ->
+            client.admin()
+                .indices()
+                .shardStores(indicesShardStoresRequest, new RestBuilderListener<IndicesShardStoresResponse>(channel) {
                     @Override
-                    public RestResponse buildResponse(IndicesShardStoresResponse response, XContentBuilder builder) throws Exception {
+                    public RestResponse buildResponse(
+                        IndicesShardStoresResponse response,
+                        XContentBuilder builder) throws Exception {
                         builder.startObject();
                         response.toXContent(builder, request);
                         builder.endObject();

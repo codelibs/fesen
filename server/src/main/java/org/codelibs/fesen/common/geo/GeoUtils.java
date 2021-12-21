@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.common.geo;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
 import org.apache.lucene.spatial.prefix.tree.QuadPrefixTree;
 import org.apache.lucene.util.SloppyMath;
@@ -30,8 +27,8 @@ import org.codelibs.fesen.common.unit.DistanceUnit;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.common.xcontent.XContentSubParser;
+import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 import org.codelibs.fesen.index.fielddata.FieldData;
@@ -40,6 +37,9 @@ import org.codelibs.fesen.index.fielddata.MultiGeoPointValues;
 import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 import org.codelibs.fesen.index.fielddata.SortingNumericDoubleValues;
+
+import java.io.IOException;
+import java.util.Collections;
 
 public class GeoUtils {
 
@@ -57,19 +57,19 @@ public class GeoUtils {
     public static final String GEOHASH = "geohash";
 
     /** Earth ellipsoid major axis defined by WGS 84 in meters */
-    public static final double EARTH_SEMI_MAJOR_AXIS = 6378137.0; // meters (WGS 84)
+    public static final double EARTH_SEMI_MAJOR_AXIS = 6378137.0;      // meters (WGS 84)
 
     /** Earth ellipsoid minor axis defined by WGS 84 in meters */
     public static final double EARTH_SEMI_MINOR_AXIS = 6356752.314245; // meters (WGS 84)
 
     /** Earth mean radius defined by WGS 84 in meters */
-    public static final double EARTH_MEAN_RADIUS = 6371008.7714D; // meters (WGS 84)
+    public static final double EARTH_MEAN_RADIUS = 6371008.7714D;      // meters (WGS 84)
 
     /** Earth axis ratio defined by WGS 84 (0.996647189335) */
     public static final double EARTH_AXIS_RATIO = EARTH_SEMI_MINOR_AXIS / EARTH_SEMI_MAJOR_AXIS;
 
     /** Earth ellipsoid equator length in meters */
-    public static final double EARTH_EQUATOR = 2 * Math.PI * EARTH_SEMI_MAJOR_AXIS;
+    public static final double EARTH_EQUATOR = 2*Math.PI * EARTH_SEMI_MAJOR_AXIS;
 
     /** Earth ellipsoid polar distance in meters */
     public static final double EARTH_POLAR_DISTANCE = Math.PI * EARTH_SEMI_MINOR_AXIS;
@@ -93,16 +93,17 @@ public class GeoUtils {
         return true;
     }
 
+
     /**
      * Calculate the width (in meters) of geohash cells at a specific level
      * @param level geohash level must be greater or equal to zero
      * @return the width of cells at level in meters
      */
     public static double geoHashCellWidth(int level) {
-        assert level >= 0;
+        assert level>=0;
         // Geohash cells are split into 32 cells at each level. the grid
         // alternates at each level between a 8x4 and a 4x8 grid
-        return EARTH_EQUATOR / (1L << ((((level + 1) / 2) * 3) + ((level / 2) * 2)));
+        return EARTH_EQUATOR / (1L<<((((level+1)/2)*3) + ((level/2)*2)));
     }
 
     /**
@@ -111,8 +112,8 @@ public class GeoUtils {
      * @return the width of cells at level in meters
      */
     public static double quadTreeCellWidth(int level) {
-        assert level >= 0;
-        return EARTH_EQUATOR / (1L << level);
+        assert level >=0;
+        return EARTH_EQUATOR / (1L<<level);
     }
 
     /**
@@ -121,10 +122,10 @@ public class GeoUtils {
      * @return the height of cells at level in meters
      */
     public static double geoHashCellHeight(int level) {
-        assert level >= 0;
+        assert level>=0;
         // Geohash cells are split into 32 cells at each level. the grid
         // alternates at each level between a 8x4 and a 4x8 grid
-        return EARTH_POLAR_DISTANCE / (1L << ((((level + 1) / 2) * 2) + ((level / 2) * 3)));
+        return EARTH_POLAR_DISTANCE / (1L<<((((level+1)/2)*2) + ((level/2)*3)));
     }
 
     /**
@@ -133,8 +134,8 @@ public class GeoUtils {
      * @return the height of cells at level in meters
      */
     public static double quadTreeCellHeight(int level) {
-        assert level >= 0;
-        return EARTH_POLAR_DISTANCE / (1L << level);
+        assert level>=0;
+        return EARTH_POLAR_DISTANCE / (1L<<level);
     }
 
     /**
@@ -143,10 +144,10 @@ public class GeoUtils {
      * @return the size of cells at level in meters
      */
     public static double geoHashCellSize(int level) {
-        assert level >= 0;
+        assert level>=0;
         final double w = geoHashCellWidth(level);
         final double h = geoHashCellHeight(level);
-        return Math.sqrt(w * w + h * h);
+        return Math.sqrt(w*w + h*h);
     }
 
     /**
@@ -155,8 +156,8 @@ public class GeoUtils {
      * @return the size of cells at level in meters
      */
     public static double quadTreeCellSize(int level) {
-        assert level >= 0;
-        return Math.sqrt(EARTH_POLAR_DISTANCE * EARTH_POLAR_DISTANCE + EARTH_EQUATOR * EARTH_EQUATOR) / (1L << level);
+        assert level>=0;
+        return Math.sqrt(EARTH_POLAR_DISTANCE*EARTH_POLAR_DISTANCE + EARTH_EQUATOR*EARTH_EQUATOR) / (1L<<level);
     }
 
     /**
@@ -167,14 +168,14 @@ public class GeoUtils {
      */
     public static int quadTreeLevelsForPrecision(double meters) {
         assert meters >= 0;
-        if (meters == 0) {
+        if(meters == 0) {
             return QuadPrefixTree.MAX_LEVELS_POSSIBLE;
         } else {
-            final double ratio = 1 + (EARTH_POLAR_DISTANCE / EARTH_EQUATOR); // cell ratio
-            final double width = Math.sqrt((meters * meters) / (ratio * ratio)); // convert to cell width
+            final double ratio = 1+(EARTH_POLAR_DISTANCE / EARTH_EQUATOR); // cell ratio
+            final double width = Math.sqrt((meters*meters)/(ratio*ratio)); // convert to cell width
             final long part = Math.round(Math.ceil(EARTH_EQUATOR / width));
-            final int level = Long.SIZE - Long.numberOfLeadingZeros(part) - 1; // (log_2)
-            return (part <= (1L << level)) ? level : (level + 1); // adjust level
+            final int level = Long.SIZE - Long.numberOfLeadingZeros(part)-1; // (log_2)
+            return (part<=(1L<<level)) ?level :(level+1); // adjust level
         }
     }
 
@@ -197,20 +198,20 @@ public class GeoUtils {
     public static int geoHashLevelsForPrecision(double meters) {
         assert meters >= 0;
 
-        if (meters == 0) {
+        if(meters == 0) {
             return GeohashPrefixTree.getMaxLevelsPossible();
         } else {
-            final double ratio = 1 + (EARTH_POLAR_DISTANCE / EARTH_EQUATOR); // cell ratio
-            final double width = Math.sqrt((meters * meters) / (ratio * ratio)); // convert to cell width
+            final double ratio = 1+(EARTH_POLAR_DISTANCE / EARTH_EQUATOR); // cell ratio
+            final double width = Math.sqrt((meters*meters)/(ratio*ratio)); // convert to cell width
             final double part = Math.ceil(EARTH_EQUATOR / width);
-            if (part == 1)
+            if(part == 1)
                 return 1;
-            final int bits = (int) Math.round(Math.ceil(Math.log(part) / Math.log(2)));
-            final int full = bits / 5; // number of 5 bit subdivisions
-            final int left = bits - full * 5; // bit representing the last level
-            final int even = full + (left > 0 ? 1 : 0); // number of even levels
-            final int odd = full + (left > 3 ? 1 : 0); // number of odd levels
-            return even + odd;
+            final int bits = (int)Math.round(Math.ceil(Math.log(part) / Math.log(2)));
+            final int full = bits / 5;                // number of 5 bit subdivisions
+            final int left = bits - full*5;           // bit representing the last level
+            final int even = full + (left>0?1:0);     // number of even levels
+            final int odd = full + (left>3?1:0);      // number of odd levels
+            return even+odd;
         }
     }
 
@@ -295,7 +296,7 @@ public class GeoUtils {
      * @param normLon Whether to normalize longitude.
      */
     public static void normalizePoint(GeoPoint point, boolean normLat, boolean normLon) {
-        double[] pt = { point.lon(), point.lat() };
+        double[] pt = {point.lon(), point.lat()};
         normalizePoint(pt, normLon, normLat);
         point.reset(pt[1], pt[0]);
     }
@@ -347,7 +348,6 @@ public class GeoUtils {
         }
         return rtn;
     }
-
     /**
      * Parse a {@link GeoPoint} with a {@link XContentParser}:
      *
@@ -357,6 +357,7 @@ public class GeoUtils {
     public static GeoPoint parseGeoPoint(XContentParser parser) throws IOException, FesenParseException {
         return parseGeoPoint(parser, new GeoPoint());
     }
+
 
     public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point) throws IOException, FesenParseException {
         return parseGeoPoint(parser, point, false);
@@ -386,7 +387,7 @@ public class GeoUtils {
      */
     public static GeoPoint parseGeoPoint(Object value, GeoPoint point, final boolean ignoreZValue) throws FesenParseException {
         try (XContentParser parser = new MapXContentParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE,
-                Collections.singletonMap("null_value", value), null)) {
+            Collections.singletonMap("null_value", value), null)) {
             parser.nextToken(); // start object
             parser.nextToken(); // field name
             parser.nextToken(); // field value
@@ -400,7 +401,10 @@ public class GeoUtils {
      * Represents the point of the geohash cell that should be used as the value of geohash
      */
     public enum EffectivePoint {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
     }
 
     /**
@@ -433,7 +437,7 @@ public class GeoUtils {
         String geohash = null;
         NumberFormatException numberFormatException = null;
 
-        if (parser.currentToken() == Token.START_OBJECT) {
+        if(parser.currentToken() == Token.START_OBJECT) {
             try (XContentSubParser subParser = new XContentSubParser(parser)) {
                 while (subParser.nextToken() != Token.END_OBJECT) {
                     if (subParser.currentToken() == Token.FIELD_NAME) {
@@ -441,30 +445,30 @@ public class GeoUtils {
                         if (LATITUDE.equals(field)) {
                             subParser.nextToken();
                             switch (subParser.currentToken()) {
-                            case VALUE_NUMBER:
-                            case VALUE_STRING:
-                                try {
-                                    lat = subParser.doubleValue(true);
-                                } catch (NumberFormatException e) {
-                                    numberFormatException = e;
-                                }
-                                break;
-                            default:
-                                throw new FesenParseException("latitude must be a number");
+                                case VALUE_NUMBER:
+                                case VALUE_STRING:
+                                    try {
+                                        lat = subParser.doubleValue(true);
+                                    } catch (NumberFormatException e) {
+                                        numberFormatException = e;
+                                    }
+                                    break;
+                                default:
+                                    throw new FesenParseException("latitude must be a number");
                             }
                         } else if (LONGITUDE.equals(field)) {
                             subParser.nextToken();
                             switch (subParser.currentToken()) {
-                            case VALUE_NUMBER:
-                            case VALUE_STRING:
-                                try {
-                                    lon = subParser.doubleValue(true);
-                                } catch (NumberFormatException e) {
-                                    numberFormatException = e;
-                                }
-                                break;
-                            default:
-                                throw new FesenParseException("longitude must be a number");
+                                case VALUE_NUMBER:
+                                case VALUE_STRING:
+                                    try {
+                                        lon = subParser.doubleValue(true);
+                                    } catch (NumberFormatException e) {
+                                        numberFormatException = e;
+                                    }
+                                    break;
+                                default:
+                                    throw new FesenParseException("longitude must be a number");
                             }
                         } else if (GEOHASH.equals(field)) {
                             if (subParser.nextToken() == Token.VALUE_STRING) {
@@ -481,13 +485,14 @@ public class GeoUtils {
                 }
             }
             if (geohash != null) {
-                if (!Double.isNaN(lat) || !Double.isNaN(lon)) {
+                if(!Double.isNaN(lat) || !Double.isNaN(lon)) {
                     throw new FesenParseException("field must be either lat/lon or geohash");
                 } else {
                     return point.parseGeoHash(geohash, effectivePoint);
                 }
             } else if (numberFormatException != null) {
-                throw new FesenParseException("[{}] and [{}] must be valid double values", numberFormatException, LATITUDE, LONGITUDE);
+                throw new FesenParseException("[{}] and [{}] must be valid double values", numberFormatException, LATITUDE,
+                    LONGITUDE);
             } else if (Double.isNaN(lat)) {
                 throw new FesenParseException("field [{}] missing", LATITUDE);
             } else if (Double.isNaN(lon)) {
@@ -496,7 +501,7 @@ public class GeoUtils {
                 return point.reset(lat, lon);
             }
 
-        } else if (parser.currentToken() == Token.START_ARRAY) {
+        } else if(parser.currentToken() == Token.START_ARRAY) {
             try (XContentSubParser subParser = new XContentSubParser(parser)) {
                 int element = 0;
                 while (subParser.nextToken() != Token.END_ARRAY) {
@@ -517,7 +522,7 @@ public class GeoUtils {
                 }
             }
             return point.reset(lat, lon);
-        } else if (parser.currentToken() == Token.VALUE_STRING) {
+        } else if(parser.currentToken() == Token.VALUE_STRING) {
             String val = parser.text();
             return point.resetFromString(val, ignoreZValue, effectivePoint);
         } else {
@@ -580,17 +585,18 @@ public class GeoUtils {
      */
     public static int checkPrecisionRange(int precision) {
         if ((precision < 1) || (precision > 12)) {
-            throw new IllegalArgumentException("Invalid geohash aggregation precision of " + precision + ". Must be between 1 and 12.");
+            throw new IllegalArgumentException("Invalid geohash aggregation precision of " + precision
+                + ". Must be between 1 and 12.");
         }
         return precision;
     }
 
     /** Returns the maximum distance/radius (in meters) from the point 'center' before overlapping */
     public static double maxRadialDistanceMeters(final double centerLat, final double centerLon) {
-        if (Math.abs(centerLat) == MAX_LAT) {
-            return SloppyMath.haversinMeters(centerLat, centerLon, 0, centerLon);
-        }
-        return SloppyMath.haversinMeters(centerLat, centerLon, centerLat, (MAX_LON + centerLon) % 360);
+      if (Math.abs(centerLat) == MAX_LAT) {
+        return SloppyMath.haversinMeters(centerLat, centerLon, 0, centerLon);
+      }
+      return SloppyMath.haversinMeters(centerLat, centerLon, centerLat, (MAX_LON + centerLon) % 360);
     }
 
     /** Return the distance (in meters) between 2 lat,lon geo points using the haversine method implemented by lucene */
@@ -613,8 +619,10 @@ public class GeoUtils {
      * Return a {@link SortedNumericDoubleValues} instance that returns the distances to a list of geo-points
      * for each document.
      */
-    public static SortedNumericDoubleValues distanceValues(final GeoDistance distance, final DistanceUnit unit,
-            final MultiGeoPointValues geoPointValues, final GeoPoint... fromPoints) {
+    public static SortedNumericDoubleValues distanceValues(final GeoDistance distance,
+                                                           final DistanceUnit unit,
+                                                           final MultiGeoPointValues geoPointValues,
+                                                           final GeoPoint... fromPoints) {
         final GeoPointValues singleValues = FieldData.unwrapSingleton(geoPointValues);
         if (singleValues != null && fromPoints.length == 1) {
             return FieldData.singleton(new NumericDoubleValues() {

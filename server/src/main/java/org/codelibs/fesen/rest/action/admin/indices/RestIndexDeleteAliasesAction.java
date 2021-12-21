@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -33,11 +29,17 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
+
 public class RestIndexDeleteAliasesAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(DELETE, "/{index}/_alias/{name}"), new Route(DELETE, "/{index}/_aliases/{name}")));
+        return unmodifiableList(asList(
+            new Route(DELETE, "/{index}/_alias/{name}"),
+            new Route(DELETE, "/{index}/_aliases/{name}")));
     }
 
     @Override

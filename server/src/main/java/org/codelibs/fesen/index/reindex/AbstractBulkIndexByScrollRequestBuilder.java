@@ -24,11 +24,13 @@ import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.script.Script;
 
-public abstract class AbstractBulkIndexByScrollRequestBuilder<Request extends AbstractBulkIndexByScrollRequest<Request>, Self extends AbstractBulkIndexByScrollRequestBuilder<Request, Self>>
+public abstract class AbstractBulkIndexByScrollRequestBuilder<
+                Request extends AbstractBulkIndexByScrollRequest<Request>,
+                Self extends AbstractBulkIndexByScrollRequestBuilder<Request, Self>>
         extends AbstractBulkByScrollRequestBuilder<Request, Self> {
 
     protected AbstractBulkIndexByScrollRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action,
-            SearchRequestBuilder search, Request request) {
+                                                      SearchRequestBuilder search, Request request) {
         super(client, action, search, request);
     }
 

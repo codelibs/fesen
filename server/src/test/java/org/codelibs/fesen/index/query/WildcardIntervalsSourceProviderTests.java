@@ -36,8 +36,11 @@ public class WildcardIntervalsSourceProviderTests extends AbstractSerializingTes
     }
 
     static Wildcard createRandomWildcard() {
-        return new Wildcard(randomAlphaOfLength(10), randomBoolean() ? randomAlphaOfLength(10) : null,
-                randomBoolean() ? randomAlphaOfLength(10) : null);
+        return new Wildcard(
+            randomAlphaOfLength(10),
+            randomBoolean() ? randomAlphaOfLength(10) : null,
+            randomBoolean() ? randomAlphaOfLength(10) : null
+        );
     }
 
     @Override
@@ -46,17 +49,17 @@ public class WildcardIntervalsSourceProviderTests extends AbstractSerializingTes
         String analyzer = instance.getAnalyzer();
         String useField = instance.getUseField();
         switch (between(0, 2)) {
-        case 0:
-            wildcard += "a";
-            break;
-        case 1:
-            analyzer = randomAlphaOfLength(5);
-            break;
-        case 2:
-            useField = useField == null ? randomAlphaOfLength(5) : null;
-            break;
-        default:
-            throw new AssertionError("Illegal randomisation branch");
+            case 0:
+                wildcard += "a";
+                break;
+            case 1:
+                analyzer = randomAlphaOfLength(5);
+                break;
+            case 2:
+                useField = useField == null ? randomAlphaOfLength(5) : null;
+                break;
+            default:
+                throw new AssertionError("Illegal randomisation branch");
         }
         return new Wildcard(wildcard, analyzer, useField);
     }

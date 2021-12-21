@@ -30,6 +30,7 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.test.AbstractXContentTestCase;
 
+
 public class SnapshotIndexStatusTests extends AbstractXContentTestCase<SnapshotIndexStatus> {
 
     @Override

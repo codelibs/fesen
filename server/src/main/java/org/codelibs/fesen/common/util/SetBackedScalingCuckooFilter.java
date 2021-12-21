@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.common.util;
 
+import org.apache.lucene.util.BytesRef;
+import org.codelibs.fesen.common.hash.MurmurHash3;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,12 +34,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import org.apache.lucene.util.BytesRef;
-import org.codelibs.fesen.common.hash.MurmurHash3;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
 
 /**
  * An approximate set membership datastructure that scales as more unique values are inserted.
@@ -272,8 +272,8 @@ public class SetBackedScalingCuckooFilter implements Writeable {
      */
     void convert() {
         if (isSetMode == false) {
-            throw new IllegalStateException(
-                    "Cannot convert SetBackedScalingCuckooFilter to approximate " + "when it has already been converted.");
+            throw new IllegalStateException("Cannot convert SetBackedScalingCuckooFilter to approximate " +
+                "when it has already been converted.");
         }
         long oldSize = getSizeInBytes();
 
@@ -310,6 +310,7 @@ public class SetBackedScalingCuckooFilter implements Writeable {
         return bytes;
     }
 
+
     /**
      * Merge `other` cuckoo filter into this cuckoo.  After merging, this filter's state will
      * be the union of the two.  During the merging process, the internal Set may be upgraded
@@ -318,16 +319,16 @@ public class SetBackedScalingCuckooFilter implements Writeable {
     public void merge(SetBackedScalingCuckooFilter other) {
         // Some basic sanity checks to make sure we can merge
         if (this.threshold != other.threshold) {
-            throw new IllegalStateException("Cannot merge other CuckooFilter because thresholds do not match: [" + this.threshold + "] vs ["
-                    + other.threshold + "]");
+            throw new IllegalStateException("Cannot merge other CuckooFilter because thresholds do not match: ["
+                + this.threshold + "] vs [" + other.threshold + "]");
         }
         if (this.capacity != other.capacity) {
-            throw new IllegalStateException(
-                    "Cannot merge other CuckooFilter because capacities do not match: [" + this.capacity + "] vs [" + other.capacity + "]");
+            throw new IllegalStateException("Cannot merge other CuckooFilter because capacities do not match: ["
+                + this.capacity + "] vs [" + other.capacity + "]");
         }
         if (this.fpp != other.fpp) {
-            throw new IllegalStateException(
-                    "Cannot merge other CuckooFilter because precisions do not match: [" + this.fpp + "] vs [" + other.fpp + "]");
+            throw new IllegalStateException("Cannot merge other CuckooFilter because precisions do not match: ["
+                + this.fpp + "] vs [" + other.fpp + "]");
         }
 
         if (isSetMode && other.isSetMode) {
@@ -381,6 +382,7 @@ public class SetBackedScalingCuckooFilter implements Writeable {
         }
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(hashes, filters, threshold, isSetMode, capacity, fpp);
@@ -396,8 +398,11 @@ public class SetBackedScalingCuckooFilter implements Writeable {
         }
 
         final SetBackedScalingCuckooFilter that = (SetBackedScalingCuckooFilter) other;
-        return Objects.equals(this.hashes, that.hashes) && Objects.equals(this.filters, that.filters)
-                && Objects.equals(this.threshold, that.threshold) && Objects.equals(this.isSetMode, that.isSetMode)
-                && Objects.equals(this.capacity, that.capacity) && Objects.equals(this.fpp, that.fpp);
+        return Objects.equals(this.hashes, that.hashes)
+            && Objects.equals(this.filters, that.filters)
+            && Objects.equals(this.threshold, that.threshold)
+            && Objects.equals(this.isSetMode, that.isSetMode)
+            && Objects.equals(this.capacity, that.capacity)
+            && Objects.equals(this.fpp, that.fpp);
     }
 }

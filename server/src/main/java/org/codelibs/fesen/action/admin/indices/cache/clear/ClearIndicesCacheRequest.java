@@ -21,6 +21,7 @@ package org.codelibs.fesen.action.admin.indices.cache.clear;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -37,6 +38,9 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         super(in);
         queryCache = in.readBoolean();
         fieldDataCache = in.readBoolean();
+        if (in.getVersion().before(Version.V_6_0_0_beta1)) {
+            in.readBoolean(); // recycler
+        }
         fields = in.readStringArray();
         requestCache = in.readBoolean();
     }
@@ -86,6 +90,9 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         super.writeTo(out);
         out.writeBoolean(queryCache);
         out.writeBoolean(fieldDataCache);
+        if (out.getVersion().before(Version.V_6_0_0_beta1)) {
+            out.writeBoolean(false); // recycler
+        }
         out.writeStringArrayNullable(fields);
         out.writeBoolean(requestCache);
     }

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import java.util.List;
-
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.transport.NettyAllocator;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,6 +28,11 @@ import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpResponse;
+
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.transport.NettyAllocator;
+
+import java.util.List;
 
 /**
  * Split up large responses to prevent batch compression {@link JdkZlibEncoder} down the pipeline.

@@ -70,7 +70,7 @@ public class FieldCapabilitiesTests extends AbstractSerializingTestCase<FieldCap
             assertThat(cap2.isSearchable(), equalTo(true));
             assertThat(cap2.isAggregatable(), equalTo(false));
             assertThat(cap2.indices().length, equalTo(3));
-            assertThat(cap2.indices(), equalTo(new String[] { "index1", "index2", "index3" }));
+            assertThat(cap2.indices(), equalTo(new String[]{"index1", "index2", "index3"}));
             assertNull(cap2.nonSearchableIndices());
             assertNull(cap2.nonAggregatableIndices());
             assertEquals(Collections.emptyMap(), cap2.meta());
@@ -85,17 +85,17 @@ public class FieldCapabilitiesTests extends AbstractSerializingTestCase<FieldCap
             assertThat(cap1.isSearchable(), equalTo(false));
             assertThat(cap1.isAggregatable(), equalTo(false));
             assertNull(cap1.indices());
-            assertThat(cap1.nonSearchableIndices(), equalTo(new String[] { "index1", "index3" }));
-            assertThat(cap1.nonAggregatableIndices(), equalTo(new String[] { "index2", "index3" }));
+            assertThat(cap1.nonSearchableIndices(), equalTo(new String[]{"index1", "index3"}));
+            assertThat(cap1.nonAggregatableIndices(), equalTo(new String[]{"index2", "index3"}));
             assertEquals(Collections.emptyMap(), cap1.meta());
 
             FieldCapabilities cap2 = builder.build(true);
             assertThat(cap2.isSearchable(), equalTo(false));
             assertThat(cap2.isAggregatable(), equalTo(false));
             assertThat(cap2.indices().length, equalTo(3));
-            assertThat(cap2.indices(), equalTo(new String[] { "index1", "index2", "index3" }));
-            assertThat(cap2.nonSearchableIndices(), equalTo(new String[] { "index1", "index3" }));
-            assertThat(cap2.nonAggregatableIndices(), equalTo(new String[] { "index2", "index3" }));
+            assertThat(cap2.indices(), equalTo(new String[]{"index1", "index2", "index3"}));
+            assertThat(cap2.nonSearchableIndices(), equalTo(new String[]{"index1", "index3"}));
+            assertThat(cap2.nonAggregatableIndices(), equalTo(new String[]{"index2", "index3"}));
             assertEquals(Collections.emptyMap(), cap2.meta());
         }
 
@@ -116,7 +116,7 @@ public class FieldCapabilitiesTests extends AbstractSerializingTestCase<FieldCap
             assertThat(cap2.isSearchable(), equalTo(true));
             assertThat(cap2.isAggregatable(), equalTo(true));
             assertThat(cap2.indices().length, equalTo(3));
-            assertThat(cap2.indices(), equalTo(new String[] { "index1", "index2", "index3" }));
+            assertThat(cap2.indices(), equalTo(new String[]{"index1", "index2", "index3"}));
             assertNull(cap2.nonSearchableIndices());
             assertNull(cap2.nonAggregatableIndices());
             assertEquals(Collections.singletonMap("foo", new HashSet<>(Arrays.asList("bar", "quux"))), cap2.meta());
@@ -159,8 +159,9 @@ public class FieldCapabilitiesTests extends AbstractSerializingTestCase<FieldCap
             break;
         }
 
-        return new FieldCapabilities(fieldName, randomAlphaOfLengthBetween(5, 20), randomBoolean(), randomBoolean(), indices,
-                nonSearchableIndices, nonAggregatableIndices, meta);
+        return new FieldCapabilities(fieldName,
+            randomAlphaOfLengthBetween(5, 20), randomBoolean(), randomBoolean(),
+            indices, nonSearchableIndices, nonAggregatableIndices, meta);
     }
 
     @Override

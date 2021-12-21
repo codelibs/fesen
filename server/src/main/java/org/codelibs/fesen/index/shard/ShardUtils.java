@@ -27,8 +27,7 @@ import org.codelibs.fesen.core.Nullable;
 
 public final class ShardUtils {
 
-    private ShardUtils() {
-    }
+    private ShardUtils() {}
 
     /**
      * Tries to extract the shard id from a reader if possible, when its not possible,
@@ -56,5 +55,7 @@ public final class ShardUtils {
         }
         throw new IllegalArgumentException("can't extract shard ID, can't unwrap FesenDirectoryReader");
     }
+
+
 
 }

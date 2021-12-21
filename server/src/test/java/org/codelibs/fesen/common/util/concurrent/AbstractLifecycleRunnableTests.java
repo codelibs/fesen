@@ -119,7 +119,8 @@ public class AbstractLifecycleRunnableTests extends ESTestCase {
             protected void onAfterInLifecycle() {
                 try {
                     afterCallable.call();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     fail("Unexpected for mock.");
                 }
             }

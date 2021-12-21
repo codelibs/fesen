@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.index.similarity;
 
-import java.util.Objects;
-
 import org.apache.lucene.search.similarities.Similarity;
+
+import java.util.Objects;
 
 /**
  * Wrapper around a {@link Similarity} and its name.
@@ -52,10 +52,8 @@ public final class SimilarityProvider {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SimilarityProvider that = (SimilarityProvider) o;
         /**
          * We check <code>name</code> only because the <code>similarity</code> is

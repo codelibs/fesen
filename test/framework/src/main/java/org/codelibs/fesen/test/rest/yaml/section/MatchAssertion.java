@@ -18,22 +18,22 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static org.codelibs.fesen.test.hamcrest.RegexMatcher.matches;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.regex.Pattern;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.test.NotEqualMessageBuilder;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import static org.codelibs.fesen.test.hamcrest.RegexMatcher.matches;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Represents a match assert section:
@@ -44,7 +44,7 @@ import org.codelibs.fesen.test.NotEqualMessageBuilder;
 public class MatchAssertion extends Assertion {
     public static MatchAssertion parse(XContentParser parser) throws IOException {
         XContentLocation location = parser.getTokenLocation();
-        Tuple<String, Object> stringObjectTuple = ParserUtils.parseTuple(parser);
+        Tuple<String,Object> stringObjectTuple = ParserUtils.parseTuple(parser);
         return new MatchAssertion(location, stringObjectTuple.v1(), stringObjectTuple.v2());
     }
 
@@ -60,13 +60,13 @@ public class MatchAssertion extends Assertion {
         if (expectedValue instanceof String) {
             String expValue = ((String) expectedValue).trim();
             if (expValue.length() > 2 && expValue.startsWith("/") && expValue.endsWith("/")) {
-                assertThat("field [" + getField() + "] was expected to be of type String but is an instanceof [" + safeClass(actualValue)
-                        + "]", actualValue, instanceOf(String.class));
+                assertThat("field [" + getField() + "] was expected to be of type String but is an instanceof [" +
+                        safeClass(actualValue) + "]", actualValue, instanceOf(String.class));
                 String stringValue = (String) actualValue;
                 String regex = expValue.substring(1, expValue.length() - 1);
                 logger.trace("assert that [{}] matches [{}]", stringValue, regex);
-                assertThat("field [" + getField() + "] was expected to match the provided regex but didn't", stringValue,
-                        matches(regex, Pattern.COMMENTS));
+                assertThat("field [" + getField() + "] was expected to match the provided regex but didn't",
+                        stringValue, matches(regex, Pattern.COMMENTS));
                 return;
             }
         }
@@ -81,8 +81,8 @@ public class MatchAssertion extends Assertion {
         if (actualValue.getClass().equals(safeClass(expectedValue)) == false) {
             if (actualValue instanceof Number && expectedValue instanceof Number) {
                 //Double 1.0 is equal to Integer 1
-                assertThat("field [" + getField() + "] doesn't match the expected value", ((Number) actualValue).doubleValue(),
-                        equalTo(((Number) expectedValue).doubleValue()));
+                assertThat("field [" + getField() + "] doesn't match the expected value",
+                        ((Number) actualValue).doubleValue(), equalTo(((Number) expectedValue).doubleValue()));
                 return;
             }
         }

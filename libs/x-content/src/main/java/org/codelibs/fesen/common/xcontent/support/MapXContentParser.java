@@ -42,11 +42,12 @@ public class MapXContentParser extends AbstractXContentParser {
     private boolean closed;
 
     public MapXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, Map<String, Object> map,
-            XContentType xContentType) {
+                             XContentType xContentType) {
         super(xContentRegistry, deprecationHandler);
         this.xContentType = xContentType;
         this.iterator = new MapIterator(null, null, map);
     }
+
 
     @Override
     protected boolean doBooleanValue() throws IOException {
@@ -285,7 +286,10 @@ public class MapXContentParser extends AbstractXContentParser {
     }
 
     private enum State {
-        BEFORE, NAME, VALUE, AFTER
+        BEFORE,
+        NAME,
+        VALUE,
+        AFTER
     }
 
     /**
@@ -305,34 +309,34 @@ public class MapXContentParser extends AbstractXContentParser {
         @Override
         public TokenIterator next() {
             switch (state) {
-            case BEFORE:
-                state = State.NAME;
-                currentToken = Token.START_OBJECT;
-                return this;
-            case NAME:
-                if (iterator.hasNext()) {
-                    state = State.VALUE;
-                    entry = iterator.next();
-                    currentToken = Token.FIELD_NAME;
+                case BEFORE:
+                    state = State.NAME;
+                    currentToken = Token.START_OBJECT;
                     return this;
-                } else {
-                    state = State.AFTER;
-                    entry = null;
-                    currentToken = Token.END_OBJECT;
-                    return this;
-                }
-            case VALUE:
-                state = State.NAME;
-                return processValue(entry.getValue());
-            case AFTER:
-                currentToken = null;
-                if (parent == null) {
-                    return null;
-                } else {
-                    return parent.next();
-                }
-            default:
-                throw new IllegalArgumentException("Unknown state " + state);
+                case NAME:
+                    if (iterator.hasNext()) {
+                        state = State.VALUE;
+                        entry = iterator.next();
+                        currentToken = Token.FIELD_NAME;
+                        return this;
+                    } else {
+                        state = State.AFTER;
+                        entry = null;
+                        currentToken = Token.END_OBJECT;
+                        return this;
+                    }
+                case VALUE:
+                    state = State.NAME;
+                    return processValue(entry.getValue());
+                case AFTER:
+                    currentToken = null;
+                    if (parent == null) {
+                        return null;
+                    } else {
+                        return parent.next();
+                    }
+                default:
+                    throw new IllegalArgumentException("Unknown state " + state);
 
             }
         }
@@ -380,29 +384,29 @@ public class MapXContentParser extends AbstractXContentParser {
         @Override
         public TokenIterator next() {
             switch (state) {
-            case BEFORE:
-                state = State.VALUE;
-                currentToken = Token.START_ARRAY;
-                return this;
-            case VALUE:
-                if (iterator.hasNext()) {
-                    value = iterator.next();
-                    return processValue(value);
-                } else {
-                    state = State.AFTER;
-                    value = null;
-                    currentToken = Token.END_ARRAY;
+                case BEFORE:
+                    state = State.VALUE;
+                    currentToken = Token.START_ARRAY;
                     return this;
-                }
-            case AFTER:
-                currentToken = null;
-                if (parent == null) {
-                    return null;
-                } else {
-                    return parent.next();
-                }
-            default:
-                throw new IllegalArgumentException("Unknown state " + state);
+                case VALUE:
+                    if (iterator.hasNext()) {
+                        value = iterator.next();
+                        return processValue(value);
+                    } else {
+                        state = State.AFTER;
+                        value = null;
+                        currentToken = Token.END_ARRAY;
+                        return this;
+                    }
+                case AFTER:
+                    currentToken = null;
+                    if (parent == null) {
+                        return null;
+                    } else {
+                        return parent.next();
+                    }
+                default:
+                    throw new IllegalArgumentException("Unknown state " + state);
             }
         }
 

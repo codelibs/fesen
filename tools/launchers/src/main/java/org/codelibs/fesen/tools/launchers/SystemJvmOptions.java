@@ -29,7 +29,8 @@ import org.codelibs.fesen.tools.java_version_checker.JavaVersion;
 final class SystemJvmOptions {
 
     static List<String> systemJvmOptions() {
-        return Collections.unmodifiableList(Arrays.asList(
+        return Collections.unmodifiableList(
+            Arrays.asList(
                 /*
                  * Cache ttl in seconds for positive DNS lookups noting that this overrides the JDK security property
                  * networkaddress.cache.ttl; can be set to -1 to cache forever.
@@ -58,12 +59,17 @@ final class SystemJvmOptions {
                 // enable helpful NullPointerExceptions (https://openjdk.java.net/jeps/358), if they are supported
                 maybeShowCodeDetailsInExceptionMessages(),
                 // flags to configure Netty
-                "-Dio.netty.noUnsafe=true", "-Dio.netty.noKeySetOptimization=true", "-Dio.netty.recycler.maxCapacityPerThread=0",
+                "-Dio.netty.noUnsafe=true",
+                "-Dio.netty.noKeySetOptimization=true",
+                "-Dio.netty.recycler.maxCapacityPerThread=0",
                 "-Dio.netty.allocator.numDirectArenas=0",
                 // log4j 2
-                "-Dlog4j.shutdownHookEnabled=false", "-Dlog4j2.disable.jmx=true",
+                "-Dlog4j.shutdownHookEnabled=false",
+                "-Dlog4j2.disable.jmx=true",
 
-                javaLocaleProviders())).stream().filter(e -> e.isEmpty() == false).collect(Collectors.toList());
+                javaLocaleProviders()
+            )
+        ).stream().filter(e -> e.isEmpty() == false).collect(Collectors.toList());
     }
 
     private static String maybeShowCodeDetailsInExceptionMessages() {

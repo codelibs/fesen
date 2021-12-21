@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.index.shard;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.store.StoreStats;
+
+import java.io.IOException;
 
 public class DocsStats implements Writeable, ToXContentFragment {
 
@@ -41,7 +42,11 @@ public class DocsStats implements Writeable, ToXContentFragment {
     public DocsStats(StreamInput in) throws IOException {
         count = in.readVLong();
         deleted = in.readVLong();
-        totalSizeInBytes = in.readVLong();
+        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+            totalSizeInBytes = in.readVLong();
+        } else {
+            totalSizeInBytes = -1;
+        }
     }
 
     public DocsStats(long count, long deleted, long totalSizeInBytes) {
@@ -91,7 +96,9 @@ public class DocsStats implements Writeable, ToXContentFragment {
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVLong(count);
         out.writeVLong(deleted);
-        out.writeVLong(totalSizeInBytes);
+        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+            out.writeVLong(totalSizeInBytes);
+        }
     }
 
     @Override

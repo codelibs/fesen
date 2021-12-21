@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
+import java.io.IOException;
 
 public class ParsedCardinality extends ParsedAggregation implements Cardinality {
 
@@ -50,8 +50,8 @@ public class ParsedCardinality extends ParsedAggregation implements Cardinality 
         return CardinalityAggregationBuilder.NAME;
     }
 
-    private static final ObjectParser<ParsedCardinality, Void> PARSER =
-            new ObjectParser<>(ParsedCardinality.class.getSimpleName(), true, ParsedCardinality::new);
+    private static final ObjectParser<ParsedCardinality, Void> PARSER = new ObjectParser<>(
+            ParsedCardinality.class.getSimpleName(), true, ParsedCardinality::new);
 
     static {
         declareAggregationFields(PARSER);
@@ -65,7 +65,8 @@ public class ParsedCardinality extends ParsedAggregation implements Cardinality 
     }
 
     @Override
-    protected XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
+    protected XContentBuilder doXContentBody(XContentBuilder builder, Params params)
+            throws IOException {
         builder.field(CommonFields.VALUE.getPreferredName(), cardinalityValue);
         return builder;
     }

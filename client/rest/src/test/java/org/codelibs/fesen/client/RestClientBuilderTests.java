@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.client;
 
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.message.BasicHeader;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientBuilder;
+import org.codelibs.fesen.client.RestClientTestCase;
+
+import java.io.IOException;
+import java.util.Base64;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -26,57 +39,48 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.util.Base64;
-
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.message.BasicHeader;
-
 public class RestClientBuilderTests extends RestClientTestCase {
 
     public void testBuild() throws IOException {
         try {
-            RestClient.builder((HttpHost[]) null);
+            RestClient.builder((HttpHost[])null);
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("hosts must not be null nor empty", e.getMessage());
         }
 
         try {
             RestClient.builder(new HttpHost[] {});
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("hosts must not be null nor empty", e.getMessage());
         }
 
         try {
-            RestClient.builder((Node[]) null);
+            RestClient.builder((Node[])null);
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("nodes must not be null or empty", e.getMessage());
         }
 
         try {
             RestClient.builder(new Node[] {});
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("nodes must not be null or empty", e.getMessage());
         }
 
         try {
             RestClient.builder(new Node(new HttpHost("localhost", 9200)), null);
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("node cannot be null", e.getMessage());
         }
 
         try {
             RestClient.builder(new HttpHost("localhost", 9200), null);
             fail("should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("host cannot be null", e.getMessage());
         }
 
@@ -87,35 +91,35 @@ public class RestClientBuilderTests extends RestClientTestCase {
         try {
             RestClient.builder(new HttpHost("localhost", 9200)).setDefaultHeaders(null);
             fail("should have failed");
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             assertEquals("defaultHeaders must not be null", e.getMessage());
         }
 
         try {
-            RestClient.builder(new HttpHost("localhost", 9200)).setDefaultHeaders(new Header[] { null });
+            RestClient.builder(new HttpHost("localhost", 9200)).setDefaultHeaders(new Header[]{null});
             fail("should have failed");
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             assertEquals("default header must not be null", e.getMessage());
         }
 
         try {
             RestClient.builder(new HttpHost("localhost", 9200)).setFailureListener(null);
             fail("should have failed");
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             assertEquals("failureListener must not be null", e.getMessage());
         }
 
         try {
             RestClient.builder(new HttpHost("localhost", 9200)).setHttpClientConfigCallback(null);
             fail("should have failed");
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             assertEquals("httpClientConfigCallback must not be null", e.getMessage());
         }
 
         try {
             RestClient.builder(new HttpHost("localhost", 9200)).setRequestConfigCallback(null);
             fail("should have failed");
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             assertEquals("requestConfigCallback must not be null", e.getMessage());
         }
 

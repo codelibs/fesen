@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.plugins;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.codelibs.fesen.cli.Command;
 import org.codelibs.fesen.cli.LoggingAwareMultiCommand;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * A cli tool for adding, removing and listing plugins for fesen.

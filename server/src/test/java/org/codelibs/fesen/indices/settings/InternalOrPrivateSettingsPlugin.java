@@ -77,8 +77,7 @@ public class InternalOrPrivateSettingsPlugin extends Plugin implements ActionPlu
             private String key;
             private String value;
 
-            Request() {
-            }
+            Request() {}
 
             Request(StreamInput in) throws IOException {
                 super(in);
@@ -109,16 +108,14 @@ public class InternalOrPrivateSettingsPlugin extends Plugin implements ActionPlu
         }
 
         static class Response extends ActionResponse {
-            Response() {
-            }
+            Response() {}
 
             Response(StreamInput in) throws IOException {
                 super(in);
             }
 
             @Override
-            public void writeTo(StreamOutput out) throws IOException {
-            }
+            public void writeTo(StreamOutput out) throws IOException {}
         }
 
     }
@@ -127,11 +124,20 @@ public class InternalOrPrivateSettingsPlugin extends Plugin implements ActionPlu
             extends TransportMasterNodeAction<UpdateInternalOrPrivateAction.Request, UpdateInternalOrPrivateAction.Response> {
 
         @Inject
-        public TransportUpdateInternalOrPrivateAction(final TransportService transportService, final ClusterService clusterService,
-                final ThreadPool threadPool, final ActionFilters actionFilters,
+        public TransportUpdateInternalOrPrivateAction(
+                final TransportService transportService,
+                final ClusterService clusterService,
+                final ThreadPool threadPool,
+                final ActionFilters actionFilters,
                 final IndexNameExpressionResolver indexNameExpressionResolver) {
-            super(UpdateInternalOrPrivateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                    UpdateInternalOrPrivateAction.Request::new, indexNameExpressionResolver);
+            super(
+                    UpdateInternalOrPrivateAction.NAME,
+                    transportService,
+                    clusterService,
+                    threadPool,
+                    actionFilters,
+                    UpdateInternalOrPrivateAction.Request::new,
+                    indexNameExpressionResolver);
         }
 
         @Override
@@ -145,15 +151,19 @@ public class InternalOrPrivateSettingsPlugin extends Plugin implements ActionPlu
         }
 
         @Override
-        protected void masterOperation(final UpdateInternalOrPrivateAction.Request request, final ClusterState state,
+        protected void masterOperation(
+                final UpdateInternalOrPrivateAction.Request request,
+                final ClusterState state,
                 final ActionListener<UpdateInternalOrPrivateAction.Response> listener) throws Exception {
             clusterService.submitStateUpdateTask("update-index-internal-or-private", new ClusterStateUpdateTask() {
                 @Override
                 public ClusterState execute(final ClusterState currentState) throws Exception {
                     final Metadata.Builder builder = Metadata.builder(currentState.metadata());
                     final IndexMetadata.Builder imdBuilder = IndexMetadata.builder(currentState.metadata().index(request.index));
-                    final Settings.Builder settingsBuilder = Settings.builder()
-                            .put(currentState.metadata().index(request.index).getSettings()).put(request.key, request.value);
+                    final Settings.Builder settingsBuilder =
+                            Settings.builder()
+                                    .put(currentState.metadata().index(request.index).getSettings())
+                                    .put(request.key, request.value);
                     imdBuilder.settings(settingsBuilder);
                     imdBuilder.settingsVersion(1 + imdBuilder.settingsVersion());
                     builder.put(imdBuilder.build(), true);
@@ -182,8 +192,8 @@ public class InternalOrPrivateSettingsPlugin extends Plugin implements ActionPlu
 
     @Override
     public List<ActionHandler<? extends ActionRequest, ? extends ActionResponse>> getActions() {
-        return Collections
-                .singletonList(new ActionHandler<>(UpdateInternalOrPrivateAction.INSTANCE, TransportUpdateInternalOrPrivateAction.class));
+        return Collections.singletonList(
+                new ActionHandler<>(UpdateInternalOrPrivateAction.INSTANCE, TransportUpdateInternalOrPrivateAction.class));
     }
 
 }

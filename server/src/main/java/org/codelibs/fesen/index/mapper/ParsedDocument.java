@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.List;
-
 import org.apache.lucene.document.Field;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.mapper.MapperService.MergeReason;
 import org.codelibs.fesen.index.mapper.ParseContext.Document;
+
+import java.util.List;
 
 /**
  * The result of parsing a document.
@@ -46,8 +46,15 @@ public class ParsedDocument {
 
     private Mapping dynamicMappingsUpdate;
 
-    public ParsedDocument(Field version, SeqNoFieldMapper.SequenceIDFields seqID, String id, String type, String routing,
-            List<Document> documents, BytesReference source, XContentType xContentType, Mapping dynamicMappingsUpdate) {
+    public ParsedDocument(Field version,
+                          SeqNoFieldMapper.SequenceIDFields seqID,
+                          String id,
+                          String type,
+                          String routing,
+                          List<Document> documents,
+                          BytesReference source,
+                          XContentType xContentType,
+                          Mapping dynamicMappingsUpdate) {
         this.version = version;
         this.seqID = seqID;
         this.id = id;

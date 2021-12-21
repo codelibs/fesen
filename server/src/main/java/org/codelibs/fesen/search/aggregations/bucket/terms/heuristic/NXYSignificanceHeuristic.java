@@ -17,13 +17,9 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,14 +27,20 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
 
     protected static final ParseField BACKGROUND_IS_SUPERSET = new ParseField("background_is_superset");
 
     protected static final ParseField INCLUDE_NEGATIVES_FIELD = new ParseField("include_negatives");
 
-    protected static final String SCORE_ERROR_MESSAGE = ", does your background filter not include all documents in the bucket? "
-            + "If so and it is intentional, set \"" + BACKGROUND_IS_SUPERSET.getPreferredName() + "\": false";
+    protected static final String SCORE_ERROR_MESSAGE = ", does your background filter not include all documents in the bucket? " +
+            "If so and it is intentional, set \"" + BACKGROUND_IS_SUPERSET.getPreferredName() + "\": false";
 
     protected final boolean backgroundIsSuperset;
 
@@ -189,8 +191,9 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
         }
 
         protected void build(XContentBuilder builder) throws IOException {
-            builder.field(INCLUDE_NEGATIVES_FIELD.getPreferredName(), includeNegatives).field(BACKGROUND_IS_SUPERSET.getPreferredName(),
-                    backgroundIsSuperset);
+            builder.field(INCLUDE_NEGATIVES_FIELD.getPreferredName(), includeNegatives)
+                    .field(BACKGROUND_IS_SUPERSET.getPreferredName(), backgroundIsSuperset);
         }
     }
 }
+

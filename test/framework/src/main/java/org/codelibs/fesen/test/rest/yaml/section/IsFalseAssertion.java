@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.junit.Assert.assertThat;
 
 /**
  * Represents an is_false assert section:
@@ -56,7 +56,11 @@ public class IsFalseAssertion extends Assertion {
         }
 
         String actualString = actualValue.toString();
-        assertThat(errorMessage(), actualString, anyOf(equalTo(""), equalToIgnoringCase(Boolean.FALSE.toString()), equalTo("0")));
+        assertThat(errorMessage(), actualString, anyOf(
+                equalTo(""),
+                equalToIgnoringCase(Boolean.FALSE.toString()),
+                equalTo("0")
+        ));
     }
 
     private String errorMessage() {

@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.readonly;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.master.ShardsAcknowledgedResponse;
@@ -37,12 +31,18 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.Collections.unmodifiableList;
+
 public class AddIndexBlockResponse extends ShardsAcknowledgedResponse {
 
     private final List<AddBlockResult> indices;
 
     AddIndexBlockResponse(StreamInput in) throws IOException {
-        super(in, true, true);
+        super(in, true,true);
         indices = unmodifiableList(in.readList(AddBlockResult::new));
     }
 

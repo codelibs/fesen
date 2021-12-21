@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.put;
 
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.action.support.master.MasterNodeOperationRequestBuilder;
@@ -30,8 +27,11 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
+import java.util.List;
+import java.util.Map;
+
 public class PutIndexTemplateRequestBuilder
-        extends MasterNodeOperationRequestBuilder<PutIndexTemplateRequest, AcknowledgedResponse, PutIndexTemplateRequestBuilder> {
+    extends MasterNodeOperationRequestBuilder<PutIndexTemplateRequest, AcknowledgedResponse, PutIndexTemplateRequestBuilder> {
 
     public PutIndexTemplateRequestBuilder(FesenClient client, PutIndexTemplateAction action) {
         super(client, action, new PutIndexTemplateRequest());

@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.reindex.remote;
 
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.codelibs.fesen.FesenException;
@@ -46,6 +38,14 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.search.sort.FieldSortBuilder;
 import org.codelibs.fesen.search.sort.SortBuilder;
 
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * Builds requests for remote version of Fesen. Note that unlike most of the
  * rest of Fesen this file needs to be compatible with very old versions of
@@ -54,14 +54,13 @@ import org.codelibs.fesen.search.sort.SortBuilder;
  * because the version constants have been removed.
  */
 final class RemoteRequestBuilders {
-    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(RemoteRequestBuilders.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(RemoteRequestBuilders.class);
 
     static final String DEPRECATED_URL_ENCODED_INDEX_WARNING =
-            "Specifying index name using URL escaped index names for reindex from remote is deprecated. "
-                    + "Instead specify index name without URL escaping.";
+        "Specifying index name using URL escaped index names for reindex from remote is deprecated. " +
+        "Instead specify index name without URL escaping.";
 
-    private RemoteRequestBuilders() {
-    }
+    private RemoteRequestBuilders() {}
 
     static Request initialSearch(SearchRequest searchRequest, BytesReference query, Version remoteVersion) {
         // It is nasty to build paths with StringBuilder but we'll be careful....
@@ -141,12 +140,11 @@ final class RemoteRequestBuilders {
 
         // EMPTY is safe here because we're not calling namedObject
         try (XContentBuilder entity = JsonXContent.contentBuilder();
-                XContentParser queryParser =
-                        XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, query)) {
+                XContentParser queryParser = XContentHelper
+                    .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, query)) {
             entity.startObject();
 
-            entity.field("query");
-            {
+            entity.field("query"); {
                 /* We're intentionally a bit paranoid here - copying the query
                  * as xcontent rather than writing a raw field. We don't want
                  * poorly written queries to escape. Ever. */
@@ -242,7 +240,9 @@ final class RemoteRequestBuilders {
         }
 
         try (XContentBuilder entity = JsonXContent.contentBuilder()) {
-            entity.startObject().field("scroll_id", scroll).endObject();
+            entity.startObject()
+                    .field("scroll_id", scroll)
+                .endObject();
             request.setJsonEntity(Strings.toString(entity));
         } catch (IOException e) {
             throw new FesenException("failed to build scroll entity", e);
@@ -259,7 +259,9 @@ final class RemoteRequestBuilders {
             return request;
         }
         try (XContentBuilder entity = JsonXContent.contentBuilder()) {
-            entity.startObject().array("scroll_id", scroll).endObject();
+            entity.startObject()
+                    .array("scroll_id", scroll)
+                .endObject();
             request.setJsonEntity(Strings.toString(entity));
         } catch (IOException e) {
             throw new FesenException("failed to build clear scroll entity", e);

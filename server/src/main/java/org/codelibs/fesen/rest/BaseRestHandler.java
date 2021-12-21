@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.rest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.spell.LevenshteinDistance;
@@ -43,6 +31,18 @@ import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.plugins.ActionPlugin;
 import org.codelibs.fesen.rest.action.admin.cluster.RestNodesUsageAction;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
+
 /**
  * Base handler for REST requests.
  * <p>
@@ -54,7 +54,7 @@ import org.codelibs.fesen.rest.action.admin.cluster.RestNodesUsageAction;
 public abstract class BaseRestHandler implements RestHandler {
 
     public static final Setting<Boolean> MULTI_ALLOW_EXPLICIT_INDEX =
-            Setting.boolSetting("rest.action.multi.allow_explicit_index", true, Property.NodeScope);
+        Setting.boolSetting("rest.action.multi.allow_explicit_index", true, Property.NodeScope);
 
     private final LongAdder usageCount = new LongAdder();
     /**
@@ -95,8 +95,8 @@ public abstract class BaseRestHandler implements RestHandler {
 
         // validate unconsumed params, but we must exclude params used to format the response
         // use a sorted set so the unconsumed parameters appear in a reliable sorted order
-        final SortedSet<String> unconsumedParams = request.unconsumedParams().stream().filter(p -> !responseParams().contains(p))
-                .collect(Collectors.toCollection(TreeSet::new));
+        final SortedSet<String> unconsumedParams =
+            request.unconsumedParams().stream().filter(p -> !responseParams().contains(p)).collect(Collectors.toCollection(TreeSet::new));
 
         // validate the non-response params
         if (!unconsumedParams.isEmpty()) {
@@ -115,10 +115,17 @@ public abstract class BaseRestHandler implements RestHandler {
         action.accept(channel);
     }
 
-    protected final String unrecognized(final RestRequest request, final Set<String> invalids, final Set<String> candidates,
-            final String detail) {
-        StringBuilder message = new StringBuilder(String.format(Locale.ROOT, "request [%s] contains unrecognized %s%s: ", request.path(),
-                detail, invalids.size() > 1 ? "s" : ""));
+    protected final String unrecognized(
+        final RestRequest request,
+        final Set<String> invalids,
+        final Set<String> candidates,
+        final String detail) {
+        StringBuilder message = new StringBuilder(String.format(
+            Locale.ROOT,
+            "request [%s] contains unrecognized %s%s: ",
+            request.path(),
+            detail,
+            invalids.size() > 1 ? "s" : ""));
         boolean first = true;
         for (final String invalid : invalids) {
             final LevenshteinDistance ld = new LevenshteinDistance();
@@ -132,10 +139,8 @@ public abstract class BaseRestHandler implements RestHandler {
             CollectionUtil.timSort(scoredParams, (a, b) -> {
                 // sort by distance in reverse order, then parameter name for equal distances
                 int compare = a.v1().compareTo(b.v1());
-                if (compare != 0)
-                    return -compare;
-                else
-                    return a.v2().compareTo(b.v2());
+                if (compare != 0) return -compare;
+                else return a.v2().compareTo(b.v2());
             });
             if (first == false) {
                 message.append(", ");

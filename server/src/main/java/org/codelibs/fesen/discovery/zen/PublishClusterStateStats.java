@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.discovery.zen;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 /**
  * Class encapsulating stats about the PublishClusterStateAction
@@ -41,8 +41,9 @@ public class PublishClusterStateStats implements Writeable, ToXContentObject {
      * @param incompatibleClusterStateDiffReceivedCount the number of times this node has received a cluster-state diff from the master.
      * @param compatibleClusterStateDiffReceivedCount the number of times that received cluster-state diffs were compatible with
      */
-    public PublishClusterStateStats(long fullClusterStateReceivedCount, long incompatibleClusterStateDiffReceivedCount,
-            long compatibleClusterStateDiffReceivedCount) {
+    public PublishClusterStateStats(long fullClusterStateReceivedCount,
+                                    long incompatibleClusterStateDiffReceivedCount,
+                                    long compatibleClusterStateDiffReceivedCount) {
         this.fullClusterStateReceivedCount = fullClusterStateReceivedCount;
         this.incompatibleClusterStateDiffReceivedCount = incompatibleClusterStateDiffReceivedCount;
         this.compatibleClusterStateDiffReceivedCount = compatibleClusterStateDiffReceivedCount;
@@ -73,21 +74,17 @@ public class PublishClusterStateStats implements Writeable, ToXContentObject {
         return builder;
     }
 
-    public long getFullClusterStateReceivedCount() {
-        return fullClusterStateReceivedCount;
-    }
+    public long getFullClusterStateReceivedCount() { return fullClusterStateReceivedCount; }
 
-    public long getIncompatibleClusterStateDiffReceivedCount() {
-        return incompatibleClusterStateDiffReceivedCount;
-    }
+    public long getIncompatibleClusterStateDiffReceivedCount() { return incompatibleClusterStateDiffReceivedCount; }
 
-    public long getCompatibleClusterStateDiffReceivedCount() {
-        return compatibleClusterStateDiffReceivedCount;
-    }
+    public long getCompatibleClusterStateDiffReceivedCount() { return compatibleClusterStateDiffReceivedCount; }
 
     @Override
     public String toString() {
-        return "PublishClusterStateStats(full=" + fullClusterStateReceivedCount + ", incompatible="
-                + incompatibleClusterStateDiffReceivedCount + ", compatible=" + compatibleClusterStateDiffReceivedCount + ")";
+        return "PublishClusterStateStats(full=" + fullClusterStateReceivedCount
+            + ", incompatible=" + incompatibleClusterStateDiffReceivedCount
+            + ", compatible=" + compatibleClusterStateDiffReceivedCount
+            + ")";
     }
 }

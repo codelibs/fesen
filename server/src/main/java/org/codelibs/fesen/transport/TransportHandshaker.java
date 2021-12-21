@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.transport;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -34,6 +28,12 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.metrics.CounterMetric;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Sends and receives transport-level connection handshakes. This class will send the initial handshake,
@@ -59,8 +59,8 @@ final class TransportHandshaker {
         numHandshakes.inc();
         final HandshakeResponseHandler handler = new HandshakeResponseHandler(requestId, version, listener);
         pendingHandshakes.put(requestId, handler);
-        channel.addCloseListener(ActionListener
-                .wrap(() -> handler.handleLocalException(new TransportException("handshake failed because connection reset"))));
+        channel.addCloseListener(ActionListener.wrap(
+            () -> handler.handleLocalException(new TransportException("handshake failed because connection reset"))));
         boolean success = false;
         try {
             // for the request we use the minCompatVersion since we don't know what's the version of the node we talk to
@@ -70,8 +70,9 @@ final class TransportHandshaker {
             handshakeRequestSender.sendRequest(node, channel, requestId, minCompatVersion);
 
             threadPool.schedule(
-                    () -> handler.handleLocalException(new ConnectTransportException(node, "handshake_timeout[" + timeout + "]")), timeout,
-                    ThreadPool.Names.GENERIC);
+                () -> handler.handleLocalException(new ConnectTransportException(node, "handshake_timeout[" + timeout + "]")),
+                timeout,
+                ThreadPool.Names.GENERIC);
             success = true;
         } catch (Exception e) {
             handler.handleLocalException(new ConnectTransportException(node, "failure to send " + HANDSHAKE_ACTION_NAME, e));
@@ -89,7 +90,7 @@ final class TransportHandshaker {
         final int nextByte = stream.read();
         if (nextByte != -1) {
             throw new IllegalStateException("Handshake request not fully read for requestId [" + requestId + "], action ["
-                    + TransportHandshaker.HANDSHAKE_ACTION_NAME + "], available [" + stream.available() + "]; resetting");
+                + TransportHandshaker.HANDSHAKE_ACTION_NAME + "], available [" + stream.available() + "]; resetting");
         }
         channel.sendResponse(new HandshakeResponse(this.version));
     }
@@ -130,7 +131,7 @@ final class TransportHandshaker {
                 Version version = response.responseVersion;
                 if (currentVersion.isCompatible(version) == false) {
                     listener.onFailure(new IllegalStateException("Received message from unsupported version: [" + version
-                            + "] minimal compatible version is: [" + currentVersion.minimumCompatibilityVersion() + "]"));
+                        + "] minimal compatible version is: [" + currentVersion.minimumCompatibilityVersion() + "]"));
                 } else {
                     listener.onResponse(version);
                 }

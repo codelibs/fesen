@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.test;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
@@ -38,6 +30,14 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public abstract class AbstractBroadcastResponseTestCase<T extends BroadcastResponse> extends AbstractXContentTestCase<T> {
 
@@ -65,7 +65,7 @@ public abstract class AbstractBroadcastResponseTestCase<T extends BroadcastRespo
     }
 
     protected abstract T createTestInstance(int totalShards, int successfulShards, int failedShards,
-            List<DefaultShardOperationFailedException> failures);
+                                          List<DefaultShardOperationFailedException> failures);
 
     @Override
     protected void assertEqualInstances(T response, T parsedResponse) {
@@ -114,7 +114,7 @@ public abstract class AbstractBroadcastResponseTestCase<T extends BroadcastRespo
         XContentType xContentType = randomFrom(XContentType.values());
         BytesReference bytesReference = toShuffledXContent(response, xContentType, ToXContent.EMPTY_PARAMS, humanReadable);
         T parsedResponse;
-        try (XContentParser parser = createParser(xContentType.xContent(), bytesReference)) {
+        try(XContentParser parser = createParser(xContentType.xContent(), bytesReference)) {
             parsedResponse = doParseInstance(parser);
             assertNull(parser.nextToken());
         }

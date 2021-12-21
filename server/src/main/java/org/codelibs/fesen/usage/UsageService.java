@@ -74,9 +74,13 @@ public class UsageService {
          * with the same name was registered before, and it is not the same instance as before.
          */
         if (maybeHandler != null && maybeHandler != handler) {
-            final String message = String.format(Locale.ROOT,
-                    "handler of type [%s] conflicts with handler of type [%s] as they both have the same name [%s]",
-                    handler.getClass().getName(), maybeHandler.getClass().getName(), handler.getName());
+            final String message = String.format(
+                Locale.ROOT,
+                "handler of type [%s] conflicts with handler of type [%s] as they both have the same name [%s]",
+                handler.getClass().getName(),
+                maybeHandler.getClass().getName(),
+                handler.getName()
+            );
             throw new IllegalArgumentException(message);
         }
     }

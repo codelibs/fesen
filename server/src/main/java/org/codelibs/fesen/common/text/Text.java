@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.common.text;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Both {@link String} and {@link BytesReference} representation of the text. Starts with one of those, and if

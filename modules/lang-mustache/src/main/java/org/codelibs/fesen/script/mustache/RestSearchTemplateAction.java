@@ -19,10 +19,13 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import org.codelibs.fesen.action.search.SearchRequest;
+import org.codelibs.fesen.client.node.NodeClient;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.rest.BaseRestHandler;
+import org.codelibs.fesen.rest.RestRequest;
+import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
+import org.codelibs.fesen.rest.action.search.RestSearchAction;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,13 +34,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.client.node.NodeClient;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.rest.BaseRestHandler;
-import org.codelibs.fesen.rest.RestRequest;
-import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
-import org.codelibs.fesen.rest.action.search.RestSearchAction;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 public class RestSearchTemplateAction extends BaseRestHandler {
     public static final String TYPED_KEYS_PARAM = "typed_keys";
@@ -50,10 +50,14 @@ public class RestSearchTemplateAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_search/template"), new Route(POST, "/_search/template"),
-                new Route(GET, "/{index}/_search/template"), new Route(POST, "/{index}/_search/template"),
-                // Deprecated typed endpoints.
-                new Route(GET, "/{index}/{type}/_search/template"), new Route(POST, "/{index}/{type}/_search/template")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_search/template"),
+            new Route(POST, "/_search/template"),
+            new Route(GET, "/{index}/_search/template"),
+            new Route(POST, "/{index}/_search/template"),
+            // Deprecated typed endpoints.
+            new Route(GET, "/{index}/{type}/_search/template"),
+            new Route(POST, "/{index}/{type}/_search/template")));
     }
 
     @Override
@@ -65,8 +69,8 @@ public class RestSearchTemplateAction extends BaseRestHandler {
     public RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
         // Creates the search request with all required params
         SearchRequest searchRequest = new SearchRequest();
-        RestSearchAction.parseSearchRequest(searchRequest, request, null, client.getNamedWriteableRegistry(),
-                size -> searchRequest.source().size(size));
+        RestSearchAction.parseSearchRequest(
+            searchRequest, request, null, client.getNamedWriteableRegistry(), size -> searchRequest.source().size(size));
 
         // Creates the search template request
         SearchTemplateRequest searchTemplateRequest;

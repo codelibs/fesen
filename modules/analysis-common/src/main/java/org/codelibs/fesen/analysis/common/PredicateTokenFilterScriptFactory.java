@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-
 import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.codelibs.fesen.common.settings.Settings;
@@ -29,6 +27,8 @@ import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.script.ScriptType;
+
+import java.io.IOException;
 
 /**
  * A factory for creating FilteringTokenFilters that determine whether or not to

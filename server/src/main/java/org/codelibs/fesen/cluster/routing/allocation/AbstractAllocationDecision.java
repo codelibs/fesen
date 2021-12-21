@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision.Type;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -34,6 +27,13 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * An abstract class for representing various types of allocation decisions.
@@ -111,7 +111,7 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
      * Generates X-Content for a {@link DiscoveryNode} that leaves off some of the non-critical fields.
      */
     public static XContentBuilder discoveryNodeToXContent(DiscoveryNode node, boolean outerObjectWritten, XContentBuilder builder)
-            throws IOException {
+        throws IOException {
 
         builder.field(outerObjectWritten ? "id" : "node_id", node.getId());
         builder.field(outerObjectWritten ? "name" : "node_name", node.getName());
@@ -138,7 +138,7 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
      * in which they are serialized.
      */
     public XContentBuilder nodeDecisionsToXContent(List<NodeAllocationResult> nodeDecisions, XContentBuilder builder, Params params)
-            throws IOException {
+        throws IOException {
 
         if (nodeDecisions != null && nodeDecisions.isEmpty() == false) {
             builder.startArray("node_allocation_decisions");

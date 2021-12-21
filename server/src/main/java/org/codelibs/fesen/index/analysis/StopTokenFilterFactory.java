@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.util.Set;
-
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -29,6 +27,8 @@ import org.apache.lucene.search.suggest.analyzing.SuggestStopFilter;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
+
+import java.util.Set;
 
 public class StopTokenFilterFactory extends AbstractTokenFilterFactory {
 

@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.cluster.routing;
 
+
 /**
  * Represents the current state of a {@link ShardRouting} as defined by the
  * cluster.
@@ -58,16 +59,16 @@ public enum ShardRoutingState {
 
     public static ShardRoutingState fromValue(byte value) {
         switch (value) {
-        case 1:
-            return UNASSIGNED;
-        case 2:
-            return INITIALIZING;
-        case 3:
-            return STARTED;
-        case 4:
-            return RELOCATING;
-        default:
-            throw new IllegalStateException("No routing state mapped for [" + value + "]");
+            case 1:
+                return UNASSIGNED;
+            case 2:
+                return INITIALIZING;
+            case 3:
+                return STARTED;
+            case 4:
+                return RELOCATING;
+            default:
+                throw new IllegalStateException("No routing state mapped for [" + value + "]");
         }
     }
 }

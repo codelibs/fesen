@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.validate.query;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -35,6 +27,14 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The response of the validate action.
@@ -47,16 +47,28 @@ public class ValidateQueryResponse extends BroadcastResponse {
     public static final String EXPLANATIONS_FIELD = "explanations";
 
     @SuppressWarnings("unchecked")
-    static final ConstructingObjectParser<ValidateQueryResponse, Void> PARSER =
-            new ConstructingObjectParser<>("validate_query", true, arg -> {
-                BroadcastResponse response = (BroadcastResponse) arg[0];
-                return new ValidateQueryResponse((boolean) arg[1], (List<QueryExplanation>) arg[2], response.getTotalShards(),
-                        response.getSuccessfulShards(), response.getFailedShards(), Arrays.asList(response.getShardFailures()));
-            });
+    static final ConstructingObjectParser<ValidateQueryResponse, Void> PARSER = new ConstructingObjectParser<>(
+        "validate_query",
+        true,
+        arg -> {
+            BroadcastResponse response = (BroadcastResponse) arg[0];
+            return
+                new ValidateQueryResponse(
+                    (boolean)arg[1],
+                    (List<QueryExplanation>)arg[2],
+                    response.getTotalShards(),
+                    response.getSuccessfulShards(),
+                    response.getFailedShards(),
+                    Arrays.asList(response.getShardFailures())
+                );
+        }
+    );
     static {
         declareBroadcastFields(PARSER);
         PARSER.declareBoolean(constructorArg(), new ParseField(VALID_FIELD));
-        PARSER.declareObjectArray(optionalConstructorArg(), QueryExplanation.PARSER, new ParseField(EXPLANATIONS_FIELD));
+        PARSER.declareObjectArray(
+            optionalConstructorArg(), QueryExplanation.PARSER, new ParseField(EXPLANATIONS_FIELD)
+        );
     }
 
     private final boolean valid;
@@ -70,7 +82,7 @@ public class ValidateQueryResponse extends BroadcastResponse {
     }
 
     ValidateQueryResponse(boolean valid, List<QueryExplanation> queryExplanations, int totalShards, int successfulShards, int failedShards,
-            List<DefaultShardOperationFailedException> shardFailures) {
+                          List<DefaultShardOperationFailedException> shardFailures) {
         super(totalShards, successfulShards, failedShards, shardFailures);
         this.valid = valid;
         this.queryExplanations = queryExplanations == null ? Collections.emptyList() : queryExplanations;

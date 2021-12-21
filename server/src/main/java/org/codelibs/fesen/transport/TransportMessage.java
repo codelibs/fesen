@@ -38,13 +38,11 @@ public abstract class TransportMessage implements Writeable {
     /**
      * Constructs a new empty transport message
      */
-    public TransportMessage() {
-    }
+    public TransportMessage() {}
 
     /**
      * Constructs a new transport message with the data from the {@link StreamInput}. This is
      * currently a no-op
      */
-    public TransportMessage(StreamInput in) {
-    }
+    public TransportMessage(StreamInput in) {}
 }

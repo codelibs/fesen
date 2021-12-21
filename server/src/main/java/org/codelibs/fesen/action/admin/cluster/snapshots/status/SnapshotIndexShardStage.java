@@ -19,28 +19,29 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
+
 public enum SnapshotIndexShardStage {
 
     /**
      * Snapshot hasn't started yet
      */
-    INIT((byte) 0, false),
+    INIT((byte)0, false),
     /**
      * Index files are being copied
      */
-    STARTED((byte) 1, false),
+    STARTED((byte)1, false),
     /**
      * Snapshot metadata is being written or this shard's status in the cluster state is being updated
      */
-    FINALIZE((byte) 2, false),
+    FINALIZE((byte)2, false),
     /**
      * Snapshot completed successfully
      */
-    DONE((byte) 3, true),
+    DONE((byte)3, true),
     /**
      * Snapshot failed
      */
-    FAILURE((byte) 4, true);
+    FAILURE((byte)4, true);
 
     private byte value;
 
@@ -77,18 +78,18 @@ public enum SnapshotIndexShardStage {
      */
     public static SnapshotIndexShardStage fromValue(byte value) {
         switch (value) {
-        case 0:
-            return INIT;
-        case 1:
-            return STARTED;
-        case 2:
-            return FINALIZE;
-        case 3:
-            return DONE;
-        case 4:
-            return FAILURE;
-        default:
-            throw new IllegalArgumentException("No snapshot shard stage for value [" + value + "]");
+            case 0:
+                return INIT;
+            case 1:
+                return STARTED;
+            case 2:
+                return FINALIZE;
+            case 3:
+                return DONE;
+            case 4:
+                return FAILURE;
+            default:
+                throw new IllegalArgumentException("No snapshot shard stage for value [" + value + "]");
         }
     }
 }

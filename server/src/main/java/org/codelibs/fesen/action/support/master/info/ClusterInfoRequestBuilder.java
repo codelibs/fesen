@@ -25,8 +25,10 @@ import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBu
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.util.ArrayUtils;
 
-public abstract class ClusterInfoRequestBuilder<Request extends ClusterInfoRequest<Request>, Response extends ActionResponse, Builder extends ClusterInfoRequestBuilder<Request, Response, Builder>>
+public abstract class ClusterInfoRequestBuilder<Request extends ClusterInfoRequest<Request>, Response extends ActionResponse,
+        Builder extends ClusterInfoRequestBuilder<Request, Response, Builder>>
         extends MasterNodeReadOperationRequestBuilder<Request, Response, Builder> {
+
 
     protected ClusterInfoRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {
         super(client, action, request);

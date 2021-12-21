@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.cluster;
 
-import java.util.List;
-
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.util.List;
 
 /**
  * A task that can update the cluster state.
@@ -45,7 +45,7 @@ public abstract class ClusterStateUpdateTask
     public final ClusterTasksResult<ClusterStateUpdateTask> execute(ClusterState currentState, List<ClusterStateUpdateTask> tasks)
             throws Exception {
         ClusterState result = execute(currentState);
-        return ClusterTasksResult.<ClusterStateUpdateTask> builder().successes(tasks).build(result);
+        return ClusterTasksResult.<ClusterStateUpdateTask>builder().successes(tasks).build(result);
     }
 
     @Override

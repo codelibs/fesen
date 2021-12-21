@@ -18,21 +18,21 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
+import org.apache.lucene.geo.GeoEncodingUtils;
+import org.apache.lucene.util.SloppyMath;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.geo.GeoPoint;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
+import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+import org.codelibs.fesen.core.ESSloppyMath;
+import org.codelibs.fesen.geometry.Rectangle;
+
 import static org.codelibs.fesen.common.geo.GeoUtils.normalizeLat;
 import static org.codelibs.fesen.common.geo.GeoUtils.normalizeLon;
 
 import java.io.IOException;
 import java.util.Locale;
-
-import org.apache.lucene.geo.GeoEncodingUtils;
-import org.apache.lucene.util.SloppyMath;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.geo.GeoPoint;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
-import org.codelibs.fesen.core.ESSloppyMath;
-import org.codelibs.fesen.geometry.Rectangle;
 
 /**
  * Implements geotile key hashing, same as used by many map tile implementations.
@@ -44,8 +44,7 @@ import org.codelibs.fesen.geometry.Rectangle;
  */
 public final class GeoTileUtils {
 
-    private GeoTileUtils() {
-    }
+    private GeoTileUtils() {}
 
     private static final double PI_DIV_2 = Math.PI / 2;
 
@@ -69,7 +68,7 @@ public final class GeoTileUtils {
      */
     public static final double NORMALIZED_LATITUDE_MASK = GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(LATITUDE_MASK));
     public static final double NORMALIZED_NEGATIVE_LATITUDE_MASK =
-            GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(-LATITUDE_MASK));
+        GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(-LATITUDE_MASK));
 
     /**
      * Bit position of the zoom value within hash - zoom is stored in the most significant 6 bits of a long number.
@@ -81,6 +80,7 @@ public final class GeoTileUtils {
      */
     private static final long X_Y_VALUE_MASK = (1L << MAX_ZOOM) - 1;
 
+
     /**
      * Parse an integer precision (zoom level). The {@link ValueType#INT} allows it to be a number or a string.
      *
@@ -90,8 +90,9 @@ public final class GeoTileUtils {
      * @return int representing precision
      */
     static int parsePrecision(XContentParser parser) throws IOException, FesenParseException {
-        final Object node =
-                parser.currentToken().equals(XContentParser.Token.VALUE_NUMBER) ? Integer.valueOf(parser.intValue()) : parser.text();
+        final Object node = parser.currentToken().equals(XContentParser.Token.VALUE_NUMBER)
+            ? Integer.valueOf(parser.intValue())
+            : parser.text();
         return XContentMapValues.nodeIntegerValue(node);
     }
 
@@ -100,8 +101,8 @@ public final class GeoTileUtils {
      */
     public static int checkPrecisionRange(int precision) {
         if (precision < 0 || precision > MAX_ZOOM) {
-            throw new IllegalArgumentException(
-                    "Invalid geotile_grid precision of " + precision + ". Must be between 0 and " + MAX_ZOOM + ".");
+            throw new IllegalArgumentException("Invalid geotile_grid precision of " +
+                precision + ". Must be between 0 and " + MAX_ZOOM + ".");
         }
         return precision;
     }
@@ -193,7 +194,7 @@ public final class GeoTileUtils {
         final int zoom = (int) (hash >>> ZOOM_SHIFT);
         final int xTile = (int) ((hash >>> MAX_ZOOM) & X_Y_VALUE_MASK);
         final int yTile = (int) (hash & X_Y_VALUE_MASK);
-        return new int[] { zoom, xTile, yTile };
+        return new int[]{zoom, xTile, yTile};
     }
 
     private static long longEncode(long precision, long xTile, long yTile) {
@@ -209,14 +210,14 @@ public final class GeoTileUtils {
     private static int[] parseHash(String hashAsString) {
         final String[] parts = hashAsString.split("/", 4);
         if (parts.length != 3) {
-            throw new IllegalArgumentException(
-                    "Invalid geotile_grid hash string of " + hashAsString + ". Must be three integers in a form \"zoom/x/y\".");
+            throw new IllegalArgumentException("Invalid geotile_grid hash string of " +
+                hashAsString + ". Must be three integers in a form \"zoom/x/y\".");
         }
         try {
-            return new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]) };
+            return new int[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2])};
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "Invalid geotile_grid hash string of " + hashAsString + ". Must be three integers in a form \"zoom/x/y\".", e);
+            throw new IllegalArgumentException("Invalid geotile_grid hash string of " +
+                hashAsString + ". Must be three integers in a form \"zoom/x/y\".", e);
         }
     }
 
@@ -276,8 +277,8 @@ public final class GeoTileUtils {
     private static int validateZXY(int zoom, int xTile, int yTile) {
         final int tiles = 1 << checkPrecisionRange(zoom);
         if (xTile < 0 || yTile < 0 || xTile >= tiles || yTile >= tiles) {
-            throw new IllegalArgumentException(
-                    String.format(Locale.ROOT, "Zoom/X/Y combination is not valid: %d/%d/%d", zoom, xTile, yTile));
+            throw new IllegalArgumentException(String.format(
+                Locale.ROOT, "Zoom/X/Y combination is not valid: %d/%d/%d", zoom, xTile, yTile));
         }
         return tiles;
     }

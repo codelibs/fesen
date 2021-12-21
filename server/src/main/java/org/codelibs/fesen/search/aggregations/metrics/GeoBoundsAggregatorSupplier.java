@@ -29,6 +29,11 @@ import org.codelibs.fesen.search.internal.SearchContext;
 @FunctionalInterface
 public interface GeoBoundsAggregatorSupplier {
 
-    MetricsAggregator build(String name, SearchContext aggregationContext, Aggregator parent, ValuesSourceConfig valuesSourceConfig,
-            boolean wrapLongitude, Map<String, Object> metadata) throws IOException;
+    MetricsAggregator build(
+        String name,
+        SearchContext aggregationContext,
+        Aggregator parent,
+        ValuesSourceConfig valuesSourceConfig,
+        boolean wrapLongitude,
+        Map<String, Object> metadata) throws IOException;
 }

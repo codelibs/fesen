@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.status;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -34,6 +27,13 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Snapshot status response
@@ -77,12 +77,13 @@ public class SnapshotsStatusResponse extends ActionResponse implements ToXConten
         return builder;
     }
 
-    private static final ConstructingObjectParser<SnapshotsStatusResponse, Void> PARSER =
-            new ConstructingObjectParser<>("snapshots_status_response", true, (Object[] parsedObjects) -> {
-                @SuppressWarnings("unchecked")
-                List<SnapshotStatus> snapshots = (List<SnapshotStatus>) parsedObjects[0];
-                return new SnapshotsStatusResponse(snapshots);
-            });
+    private static final ConstructingObjectParser<SnapshotsStatusResponse, Void> PARSER = new ConstructingObjectParser<>(
+        "snapshots_status_response", true,
+        (Object[] parsedObjects) -> {
+            @SuppressWarnings("unchecked") List<SnapshotStatus> snapshots = (List<SnapshotStatus>) parsedObjects[0];
+            return new SnapshotsStatusResponse(snapshots);
+        }
+    );
     static {
         PARSER.declareObjectArray(constructorArg(), SnapshotStatus.PARSER, new ParseField("snapshots"));
     }
@@ -93,10 +94,8 @@ public class SnapshotsStatusResponse extends ActionResponse implements ToXConten
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         return Objects.equals(snapshots, ((SnapshotsStatusResponse) o).snapshots);
     }

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.cluster;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
 
 /**
  * Abstract diffable object with simple diffs implementation that sends the entire object if object has changed or
@@ -43,7 +43,7 @@ public abstract class AbstractNamedDiffable<T extends NamedDiffable<T>> implemen
     }
 
     public static <T extends NamedDiffable<T>> NamedDiff<T> readDiffFrom(Class<? extends T> tClass, String name, StreamInput in)
-            throws IOException {
+        throws IOException {
         return new CompleteNamedDiff<>(tClass, name, in);
     }
 

@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.codelibs.fesen.index.fielddata.FieldData;
-import org.codelibs.fesen.index.fielddata.IndexNumericFieldData.NumericType;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
+import org.codelibs.fesen.index.fielddata.IndexNumericFieldData.NumericType;
 import org.codelibs.fesen.index.mapper.DocValueFetcher;
 import org.codelibs.fesen.search.DocValueFormat;
+
+import java.io.IOException;
 
 /**
  * Specialization of {@link LeafNumericFieldData} for integers.
@@ -100,6 +100,5 @@ public abstract class LeafLongFieldData implements LeafNumericFieldData {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

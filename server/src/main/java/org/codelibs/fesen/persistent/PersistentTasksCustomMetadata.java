@@ -18,22 +18,6 @@
  */
 package org.codelibs.fesen.persistent;
 
-import static org.codelibs.fesen.cluster.metadata.Metadata.ALL_CONTEXTS;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.ResourceAlreadyExistsException;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.Version;
@@ -48,12 +32,28 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.NamedObjectParser;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.codelibs.fesen.cluster.metadata.Metadata.ALL_CONTEXTS;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
 
 /**
  * A cluster state record that contains a list of all running persistent tasks
@@ -90,10 +90,10 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
 
         // Task description parser initialization
         ObjectParser<TaskDescriptionBuilder<PersistentTaskParams>, String> parser = new ObjectParser<>("named");
-        parser.declareObject(TaskDescriptionBuilder::setParams, (p, c) -> p.namedObject(PersistentTaskParams.class, c, null),
-                new ParseField("params"));
-        parser.declareObject(TaskDescriptionBuilder::setState, (p, c) -> p.namedObject(PersistentTaskState.class, c, null),
-                new ParseField("state", "status"));
+        parser.declareObject(TaskDescriptionBuilder::setParams,
+                (p, c) -> p.namedObject(PersistentTaskParams.class, c, null), new ParseField("params"));
+        parser.declareObject(TaskDescriptionBuilder::setState,
+                (p, c) -> p.namedObject(PersistentTaskState.class, c, null), new ParseField("state", "status"));
         TASK_DESCRIPTION_PARSER = (XContentParser p, Void c, String name) -> parser.parse(p, new TaskDescriptionBuilder<>(name), name);
 
         // Assignment parser
@@ -119,6 +119,7 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
         PERSISTENT_TASK_PARSER.declareLong(TaskBuilder::setAllocationIdOnLastStatusUpdate,
                 new ParseField("allocation_id_on_last_status_update"));
     }
+
 
     public static PersistentTasksCustomMetadata getPersistentTasksCustomMetadata(ClusterState clusterState) {
         return clusterState.getMetadata().custom(PersistentTasksCustomMetadata.TYPE);
@@ -161,17 +162,19 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
     }
 
     public Collection<PersistentTask<?>> findTasks(String taskName, Predicate<PersistentTask<?>> predicate) {
-        return this.tasks().stream().filter(p -> taskName.equals(p.getTaskName())).filter(predicate).collect(Collectors.toList());
+        return this.tasks().stream()
+                .filter(p -> taskName.equals(p.getTaskName()))
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         PersistentTasksCustomMetadata that = (PersistentTasksCustomMetadata) o;
-        return lastAllocationId == that.lastAllocationId && Objects.equals(tasks, that.tasks);
+        return lastAllocationId == that.lastAllocationId &&
+                Objects.equals(tasks, that.tasks);
     }
 
     @Override
@@ -185,8 +188,8 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
     }
 
     public long getNumberOfTasksOnNode(String nodeId, String taskName) {
-        return tasks.values().stream().filter(task -> taskName.equals(task.taskName) && nodeId.equals(task.assignment.executorNode))
-                .count();
+        return tasks.values().stream().filter(
+                task -> taskName.equals(task.taskName) && nodeId.equals(task.assignment.executorNode)).count();
     }
 
     @Override
@@ -230,8 +233,8 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
 
         PersistentTasksCustomMetadata.Builder taskBuilder = PersistentTasksCustomMetadata.builder(tasks);
         for (PersistentTask<?> task : tasks.tasks()) {
-            if (task.getAssignment().getExecutorNode() != null
-                    && clusterState.nodes().nodeExists(task.getAssignment().getExecutorNode()) == false) {
+            if (task.getAssignment().getExecutorNode() != null &&
+                    clusterState.nodes().nodeExists(task.getAssignment().getExecutorNode()) == false) {
                 taskBuilder.reassignTask(task.getId(), LOST_NODE_ASSIGNMENT);
             }
         }
@@ -267,12 +270,11 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Assignment that = (Assignment) o;
-            return Objects.equals(executorNode, that.executorNode) && Objects.equals(explanation, that.explanation);
+            return Objects.equals(executorNode, that.executorNode) &&
+                    Objects.equals(explanation, that.explanation);
         }
 
         @Override
@@ -317,8 +319,8 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
             this(task.id, task.allocationId, task.taskName, task.params, state, task.assignment, task.allocationId);
         }
 
-        private PersistentTask(final String id, final long allocationId, final String name, final P params, final PersistentTaskState state,
-                final Assignment assignment, final Long allocationIdOnLastStatusUpdate) {
+        private PersistentTask(final String id, final long allocationId, final String name, final P params,
+                               final PersistentTaskState state, final Assignment assignment, final Long allocationIdOnLastStatusUpdate) {
             this.id = id;
             this.allocationId = allocationId;
             this.taskName = name;
@@ -328,14 +330,14 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
             this.allocationIdOnLastStatusUpdate = allocationIdOnLastStatusUpdate;
             if (params != null) {
                 if (params.getWriteableName().equals(taskName) == false) {
-                    throw new IllegalArgumentException("params have to have the same writeable name as task. params: "
-                            + params.getWriteableName() + " task: " + taskName);
+                    throw new IllegalArgumentException("params have to have the same writeable name as task. params: " +
+                            params.getWriteableName() + " task: " + taskName);
                 }
             }
             if (state != null) {
                 if (state.getWriteableName().equals(taskName) == false) {
-                    throw new IllegalArgumentException("status has to have the same writeable name as task. status: "
-                            + state.getWriteableName() + " task: " + taskName);
+                    throw new IllegalArgumentException("status has to have the same writeable name as task. status: " +
+                            state.getWriteableName() + " task: " + taskName);
                 }
             }
         }
@@ -345,7 +347,11 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
             id = in.readString();
             allocationId = in.readLong();
             taskName = in.readString();
-            params = (P) in.readNamedWriteable(PersistentTaskParams.class);
+            if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+                params = (P) in.readNamedWriteable(PersistentTaskParams.class);
+            } else {
+                params = (P) in.readOptionalNamedWriteable(PersistentTaskParams.class);
+            }
             state = in.readOptionalNamedWriteable(PersistentTaskState.class);
             assignment = new Assignment(in.readOptionalString(), in.readString());
             allocationIdOnLastStatusUpdate = in.readOptionalLong();
@@ -356,7 +362,11 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
             out.writeString(id);
             out.writeLong(allocationId);
             out.writeString(taskName);
-            out.writeNamedWriteable(params);
+            if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+                out.writeNamedWriteable(params);
+            } else {
+                out.writeOptionalNamedWriteable(params);
+            }
             out.writeOptionalNamedWriteable(state);
             out.writeOptionalString(assignment.executorNode);
             out.writeString(assignment.explanation);
@@ -365,15 +375,16 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             PersistentTask<?> that = (PersistentTask<?>) o;
-            return Objects.equals(id, that.id) && allocationId == that.allocationId && Objects.equals(taskName, that.taskName)
-                    && Objects.equals(params, that.params) && Objects.equals(state, that.state)
-                    && Objects.equals(assignment, that.assignment)
-                    && Objects.equals(allocationIdOnLastStatusUpdate, that.allocationIdOnLastStatusUpdate);
+            return Objects.equals(id, that.id) &&
+                    allocationId == that.allocationId &&
+                    Objects.equals(taskName, that.taskName) &&
+                    Objects.equals(params, that.params) &&
+                    Objects.equals(state, that.state) &&
+                    Objects.equals(assignment, that.assignment) &&
+                    Objects.equals(allocationIdOnLastStatusUpdate, that.allocationIdOnLastStatusUpdate);
         }
 
         @Override
@@ -499,6 +510,7 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
             return this;
         }
 
+
         public TaskBuilder<Params> setAssignment(Assignment assignment) {
             this.assignment = assignment;
             return this;
@@ -527,9 +539,9 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeLong(lastAllocationId);
-        Map<String, PersistentTask<?>> filteredTasks =
-                tasks.values().stream().filter(t -> ClusterState.FeatureAware.shouldSerialize(out, t.getParams()))
-                        .collect(Collectors.toMap(PersistentTask::getId, Function.identity()));
+        Map<String, PersistentTask<?>> filteredTasks = tasks.values().stream()
+            .filter(t -> ClusterState.FeatureAware.shouldSerialize(out, t.getParams()))
+            .collect(Collectors.toMap(PersistentTask::getId, Function.identity()));
         out.writeMap(filteredTasks, StreamOutput::writeString, (stream, value) -> value.writeTo(stream));
     }
 
@@ -602,10 +614,11 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
          * <p>
          * After the task is added its id can be found by calling {{@link #getLastAllocationId()}} method.
          */
-        public <Params extends PersistentTaskParams> Builder addTask(String taskId, String taskName, Params params, Assignment assignment) {
+        public <Params extends PersistentTaskParams> Builder addTask(String taskId, String taskName, Params params,
+                                                                     Assignment assignment) {
             changed = true;
-            PersistentTask<?> previousTask =
-                    tasks.put(taskId, new PersistentTask<>(taskId, taskName, params, getNextAllocationId(), assignment));
+            PersistentTask<?> previousTask = tasks.put(taskId, new PersistentTask<>(taskId, taskName, params,
+                    getNextAllocationId(), assignment));
             if (previousTask != null) {
                 throw new ResourceAlreadyExistsException("Trying to override task with id {" + taskId + "}");
             }

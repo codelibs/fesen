@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -40,6 +38,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+
 public class TransportUpgradeSettingsAction extends TransportMasterNodeAction<UpgradeSettingsRequest, AcknowledgedResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportUpgradeSettingsAction.class);
@@ -47,11 +47,11 @@ public class TransportUpgradeSettingsAction extends TransportMasterNodeAction<Up
     private final MetadataUpdateSettingsService updateSettingsService;
 
     @Inject
-    public TransportUpgradeSettingsAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            MetadataUpdateSettingsService updateSettingsService, IndexNameExpressionResolver indexNameExpressionResolver,
-            ActionFilters actionFilters) {
-        super(UpgradeSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, UpgradeSettingsRequest::new,
-                indexNameExpressionResolver);
+    public TransportUpgradeSettingsAction(TransportService transportService, ClusterService clusterService,
+                                          ThreadPool threadPool, MetadataUpdateSettingsService updateSettingsService,
+                                          IndexNameExpressionResolver indexNameExpressionResolver, ActionFilters actionFilters) {
+        super(UpgradeSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters,
+            UpgradeSettingsRequest::new, indexNameExpressionResolver);
         this.updateSettingsService = updateSettingsService;
     }
 
@@ -73,9 +73,11 @@ public class TransportUpgradeSettingsAction extends TransportMasterNodeAction<Up
 
     @Override
     protected void masterOperation(final UpgradeSettingsRequest request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         UpgradeSettingsClusterStateUpdateRequest clusterStateUpdateRequest = new UpgradeSettingsClusterStateUpdateRequest()
-                .ackTimeout(request.timeout()).versions(request.versions()).masterNodeTimeout(request.masterNodeTimeout());
+                .ackTimeout(request.timeout())
+                .versions(request.versions())
+                .masterNodeTimeout(request.masterNodeTimeout());
 
         updateSettingsService.upgradeIndexSettings(clusterStateUpdateRequest, new ActionListener<ClusterStateUpdateResponse>() {
             @Override
@@ -86,7 +88,7 @@ public class TransportUpgradeSettingsAction extends TransportMasterNodeAction<Up
             @Override
             public void onFailure(Exception t) {
                 logger.debug(() -> new ParameterizedMessage("failed to upgrade minimum compatibility version settings on indices [{}]",
-                        request.versions().keySet()), t);
+                    request.versions().keySet()), t);
                 listener.onFailure(t);
             }
         });

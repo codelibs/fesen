@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -35,13 +31,19 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 public class RestForceMergeAction extends BaseRestHandler {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestForceMergeAction.class);
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/_forcemerge"), new Route(POST, "/{index}/_forcemerge")));
+        return unmodifiableList(asList(
+            new Route(POST, "/_forcemerge"),
+            new Route(POST, "/{index}/_forcemerge")));
     }
 
     @Override
@@ -58,7 +60,7 @@ public class RestForceMergeAction extends BaseRestHandler {
         mergeRequest.flush(request.paramAsBoolean("flush", mergeRequest.flush()));
         if (mergeRequest.onlyExpungeDeletes() && mergeRequest.maxNumSegments() != ForceMergeRequest.Defaults.MAX_NUM_SEGMENTS) {
             deprecationLogger.deprecate("force_merge_expunge_deletes_and_max_num_segments_deprecation",
-                    "setting only_expunge_deletes and max_num_segments at the same time is deprecated and will be rejected in a future version");
+               "setting only_expunge_deletes and max_num_segments at the same time is deprecated and will be rejected in a future version");
         }
         return channel -> client.admin().indices().forceMerge(mergeRequest, new RestToXContentListener<>(channel));
     }

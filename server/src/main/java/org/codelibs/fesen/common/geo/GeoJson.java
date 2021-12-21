@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.common.geo;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
@@ -56,6 +46,16 @@ import org.codelibs.fesen.geometry.Rectangle;
 import org.codelibs.fesen.geometry.ShapeType;
 import org.codelibs.fesen.geometry.utils.GeometryValidator;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Utility class for converting libs/geo shapes to and from GeoJson
  */
@@ -77,7 +77,8 @@ public final class GeoJson {
         this.validator = validator;
     }
 
-    public Geometry fromXContent(XContentParser parser) throws IOException {
+    public Geometry fromXContent(XContentParser parser)
+        throws IOException {
         try (XContentSubParser subParser = new XContentSubParser(parser)) {
             Geometry geometry = PARSER.apply(subParser, this);
             validator.validate(geometry);
@@ -229,7 +230,7 @@ public final class GeoJson {
                 for (Geometry g : collection) {
                     geometries.add(toMap(g));
                 }
-                root.put(FIELD_GEOMETRIES.getPreferredName(), geometries);
+                root.put(FIELD_GEOMETRIES.getPreferredName(),  geometries);
                 return null;
             }
 
@@ -344,27 +345,28 @@ public final class GeoJson {
         return root;
     }
 
-    private static final ConstructingObjectParser<Geometry, GeoJson> PARSER = new ConstructingObjectParser<>("geojson", true, (a, c) -> {
-        String type = (String) a[0];
-        CoordinateNode coordinates = (CoordinateNode) a[1];
-        @SuppressWarnings("unchecked")
-        List<Geometry> geometries = (List<Geometry>) a[2];
-        Boolean orientation = orientationFromString((String) a[3]);
-        DistanceUnit.Distance radius = (DistanceUnit.Distance) a[4];
-        return createGeometry(type, geometries, coordinates, orientation, c.rightOrientation, c.coerce, radius);
-    });
+    private static final ConstructingObjectParser<Geometry, GeoJson> PARSER =
+        new ConstructingObjectParser<>("geojson", true, (a, c) -> {
+            String type = (String) a[0];
+            CoordinateNode coordinates = (CoordinateNode) a[1];
+            @SuppressWarnings("unchecked") List<Geometry> geometries = (List<Geometry>) a[2];
+            Boolean orientation = orientationFromString((String) a[3]);
+            DistanceUnit.Distance radius = (DistanceUnit.Distance) a[4];
+            return createGeometry(type, geometries, coordinates, orientation, c.rightOrientation, c.coerce, radius);
+        });
 
     static {
         PARSER.declareString(constructorArg(), FIELD_TYPE);
-        PARSER.declareField(optionalConstructorArg(), (p, c) -> parseCoordinates(p), FIELD_COORDINATES, ObjectParser.ValueType.VALUE_ARRAY);
+        PARSER.declareField(optionalConstructorArg(), (p, c) -> parseCoordinates(p), FIELD_COORDINATES,
+            ObjectParser.ValueType.VALUE_ARRAY);
         PARSER.declareObjectArray(optionalConstructorArg(), PARSER, FIELD_GEOMETRIES);
         PARSER.declareString(optionalConstructorArg(), FIELD_ORIENTATION);
         PARSER.declareField(optionalConstructorArg(), p -> DistanceUnit.Distance.parseDistance(p.text()), FIELD_RADIUS,
-                ObjectParser.ValueType.STRING);
+            ObjectParser.ValueType.STRING);
     }
 
     private static Geometry createGeometry(String type, List<Geometry> geometries, CoordinateNode coordinates, Boolean orientation,
-            boolean defaultOrientation, boolean coerce, DistanceUnit.Distance radius) {
+                                           boolean defaultOrientation, boolean coerce, DistanceUnit.Distance radius) {
         ShapeType shapeType;
         if ("bbox".equalsIgnoreCase(type)) {
             shapeType = ShapeType.ENVELOPE;
@@ -388,38 +390,38 @@ public final class GeoJson {
         }
 
         switch (shapeType) {
-        case CIRCLE:
-            if (radius == null) {
-                throw new FesenParseException("radius is not specified");
-            }
-            verifyNulls(type, geometries, orientation, null);
-            Point point = coordinates.asPoint();
-            return new Circle(point.getX(), point.getY(), point.getZ(), radius.convert(DistanceUnit.METERS).value);
-        case POINT:
-            verifyNulls(type, geometries, orientation, radius);
-            return coordinates.asPoint();
-        case MULTIPOINT:
-            verifyNulls(type, geometries, orientation, radius);
-            return coordinates.asMultiPoint();
-        case LINESTRING:
-            verifyNulls(type, geometries, orientation, radius);
-            return coordinates.asLineString(coerce);
-        case MULTILINESTRING:
-            verifyNulls(type, geometries, orientation, radius);
-            return coordinates.asMultiLineString(coerce);
-        case POLYGON:
-            verifyNulls(type, geometries, null, radius);
-            // handle possible null in orientation
-            return coordinates.asPolygon(orientation != null ? orientation : defaultOrientation, coerce);
-        case MULTIPOLYGON:
-            verifyNulls(type, geometries, null, radius);
-            // handle possible null in orientation
-            return coordinates.asMultiPolygon(orientation != null ? orientation : defaultOrientation, coerce);
-        case ENVELOPE:
-            verifyNulls(type, geometries, orientation, radius);
-            return coordinates.asRectangle();
-        default:
-            throw new FesenParseException("unsupported shape type " + type);
+            case CIRCLE:
+                if (radius == null) {
+                    throw new FesenParseException("radius is not specified");
+                }
+                verifyNulls(type, geometries, orientation, null);
+                Point point = coordinates.asPoint();
+                return new Circle(point.getX(), point.getY(), point.getZ(), radius.convert(DistanceUnit.METERS).value);
+            case POINT:
+                verifyNulls(type, geometries, orientation, radius);
+                return coordinates.asPoint();
+            case MULTIPOINT:
+                verifyNulls(type, geometries, orientation, radius);
+                return coordinates.asMultiPoint();
+            case LINESTRING:
+                verifyNulls(type, geometries, orientation, radius);
+                return coordinates.asLineString(coerce);
+            case MULTILINESTRING:
+                verifyNulls(type, geometries, orientation, radius);
+                return coordinates.asMultiLineString(coerce);
+            case POLYGON:
+                verifyNulls(type, geometries, null, radius);
+                // handle possible null in orientation
+                return coordinates.asPolygon(orientation != null ? orientation : defaultOrientation, coerce);
+            case MULTIPOLYGON:
+                verifyNulls(type, geometries, null, radius);
+                // handle possible null in orientation
+                return coordinates.asMultiPolygon(orientation != null ? orientation : defaultOrientation, coerce);
+            case ENVELOPE:
+                verifyNulls(type, geometries, orientation, radius);
+                return coordinates.asRectangle();
+            default:
+                throw new FesenParseException("unsupported shape type " + type);
         }
     }
 
@@ -445,8 +447,9 @@ public final class GeoJson {
     private static CoordinateNode parseCoordinates(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         // Base cases
-        if (token != XContentParser.Token.START_ARRAY && token != XContentParser.Token.END_ARRAY
-                && token != XContentParser.Token.VALUE_NULL) {
+        if (token != XContentParser.Token.START_ARRAY &&
+            token != XContentParser.Token.END_ARRAY &&
+            token != XContentParser.Token.VALUE_NULL) {
             return new CoordinateNode(parseCoordinate(parser));
         } else if (token == XContentParser.Token.VALUE_NULL) {
             throw new IllegalArgumentException("coordinates cannot contain NULL values)");
@@ -501,16 +504,16 @@ public final class GeoJson {
         }
         orientation = orientation.toLowerCase(Locale.ROOT);
         switch (orientation) {
-        case "right":
-        case "counterclockwise":
-        case "ccw":
-            return true;
-        case "left":
-        case "clockwise":
-        case "cw":
-            return false;
-        default:
-            throw new IllegalArgumentException("Unknown orientation [" + orientation + "]");
+            case "right":
+            case "counterclockwise":
+            case "ccw":
+                return true;
+            case "left":
+            case "clockwise":
+            case "cw":
+                return false;
+            default:
+                throw new IllegalArgumentException("Unknown orientation [" + orientation + "]");
         }
     }
 
@@ -691,6 +694,7 @@ public final class GeoJson {
             return new MultiLine(lines);
         }
 
+
         public Polygon asPolygon(boolean orientation, boolean coerce) {
             if (coordinate != null) {
                 throw new FesenException("expected a list of points but got a point");
@@ -721,8 +725,8 @@ public final class GeoJson {
         public Rectangle asRectangle() {
             if (children.size() != 2) {
                 throw new FesenParseException(
-                        "invalid number of points [{}] provided for geo_shape [{}] when expecting an array of 2 coordinates",
-                        children.size(), ShapeType.ENVELOPE);
+                    "invalid number of points [{}] provided for geo_shape [{}] when expecting an array of 2 coordinates",
+                    children.size(), ShapeType.ENVELOPE);
             }
             // verify coordinate bounds, correct if necessary
             Point uL = children.get(0).coordinate;

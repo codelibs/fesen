@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.put;
 
-import java.util.Map;
-
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
@@ -29,11 +27,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.Index;
 
+import java.util.Map;
+
 /**
  * Builder for a put mapping request
  */
 public class PutMappingRequestBuilder
-        extends AcknowledgedRequestBuilder<PutMappingRequest, AcknowledgedResponse, PutMappingRequestBuilder> {
+    extends AcknowledgedRequestBuilder<PutMappingRequest, AcknowledgedResponse, PutMappingRequestBuilder> {
 
     public PutMappingRequestBuilder(FesenClient client, PutMappingAction action) {
         super(client, action, new PutMappingRequest());

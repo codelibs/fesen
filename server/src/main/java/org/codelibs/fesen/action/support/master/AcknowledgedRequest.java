@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.action.support.master;
 
-import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.cluster.ack.AckedRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
+
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
+
+import java.io.IOException;
 
 /**
  * Abstract class that allows to mark action requests that support acknowledgements.
@@ -54,7 +54,7 @@ public abstract class AcknowledgedRequest<Request extends MasterNodeRequest<Requ
     @SuppressWarnings("unchecked")
     public final Request timeout(String timeout) {
         this.timeout = TimeValue.parseTimeValue(timeout, this.timeout, getClass().getSimpleName() + ".timeout");
-        return (Request) this;
+        return (Request)this;
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class AcknowledgedRequest<Request extends MasterNodeRequest<Requ
      * @return the current timeout as a {@link TimeValue}
      */
     public final TimeValue timeout() {
-        return timeout;
+        return  timeout;
     }
 
     @Override

@@ -52,14 +52,14 @@ public class FlushOperation {
 
     public boolean isFullyFlushed() {
         assert length >= internalIndex : "Should never have an index that is greater than the length [length=" + length + ", index="
-                + internalIndex + "]";
+            + internalIndex + "]";
         return internalIndex == length;
     }
 
     public void incrementIndex(int delta) {
         internalIndex += delta;
         assert length >= internalIndex : "Should never increment index past length [length=" + length + ", post-increment index="
-                + internalIndex + ", delta=" + delta + "]";
+            + internalIndex + ", delta=" + delta + "]";
     }
 
     public ByteBuffer[] getBuffersToWrite() {

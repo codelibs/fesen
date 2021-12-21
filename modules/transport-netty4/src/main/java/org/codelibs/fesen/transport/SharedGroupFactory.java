@@ -19,22 +19,22 @@
 
 package org.codelibs.fesen.transport;
 
-import static org.codelibs.fesen.common.util.concurrent.EsExecutors.daemonThreadFactory;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.Future;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.http.netty4.Netty4HttpServerTransport;
+import org.codelibs.fesen.transport.TcpTransport;
 import org.codelibs.fesen.transport.netty4.Netty4Transport;
 
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.Future;
+import static org.codelibs.fesen.common.util.concurrent.EsExecutors.daemonThreadFactory;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Creates and returns {@link io.netty.channel.EventLoopGroup} instances. It will return a shared group for
@@ -77,7 +77,7 @@ public final class SharedGroupFactory {
         } else {
             if (dedicatedHttpGroup == null) {
                 NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(httpWorkerCount,
-                        daemonThreadFactory(settings, HttpServerTransport.HTTP_SERVER_WORKER_THREAD_NAME_PREFIX));
+                    daemonThreadFactory(settings, HttpServerTransport.HTTP_SERVER_WORKER_THREAD_NAME_PREFIX));
                 dedicatedHttpGroup = new SharedGroup(new RefCountedGroup(eventLoopGroup));
             }
             return dedicatedHttpGroup;
@@ -86,8 +86,8 @@ public final class SharedGroupFactory {
 
     private SharedGroup getGenericGroup() {
         if (genericGroup == null) {
-            EventLoopGroup eventLoopGroup =
-                    new NioEventLoopGroup(workerCount, daemonThreadFactory(settings, TcpTransport.TRANSPORT_WORKER_THREAD_NAME_PREFIX));
+            EventLoopGroup eventLoopGroup = new NioEventLoopGroup(workerCount,
+                daemonThreadFactory(settings, TcpTransport.TRANSPORT_WORKER_THREAD_NAME_PREFIX));
             this.genericGroup = new RefCountedGroup(eventLoopGroup);
         } else {
             genericGroup.incRef();

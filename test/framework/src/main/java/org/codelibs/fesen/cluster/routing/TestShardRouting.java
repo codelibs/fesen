@@ -24,6 +24,11 @@ import static org.codelibs.fesen.test.ESTestCase.randomAlphaOfLength;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
+import org.codelibs.fesen.cluster.routing.AllocationId;
+import org.codelibs.fesen.cluster.routing.RecoverySource;
+import org.codelibs.fesen.cluster.routing.ShardRouting;
+import org.codelibs.fesen.cluster.routing.ShardRoutingState;
+import org.codelibs.fesen.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.repositories.IndexId;
@@ -46,44 +51,46 @@ public class TestShardRouting {
                 buildUnassignedInfo(state), buildAllocationId(state), -1);
     }
 
-    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, boolean primary, ShardRoutingState state,
-            RecoverySource recoverySource) {
-        return new ShardRouting(shardId, currentNodeId, null, primary, state, recoverySource, buildUnassignedInfo(state),
-                buildAllocationId(state), -1);
-    }
-
-    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId, String relocatingNodeId, boolean primary,
-            ShardRoutingState state) {
-        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId, relocatingNodeId, primary,
-                state);
-    }
-
-    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, String relocatingNodeId, boolean primary,
-            ShardRoutingState state) {
-        return new ShardRouting(shardId, currentNodeId, relocatingNodeId, primary, state, buildRecoveryTarget(primary, state),
+    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, boolean primary,
+            ShardRoutingState state, RecoverySource recoverySource) {
+        return new ShardRouting(shardId, currentNodeId, null, primary, state, recoverySource,
                 buildUnassignedInfo(state), buildAllocationId(state), -1);
     }
 
-    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId, String relocatingNodeId, boolean primary,
-            ShardRoutingState state, AllocationId allocationId) {
-        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId, relocatingNodeId, primary,
-                state, allocationId);
+    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId, String relocatingNodeId,
+            boolean primary, ShardRoutingState state) {
+        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId,
+                relocatingNodeId, primary, state);
+    }
+
+    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, String relocatingNodeId,
+            boolean primary, ShardRoutingState state) {
+        return new ShardRouting(shardId, currentNodeId, relocatingNodeId, primary, state,
+                buildRecoveryTarget(primary, state), buildUnassignedInfo(state), buildAllocationId(state), -1);
+    }
+
+    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId,
+            String relocatingNodeId, boolean primary, ShardRoutingState state, AllocationId allocationId) {
+        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId,
+                relocatingNodeId, primary, state, allocationId);
     }
 
     public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, String relocatingNodeId, boolean primary,
             ShardRoutingState state, AllocationId allocationId) {
-        return new ShardRouting(shardId, currentNodeId, relocatingNodeId, primary, state, buildRecoveryTarget(primary, state),
-                buildUnassignedInfo(state), allocationId, -1);
+        return new ShardRouting(shardId, currentNodeId, relocatingNodeId, primary, state,
+                buildRecoveryTarget(primary, state), buildUnassignedInfo(state), allocationId, -1);
     }
 
-    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId, String relocatingNodeId, boolean primary,
-            ShardRoutingState state, UnassignedInfo unassignedInfo) {
-        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId, relocatingNodeId, primary,
-                state, unassignedInfo);
+    public static ShardRouting newShardRouting(String index, int shardId, String currentNodeId,
+                                               String relocatingNodeId, boolean primary, ShardRoutingState state,
+                                               UnassignedInfo unassignedInfo) {
+        return newShardRouting(new ShardId(index, IndexMetadata.INDEX_UUID_NA_VALUE, shardId), currentNodeId, relocatingNodeId,
+                primary, state, unassignedInfo);
     }
 
-    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId, String relocatingNodeId, boolean primary,
-            ShardRoutingState state, UnassignedInfo unassignedInfo) {
+    public static ShardRouting newShardRouting(ShardId shardId, String currentNodeId,
+                                               String relocatingNodeId, boolean primary, ShardRoutingState state,
+                                               UnassignedInfo unassignedInfo) {
         return new ShardRouting(shardId, currentNodeId, relocatingNodeId, primary, state, buildRecoveryTarget(primary, state),
                 unassignedInfo, buildAllocationId(state), -1);
     }
@@ -94,55 +101,59 @@ public class TestShardRouting {
 
     private static RecoverySource buildRecoveryTarget(boolean primary, ShardRoutingState state) {
         switch (state) {
-        case UNASSIGNED:
-        case INITIALIZING:
-            if (primary) {
-                return ESTestCase.randomFrom(RecoverySource.EmptyStoreRecoverySource.INSTANCE,
+            case UNASSIGNED:
+            case INITIALIZING:
+                if (primary) {
+                    return ESTestCase.randomFrom(RecoverySource.EmptyStoreRecoverySource.INSTANCE,
                         RecoverySource.ExistingStoreRecoverySource.INSTANCE);
-            } else {
-                return RecoverySource.PeerRecoverySource.INSTANCE;
-            }
-        case STARTED:
-        case RELOCATING:
-            return null;
-        default:
-            throw new IllegalStateException("illegal state");
+                } else {
+                    return RecoverySource.PeerRecoverySource.INSTANCE;
+                }
+            case STARTED:
+            case RELOCATING:
+                return null;
+            default:
+                throw new IllegalStateException("illegal state");
         }
     }
 
     private static AllocationId buildAllocationId(ShardRoutingState state) {
         switch (state) {
-        case UNASSIGNED:
-            return null;
-        case INITIALIZING:
-        case STARTED:
-            return AllocationId.newInitializing();
-        case RELOCATING:
-            AllocationId allocationId = AllocationId.newInitializing();
-            return AllocationId.newRelocation(allocationId);
-        default:
-            throw new IllegalStateException("illegal state");
+            case UNASSIGNED:
+                return null;
+            case INITIALIZING:
+            case STARTED:
+                return AllocationId.newInitializing();
+            case RELOCATING:
+                AllocationId allocationId = AllocationId.newInitializing();
+                return AllocationId.newRelocation(allocationId);
+            default:
+                throw new IllegalStateException("illegal state");
         }
     }
 
     private static UnassignedInfo buildUnassignedInfo(ShardRoutingState state) {
         switch (state) {
-        case UNASSIGNED:
-        case INITIALIZING:
-            return new UnassignedInfo(ESTestCase.randomFrom(UnassignedInfo.Reason.values()), "auto generated for test");
-        case STARTED:
-        case RELOCATING:
-            return null;
-        default:
-            throw new IllegalStateException("illegal state");
+            case UNASSIGNED:
+            case INITIALIZING:
+                return new UnassignedInfo(ESTestCase.randomFrom(UnassignedInfo.Reason.values()), "auto generated for test");
+            case STARTED:
+            case RELOCATING:
+                return null;
+            default:
+                throw new IllegalStateException("illegal state");
         }
     }
 
     public static RecoverySource randomRecoverySource() {
-        return ESTestCase.randomFrom(RecoverySource.EmptyStoreRecoverySource.INSTANCE, RecoverySource.ExistingStoreRecoverySource.INSTANCE,
-                RecoverySource.PeerRecoverySource.INSTANCE, RecoverySource.LocalShardsRecoverySource.INSTANCE,
-                new RecoverySource.SnapshotRecoverySource(UUIDs.randomBase64UUID(),
-                        new Snapshot("repo", new SnapshotId(randomAlphaOfLength(8), UUIDs.randomBase64UUID())), Version.CURRENT,
-                        new IndexId("some_index", UUIDs.randomBase64UUID(random()))));
+        return ESTestCase.randomFrom(RecoverySource.EmptyStoreRecoverySource.INSTANCE,
+            RecoverySource.ExistingStoreRecoverySource.INSTANCE,
+            RecoverySource.PeerRecoverySource.INSTANCE,
+            RecoverySource.LocalShardsRecoverySource.INSTANCE,
+            new RecoverySource.SnapshotRecoverySource(
+                UUIDs.randomBase64UUID(),
+                new Snapshot("repo", new SnapshotId(randomAlphaOfLength(8), UUIDs.randomBase64UUID())),
+                Version.CURRENT,
+                new IndexId("some_index", UUIDs.randomBase64UUID(random()))));
     }
 }

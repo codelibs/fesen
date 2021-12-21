@@ -23,6 +23,7 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.metrics.ParsedStats;
 
+
 public class ParsedStatsBucket extends ParsedStats implements StatsBucket {
 
     @Override
@@ -30,8 +31,8 @@ public class ParsedStatsBucket extends ParsedStats implements StatsBucket {
         return StatsBucketPipelineAggregationBuilder.NAME;
     }
 
-    private static final ObjectParser<ParsedStatsBucket, Void> PARSER =
-            new ObjectParser<>(ParsedStatsBucket.class.getSimpleName(), true, ParsedStatsBucket::new);
+    private static final ObjectParser<ParsedStatsBucket, Void> PARSER = new ObjectParser<>(
+            ParsedStatsBucket.class.getSimpleName(), true, ParsedStatsBucket::new);
 
     static {
         declareStatsFields(PARSER);

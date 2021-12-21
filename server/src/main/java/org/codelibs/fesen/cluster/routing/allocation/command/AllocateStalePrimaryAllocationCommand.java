@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.command;
 
-import java.io.IOException;
-import java.util.Optional;
-
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.RecoverySource;
 import org.codelibs.fesen.cluster.routing.RoutingNode;
@@ -36,6 +33,9 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardNotFoundException;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Allocates an unassigned stale primary shard to a specific node. Use with extreme care as this will result in data loss.
@@ -126,18 +126,18 @@ public class AllocateStalePrimaryAllocationCommand extends BasePrimaryAllocation
         }
 
         if (acceptDataLoss == false) {
-            String dataLossWarning = "allocating an empty primary for [" + index + "][" + shardId + "] can result in data loss. Please "
-                    + "confirm by setting the accept_data_loss parameter to true";
+            String dataLossWarning = "allocating an empty primary for [" + index + "][" + shardId + "] can result in data loss. Please " +
+                "confirm by setting the accept_data_loss parameter to true";
             return explainOrThrowRejectedCommand(explain, allocation, dataLossWarning);
         }
 
         if (shardRouting.recoverySource().getType() != RecoverySource.Type.EXISTING_STORE) {
-            return explainOrThrowRejectedCommand(explain, allocation, "trying to allocate an existing primary shard [" + index + "]["
-                    + shardId + "], while no such shard has ever been active");
+            return explainOrThrowRejectedCommand(explain, allocation,
+                "trying to allocate an existing primary shard [" + index + "][" + shardId + "], while no such shard has ever been active");
         }
 
         initializeUnassignedShard(allocation, routingNodes, routingNode, shardRouting, null,
-                RecoverySource.ExistingStoreRecoverySource.FORCE_STALE_PRIMARY_INSTANCE);
+            RecoverySource.ExistingStoreRecoverySource.FORCE_STALE_PRIMARY_INSTANCE);
         return new RerouteExplanation(this, allocation.decision(Decision.YES, name() + " (allocation command)", "ignore deciders"));
     }
 

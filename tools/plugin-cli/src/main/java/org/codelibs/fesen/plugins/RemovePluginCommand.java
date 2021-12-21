@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.plugins;
 
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+
+import org.codelibs.fesen.cli.EnvironmentAwareCommand;
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.plugins.PluginsService;
+
 import static org.codelibs.fesen.cli.Terminal.Verbosity.VERBOSE;
 
 import java.io.IOException;
@@ -32,16 +43,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.codelibs.fesen.cli.EnvironmentAwareCommand;
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.env.Environment;
-
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 
 /**
  * A command for the plugin CLI to remove a plugin from Fesen.
@@ -96,8 +97,10 @@ class RemovePluginCommand extends EnvironmentAwareCommand {
             }
         }
         if (usedBy.isEmpty() == false) {
-            throw new UserException(PLUGIN_STILL_USED,
-                    "plugin [" + pluginName + "] cannot be removed" + " because it is extended by other plugins: " + usedBy);
+            throw new UserException(
+                PLUGIN_STILL_USED,
+                "plugin [" + pluginName + "] cannot be removed" + " because it is extended by other plugins: " + usedBy
+            );
         }
 
         final Path pluginDir = env.pluginsFile().resolve(pluginName);
@@ -111,9 +114,12 @@ class RemovePluginCommand extends EnvironmentAwareCommand {
          * not exist, the plugin config does, and we are not purging, again fail to the user that the plugin is not found.
          */
         if ((!Files.exists(pluginDir) && !Files.exists(pluginConfigDir) && !Files.exists(removing))
-                || (!Files.exists(pluginDir) && Files.exists(pluginConfigDir) && !purge)) {
-            final String message = String.format(Locale.ROOT,
-                    "plugin [%s] not found; run 'fesen-plugin list' to get list of installed plugins", pluginName);
+            || (!Files.exists(pluginDir) && Files.exists(pluginConfigDir) && !purge)) {
+            final String message = String.format(
+                Locale.ROOT,
+                "plugin [%s] not found; run 'fesen-plugin list' to get list of installed plugins",
+                pluginName
+            );
             throw new UserException(ExitCodes.CONFIG, message);
         }
 
@@ -154,8 +160,11 @@ class RemovePluginCommand extends EnvironmentAwareCommand {
                  * By default we preserve the config files in case the user is upgrading the plugin, but we print a message so the user
                  * knows in case they want to remove manually.
                  */
-                final String message = String.format(Locale.ROOT,
-                        "-> preserving plugin config files [%s] in case of upgrade; use --purge if not needed", pluginConfigDir);
+                final String message = String.format(
+                    Locale.ROOT,
+                    "-> preserving plugin config files [%s] in case of upgrade; use --purge if not needed",
+                    pluginConfigDir
+                );
                 terminal.println(message);
             }
         }

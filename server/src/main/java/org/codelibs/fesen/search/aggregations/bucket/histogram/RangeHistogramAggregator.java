@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
@@ -38,19 +34,51 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 public class RangeHistogramAggregator extends AbstractHistogramAggregator {
     private final ValuesSource.Range valuesSource;
 
-    public RangeHistogramAggregator(String name, AggregatorFactories factories, double interval, double offset, BucketOrder order,
-            boolean keyed, long minDocCount, DoubleBounds extendedBounds, DoubleBounds hardBounds, ValuesSourceConfig valuesSourceConfig,
-            SearchContext context, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
-        super(name, factories, interval, offset, order, keyed, minDocCount, extendedBounds, hardBounds, valuesSourceConfig.format(),
-                context, parent, cardinality, metadata);
+    public RangeHistogramAggregator(
+        String name,
+        AggregatorFactories factories,
+        double interval,
+        double offset,
+        BucketOrder order,
+        boolean keyed,
+        long minDocCount,
+        DoubleBounds extendedBounds,
+        DoubleBounds hardBounds,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext context,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
+        super(
+            name,
+            factories,
+            interval,
+            offset,
+            order,
+            keyed,
+            minDocCount,
+            extendedBounds,
+            hardBounds,
+            valuesSourceConfig.format(),
+            context,
+            parent,
+            cardinality,
+            metadata
+        );
         // TODO: Stop using nulls here
         this.valuesSource = valuesSourceConfig.hasValues() ? (ValuesSource.Range) valuesSourceConfig.getValuesSource() : null;
         if (this.valuesSource.rangeType().isNumeric() == false) {
             throw new IllegalArgumentException(
-                    "Expected numeric range type but found non-numeric range [" + this.valuesSource.rangeType().name + "]");
+                "Expected numeric range type but found non-numeric range [" + this.valuesSource.rangeType().name + "]"
+            );
         }
     }
 
@@ -80,10 +108,10 @@ public class RangeHistogramAggregator extends AbstractHistogramAggregator {
                             // The encoding should ensure that this assert is always true.
                             assert from >= previousFrom : "Start of range not >= previous start";
                             final Double to = rangeType.doubleValue(range.getTo());
-                            final double effectiveFrom =
-                                    (hardBounds != null && hardBounds.getMin() != null) ? Double.max(from, hardBounds.getMin()) : from;
-                            final double effectiveTo =
-                                    (hardBounds != null && hardBounds.getMax() != null) ? Double.min(to, hardBounds.getMax()) : to;
+                            final double effectiveFrom = (hardBounds != null && hardBounds.getMin() != null) ?
+                                Double.max(from, hardBounds.getMin()) : from;
+                            final double effectiveTo = (hardBounds != null && hardBounds.getMax() != null) ?
+                                Double.min(to, hardBounds.getMax()) : to;
                             final double startKey = Math.floor((effectiveFrom - offset) / interval);
                             final double endKey = Math.floor((effectiveTo - offset) / interval);
                             for (double key = Math.max(startKey, previousKey); key <= endKey; key++) {

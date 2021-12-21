@@ -36,6 +36,7 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+
 public class TransportShardRefreshAction
         extends TransportReplicationAction<BasicReplicationRequest, BasicReplicationRequest, ReplicationResponse> {
 
@@ -43,7 +44,8 @@ public class TransportShardRefreshAction
 
     @Inject
     public TransportShardRefreshAction(Settings settings, TransportService transportService, ClusterService clusterService,
-            IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction, ActionFilters actionFilters) {
+                                       IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
+                                       ActionFilters actionFilters) {
         super(settings, NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
                 BasicReplicationRequest::new, BasicReplicationRequest::new, ThreadPool.Names.REFRESH);
     }
@@ -64,7 +66,8 @@ public class TransportShardRefreshAction
     }
 
     @Override
-    protected void shardOperationOnReplica(BasicReplicationRequest request, IndexShard replica, ActionListener<ReplicaResult> listener) {
+    protected void shardOperationOnReplica(BasicReplicationRequest request, IndexShard replica,
+            ActionListener<ReplicaResult> listener) {
         ActionListener.completeWith(listener, () -> {
             replica.refresh("api");
             logger.trace("{} refresh request executed on replica", replica.shardId());

@@ -175,34 +175,35 @@ public class RestCancellableNodeClientTests extends ESTestCase {
 
         @Override
         public <Request extends ActionRequest, Response extends ActionResponse> Task executeLocally(ActionType<Response> action,
-                Request request, ActionListener<Response> listener) {
-            switch (action.name()) {
-            case CancelTasksAction.NAME:
-                CancelTasksRequest cancelTasksRequest = (CancelTasksRequest) request;
-                assertTrue("tried to cancel the same task more than once", cancelledTasks.add(cancelTasksRequest.getTaskId()));
-                Task task = request.createTask(counter.getAndIncrement(), "cancel_task", action.name(), null, Collections.emptyMap());
-                if (randomBoolean()) {
-                    listener.onResponse(null);
-                } else {
-                    //test that cancel tasks is best effort, failure received are not propagated
-                    listener.onFailure(new IllegalStateException());
-                }
-
-                return task;
-            case SearchAction.NAME:
-                searchRequests.incrementAndGet();
-                Task searchTask = request.createTask(counter.getAndIncrement(), "search", action.name(), null, Collections.emptyMap());
-                if (timeout == false) {
-                    if (rarely()) {
-                        //make sure that search is sometimes also called from the same thread before the task is returned
+                                                                                                    Request request,
+                                                                                                    ActionListener<Response> listener) {
+            switch(action.name()) {
+                case CancelTasksAction.NAME:
+                    CancelTasksRequest cancelTasksRequest = (CancelTasksRequest) request;
+                    assertTrue("tried to cancel the same task more than once", cancelledTasks.add(cancelTasksRequest.getTaskId()));
+                    Task task = request.createTask(counter.getAndIncrement(), "cancel_task", action.name(), null, Collections.emptyMap());
+                    if (randomBoolean()) {
                         listener.onResponse(null);
                     } else {
-                        threadPool().generic().submit(() -> listener.onResponse(null));
+                        //test that cancel tasks is best effort, failure received are not propagated
+                        listener.onFailure(new IllegalStateException());
                     }
-                }
-                return searchTask;
-            default:
-                throw new UnsupportedOperationException();
+
+                    return task;
+                case SearchAction.NAME:
+                    searchRequests.incrementAndGet();
+                    Task searchTask = request.createTask(counter.getAndIncrement(), "search", action.name(), null, Collections.emptyMap());
+                    if (timeout == false) {
+                        if (rarely()) {
+                            //make sure that search is sometimes also called from the same thread before the task is returned
+                            listener.onResponse(null);
+                        } else {
+                            threadPool().generic().submit(() -> listener.onResponse(null));
+                        }
+                    }
+                    return searchTask;
+                default:
+                    throw new UnsupportedOperationException();
             }
 
         }

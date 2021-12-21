@@ -105,7 +105,7 @@ public class ContextPreservingActionListenerTests extends ESTestCase {
 
         assertNull(threadContext.getHeader("foo"));
         assertEquals(nonEmptyContext ? "value" : null, threadContext.getHeader("not empty"));
-    }
+}
 
     public void testOriginalContextIsWhenListenerThrows() throws Exception {
         ThreadContext threadContext = new ThreadContext(Settings.EMPTY);

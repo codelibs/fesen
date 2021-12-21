@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.action.ActionRequestBuilder;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.client.FesenClient;
@@ -41,6 +38,9 @@ import org.codelibs.fesen.search.slice.SliceBuilder;
 import org.codelibs.fesen.search.sort.SortBuilder;
 import org.codelibs.fesen.search.sort.SortOrder;
 import org.codelibs.fesen.search.suggest.SuggestBuilder;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A search action request builder.
@@ -530,6 +530,7 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
         request.requestCache(requestCache);
         return this;
     }
+
 
     /**
      * Sets if this request should allow partial results.  (If method is not called,

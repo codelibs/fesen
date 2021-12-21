@@ -23,6 +23,7 @@ import static org.codelibs.fesen.action.ValidateActions.addValidationError;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;
@@ -45,7 +46,9 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
         super(in);
         indices = in.readStringArray();
         indicesOptions = IndicesOptions.readIndicesOptions(in);
-        waitForActiveShards = ActiveShardCount.readFrom(in);
+        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+            waitForActiveShards = ActiveShardCount.readFrom(in);
+        }
     }
 
     public OpenIndexRequest() {
@@ -152,6 +155,8 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
         super.writeTo(out);
         out.writeStringArray(indices);
         indicesOptions.writeIndicesOptions(out);
-        waitForActiveShards.writeTo(out);
+        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+            waitForActiveShards.writeTo(out);
+        }
     }
 }

@@ -19,10 +19,8 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.search.Query;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -32,6 +30,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.search.MatchQuery;
 import org.codelibs.fesen.index.search.MatchQuery.ZeroTermsQuery;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Match query is a query that analyzes the text and constructs a phrase query
@@ -71,7 +72,9 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         fieldName = in.readString();
         value = in.readGenericValue();
         slop = in.readVInt();
-        zeroTermsQuery = ZeroTermsQuery.readFromStream(in);
+        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+            zeroTermsQuery = ZeroTermsQuery.readFromStream(in);
+        }
         analyzer = in.readOptionalString();
     }
 
@@ -80,7 +83,9 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         out.writeString(fieldName);
         out.writeGenericValue(value);
         out.writeVInt(slop);
-        zeroTermsQuery.writeTo(out);
+        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+            zeroTermsQuery.writeTo(out);
+        }
         out.writeOptionalString(analyzer);
     }
 
@@ -179,8 +184,11 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
 
     @Override
     protected boolean doEquals(MatchPhraseQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value) && Objects.equals(analyzer, other.analyzer)
-                && Objects.equals(slop, other.slop) && Objects.equals(zeroTermsQuery, other.zeroTermsQuery);
+        return Objects.equals(fieldName, other.fieldName)
+            && Objects.equals(value, other.value)
+            && Objects.equals(analyzer, other.analyzer)
+            && Objects.equals(slop, other.slop)
+            && Objects.equals(zeroTermsQuery, other.zeroTermsQuery);
     }
 
     @Override
@@ -226,7 +234,7 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
                                 zeroTermsQuery = ZeroTermsQuery.ALL;
                             } else {
                                 throw new ParsingException(parser.getTokenLocation(),
-                                        "Unsupported zero_terms_query value [" + zeroTermsValue + "]");
+                                    "Unsupported zero_terms_query value [" + zeroTermsValue + "]");
                             }
                         } else {
                             throw new ParsingException(parser.getTokenLocation(),

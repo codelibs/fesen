@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.search.fetch;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -34,6 +27,13 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestRequest;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Context used to fetch the {@code stored_fields}.
@@ -119,15 +119,12 @@ public class StoredFieldsContext implements Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         StoredFieldsContext that = (StoredFieldsContext) o;
 
-        if (fetchFields != that.fetchFields)
-            return false;
+        if (fetchFields != that.fetchFields) return false;
         return fieldNames != null ? fieldNames.equals(that.fieldNames) : that.fieldNames == null;
 
     }
@@ -178,10 +175,10 @@ public class StoredFieldsContext implements Writeable {
             }
             return fromList(list);
         } else {
-            throw new ParsingException(
-                    parser.getTokenLocation(), "Expected [" + XContentParser.Token.VALUE_STRING + "] or ["
-                            + XContentParser.Token.START_ARRAY + "] in [" + fieldName + "] but found [" + token + "]",
-                    parser.getTokenLocation());
+            throw new ParsingException(parser.getTokenLocation(),
+                "Expected [" + XContentParser.Token.VALUE_STRING + "] or ["
+                    + XContentParser.Token.START_ARRAY + "] in [" + fieldName + "] but found [" + token + "]",
+                parser.getTokenLocation());
         }
     }
 

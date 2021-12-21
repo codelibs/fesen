@@ -47,8 +47,8 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class IndicesShardStoreResponseTests extends ESTestCase {
     public void testBasicSerialization() throws Exception {
-        ImmutableOpenMap.Builder<String, ImmutableOpenIntMap<List<IndicesShardStoresResponse.StoreStatus>>> indexStoreStatuses =
-                ImmutableOpenMap.builder();
+        ImmutableOpenMap.Builder<String, ImmutableOpenIntMap<List<IndicesShardStoresResponse.StoreStatus>>>
+            indexStoreStatuses = ImmutableOpenMap.builder();
 
         List<IndicesShardStoresResponse.Failure> failures = new ArrayList<>();
         ImmutableOpenIntMap.Builder<List<IndicesShardStoresResponse.StoreStatus>> storeStatuses = ImmutableOpenIntMap.builder();
@@ -57,11 +57,11 @@ public class IndicesShardStoreResponseTests extends ESTestCase {
         DiscoveryNode node2 = new DiscoveryNode("node2", buildNewFakeTransportAddress(), emptyMap(), emptySet(), Version.CURRENT);
         List<IndicesShardStoresResponse.StoreStatus> storeStatusList = new ArrayList<>();
         storeStatusList.add(new IndicesShardStoresResponse.StoreStatus(node1, null,
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
         storeStatusList.add(new IndicesShardStoresResponse.StoreStatus(node2, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
         storeStatusList.add(new IndicesShardStoresResponse.StoreStatus(node1, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, new IOException("corrupted")));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, new IOException("corrupted")));
         storeStatuses.put(0, storeStatusList);
         storeStatuses.put(1, storeStatusList);
         ImmutableOpenIntMap<List<IndicesShardStoresResponse.StoreStatus>> storesMap = storeStatuses.build();
@@ -70,8 +70,8 @@ public class IndicesShardStoreResponseTests extends ESTestCase {
 
         failures.add(new IndicesShardStoresResponse.Failure("node1", "test", 3, new NodeDisconnectedException(node1, "")));
 
-        IndicesShardStoresResponse storesResponse =
-                new IndicesShardStoresResponse(indexStoreStatuses.build(), Collections.unmodifiableList(failures));
+        IndicesShardStoresResponse storesResponse = new IndicesShardStoresResponse(indexStoreStatuses.build(),
+            Collections.unmodifiableList(failures));
         XContentBuilder contentBuilder = XContentFactory.jsonBuilder();
         contentBuilder.startObject();
         storesResponse.toXContent(contentBuilder, ToXContent.EMPTY_PARAMS);
@@ -83,7 +83,7 @@ public class IndicesShardStoreResponseTests extends ESTestCase {
             List<?> failureList = (List<?>) map.get("failures");
             assertThat(failureList.size(), equalTo(1));
             @SuppressWarnings("unchecked")
-            Map<String, ?> failureMap = (Map<String, ?>) failureList.get(0);
+            Map<String, ?> failureMap =  (Map<String, ?>) failureList.get(0);
             assertThat(failureMap.containsKey("index"), equalTo(true));
             assertThat(((String) failureMap.get("index")), equalTo("test"));
             assertThat(failureMap.containsKey("shard"), equalTo(true));
@@ -93,7 +93,7 @@ public class IndicesShardStoreResponseTests extends ESTestCase {
 
             @SuppressWarnings("unchecked")
             Map<String, Object> indices = (Map<String, Object>) map.get("indices");
-            for (String index : new String[] { "test", "test2" }) {
+            for (String index : new String[] {"test", "test2"}) {
                 assertThat(indices.containsKey(index), equalTo(true));
                 @SuppressWarnings("unchecked")
                 Map<String, Object> shards = ((Map<String, Object>) ((Map<String, Object>) indices.get(index)).get("shards"));
@@ -125,21 +125,21 @@ public class IndicesShardStoreResponseTests extends ESTestCase {
         DiscoveryNode node1 = new DiscoveryNode("node1", buildNewFakeTransportAddress(), emptyMap(), emptySet(), Version.CURRENT);
         List<IndicesShardStoresResponse.StoreStatus> orderedStoreStatuses = new ArrayList<>();
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, null,
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.PRIMARY, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, null,
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, null,
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, null));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.UNUSED, null));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, UUIDs.randomBase64UUID(),
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, new IOException("corrupted")));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, new IOException("corrupted")));
         orderedStoreStatuses.add(new IndicesShardStoresResponse.StoreStatus(node1, null,
-                IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, new IOException("corrupted")));
+            IndicesShardStoresResponse.StoreStatus.AllocationStatus.REPLICA, new IOException("corrupted")));
 
         List<IndicesShardStoresResponse.StoreStatus> storeStatuses = new ArrayList<>(orderedStoreStatuses);
         Collections.shuffle(storeStatuses, random());

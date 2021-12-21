@@ -5,9 +5,13 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches:
+    - main
+    - "*.x"
   pull_request:
-    branches: [ main ]
+    branches:
+    - main
+    - "*.x"
 
 jobs:
   build:
@@ -15,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [17]
+        java: [11]
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK

@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import org.codelibs.fesen.action.index.IndexRequestBuilder;
+import org.codelibs.fesen.test.ESIntegTestCase;
+
 import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.codelibs.fesen.action.index.IndexRequestBuilder;
-import org.codelibs.fesen.test.ESIntegTestCase;
 
 @ESIntegTestCase.SuiteScopeTestCase
 public abstract class AbstractNumericTestCase extends ESIntegTestCase {
@@ -39,8 +39,11 @@ public abstract class AbstractNumericTestCase extends ESIntegTestCase {
 
         final int numDocs = 10;
         for (int i = 0; i < numDocs; i++) { // TODO randomize the size and the params in here?
-            builders.add(client().prepareIndex("idx", "type", String.valueOf(i)).setSource(jsonBuilder().startObject().field("value", i + 1)
-                    .startArray("values").value(i + 2).value(i + 3).endArray().endObject()));
+            builders.add(client().prepareIndex("idx", "type", String.valueOf(i)).setSource(jsonBuilder()
+                    .startObject()
+                    .field("value", i+1)
+                    .startArray("values").value(i+2).value(i+3).endArray()
+                    .endObject()));
         }
         minValue = 1;
         minValues = 2;
@@ -55,55 +58,42 @@ public abstract class AbstractNumericTestCase extends ESIntegTestCase {
         prepareCreate("empty_bucket_idx").addMapping("type", "value", "type=integer").execute().actionGet();
         builders = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            builders.add(client().prepareIndex("empty_bucket_idx", "type", String.valueOf(i))
-                    .setSource(jsonBuilder().startObject().field("value", i * 2).endObject()));
+            builders.add(client().prepareIndex("empty_bucket_idx", "type", String.valueOf(i)).setSource(jsonBuilder()
+                    .startObject()
+                    .field("value", i*2)
+                    .endObject()));
         }
         indexRandom(true, builders);
         ensureSearchable();
     }
 
-    public void testEmptyAggregation() throws Exception {
-    }
+    public void testEmptyAggregation() throws Exception {}
 
-    public void testUnmapped() throws Exception {
-    }
+    public void testUnmapped() throws Exception {}
 
-    public void testSingleValuedField() throws Exception {
-    }
+    public void testSingleValuedField() throws Exception {}
 
-    public void testSingleValuedFieldGetProperty() throws Exception {
-    }
+    public void testSingleValuedFieldGetProperty() throws Exception {}
 
-    public void testSingleValuedFieldPartiallyUnmapped() throws Exception {
-    }
+    public void testSingleValuedFieldPartiallyUnmapped() throws Exception {}
 
-    public void testSingleValuedFieldWithValueScript() throws Exception {
-    }
+    public void testSingleValuedFieldWithValueScript() throws Exception {}
 
-    public void testSingleValuedFieldWithValueScriptWithParams() throws Exception {
-    }
+    public void testSingleValuedFieldWithValueScriptWithParams() throws Exception {}
 
-    public void testMultiValuedField() throws Exception {
-    }
+    public void testMultiValuedField() throws Exception {}
 
-    public void testMultiValuedFieldWithValueScript() throws Exception {
-    }
+    public void testMultiValuedFieldWithValueScript() throws Exception {}
 
-    public void testMultiValuedFieldWithValueScriptWithParams() throws Exception {
-    }
+    public void testMultiValuedFieldWithValueScriptWithParams() throws Exception {}
 
-    public void testScriptSingleValued() throws Exception {
-    }
+    public void testScriptSingleValued() throws Exception {}
 
-    public void testScriptSingleValuedWithParams() throws Exception {
-    }
+    public void testScriptSingleValuedWithParams() throws Exception {}
 
-    public void testScriptMultiValued() throws Exception {
-    }
+    public void testScriptMultiValued() throws Exception {}
 
-    public void testScriptMultiValuedWithParams() throws Exception {
-    }
+    public void testScriptMultiValuedWithParams() throws Exception {}
 
-    public void testOrderByEmptyAggregation() throws Exception {
-    }
+    public void testOrderByEmptyAggregation() throws Exception {}
 }

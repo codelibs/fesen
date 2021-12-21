@@ -29,7 +29,7 @@ final class DeleteVersionValue extends VersionValue {
 
     final long time;
 
-    DeleteVersionValue(long version, long seqNo, long term, long time) {
+    DeleteVersionValue(long version,long seqNo, long term, long time) {
         super(version, seqNo, term);
         this.time = time;
     }
@@ -46,12 +46,9 @@ final class DeleteVersionValue extends VersionValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         DeleteVersionValue that = (DeleteVersionValue) o;
 
@@ -67,6 +64,11 @@ final class DeleteVersionValue extends VersionValue {
 
     @Override
     public String toString() {
-        return "DeleteVersionValue{" + "version=" + version + ", seqNo=" + seqNo + ", term=" + term + ",time=" + time + '}';
+        return "DeleteVersionValue{" +
+            "version=" + version +
+            ", seqNo=" + seqNo +
+            ", term=" + term +
+            ",time=" + time +
+            '}';
     }
 }

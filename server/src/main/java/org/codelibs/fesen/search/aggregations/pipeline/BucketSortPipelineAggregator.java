@@ -18,6 +18,7 @@
  */
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +29,8 @@ import java.util.Map;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import org.codelibs.fesen.search.sort.FieldSortBuilder;
@@ -43,7 +44,7 @@ public class BucketSortPipelineAggregator extends PipelineAggregator {
     private final GapPolicy gapPolicy;
 
     BucketSortPipelineAggregator(String name, List<FieldSortBuilder> sorts, int from, Integer size, GapPolicy gapPolicy,
-            Map<String, Object> metadata) {
+                                        Map<String, Object> metadata) {
         super(name, sorts.stream().map(FieldSortBuilder::getFieldName).toArray(String[]::new), metadata);
         this.sorts = sorts;
         this.from = from;

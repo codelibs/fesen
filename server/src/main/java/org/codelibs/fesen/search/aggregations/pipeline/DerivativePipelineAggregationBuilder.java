@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Rounding;
@@ -37,6 +31,12 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<DerivativePipelineAggregationBuilder> {
     public static final String NAME = "derivative";
@@ -218,7 +218,8 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
                     + "] for derivative aggregation [" + pipelineAggregatorName + "]");
         }
 
-        DerivativePipelineAggregationBuilder factory = new DerivativePipelineAggregationBuilder(pipelineAggregatorName, bucketsPaths[0]);
+        DerivativePipelineAggregationBuilder factory =
+                new DerivativePipelineAggregationBuilder(pipelineAggregatorName, bucketsPaths[0]);
         if (format != null) {
             factory.format(format);
         }
@@ -233,14 +234,13 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         DerivativePipelineAggregationBuilder other = (DerivativePipelineAggregationBuilder) obj;
-        return Objects.equals(format, other.format) && gapPolicy == other.gapPolicy && Objects.equals(units, other.units);
+        return Objects.equals(format, other.format) &&
+            gapPolicy == other.gapPolicy &&
+            Objects.equals(units, other.units);
     }
 
     @Override

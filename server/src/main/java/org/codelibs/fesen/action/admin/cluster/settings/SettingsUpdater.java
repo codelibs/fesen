@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.settings;
 
-import static org.codelibs.fesen.cluster.ClusterState.builder;
-import static org.codelibs.fesen.common.settings.AbstractScopedSettings.ARCHIVED_SETTINGS_PREFIX;
-
-import java.util.Map;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.cluster.metadata.Metadata;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.Tuple;
+
+import static org.codelibs.fesen.cluster.ClusterState.builder;
+import static org.codelibs.fesen.common.settings.AbstractScopedSettings.ARCHIVED_SETTINGS_PREFIX;
+
+import java.util.Map;
 
 /**
  * Updates transient and persistent cluster state settings if there are any changes
@@ -55,8 +55,8 @@ final class SettingsUpdater {
         return persistentUpdates.build();
     }
 
-    synchronized ClusterState updateSettings(final ClusterState currentState, final Settings transientToApply,
-            final Settings persistentToApply, final Logger logger) {
+    synchronized ClusterState updateSettings(
+            final ClusterState currentState, final Settings transientToApply, final Settings persistentToApply, final Logger logger) {
         boolean changed = false;
 
         /*
@@ -138,16 +138,20 @@ final class SettingsUpdater {
      * @param logger       a logger to sending warnings to
      * @return the partitioned settings
      */
-    private Tuple<Settings, Settings> partitionKnownAndValidSettings(final Settings settings, final String settingsType,
-            final Logger logger) {
+    private Tuple<Settings, Settings> partitionKnownAndValidSettings(
+            final Settings settings, final String settingsType, final Logger logger) {
         final Settings existingArchivedSettings = settings.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX));
-        final Settings settingsExcludingExistingArchivedSettings = settings.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX) == false);
-        final Settings settingsWithUnknownOrInvalidArchived =
-                clusterSettings.archiveUnknownOrInvalidSettings(settingsExcludingExistingArchivedSettings,
-                        e -> logUnknownSetting(settingsType, e, logger), (e, ex) -> logInvalidSetting(settingsType, e, ex, logger));
+        final Settings settingsExcludingExistingArchivedSettings =
+                settings.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX) == false);
+        final Settings settingsWithUnknownOrInvalidArchived = clusterSettings.archiveUnknownOrInvalidSettings(
+                settingsExcludingExistingArchivedSettings,
+                e -> logUnknownSetting(settingsType, e, logger),
+                (e, ex) -> logInvalidSetting(settingsType, e, ex, logger));
         return Tuple.tuple(
-                Settings.builder().put(settingsWithUnknownOrInvalidArchived.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX) == false))
-                        .put(existingArchivedSettings).build(),
+                Settings.builder()
+                        .put(settingsWithUnknownOrInvalidArchived.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX) == false))
+                        .put(existingArchivedSettings)
+                        .build(),
                 settingsWithUnknownOrInvalidArchived.filter(k -> k.startsWith(ARCHIVED_SETTINGS_PREFIX)));
     }
 
@@ -155,10 +159,15 @@ final class SettingsUpdater {
         logger.warn("ignoring existing unknown {} setting: [{}] with value [{}]; archiving", settingType, e.getKey(), e.getValue());
     }
 
-    private void logInvalidSetting(final String settingType, final Map.Entry<String, String> e, final IllegalArgumentException ex,
-            final Logger logger) {
-        logger.warn((Supplier<?>) () -> new ParameterizedMessage("ignoring existing invalid {} setting: [{}] with value [{}]; archiving",
-                settingType, e.getKey(), e.getValue()), ex);
+    private void logInvalidSetting(
+            final String settingType, final Map.Entry<String, String> e, final IllegalArgumentException ex, final Logger logger) {
+        logger.warn(
+                (Supplier<?>)
+                        () -> new ParameterizedMessage("ignoring existing invalid {} setting: [{}] with value [{}]; archiving",
+                                settingType,
+                                e.getKey(),
+                                e.getValue()),
+                ex);
     }
 
 }

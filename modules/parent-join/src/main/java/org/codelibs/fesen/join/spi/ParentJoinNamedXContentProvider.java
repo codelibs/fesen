@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.join.spi;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ContextParser;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -32,6 +29,9 @@ import org.codelibs.fesen.join.aggregations.ParsedParent;
 import org.codelibs.fesen.plugins.spi.NamedXContentProvider;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ParentJoinNamedXContentProvider implements NamedXContentProvider {
 
     @Override
@@ -40,7 +40,9 @@ public class ParentJoinNamedXContentProvider implements NamedXContentProvider {
         ParseField parseFieldParent = new ParseField(ParentAggregationBuilder.NAME);
         ContextParser<Object, Aggregation> contextParserChildren = (p, name) -> ParsedChildren.fromXContent(p, (String) name);
         ContextParser<Object, Aggregation> contextParserParent = (p, name) -> ParsedParent.fromXContent(p, (String) name);
-        return Arrays.asList(new NamedXContentRegistry.Entry(Aggregation.class, parseFieldChildren, contextParserChildren),
-                new NamedXContentRegistry.Entry(Aggregation.class, parseFieldParent, contextParserParent));
+        return Arrays.asList(
+            new NamedXContentRegistry.Entry(Aggregation.class, parseFieldChildren, contextParserChildren),
+            new NamedXContentRegistry.Entry(Aggregation.class, parseFieldParent, contextParserParent)
+        );
     }
 }

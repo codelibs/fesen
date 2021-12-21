@@ -61,29 +61,47 @@ public class RetentionLeaseActions {
         private final IndicesService indicesService;
 
         @Inject
-        TransportRetentionLeaseAction(final String name, final ThreadPool threadPool, final ClusterService clusterService,
-                final TransportService transportService, final ActionFilters actionFilters,
-                final IndexNameExpressionResolver indexNameExpressionResolver, final IndicesService indicesService,
+        TransportRetentionLeaseAction(
+                final String name,
+                final ThreadPool threadPool,
+                final ClusterService clusterService,
+                final TransportService transportService,
+                final ActionFilters actionFilters,
+                final IndexNameExpressionResolver indexNameExpressionResolver,
+                final IndicesService indicesService,
                 final Writeable.Reader<T> requestSupplier) {
-            super(name, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, requestSupplier,
+            super(
+                    name,
+                    threadPool,
+                    clusterService,
+                    transportService,
+                    actionFilters,
+                    indexNameExpressionResolver,
+                    requestSupplier,
                     ThreadPool.Names.MANAGEMENT);
             this.indicesService = Objects.requireNonNull(indicesService);
         }
 
         @Override
         protected ShardsIterator shards(final ClusterState state, final InternalRequest request) {
-            return state.routingTable().shardRoutingTable(request.concreteIndex(), request.request().getShardId().id()).primaryShardIt();
+            return state
+                    .routingTable()
+                    .shardRoutingTable(request.concreteIndex(), request.request().getShardId().id())
+                    .primaryShardIt();
         }
 
         @Override
         protected void asyncShardOperation(T request, ShardId shardId, final ActionListener<Response> listener) {
             final IndexService indexService = indicesService.indexServiceSafe(shardId.getIndex());
             final IndexShard indexShard = indexService.getShard(shardId.id());
-            indexShard.acquirePrimaryOperationPermit(ActionListener.delegateFailure(listener, (delegatedListener, releasable) -> {
-                try (Releasable ignore = releasable) {
-                    doRetentionLeaseAction(indexShard, request, delegatedListener);
-                }
-            }), ThreadPool.Names.SAME, request);
+            indexShard.acquirePrimaryOperationPermit(
+                ActionListener.delegateFailure(listener, (delegatedListener, releasable) -> {
+                    try (Releasable ignore = releasable) {
+                        doRetentionLeaseAction(indexShard, request, delegatedListener);
+                    }
+                }),
+                ThreadPool.Names.SAME,
+                request);
         }
 
         @Override
@@ -117,16 +135,30 @@ public class RetentionLeaseActions {
         public static class TransportAction extends TransportRetentionLeaseAction<AddRequest> {
 
             @Inject
-            public TransportAction(final ThreadPool threadPool, final ClusterService clusterService,
-                    final TransportService transportService, final ActionFilters actionFilters,
-                    final IndexNameExpressionResolver indexNameExpressionResolver, final IndicesService indicesService) {
-                super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, indicesService,
+            public TransportAction(
+                    final ThreadPool threadPool,
+                    final ClusterService clusterService,
+                    final TransportService transportService,
+                    final ActionFilters actionFilters,
+                    final IndexNameExpressionResolver indexNameExpressionResolver,
+                    final IndicesService indicesService) {
+                super(
+                        ACTION_NAME,
+                        threadPool,
+                        clusterService,
+                        transportService,
+                        actionFilters,
+                        indexNameExpressionResolver,
+                        indicesService,
                         AddRequest::new);
             }
 
             @Override
             void doRetentionLeaseAction(final IndexShard indexShard, final AddRequest request, final ActionListener<Response> listener) {
-                indexShard.addRetentionLease(request.getId(), request.getRetainingSequenceNumber(), request.getSource(),
+                indexShard.addRetentionLease(
+                        request.getId(),
+                        request.getRetainingSequenceNumber(),
+                        request.getSource(),
                         ActionListener.map(listener, r -> new Response()));
             }
 
@@ -150,12 +182,24 @@ public class RetentionLeaseActions {
         public static class TransportAction extends TransportRetentionLeaseAction<RenewRequest> {
 
             @Inject
-            public TransportAction(final ThreadPool threadPool, final ClusterService clusterService,
-                    final TransportService transportService, final ActionFilters actionFilters,
-                    final IndexNameExpressionResolver indexNameExpressionResolver, final IndicesService indicesService) {
-                super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, indicesService,
+            public TransportAction(
+                    final ThreadPool threadPool,
+                    final ClusterService clusterService,
+                    final TransportService transportService,
+                    final ActionFilters actionFilters,
+                    final IndexNameExpressionResolver indexNameExpressionResolver,
+                    final IndicesService indicesService) {
+                super(
+                        ACTION_NAME,
+                        threadPool,
+                        clusterService,
+                        transportService,
+                        actionFilters,
+                        indexNameExpressionResolver,
+                        indicesService,
                         RenewRequest::new);
             }
+
 
             @Override
             void doRetentionLeaseAction(final IndexShard indexShard, final RenewRequest request, final ActionListener<Response> listener) {
@@ -178,16 +222,30 @@ public class RetentionLeaseActions {
         public static class TransportAction extends TransportRetentionLeaseAction<RemoveRequest> {
 
             @Inject
-            public TransportAction(final ThreadPool threadPool, final ClusterService clusterService,
-                    final TransportService transportService, final ActionFilters actionFilters,
-                    final IndexNameExpressionResolver indexNameExpressionResolver, final IndicesService indicesService) {
-                super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, indicesService,
+            public TransportAction(
+                    final ThreadPool threadPool,
+                    final ClusterService clusterService,
+                    final TransportService transportService,
+                    final ActionFilters actionFilters,
+                    final IndexNameExpressionResolver indexNameExpressionResolver,
+                    final IndicesService indicesService) {
+                super(
+                        ACTION_NAME,
+                        threadPool,
+                        clusterService,
+                        transportService,
+                        actionFilters,
+                        indexNameExpressionResolver,
+                        indicesService,
                         RemoveRequest::new);
             }
 
+
             @Override
             void doRetentionLeaseAction(final IndexShard indexShard, final RemoveRequest request, final ActionListener<Response> listener) {
-                indexShard.removeRetentionLease(request.getId(), ActionListener.map(listener, r -> new Response()));
+                indexShard.removeRetentionLease(
+                        request.getId(),
+                        ActionListener.map(listener, r -> new Response()));
             }
 
         }
@@ -309,16 +367,14 @@ public class RetentionLeaseActions {
 
     public static class Response extends ActionResponse {
 
-        public Response() {
-        }
+        public Response() {}
 
         Response(final StreamInput in) throws IOException {
             super(in);
         }
 
         @Override
-        public void writeTo(StreamOutput out) throws IOException {
-        }
+        public void writeTo(StreamOutput out) throws IOException {}
     }
 
 }

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.plugins;
 
+import org.apache.lucene.util.Constants;
+
 import java.nio.file.Path;
 import java.util.Locale;
-
-import org.apache.lucene.util.Constants;
 
 /**
  * Encapsulates platform-dependent methods for handling native components of plugins.
@@ -32,18 +32,26 @@ public class Platforms {
     private static final String PROGRAM_NAME = Constants.WINDOWS ? "controller.exe" : "controller";
     public static final String PLATFORM_NAME = Platforms.platformName(Constants.OS_NAME, Constants.OS_ARCH);
 
-    private Platforms() {
-    }
+    private Platforms() {}
 
     /**
      * The path to the native controller for a plugin with native components.
      */
     public static Path nativeControllerPath(Path plugin) {
         if (Constants.MAC_OS_X) {
-            return plugin.resolve("platform").resolve(PLATFORM_NAME).resolve(PROGRAM_NAME + ".app").resolve("Contents").resolve("MacOS")
-                    .resolve(PROGRAM_NAME);
+            return plugin
+                .resolve("platform")
+                .resolve(PLATFORM_NAME)
+                .resolve(PROGRAM_NAME + ".app")
+                .resolve("Contents")
+                .resolve("MacOS")
+                .resolve(PROGRAM_NAME);
         }
-        return plugin.resolve("platform").resolve(PLATFORM_NAME).resolve("bin").resolve(PROGRAM_NAME);
+        return plugin
+                .resolve("platform")
+                .resolve(PLATFORM_NAME)
+                .resolve("bin")
+                .resolve(PROGRAM_NAME);
     }
 
     /**

@@ -61,39 +61,39 @@ public class SearchAfterBuilderTests extends ESTestCase {
         for (int i = 0; i < numSearchFrom; i++) {
             int branch = randomInt(10);
             switch (branch) {
-            case 0:
-                values[i] = randomInt();
-                break;
-            case 1:
-                values[i] = randomFloat();
-                break;
-            case 2:
-                values[i] = randomLong();
-                break;
-            case 3:
-                values[i] = randomDouble();
-                break;
-            case 4:
-                values[i] = randomAlphaOfLengthBetween(5, 20);
-                break;
-            case 5:
-                values[i] = randomBoolean();
-                break;
-            case 6:
-                values[i] = randomByte();
-                break;
-            case 7:
-                values[i] = randomShort();
-                break;
-            case 8:
-                values[i] = new Text(randomAlphaOfLengthBetween(5, 20));
-                break;
-            case 9:
-                values[i] = null;
-                break;
-            case 10:
-                values[i] = randomBigInteger();
-                break;
+                case 0:
+                    values[i] = randomInt();
+                    break;
+                case 1:
+                    values[i] = randomFloat();
+                    break;
+                case 2:
+                    values[i] = randomLong();
+                    break;
+                case 3:
+                    values[i] = randomDouble();
+                    break;
+                case 4:
+                    values[i] = randomAlphaOfLengthBetween(5, 20);
+                    break;
+                case 5:
+                    values[i] = randomBoolean();
+                    break;
+                case 6:
+                    values[i] = randomByte();
+                    break;
+                case 7:
+                    values[i] = randomShort();
+                    break;
+                case 8:
+                    values[i] = new Text(randomAlphaOfLengthBetween(5, 20));
+                    break;
+                case 9:
+                    values[i] = null;
+                    break;
+                case 10:
+                    values[i] = randomBigInteger();
+                    break;
             }
         }
         searchAfterBuilder.setSortValues(values);
@@ -112,36 +112,36 @@ public class SearchAfterBuilderTests extends ESTestCase {
         for (int i = 0; i < numSearchAfter; i++) {
             int branch = randomInt(9);
             switch (branch) {
-            case 0:
-                jsonBuilder.value(randomInt());
-                break;
-            case 1:
-                jsonBuilder.value(randomFloat());
-                break;
-            case 2:
-                jsonBuilder.value(randomLong());
-                break;
-            case 3:
-                jsonBuilder.value(randomDouble());
-                break;
-            case 4:
-                jsonBuilder.value(randomAlphaOfLengthBetween(5, 20));
-                break;
-            case 5:
-                jsonBuilder.value(randomBoolean());
-                break;
-            case 6:
-                jsonBuilder.value(randomByte());
-                break;
-            case 7:
-                jsonBuilder.value(randomShort());
-                break;
-            case 8:
-                jsonBuilder.value(new Text(randomAlphaOfLengthBetween(5, 20)));
-                break;
-            case 9:
-                jsonBuilder.nullValue();
-                break;
+                case 0:
+                    jsonBuilder.value(randomInt());
+                    break;
+                case 1:
+                    jsonBuilder.value(randomFloat());
+                    break;
+                case 2:
+                    jsonBuilder.value(randomLong());
+                    break;
+                case 3:
+                    jsonBuilder.value(randomDouble());
+                    break;
+                case 4:
+                    jsonBuilder.value(randomAlphaOfLengthBetween(5, 20));
+                    break;
+                case 5:
+                    jsonBuilder.value(randomBoolean());
+                    break;
+                case 6:
+                    jsonBuilder.value(randomByte());
+                    break;
+                case 7:
+                    jsonBuilder.value(randomShort());
+                    break;
+                case 8:
+                    jsonBuilder.value(new Text(randomAlphaOfLengthBetween(5, 20)));
+                    break;
+                case 9:
+                    jsonBuilder.nullValue();
+                    break;
             }
         }
         jsonBuilder.endArray();
@@ -205,7 +205,11 @@ public class SearchAfterBuilderTests extends ESTestCase {
                 continue;
             }
             XContentBuilder xContent = XContentFactory.contentBuilder(type);
-            xContent.startObject().startArray("search_after").value(new BigDecimal("9223372036854776003.3")).endArray().endObject();
+            xContent.startObject()
+                .startArray("search_after")
+                    .value(new BigDecimal("9223372036854776003.3"))
+                .endArray()
+                .endObject();
             try (XContentParser parser = createParser(xContent)) {
                 parser.nextToken();
                 parser.nextToken();
@@ -271,8 +275,8 @@ public class SearchAfterBuilderTests extends ESTestCase {
             }
 
             @Override
-            public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
-                    BucketedSort.ExtraData extra) {
+            public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
+                    int bucketSize, BucketedSort.ExtraData extra) {
                 return null;
             }
         };

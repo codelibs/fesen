@@ -49,6 +49,7 @@ public class ShuffleForcedMergePolicy extends FilterMergePolicy {
         return segReader.getSegmentInfo().info.getDiagnostics().containsKey(SHUFFLE_MERGE_KEY);
     }
 
+
     @Override
     public MergeSpecification findForcedDeletesMerges(SegmentInfos segmentInfos, MergeContext mergeContext) throws IOException {
         return wrap(in.findForcedDeletesMerges(segmentInfos, mergeContext));
@@ -56,7 +57,8 @@ public class ShuffleForcedMergePolicy extends FilterMergePolicy {
 
     @Override
     public MergeSpecification findForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount,
-            Map<SegmentCommitInfo, Boolean> segmentsToMerge, MergeContext mergeContext) throws IOException {
+                                               Map<SegmentCommitInfo, Boolean> segmentsToMerge,
+                                               MergeContext mergeContext) throws IOException {
         return wrap(in.findForcedMerges(segmentInfos, maxSegmentCount, segmentsToMerge, mergeContext));
     }
 
@@ -109,8 +111,8 @@ public class ShuffleForcedMergePolicy extends FilterMergePolicy {
                     newInfos.add(leftInfo);
                 }
             }
-            left++;
-            right--;
+            left ++;
+            right --;
         }
         return newInfos;
     }

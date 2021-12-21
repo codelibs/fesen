@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
 
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -32,6 +29,10 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.Rewriteable;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * A factory that knows how to create an {@link Aggregator} of a specific type.
@@ -151,7 +152,6 @@ public abstract class AggregationBuilder
     public enum BucketCardinality {
         NONE, ONE, MANY;
     }
-
     /**
      * A rough count of the number of buckets that {@link Aggregator}s built
      * by this builder will contain per owning parent bucket.

@@ -33,8 +33,10 @@ public class NorwegianAnalyzerProvider extends AbstractIndexAnalyzerProvider<Nor
 
     NorwegianAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, name, settings);
-        analyzer = new NorwegianAnalyzer(Analysis.parseStopWords(env, settings, NorwegianAnalyzer.getDefaultStopSet()),
-                Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET));
+        analyzer = new NorwegianAnalyzer(
+            Analysis.parseStopWords(env, settings, NorwegianAnalyzer.getDefaultStopSet()),
+            Analysis.parseStemExclusion(settings, CharArraySet.EMPTY_SET)
+        );
         analyzer.setVersion(version);
     }
 

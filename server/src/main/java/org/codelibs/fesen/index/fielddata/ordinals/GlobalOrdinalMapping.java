@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.fielddata.ordinals;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.OrdinalMap;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.LongValues;
+
+import java.io.IOException;
 
 /**
  * A {@link SortedSetDocValues} implementation that returns ordinals that are global.

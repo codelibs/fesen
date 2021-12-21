@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.fesen.common.util.Countable;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class implements a compilation of {@link ShardIterator}s. Each {@link ShardIterator}
@@ -85,6 +85,6 @@ public final class GroupShardsIterator<ShardIt extends Comparable<ShardIt> & Cou
     }
 
     public ShardIt get(int index) {
-        return iterators.get(index);
+        return  iterators.get(index);
     }
 }

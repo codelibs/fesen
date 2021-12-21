@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.discovery.zen;
 
+import org.codelibs.fesen.cluster.ClusterName;
+import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.lease.Releasable;
+import org.codelibs.fesen.core.TimeValue;
+
 import static org.codelibs.fesen.gateway.GatewayService.STATE_NOT_RECOVERED_BLOCK;
 
 import java.io.IOException;
@@ -28,15 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
-
-import org.codelibs.fesen.cluster.ClusterName;
-import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.core.TimeValue;
 
 public interface ZenPing extends Releasable {
 
@@ -83,7 +83,7 @@ public interface ZenPing extends Releasable {
          * @param master              the current master of the node
          * @param clusterName         the cluster name of the node
          * @param clusterStateVersion the current cluster state version of that node
-        *                            ({@link ElectMasterService.MasterCandidate#UNRECOVERED_CLUSTER_VERSION} for not recovered)
+*                            ({@link ElectMasterService.MasterCandidate#UNRECOVERED_CLUSTER_VERSION} for not recovered)
          */
         public PingResponse(long id, DiscoveryNode node, DiscoveryNode master, ClusterName clusterName, long clusterStateVersion) {
             this.id = id;
@@ -95,9 +95,8 @@ public interface ZenPing extends Releasable {
 
         public PingResponse(DiscoveryNode node, DiscoveryNode master, ClusterState state) {
             this(node, master, state.getClusterName(),
-                    state.blocks().hasGlobalBlock(STATE_NOT_RECOVERED_BLOCK)
-                            ? ElectMasterService.MasterCandidate.UNRECOVERED_CLUSTER_VERSION
-                            : state.version());
+                state.blocks().hasGlobalBlock(STATE_NOT_RECOVERED_BLOCK) ?
+                    ElectMasterService.MasterCandidate.UNRECOVERED_CLUSTER_VERSION : state.version());
         }
 
         PingResponse(StreamInput in) throws IOException {
@@ -151,10 +150,11 @@ public interface ZenPing extends Releasable {
 
         @Override
         public String toString() {
-            return "ping_response{node [" + node + "], id[" + id + "], master [" + master + "]," + "cluster_state_version ["
-                    + clusterStateVersion + "], cluster_name[" + clusterName.value() + "]}";
+            return "ping_response{node [" + node + "], id[" + id + "], master [" + master + "]," +
+                   "cluster_state_version [" + clusterStateVersion + "], cluster_name[" + clusterName.value() + "]}";
         }
     }
+
 
     /**
      * a utility collection of pings where only the most recent ping is stored per node

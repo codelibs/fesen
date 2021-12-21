@@ -24,8 +24,7 @@ import java.util.Arrays;
 
 public class ArrayUtils {
 
-    private ArrayUtils() {
-    }
+    private ArrayUtils() {}
 
     /**
      * Return the index of <code>value</code> in <code>array</code>, or {@code -1} if there is no such index.

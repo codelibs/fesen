@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.stats;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,7 +27,10 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
+import java.io.IOException;
+
 public class IndexingPressureStats implements Writeable, ToXContentFragment {
+
 
     private final long totalCombinedCoordinatingAndPrimaryBytes;
     private final long totalCoordinatingBytes;
@@ -68,9 +69,9 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
     }
 
     public IndexingPressureStats(long totalCombinedCoordinatingAndPrimaryBytes, long totalCoordinatingBytes, long totalPrimaryBytes,
-            long totalReplicaBytes, long currentCombinedCoordinatingAndPrimaryBytes, long currentCoordinatingBytes,
-            long currentPrimaryBytes, long currentReplicaBytes, long coordinatingRejections, long primaryRejections, long replicaRejections,
-            long memoryLimit) {
+                                 long totalReplicaBytes, long currentCombinedCoordinatingAndPrimaryBytes, long currentCoordinatingBytes,
+                                 long currentPrimaryBytes, long currentReplicaBytes, long coordinatingRejections, long primaryRejections,
+                                 long replicaRejections, long memoryLimit) {
         this.totalCombinedCoordinatingAndPrimaryBytes = totalCombinedCoordinatingAndPrimaryBytes;
         this.totalCoordinatingBytes = totalCoordinatingBytes;
         this.totalPrimaryBytes = totalPrimaryBytes;
@@ -192,3 +193,4 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
         return builder.endObject();
     }
 }
+

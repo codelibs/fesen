@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.io.Reader;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.codelibs.fesen.common.util.CollectionUtils;
+
+import java.io.Reader;
 
 public final class CustomAnalyzer extends Analyzer implements AnalyzerComponentsProvider {
 
@@ -33,12 +33,13 @@ public final class CustomAnalyzer extends Analyzer implements AnalyzerComponents
     private final int offsetGap;
     private final AnalysisMode analysisMode;
 
-    public CustomAnalyzer(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters, TokenFilterFactory[] tokenFilters) {
+    public CustomAnalyzer(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters,
+            TokenFilterFactory[] tokenFilters) {
         this(tokenizerFactory, charFilters, tokenFilters, 0, -1);
     }
 
-    public CustomAnalyzer(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters, TokenFilterFactory[] tokenFilters,
-            int positionIncrementGap, int offsetGap) {
+    public CustomAnalyzer(TokenizerFactory tokenizerFactory, CharFilterFactory[] charFilters,
+            TokenFilterFactory[] tokenFilters, int positionIncrementGap, int offsetGap) {
         this.components = new AnalyzerComponents(tokenizerFactory, charFilters, tokenFilters);
         this.positionIncrementGap = positionIncrementGap;
         this.offsetGap = offsetGap;

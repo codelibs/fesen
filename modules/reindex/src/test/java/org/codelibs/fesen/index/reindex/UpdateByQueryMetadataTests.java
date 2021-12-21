@@ -21,10 +21,14 @@ package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.TransportUpdateByQueryAction;
+import org.codelibs.fesen.index.reindex.UpdateByQueryRequest;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.Hit;
 
 public class UpdateByQueryMetadataTests
-        extends AbstractAsyncBulkByScrollActionMetadataTestCase<UpdateByQueryRequest, BulkByScrollResponse> {
+    extends AbstractAsyncBulkByScrollActionMetadataTestCase<UpdateByQueryRequest, BulkByScrollResponse> {
 
     public void testRoutingIsCopied() {
         IndexRequest index = new IndexRequest();
@@ -45,12 +49,12 @@ public class UpdateByQueryMetadataTests
     private class TestAction extends TransportUpdateByQueryAction.AsyncIndexBySearchAction {
         TestAction() {
             super(UpdateByQueryMetadataTests.this.task, UpdateByQueryMetadataTests.this.logger, null,
-                    UpdateByQueryMetadataTests.this.threadPool, null, request(), ClusterState.EMPTY_STATE, listener());
+                UpdateByQueryMetadataTests.this.threadPool, null, request(), ClusterState.EMPTY_STATE, listener());
         }
 
         @Override
         public AbstractAsyncBulkByScrollAction.RequestWrapper<?> copyMetadata(AbstractAsyncBulkByScrollAction.RequestWrapper<?> request,
-                Hit doc) {
+                                                                              Hit doc) {
             return super.copyMetadata(request, doc);
         }
     }

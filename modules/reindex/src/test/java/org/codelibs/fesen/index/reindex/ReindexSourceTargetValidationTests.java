@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyMap;
-import static org.hamcrest.Matchers.containsString;
-
-import java.util.HashMap;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.index.IndexRequest;
@@ -41,8 +36,15 @@ import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.reindex.ReindexValidator;
+import org.codelibs.fesen.index.reindex.RemoteInfo;
 import org.codelibs.fesen.indices.SystemIndices;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.util.HashMap;
+
+import static java.util.Collections.emptyMap;
+import static org.hamcrest.Matchers.containsString;
 
 /**
  * Tests source and target index validation of reindex. Mostly that means testing that indexing from an index back into itself fails the
@@ -52,16 +54,21 @@ import org.codelibs.fesen.test.ESTestCase;
  */
 public class ReindexSourceTargetValidationTests extends ESTestCase {
     private static final ClusterState STATE = ClusterState.builder(new ClusterName("test")).metadata(Metadata.builder()
-            .put(index("target", "target_alias", "target_multi"), true).put(index("target2", "target_multi"), true)
-            .put(index("target_with_write_index", true, "target_multi_with_write_index"), true)
-            .put(index("target2_without_write_index", "target_multi_with_write_index"), true)
-            .put(index("qux", false, "target_alias_with_write_index_disabled"), true).put(index("foo"), true).put(index("bar"), true)
-            .put(index("baz"), true).put(index("source", "source_multi"), true).put(index("source2", "source_multi"), true)).build();
+                .put(index("target", "target_alias", "target_multi"), true)
+                .put(index("target2", "target_multi"), true)
+                .put(index("target_with_write_index", true, "target_multi_with_write_index"), true)
+                .put(index("target2_without_write_index", "target_multi_with_write_index"), true)
+                .put(index("qux", false, "target_alias_with_write_index_disabled"), true)
+                .put(index("foo"), true)
+                .put(index("bar"), true)
+                .put(index("baz"), true)
+                .put(index("source", "source_multi"), true)
+                .put(index("source2", "source_multi"), true)).build();
     private static final IndexNameExpressionResolver INDEX_NAME_EXPRESSION_RESOLVER =
-            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY));
-    private static final AutoCreateIndex AUTO_CREATE_INDEX =
-            new AutoCreateIndex(Settings.EMPTY, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS),
-                    INDEX_NAME_EXPRESSION_RESOLVER, new SystemIndices(new HashMap<>()));
+        new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY));
+    private static final AutoCreateIndex AUTO_CREATE_INDEX = new AutoCreateIndex(Settings.EMPTY,
+            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), INDEX_NAME_EXPRESSION_RESOLVER,
+            new SystemIndices(new HashMap<>()));
 
     private final BytesReference query = new BytesArray("{ \"foo\" : \"bar\" }");
 
@@ -88,17 +95,16 @@ public class ReindexSourceTargetValidationTests extends ESTestCase {
 
     public void testTargetIsAliasToMultipleIndicesWithoutWriteAlias() {
         Exception e = expectThrows(IllegalArgumentException.class, () -> succeeds("target_multi", "foo"));
-        assertThat(e.getMessage(),
-                containsString("no write index is defined for alias [target_multi]. The write index may be explicitly "
-                        + "disabled using is_write_index=false or the alias points to multiple indices without one being designated as a "
-                        + "write index"));
+        assertThat(e.getMessage(), containsString("no write index is defined for alias [target_multi]. The write index may be explicitly " +
+                "disabled using is_write_index=false or the alias points to multiple indices without one being designated as a " +
+                "write index"));
     }
 
     public void testTargetIsAliasWithWriteIndexDisabled() {
         Exception e = expectThrows(IllegalArgumentException.class, () -> succeeds("target_alias_with_write_index_disabled", "foo"));
-        assertThat(e.getMessage(), containsString("no write index is defined for alias [target_alias_with_write_index_disabled]. "
-                + "The write index may be explicitly disabled using is_write_index=false or the alias points to multiple indices without one "
-                + "being designated as a write index"));
+        assertThat(e.getMessage(), containsString("no write index is defined for alias [target_alias_with_write_index_disabled]. " +
+            "The write index may be explicitly disabled using is_write_index=false or the alias points to multiple indices without one " +
+            "being designated as a write index"));
         succeeds("qux", "foo"); // writing directly into the index of which this is the alias works though
     }
 
@@ -138,8 +144,10 @@ public class ReindexSourceTargetValidationTests extends ESTestCase {
 
     private static IndexMetadata index(String name, @Nullable Boolean writeIndex, String... aliases) {
         IndexMetadata.Builder builder = IndexMetadata.builder(name).settings(Settings.builder()
-                .put("index.version.created", Version.CURRENT.id).put("index.number_of_shards", 1).put("index.number_of_replicas", 1));
-        for (String alias : aliases) {
+                .put("index.version.created", Version.CURRENT.id)
+                .put("index.number_of_shards", 1)
+                .put("index.number_of_replicas", 1));
+        for (String alias: aliases) {
             builder.putAlias(AliasMetadata.builder(alias).writeIndex(writeIndex).build());
         }
         return builder.build();

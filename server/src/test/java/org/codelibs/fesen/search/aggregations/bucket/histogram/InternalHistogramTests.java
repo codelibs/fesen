@@ -64,7 +64,7 @@ public class InternalHistogramTests extends InternalMultiBucketAggregationTestCa
             //it's ok if minBound and maxBound are outside the range of the generated buckets, that will just mean that
             //empty buckets won't be added before the first bucket and/or after the last one
             int minBound = randomInt(50) - 30;
-            int maxBound = randomNumberOfBuckets() * interval + randomIntBetween(0, 10);
+            int maxBound =  randomNumberOfBuckets() * interval + randomIntBetween(0, 10);
             emptyBucketInfo = new InternalHistogram.EmptyBucketInfo(interval, offset, minBound, maxBound, InternalAggregations.EMPTY);
         }
     }
@@ -145,7 +145,8 @@ public class InternalHistogramTests extends InternalMultiBucketAggregationTestCa
 
         Map<Double, Long> actualCounts = new TreeMap<>();
         for (Histogram.Bucket bucket : reduced.getBuckets()) {
-            actualCounts.compute((Double) bucket.getKey(), (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
+            actualCounts.compute((Double) bucket.getKey(),
+                    (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
         }
         assertEquals(expectedCounts, actualCounts);
     }

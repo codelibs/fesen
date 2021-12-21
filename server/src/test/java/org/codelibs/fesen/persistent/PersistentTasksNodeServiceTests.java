@@ -111,22 +111,21 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
 
     public void testStartTask() {
         PersistentTasksService persistentTasksService = mock(PersistentTasksService.class);
-        @SuppressWarnings("unchecked")
-        PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
+        @SuppressWarnings("unchecked") PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
         when(action.getExecutor()).thenReturn(ThreadPool.Names.SAME);
         when(action.getTaskName()).thenReturn(TestPersistentTasksExecutor.NAME);
         int nonLocalNodesCount = randomInt(10);
         // need to account for 5 original tasks on each node and their relocations
         for (int i = 0; i < (nonLocalNodesCount + 1) * 10; i++) {
             TaskId parentId = new TaskId("cluster", i);
-            when(action.createTask(anyLong(), anyString(), anyString(), eq(parentId), any(), any()))
-                    .thenReturn(new TestPersistentTasksPlugin.TestTask(i, "persistent", "test", "", parentId, Collections.emptyMap()));
+            when(action.createTask(anyLong(), anyString(), anyString(), eq(parentId), any(), any())).thenReturn(
+                    new TestPersistentTasksPlugin.TestTask(i, "persistent", "test", "", parentId, Collections.emptyMap()));
         }
         PersistentTasksExecutorRegistry registry = new PersistentTasksExecutorRegistry(Collections.singletonList(action));
 
         MockExecutor executor = new MockExecutor();
-        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService, registry,
-                new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
+        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService,
+                registry, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
 
         ClusterState state = createInitialClusterState(nonLocalNodesCount, Settings.EMPTY);
 
@@ -211,8 +210,7 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
 
     public void testParamsStatusAndNodeTaskAreDelegated() throws Exception {
         PersistentTasksService persistentTasksService = mock(PersistentTasksService.class);
-        @SuppressWarnings("unchecked")
-        PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
+        @SuppressWarnings("unchecked") PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
         when(action.getExecutor()).thenReturn(ThreadPool.Names.SAME);
         when(action.getTaskName()).thenReturn(TestPersistentTasksExecutor.NAME);
         TaskId parentId = new TaskId("cluster", 1);
@@ -222,8 +220,8 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         PersistentTasksExecutorRegistry registry = new PersistentTasksExecutorRegistry(Collections.singletonList(action));
 
         MockExecutor executor = new MockExecutor();
-        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService, registry,
-                new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
+        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService,
+                registry, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
 
         ClusterState state = createInitialClusterState(1, Settings.EMPTY);
 
@@ -258,23 +256,24 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
             }
 
             @Override
-            public void sendCompletionRequest(final String taskId, final long taskAllocationId, final Exception taskFailure,
-                    final ActionListener<PersistentTask<?>> listener) {
+            public void sendCompletionRequest(final String taskId, final long taskAllocationId,
+                                              final Exception taskFailure, final ActionListener<PersistentTask<?>> listener) {
                 fail("Shouldn't be called during Cluster State cancellation");
             }
         };
-        @SuppressWarnings("unchecked")
-        PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
+        @SuppressWarnings("unchecked") PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
         when(action.getExecutor()).thenReturn(ThreadPool.Names.SAME);
         when(action.getTaskName()).thenReturn("test");
-        when(action.createTask(anyLong(), anyString(), anyString(), any(), any(), any())).thenReturn(
-                new TestPersistentTasksPlugin.TestTask(1, "persistent", "test", "", new TaskId("cluster", 1), Collections.emptyMap()));
+        when(action.createTask(anyLong(), anyString(), anyString(), any(), any(), any()))
+                .thenReturn(new TestPersistentTasksPlugin.TestTask(1, "persistent", "test", "", new TaskId("cluster", 1),
+                        Collections.emptyMap()));
         PersistentTasksExecutorRegistry registry = new PersistentTasksExecutorRegistry(Collections.singletonList(action));
 
         int nonLocalNodesCount = randomInt(10);
         MockExecutor executor = new MockExecutor();
         TaskManager taskManager = new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet());
-        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService, registry, taskManager, executor);
+        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService,
+                registry, taskManager, executor);
 
         ClusterState state = createInitialClusterState(nonLocalNodesCount, Settings.EMPTY);
 
@@ -286,7 +285,7 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
 
         // Check the task is know to the task manager
         assertThat(taskManager.getTasks().size(), equalTo(1));
-        AllocatedPersistentTask runningTask = (AllocatedPersistentTask) taskManager.getTasks().values().iterator().next();
+        AllocatedPersistentTask runningTask = (AllocatedPersistentTask)taskManager.getTasks().values().iterator().next();
         String persistentId = runningTask.getPersistentTaskId();
         long localId = runningTask.getId();
         // Make sure it returns correct status
@@ -306,11 +305,12 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         assertThat(taskManager.getTasks().size(), equalTo(1));
         assertThat(taskManager.getTasks().values().iterator().next().getStatus().toString(), equalTo("{\"state\":\"PENDING_CANCEL\"}"));
 
+
         // That should trigger cancellation request
         assertThat(capturedTaskId.get(), equalTo(localId));
         // Notify successful cancellation
-        capturedListener.get()
-                .onResponse(new CancelTasksResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
+        capturedListener.get().onResponse(
+            new CancelTasksResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
 
         // finish or fail task
         if (randomBoolean()) {
@@ -336,7 +336,7 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         PersistentTasksService persistentTasksService = new PersistentTasksService(null, null, mockClient) {
             @Override
             public void sendCompletionRequest(String taskId, long taskAllocationId, Exception taskFailure,
-                    ActionListener<PersistentTask<?>> listener) {
+                                              ActionListener<PersistentTask<?>> listener) {
                 assertThat(taskFailure, instanceOf(RuntimeException.class));
                 assertThat(taskFailure.getMessage(), equalTo("Something went wrong"));
                 listener.onResponse(mock(PersistentTask.class));
@@ -344,25 +344,24 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
             }
         };
 
-        @SuppressWarnings("unchecked")
-        PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
+        @SuppressWarnings("unchecked") PersistentTasksExecutor<TestParams> action = mock(PersistentTasksExecutor.class);
         when(action.getExecutor()).thenReturn(ThreadPool.Names.SAME);
         when(action.getTaskName()).thenReturn(TestPersistentTasksExecutor.NAME);
         when(action.createTask(anyLong(), anyString(), anyString(), any(), any(), any()))
-                .thenThrow(new RuntimeException("Something went wrong"));
+            .thenThrow(new RuntimeException("Something went wrong"));
 
         PersistentTasksExecutorRegistry registry = new PersistentTasksExecutorRegistry(Collections.singletonList(action));
 
         MockExecutor executor = new MockExecutor();
-        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService, registry,
-                new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
+        PersistentTasksNodeService coordinator = new PersistentTasksNodeService(persistentTasksService,
+            registry, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet()), executor);
 
         ClusterState state = createInitialClusterState(0, Settings.EMPTY);
 
         PersistentTasksCustomMetadata.Builder tasks = PersistentTasksCustomMetadata.builder();
 
         tasks.addTask(UUIDs.base64UUID(), TestPersistentTasksExecutor.NAME, new TestParams("this_param"),
-                new Assignment("this_node", "test assignment on this node"));
+            new Assignment("this_node", "test assignment on this node"));
 
         Metadata.Builder metadata = Metadata.builder(state.metadata());
         metadata.putCustom(PersistentTasksCustomMetadata.TYPE, tasks.build());
@@ -376,7 +375,8 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
-    private <Params extends PersistentTaskParams> ClusterState addTask(ClusterState state, String action, Params params, String node) {
+    private <Params extends PersistentTaskParams> ClusterState addTask(ClusterState state, String action, Params params,
+                                                                       String node) {
         PersistentTasksCustomMetadata.Builder builder =
                 PersistentTasksCustomMetadata.builder(state.getMetadata().custom(PersistentTasksCustomMetadata.TYPE));
         return ClusterState.builder(state).metadata(Metadata.builder(state.metadata()).putCustom(PersistentTasksCustomMetadata.TYPE,
@@ -395,9 +395,8 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         PersistentTasksCustomMetadata.Builder builder =
                 PersistentTasksCustomMetadata.builder(state.getMetadata().custom(PersistentTasksCustomMetadata.TYPE));
         assertTrue(builder.hasTask(taskId));
-        return ClusterState.builder(state).metadata(
-                Metadata.builder(state.metadata()).putCustom(PersistentTasksCustomMetadata.TYPE, builder.removeTask(taskId).build()))
-                .build();
+        return ClusterState.builder(state).metadata(Metadata.builder(state.metadata()).putCustom(PersistentTasksCustomMetadata.TYPE,
+                builder.removeTask(taskId).build())).build();
     }
 
     private class Execution {
@@ -421,8 +420,10 @@ public class PersistentTasksNodeServiceTests extends ESTestCase {
         }
 
         @Override
-        public <Params extends PersistentTaskParams> void executeTask(final Params params, final PersistentTaskState state,
-                final AllocatedPersistentTask task, final PersistentTasksExecutor<Params> executor) {
+        public <Params extends PersistentTaskParams> void executeTask(final Params params,
+                                                                      final PersistentTaskState state,
+                                                                      final AllocatedPersistentTask task,
+                                                                      final PersistentTasksExecutor<Params> executor) {
             executions.add(new Execution(params, task, state));
         }
 

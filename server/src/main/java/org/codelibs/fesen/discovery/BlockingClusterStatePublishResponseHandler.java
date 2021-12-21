@@ -18,14 +18,15 @@
  */
 package org.codelibs.fesen.discovery;
 
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
+import org.codelibs.fesen.core.TimeValue;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
-import org.codelibs.fesen.core.TimeValue;
 
 /**
  * Handles responses obtained when publishing a new cluster state from master to all non master nodes.

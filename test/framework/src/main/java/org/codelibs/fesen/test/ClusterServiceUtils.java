@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.test;
 
-import static junit.framework.TestCase.fail;
-
-import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.core.util.Throwables;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
@@ -37,20 +31,26 @@ import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.service.ClusterApplier;
-import org.codelibs.fesen.cluster.service.ClusterApplier.ClusterApplyListener;
 import org.codelibs.fesen.cluster.service.ClusterApplierService;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.cluster.service.MasterService;
+import org.codelibs.fesen.cluster.service.ClusterApplier.ClusterApplyListener;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static junit.framework.TestCase.fail;
+
 public class ClusterServiceUtils {
 
     public static MasterService createMasterService(ThreadPool threadPool, ClusterState initialClusterState) {
         MasterService masterService = new MasterService(Settings.builder().put(Node.NODE_NAME_SETTING.getKey(), "test_master_node").build(),
-                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), threadPool);
+            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), threadPool);
         AtomicReference<ClusterState> clusterStateRef = new AtomicReference<>(initialClusterState);
         masterService.setClusterStatePublisher((event, publishListener, ackListener) -> {
             clusterStateRef.set(event.state());
@@ -63,8 +63,11 @@ public class ClusterServiceUtils {
 
     public static MasterService createMasterService(ThreadPool threadPool, DiscoveryNode localNode) {
         ClusterState initialClusterState = ClusterState.builder(new ClusterName(ClusterServiceUtils.class.getSimpleName()))
-                .nodes(DiscoveryNodes.builder().add(localNode).localNodeId(localNode.getId()).masterNodeId(localNode.getId()))
-                .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build();
+            .nodes(DiscoveryNodes.builder()
+                .add(localNode)
+                .localNodeId(localNode.getId())
+                .masterNodeId(localNode.getId()))
+            .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build();
         return createMasterService(threadPool, initialClusterState);
     }
 
@@ -72,18 +75,18 @@ public class ClusterServiceUtils {
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<Exception> exception = new AtomicReference<>();
         executor.onNewClusterState("test setting state",
-                () -> ClusterState.builder(clusterState).version(clusterState.version() + 1).build(), new ClusterApplyListener() {
-                    @Override
-                    public void onSuccess(String source) {
-                        latch.countDown();
-                    }
+            () -> ClusterState.builder(clusterState).version(clusterState.version() + 1).build(), new ClusterApplyListener() {
+                @Override
+                public void onSuccess(String source) {
+                    latch.countDown();
+                }
 
-                    @Override
-                    public void onFailure(String source, Exception e) {
-                        exception.set(e);
-                        latch.countDown();
-                    }
-                });
+                @Override
+                public void onFailure(String source, Exception e) {
+                    exception.set(e);
+                    latch.countDown();
+                }
+            });
         try {
             latch.await();
             if (exception.get() != null) {
@@ -131,14 +134,21 @@ public class ClusterServiceUtils {
     }
 
     public static ClusterService createClusterService(ThreadPool threadPool, DiscoveryNode localNode, ClusterSettings clusterSettings) {
-        Settings settings = Settings.builder().put("node.name", "test").put("cluster.name", "ClusterServiceTests").build();
+        Settings settings = Settings.builder()
+                .put("node.name", "test")
+                .put("cluster.name", "ClusterServiceTests")
+                .build();
         ClusterService clusterService = new ClusterService(settings, clusterSettings, threadPool);
         clusterService.setNodeConnectionsService(createNoOpNodeConnectionsService());
         ClusterState initialClusterState = ClusterState.builder(new ClusterName(ClusterServiceUtils.class.getSimpleName()))
-                .nodes(DiscoveryNodes.builder().add(localNode).localNodeId(localNode.getId()).masterNodeId(localNode.getId()))
-                .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build();
+            .nodes(DiscoveryNodes.builder()
+                .add(localNode)
+                .localNodeId(localNode.getId())
+                .masterNodeId(localNode.getId()))
+            .blocks(ClusterBlocks.EMPTY_CLUSTER_BLOCK).build();
         clusterService.getClusterApplierService().setInitialState(initialClusterState);
-        clusterService.getMasterService().setClusterStatePublisher(createClusterStatePublisher(clusterService.getClusterApplierService()));
+        clusterService.getMasterService().setClusterStatePublisher(
+            createClusterStatePublisher(clusterService.getClusterApplierService()));
         clusterService.getMasterService().setClusterStateSupplier(clusterService.getClusterApplierService()::state);
         clusterService.start();
         return clusterService;
@@ -160,8 +170,9 @@ public class ClusterServiceUtils {
     }
 
     public static ClusterStatePublisher createClusterStatePublisher(ClusterApplier clusterApplier) {
-        return (event, publishListener, ackListener) -> clusterApplier.onNewClusterState("mock_publish_to_self[" + event.source() + "]",
-                () -> event.state(), new ClusterApplyListener() {
+        return (event, publishListener, ackListener) ->
+            clusterApplier.onNewClusterState("mock_publish_to_self[" + event.source() + "]", () -> event.state(),
+                new ClusterApplyListener() {
                     @Override
                     public void onSuccess(String source) {
                         publishListener.onResponse(null);
@@ -171,7 +182,8 @@ public class ClusterServiceUtils {
                     public void onFailure(String source, Exception e) {
                         publishListener.onFailure(e);
                     }
-                });
+                }
+        );
     }
 
     public static ClusterService createClusterService(ClusterState initialState, ThreadPool threadPool) {

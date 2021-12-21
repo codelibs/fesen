@@ -45,8 +45,14 @@ public class BinaryDVFieldDataTests extends AbstractFieldDataTestCase {
     }
 
     public void testDocValue() throws Exception {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("test").startObject("properties")
-                .startObject("field").field("type", "binary").field("doc_values", true).endObject().endObject().endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("test")
+                .startObject("properties")
+                .startObject("field")
+                .field("type", "binary")
+                .field("doc_values", true)
+                .endObject()
+                .endObject()
+                .endObject().endObject());
 
         final DocumentMapper mapper = mapperService.documentMapperParser().parse("test", new CompressedXContent(mapping));
 

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -34,6 +29,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.index.rankeval.RatedDocument.DocumentKey;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Result of the evaluation metric calculation on one particular query alone.
@@ -126,8 +126,8 @@ public class EvalQueryQuality implements ToXContentFragment, Writeable {
     private static final ParseField UNRATED_DOCS_FIELD = new ParseField("unrated_docs");
     private static final ParseField HITS_FIELD = new ParseField("hits");
     private static final ParseField METRIC_DETAILS_FIELD = new ParseField("metric_details");
-    private static final ObjectParser<ParsedEvalQueryQuality, Void> PARSER =
-            new ObjectParser<>("eval_query_quality", true, ParsedEvalQueryQuality::new);
+    private static final ObjectParser<ParsedEvalQueryQuality, Void> PARSER = new ObjectParser<>("eval_query_quality",
+            true, ParsedEvalQueryQuality::new);
 
     private static class ParsedEvalQueryQuality {
         double evaluationResult;
@@ -137,7 +137,8 @@ public class EvalQueryQuality implements ToXContentFragment, Writeable {
 
     static {
         PARSER.declareDouble((obj, value) -> obj.evaluationResult = value, METRIC_SCORE_FIELD);
-        PARSER.declareObject((obj, value) -> obj.optionalMetricDetails = value, (p, c) -> parseMetricDetail(p), METRIC_DETAILS_FIELD);
+        PARSER.declareObject((obj, value) -> obj.optionalMetricDetails = value, (p, c) -> parseMetricDetail(p),
+                METRIC_DETAILS_FIELD);
         PARSER.declareObjectArray((obj, list) -> obj.ratedHits = list, (p, c) -> RatedSearchHit.parse(p), HITS_FIELD);
     }
 
@@ -162,8 +163,10 @@ public class EvalQueryQuality implements ToXContentFragment, Writeable {
             return false;
         }
         EvalQueryQuality other = (EvalQueryQuality) obj;
-        return Objects.equals(queryId, other.queryId) && Objects.equals(metricScore, other.metricScore)
-                && Objects.equals(ratedHits, other.ratedHits) && Objects.equals(optionalMetricDetails, other.optionalMetricDetails);
+        return Objects.equals(queryId, other.queryId) &&
+                Objects.equals(metricScore, other.metricScore) &&
+                Objects.equals(ratedHits, other.ratedHits) &&
+                Objects.equals(optionalMetricDetails, other.optionalMetricDetails);
     }
 
     @Override

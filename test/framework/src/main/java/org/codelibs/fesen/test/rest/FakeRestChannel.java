@@ -47,7 +47,7 @@ public final class FakeRestChannel extends AbstractRestChannel {
         }
         latch.countDown();
     }
-
+    
     public RestResponse capturedResponse() {
         return capturedRestResponse;
     }

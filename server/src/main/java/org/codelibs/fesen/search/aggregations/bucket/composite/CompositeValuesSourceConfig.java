@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.util.function.LongConsumer;
-
 import org.apache.lucene.index.IndexReader;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
@@ -29,12 +27,19 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.sort.SortOrder;
 
+import java.util.function.LongConsumer;
+
 public class CompositeValuesSourceConfig {
 
     @FunctionalInterface
     public interface SingleDimensionValuesSourceProvider {
-        SingleDimensionValuesSource<?> createValuesSource(BigArrays bigArrays, IndexReader reader, int size,
-                LongConsumer addRequestCircuitBreakerBytes, CompositeValuesSourceConfig config);
+        SingleDimensionValuesSource<?> createValuesSource(
+            BigArrays bigArrays,
+            IndexReader reader,
+            int size,
+            LongConsumer addRequestCircuitBreakerBytes,
+            CompositeValuesSourceConfig config
+        );
     }
 
     private final String name;
@@ -58,8 +63,16 @@ public class CompositeValuesSourceConfig {
      * @param missingBucket If <code>true</code> an explicit <code>null</code> bucket will represent documents with missing values.
      * @param hasScript <code>true</code> if the source contains a script that can change the value.
      */
-    CompositeValuesSourceConfig(String name, @Nullable MappedFieldType fieldType, ValuesSource vs, DocValueFormat format, SortOrder order,
-            boolean missingBucket, boolean hasScript, SingleDimensionValuesSourceProvider singleDimensionValuesSourceProvider) {
+    CompositeValuesSourceConfig(
+        String name,
+        @Nullable MappedFieldType fieldType,
+        ValuesSource vs,
+        DocValueFormat format,
+        SortOrder order,
+        boolean missingBucket,
+        boolean hasScript,
+        SingleDimensionValuesSourceProvider singleDimensionValuesSourceProvider
+    ) {
         this.name = name;
         this.fieldType = fieldType;
         this.vs = vs;
@@ -121,8 +134,12 @@ public class CompositeValuesSourceConfig {
         return reverseMul;
     }
 
-    SingleDimensionValuesSource<?> createValuesSource(BigArrays bigArrays, IndexReader reader, int size,
-            LongConsumer addRequestCircuitBreakerBytes) {
+    SingleDimensionValuesSource<?> createValuesSource(
+        BigArrays bigArrays,
+        IndexReader reader,
+        int size,
+        LongConsumer addRequestCircuitBreakerBytes
+    ) {
         return this.singleDimensionValuesSourceProvider.createValuesSource(bigArrays, reader, size, addRequestCircuitBreakerBytes, this);
     }
 }

@@ -19,27 +19,8 @@
 
 package org.codelibs.fesen.test;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import com.carrotsearch.randomizedtesting.RandomizedTest;
+import com.carrotsearch.randomizedtesting.SeedUtils;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.util.Accountable;
@@ -100,8 +81,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.carrotsearch.randomizedtesting.RandomizedTest;
-import com.carrotsearch.randomizedtesting.SeedUtils;
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractBuilderTestCase extends ESTestCase {
 
@@ -121,12 +121,13 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
     protected static final String GEO_POINT_FIELD_NAME = "mapped_geo_point";
     protected static final String GEO_POINT_ALIAS_FIELD_NAME = "mapped_geo_point_alias";
     protected static final String GEO_SHAPE_FIELD_NAME = "mapped_geo_shape";
-    protected static final String[] MAPPED_FIELD_NAMES = new String[] { TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME, INT_FIELD_NAME,
-            INT_RANGE_FIELD_NAME, DOUBLE_FIELD_NAME, BOOLEAN_FIELD_NAME, DATE_NANOS_FIELD_NAME, DATE_FIELD_NAME, DATE_RANGE_FIELD_NAME,
-            OBJECT_FIELD_NAME, GEO_POINT_FIELD_NAME, GEO_POINT_ALIAS_FIELD_NAME, GEO_SHAPE_FIELD_NAME };
-    protected static final String[] MAPPED_LEAF_FIELD_NAMES = new String[] { TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME, INT_FIELD_NAME,
-            INT_RANGE_FIELD_NAME, DOUBLE_FIELD_NAME, BOOLEAN_FIELD_NAME, DATE_NANOS_FIELD_NAME, DATE_FIELD_NAME, DATE_RANGE_FIELD_NAME,
-            GEO_POINT_FIELD_NAME, GEO_POINT_ALIAS_FIELD_NAME };
+    protected static final String[] MAPPED_FIELD_NAMES = new String[]{TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME,
+        INT_FIELD_NAME, INT_RANGE_FIELD_NAME, DOUBLE_FIELD_NAME, BOOLEAN_FIELD_NAME, DATE_NANOS_FIELD_NAME, DATE_FIELD_NAME,
+        DATE_RANGE_FIELD_NAME, OBJECT_FIELD_NAME, GEO_POINT_FIELD_NAME, GEO_POINT_ALIAS_FIELD_NAME,
+        GEO_SHAPE_FIELD_NAME};
+    protected static final String[] MAPPED_LEAF_FIELD_NAMES = new String[]{TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME,
+        INT_FIELD_NAME, INT_RANGE_FIELD_NAME, DOUBLE_FIELD_NAME, BOOLEAN_FIELD_NAME, DATE_NANOS_FIELD_NAME,
+        DATE_FIELD_NAME, DATE_RANGE_FIELD_NAME,  GEO_POINT_FIELD_NAME, GEO_POINT_ALIAS_FIELD_NAME};
 
     private static final Map<String, String> ALIAS_TO_CONCRETE_FIELD_NAME = new HashMap<>();
     static {
@@ -157,8 +158,10 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
 
     @BeforeClass
     public static void beforeClass() {
-        nodeSettings = Settings.builder().put("node.name", AbstractQueryTestCase.class.toString())
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        nodeSettings = Settings.builder()
+            .put("node.name", AbstractQueryTestCase.class.toString())
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+            .build();
 
         index = new Index(randomAlphaOfLengthBetween(1, 10), randomAlphaOfLength(10));
         nowInMillis = randomNonNegativeLong();
@@ -184,9 +187,11 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
 
     protected Settings createTestIndexSettings() {
         // we have to prefer CURRENT since with the range of versions we support it's rather unlikely to get the current actually.
-        Version indexVersionCreated =
-                randomBoolean() ? Version.CURRENT : VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT);
-        return Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, indexVersionCreated).build();
+        Version indexVersionCreated = randomBoolean() ? Version.CURRENT
+                : VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.CURRENT);
+        return Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, indexVersionCreated)
+            .build();
     }
 
     protected static IndexSettings indexSettings() {
@@ -277,7 +282,7 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method.equals(Client.class.getMethod("get", GetRequest.class, ActionListener.class))) {
+            if (method.equals(Client.class.getMethod("get", GetRequest.class, ActionListener.class))){
                 GetResponse getResponse = delegate.executeGet((GetRequest) args[0]);
                 ActionListener<GetResponse> listener = (ActionListener<GetResponse>) args[1];
                 if (randomBoolean()) {
@@ -286,7 +291,8 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
                     new Thread(() -> listener.onResponse(getResponse)).start();
                 }
                 return null;
-            } else if (method.equals(Client.class.getMethod("multiTermVectors", MultiTermVectorsRequest.class))) {
+            } else if (method.equals(Client.class.getMethod
+                ("multiTermVectors", MultiTermVectorsRequest.class))) {
                 return new PlainActionFuture<MultiTermVectorsResponse>() {
                     @Override
                     public MultiTermVectorsResponse get() throws InterruptedException, ExecutionException {
@@ -315,16 +321,24 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
         private final Client client;
         private final long nowInMillis;
 
-        ServiceHolder(Settings nodeSettings, Settings indexSettings, Collection<Class<? extends Plugin>> plugins, long nowInMillis,
-                AbstractBuilderTestCase testCase, boolean registerType) throws IOException {
+        ServiceHolder(Settings nodeSettings,
+                        Settings indexSettings,
+                        Collection<Class<? extends Plugin>> plugins,
+                        long nowInMillis,
+                        AbstractBuilderTestCase testCase,
+                        boolean registerType) throws IOException {
             this.nowInMillis = nowInMillis;
-            Environment env = InternalSettingsPreparer.prepareEnvironment(nodeSettings, emptyMap(), null, () -> {
-                throw new AssertionError("node.name must be set");
-            });
+            Environment env = InternalSettingsPreparer.prepareEnvironment(nodeSettings, emptyMap(),
+                    null, () -> {
+                        throw new AssertionError("node.name must be set");
+                    });
             PluginsService pluginsService;
             pluginsService = new PluginsService(nodeSettings, null, env.modulesFile(), env.pluginsFile(), plugins);
 
-            client = (Client) Proxy.newProxyInstance(Client.class.getClassLoader(), new Class[] { Client.class }, clientInvocationHandler);
+            client = (Client) Proxy.newProxyInstance(
+                    Client.class.getClassLoader(),
+                    new Class[]{Client.class},
+                    clientInvocationHandler);
             ScriptModule scriptModule = createScriptModule(pluginsService.filterPlugins(ScriptPlugin.class));
             List<Setting<?>> additionalSettings = pluginsService.getPluginSettings();
             SettingsModule settingsModule =
@@ -335,8 +349,9 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
             entries.addAll(indicesModule.getNamedWriteables());
             entries.addAll(searchModule.getNamedWriteables());
             namedWriteableRegistry = new NamedWriteableRegistry(entries);
-            xContentRegistry = new NamedXContentRegistry(
-                    Stream.of(searchModule.getNamedXContents().stream()).flatMap(Function.identity()).collect(toList()));
+            xContentRegistry = new NamedXContentRegistry(Stream.of(
+                    searchModule.getNamedXContents().stream()
+                    ).flatMap(Function.identity()).collect(toList()));
             IndexScopedSettings indexScopedSettings = settingsModule.getIndexScopedSettings();
             idxSettings = IndexSettingsModule.newIndexSettings(index, indexSettings, indexScopedSettings);
             AnalysisModule analysisModule = new AnalysisModule(TestEnvironment.newEnvironment(nodeSettings), emptyList());
@@ -348,8 +363,8 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
                     () -> createShardContext(null), () -> false, null);
             IndicesFieldDataCache indicesFieldDataCache = new IndicesFieldDataCache(nodeSettings, new IndexFieldDataCache.Listener() {
             });
-            indexFieldDataService =
-                    new IndexFieldDataService(idxSettings, indicesFieldDataCache, new NoneCircuitBreakerService(), mapperService);
+            indexFieldDataService = new IndexFieldDataService(idxSettings, indicesFieldDataCache,
+                    new NoneCircuitBreakerService(), mapperService);
             bitsetFilterCache = new BitsetFilterCache(idxSettings, new BitsetFilterCache.Listener() {
                 @Override
                 public void onCache(ShardId shardId, Accountable accountable) {
@@ -364,19 +379,28 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
 
             if (registerType) {
                 mapperService.merge("_doc", new CompressedXContent(Strings.toString(PutMappingRequest.buildFromSimplifiedDef("_doc",
-                        TEXT_FIELD_NAME, "type=text", KEYWORD_FIELD_NAME, "type=keyword", TEXT_ALIAS_FIELD_NAME,
-                        "type=alias,path=" + TEXT_FIELD_NAME, INT_FIELD_NAME, "type=integer", INT_ALIAS_FIELD_NAME,
-                        "type=alias,path=" + INT_FIELD_NAME, INT_RANGE_FIELD_NAME, "type=integer_range", DOUBLE_FIELD_NAME, "type=double",
-                        BOOLEAN_FIELD_NAME, "type=boolean", DATE_NANOS_FIELD_NAME, "type=date_nanos", DATE_FIELD_NAME, "type=date",
-                        DATE_ALIAS_FIELD_NAME, "type=alias,path=" + DATE_FIELD_NAME, DATE_RANGE_FIELD_NAME, "type=date_range",
-                        OBJECT_FIELD_NAME, "type=object", GEO_POINT_FIELD_NAME, "type=geo_point", GEO_POINT_ALIAS_FIELD_NAME,
-                        "type=alias,path=" + GEO_POINT_FIELD_NAME, GEO_SHAPE_FIELD_NAME, "type=geo_shape"))),
-                        MapperService.MergeReason.MAPPING_UPDATE);
+                    TEXT_FIELD_NAME, "type=text",
+                    KEYWORD_FIELD_NAME, "type=keyword",
+                    TEXT_ALIAS_FIELD_NAME, "type=alias,path=" + TEXT_FIELD_NAME,
+                    INT_FIELD_NAME, "type=integer",
+                    INT_ALIAS_FIELD_NAME, "type=alias,path=" + INT_FIELD_NAME,
+                    INT_RANGE_FIELD_NAME, "type=integer_range",
+                    DOUBLE_FIELD_NAME, "type=double",
+                    BOOLEAN_FIELD_NAME, "type=boolean",
+                    DATE_NANOS_FIELD_NAME, "type=date_nanos",
+                    DATE_FIELD_NAME, "type=date",
+                    DATE_ALIAS_FIELD_NAME, "type=alias,path=" + DATE_FIELD_NAME,
+                    DATE_RANGE_FIELD_NAME, "type=date_range",
+                    OBJECT_FIELD_NAME, "type=object",
+                    GEO_POINT_FIELD_NAME, "type=geo_point",
+                    GEO_POINT_ALIAS_FIELD_NAME, "type=alias,path=" + GEO_POINT_FIELD_NAME,
+                    GEO_SHAPE_FIELD_NAME, "type=geo_shape"
+                ))), MapperService.MergeReason.MAPPING_UPDATE);
                 // also add mappings for two inner field in the object field
-                mapperService.merge("_doc",
-                        new CompressedXContent("{\"properties\":{\"" + OBJECT_FIELD_NAME + "\":{\"type\":\"object\"," + "\"properties\":{\""
-                                + DATE_FIELD_NAME + "\":{\"type\":\"date\"},\"" + INT_FIELD_NAME + "\":{\"type\":\"integer\"}}}}}"),
-                        MapperService.MergeReason.MAPPING_UPDATE);
+                mapperService.merge("_doc", new CompressedXContent("{\"properties\":{\"" + OBJECT_FIELD_NAME + "\":{\"type\":\"object\","
+                        + "\"properties\":{\"" + DATE_FIELD_NAME + "\":{\"type\":\"date\"},\"" +
+                        INT_FIELD_NAME + "\":{\"type\":\"integer\"}}}}}"),
+                    MapperService.MergeReason.MAPPING_UPDATE);
                 testCase.initializeAdditionalMappings(mapperService);
             }
         }
@@ -392,8 +416,8 @@ public abstract class AbstractBuilderTestCase extends ESTestCase {
 
         QueryShardContext createShardContext(IndexSearcher searcher) {
             return new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE, bitsetFilterCache,
-                    indexFieldDataService::getForField, mapperService, similarityService, scriptService, xContentRegistry,
-                    namedWriteableRegistry, this.client, searcher, () -> nowInMillis, null, indexNameMatcher(), () -> true, null);
+                indexFieldDataService::getForField, mapperService, similarityService, scriptService, xContentRegistry,
+                namedWriteableRegistry, this.client, searcher, () -> nowInMillis, null, indexNameMatcher(), () -> true, null);
         }
 
         ScriptModule createScriptModule(List<ScriptPlugin> scriptPlugins) {

@@ -80,7 +80,7 @@ public abstract class AbstractSearchTestCase extends ESTestCase {
         Supplier<List<SearchExtBuilder>> randomExtBuilders = () -> {
             Set<String> elementNames = new HashSet<>(searchExtPlugin.getSupportedElements().keySet());
             int numSearchExts = randomIntBetween(1, elementNames.size());
-            while (elementNames.size() > numSearchExts) {
+            while(elementNames.size() > numSearchExts) {
                 elementNames.remove(randomFrom(elementNames));
             }
             List<SearchExtBuilder> searchExtBuilders = new ArrayList<>();
@@ -89,8 +89,11 @@ public abstract class AbstractSearchTestCase extends ESTestCase {
             }
             return searchExtBuilders;
         };
-        return RandomSearchRequestGenerator.randomSearchSourceBuilder(HighlightBuilderTests::randomHighlighterBuilder,
-                SuggestBuilderTests::randomSuggestBuilder, QueryRescorerBuilderTests::randomRescoreBuilder, randomExtBuilders,
+        return RandomSearchRequestGenerator.randomSearchSourceBuilder(
+                HighlightBuilderTests::randomHighlighterBuilder,
+                SuggestBuilderTests::randomSuggestBuilder,
+                QueryRescorerBuilderTests::randomRescoreBuilder,
+                randomExtBuilders,
                 CollapseBuilderTests::randomCollapseBuilder);
     }
 
@@ -108,26 +111,26 @@ public abstract class AbstractSearchTestCase extends ESTestCase {
             this.supportedElements = new HashMap<>();
             for (int i = 0; i < numSearchExts; i++) {
                 switch (randomIntBetween(0, 2)) {
-                case 0:
-                    if (this.supportedElements.put(TestSearchExtBuilder1.NAME, TestSearchExtBuilder1::new) == null) {
-                        this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder1.NAME, TestSearchExtBuilder1::new,
-                                new TestSearchExtParser<>(TestSearchExtBuilder1::new)));
-                    }
-                    break;
-                case 1:
-                    if (this.supportedElements.put(TestSearchExtBuilder2.NAME, TestSearchExtBuilder2::new) == null) {
-                        this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder2.NAME, TestSearchExtBuilder2::new,
-                                new TestSearchExtParser<>(TestSearchExtBuilder2::new)));
-                    }
-                    break;
-                case 2:
-                    if (this.supportedElements.put(TestSearchExtBuilder3.NAME, TestSearchExtBuilder3::new) == null) {
-                        this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder3.NAME, TestSearchExtBuilder3::new,
-                                new TestSearchExtParser<>(TestSearchExtBuilder3::new)));
-                    }
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
+                    case 0:
+                        if (this.supportedElements.put(TestSearchExtBuilder1.NAME, TestSearchExtBuilder1::new) == null) {
+                            this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder1.NAME, TestSearchExtBuilder1::new,
+                                    new TestSearchExtParser<>(TestSearchExtBuilder1::new)));
+                        }
+                        break;
+                    case 1:
+                        if (this.supportedElements.put(TestSearchExtBuilder2.NAME, TestSearchExtBuilder2::new) == null) {
+                            this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder2.NAME, TestSearchExtBuilder2::new,
+                                    new TestSearchExtParser<>(TestSearchExtBuilder2::new)));
+                        }
+                        break;
+                    case 2:
+                        if (this.supportedElements.put(TestSearchExtBuilder3.NAME, TestSearchExtBuilder3::new) == null) {
+                            this.searchExtSpecs.add(new SearchExtSpec<>(TestSearchExtBuilder3.NAME, TestSearchExtBuilder3::new,
+                                    new TestSearchExtParser<>(TestSearchExtBuilder3::new)));
+                        }
+                        break;
+                    default:
+                        throw new UnsupportedOperationException();
                 }
             }
         }
@@ -242,7 +245,8 @@ public abstract class AbstractSearchTestCase extends ESTestCase {
                 return false;
             }
             TestSearchExtBuilder that = (TestSearchExtBuilder) o;
-            return Objects.equals(objectName, that.objectName) && Objects.equals(name, that.name);
+            return Objects.equals(objectName, that.objectName) &&
+                    Objects.equals(name, that.name);
         }
 
         @Override

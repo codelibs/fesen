@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.transport;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -33,6 +27,12 @@ import org.codelibs.fesen.common.bytes.ReleasableBytesReference;
 import org.codelibs.fesen.common.compress.CompressorFactory;
 import org.codelibs.fesen.common.recycler.Recycler;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 public class TransportDecompressor implements Closeable {
 
@@ -53,9 +53,9 @@ public class TransportDecompressor implements Closeable {
         if (hasReadHeader == false) {
             if (CompressorFactory.COMPRESSOR.isCompressed(bytesReference) == false) {
                 int maxToRead = Math.min(bytesReference.length(), 10);
-                StringBuilder sb = new StringBuilder("stream marked as compressed, but no compressor found, first [").append(maxToRead)
-                        .append("] content bytes out of [").append(bytesReference.length()).append("] readable bytes with message size [")
-                        .append(bytesReference.length()).append("] ").append("] are [");
+                StringBuilder sb = new StringBuilder("stream marked as compressed, but no compressor found, first [")
+                    .append(maxToRead).append("] content bytes out of [").append(bytesReference.length())
+                    .append("] readable bytes with message size [").append(bytesReference.length()).append("] ").append("] are [");
                 for (int i = 0; i < maxToRead; i++) {
                     sb.append(bytesReference.get(i)).append(",");
                 }

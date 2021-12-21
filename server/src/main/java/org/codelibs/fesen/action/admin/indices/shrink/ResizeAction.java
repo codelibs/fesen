@@ -19,12 +19,14 @@
 
 package org.codelibs.fesen.action.admin.indices.shrink;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionType;
 
 public class ResizeAction extends ActionType<ResizeResponse> {
 
     public static final ResizeAction INSTANCE = new ResizeAction();
     public static final String NAME = "indices:admin/resize";
+    public static final Version COMPATIBILITY_VERSION = Version.V_6_1_0; // TODO remove this once it's backported
 
     private ResizeAction() {
         super(NAME, ResizeResponse::new);

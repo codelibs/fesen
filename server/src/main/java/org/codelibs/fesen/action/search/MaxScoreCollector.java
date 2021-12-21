@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.SimpleCollector;
+
+import java.io.IOException;
 
 /**
  * A collector that computes the maximum score.

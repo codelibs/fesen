@@ -18,6 +18,9 @@
  */
 package org.codelibs.fesen.common.util.concurrent;
 
+import org.codelibs.fesen.common.Priority;
+import org.codelibs.fesen.core.TimeValue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -30,9 +33,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.core.TimeValue;
 
 /**
  * A prioritizing executor which uses a priority queue as a work queue. The jobs that will be submitted will be treated
@@ -49,7 +49,7 @@ public class PrioritizedEsThreadPoolExecutor extends EsThreadPoolExecutor {
     private final ScheduledExecutorService timer;
 
     public PrioritizedEsThreadPoolExecutor(String name, int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-            ThreadFactory threadFactory, ThreadContext contextHolder, ScheduledExecutorService timer) {
+                                    ThreadFactory threadFactory, ThreadContext contextHolder, ScheduledExecutorService timer) {
         super(name, corePoolSize, maximumPoolSize, keepAliveTime, unit, new PriorityBlockingQueue<>(), threadFactory, contextHolder);
         this.timer = timer;
     }
@@ -79,8 +79,8 @@ public class PrioritizedEsThreadPoolExecutor extends EsThreadPoolExecutor {
         long oldestCreationDateInNanos = now;
         for (Runnable queuedRunnable : getQueue()) {
             if (queuedRunnable instanceof PrioritizedRunnable) {
-                oldestCreationDateInNanos =
-                        Math.min(oldestCreationDateInNanos, ((PrioritizedRunnable) queuedRunnable).getCreationDateInNanos());
+                oldestCreationDateInNanos = Math.min(oldestCreationDateInNanos,
+                        ((PrioritizedRunnable) queuedRunnable).getCreationDateInNanos());
             }
         }
 
@@ -172,7 +172,7 @@ public class PrioritizedEsThreadPoolExecutor extends EsThreadPoolExecutor {
         if (!(callable instanceof PrioritizedCallable)) {
             callable = PrioritizedCallable.wrap(callable, Priority.NORMAL);
         }
-        return new PrioritizedFutureTask<>((PrioritizedCallable) callable, insertionOrder.incrementAndGet());
+        return new PrioritizedFutureTask<>((PrioritizedCallable)callable, insertionOrder.incrementAndGet());
     }
 
     public static class Pending {

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import java.net.InetSocketAddress;
+import io.netty.channel.Channel;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.transport.TcpServerChannel;
 
-import io.netty.channel.Channel;
+import java.net.InetSocketAddress;
 
 public class Netty4TcpServerChannel implements TcpServerChannel {
 
@@ -59,6 +59,8 @@ public class Netty4TcpServerChannel implements TcpServerChannel {
 
     @Override
     public String toString() {
-        return "Netty4TcpChannel{" + "localAddress=" + getLocalAddress() + '}';
+        return "Netty4TcpChannel{" +
+            "localAddress=" + getLocalAddress() +
+            '}';
     }
 }

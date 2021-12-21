@@ -32,8 +32,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.script.BucketAggregationSelectorScript;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 
 public class BucketSelectorPipelineAggregator extends PipelineAggregator {
@@ -79,7 +79,7 @@ public class BucketSelectorPipelineAggregator extends PipelineAggregator {
         List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = originalAgg.getBuckets();
 
         BucketAggregationSelectorScript.Factory factory =
-                reduceContext.scriptService().compile(script, BucketAggregationSelectorScript.CONTEXT);
+            reduceContext.scriptService().compile(script, BucketAggregationSelectorScript.CONTEXT);
         List<InternalMultiBucketAggregation.InternalBucket> newBuckets = new ArrayList<>();
         for (InternalMultiBucketAggregation.InternalBucket bucket : buckets) {
             Map<String, Object> vars = new HashMap<>();

@@ -59,15 +59,12 @@ public class PublishWithJoinResponse extends TransportResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof PublishWithJoinResponse))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof PublishWithJoinResponse)) return false;
 
         PublishWithJoinResponse that = (PublishWithJoinResponse) o;
 
-        if (!publishResponse.equals(that.publishResponse))
-            return false;
+        if (!publishResponse.equals(that.publishResponse)) return false;
         return optionalJoin.equals(that.optionalJoin);
     }
 
@@ -80,6 +77,9 @@ public class PublishWithJoinResponse extends TransportResponse {
 
     @Override
     public String toString() {
-        return "PublishWithJoinResponse{" + "publishResponse=" + publishResponse + ", optionalJoin=" + optionalJoin + '}';
+        return "PublishWithJoinResponse{" +
+            "publishResponse=" + publishResponse +
+            ", optionalJoin=" + optionalJoin +
+            '}';
     }
 }

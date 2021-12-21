@@ -16,8 +16,6 @@
 
 package org.codelibs.fesen.common.inject.internal;
 
-import static java.util.Collections.unmodifiableMap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,6 +31,8 @@ import org.codelibs.fesen.common.inject.PrivateBinder;
 import org.codelibs.fesen.common.inject.spi.Element;
 import org.codelibs.fesen.common.inject.spi.ElementVisitor;
 import org.codelibs.fesen.common.inject.spi.PrivateElements;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * @author jessewilson@google.com (Jesse Wilson)
@@ -145,6 +145,9 @@ public final class PrivateElementsImpl implements PrivateElements {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(PrivateElements.class).add("exposedKeys", getExposedKeys()).add("source", getSource()).toString();
+        return new ToStringBuilder(PrivateElements.class)
+                .add("exposedKeys", getExposedKeys())
+                .add("source", getSource())
+                .toString();
     }
 }

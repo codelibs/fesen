@@ -19,20 +19,28 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.FeatureField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.mapper.FieldMapper;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.ParametrizedFieldMapper;
+import org.codelibs.fesen.index.mapper.ParseContext;
+import org.codelibs.fesen.index.mapper.SourceValueFetcher;
+import org.codelibs.fesen.index.mapper.TextSearchInfo;
+import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link FieldMapper} that exposes Lucene's {@link FeatureField} as a sparse
@@ -58,7 +66,8 @@ public class RankFeaturesFieldMapper extends ParametrizedFieldMapper {
 
         @Override
         public RankFeaturesFieldMapper build(BuilderContext context) {
-            return new RankFeaturesFieldMapper(name, new RankFeaturesFieldType(buildFullName(context), meta.getValue()),
+            return new RankFeaturesFieldMapper(
+                    name, new RankFeaturesFieldType(buildFullName(context), meta.getValue()),
                     multiFieldsBuilder.build(this, context), copyTo.build());
         }
     }
@@ -98,7 +107,8 @@ public class RankFeaturesFieldMapper extends ParametrizedFieldMapper {
         }
     }
 
-    private RankFeaturesFieldMapper(String simpleName, MappedFieldType mappedFieldType, MultiFields multiFields, CopyTo copyTo) {
+    private RankFeaturesFieldMapper(String simpleName, MappedFieldType mappedFieldType,
+                                    MultiFields multiFields, CopyTo copyTo) {
         super(simpleName, mappedFieldType, multiFields, copyTo);
         assert fieldType.indexOptions().compareTo(IndexOptions.DOCS_AND_FREQS) <= 0;
     }
@@ -125,8 +135,8 @@ public class RankFeaturesFieldMapper extends ParametrizedFieldMapper {
         }
 
         if (context.parser().currentToken() != Token.START_OBJECT) {
-            throw new IllegalArgumentException(
-                    "[rank_features] fields must be json objects, expected a START_OBJECT but got: " + context.parser().currentToken());
+            throw new IllegalArgumentException("[rank_features] fields must be json objects, expected a START_OBJECT but got: " +
+                    context.parser().currentToken());
         }
 
         String feature = null;
@@ -139,13 +149,13 @@ public class RankFeaturesFieldMapper extends ParametrizedFieldMapper {
                 final String key = name() + "." + feature;
                 float value = context.parser().floatValue(true);
                 if (context.doc().getByKey(key) != null) {
-                    throw new IllegalArgumentException("[rank_features] fields do not support indexing multiple values for the same "
-                            + "rank feature [" + key + "] in the same document");
+                    throw new IllegalArgumentException("[rank_features] fields do not support indexing multiple values for the same " +
+                            "rank feature [" + key + "] in the same document");
                 }
                 context.doc().addWithKey(key, new FeatureField(name(), feature, value));
             } else {
-                throw new IllegalArgumentException("[rank_features] fields take hashes that map a feature to a strictly positive "
-                        + "float, but got unexpected token " + token);
+                throw new IllegalArgumentException("[rank_features] fields take hashes that map a feature to a strictly positive " +
+                        "float, but got unexpected token " + token);
             }
         }
     }

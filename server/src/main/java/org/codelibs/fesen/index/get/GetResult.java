@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.index.get;
 
-import static java.util.Collections.emptyMap;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
@@ -48,6 +36,18 @@ import org.codelibs.fesen.index.mapper.IgnoredFieldMapper;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Collections.emptyMap;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
 
 public class GetResult implements Writeable, Iterable<DocumentField>, ToXContentObject {
 
@@ -77,8 +77,13 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         index = in.readString();
         type = in.readOptionalString();
         id = in.readString();
-        seqNo = in.readZLong();
-        primaryTerm = in.readVLong();
+        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
+            seqNo = in.readZLong();
+            primaryTerm = in.readVLong();
+        } else {
+            seqNo = UNASSIGNED_SEQ_NO;
+            primaryTerm = UNASSIGNED_PRIMARY_TERM;
+        }
         version = in.readLong();
         exists = in.readBoolean();
         if (exists) {
@@ -93,9 +98,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
                 Map<String, DocumentField> fields = readFields(in);
                 documentFields = new HashMap<>();
                 metaFields = new HashMap<>();
-                fields.forEach(
-                        (fieldName, docField) -> (MapperService.META_FIELDS_BEFORE_7DOT8.contains(fieldName) ? metaFields : documentFields)
-                                .put(fieldName, docField));
+                fields.forEach((fieldName, docField) ->
+                    (MapperService.META_FIELDS_BEFORE_7DOT8.contains(fieldName) ? metaFields : documentFields).put(fieldName, docField));
             }
         } else {
             metaFields = Collections.emptyMap();
@@ -104,16 +108,16 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
     }
 
     public GetResult(String index, String type, String id, long seqNo, long primaryTerm, long version, boolean exists,
-            BytesReference source, Map<String, DocumentField> documentFields, Map<String, DocumentField> metaFields) {
+                     BytesReference source, Map<String, DocumentField> documentFields, Map<String, DocumentField> metaFields) {
         this.index = index;
         this.type = type;
         this.id = id;
         this.seqNo = seqNo;
         this.primaryTerm = primaryTerm;
-        assert (seqNo == UNASSIGNED_SEQ_NO && primaryTerm == UNASSIGNED_PRIMARY_TERM) || (seqNo >= 0 && primaryTerm >= 1) : "seqNo: "
-                + seqNo + " primaryTerm: " + primaryTerm;
-        assert exists
-                || (seqNo == UNASSIGNED_SEQ_NO && primaryTerm == UNASSIGNED_PRIMARY_TERM) : "doc not found but seqNo/primaryTerm are set";
+        assert (seqNo == UNASSIGNED_SEQ_NO && primaryTerm == UNASSIGNED_PRIMARY_TERM) || (seqNo >= 0 && primaryTerm >= 1) :
+            "seqNo: " + seqNo + " primaryTerm: " + primaryTerm;
+        assert exists || (seqNo == UNASSIGNED_SEQ_NO && primaryTerm == UNASSIGNED_PRIMARY_TERM) :
+            "doc not found but seqNo/primaryTerm are set";
         this.version = version;
         this.exists = exists;
         this.source = source;
@@ -248,6 +252,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return sourceAsMap();
     }
 
+
     public Map<String, DocumentField> getMetadataFields() {
         return metaFields;
     }
@@ -285,7 +290,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
             if (field.getName().equals(IgnoredFieldMapper.NAME)) {
                 builder.field(field.getName(), field.getValues());
             } else {
-                builder.field(field.getName(), field.<Object> getValue());
+                builder.field(field.getName(), field.<Object>getValue());
             }
         }
 
@@ -351,16 +356,17 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
                     type = parser.text();
                 } else if (_ID.equals(currentFieldName)) {
                     id = parser.text();
-                } else if (_VERSION.equals(currentFieldName)) {
+                }  else if (_VERSION.equals(currentFieldName)) {
                     version = parser.longValue();
-                } else if (_SEQ_NO.equals(currentFieldName)) {
+                }  else if (_SEQ_NO.equals(currentFieldName)) {
                     seqNo = parser.longValue();
-                } else if (_PRIMARY_TERM.equals(currentFieldName)) {
+                }  else if (_PRIMARY_TERM.equals(currentFieldName)) {
                     primaryTerm = parser.longValue();
                 } else if (FOUND.equals(currentFieldName)) {
                     found = parser.booleanValue();
                 } else {
-                    metaFields.put(currentFieldName, new DocumentField(currentFieldName, Collections.singletonList(parser.objectText())));
+                    metaFields.put(currentFieldName, new DocumentField(currentFieldName,
+                            Collections.singletonList(parser.objectText())));
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if (SourceFieldMapper.NAME.equals(currentFieldName)) {
@@ -371,7 +377,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
                         source = BytesReference.bytes(builder);
                     }
                 } else if (FIELDS.equals(currentFieldName)) {
-                    while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+                    while(parser.nextToken() != XContentParser.Token.END_OBJECT) {
                         DocumentField getField = DocumentField.fromXContent(parser);
                         documentFields.put(getField.getName(), getField);
                     }
@@ -416,8 +422,10 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         out.writeString(index);
         out.writeOptionalString(type);
         out.writeString(id);
-        out.writeZLong(seqNo);
-        out.writeVLong(primaryTerm);
+        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
+            out.writeZLong(seqNo);
+            out.writeVLong(primaryTerm);
+        }
         out.writeLong(version);
         out.writeBoolean(exists);
         if (exists) {
@@ -431,7 +439,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         }
     }
 
-    private void writeFields(StreamOutput out, Map<String, DocumentField> fields) throws IOException {
+    private void writeFields(StreamOutput out,  Map<String, DocumentField> fields) throws IOException {
         if (fields == null) {
             out.writeVInt(0);
         } else {
@@ -451,10 +459,16 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
             return false;
         }
         GetResult getResult = (GetResult) o;
-        return version == getResult.version && seqNo == getResult.seqNo && primaryTerm == getResult.primaryTerm
-                && exists == getResult.exists && Objects.equals(index, getResult.index) && Objects.equals(type, getResult.type)
-                && Objects.equals(id, getResult.id) && Objects.equals(documentFields, getResult.documentFields)
-                && Objects.equals(metaFields, getResult.metaFields) && Objects.equals(sourceAsMap(), getResult.sourceAsMap());
+        return version == getResult.version &&
+                seqNo == getResult.seqNo &&
+                primaryTerm == getResult.primaryTerm &&
+                exists == getResult.exists &&
+                Objects.equals(index, getResult.index) &&
+                Objects.equals(type, getResult.type) &&
+                Objects.equals(id, getResult.id) &&
+                Objects.equals(documentFields, getResult.documentFields) &&
+                Objects.equals(metaFields, getResult.metaFields) &&
+                Objects.equals(sourceAsMap(), getResult.sourceAsMap());
     }
 
     @Override
@@ -467,3 +481,4 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return Strings.toString(this, true, true);
     }
 }
+

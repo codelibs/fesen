@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.Query;
@@ -66,9 +61,14 @@ import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class TestSearchContext extends SearchContext {
     public static final SearchShardTarget SHARD_TARGET =
-            new SearchShardTarget("test", new ShardId("test", "test", 0), null, OriginalIndices.NONE);
+        new SearchShardTarget("test", new ShardId("test", "test", 0), null, OriginalIndices.NONE);
 
     final BigArrays bigArrays;
     final IndexService indexService;
@@ -116,8 +116,8 @@ public class TestSearchContext extends SearchContext {
         this(queryShardContext, indexShard, searcher, null);
     }
 
-    public TestSearchContext(QueryShardContext queryShardContext, IndexShard indexShard, ContextIndexSearcher searcher,
-            ScrollContext scrollContext) {
+    public TestSearchContext(QueryShardContext queryShardContext, IndexShard indexShard,
+                             ContextIndexSearcher searcher, ScrollContext scrollContext) {
         this.bigArrays = null;
         this.indexService = null;
         this.fixedBitSetFilterCache = null;
@@ -448,6 +448,7 @@ public class TestSearchContext extends SearchContext {
         this.size = size;
     }
 
+
     @Override
     public SearchContext size(int size) {
         return null;
@@ -586,9 +587,7 @@ public class TestSearchContext extends SearchContext {
     }
 
     @Override
-    public Map<Class<?>, Collector> queryCollectors() {
-        return queryCollectors;
-    }
+    public Map<Class<?>, Collector> queryCollectors() {return queryCollectors;}
 
     @Override
     public QueryShardContext getQueryShardContext() {

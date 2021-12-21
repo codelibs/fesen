@@ -54,51 +54,51 @@ public final class DissectKey {
         skip = key == null || key.isEmpty();
         modifier = Modifier.findModifier(key);
         switch (modifier) {
-        case NONE:
-            Matcher matcher = RIGHT_PADDING_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(1);
-                skipRightPadding = matcher.group(2) != null;
-            }
-            skip = name.isEmpty();
-            break;
-        case NAMED_SKIP:
-            matcher = LEFT_MODIFIER_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(2);
-                skipRightPadding = matcher.group(3) != null;
-            }
-            skip = true;
-            break;
-        case APPEND:
-            matcher = LEFT_MODIFIER_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(2);
-                skipRightPadding = matcher.group(3) != null;
-            }
-            break;
-        case FIELD_NAME:
-            matcher = LEFT_MODIFIER_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(2);
-                skipRightPadding = matcher.group(3) != null;
-            }
-            break;
-        case FIELD_VALUE:
-            matcher = LEFT_MODIFIER_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(2);
-                skipRightPadding = matcher.group(3) != null;
-            }
-            break;
-        case APPEND_WITH_ORDER:
-            matcher = APPEND_WITH_ORDER_PATTERN.matcher(key);
-            while (matcher.find()) {
-                name = matcher.group(1);
-                appendPosition = Short.valueOf(matcher.group(3));
-                skipRightPadding = matcher.group(4) != null;
-            }
-            break;
+            case NONE:
+                Matcher matcher = RIGHT_PADDING_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(1);
+                    skipRightPadding = matcher.group(2) != null;
+                }
+                skip = name.isEmpty();
+                break;
+            case NAMED_SKIP:
+                matcher = LEFT_MODIFIER_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(2);
+                    skipRightPadding = matcher.group(3) != null;
+                }
+                skip = true;
+                break;
+            case APPEND:
+                matcher = LEFT_MODIFIER_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(2);
+                    skipRightPadding = matcher.group(3) != null;
+                }
+                break;
+            case FIELD_NAME:
+                matcher = LEFT_MODIFIER_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(2);
+                    skipRightPadding = matcher.group(3) != null;
+                }
+                break;
+            case FIELD_VALUE:
+                matcher = LEFT_MODIFIER_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(2);
+                    skipRightPadding = matcher.group(3) != null;
+                }
+                break;
+            case APPEND_WITH_ORDER:
+                matcher = APPEND_WITH_ORDER_PATTERN.matcher(key);
+                while (matcher.find()) {
+                    name = matcher.group(1);
+                    appendPosition = Short.valueOf(matcher.group(3));
+                    skipRightPadding = matcher.group(4) != null;
+                }
+                break;
         }
 
         if (name == null || (name.isEmpty() && !skip)) {
@@ -111,7 +111,7 @@ public final class DissectKey {
      * @param key The key to copy (except for the modifier)
      * @param modifier the modifer to use for this copy
      */
-    DissectKey(DissectKey key, DissectKey.Modifier modifier) {
+    DissectKey(DissectKey key, DissectKey.Modifier modifier){
         this.modifier = modifier;
         this.skipRightPadding = key.skipRightPadding;
         this.skip = key.skip;
@@ -142,8 +142,12 @@ public final class DissectKey {
     //generated
     @Override
     public String toString() {
-        return "DissectKey{" + "modifier=" + modifier + ", skip=" + skip + ", appendPosition=" + appendPosition + ", name='" + name + '\''
-                + '}';
+        return "DissectKey{" +
+            "modifier=" + modifier +
+            ", skip=" + skip +
+            ", appendPosition=" + appendPosition +
+            ", name='" + name + '\'' +
+            '}';
     }
 
     public enum Modifier {
@@ -164,8 +168,8 @@ public final class DissectKey {
 
         //package private for testing
         static Modifier fromString(String modifier) {
-            return EnumSet.allOf(Modifier.class).stream().filter(km -> km.modifier.equals(modifier)).findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Found invalid modifier.")); //throw should never happen
+            return EnumSet.allOf(Modifier.class).stream().filter(km -> km.modifier.equals(modifier))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Found invalid modifier.")); //throw should never happen
         }
 
         private static Modifier findModifier(String key) {

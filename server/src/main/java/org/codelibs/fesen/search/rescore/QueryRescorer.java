@@ -19,7 +19,11 @@
 
 package org.codelibs.fesen.search.rescore;
 
-import static java.util.stream.Collectors.toSet;
+import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,11 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import static java.util.stream.Collectors.toSet;
 
 public final class QueryRescorer implements Rescorer {
 
@@ -66,8 +66,8 @@ public final class QueryRescorer implements Rescorer {
         TopDocs topNFirstPass = topN(topDocs, rescoreContext.getWindowSize());
 
         // Save doc IDs for which rescoring was applied to be used in score explanation
-        Set<Integer> topNDocIDs =
-                Collections.unmodifiableSet(Arrays.stream(topNFirstPass.scoreDocs).map(scoreDoc -> scoreDoc.doc).collect(toSet()));
+        Set<Integer> topNDocIDs = Collections.unmodifiableSet(
+            Arrays.stream(topNFirstPass.scoreDocs).map(scoreDoc -> scoreDoc.doc).collect(toSet()));
         rescoreContext.setRescoredDocs(topNDocIDs);
 
         // Rescore them:
@@ -78,8 +78,8 @@ public final class QueryRescorer implements Rescorer {
     }
 
     @Override
-    public Explanation explain(int topLevelDocId, IndexSearcher searcher, RescoreContext rescoreContext, Explanation sourceExplanation)
-            throws IOException {
+    public Explanation explain(int topLevelDocId, IndexSearcher searcher, RescoreContext rescoreContext,
+                               Explanation sourceExplanation) throws IOException {
         if (sourceExplanation == null) {
             // this should not happen but just in case
             return Explanation.noMatch("nothing matched");
@@ -88,22 +88,27 @@ public final class QueryRescorer implements Rescorer {
         float primaryWeight = rescore.queryWeight();
         Explanation prim;
         if (sourceExplanation.isMatch()) {
-            prim = Explanation.match(sourceExplanation.getValue().floatValue() * primaryWeight, "product of:", sourceExplanation,
-                    Explanation.match(primaryWeight, "primaryWeight"));
+            prim = Explanation.match(
+                    sourceExplanation.getValue().floatValue() * primaryWeight,
+                    "product of:", sourceExplanation, Explanation.match(primaryWeight, "primaryWeight"));
         } else {
             prim = Explanation.noMatch("First pass did not match", sourceExplanation);
         }
-        if (rescoreContext.isRescored(topLevelDocId)) {
+        if (rescoreContext.isRescored(topLevelDocId)){
             Explanation rescoreExplain = searcher.explain(rescore.query(), topLevelDocId);
             // NOTE: we don't use Lucene's Rescorer.explain because we want to insert our own description with which ScoreMode was used.
             //  Maybe we should add QueryRescorer.explainCombine to Lucene?
             if (rescoreExplain != null && rescoreExplain.isMatch()) {
                 float secondaryWeight = rescore.rescoreQueryWeight();
-                Explanation sec = Explanation.match(rescoreExplain.getValue().floatValue() * secondaryWeight, "product of:", rescoreExplain,
-                        Explanation.match(secondaryWeight, "secondaryWeight"));
+                Explanation sec = Explanation.match(
+                    rescoreExplain.getValue().floatValue() * secondaryWeight,
+                    "product of:",
+                    rescoreExplain, Explanation.match(secondaryWeight, "secondaryWeight"));
                 QueryRescoreMode scoreMode = rescore.scoreMode();
-                return Explanation.match(scoreMode.combine(prim.getValue().floatValue(), sec.getValue().floatValue()), scoreMode + " of:",
-                        prim, sec);
+                return Explanation.match(
+                    scoreMode.combine(prim.getValue().floatValue(), sec.getValue().floatValue()),
+                    scoreMode + " of:",
+                    prim, sec);
             }
         }
         return prim;
@@ -113,7 +118,7 @@ public final class QueryRescorer implements Rescorer {
         @Override
         public int compare(ScoreDoc o1, ScoreDoc o2) {
             int cmp = Float.compare(o2.score, o1.score);
-            return cmp == 0 ? Integer.compare(o1.doc, o2.doc) : cmp;
+            return cmp == 0 ?  Integer.compare(o1.doc, o2.doc) : cmp;
         }
     };
 
@@ -137,7 +142,7 @@ public final class QueryRescorer implements Rescorer {
         if (in.scoreDocs.length > resorted.scoreDocs.length) {
             // These hits were not rescored (beyond the rescore window), so we treat them the same as a hit that did get rescored but did
             // not match the 2nd pass query:
-            for (int i = resorted.scoreDocs.length; i < in.scoreDocs.length; i++) {
+            for(int i=resorted.scoreDocs.length;i<in.scoreDocs.length;i++) {
                 // TODO: shouldn't this be up to the ScoreMode?  I.e., we should just invoke ScoreMode.combine, passing 0.0f for the
                 // secondary score?
                 in.scoreDocs[i].score *= ctx.queryWeight();

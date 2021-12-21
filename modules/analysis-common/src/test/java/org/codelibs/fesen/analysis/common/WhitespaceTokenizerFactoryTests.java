@@ -19,14 +19,11 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import com.carrotsearch.randomizedtesting.generators.RandomStrings;
 
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.codelibs.fesen.Version;
+import org.codelibs.fesen.analysis.common.WhitespaceTokenizerFactory;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.Index;
@@ -34,15 +31,19 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
-import com.carrotsearch.randomizedtesting.generators.RandomStrings;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 
 public class WhitespaceTokenizerFactoryTests extends ESTestCase {
 
     public void testSimpleWhiteSpaceTokenizer() throws IOException {
         final Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
         IndexSettings indexProperties = IndexSettingsModule.newIndexSettings(new Index("test", "_na_"), indexSettings);
-        WhitespaceTokenizer tokenizer =
-                (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen", Settings.EMPTY).create();
+        WhitespaceTokenizer tokenizer = (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen",
+                Settings.EMPTY).create();
 
         try (Reader reader = new StringReader("one, two, three")) {
             tokenizer.setReader(reader);
@@ -54,16 +55,16 @@ public class WhitespaceTokenizerFactoryTests extends ESTestCase {
         final Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
         IndexSettings indexProperties = IndexSettingsModule.newIndexSettings(new Index("test", "_na_"), indexSettings);
         final Settings settings = Settings.builder().put(WhitespaceTokenizerFactory.MAX_TOKEN_LENGTH, 2).build();
-        WhitespaceTokenizer tokenizer =
-                (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen", settings).create();
+        WhitespaceTokenizer tokenizer = (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen",
+                settings).create();
         try (Reader reader = new StringReader("one, two, three")) {
             tokenizer.setReader(reader);
             assertTokenStreamContents(tokenizer, new String[] { "on", "e,", "tw", "o,", "th", "re", "e" });
         }
 
         final Settings defaultSettings = Settings.EMPTY;
-        tokenizer =
-                (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen", defaultSettings).create();
+        tokenizer = (WhitespaceTokenizer) new WhitespaceTokenizerFactory(indexProperties, null, "whitespace_maxlen", defaultSettings)
+                .create();
         String veryLongToken = RandomStrings.randomAsciiAlphanumOfLength(random(), 256);
         try (Reader reader = new StringReader(veryLongToken)) {
             tokenizer.setReader(reader);

@@ -82,7 +82,9 @@ public final class ClusterNameExpressionResolver {
 
         private static Set<String> otherWildcard(Set<String> remoteClusters, String expression) {
             final String pattern = expression;
-            return remoteClusters.stream().filter(n -> Regex.simpleMatch(pattern, n)).collect(Collectors.toSet());
+            return remoteClusters.stream()
+                .filter(n -> Regex.simpleMatch(pattern, n))
+                .collect(Collectors.toSet());
         }
     }
 }

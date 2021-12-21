@@ -24,8 +24,8 @@ import org.codelibs.fesen.transport.TransportChannel;
 import org.codelibs.fesen.transport.TransportRequest;
 import org.codelibs.fesen.transport.TransportResponse;
 
-public final class ChannelActionListener<Response extends TransportResponse, Request extends TransportRequest>
-        implements ActionListener<Response> {
+public final class ChannelActionListener<
+    Response extends TransportResponse, Request extends TransportRequest> implements ActionListener<Response> {
 
     private final TransportChannel channel;
     private final Request request;

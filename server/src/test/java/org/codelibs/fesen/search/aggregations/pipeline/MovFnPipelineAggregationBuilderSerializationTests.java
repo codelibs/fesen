@@ -37,8 +37,12 @@ import static org.mockito.Mockito.when;
 public class MovFnPipelineAggregationBuilderSerializationTests extends BasePipelineAggregationTestCase<MovFnPipelineAggregationBuilder> {
     @Override
     protected MovFnPipelineAggregationBuilder createTestAggregatorFactory() {
-        MovFnPipelineAggregationBuilder builder =
-                new MovFnPipelineAggregationBuilder(randomAlphaOfLength(10), "foo", new Script("foo"), randomIntBetween(1, 10));
+        MovFnPipelineAggregationBuilder builder = new MovFnPipelineAggregationBuilder(
+            randomAlphaOfLength(10),
+            "foo",
+            new Script("foo"),
+            randomIntBetween(1, 10)
+        );
         builder.setShift(randomIntBetween(1, 10));
         return builder;
     }
@@ -54,15 +58,16 @@ public class MovFnPipelineAggregationBuilderSerializationTests extends BasePipel
         AggregationBuilder parent = mock(AggregationBuilder.class);
         when(parent.getName()).thenReturn("name");
 
-        assertThat(validate(parent, new MovFnPipelineAggregationBuilder("name", "invalid_agg>metric", script, 1)),
-                equalTo("Validation Failed: 1: moving_fn aggregation [name] must have a histogram, date_histogram"
-                        + " or auto_date_histogram as parent;"));
+        assertThat(validate(parent, new MovFnPipelineAggregationBuilder("name", "invalid_agg>metric", script, 1)), equalTo(
+                "Validation Failed: 1: moving_fn aggregation [name] must have a histogram, date_histogram"
+                + " or auto_date_histogram as parent;"));
     }
 
     public void testNoParent() throws IOException {
         Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, "painless", "test", Collections.emptyMap());
-        assertThat(validate(emptyList(), new MovFnPipelineAggregationBuilder("name", "invalid_agg>metric", script, 1)),
-                equalTo("Validation Failed: 1: moving_fn aggregation [name] must have a histogram, date_histogram"
-                        + " or auto_date_histogram as parent but doesn't have a parent;"));
+                assertThat(validate(emptyList(), new MovFnPipelineAggregationBuilder("name", "invalid_agg>metric", script, 1)), equalTo(
+                "Validation Failed: 1: moving_fn aggregation [name] must have a histogram, date_histogram"
+                + " or auto_date_histogram as parent but doesn't have a parent;"));
     }
 }
+

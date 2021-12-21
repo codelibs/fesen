@@ -19,21 +19,22 @@
 
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
 import org.codelibs.fesen.search.suggest.phrase.WordScorer.WordScorerFactory;
+
+import java.io.IOException;
 
 public abstract class SmoothingModel implements NamedWriteable, ToXContentFragment {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(getWriteableName());
-        innerToXContent(builder, params);
+        innerToXContent(builder,params);
         builder.endObject();
         return builder;
     }

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.translog.Translog;
+
+import java.util.Collection;
+import java.util.Collections;
 
 abstract class VersionValue implements Accountable {
 
@@ -61,17 +61,13 @@ abstract class VersionValue implements Accountable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         VersionValue that = (VersionValue) o;
 
-        if (version != that.version)
-            return false;
-        if (seqNo != that.seqNo)
-            return false;
+        if (version != that.version) return false;
+        if (seqNo != that.seqNo) return false;
         return term == that.term;
     }
 
@@ -85,7 +81,11 @@ abstract class VersionValue implements Accountable {
 
     @Override
     public String toString() {
-        return "VersionValue{" + "version=" + version + ", seqNo=" + seqNo + ", term=" + term + '}';
+        return "VersionValue{" +
+            "version=" + version +
+            ", seqNo=" + seqNo +
+            ", term=" + term +
+            '}';
     }
 
     /**

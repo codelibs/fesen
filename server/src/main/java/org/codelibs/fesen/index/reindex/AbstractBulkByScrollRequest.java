@@ -19,14 +19,7 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.search.SearchRequest;
@@ -39,6 +32,14 @@ import org.codelibs.fesen.search.Scroll;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueMinutes;
 
 public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScrollRequest<Self>> extends ActionRequest {
 
@@ -470,7 +471,12 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
         out.writeTimeValue(retryBackoffInitialTime);
         out.writeVInt(maxRetries);
         out.writeFloat(requestsPerSecond);
-        out.writeVInt(slices);
+        if (out.getVersion().before(Version.V_6_1_0) && slices == AUTO_SLICES) {
+            throw new IllegalArgumentException("Slices set as \"auto\" are not supported before version [" + Version.V_6_1_0 + "]. " +
+                "Found version [" + out.getVersion() + "]");
+        } else {
+            out.writeVInt(slices);
+        }
     }
 
     /**

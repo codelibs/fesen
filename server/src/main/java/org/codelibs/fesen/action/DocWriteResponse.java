@@ -18,19 +18,10 @@
  */
 package org.codelibs.fesen.action;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
-import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Locale;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.WriteRequest;
-import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
 import org.codelibs.fesen.action.support.WriteResponse;
+import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
 import org.codelibs.fesen.action.support.replication.ReplicationResponse;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -45,6 +36,16 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_PRIMARY_TERM;
+import static org.codelibs.fesen.index.seqno.SequenceNumbers.UNASSIGNED_SEQ_NO;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A base class for the response of a write operation that involves a single doc
@@ -66,7 +67,11 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
      * operation that occurred.
      */
     public enum Result implements Writeable {
-        CREATED(0), UPDATED(1), DELETED(2), NOT_FOUND(3), NOOP(4);
+        CREATED(0),
+        UPDATED(1),
+        DELETED(2),
+        NOT_FOUND(3),
+        NOOP(4);
 
         private final byte op;
         private final String lowercase;
@@ -84,21 +89,21 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
             return lowercase;
         }
 
-        public static Result readFrom(StreamInput in) throws IOException {
+        public static Result readFrom(StreamInput in) throws IOException{
             Byte opcode = in.readByte();
-            switch (opcode) {
-            case 0:
-                return CREATED;
-            case 1:
-                return UPDATED;
-            case 2:
-                return DELETED;
-            case 3:
-                return NOT_FOUND;
-            case 4:
-                return NOOP;
-            default:
-                throw new IllegalArgumentException("Unknown result code: " + opcode);
+            switch(opcode){
+                case 0:
+                    return CREATED;
+                case 1:
+                    return UPDATED;
+                case 2:
+                    return DELETED;
+                case 3:
+                    return NOT_FOUND;
+                case 4:
+                    return NOOP;
+                default:
+                    throw new IllegalArgumentException("Unknown result code: " + opcode);
             }
         }
 
@@ -150,8 +155,13 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         type = in.readString();
         id = in.readString();
         version = in.readZLong();
-        seqNo = in.readZLong();
-        primaryTerm = in.readVLong();
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            seqNo = in.readZLong();
+            primaryTerm = in.readVLong();
+        } else {
+            seqNo = UNASSIGNED_SEQ_NO;
+            primaryTerm = UNASSIGNED_PRIMARY_TERM;
+        }
         forcedRefresh = in.readBoolean();
         result = Result.readFrom(in);
     }
@@ -294,8 +304,10 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         out.writeString(type);
         out.writeString(id);
         out.writeZLong(version);
-        out.writeZLong(seqNo);
-        out.writeVLong(primaryTerm);
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            out.writeZLong(seqNo);
+            out.writeVLong(primaryTerm);
+        }
         out.writeBoolean(forcedRefresh);
         result.writeTo(out);
     }
@@ -312,7 +324,9 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         ReplicationResponse.ShardInfo shardInfo = getShardInfo();
         builder.field(_INDEX, shardId.getIndexName());
         builder.field(_TYPE, type);
-        builder.field(_ID, id).field(_VERSION, version).field(RESULT, getResult().getLowercase());
+        builder.field(_ID, id)
+                .field(_VERSION, version)
+                .field(RESULT, getResult().getLowercase());
         if (forcedRefresh) {
             builder.field(FORCED_REFRESH, true);
         }
@@ -350,7 +364,7 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
                 context.setVersion(parser.longValue());
             } else if (RESULT.equals(currentFieldName)) {
                 String result = parser.text();
-                for (Result r : Result.values()) {
+                for (Result r :  Result.values()) {
                     if (r.getLowercase().equals(result)) {
                         context.setResult(r);
                         break;

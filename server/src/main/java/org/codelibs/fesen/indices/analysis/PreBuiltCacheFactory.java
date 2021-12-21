@@ -36,9 +36,7 @@ public class PreBuiltCacheFactory {
      * ELASTICSEARCH     Exactly one version per fesen version is stored. Useful if you change an analyzer between fesen
      *                   releases, when the lucene version does not change
      */
-    public enum CachingStrategy {
-        ONE, LUCENE, ELASTICSEARCH
-    }
+    public enum CachingStrategy { ONE, LUCENE, ELASTICSEARCH }
 
     public interface PreBuiltCache<T> {
 
@@ -49,19 +47,18 @@ public class PreBuiltCacheFactory {
         Collection<T> values();
     }
 
-    private PreBuiltCacheFactory() {
-    }
+    private PreBuiltCacheFactory() {}
 
     public static <T> PreBuiltCache<T> getCache(CachingStrategy cachingStrategy) {
         switch (cachingStrategy) {
-        case ONE:
-            return new PreBuiltCacheStrategyOne<>();
-        case LUCENE:
-            return new PreBuiltCacheStrategyLucene<>();
-        case ELASTICSEARCH:
-            return new PreBuiltCacheStrategyFesen<>();
-        default:
-            throw new FesenException("No action configured for caching strategy[" + cachingStrategy + "]");
+            case ONE:
+                return new PreBuiltCacheStrategyOne<>();
+            case LUCENE:
+                return new PreBuiltCacheStrategyLucene<>();
+            case ELASTICSEARCH:
+                return new PreBuiltCacheStrategyFesen<>();
+            default:
+                throw new FesenException("No action configured for caching strategy[" + cachingStrategy + "]");
         }
     }
 

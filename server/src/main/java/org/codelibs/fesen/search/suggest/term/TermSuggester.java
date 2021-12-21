@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.term;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
@@ -36,24 +32,30 @@ import org.codelibs.fesen.search.suggest.Suggester;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public final class TermSuggester extends Suggester<TermSuggestionContext> {
 
     public static final TermSuggester INSTANCE = new TermSuggester();
 
-    private TermSuggester() {
-    }
+    private TermSuggester() {}
 
     @Override
     public TermSuggestion innerExecute(String name, TermSuggestionContext suggestion, IndexSearcher searcher, CharsRefBuilder spare)
             throws IOException {
         DirectSpellChecker directSpellChecker = suggestion.getDirectSpellCheckerSettings().createDirectSpellChecker();
         final IndexReader indexReader = searcher.getIndexReader();
-        TermSuggestion response = new TermSuggestion(name, suggestion.getSize(), suggestion.getDirectSpellCheckerSettings().sort());
+        TermSuggestion response = new TermSuggestion(
+                name, suggestion.getSize(), suggestion.getDirectSpellCheckerSettings().sort()
+        );
         List<Token> tokens = queryTerms(suggestion, spare);
         for (Token token : tokens) {
             // TODO: Extend DirectSpellChecker in 4.1, to get the raw suggested words as BytesRef
-            SuggestWord[] suggestedWords = directSpellChecker.suggestSimilar(token.term, suggestion.getShardSize(), indexReader,
-                    suggestion.getDirectSpellCheckerSettings().suggestMode());
+            SuggestWord[] suggestedWords = directSpellChecker.suggestSimilar(
+                    token.term, suggestion.getShardSize(), indexReader, suggestion.getDirectSpellCheckerSettings().suggestMode()
+            );
             Text key = new Text(new BytesArray(token.term.bytes()));
             TermSuggestion.Entry resultEntry = new TermSuggestion.Entry(key, token.startOffset, token.endOffset - token.startOffset);
             for (SuggestWord suggestWord : suggestedWords) {
@@ -70,13 +72,13 @@ public final class TermSuggester extends Suggester<TermSuggestionContext> {
         final String field = suggestion.getField();
         DirectCandidateGenerator.analyze(suggestion.getAnalyzer(), suggestion.getText(), field,
                 new DirectCandidateGenerator.TokenConsumer() {
-                    @Override
-                    public void nextToken() {
-                        Term term = new Term(field, BytesRef.deepCopyOf(fillBytesRef(new BytesRefBuilder())));
-                        result.add(new Token(term, offsetAttr.startOffset(), offsetAttr.endOffset()));
-                    }
-                }, spare);
-        return result;
+            @Override
+            public void nextToken() {
+                Term term = new Term(field, BytesRef.deepCopyOf(fillBytesRef(new BytesRefBuilder())));
+                result.add(new Token(term, offsetAttr.startOffset(), offsetAttr.endOffset()));
+            }
+        }, spare);
+       return result;
     }
 
     private static class Token {

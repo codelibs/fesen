@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -30,6 +27,9 @@ import org.codelibs.fesen.common.text.Text;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.transport.RemoteClusterAware;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * The target that the search request was executed on.
@@ -124,8 +124,9 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
             return false;
         }
         SearchShardTarget that = (SearchShardTarget) o;
-        return Objects.equals(nodeId, that.nodeId) && Objects.equals(shardId, that.shardId)
-                && Objects.equals(clusterAlias, that.clusterAlias);
+        return Objects.equals(nodeId, that.nodeId) &&
+            Objects.equals(shardId, that.shardId) &&
+            Objects.equals(clusterAlias, that.clusterAlias);
     }
 
     @Override
@@ -135,8 +136,8 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
 
     @Override
     public String toString() {
-        String shardToString =
-                "[" + RemoteClusterAware.buildRemoteIndexName(clusterAlias, shardId.getIndexName()) + "][" + shardId.getId() + "]";
+        String shardToString = "[" + RemoteClusterAware.buildRemoteIndexName(
+            clusterAlias, shardId.getIndexName()) + "][" + shardId.getId() + "]";
         if (nodeId == null) {
             return "[_na_]" + shardToString;
         }

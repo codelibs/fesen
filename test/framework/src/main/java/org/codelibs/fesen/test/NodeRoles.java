@@ -46,8 +46,12 @@ public class NodeRoles {
     }
 
     public static Settings onlyRoles(final Settings settings, final Set<DiscoveryNodeRole> roles) {
-        return Settings.builder().put(settings).putList(NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
-                Collections.unmodifiableList(roles.stream().map(DiscoveryNodeRole::roleName).collect(Collectors.toList()))).build();
+        return Settings.builder()
+            .put(settings)
+            .putList(
+                NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
+                Collections.unmodifiableList(roles.stream().map(DiscoveryNodeRole::roleName).collect(Collectors.toList())))
+            .build();
     }
 
     public static Settings removeRoles(final Set<DiscoveryNodeRole> roles) {
@@ -56,9 +60,15 @@ public class NodeRoles {
 
     public static Settings removeRoles(final Settings settings, final Set<DiscoveryNodeRole> roles) {
         final Settings.Builder builder = Settings.builder().put(settings);
-        builder.putList(NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
-                Collections.unmodifiableList(NodeRoleSettings.NODE_ROLES_SETTING.get(settings).stream()
-                        .filter(r -> roles.contains(r) == false).map(DiscoveryNodeRole::roleName).collect(Collectors.toList())));
+        builder.putList(
+            NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
+            Collections.unmodifiableList(NodeRoleSettings.NODE_ROLES_SETTING.get(settings)
+                .stream()
+                .filter(r -> roles.contains(r) == false)
+                .map(DiscoveryNodeRole::roleName)
+                .collect(Collectors.toList())
+            )
+        );
         return builder.build();
     }
 
@@ -68,9 +78,14 @@ public class NodeRoles {
 
     public static Settings addRoles(final Settings settings, final Set<DiscoveryNodeRole> roles) {
         final Settings.Builder builder = Settings.builder().put(settings);
-        builder.putList(NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
-                Collections.unmodifiableList(Stream.concat(NodeRoleSettings.NODE_ROLES_SETTING.get(settings).stream(), roles.stream())
-                        .map(DiscoveryNodeRole::roleName).distinct().collect(Collectors.toList())));
+        builder.putList(
+            NodeRoleSettings.NODE_ROLES_SETTING.getKey(),
+            Collections.unmodifiableList(Stream.concat(NodeRoleSettings.NODE_ROLES_SETTING.get(settings).stream(), roles.stream())
+                .map(DiscoveryNodeRole::roleName)
+                .distinct()
+                .collect(Collectors.toList())
+            )
+        );
         return builder.build();
     }
 

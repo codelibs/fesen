@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.clone;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -32,6 +28,10 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
 
 public class CloneSnapshotRequest extends MasterNodeRequest<CloneSnapshotRequest> implements IndicesRequest.Replaceable, ToXContentObject {
 

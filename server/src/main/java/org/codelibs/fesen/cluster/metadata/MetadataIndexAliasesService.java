@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.NO_LONGER_ASSIGNED;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.indices.alias.IndicesAliasesClusterStateUpdateRequest;
@@ -49,6 +37,18 @@ import org.codelibs.fesen.index.IndexService;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.indices.IndicesService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import static java.util.Collections.emptyList;
+import static org.codelibs.fesen.indices.cluster.IndicesClusterStateService.AllocatedIndices.IndexRemovalReason.NO_LONGER_ASSIGNED;
+
 /**
  * Service responsible for submitting add and remove aliases requests
  */
@@ -65,8 +65,8 @@ public class MetadataIndexAliasesService {
     private final NamedXContentRegistry xContentRegistry;
 
     @Inject
-    public MetadataIndexAliasesService(ClusterService clusterService, IndicesService indicesService, AliasValidator aliasValidator,
-            MetadataDeleteIndexService deleteIndexService, NamedXContentRegistry xContentRegistry) {
+    public MetadataIndexAliasesService(ClusterService clusterService, IndicesService indicesService,
+            AliasValidator aliasValidator, MetadataDeleteIndexService deleteIndexService, NamedXContentRegistry xContentRegistry) {
         this.clusterService = clusterService;
         this.indicesService = indicesService;
         this.aliasValidator = aliasValidator;
@@ -75,25 +75,25 @@ public class MetadataIndexAliasesService {
     }
 
     public void indicesAliases(final IndicesAliasesClusterStateUpdateRequest request,
-            final ActionListener<ClusterStateUpdateResponse> listener) {
+                               final ActionListener<ClusterStateUpdateResponse> listener) {
         clusterService.submitStateUpdateTask("index-aliases",
-                new AckedClusterStateUpdateTask<ClusterStateUpdateResponse>(Priority.URGENT, request, listener) {
-                    @Override
-                    protected ClusterStateUpdateResponse newResponse(boolean acknowledged) {
-                        return new ClusterStateUpdateResponse(acknowledged);
-                    }
+            new AckedClusterStateUpdateTask<ClusterStateUpdateResponse>(Priority.URGENT, request, listener) {
+                @Override
+                protected ClusterStateUpdateResponse newResponse(boolean acknowledged) {
+                    return new ClusterStateUpdateResponse(acknowledged);
+                }
 
-                    @Override
-                    public ClusterState execute(ClusterState currentState) {
-                        return applyAliasActions(currentState, request.actions());
-                    }
-                });
+                @Override
+                public ClusterState execute(ClusterState currentState) {
+                    return applyAliasActions(currentState, request.actions());
+                }
+            });
     }
 
     /**
      * Handles the cluster state transition to a version that reflects the provided {@link AliasAction}s.
      */
-    public ClusterState applyAliasActions(ClusterState currentState, Iterable<AliasAction> actions) {
+     public ClusterState applyAliasActions(ClusterState currentState, Iterable<AliasAction> actions) {
         List<Index> indicesToClose = new ArrayList<>();
         Map<String, IndexService> indices = new HashMap<>();
         try {
@@ -153,8 +153,8 @@ public class MetadataIndexAliasesService {
                         }
                         // the context is only used for validation so it's fine to pass fake values for the shard id,
                         // but the current timestamp should be set to real value as we may use `now` in a filtered alias
-                        aliasValidator.validateAliasFilter(alias, filter,
-                                indexService.newQueryShardContext(0, null, () -> System.currentTimeMillis(), null), xContentRegistry);
+                        aliasValidator.validateAliasFilter(alias, filter, indexService.newQueryShardContext(0, null,
+                            () -> System.currentTimeMillis(), null), xContentRegistry);
                     }
                 };
                 if (action.apply(newAliasValidator, metadata, index)) {
@@ -194,8 +194,8 @@ public class MetadataIndexAliasesService {
         assert indexAbstraction != null : "invalid cluster metadata. index [" + action.getIndex() + "] was not found";
         if (indexAbstraction.getParentDataStream() != null) {
             throw new IllegalArgumentException("The provided index [ " + action.getIndex()
-                    + "] is a backing index belonging to data stream [" + indexAbstraction.getParentDataStream().getName()
-                    + "]. Data streams and their backing indices don't support alias operations.");
+                + "] is a backing index belonging to data stream [" + indexAbstraction.getParentDataStream().getName()
+                + "]. Data streams and their backing indices don't support alias operations.");
         }
     }
 }

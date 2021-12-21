@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.client;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Exception thrown when an fesen node responds to a request with a status code that indicates an error.
@@ -40,9 +40,13 @@ public final class ResponseException extends IOException {
     }
 
     static String buildMessage(Response response) throws IOException {
-        String message =
-                String.format(Locale.ROOT, "method [%s], host [%s], URI [%s], status line [%s]", response.getRequestLine().getMethod(),
-                        response.getHost(), response.getRequestLine().getUri(), response.getStatusLine().toString());
+        String message = String.format(Locale.ROOT,
+            "method [%s], host [%s], URI [%s], status line [%s]",
+            response.getRequestLine().getMethod(),
+            response.getHost(),
+            response.getRequestLine().getUri(),
+            response.getStatusLine().toString()
+        );
 
         if (response.hasWarnings()) {
             message += "\n" + "Warnings: " + response.getWarnings();

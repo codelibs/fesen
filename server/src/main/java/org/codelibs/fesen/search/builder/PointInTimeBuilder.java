@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.builder;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -32,6 +29,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A search request with a point in time will execute using the reader contexts associated with that point time
@@ -46,8 +46,8 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
         PARSER = new ObjectParser<>(SearchSourceBuilder.POINT_IN_TIME.getPreferredName(), XContentParams::new);
         PARSER.declareString((params, id) -> params.id = id, ID_FIELD);
         PARSER.declareField((params, keepAlive) -> params.keepAlive = keepAlive,
-                (p, c) -> TimeValue.parseTimeValue(p.text(), KEEP_ALIVE_FIELD.getPreferredName()), KEEP_ALIVE_FIELD,
-                ObjectParser.ValueType.STRING);
+            (p, c) -> TimeValue.parseTimeValue(p.text(), KEEP_ALIVE_FIELD.getPreferredName()),
+            KEEP_ALIVE_FIELD, ObjectParser.ValueType.STRING);
     }
 
     private static final class XContentParams {
@@ -115,10 +115,8 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         final PointInTimeBuilder that = (PointInTimeBuilder) o;
         return Objects.equals(id, that.id) && Objects.equals(keepAlive, that.keepAlive);
     }

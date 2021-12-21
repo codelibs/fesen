@@ -90,7 +90,9 @@ public class RetryTests extends ESTestCase {
         BackoffPolicy backoff = BackoffPolicy.constantBackoff(DELAY, CALLS_TO_FAIL);
 
         BulkRequest bulkRequest = createBulkRequest();
-        BulkResponse response = new Retry(backoff, bulkClient.threadPool()).withBackoff(bulkClient::bulk, bulkRequest).actionGet();
+        BulkResponse response = new Retry(backoff, bulkClient.threadPool())
+            .withBackoff(bulkClient::bulk, bulkRequest)
+            .actionGet();
 
         assertFalse(response.hasFailures());
         assertThat(response.getItems().length, equalTo(bulkRequest.numberOfActions()));
@@ -100,7 +102,9 @@ public class RetryTests extends ESTestCase {
         BackoffPolicy backoff = BackoffPolicy.constantBackoff(DELAY, CALLS_TO_FAIL - 1);
 
         BulkRequest bulkRequest = createBulkRequest();
-        BulkResponse response = new Retry(backoff, bulkClient.threadPool()).withBackoff(bulkClient::bulk, bulkRequest).actionGet();
+        BulkResponse response = new Retry(backoff, bulkClient.threadPool())
+            .withBackoff(bulkClient::bulk, bulkRequest)
+            .actionGet();
 
         assertTrue(response.hasFailures());
         assertThat(response.getItems().length, equalTo(bulkRequest.numberOfActions()));
@@ -228,13 +232,13 @@ public class RetryTests extends ESTestCase {
         }
 
         private BulkItemResponse successfulResponse() {
-            return new BulkItemResponse(1, OpType.DELETE,
-                    new DeleteResponse(new ShardId("test", "test", 0), "_doc", "test", 0, 0, 0, false));
+            return new BulkItemResponse(1, OpType.DELETE, new DeleteResponse(
+                new ShardId("test", "test", 0), "_doc", "test", 0, 0, 0, false));
         }
 
         private BulkItemResponse failedResponse() {
-            return new BulkItemResponse(1, OpType.INDEX,
-                    new BulkItemResponse.Failure("test", "test", "1", new EsRejectedExecutionException("pool full")));
+            return new BulkItemResponse(1, OpType.INDEX, new BulkItemResponse.Failure("test", "test", "1",
+                new EsRejectedExecutionException("pool full")));
         }
     }
 }

@@ -92,7 +92,7 @@ public class MetadataStateFormatTests extends ESTestCase {
         final long id = addDummyFiles("foo-", dirs);
         Format format = new Format("foo-");
         DummyState state = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 1000), randomInt(), randomLong(),
-                randomDouble(), randomBoolean());
+            randomDouble(), randomBoolean());
         format.writeAndCleanup(state, dirs);
         for (Path file : dirs) {
             Path[] list = content("*", file);
@@ -107,7 +107,7 @@ public class MetadataStateFormatTests extends ESTestCase {
             assertThat(read, equalTo(state));
         }
         DummyState state2 = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 1000), randomInt(), randomLong(),
-                randomDouble(), randomBoolean());
+            randomDouble(), randomBoolean());
         format.writeAndCleanup(state2, dirs);
 
         for (Path file : dirs) {
@@ -117,8 +117,8 @@ public class MetadataStateFormatTests extends ESTestCase {
             Path stateDir = list[0];
             assertThat(Files.isDirectory(stateDir), is(true));
             list = content("foo-*", stateDir);
-            assertEquals(list.length, 1);
-            assertThat(list[0].getFileName().toString(), equalTo("foo-" + (id + 1) + ".st"));
+            assertEquals(list.length,1);
+            assertThat(list[0].getFileName().toString(), equalTo("foo-"+ (id+1) + ".st"));
             DummyState read = format.read(NamedXContentRegistry.EMPTY, list[0]);
             assertThat(read, equalTo(state2));
 
@@ -134,7 +134,7 @@ public class MetadataStateFormatTests extends ESTestCase {
 
         Format format = new Format("foo-");
         DummyState state = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 1000), randomInt(), randomLong(),
-                randomDouble(), randomBoolean());
+            randomDouble(), randomBoolean());
         format.writeAndCleanup(state, dirs);
         for (Path file : dirs) {
             Path[] list = content("*", file);
@@ -158,7 +158,7 @@ public class MetadataStateFormatTests extends ESTestCase {
         final long id = addDummyFiles("foo-", dirs);
         Format format = new Format("foo-");
         DummyState state = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 1000), randomInt(), randomLong(),
-                randomDouble(), randomBoolean());
+            randomDouble(), randomBoolean());
         format.writeAndCleanup(state, dirs);
         for (Path file : dirs) {
             Path[] list = content("*", file);
@@ -189,7 +189,7 @@ public class MetadataStateFormatTests extends ESTestCase {
                 checksumBeforeCorruption = CodecUtil.retrieveChecksum(input);
             }
             try (FileChannel raf = FileChannel.open(fileToCorrupt, StandardOpenOption.READ, StandardOpenOption.WRITE)) {
-                raf.position(randomIntBetween(0, (int) Math.min(Integer.MAX_VALUE, raf.size() - 1)));
+                raf.position(randomIntBetween(0, (int)Math.min(Integer.MAX_VALUE, raf.size()-1)));
                 long filePointer = raf.position();
                 ByteBuffer bb = ByteBuffer.wrap(new byte[1]);
                 raf.read(bb);
@@ -200,32 +200,33 @@ public class MetadataStateFormatTests extends ESTestCase {
                 bb.put(0, newValue);
                 raf.write(bb, filePointer);
                 logger.debug("Corrupting file {} --  flipping at position {} from {} to {} ", fileToCorrupt.getFileName().toString(),
-                        filePointer, Integer.toHexString(oldValue), Integer.toHexString(newValue));
+                    filePointer, Integer.toHexString(oldValue), Integer.toHexString(newValue));
             }
-            long checksumAfterCorruption;
-            long actualChecksumAfterCorruption;
-            try (ChecksumIndexInput input = dir.openChecksumInput(fileToCorrupt.getFileName().toString(), IOContext.DEFAULT)) {
-                assertThat(input.getFilePointer(), is(0L));
-                input.seek(input.length() - 8); // one long is the checksum... 8 bytes
-                checksumAfterCorruption = input.getChecksum();
-                actualChecksumAfterCorruption = input.readLong();
-            }
-            StringBuilder msg = new StringBuilder();
-            msg.append("Checksum before: [").append(checksumBeforeCorruption).append("]");
-            msg.append(" after: [").append(checksumAfterCorruption).append("]");
-            msg.append(" checksum value after corruption: ").append(actualChecksumAfterCorruption).append("]");
-            msg.append(" file: ").append(fileToCorrupt.getFileName().toString()).append(" length: ")
-                    .append(dir.fileLength(fileToCorrupt.getFileName().toString()));
-            logger.debug("{}", msg.toString());
-            assumeTrue("Checksum collision - " + msg.toString(), checksumAfterCorruption != checksumBeforeCorruption // collision
-                    || actualChecksumAfterCorruption != checksumBeforeCorruption); // checksum corrupted
+        long checksumAfterCorruption;
+        long actualChecksumAfterCorruption;
+        try (ChecksumIndexInput input = dir.openChecksumInput(fileToCorrupt.getFileName().toString(), IOContext.DEFAULT)) {
+            assertThat(input.getFilePointer(), is(0L));
+            input.seek(input.length() - 8); // one long is the checksum... 8 bytes
+            checksumAfterCorruption = input.getChecksum();
+            actualChecksumAfterCorruption = input.readLong();
+        }
+        StringBuilder msg = new StringBuilder();
+        msg.append("Checksum before: [").append(checksumBeforeCorruption).append("]");
+        msg.append(" after: [").append(checksumAfterCorruption).append("]");
+        msg.append(" checksum value after corruption: ").append(actualChecksumAfterCorruption).append("]");
+        msg.append(" file: ").append(fileToCorrupt.getFileName().toString()).append(" length: ")
+            .append(dir.fileLength(fileToCorrupt.getFileName().toString()));
+        logger.debug("{}", msg.toString());
+        assumeTrue("Checksum collision - " + msg.toString(),
+                checksumAfterCorruption != checksumBeforeCorruption // collision
+                        || actualChecksumAfterCorruption != checksumBeforeCorruption); // checksum corrupted
         }
     }
 
     private DummyState writeAndReadStateSuccessfully(Format format, Path... paths) throws IOException {
         format.noFailures();
-        DummyState state = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 100), randomInt(), randomLong(), randomDouble(),
-                randomBoolean());
+        DummyState state = new DummyState(randomRealisticUnicodeOfCodepointLengthBetween(1, 100), randomInt(), randomLong(),
+                randomDouble(), randomBoolean());
         format.writeAndCleanup(state, paths);
         assertEquals(state, format.loadLatestState(logger, NamedXContentRegistry.EMPTY, paths));
         ensureOnlyOneStateFile(paths);
@@ -350,7 +351,9 @@ public class MetadataStateFormatTests extends ESTestCase {
 
     private static class Format extends MetadataStateFormat<DummyState> {
         private enum FailureMode {
-            NO_FAILURES, FAIL_ON_METHOD, FAIL_RANDOMLY
+            NO_FAILURES,
+            FAIL_ON_METHOD,
+            FAIL_RANDOMLY
         }
 
         private FailureMode failureMode;
@@ -439,8 +442,13 @@ public class MetadataStateFormatTests extends ESTestCase {
 
         @Override
         public String toString() {
-            return "DummyState{" + "string='" + string + '\'' + ", aInt=" + aInt + ", aLong=" + aLong + ", aDouble=" + aDouble
-                    + ", aBoolean=" + aBoolean + '}';
+            return "DummyState{" +
+                    "string='" + string + '\'' +
+                    ", aInt=" + aInt +
+                    ", aLong=" + aLong +
+                    ", aDouble=" + aDouble +
+                    ", aBoolean=" + aBoolean +
+                    '}';
         }
 
         DummyState(String string, int aInt, long aLong, double aDouble, boolean aBoolean) {
@@ -467,21 +475,15 @@ public class MetadataStateFormatTests extends ESTestCase {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             DummyState that = (DummyState) o;
 
-            if (aBoolean != that.aBoolean)
-                return false;
-            if (Double.compare(that.aDouble, aDouble) != 0)
-                return false;
-            if (aInt != that.aInt)
-                return false;
-            if (aLong != that.aLong)
-                return false;
+            if (aBoolean != that.aBoolean) return false;
+            if (Double.compare(that.aDouble, aDouble) != 0) return false;
+            if (aInt != that.aInt) return false;
+            if (aLong != that.aLong) return false;
             return string.equals(that.string);
 
         }
@@ -501,30 +503,30 @@ public class MetadataStateFormatTests extends ESTestCase {
 
         public DummyState parse(XContentParser parser) throws IOException {
             String fieldName = null;
-            parser.nextToken(); // start object
-            while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            parser.nextToken();  // start object
+            while(parser.nextToken() != XContentParser.Token.END_OBJECT) {
                 XContentParser.Token token = parser.currentToken();
                 if (token == XContentParser.Token.FIELD_NAME) {
-                    fieldName = parser.currentName();
+                  fieldName = parser.currentName();
                 } else if (token == XContentParser.Token.VALUE_STRING) {
                     assertTrue("string".equals(fieldName));
                     string = parser.text();
                 } else if (token == XContentParser.Token.VALUE_NUMBER) {
                     switch (fieldName) {
-                    case "double":
-                        aDouble = parser.doubleValue();
-                        break;
-                    case "int":
-                        aInt = parser.intValue();
-                        break;
-                    case "long":
-                        aLong = parser.longValue();
-                        break;
-                    default:
-                        fail("unexpected numeric value " + token);
-                        break;
+                        case "double":
+                            aDouble = parser.doubleValue();
+                            break;
+                        case "int":
+                            aInt = parser.intValue();
+                            break;
+                        case "long":
+                            aLong = parser.longValue();
+                            break;
+                        default:
+                            fail("unexpected numeric value " + token);
+                            break;
                     }
-                } else if (token == XContentParser.Token.VALUE_BOOLEAN) {
+                }else if (token == XContentParser.Token.VALUE_BOOLEAN) {
                     assertTrue("boolean".equals(fieldName));
                     aBoolean = parser.booleanValue();
                 } else {
@@ -552,10 +554,10 @@ public class MetadataStateFormatTests extends ESTestCase {
                 if (randomBoolean()) {
                     actualPrefix = "dummy-";
                 } else {
-                    realId = Math.max(realId, id);
+                   realId = Math.max(realId, id);
                 }
                 try (OutputStream stream =
-                        Files.newOutputStream(stateDir.resolve(actualPrefix + id + MetadataStateFormat.STATE_FILE_EXTENSION))) {
+                         Files.newOutputStream(stateDir.resolve(actualPrefix + id + MetadataStateFormat.STATE_FILE_EXTENSION))) {
                     stream.write(0);
                 }
             }

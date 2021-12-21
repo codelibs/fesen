@@ -19,14 +19,10 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.reload;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.ActionFilters;
@@ -47,25 +43,32 @@ import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportNodesReloadSecureSettingsAction extends
-        TransportNodesAction<NodesReloadSecureSettingsRequest, NodesReloadSecureSettingsResponse, TransportNodesReloadSecureSettingsAction.NodeRequest, NodesReloadSecureSettingsResponse.NodeResponse> {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TransportNodesReloadSecureSettingsAction extends TransportNodesAction<NodesReloadSecureSettingsRequest,
+                                                                    NodesReloadSecureSettingsResponse,
+                                                                    TransportNodesReloadSecureSettingsAction.NodeRequest,
+                                                                    NodesReloadSecureSettingsResponse.NodeResponse> {
 
     private final Environment environment;
     private final PluginsService pluginsService;
 
     @Inject
     public TransportNodesReloadSecureSettingsAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-            ActionFilters actionFilters, Environment environment, PluginsService pluginService) {
+                                                    ActionFilters actionFilters, Environment environment, PluginsService pluginService) {
         super(NodesReloadSecureSettingsAction.NAME, threadPool, clusterService, transportService, actionFilters,
-                NodesReloadSecureSettingsRequest::new, NodeRequest::new, ThreadPool.Names.GENERIC,
-                NodesReloadSecureSettingsResponse.NodeResponse.class);
+              NodesReloadSecureSettingsRequest::new, NodeRequest::new, ThreadPool.Names.GENERIC,
+              NodesReloadSecureSettingsResponse.NodeResponse.class);
         this.environment = environment;
         this.pluginsService = pluginService;
     }
 
     @Override
     protected NodesReloadSecureSettingsResponse newResponse(NodesReloadSecureSettingsRequest request,
-            List<NodesReloadSecureSettingsResponse.NodeResponse> responses, List<FailedNodeException> failures) {
+                                                            List<NodesReloadSecureSettingsResponse.NodeResponse> responses,
+                                                            List<FailedNodeException> failures) {
         return new NodesReloadSecureSettingsResponse(clusterService.getClusterName(), responses, failures);
     }
 
@@ -81,11 +84,12 @@ public class TransportNodesReloadSecureSettingsAction extends
 
     @Override
     protected void doExecute(Task task, NodesReloadSecureSettingsRequest request,
-            ActionListener<NodesReloadSecureSettingsResponse> listener) {
+                             ActionListener<NodesReloadSecureSettingsResponse> listener) {
         if (request.hasPassword() && isNodeLocal(request) == false && isNodeTransportTLSEnabled() == false) {
             request.closePassword();
-            listener.onFailure(new FesenException("Secure settings cannot be updated cluster wide when TLS for the transport layer"
-                    + " is not enabled. Enable TLS or use the API with a `_local` filter on each node."));
+            listener.onFailure(
+                new FesenException("Secure settings cannot be updated cluster wide when TLS for the transport layer" +
+                " is not enabled. Enable TLS or use the API with a `_local` filter on each node."));
         } else {
             super.doExecute(task, request, ActionListener.wrap(response -> {
                 request.closePassword();
@@ -101,8 +105,8 @@ public class TransportNodesReloadSecureSettingsAction extends
     protected NodesReloadSecureSettingsResponse.NodeResponse nodeOperation(NodeRequest nodeReloadRequest) {
         final NodesReloadSecureSettingsRequest request = nodeReloadRequest.request;
         // We default to using an empty string as the keystore password so that we mimic pre 7.3 API behavior
-        final SecureString secureSettingsPassword =
-                request.hasPassword() ? request.getSecureSettingsPassword() : new SecureString(new char[0]);
+        final SecureString secureSettingsPassword = request.hasPassword() ? request.getSecureSettingsPassword() :
+            new SecureString(new char[0]);
         try (KeyStoreWrapper keystore = KeyStoreWrapper.load(environment.configFile())) {
             // reread keystore from config file
             if (keystore == null) {
@@ -112,7 +116,10 @@ public class TransportNodesReloadSecureSettingsAction extends
             // decrypt the keystore using the password from the request
             keystore.decrypt(secureSettingsPassword.getChars());
             // add the keystore to the original node settings object
-            final Settings settingsWithKeystore = Settings.builder().put(environment.settings(), false).setSecureSettings(keystore).build();
+            final Settings settingsWithKeystore = Settings.builder()
+                    .put(environment.settings(), false)
+                    .setSecureSettings(keystore)
+                    .build();
             final List<Exception> exceptions = new ArrayList<>();
             // broadcast the new settings object (with the open embedded keystore) to all reloadable plugins
             pluginsService.filterPlugins(ReloadablePlugin.class).stream().forEach(p -> {

@@ -40,23 +40,43 @@ import org.codelibs.fesen.transport.TransportService;
  * Implements the listing of all dangling indices. All nodes in the cluster are queried, and
  * their answers aggregated. Finding dangling indices is performed in {@link DanglingIndicesState}.
  */
-public class TransportListDanglingIndicesAction extends
-        TransportNodesAction<ListDanglingIndicesRequest, ListDanglingIndicesResponse, NodeListDanglingIndicesRequest, NodeListDanglingIndicesResponse> {
+public class TransportListDanglingIndicesAction extends TransportNodesAction<
+    ListDanglingIndicesRequest,
+    ListDanglingIndicesResponse,
+    NodeListDanglingIndicesRequest,
+    NodeListDanglingIndicesResponse> {
     private final TransportService transportService;
     private final DanglingIndicesState danglingIndicesState;
 
     @Inject
-    public TransportListDanglingIndicesAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-            ActionFilters actionFilters, DanglingIndicesState danglingIndicesState) {
-        super(ListDanglingIndicesAction.NAME, threadPool, clusterService, transportService, actionFilters, ListDanglingIndicesRequest::new,
-                NodeListDanglingIndicesRequest::new, ThreadPool.Names.MANAGEMENT, NodeListDanglingIndicesResponse.class);
+    public TransportListDanglingIndicesAction(
+        ThreadPool threadPool,
+        ClusterService clusterService,
+        TransportService transportService,
+        ActionFilters actionFilters,
+        DanglingIndicesState danglingIndicesState
+    ) {
+        super(
+            ListDanglingIndicesAction.NAME,
+            threadPool,
+            clusterService,
+            transportService,
+            actionFilters,
+            ListDanglingIndicesRequest::new,
+            NodeListDanglingIndicesRequest::new,
+            ThreadPool.Names.MANAGEMENT,
+            NodeListDanglingIndicesResponse.class
+        );
         this.transportService = transportService;
         this.danglingIndicesState = danglingIndicesState;
     }
 
     @Override
-    protected ListDanglingIndicesResponse newResponse(ListDanglingIndicesRequest request,
-            List<NodeListDanglingIndicesResponse> nodeListDanglingIndicesResponse, List<FailedNodeException> failures) {
+    protected ListDanglingIndicesResponse newResponse(
+        ListDanglingIndicesRequest request,
+        List<NodeListDanglingIndicesResponse> nodeListDanglingIndicesResponse,
+        List<FailedNodeException> failures
+    ) {
         return new ListDanglingIndicesResponse(clusterService.getClusterName(), nodeListDanglingIndicesResponse, failures);
     }
 
@@ -80,8 +100,12 @@ public class TransportListDanglingIndicesAction extends
 
         for (IndexMetadata each : danglingIndicesState.getDanglingIndices().values()) {
             if (indexFilter == null || indexFilter.equals(each.getIndexUUID())) {
-                DanglingIndexInfo danglingIndexInfo =
-                        new DanglingIndexInfo(localNode.getId(), each.getIndex().getName(), each.getIndexUUID(), each.getCreationDate());
+                DanglingIndexInfo danglingIndexInfo = new DanglingIndexInfo(
+                    localNode.getId(),
+                    each.getIndex().getName(),
+                    each.getIndexUUID(),
+                    each.getCreationDate()
+                );
                 indexMetaData.add(danglingIndexInfo);
             }
         }

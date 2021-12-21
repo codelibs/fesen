@@ -19,12 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -37,6 +32,12 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.script.StoredScriptSource;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 public class GetStoredScriptResponse extends ActionResponse implements StatusToXContentObject {
 
     public static final ParseField _ID_PARSE_FIELD = new ParseField("_id");
@@ -44,18 +45,22 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
     public static final ParseField SCRIPT = new ParseField("script");
 
     private static final ConstructingObjectParser<GetStoredScriptResponse, String> PARSER =
-            new ConstructingObjectParser<>("GetStoredScriptResponse", true, (a, c) -> {
+        new ConstructingObjectParser<>("GetStoredScriptResponse",
+            true,
+            (a, c) -> {
                 String id = (String) a[0];
-                boolean found = (Boolean) a[1];
-                StoredScriptSource scriptSource = (StoredScriptSource) a[2];
+                boolean found = (Boolean)a[1];
+                StoredScriptSource scriptSource = (StoredScriptSource)a[2];
                 return found ? new GetStoredScriptResponse(id, scriptSource) : new GetStoredScriptResponse(id, null);
             });
 
     static {
-        PARSER.declareField(constructorArg(), (p, c) -> p.text(), _ID_PARSE_FIELD, ObjectParser.ValueType.STRING);
-        PARSER.declareField(constructorArg(), (p, c) -> p.booleanValue(), FOUND_PARSE_FIELD, ObjectParser.ValueType.BOOLEAN);
-        PARSER.declareField(optionalConstructorArg(), (p, c) -> StoredScriptSource.fromXContent(p, true), SCRIPT,
-                ObjectParser.ValueType.OBJECT);
+        PARSER.declareField(constructorArg(), (p, c) -> p.text(),
+            _ID_PARSE_FIELD, ObjectParser.ValueType.STRING);
+        PARSER.declareField(constructorArg(), (p, c) -> p.booleanValue(),
+            FOUND_PARSE_FIELD, ObjectParser.ValueType.BOOLEAN);
+        PARSER.declareField(optionalConstructorArg(), (p, c) -> StoredScriptSource.fromXContent(p, true),
+            SCRIPT, ObjectParser.ValueType.OBJECT);
     }
 
     private String id;
@@ -70,7 +75,9 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
             source = null;
         }
 
-        id = in.readString();
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            id = in.readString();
+        }
     }
 
     GetStoredScriptResponse(String id, StoredScriptSource source) {
@@ -121,17 +128,18 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
             out.writeBoolean(true);
             source.writeTo(out);
         }
-        out.writeString(id);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            out.writeString(id);
+        }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         GetStoredScriptResponse that = (GetStoredScriptResponse) o;
-        return Objects.equals(id, that.id) && Objects.equals(source, that.source);
+        return Objects.equals(id, that.id) &&
+            Objects.equals(source, that.source);
     }
 
     @Override

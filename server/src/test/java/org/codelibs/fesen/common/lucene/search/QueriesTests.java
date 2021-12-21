@@ -39,24 +39,36 @@ public class QueriesTests extends ESTestCase {
             // This is a custom query that extends AutomatonQuery and want to make sure the equals method works
             assertEquals(Queries.newNonNestedFilter(version), Queries.newNonNestedFilter(version));
             assertEquals(Queries.newNonNestedFilter(version).hashCode(), Queries.newNonNestedFilter(version).hashCode());
-            assertEquals(Queries.newNonNestedFilter(version), new DocValuesFieldExistsQuery(SeqNoFieldMapper.PRIMARY_TERM_NAME));
+            if (version.onOrAfter(Version.V_6_1_0)) {
+                assertEquals(Queries.newNonNestedFilter(version), new DocValuesFieldExistsQuery(SeqNoFieldMapper.PRIMARY_TERM_NAME));
+            } else {
+                assertEquals(Queries.newNonNestedFilter(version), new BooleanQuery.Builder()
+                    .add(new MatchAllDocsQuery(), BooleanClause.Occur.FILTER)
+                    .add(Queries.newNestedFilter(), BooleanClause.Occur.MUST_NOT)
+                    .build());
+            }
         }
     }
 
     public void testIsNegativeQuery() {
         assertFalse(Queries.isNegativeQuery(new MatchAllDocsQuery()));
         assertFalse(Queries.isNegativeQuery(new BooleanQuery.Builder().build()));
-        assertFalse(Queries.isNegativeQuery(new BooleanQuery.Builder().add(new TermQuery(new Term("foo", "bar")), Occur.MUST).build()));
-        assertTrue(Queries.isNegativeQuery(new BooleanQuery.Builder().add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT).build()));
-        assertFalse(Queries.isNegativeQuery(
-                new BooleanQuery.Builder().add(new MatchAllDocsQuery(), Occur.MUST).add(new MatchAllDocsQuery(), Occur.MUST_NOT).build()));
+        assertFalse(Queries.isNegativeQuery(new BooleanQuery.Builder()
+                .add(new TermQuery(new Term("foo", "bar")), Occur.MUST).build()));
+        assertTrue(Queries.isNegativeQuery(new BooleanQuery.Builder()
+                .add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT).build()));
+        assertFalse(Queries.isNegativeQuery(new BooleanQuery.Builder()
+                .add(new MatchAllDocsQuery(), Occur.MUST)
+                .add(new MatchAllDocsQuery(), Occur.MUST_NOT).build()));
     }
 
     public void testFixNegativeQuery() {
-        assertEquals(
-                new BooleanQuery.Builder().add(new MatchAllDocsQuery(), Occur.FILTER)
-                        .add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT).build(),
+        assertEquals(new BooleanQuery.Builder()
+                .add(new MatchAllDocsQuery(), Occur.FILTER)
+                .add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT).build(),
                 Queries.fixNegativeQueryIfNeeded(
-                        new BooleanQuery.Builder().add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT).build()));
+                        new BooleanQuery.Builder()
+                        .add(new TermQuery(new Term("foo", "bar")), Occur.MUST_NOT)
+                        .build()));
     }
 }

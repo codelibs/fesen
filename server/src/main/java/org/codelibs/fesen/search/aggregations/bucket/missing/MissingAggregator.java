@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.missing;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.index.fielddata.DocValueBits;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -35,20 +32,29 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class MissingAggregator extends BucketsAggregator implements SingleBucketAggregator {
 
     private final ValuesSource valuesSource;
 
-    public MissingAggregator(String name, AggregatorFactories factories, ValuesSourceConfig valuesSourceConfig,
-            SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata)
-            throws IOException {
+    public MissingAggregator(
+            String name,
+            AggregatorFactories factories,
+            ValuesSourceConfig valuesSourceConfig,
+            SearchContext aggregationContext,
+            Aggregator parent,
+            CardinalityUpperBound cardinality,
+            Map<String, Object> metadata) throws IOException {
         super(name, factories, aggregationContext, parent, cardinality, metadata);
         // TODO: Stop using nulls here
         this.valuesSource = valuesSourceConfig.hasValues() ? valuesSourceConfig.getValuesSource() : null;
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
+            final LeafBucketCollector sub) throws IOException {
         final DocValueBits docsWithValue;
         if (valuesSource != null) {
             docsWithValue = valuesSource.docsWithValue(ctx);
@@ -72,8 +78,8 @@ public class MissingAggregator extends BucketsAggregator implements SingleBucket
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) -> new InternalMissing(name,
-                bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
+        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) ->
+            new InternalMissing(name, bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
     }
 
     @Override
@@ -82,3 +88,5 @@ public class MissingAggregator extends BucketsAggregator implements SingleBucket
     }
 
 }
+
+

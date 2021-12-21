@@ -28,7 +28,8 @@ import org.codelibs.fesen.core.TimeValue;
 /**
  * Base request builder for master node operations
  */
-public abstract class MasterNodeOperationRequestBuilder<Request extends MasterNodeRequest<Request>, Response extends ActionResponse, RequestBuilder extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder>>
+public abstract class MasterNodeOperationRequestBuilder<Request extends MasterNodeRequest<Request>, Response extends ActionResponse,
+        RequestBuilder extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
     protected MasterNodeOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {

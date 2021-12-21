@@ -29,7 +29,15 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface RangeAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, DocValueFormat format,
-            InternalRange.Factory rangeFactory, RangeAggregator.Range[] ranges, boolean keyed, SearchContext context, Aggregator parent,
-            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name,
+                     AggregatorFactories factories,
+                     ValuesSource.Numeric valuesSource,
+                     DocValueFormat format,
+                     InternalRange.Factory rangeFactory,
+                     RangeAggregator.Range[] ranges,
+                     boolean keyed,
+                     SearchContext context,
+                     Aggregator parent,
+                     CardinalityUpperBound cardinality,
+                     Map<String, Object> metadata) throws IOException;
 }

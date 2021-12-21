@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import static org.codelibs.fesen.index.analysis.AnalyzerComponents.createComponents;
-
-import java.util.Map;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.mapper.TextFieldMapper;
+
+import static org.codelibs.fesen.index.analysis.AnalyzerComponents.createComponents;
+
+import java.util.Map;
 
 /**
  * A custom analyzer that is built out of a single {@link org.apache.lucene.analysis.Tokenizer} and a list
@@ -38,13 +38,15 @@ public class CustomAnalyzerProvider extends AbstractIndexAnalyzerProvider<Analyz
 
     private Analyzer customAnalyzer;
 
-    public CustomAnalyzerProvider(IndexSettings indexSettings, String name, Settings settings) {
+    public CustomAnalyzerProvider(IndexSettings indexSettings,
+                                  String name, Settings settings) {
         super(indexSettings, name, settings);
         this.analyzerSettings = settings;
     }
 
-    void build(final Map<String, TokenizerFactory> tokenizers, final Map<String, CharFilterFactory> charFilters,
-            final Map<String, TokenFilterFactory> tokenFilters) {
+    void build(final Map<String, TokenizerFactory> tokenizers,
+               final Map<String, CharFilterFactory> charFilters,
+               final Map<String, TokenFilterFactory> tokenFilters) {
         customAnalyzer = create(name(), analyzerSettings, tokenizers, charFilters, tokenFilters);
     }
 
@@ -53,7 +55,8 @@ public class CustomAnalyzerProvider extends AbstractIndexAnalyzerProvider<Analyz
      * and search time use, or a {@link ReloadableCustomAnalyzer} if the components are intended for search time use only.
      */
     private static Analyzer create(String name, Settings analyzerSettings, Map<String, TokenizerFactory> tokenizers,
-            Map<String, CharFilterFactory> charFilters, Map<String, TokenFilterFactory> tokenFilters) {
+            Map<String, CharFilterFactory> charFilters,
+            Map<String, TokenFilterFactory> tokenFilters) {
         int positionIncrementGap = TextFieldMapper.Defaults.POSITION_INCREMENT_GAP;
         positionIncrementGap = analyzerSettings.getAsInt("position_increment_gap", positionIncrementGap);
         int offsetGap = analyzerSettings.getAsInt("offset_gap", -1);
@@ -61,8 +64,8 @@ public class CustomAnalyzerProvider extends AbstractIndexAnalyzerProvider<Analyz
         if (components.analysisMode().equals(AnalysisMode.SEARCH_TIME)) {
             return new ReloadableCustomAnalyzer(components, positionIncrementGap, offsetGap);
         } else {
-            return new CustomAnalyzer(components.getTokenizerFactory(), components.getCharFilters(), components.getTokenFilters(),
-                    positionIncrementGap, offsetGap);
+            return new CustomAnalyzer(components.getTokenizerFactory(), components.getCharFilters(),
+                    components.getTokenFilters(), positionIncrementGap, offsetGap);
         }
     }
 

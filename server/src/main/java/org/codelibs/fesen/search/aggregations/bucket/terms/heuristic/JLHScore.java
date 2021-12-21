@@ -17,7 +17,9 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
+
 
 import java.io.IOException;
 
@@ -122,3 +124,4 @@ public class JLHScore extends SignificanceHeuristic {
         }
     }
 }
+

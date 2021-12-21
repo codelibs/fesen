@@ -76,10 +76,14 @@ public abstract class AbstractXContentFilteringTestCase extends AbstractFilterin
 
     static void assertXContentBuilderAsBytes(final XContentBuilder expected, final XContentBuilder actual) {
         XContent xContent = XContentFactory.xContent(actual.contentType());
-        try (XContentParser jsonParser = xContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
-                BytesReference.bytes(expected).streamInput());
-                XContentParser testParser = xContent.createParser(NamedXContentRegistry.EMPTY,
-                        DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(actual).streamInput());) {
+        try (
+            XContentParser jsonParser =
+                xContent.createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(expected).streamInput());
+            XContentParser testParser =
+                xContent.createParser(NamedXContentRegistry.EMPTY,
+                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(actual).streamInput());
+        ) {
             while (true) {
                 XContentParser.Token token1 = jsonParser.nextToken();
                 XContentParser.Token token2 = testParser.nextToken();
@@ -89,16 +93,16 @@ public abstract class AbstractXContentFilteringTestCase extends AbstractFilterin
                 }
                 assertThat(token1, equalTo(token2));
                 switch (token1) {
-                case FIELD_NAME:
-                    assertThat(jsonParser.currentName(), equalTo(testParser.currentName()));
-                    break;
-                case VALUE_STRING:
-                    assertThat(jsonParser.text(), equalTo(testParser.text()));
-                    break;
-                case VALUE_NUMBER:
-                    assertThat(jsonParser.numberType(), equalTo(testParser.numberType()));
-                    assertThat(jsonParser.numberValue(), equalTo(testParser.numberValue()));
-                    break;
+                    case FIELD_NAME:
+                        assertThat(jsonParser.currentName(), equalTo(testParser.currentName()));
+                        break;
+                    case VALUE_STRING:
+                        assertThat(jsonParser.text(), equalTo(testParser.text()));
+                        break;
+                    case VALUE_NUMBER:
+                        assertThat(jsonParser.numberType(), equalTo(testParser.numberType()));
+                        assertThat(jsonParser.numberValue(), equalTo(testParser.numberValue()));
+                        break;
                 }
             }
         } catch (Exception e) {

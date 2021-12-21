@@ -24,7 +24,8 @@ import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.client.FesenClient;
 
-public abstract class SingleShardOperationRequestBuilder<Request extends SingleShardRequest<Request>, Response extends ActionResponse, RequestBuilder extends SingleShardOperationRequestBuilder<Request, Response, RequestBuilder>>
+public abstract class SingleShardOperationRequestBuilder<Request extends SingleShardRequest<Request>, Response extends ActionResponse,
+        RequestBuilder extends SingleShardOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
     protected SingleShardOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {

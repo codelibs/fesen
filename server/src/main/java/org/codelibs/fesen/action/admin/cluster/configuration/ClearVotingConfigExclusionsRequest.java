@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.MasterNodeRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
 
 /**
  * A request to clear the voting config exclusions from the cluster state, optionally waiting for these nodes to be removed from the
@@ -92,6 +92,9 @@ public class ClearVotingConfigExclusionsRequest extends MasterNodeRequest<ClearV
 
     @Override
     public String toString() {
-        return "ClearVotingConfigExclusionsRequest{" + ", waitForRemoval=" + waitForRemoval + ", timeout=" + timeout + '}';
+        return "ClearVotingConfigExclusionsRequest{" +
+            ", waitForRemoval=" + waitForRemoval +
+            ", timeout=" + timeout +
+            '}';
     }
 }

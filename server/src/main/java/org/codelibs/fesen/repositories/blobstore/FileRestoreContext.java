@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.repositories.blobstore;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -42,6 +32,16 @@ import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.store.StoreFileMetadata;
 import org.codelibs.fesen.indices.recovery.RecoveryState;
 import org.codelibs.fesen.snapshots.SnapshotId;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * This context will execute a file restore of the lucene files. It is primarily designed to be used to
@@ -91,7 +91,7 @@ public abstract class FileRestoreContext {
                 recoveryTargetMetadata = Store.MetadataSnapshot.EMPTY;
             } catch (IOException e) {
                 logger.warn(new ParameterizedMessage("[{}] [{}] Can't read metadata from store, will not reuse local files during restore",
-                        shardId, snapshotId), e);
+                    shardId, snapshotId), e);
                 recoveryTargetMetadata = Store.MetadataSnapshot.EMPTY;
             }
             final List<BlobStoreIndexShardSnapshot.FileInfo> filesToRecover = new ArrayList<>();
@@ -115,7 +115,7 @@ public abstract class FileRestoreContext {
                 recoveryState.getIndex().addFileDetail(fileInfo.physicalName(), fileInfo.length(), true);
                 if (logger.isTraceEnabled()) {
                     logger.trace("[{}] [{}] not_recovering file [{}] from [{}], exists in local store and is same", shardId, snapshotId,
-                            fileInfo.physicalName(), fileInfo.name());
+                        fileInfo.physicalName(), fileInfo.name());
                 }
             }
 
@@ -124,7 +124,8 @@ public abstract class FileRestoreContext {
                 filesToRecover.add(fileInfo);
                 recoveryState.getIndex().addFileDetail(fileInfo.physicalName(), fileInfo.length(), false);
                 if (logger.isTraceEnabled()) {
-                    logger.trace("[{}] [{}] recovering [{}] from [{}]", shardId, snapshotId, fileInfo.physicalName(), fileInfo.name());
+                    logger.trace("[{}] [{}] recovering [{}] from [{}]", shardId, snapshotId,
+                        fileInfo.physicalName(), fileInfo.name());
                 }
             }
 
@@ -152,15 +153,16 @@ public abstract class FileRestoreContext {
                     }
                 }
 
-                restoreFiles(filesToRecover, store, ActionListener.wrap(v -> {
-                    store.incRef();
-                    try {
-                        afterRestore(snapshotFiles, store, restoredSegmentsFile);
-                        listener.onResponse(null);
-                    } finally {
-                        store.decRef();
-                    }
-                }, listener::onFailure));
+                restoreFiles(filesToRecover, store, ActionListener.wrap(
+                    v -> {
+                        store.incRef();
+                        try {
+                            afterRestore(snapshotFiles, store, restoredSegmentsFile);
+                            listener.onResponse(null);
+                        } finally {
+                            store.decRef();
+                        }
+                    }, listener::onFailure));
             } catch (IOException ex) {
                 throw new IndexShardRestoreFailedException(shardId, "Failed to recover index", ex);
             }
@@ -204,7 +206,7 @@ public abstract class FileRestoreContext {
      * @param store          Store to restore into
      */
     protected abstract void restoreFiles(List<BlobStoreIndexShardSnapshot.FileInfo> filesToRecover, Store store,
-            ActionListener<Void> listener);
+                                         ActionListener<Void> listener);
 
     @SuppressWarnings("unchecked")
     private static Iterable<StoreFileMetadata> concat(Store.RecoveryDiff diff) {

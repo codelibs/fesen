@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.update;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.DocWriteResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.get.GetResult;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
 
 public class UpdateResponse extends DocWriteResponse {
 
@@ -60,8 +60,8 @@ public class UpdateResponse extends DocWriteResponse {
         this(new ShardInfo(0, 0), shardId, type, id, seqNo, primaryTerm, version, result);
     }
 
-    public UpdateResponse(ShardInfo shardInfo, ShardId shardId, String type, String id, long seqNo, long primaryTerm, long version,
-            Result result) {
+    public UpdateResponse(
+            ShardInfo shardInfo, ShardId shardId, String type, String id, long seqNo, long primaryTerm, long version, Result result) {
         super(shardId, type, id, seqNo, primaryTerm, version, result);
         setShardInfo(shardInfo);
     }
@@ -174,9 +174,10 @@ public class UpdateResponse extends DocWriteResponse {
                 update = new UpdateResponse(shardId, type, id, seqNo, primaryTerm, version, result);
             }
             if (getResult != null) {
-                update.setGetResult(new GetResult(update.getIndex(), update.getType(), update.getId(), getResult.getSeqNo(),
-                        getResult.getPrimaryTerm(), update.getVersion(), getResult.isExists(), getResult.internalSourceRef(),
-                        getResult.getDocumentFields(), getResult.getMetadataFields()));
+                update.setGetResult(new GetResult(update.getIndex(), update.getType(), update.getId(),
+                    getResult.getSeqNo(), getResult.getPrimaryTerm(), update.getVersion(),
+                    getResult.isExists(), getResult.internalSourceRef(), getResult.getDocumentFields(),
+                    getResult.getMetadataFields()));
             }
             update.setForcedRefresh(forcedRefresh);
             return update;

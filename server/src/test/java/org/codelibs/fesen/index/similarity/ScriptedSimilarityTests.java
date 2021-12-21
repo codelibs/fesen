@@ -72,7 +72,10 @@ public class ScriptedSimilarityTests extends ESTestCase {
             int uniqueTermCount = TestUtil.nextInt(random(), 1, 10);
             FieldInvertState state = new FieldInvertState(Version.LATEST.major, "foo", IndexOptions.DOCS_AND_FREQS, position, length,
                     numOverlaps, 100, maxTermFrequency, uniqueTermCount);
-            assertEquals(sim2.computeNorm(state), sim1.computeNorm(state), 0f);
+            assertEquals(
+                    sim2.computeNorm(state),
+                    sim1.computeNorm(state),
+                    0f);
         }
     }
 
@@ -82,13 +85,15 @@ public class ScriptedSimilarityTests extends ESTestCase {
             return new SimilarityScript() {
 
                 @Override
-                public double execute(double weight, ScriptedSimilarity.Query query, ScriptedSimilarity.Field field,
-                        ScriptedSimilarity.Term term, ScriptedSimilarity.Doc doc) {
+                public double execute(double weight, ScriptedSimilarity.Query query,
+                        ScriptedSimilarity.Field field, ScriptedSimilarity.Term term,
+                        ScriptedSimilarity.Doc doc) {
 
                     StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
                     if (Arrays.stream(stackTraceElements).anyMatch(ste -> {
-                        return ste.getClassName().endsWith(".TermScorer") && ste.getMethodName().equals("score");
-                    }) == false) {
+                        return ste.getClassName().endsWith(".TermScorer") &&
+                                ste.getMethodName().equals("score");
+                            }) == false) {
                         // this might happen when computing max scores
                         return Float.MAX_VALUE;
                     }
@@ -135,8 +140,10 @@ public class ScriptedSimilarityTests extends ESTestCase {
         w.close();
         IndexSearcher searcher = new IndexSearcher(r);
         searcher.setSimilarity(sim);
-        Query query = new BoostQuery(new BooleanQuery.Builder().add(new TermQuery(new Term("f", "foo")), Occur.SHOULD)
-                .add(new TermQuery(new Term("match", "yes")), Occur.FILTER).build(), 3.2f);
+        Query query = new BoostQuery(new BooleanQuery.Builder()
+                .add(new TermQuery(new Term("f", "foo")), Occur.SHOULD)
+                .add(new TermQuery(new Term("match", "yes")), Occur.FILTER)
+                .build(), 3.2f);
         TopDocs topDocs = searcher.search(query, 1);
         assertEquals(1, topDocs.totalHits.value);
         assertTrue(called.get());
@@ -151,7 +158,8 @@ public class ScriptedSimilarityTests extends ESTestCase {
             return new SimilarityWeightScript() {
 
                 @Override
-                public double execute(ScriptedSimilarity.Query query, ScriptedSimilarity.Field field, ScriptedSimilarity.Term term) {
+                public double execute(ScriptedSimilarity.Query query, ScriptedSimilarity.Field field,
+                    ScriptedSimilarity.Term term) {
                     assertEquals(3, field.getDocCount());
                     assertEquals(5, field.getSumDocFreq());
                     assertEquals(6, field.getSumTotalTermFreq());
@@ -171,13 +179,15 @@ public class ScriptedSimilarityTests extends ESTestCase {
             return new SimilarityScript() {
 
                 @Override
-                public double execute(double weight, ScriptedSimilarity.Query query, ScriptedSimilarity.Field field,
-                        ScriptedSimilarity.Term term, ScriptedSimilarity.Doc doc) {
+                public double execute(double weight, ScriptedSimilarity.Query query,
+                        ScriptedSimilarity.Field field, ScriptedSimilarity.Term term,
+                        ScriptedSimilarity.Doc doc) {
 
                     StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
                     if (Arrays.stream(stackTraceElements).anyMatch(ste -> {
-                        return ste.getClassName().endsWith(".TermScorer") && ste.getMethodName().equals("score");
-                    }) == false) {
+                        return ste.getClassName().endsWith(".TermScorer") &&
+                                ste.getMethodName().equals("score");
+                            }) == false) {
                         // this might happen when computing max scores
                         return Float.MAX_VALUE;
                     }

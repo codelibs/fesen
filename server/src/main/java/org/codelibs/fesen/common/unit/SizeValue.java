@@ -198,10 +198,8 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         return compareTo((SizeValue) o) == 0;
     }

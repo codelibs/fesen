@@ -72,8 +72,13 @@ public class NestedIdentityTests extends ESTestCase {
         builder.startObject();
         nestedIdentity.toXContent(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
-        assertEquals("{\n" + "  \"_nested\" : {\n" + "    \"field\" : \"foo\",\n" + "    \"offset\" : 5\n" + "  }\n" + "}",
-                Strings.toString(builder));
+        assertEquals(
+              "{\n" +
+              "  \"_nested\" : {\n" +
+              "    \"field\" : \"foo\",\n" +
+              "    \"offset\" : 5\n" +
+              "  }\n" +
+              "}", Strings.toString(builder));
 
         nestedIdentity = new NestedIdentity("foo", 5, new NestedIdentity("bar", 3, null));
         builder = JsonXContent.contentBuilder();
@@ -81,8 +86,17 @@ public class NestedIdentityTests extends ESTestCase {
         builder.startObject();
         nestedIdentity.toXContent(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
-        assertEquals("{\n" + "  \"_nested\" : {\n" + "    \"field\" : \"foo\",\n" + "    \"offset\" : 5,\n" + "    \"_nested\" : {\n"
-                + "      \"field\" : \"bar\",\n" + "      \"offset\" : 3\n" + "    }\n" + "  }\n" + "}", Strings.toString(builder));
+        assertEquals(
+              "{\n" +
+              "  \"_nested\" : {\n" +
+              "    \"field\" : \"foo\",\n" +
+              "    \"offset\" : 5,\n" +
+              "    \"_nested\" : {\n" +
+              "      \"field\" : \"bar\",\n" +
+              "      \"offset\" : 3\n" +
+              "    }\n" +
+              "  }\n" +
+              "}", Strings.toString(builder));
     }
 
     /**
@@ -113,7 +127,8 @@ public class NestedIdentityTests extends ESTestCase {
         int offset = original.getOffset();
         NestedIdentity child = (NestedIdentity) original.getChild();
         String fieldName = original.getField().string();
-        mutations.add(() -> new NestedIdentity(original.getField().string() + "_prefix", offset, child));
+        mutations.add(() ->
+            new NestedIdentity(original.getField().string() + "_prefix", offset, child));
         mutations.add(() -> new NestedIdentity(fieldName, offset + 1, child));
         mutations.add(() -> new NestedIdentity(fieldName, offset, mutate(child)));
         return randomFrom(mutations).get();

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata.ordinals;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.IndexReader;
@@ -40,6 +34,12 @@ import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.fielddata.plain.AbstractLeafOrdinalsFieldData;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
 /**
  * Utility class to build global ordinals.
  */
@@ -50,8 +50,8 @@ public enum GlobalOrdinalsBuilder {
      * Build global ordinals for the provided {@link IndexReader}.
      */
     public static IndexOrdinalsFieldData build(final IndexReader indexReader, IndexOrdinalsFieldData indexFieldData,
-            CircuitBreakerService breakerService, Logger logger, Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction)
-            throws IOException {
+            CircuitBreakerService breakerService, Logger logger,
+            Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction) throws IOException {
         assert indexReader.leaves().size() > 1;
         long startTimeNS = System.nanoTime();
 
@@ -66,11 +66,16 @@ public enum GlobalOrdinalsBuilder {
         breakerService.getBreaker(CircuitBreaker.FIELDDATA).addWithoutBreaking(memorySizeInBytes);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("global-ordinals [{}][{}] took [{}]", indexFieldData.getFieldName(), ordinalMap.getValueCount(),
-                    new TimeValue(System.nanoTime() - startTimeNS, TimeUnit.NANOSECONDS));
+            logger.debug(
+                    "global-ordinals [{}][{}] took [{}]",
+                    indexFieldData.getFieldName(),
+                    ordinalMap.getValueCount(),
+                    new TimeValue(System.nanoTime() - startTimeNS, TimeUnit.NANOSECONDS)
+            );
         }
-        return new GlobalOrdinalsIndexFieldData(indexFieldData.getFieldName(), indexFieldData.getValuesSourceType(), atomicFD, ordinalMap,
-                memorySizeInBytes, scriptFunction);
+        return new GlobalOrdinalsIndexFieldData(indexFieldData.getFieldName(), indexFieldData.getValuesSourceType(),
+                atomicFD, ordinalMap, memorySizeInBytes, scriptFunction
+        );
     }
 
     public static IndexOrdinalsFieldData buildEmpty(IndexReader indexReader, IndexOrdinalsFieldData indexFieldData) throws IOException {
@@ -102,8 +107,9 @@ public enum GlobalOrdinalsBuilder {
             subs[i] = atomicFD[i].getOrdinalsValues();
         }
         final OrdinalMap ordinalMap = OrdinalMap.build(null, subs, PackedInts.DEFAULT);
-        return new GlobalOrdinalsIndexFieldData(indexFieldData.getFieldName(), indexFieldData.getValuesSourceType(), atomicFD, ordinalMap,
-                0, AbstractLeafOrdinalsFieldData.DEFAULT_SCRIPT_FUNCTION);
+        return new GlobalOrdinalsIndexFieldData(indexFieldData.getFieldName(), indexFieldData.getValuesSourceType(),
+                atomicFD, ordinalMap, 0, AbstractLeafOrdinalsFieldData.DEFAULT_SCRIPT_FUNCTION
+        );
     }
 
 }

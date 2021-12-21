@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanNotQuery;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilder> implements SpanQueryBuilder {
     public static final String NAME = "span_not";
@@ -169,7 +169,7 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
         SpanQueryBuilder exclude = null;
 
         Integer dist = null;
-        Integer pre = null;
+        Integer pre  = null;
         Integer post = null;
 
         String queryName = null;
@@ -256,8 +256,10 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
 
     @Override
     protected boolean doEquals(SpanNotQueryBuilder other) {
-        return Objects.equals(include, other.include) && Objects.equals(exclude, other.exclude) && (pre == other.pre)
-                && (post == other.post);
+        return Objects.equals(include, other.include) &&
+               Objects.equals(exclude, other.exclude) &&
+               (pre == other.pre) &&
+               (post == other.post);
     }
 
     @Override

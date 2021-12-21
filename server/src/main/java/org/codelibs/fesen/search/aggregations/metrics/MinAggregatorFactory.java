@@ -36,25 +36,35 @@ import org.codelibs.fesen.search.internal.SearchContext;
 class MinAggregatorFactory extends ValuesSourceAggregatorFactory {
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        builder.register(MinAggregationBuilder.REGISTRY_KEY,
-                org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
-                MinAggregator::new, true);
+        builder.register(
+            MinAggregationBuilder.REGISTRY_KEY,
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.DATE, CoreValuesSourceType.BOOLEAN),
+            MinAggregator::new,
+            true);
     }
 
-    MinAggregatorFactory(String name, ValuesSourceConfig config, QueryShardContext queryShardContext, AggregatorFactory parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
+    MinAggregatorFactory(String name, ValuesSourceConfig config, QueryShardContext queryShardContext,
+                         AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
+                         Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext,
+                                            Aggregator parent,
+                                            Map<String, Object> metadata) throws IOException {
         return new MinAggregator(name, config, searchContext, parent, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound bucketCardinality,
-            Map<String, Object> metadata) throws IOException {
-        return queryShardContext.getValuesSourceRegistry().getAggregator(MinAggregationBuilder.REGISTRY_KEY, config).build(name, config,
-                searchContext, parent, metadata);
+    protected Aggregator doCreateInternal(
+        SearchContext searchContext,
+        Aggregator parent,
+        CardinalityUpperBound bucketCardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
+        return queryShardContext.getValuesSourceRegistry()
+            .getAggregator(MinAggregationBuilder.REGISTRY_KEY, config)
+            .build(name, config, searchContext, parent, metadata);
     }
 }

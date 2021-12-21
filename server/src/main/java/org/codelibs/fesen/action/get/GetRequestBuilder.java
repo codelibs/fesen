@@ -103,8 +103,9 @@ public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetReq
      * @param exclude An optional exclude (optionally wildcarded) pattern to filter the returned _source
      */
     public GetRequestBuilder setFetchSource(@Nullable String include, @Nullable String exclude) {
-        return setFetchSource(include == null ? Strings.EMPTY_ARRAY : new String[] { include },
-                exclude == null ? Strings.EMPTY_ARRAY : new String[] { exclude });
+        return setFetchSource(
+                include == null ? Strings.EMPTY_ARRAY : new String[]{include},
+                exclude == null ? Strings.EMPTY_ARRAY : new String[]{exclude});
     }
 
     /**

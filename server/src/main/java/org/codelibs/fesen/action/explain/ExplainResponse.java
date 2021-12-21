@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.action.explain;
 
-import static org.codelibs.fesen.common.lucene.Lucene.readExplanation;
-import static org.codelibs.fesen.common.lucene.Lucene.writeExplanation;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Objects;
-
 import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -37,6 +30,13 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.get.GetResult;
 import org.codelibs.fesen.rest.RestStatus;
+
+import static org.codelibs.fesen.common.lucene.Lucene.readExplanation;
+import static org.codelibs.fesen.common.lucene.Lucene.writeExplanation;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Response containing the score explanation.
@@ -156,22 +156,22 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
         }
     }
 
-    private static final ConstructingObjectParser<ExplainResponse, Boolean> PARSER =
-            new ConstructingObjectParser<>("explain", true, (arg, exists) -> new ExplainResponse((String) arg[0], (String) arg[1],
-                    (String) arg[2], exists, (Explanation) arg[3], (GetResult) arg[4]));
+    private static final ConstructingObjectParser<ExplainResponse, Boolean> PARSER = new ConstructingObjectParser<>("explain", true,
+        (arg, exists) -> new ExplainResponse((String) arg[0], (String) arg[1], (String) arg[2], exists, (Explanation) arg[3],
+            (GetResult) arg[4]));
 
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), _INDEX);
         PARSER.declareString(ConstructingObjectParser.constructorArg(), _TYPE);
         PARSER.declareString(ConstructingObjectParser.constructorArg(), _ID);
-        final ConstructingObjectParser<Explanation, Boolean> explanationParser =
-                new ConstructingObjectParser<>("explanation", true, arg -> {
-                    if ((float) arg[0] > 0) {
-                        return Explanation.match((float) arg[0], (String) arg[1], (Collection<Explanation>) arg[2]);
-                    } else {
-                        return Explanation.noMatch((String) arg[1], (Collection<Explanation>) arg[2]);
-                    }
-                });
+        final ConstructingObjectParser<Explanation, Boolean> explanationParser = new ConstructingObjectParser<>("explanation", true,
+            arg -> {
+                if ((float) arg[0] > 0) {
+                    return Explanation.match((float) arg[0], (String) arg[1], (Collection<Explanation>) arg[2]);
+                } else {
+                    return Explanation.noMatch((String) arg[1], (Collection<Explanation>) arg[2]);
+                }
+            });
         explanationParser.declareFloat(ConstructingObjectParser.constructorArg(), VALUE);
         explanationParser.declareString(ConstructingObjectParser.constructorArg(), DESCRIPTION);
         explanationParser.declareObjectArray(ConstructingObjectParser.constructorArg(), explanationParser, DETAILS);
@@ -228,10 +228,13 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
             return false;
         }
         ExplainResponse other = (ExplainResponse) obj;
-        return index.equals(other.index) && type.equals(other.type) && id.equals(other.id) && Objects.equals(explanation, other.explanation)
-                && getResult.isExists() == other.getResult.isExists()
-                && Objects.equals(getResult.sourceAsMap(), other.getResult.sourceAsMap())
-                && Objects.equals(getResult.getFields(), other.getResult.getFields());
+        return index.equals(other.index)
+            && type.equals(other.type)
+            && id.equals(other.id)
+            && Objects.equals(explanation, other.explanation)
+            && getResult.isExists() == other.getResult.isExists()
+            && Objects.equals(getResult.sourceAsMap(), other.getResult.sourceAsMap())
+            && Objects.equals(getResult.getFields(), other.getResult.getFields());
     }
 
     @Override

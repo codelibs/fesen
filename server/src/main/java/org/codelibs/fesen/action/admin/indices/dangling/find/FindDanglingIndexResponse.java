@@ -38,8 +38,11 @@ public class FindDanglingIndexResponse extends BaseNodesResponse<NodeFindDanglin
         super(in);
     }
 
-    public FindDanglingIndexResponse(ClusterName clusterName, List<NodeFindDanglingIndexResponse> nodes,
-            List<FailedNodeException> failures) {
+    public FindDanglingIndexResponse(
+        ClusterName clusterName,
+        List<NodeFindDanglingIndexResponse> nodes,
+        List<FailedNodeException> failures
+    ) {
         super(clusterName, nodes, failures);
     }
 

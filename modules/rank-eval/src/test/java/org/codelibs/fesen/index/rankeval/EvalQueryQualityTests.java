@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -37,9 +26,27 @@ import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.index.rankeval.DiscountedCumulativeGain;
+import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
+import org.codelibs.fesen.index.rankeval.MeanReciprocalRank;
+import org.codelibs.fesen.index.rankeval.MetricDetail;
+import org.codelibs.fesen.index.rankeval.PrecisionAtK;
+import org.codelibs.fesen.index.rankeval.RankEvalPlugin;
+import org.codelibs.fesen.index.rankeval.RatedSearchHit;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public class EvalQueryQualityTests extends ESTestCase {
 
@@ -60,7 +67,8 @@ public class EvalQueryQualityTests extends ESTestCase {
             ratedSearchHit.getSearchHit().shard(new SearchShardTarget("_na_", new ShardId("index", "_na_", 0), null, OriginalIndices.NONE));
             ratedHits.add(ratedSearchHit);
         }
-        EvalQueryQuality evalQueryQuality = new EvalQueryQuality(randomAlphaOfLength(10), randomDoubleBetween(0.0, 1.0, true));
+        EvalQueryQuality evalQueryQuality = new EvalQueryQuality(randomAlphaOfLength(10),
+                randomDoubleBetween(0.0, 1.0, true));
         if (randomBoolean()) {
             int metricDetail = randomIntBetween(0, 2);
             switch (metricDetail) {

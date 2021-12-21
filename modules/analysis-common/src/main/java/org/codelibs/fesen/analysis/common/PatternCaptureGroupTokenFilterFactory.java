@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.analysis.common;
 
-import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -28,6 +26,9 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class PatternCaptureGroupTokenFilterFactory extends AbstractTokenFilterFactory {
     private final Pattern[] patterns;

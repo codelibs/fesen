@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.common.xcontent;
 
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codelibs.fesen.common.xcontent.ObjectPath;
 import org.codelibs.fesen.test.ESTestCase;
+
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.is;
 
 public class ObjectPathTests extends ESTestCase {
     public void testEval() {

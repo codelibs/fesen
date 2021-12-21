@@ -66,7 +66,7 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
         if (randomBoolean()) {
             shard = clusterState.getRoutingTable().shardRoutingTable("test", 0).primaryShard();
             assertEquals(RecoverySource.Type.EMPTY_STORE, shard.recoverySource().getType());
-        } else {
+        }  else {
             shard = clusterState.getRoutingTable().shardRoutingTable("test", 0).replicaShards().get(0);
             assertEquals(RecoverySource.Type.PEER, shard.recoverySource().getType());
         }
@@ -79,9 +79,12 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
     public void testCannotAllocatePrimaryMissingInRestoreInProgress() {
         ClusterState clusterState = createInitialClusterState();
         RoutingTable routingTable = RoutingTable.builder(clusterState.getRoutingTable())
-                .addAsRestore(clusterState.getMetadata().index("test"), createSnapshotRecoverySource("_missing")).build();
+            .addAsRestore(clusterState.getMetadata().index("test"), createSnapshotRecoverySource("_missing"))
+            .build();
 
-        clusterState = ClusterState.builder(clusterState).routingTable(routingTable).build();
+        clusterState = ClusterState.builder(clusterState)
+            .routingTable(routingTable)
+            .build();
 
         ShardRouting primary = clusterState.getRoutingTable().shardRoutingTable("test", 0).primaryShard();
         assertEquals(ShardRoutingState.UNASSIGNED, primary.state());
@@ -89,11 +92,9 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
 
         final Decision decision = executeAllocation(clusterState, primary);
         assertEquals(Decision.Type.NO, decision.type());
-        assertEquals(
-                "shard has failed to be restored from the snapshot [_repository:_missing/_uuid] because of "
-                        + "[restore_source[_repository/_missing]] - manually close or delete the index [test] in order to retry to restore "
-                        + "the snapshot again or use the reroute API to force the allocation of an empty primary shard",
-                decision.getExplanation());
+        assertEquals("shard has failed to be restored from the snapshot [_repository:_missing/_uuid] because of " +
+            "[restore_source[_repository/_missing]] - manually close or delete the index [test] in order to retry to restore " +
+            "the snapshot again or use the reroute API to force the allocation of an empty primary shard", decision.getExplanation());
     }
 
     public void testCanAllocatePrimaryExistingInRestoreInProgress() {
@@ -101,9 +102,12 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
 
         ClusterState clusterState = createInitialClusterState();
         RoutingTable routingTable = RoutingTable.builder(clusterState.getRoutingTable())
-                .addAsRestore(clusterState.getMetadata().index("test"), recoverySource).build();
+            .addAsRestore(clusterState.getMetadata().index("test"), recoverySource)
+            .build();
 
-        clusterState = ClusterState.builder(clusterState).routingTable(routingTable).build();
+        clusterState = ClusterState.builder(clusterState)
+            .routingTable(routingTable)
+            .build();
 
         ShardRouting primary = clusterState.getRoutingTable().shardRoutingTable("test", 0).primaryShard();
         assertEquals(ShardRoutingState.UNASSIGNED, primary.state());
@@ -119,8 +123,8 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
 
             UnassignedInfo currentInfo = primary.unassignedInfo();
             UnassignedInfo newInfo = new UnassignedInfo(currentInfo.getReason(), currentInfo.getMessage(), new IOException("i/o failure"),
-                    currentInfo.getNumFailedAllocations(), currentInfo.getUnassignedTimeInNanos(), currentInfo.getUnassignedTimeInMillis(),
-                    currentInfo.isDelayed(), currentInfo.getLastAllocationStatus(), currentInfo.getFailedNodeIds());
+                currentInfo.getNumFailedAllocations(), currentInfo.getUnassignedTimeInNanos(), currentInfo.getUnassignedTimeInMillis(),
+                currentInfo.isDelayed(), currentInfo.getLastAllocationStatus(), currentInfo.getFailedNodeIds());
             primary = primary.updateUnassigned(newInfo, primary.recoverySource());
 
             IndexRoutingTable indexRoutingTable = routingTable.index("test");
@@ -144,18 +148,20 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
         Snapshot snapshot = recoverySource.snapshot();
         RestoreInProgress.State restoreState = RestoreInProgress.State.STARTED;
         RestoreInProgress.Entry restore =
-                new RestoreInProgress.Entry(recoverySource.restoreUUID(), snapshot, restoreState, singletonList("test"), shards.build());
+            new RestoreInProgress.Entry(recoverySource.restoreUUID(), snapshot, restoreState, singletonList("test"), shards.build());
 
         clusterState = ClusterState.builder(clusterState)
-                .putCustom(RestoreInProgress.TYPE, new RestoreInProgress.Builder().add(restore).build()).routingTable(routingTable).build();
+            .putCustom(RestoreInProgress.TYPE, new RestoreInProgress.Builder().add(restore).build())
+            .routingTable(routingTable)
+            .build();
 
         Decision decision = executeAllocation(clusterState, primary);
         if (shardState == RestoreInProgress.State.FAILURE) {
             assertEquals(Decision.Type.NO, decision.type());
-            assertEquals("shard has failed to be restored from the snapshot [_repository:_existing/_uuid] because of "
-                    + "[restore_source[_repository/_existing], failure IOException[i/o failure]] - manually close or delete the index "
-                    + "[test] in order to retry to restore the snapshot again or use the reroute API to force the allocation of "
-                    + "an empty primary shard", decision.getExplanation());
+            assertEquals("shard has failed to be restored from the snapshot [_repository:_existing/_uuid] because of " +
+                "[restore_source[_repository/_existing], failure IOException[i/o failure]] - manually close or delete the index " +
+                "[test] in order to retry to restore the snapshot again or use the reroute API to force the allocation of " +
+                "an empty primary shard", decision.getExplanation());
         } else {
             assertEquals(Decision.Type.YES, decision.type());
             assertEquals("shard is currently being restored", decision.getExplanation());
@@ -164,16 +170,24 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
 
     private ClusterState createInitialClusterState() {
         Metadata metadata = Metadata.builder()
-                .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(1).numberOfReplicas(1)).build();
+            .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(1).numberOfReplicas(1))
+            .build();
 
-        RoutingTable routingTable = RoutingTable.builder().addAsNew(metadata.index("test")).build();
+        RoutingTable routingTable = RoutingTable.builder()
+            .addAsNew(metadata.index("test"))
+            .build();
 
-        DiscoveryNodes discoveryNodes =
-                DiscoveryNodes.builder().add(newNode("master", Collections.singleton(DiscoveryNodeRole.MASTER_ROLE))).localNodeId("master")
-                        .masterNodeId("master").build();
+        DiscoveryNodes discoveryNodes = DiscoveryNodes.builder()
+            .add(newNode("master", Collections.singleton(DiscoveryNodeRole.MASTER_ROLE)))
+            .localNodeId("master")
+            .masterNodeId("master")
+            .build();
 
-        ClusterState clusterState =
-                ClusterState.builder(ClusterName.DEFAULT).metadata(metadata).routingTable(routingTable).nodes(discoveryNodes).build();
+        ClusterState clusterState = ClusterState.builder(ClusterName.DEFAULT)
+            .metadata(metadata)
+            .routingTable(routingTable)
+            .nodes(discoveryNodes)
+            .build();
 
         assertEquals(2, clusterState.getRoutingTable().shardsWithState(ShardRoutingState.UNASSIGNED).size());
         return clusterState;
@@ -182,7 +196,7 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
     private Decision executeAllocation(final ClusterState clusterState, final ShardRouting shardRouting) {
         final AllocationDecider decider = new RestoreInProgressAllocationDecider();
         final RoutingAllocation allocation = new RoutingAllocation(new AllocationDeciders(Collections.singleton(decider)),
-                clusterState.getRoutingNodes(), clusterState, null, null, 0L);
+            clusterState.getRoutingNodes(), clusterState, null, null, 0L);
         allocation.debugDecision(true);
 
         final Decision decision;
@@ -198,6 +212,6 @@ public class RestoreInProgressAllocationDeciderTests extends ESAllocationTestCas
     private RecoverySource.SnapshotRecoverySource createSnapshotRecoverySource(final String snapshotName) {
         Snapshot snapshot = new Snapshot("_repository", new SnapshotId(snapshotName, "_uuid"));
         return new RecoverySource.SnapshotRecoverySource(UUIDs.randomBase64UUID(), snapshot, Version.CURRENT,
-                new IndexId("test", UUIDs.randomBase64UUID(random())));
+            new IndexId("test", UUIDs.randomBase64UUID(random())));
     }
 }

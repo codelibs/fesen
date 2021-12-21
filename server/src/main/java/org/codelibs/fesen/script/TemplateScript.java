@@ -38,7 +38,6 @@ public abstract class TemplateScript {
     }
 
     public static final String[] PARAMETERS = {};
-
     /** Run a template and return the resulting string, encoded in utf8 bytes. */
     public abstract String execute();
 

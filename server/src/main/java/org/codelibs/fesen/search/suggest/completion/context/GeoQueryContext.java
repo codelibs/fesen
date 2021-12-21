@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.search.suggest.completion.context;
 
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.geo.GeoPoint;
+import org.codelibs.fesen.common.geo.GeoUtils;
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+
 import static org.codelibs.fesen.common.geo.GeoUtils.parsePrecision;
 import static org.codelibs.fesen.search.suggest.completion.context.GeoContextMapping.CONTEXT_BOOST;
 import static org.codelibs.fesen.search.suggest.completion.context.GeoContextMapping.CONTEXT_NEIGHBOURS;
@@ -29,15 +38,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.geo.GeoPoint;
-import org.codelibs.fesen.common.geo.GeoUtils;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
 
 /**
  * Defines the query context for {@link GeoContextMapping}
@@ -87,19 +87,14 @@ public final class GeoQueryContext implements ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         GeoQueryContext that = (GeoQueryContext) o;
 
-        if (boost != that.boost)
-            return false;
-        if (precision != that.precision)
-            return false;
-        if (geoPoint != null ? !geoPoint.equals(that.geoPoint) : that.geoPoint != null)
-            return false;
+        if (boost != that.boost) return false;
+        if (precision != that.precision) return false;
+        if (geoPoint != null ? !geoPoint.equals(that.geoPoint) : that.geoPoint != null) return false;
         return neighbours != null ? neighbours.equals(that.neighbours) : that.neighbours == null;
 
     }
@@ -119,14 +114,14 @@ public final class GeoQueryContext implements ToXContentObject {
 
     private static final ObjectParser<GeoQueryContext.Builder, Void> GEO_CONTEXT_PARSER = new ObjectParser<>(NAME);
     static {
-        GEO_CONTEXT_PARSER.declareField(
-                (parser, geoQueryContext, geoContextMapping) -> geoQueryContext.setGeoPoint(GeoUtils.parseGeoPoint(parser)),
+        GEO_CONTEXT_PARSER.declareField((parser, geoQueryContext,
+                geoContextMapping) -> geoQueryContext.setGeoPoint(GeoUtils.parseGeoPoint(parser)),
                 new ParseField(CONTEXT_VALUE), ObjectParser.ValueType.OBJECT);
         GEO_CONTEXT_PARSER.declareInt(GeoQueryContext.Builder::setBoost, new ParseField(CONTEXT_BOOST));
         GEO_CONTEXT_PARSER.declareField((parser, builder, context) -> builder.setPrecision(parsePrecision(parser)),
-                new ParseField(CONTEXT_PRECISION), ObjectParser.ValueType.INT);
+            new ParseField(CONTEXT_PRECISION), ObjectParser.ValueType.INT);
         GEO_CONTEXT_PARSER.declareFieldArray(GeoQueryContext.Builder::setNeighbours, (parser, builder) -> parsePrecision(parser),
-                new ParseField(CONTEXT_NEIGHBOURS), ObjectParser.ValueType.INT_ARRAY);
+            new ParseField(CONTEXT_NEIGHBOURS), ObjectParser.ValueType.INT_ARRAY);
         GEO_CONTEXT_PARSER.declareDouble(GeoQueryContext.Builder::setLat, new ParseField("lat"));
         GEO_CONTEXT_PARSER.declareDouble(GeoQueryContext.Builder::setLon, new ParseField("lon"));
     }
@@ -216,13 +211,11 @@ public final class GeoQueryContext implements ToXContentObject {
         }
 
         private double lat = Double.NaN;
-
         void setLat(double lat) {
             this.lat = lat;
         }
 
         private double lon = Double.NaN;
-
         void setLon(double lon) {
             this.lon = lon;
         }

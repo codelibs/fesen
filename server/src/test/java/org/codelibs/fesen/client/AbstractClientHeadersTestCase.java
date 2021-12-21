@@ -52,18 +52,22 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public abstract class AbstractClientHeadersTestCase extends ESTestCase {
 
-    protected static final Settings HEADER_SETTINGS =
-            Settings.builder().put(ThreadContext.PREFIX + ".key1", "val1").put(ThreadContext.PREFIX + ".key2", "val 2").build();
+    protected static final Settings HEADER_SETTINGS = Settings.builder()
+            .put(ThreadContext.PREFIX + ".key1", "val1")
+            .put(ThreadContext.PREFIX + ".key2", "val 2")
+            .build();
 
     private static final ActionType<?>[] ACTIONS = new ActionType[] {
-            // client actions
-            GetAction.INSTANCE, SearchAction.INSTANCE, DeleteAction.INSTANCE, DeleteStoredScriptAction.INSTANCE, IndexAction.INSTANCE,
+                // client actions
+                GetAction.INSTANCE, SearchAction.INSTANCE, DeleteAction.INSTANCE, DeleteStoredScriptAction.INSTANCE,
+                IndexAction.INSTANCE,
 
-            // cluster admin actions
-            ClusterStatsAction.INSTANCE, CreateSnapshotAction.INSTANCE, ClusterRerouteAction.INSTANCE,
+                // cluster admin actions
+                ClusterStatsAction.INSTANCE, CreateSnapshotAction.INSTANCE, ClusterRerouteAction.INSTANCE,
 
-            // indices admin actions
-            CreateIndexAction.INSTANCE, IndicesStatsAction.INSTANCE, ClearIndicesCacheAction.INSTANCE, FlushAction.INSTANCE };
+                // indices admin actions
+                CreateIndexAction.INSTANCE, IndicesStatsAction.INSTANCE, ClearIndicesCacheAction.INSTANCE, FlushAction.INSTANCE
+    };
 
     protected ThreadPool threadPool;
     private Client client;
@@ -71,11 +75,16 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Settings settings = Settings.builder().put(HEADER_SETTINGS).put("path.home", createTempDir().toString())
-                .put("node.name", "test-" + getTestName()).put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings.builder()
+                .put(HEADER_SETTINGS)
+                .put("path.home", createTempDir().toString())
+                .put("node.name", "test-" + getTestName())
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+                .build();
         threadPool = new ThreadPool(settings);
         client = buildClient(settings, ACTIONS);
     }
+
 
     @Override
     public void tearDown() throws Exception {
@@ -85,6 +94,7 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
     }
 
     protected abstract Client buildClient(Settings headersSettings, ActionType<?>[] testedActions);
+
 
     public void testActions() {
 
@@ -98,21 +108,21 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
         client.prepareSearch().execute(new AssertingActionListener<>(SearchAction.NAME, client.threadPool()));
         client.prepareDelete("idx", "type", "id").execute(new AssertingActionListener<>(DeleteAction.NAME, client.threadPool()));
         client.admin().cluster().prepareDeleteStoredScript("id")
-                .execute(new AssertingActionListener<>(DeleteStoredScriptAction.NAME, client.threadPool()));
+            .execute(new AssertingActionListener<>(DeleteStoredScriptAction.NAME, client.threadPool()));
         client.prepareIndex("idx", "type", "id").setSource("source", XContentType.JSON)
-                .execute(new AssertingActionListener<>(IndexAction.NAME, client.threadPool()));
+            .execute(new AssertingActionListener<>(IndexAction.NAME, client.threadPool()));
 
         // choosing arbitrary cluster admin actions to test
         client.admin().cluster().prepareClusterStats().execute(new AssertingActionListener<>(ClusterStatsAction.NAME, client.threadPool()));
         client.admin().cluster().prepareCreateSnapshot("repo", "bck")
-                .execute(new AssertingActionListener<>(CreateSnapshotAction.NAME, client.threadPool()));
+            .execute(new AssertingActionListener<>(CreateSnapshotAction.NAME, client.threadPool()));
         client.admin().cluster().prepareReroute().execute(new AssertingActionListener<>(ClusterRerouteAction.NAME, client.threadPool()));
 
         // choosing arbitrary indices admin actions to test
         client.admin().indices().prepareCreate("idx").execute(new AssertingActionListener<>(CreateIndexAction.NAME, client.threadPool()));
         client.admin().indices().prepareStats().execute(new AssertingActionListener<>(IndicesStatsAction.NAME, client.threadPool()));
         client.admin().indices().prepareClearCache("idx1", "idx2")
-                .execute(new AssertingActionListener<>(ClearIndicesCacheAction.NAME, client.threadPool()));
+            .execute(new AssertingActionListener<>(ClearIndicesCacheAction.NAME, client.threadPool()));
         client.admin().indices().prepareFlush().execute(new AssertingActionListener<>(FlushAction.NAME, client.threadPool()));
     }
 
@@ -122,7 +132,8 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
         expected.put("key1", key1Val);
         expected.put("key2", "val 2");
         client.threadPool().getThreadContext().putHeader("key1", key1Val);
-        client.prepareGet("idx", "type", "id").execute(new AssertingActionListener<>(GetAction.NAME, expected, client.threadPool()));
+        client.prepareGet("idx", "type", "id")
+                .execute(new AssertingActionListener<>(GetAction.NAME, expected, client.threadPool()));
 
         client.admin().cluster().prepareClusterStats()
                 .execute(new AssertingActionListener<>(ClusterStatsAction.NAME, expected, client.threadPool()));
@@ -144,7 +155,7 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
     protected static void assertHeaders(ThreadPool pool) {
         Settings asSettings = HEADER_SETTINGS.getAsSettings(ThreadContext.PREFIX);
         assertHeaders(pool.getThreadContext().getHeaders(),
-                asSettings.keySet().stream().collect(Collectors.toMap(Function.identity(), k -> asSettings.get(k))));
+            asSettings.keySet().stream().collect(Collectors.toMap(Function.identity(), k -> asSettings.get(k))));
     }
 
     public static class InternalException extends Exception {
@@ -165,10 +176,10 @@ public abstract class AbstractClientHeadersTestCase extends ESTestCase {
 
         public AssertingActionListener(String action, ThreadPool pool) {
             this(action, THREAD_HEADER_SETTINGS.keySet().stream()
-                    .collect(Collectors.toMap(Function.identity(), k -> THREAD_HEADER_SETTINGS.get(k))), pool);
+                .collect(Collectors.toMap(Function.identity(), k -> THREAD_HEADER_SETTINGS.get(k))), pool);
         }
 
-        public AssertingActionListener(String action, Map<String, String> expectedHeaders, ThreadPool pool) {
+       public AssertingActionListener(String action, Map<String, String> expectedHeaders, ThreadPool pool) {
             this.action = action;
             this.expectedHeaders = expectedHeaders;
             this.pool = pool;

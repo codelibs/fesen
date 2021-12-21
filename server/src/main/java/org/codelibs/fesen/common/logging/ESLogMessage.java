@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.logging;
 
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.codelibs.fesen.common.SuppressLoggerChecks;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.common.SuppressLoggerChecks;
 
 /**
  * A base class for custom log4j logger messages. Carries additional fields which will populate JSON fields in logs.
@@ -60,7 +60,9 @@ public abstract class ESLogMessage extends ParameterizedMessage {
     }
 
     public static String asJsonArray(Stream<String> stream) {
-        return "[" + stream.map(ESLogMessage::inQuotes).collect(Collectors.joining(", ")) + "]";
+        return "[" + stream
+            .map(ESLogMessage::inQuotes)
+            .collect(Collectors.joining(", ")) + "]";
     }
 
     public Object[] getArguments() {

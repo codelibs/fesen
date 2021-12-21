@@ -33,7 +33,7 @@ public class RoutingException extends FesenException {
         super(message, cause);
     }
 
-    public RoutingException(StreamInput in) throws IOException {
+    public RoutingException(StreamInput in) throws IOException{
         super(in);
     }
 }

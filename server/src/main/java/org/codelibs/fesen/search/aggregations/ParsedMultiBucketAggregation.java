@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.common.CheckedBiConsumer;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -34,8 +27,15 @@ import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 
-public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAggregation.Bucket> extends ParsedAggregation
-        implements MultiBucketsAggregation {
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAggregation.Bucket>
+        extends ParsedAggregation implements MultiBucketsAggregation {
 
     protected final List<B> buckets = new ArrayList<>();
     protected boolean keyed = false;
@@ -59,8 +59,8 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
     }
 
     protected static void declareMultiBucketAggregationFields(final ObjectParser<? extends ParsedMultiBucketAggregation, Void> objectParser,
-            final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
-            final CheckedFunction<XContentParser, ParsedBucket, IOException> keyedBucketParser) {
+                                                  final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
+                                                  final CheckedFunction<XContentParser, ParsedBucket, IOException> keyedBucketParser) {
         declareAggregationFields(objectParser);
         objectParser.declareField((parser, aggregation, context) -> {
             XContentParser.Token token = parser.currentToken();
@@ -144,8 +144,11 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
             return builder.field(CommonFields.KEY.getPreferredName(), getKey());
         }
 
-        protected static <B extends ParsedBucket> B parseXContent(final XContentParser parser, final boolean keyed,
-                final Supplier<B> bucketSupplier, final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer) throws IOException {
+        protected static <B extends ParsedBucket> B parseXContent(final XContentParser parser,
+                                                                  final boolean keyed,
+                                                                  final Supplier<B> bucketSupplier,
+                                                                  final CheckedBiConsumer<XContentParser, B, IOException> keyConsumer)
+                                                                        throws IOException {
             final B bucket = bucketSupplier.get();
             bucket.setKeyed(keyed);
             XContentParser.Token token = parser.currentToken();
@@ -172,7 +175,7 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
                         keyConsumer.accept(parser, bucket);
                     } else {
                         XContentParserUtils.parseTypedKeysObject(parser, Aggregation.TYPED_KEYS_DELIMITER, Aggregation.class,
-                                aggregations::add);
+                            aggregations::add);
                     }
                 }
             }

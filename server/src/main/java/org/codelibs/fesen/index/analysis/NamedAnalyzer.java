@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.DelegatingAnalyzerWrapper;
 import org.codelibs.fesen.index.mapper.MapperException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Named analyzer is an analyzer wrapper around an actual analyzer ({@link #analyzer} that is associated
@@ -150,10 +150,8 @@ public class NamedAnalyzer extends DelegatingAnalyzerWrapper {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof NamedAnalyzer))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof NamedAnalyzer)) return false;
         NamedAnalyzer that = (NamedAnalyzer) o;
         return Objects.equals(name, that.name);
     }

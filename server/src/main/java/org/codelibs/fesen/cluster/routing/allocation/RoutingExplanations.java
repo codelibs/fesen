@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Class used to encapsulate a number of {@link RerouteExplanation}
@@ -55,9 +56,12 @@ public class RoutingExplanations implements ToXContentFragment {
      * Provides feedback from commands with a YES decision that should be displayed to the user after the command has been applied
      */
     public List<String> getYesDecisionMessages() {
-        return explanations().stream().filter(explanation -> explanation.decisions().type().equals(Decision.Type.YES))
-                .map(explanation -> explanation.command().getMessage()).filter(Optional::isPresent).map(Optional::get)
-                .collect(Collectors.toList());
+        return explanations().stream()
+            .filter(explanation -> explanation.decisions().type().equals(Decision.Type.YES))
+            .map(explanation -> explanation.command().getMessage())
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
     }
 
     /**

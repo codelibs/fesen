@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.ingest;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+
+import java.io.IOException;
 
 public class ProcessorInfo implements Writeable, ToXContentObject, Comparable<ProcessorInfo> {
 
@@ -64,10 +65,8 @@ public class ProcessorInfo implements Writeable, ToXContentObject, Comparable<Pr
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         ProcessorInfo that = (ProcessorInfo) o;
 

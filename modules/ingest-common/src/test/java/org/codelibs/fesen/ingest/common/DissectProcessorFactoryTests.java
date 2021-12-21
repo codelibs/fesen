@@ -19,18 +19,19 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.dissect.DissectException;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.DissectProcessor;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.dissect.DissectException;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
 
 public class DissectProcessorFactoryTests extends ESTestCase {
 

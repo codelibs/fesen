@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.shrink;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -40,6 +35,11 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * Request class to shrink an index into a single shard
  */
@@ -48,9 +48,9 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
     public static final ObjectParser<ResizeRequest, Void> PARSER = new ObjectParser<>("resize_request");
     static {
         PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().settings(parser.map()),
-                new ParseField("settings"), ObjectParser.ValueType.OBJECT);
-        PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().aliases(parser.map()), new ParseField("aliases"),
-                ObjectParser.ValueType.OBJECT);
+            new ParseField("settings"), ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, context) -> request.getTargetIndexRequest().aliases(parser.map()),
+            new ParseField("aliases"), ObjectParser.ValueType.OBJECT);
     }
 
     private CreateIndexRequest targetIndexRequest;
@@ -62,12 +62,19 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         super(in);
         targetIndexRequest = new CreateIndexRequest(in);
         sourceIndex = in.readString();
-        type = in.readEnum(ResizeType.class);
-        copySettings = in.readOptionalBoolean();
+        if (in.getVersion().onOrAfter(ResizeAction.COMPATIBILITY_VERSION)) {
+            type = in.readEnum(ResizeType.class);
+        } else {
+            type = ResizeType.SHRINK; // BWC this used to be shrink only
+        }
+        if (in.getVersion().before(Version.V_6_4_0)) {
+            copySettings = null;
+        } else {
+            copySettings = in.readOptionalBoolean();
+        }
     }
 
-    ResizeRequest() {
-    }
+    ResizeRequest() {}
 
     public ResizeRequest(String targetIndex, String sourceIndex) {
         this.targetIndexRequest = new CreateIndexRequest(targetIndex);
@@ -102,17 +109,23 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         super.writeTo(out);
         targetIndexRequest.writeTo(out);
         out.writeString(sourceIndex);
-        if (type == ResizeType.CLONE && out.getVersion().before(Version.V_7_4_0)) {
-            throw new IllegalArgumentException("can't send clone request to a node that's older than " + Version.V_7_4_0);
+        if (out.getVersion().onOrAfter(ResizeAction.COMPATIBILITY_VERSION)) {
+            if (type == ResizeType.CLONE && out.getVersion().before(Version.V_7_4_0)) {
+                throw new IllegalArgumentException("can't send clone request to a node that's older than " + Version.V_7_4_0);
+            }
+            out.writeEnum(type);
         }
-        out.writeEnum(type);
         // noinspection StatementWithEmptyBody
-        out.writeOptionalBoolean(copySettings);
+        if (out.getVersion().before(Version.V_6_4_0)) {
+
+        } else {
+            out.writeOptionalBoolean(copySettings);
+        }
     }
 
     @Override
     public String[] indices() {
-        return new String[] { sourceIndex };
+        return new String[] {sourceIndex};
     }
 
     @Override

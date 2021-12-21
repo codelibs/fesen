@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.lookup;
 
-import static java.util.Collections.unmodifiableMap;
+import org.apache.lucene.index.LeafReaderContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.lucene.index.LeafReaderContext;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Per-segment version of {@link SearchLookup}.
@@ -37,7 +37,8 @@ public class LeafSearchLookup {
     final LeafFieldsLookup fieldsLookup;
     final Map<String, Object> asMap;
 
-    public LeafSearchLookup(LeafReaderContext ctx, LeafDocLookup docMap, SourceLookup sourceLookup, LeafFieldsLookup fieldsLookup) {
+    public LeafSearchLookup(LeafReaderContext ctx, LeafDocLookup docMap, SourceLookup sourceLookup,
+            LeafFieldsLookup fieldsLookup) {
         this.ctx = ctx;
         this.docMap = docMap;
         this.sourceLookup = sourceLookup;

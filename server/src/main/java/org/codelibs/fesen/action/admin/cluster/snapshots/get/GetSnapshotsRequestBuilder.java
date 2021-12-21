@@ -26,8 +26,8 @@ import org.codelibs.fesen.common.util.ArrayUtils;
 /**
  * Get snapshots request builder
  */
-public class GetSnapshotsRequestBuilder
-        extends MasterNodeOperationRequestBuilder<GetSnapshotsRequest, GetSnapshotsResponse, GetSnapshotsRequestBuilder> {
+public class GetSnapshotsRequestBuilder extends MasterNodeOperationRequestBuilder<GetSnapshotsRequest,
+        GetSnapshotsResponse, GetSnapshotsRequestBuilder> {
 
     /**
      * Constructs the new get snapshot request
@@ -71,7 +71,7 @@ public class GetSnapshotsRequestBuilder
      * @return this builder
      */
     public GetSnapshotsRequestBuilder setCurrentSnapshot() {
-        request.snapshots(new String[] { GetSnapshotsRequest.CURRENT_SNAPSHOT });
+        request.snapshots(new String[]{GetSnapshotsRequest.CURRENT_SNAPSHOT});
         return this;
     }
 

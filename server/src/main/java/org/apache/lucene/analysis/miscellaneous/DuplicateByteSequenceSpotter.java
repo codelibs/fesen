@@ -142,6 +142,7 @@ public class DuplicateByteSequenceSpotter {
         // The final 3 bytes in the sequence are represented in an int
         // where the 4th byte will contain a hit count.
 
+        
         p = nextBufferPos(p);
         int sequence = 0xFF & sequenceBuffer[p];
         p = nextBufferPos(p);
@@ -250,7 +251,7 @@ public class DuplicateByteSequenceSpotter {
                 // Most nodes at this level we expect to have only 1 child so we start with the  
                 // smallest possible child array.
                 children = new int[1];
-                bytesAllocated += RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + Integer.BYTES;
+                bytesAllocated += RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + Integer.BYTES;                
                 children[0] = byteSequence + 1;
                 return 1;
             }

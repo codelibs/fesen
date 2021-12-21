@@ -700,8 +700,22 @@ public abstract class AbstractHyperLogLog extends AbstractCardinalityAlgorithm {
                     -527.016999999993, -664.681000000099, -680.306000000099, -704.050000000047, -850.486000000034, -757.43200000003,
                     -713.308999999892, } };
 
-    private static final long[] THRESHOLDS =
-            new long[] { 10, 20, 40, 80, 220, 400, 900, 1800, 3100, 6500, 11500, 20000, 50000, 120000, 350000 };
+    private static final long[] THRESHOLDS = new long[] {
+        10,
+        20,
+        40,
+        80,
+        220,
+        400,
+        900,
+        1800,
+        3100,
+        6500,
+        11500,
+        20000,
+        50000,
+        120000,
+        350000 };
 
     protected final int m;
     private final double alphaMM;
@@ -711,15 +725,15 @@ public abstract class AbstractHyperLogLog extends AbstractCardinalityAlgorithm {
         m = 1 << p;
         final double alpha;
         switch (p) {
-        case 4:
-            alpha = 0.673;
-            break;
-        case 5:
-            alpha = 0.697;
-            break;
-        default:
-            alpha = 0.7213 / (1 + 1.079 / m);
-            break;
+            case 4:
+                alpha = 0.673;
+                break;
+            case 5:
+                alpha = 0.697;
+                break;
+            default:
+                alpha = 0.7213 / (1 + 1.079 / m);
+                break;
         }
         alphaMM = alpha * m * m;
     }

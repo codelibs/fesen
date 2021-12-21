@@ -18,18 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.GAP_POLICY;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -41,6 +29,18 @@ import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.search.sort.FieldSortBuilder;
 import org.codelibs.fesen.search.sort.SortBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.GAP_POLICY;
 
 /**
  * Builds a pipeline aggregation that allows sorting the buckets of its parent
@@ -59,17 +59,18 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     static {
         PARSER.declareField(optionalConstructorArg(), (p, c) -> {
-            List<SortBuilder<?>> sorts = SortBuilder.fromXContent(p);
-            List<FieldSortBuilder> fieldSorts = new ArrayList<>(sorts.size());
-            for (SortBuilder<?> sort : sorts) {
-                if (sort instanceof FieldSortBuilder == false) {
-                    throw new IllegalArgumentException(
-                            "[" + NAME + "] only supports field based sorting; incompatible sort: [" + sort + "]");
-                }
-                fieldSorts.add((FieldSortBuilder) sort);
-            }
-            return fieldSorts;
-        }, SearchSourceBuilder.SORT_FIELD, ObjectParser.ValueType.OBJECT_ARRAY);
+                    List<SortBuilder<?>> sorts = SortBuilder.fromXContent(p);
+                        List<FieldSortBuilder> fieldSorts = new ArrayList<>(sorts.size());
+                        for (SortBuilder<?> sort : sorts) {
+                            if (sort instanceof FieldSortBuilder == false) {
+                                throw new IllegalArgumentException("[" + NAME + "] only supports field based sorting; incompatible sort: ["
+                                        + sort + "]");
+                            }
+                            fieldSorts.add((FieldSortBuilder) sort);
+                        }
+                    return fieldSorts;
+                }, SearchSourceBuilder.SORT_FIELD,
+                ObjectParser.ValueType.OBJECT_ARRAY);
         PARSER.declareInt(BucketSortPipelineAggregationBuilder::from, FROM);
         PARSER.declareInt(BucketSortPipelineAggregationBuilder::size, SIZE);
         PARSER.declareField(BucketSortPipelineAggregationBuilder::gapPolicy, p -> {
@@ -175,14 +176,13 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         BucketSortPipelineAggregationBuilder other = (BucketSortPipelineAggregationBuilder) obj;
-        return Objects.equals(sorts, other.sorts) && Objects.equals(from, other.from) && Objects.equals(size, other.size)
+        return Objects.equals(sorts, other.sorts)
+                && Objects.equals(from, other.from)
+                && Objects.equals(size, other.size)
                 && Objects.equals(gapPolicy, other.gapPolicy);
     }
 

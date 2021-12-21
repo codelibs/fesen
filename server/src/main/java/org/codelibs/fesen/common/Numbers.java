@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common;
 
+import org.apache.lucene.util.BytesRef;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import org.apache.lucene.util.BytesRef;
 
 /**
  * A set of utilities for numbers.
@@ -36,10 +36,10 @@ public final class Numbers {
     }
 
     public static long bytesToLong(BytesRef bytes) {
-        int high = (bytes.bytes[bytes.offset + 0] << 24) | ((bytes.bytes[bytes.offset + 1] & 0xff) << 16)
-                | ((bytes.bytes[bytes.offset + 2] & 0xff) << 8) | (bytes.bytes[bytes.offset + 3] & 0xff);
-        int low = (bytes.bytes[bytes.offset + 4] << 24) | ((bytes.bytes[bytes.offset + 5] & 0xff) << 16)
-                | ((bytes.bytes[bytes.offset + 6] & 0xff) << 8) | (bytes.bytes[bytes.offset + 7] & 0xff);
+        int high = (bytes.bytes[bytes.offset + 0] << 24) | ((bytes.bytes[bytes.offset + 1] & 0xff) << 16) |
+            ((bytes.bytes[bytes.offset + 2] & 0xff) << 8) | (bytes.bytes[bytes.offset + 3] & 0xff);
+        int low = (bytes.bytes[bytes.offset + 4] << 24) | ((bytes.bytes[bytes.offset + 5] & 0xff) << 16) |
+            ((bytes.bytes[bytes.offset + 6] & 0xff) << 8) | (bytes.bytes[bytes.offset + 7] & 0xff);
         return (((long) high) << 32) | (low & 0x0ffffffffL);
     }
 
@@ -106,7 +106,8 @@ public final class Numbers {
      *  stored value cannot be converted to a long that stores the exact same
      *  value. */
     public static long toLongExact(Number n) {
-        if (n instanceof Byte || n instanceof Short || n instanceof Integer || n instanceof Long) {
+        if (n instanceof Byte || n instanceof Short || n instanceof Integer
+                || n instanceof Long) {
             return n.longValue();
         } else if (n instanceof Float || n instanceof Double) {
             double d = n.doubleValue();
@@ -119,8 +120,8 @@ public final class Numbers {
         } else if (n instanceof BigInteger) {
             return ((BigInteger) n).longValueExact();
         } else {
-            throw new IllegalArgumentException(
-                    "Cannot check whether [" + n + "] of class [" + n.getClass().getName() + "] is actually a long");
+            throw new IllegalArgumentException("Cannot check whether [" + n + "] of class [" + n.getClass().getName()
+                    + "] is actually a long");
         }
     }
 
@@ -141,8 +142,8 @@ public final class Numbers {
         final BigInteger bigIntegerValue;
         try {
             BigDecimal bigDecimalValue = new BigDecimal(stringValue);
-            if (bigDecimalValue.compareTo(BIGDECIMAL_GREATER_THAN_LONG_MAX_VALUE) >= 0
-                    || bigDecimalValue.compareTo(BIGDECIMAL_LESS_THAN_LONG_MIN_VALUE) <= 0) {
+            if (bigDecimalValue.compareTo(BIGDECIMAL_GREATER_THAN_LONG_MAX_VALUE) >= 0 ||
+                bigDecimalValue.compareTo(BIGDECIMAL_LESS_THAN_LONG_MIN_VALUE) <= 0) {
                 throw new IllegalArgumentException("Value [" + stringValue + "] is out of range for a long");
             }
             bigIntegerValue = coerce ? bigDecimalValue.toBigInteger() : bigDecimalValue.toBigIntegerExact();

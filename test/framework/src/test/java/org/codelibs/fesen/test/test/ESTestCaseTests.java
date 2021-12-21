@@ -19,10 +19,15 @@
 
 package org.codelibs.fesen.test.test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
+import junit.framework.AssertionFailedError;
+
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.RandomObjects;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,15 +41,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.RandomObjects;
-
-import junit.framework.AssertionFailedError;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 
 public class ESTestCaseTests extends ESTestCase {
 
@@ -56,7 +56,7 @@ public class ESTestCaseTests extends ESTestCase {
 
         try {
             expectThrows(IllegalArgumentException.class, () -> {
-                throw new IllegalStateException("bad state");
+               throw new IllegalStateException("bad state");
             });
             fail("expected assertion error");
         } catch (AssertionFailedError assertFailed) {
@@ -71,7 +71,8 @@ public class ESTestCaseTests extends ESTestCase {
             fail("expected assertion error");
         } catch (AssertionFailedError assertFailed) {
             assertNull(assertFailed.getCause());
-            assertEquals("Expected exception IllegalArgumentException but no exception was thrown", assertFailed.getMessage());
+            assertEquals("Expected exception IllegalArgumentException but no exception was thrown",
+                    assertFailed.getMessage());
         }
     }
 
@@ -79,7 +80,7 @@ public class ESTestCaseTests extends ESTestCase {
         XContentType xContentType = randomFrom(XContentType.values());
         BytesReference source = RandomObjects.randomSource(random(), xContentType, 5);
         try (XContentParser parser = createParser(xContentType.xContent(), source)) {
-            LinkedHashMap<String, Object> initialMap = (LinkedHashMap<String, Object>) parser.mapOrdered();
+            LinkedHashMap<String, Object> initialMap = (LinkedHashMap<String, Object>)parser.mapOrdered();
 
             Set<List<String>> distinctKeys = new HashSet<>();
             for (int i = 0; i < 10; i++) {
@@ -124,7 +125,7 @@ public class ESTestCaseTests extends ESTestCase {
             BytesReference bytes = BytesReference.bytes(builder);
             final LinkedHashMap<String, Object> initialMap;
             try (XContentParser parser = createParser(xContentType.xContent(), bytes)) {
-                initialMap = (LinkedHashMap<String, Object>) parser.mapOrdered();
+                initialMap = (LinkedHashMap<String, Object>)parser.mapOrdered();
             }
 
             List<String> expectedInnerKeys1 = Arrays.asList("inner1", "inner2", "inner3");
@@ -139,11 +140,11 @@ public class ESTestCaseTests extends ESTestCase {
                             List<String> shuffledKeys = new ArrayList<>(shuffledMap.keySet());
                             distinctTopLevelKeys.add(shuffledKeys);
                             @SuppressWarnings("unchecked")
-                            Map<String, Object> innerMap1 = (Map<String, Object>) shuffledMap.get("object1");
+                            Map<String, Object> innerMap1 = (Map<String, Object>)shuffledMap.get("object1");
                             List<String> actualInnerKeys1 = new ArrayList<>(innerMap1.keySet());
                             assertEquals("object1 should have been left untouched", expectedInnerKeys1, actualInnerKeys1);
                             @SuppressWarnings("unchecked")
-                            Map<String, Object> innerMap2 = (Map<String, Object>) shuffledMap.get("object2");
+                            Map<String, Object> innerMap2 = (Map<String, Object>)shuffledMap.get("object2");
                             List<String> actualInnerKeys2 = new ArrayList<>(innerMap2.keySet());
                             distinctInnerKeys2.add(actualInnerKeys2);
                         }

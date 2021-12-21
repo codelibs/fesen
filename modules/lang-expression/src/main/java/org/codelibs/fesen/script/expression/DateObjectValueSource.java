@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.script.expression;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.function.ToIntFunction;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValues;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
@@ -33,14 +29,18 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
 import org.joda.time.ReadableDateTime;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.function.ToIntFunction;
+
 /** Extracts a portion of a date field with joda time */
 class DateObjectValueSource extends FieldDataValueSource {
 
     final String methodName;
     final ToIntFunction<ReadableDateTime> function;
 
-    DateObjectValueSource(IndexFieldData<?> indexFieldData, MultiValueMode multiValueMode, String methodName,
-            ToIntFunction<ReadableDateTime> function) {
+    DateObjectValueSource(IndexFieldData<?> indexFieldData, MultiValueMode multiValueMode,
+                          String methodName, ToIntFunction<ReadableDateTime> function) {
         super(indexFieldData, multiValueMode);
 
         Objects.requireNonNull(methodName);
@@ -57,7 +57,7 @@ class DateObjectValueSource extends FieldDataValueSource {
         return new DoubleValues() {
             @Override
             public double doubleValue() throws IOException {
-                joda.setMillis((long) docValues.doubleValue());
+                joda.setMillis((long)docValues.doubleValue());
                 return function.applyAsInt(joda);
             }
 
@@ -75,12 +75,9 @@ class DateObjectValueSource extends FieldDataValueSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         DateObjectValueSource that = (DateObjectValueSource) o;
         return methodName.equals(that.methodName);

@@ -150,6 +150,7 @@ public interface IndicesAdminClient extends FesenClient {
      */
     IndicesExistsRequestBuilder prepareExists(String... indices);
 
+
     /**
      * Types exists.
      *
@@ -410,7 +411,7 @@ public interface IndicesAdminClient extends FesenClient {
      * @param listener A listener to be notified with a result
      * @see org.codelibs.fesen.client.Requests#flushRequest(String...)
      */
-    void flush(FlushRequest request, ActionListener<FlushResponse> listener);
+    void flush(FlushRequest request, ActionListener <FlushResponse> listener);
 
     /**
      * Explicitly flush one or more indices (releasing memory from the node).
@@ -433,7 +434,7 @@ public interface IndicesAdminClient extends FesenClient {
      * @param listener A listener to be notified with a result
      * @see org.codelibs.fesen.client.Requests#syncedFlushRequest(String...)
      */
-    void syncedFlush(SyncedFlushRequest request, ActionListener<SyncedFlushResponse> listener);
+    void syncedFlush(SyncedFlushRequest request, ActionListener <SyncedFlushResponse> listener);
 
     /**
      * Explicitly sync flush one or more indices (write sync id to shards for faster recovery).

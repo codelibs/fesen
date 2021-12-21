@@ -32,7 +32,7 @@ public class PutPipelineRequestBuilder extends ActionRequestBuilder<PutPipelineR
     }
 
     public PutPipelineRequestBuilder(FesenClient client, PutPipelineAction action, String id, BytesReference source,
-            XContentType xContentType) {
+                                     XContentType xContentType) {
         super(client, action, new PutPipelineRequest(id, source, xContentType));
     }
 }

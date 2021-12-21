@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.action;
 
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.util.Objects;
 
 /**
  * An exception indicating that a failure occurred performing an operation on the shard.

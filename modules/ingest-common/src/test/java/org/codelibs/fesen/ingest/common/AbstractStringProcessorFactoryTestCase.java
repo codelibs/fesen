@@ -19,15 +19,16 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public abstract class AbstractStringProcessorFactoryTestCase extends ESTestCase {
 
@@ -37,8 +38,7 @@ public abstract class AbstractStringProcessorFactoryTestCase extends ESTestCase 
         return config;
     }
 
-    protected void assertProcessor(AbstractStringProcessor<?> processor) {
-    }
+    protected void assertProcessor(AbstractStringProcessor<?> processor) {}
 
     public void testCreate() throws Exception {
         AbstractStringProcessor.Factory factory = newFactory();
@@ -97,7 +97,7 @@ public abstract class AbstractStringProcessorFactoryTestCase extends ESTestCase 
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (FesenParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[field] required property is missing"));
         }
     }

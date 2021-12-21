@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.ingest.geoip;
 
+import com.maxmind.geoip2.DatabaseReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.SetOnce;
+import org.codelibs.fesen.common.CheckedSupplier;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,14 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.common.CheckedSupplier;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-
-import com.maxmind.geoip2.DatabaseReader;
 
 /**
  * Facilitates lazy loading of the database reader, so that when the geoip plugin is installed, but not used,
@@ -74,7 +73,7 @@ class DatabaseReaderLazyLoader implements Closeable {
                     if (fileSize <= 512) {
                         throw new IOException("unexpected file length [" + fileSize + "] for [" + databasePath + "]");
                     }
-                    final int[] databaseTypeMarker = { 'd', 'a', 't', 'a', 'b', 'a', 's', 'e', '_', 't', 'y', 'p', 'e' };
+                    final int[] databaseTypeMarker = {'d', 'a', 't', 'a', 'b', 'a', 's', 'e', '_', 't', 'y', 'p', 'e'};
                     try (InputStream in = databaseInputStream()) {
                         // read the last 512 bytes
                         final long skipped = in.skip(fileSize - 512);

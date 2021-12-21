@@ -55,7 +55,7 @@ public abstract class IntervalFilterScript {
         IntervalFilterScript newInstance();
     }
 
-    public static final String[] PARAMETERS = new String[] { "interval" };
+    public static final String[] PARAMETERS = new String[]{ "interval" };
     public static final ScriptContext<Factory> CONTEXT = new ScriptContext<>("interval", Factory.class);
 
 }

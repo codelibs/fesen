@@ -36,8 +36,7 @@ public abstract class LongKeyedBucketOrds implements Releasable {
         return cardinality.map(estimate -> estimate < 2 ? new FromSingle(bigArrays) : new FromMany(bigArrays));
     }
 
-    private LongKeyedBucketOrds() {
-    }
+    private LongKeyedBucketOrds() {}
 
     /**
      * Add the {@code owningBucketOrd, value} pair. Return the ord for
@@ -58,7 +57,7 @@ public abstract class LongKeyedBucketOrds implements Releasable {
      * Find the {@code owningBucketOrd, value} pair. Return the ord for
      * their bucket if they have been added or {@code -1} if they haven't.
      */
-    public abstract long find(long owningBucketOrd, long value);
+   public abstract long find(long owningBucketOrd, long value);
 
     /**
      * Returns the value currently associated with the bucket ordinal
@@ -83,7 +82,6 @@ public abstract class LongKeyedBucketOrds implements Releasable {
      * {@link BucketOrdsEnum#next()} to move it to the first value.
      */
     public abstract BucketOrdsEnum ordsEnum(long owningBucketOrd);
-
     /**
      * An iterator for buckets inside a particular {@code owningBucketOrd}.
      */
@@ -94,12 +92,10 @@ public abstract class LongKeyedBucketOrds implements Releasable {
          *         {@code false} if there isn't
          */
         boolean next();
-
         /**
          * The ordinal of the current value.
          */
         long ord();
-
         /**
          * The current value.
          */
@@ -110,19 +106,11 @@ public abstract class LongKeyedBucketOrds implements Releasable {
          */
         BucketOrdsEnum EMPTY = new BucketOrdsEnum() {
             @Override
-            public boolean next() {
-                return false;
-            }
-
+            public boolean next() { return false; }
             @Override
-            public long ord() {
-                return 0;
-            }
-
+            public long ord() { return 0; }
             @Override
-            public long value() {
-                return 0;
-            }
+            public long value() { return 0; }
         };
     }
 
@@ -148,6 +136,7 @@ public abstract class LongKeyedBucketOrds implements Releasable {
             assert owningBucketOrd == 0;
             return ords.find(value);
         }
+
 
         @Override
         public long get(long ordinal) {

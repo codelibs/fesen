@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import static org.hamcrest.Matchers.contains;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.ReferenceCounted;
 
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.network.NetworkService;
@@ -40,6 +40,7 @@ import org.codelibs.fesen.http.HttpPipelinedRequest;
 import org.codelibs.fesen.http.HttpResponse;
 import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.http.NullDispatcher;
+import org.codelibs.fesen.http.netty4.Netty4HttpServerTransport;
 import org.codelibs.fesen.indices.breaker.NoneCircuitBreakerService;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.test.ESTestCase;
@@ -49,15 +50,15 @@ import org.codelibs.fesen.transport.SharedGroupFactory;
 import org.junit.After;
 import org.junit.Before;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.util.ReferenceCounted;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.hamcrest.Matchers.contains;
 
 /**
  * This test just tests, if he pipelining works in general with out any connection the Fesen handler
@@ -82,7 +83,9 @@ public class Netty4HttpServerPipeliningTests extends ESTestCase {
     }
 
     public void testThatHttpPipeliningWorks() throws Exception {
-        final Settings settings = Settings.builder().put("http.port", "0").build();
+        final Settings settings = Settings.builder()
+            .put("http.port", "0")
+            .build();
         try (HttpServerTransport httpServerTransport = new CustomNettyHttpServerTransport(settings)) {
             httpServerTransport.start();
             final TransportAddress transportAddress = randomFrom(httpServerTransport.boundAddress().boundAddresses());
@@ -98,7 +101,7 @@ public class Netty4HttpServerPipeliningTests extends ESTestCase {
             }
 
             try (Netty4HttpClient nettyHttpClient = new Netty4HttpClient()) {
-                Collection<FullHttpResponse> responses = nettyHttpClient.get(transportAddress.address(), requests.toArray(new String[] {}));
+                Collection<FullHttpResponse> responses = nettyHttpClient.get(transportAddress.address(), requests.toArray(new String[]{}));
                 try {
                     Collection<String> responseBodies = Netty4HttpClient.returnHttpResponseBodies(responses);
                     assertThat(responseBodies, contains(requests.toArray()));
@@ -114,9 +117,12 @@ public class Netty4HttpServerPipeliningTests extends ESTestCase {
         private final ExecutorService executorService = Executors.newCachedThreadPool();
 
         CustomNettyHttpServerTransport(final Settings settings) {
-            super(settings, Netty4HttpServerPipeliningTests.this.networkService, Netty4HttpServerPipeliningTests.this.bigArrays,
-                    Netty4HttpServerPipeliningTests.this.threadPool, xContentRegistry(), new NullDispatcher(),
-                    new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), new SharedGroupFactory(settings));
+            super(settings,
+                Netty4HttpServerPipeliningTests.this.networkService,
+                Netty4HttpServerPipeliningTests.this.bigArrays,
+                Netty4HttpServerPipeliningTests.this.threadPool,
+                xContentRegistry(), new NullDispatcher(), new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS),
+                new SharedGroupFactory(settings));
         }
 
         @Override
@@ -188,7 +194,7 @@ public class Netty4HttpServerPipeliningTests extends ESTestCase {
                 final ByteBuf buffer = Unpooled.copiedBuffer(uri, StandardCharsets.UTF_8);
 
                 HttpResponse response =
-                        pipelinedRequest.createResponse(RestStatus.OK, new BytesArray(uri.getBytes(StandardCharsets.UTF_8)));
+                    pipelinedRequest.createResponse(RestStatus.OK, new BytesArray(uri.getBytes(StandardCharsets.UTF_8)));
                 response.addHeader("content-length", Integer.toString(buffer.readableBytes()));
 
                 final boolean slow = uri.matches("/slow/\\d+");

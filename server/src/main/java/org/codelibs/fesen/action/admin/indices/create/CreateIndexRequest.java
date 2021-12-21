@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
@@ -59,6 +46,19 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A request to create an index. Best created with {@link org.codelibs.fesen.client.Requests#createIndexRequest(String)}.
@@ -96,7 +96,19 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         for (int i = 0; i < size; i++) {
             final String type = in.readString();
             String source = in.readString();
+            if (in.getVersion().before(Version.V_6_0_0_alpha1)) { // TODO change to 5.3.0 after backport
+                // we do not know the content type that comes from earlier versions so we autodetect and convert
+                source = XContentHelper.convertToJson(new BytesArray(source), false, false, XContentFactory.xContentType(source));
+            }
             mappings.put(type, source);
+        }
+        if (in.getVersion().before(Version.V_6_5_0)) {
+            // This used to be the size of custom metadata classes
+            int customSize = in.readVInt();
+            assert customSize == 0 : "unexpected custom metadata when none is supported";
+            if (customSize > 0) {
+                throw new IllegalStateException("unexpected custom metadata when none is supported");
+            }
         }
         int aliasesSize = in.readVInt();
         for (int i = 0; i < aliasesSize; i++) {
@@ -137,7 +149,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     @Override
     public String[] indices() {
-        return new String[] { index };
+        return new String[]{index};
     }
 
     @Override
@@ -265,7 +277,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         }
         // wrap it in a type map if its not
         if (source.size() != 1 || !source.containsKey(type)) {
-            source = MapBuilder.<String, Object> newMapBuilder().put(type, source).map();
+            source = MapBuilder.<String, Object>newMapBuilder().put(type, source).map();
         }
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -318,14 +330,15 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      */
     public CreateIndexRequest aliases(BytesReference source) {
         // EMPTY is safe here because we never call namedObject
-        try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
+        try (XContentParser parser = XContentHelper
+                .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
             //move to the first alias
             parser.nextToken();
             while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                 alias(Alias.fromXContent(parser));
             }
             return this;
-        } catch (IOException e) {
+        } catch(IOException e) {
             throw new FesenParseException("Failed to parse aliases", e);
         }
     }
@@ -451,6 +464,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             out.writeString(entry.getKey());
             out.writeString(entry.getValue());
+        }
+        if (out.getVersion().before(Version.V_6_5_0)) {
+            // Size of custom index metadata, which is removed
+            out.writeVInt(0);
         }
         out.writeVInt(aliases.size());
         for (Alias alias : aliases) {

@@ -17,17 +17,13 @@
 
 package org.codelibs.fesen.core.internal.io;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import org.apache.lucene.mockfile.FilterFileSystemProvider;
+import org.apache.lucene.mockfile.FilterPath;
+import org.apache.lucene.util.Constants;
+import org.codelibs.fesen.core.CheckedConsumer;
+import org.codelibs.fesen.core.PathUtils;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -49,12 +45,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.apache.lucene.mockfile.FilterFileSystemProvider;
-import org.apache.lucene.mockfile.FilterPath;
-import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.core.CheckedConsumer;
-import org.codelibs.fesen.core.PathUtils;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasToString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class IOUtilsTests extends ESTestCase {
 
@@ -87,8 +85,8 @@ public class IOUtilsTests extends ESTestCase {
         runTestCloseWithIOExceptions((Function<Closeable[], List<Closeable>>) Arrays::asList, IOUtils::close);
     }
 
-    private <T> void runTestCloseWithIOExceptions(final Function<Closeable[], T> function, final CheckedConsumer<T, IOException> close)
-            throws IOException {
+    private <T> void runTestCloseWithIOExceptions(
+            final Function<Closeable[], T> function, final CheckedConsumer<T, IOException> close) throws IOException {
         final int numberOfCloseables = randomIntBetween(1, 8);
         final Closeable[] closeables = new Closeable[numberOfCloseables];
         final List<Integer> indexesThatThrow = new ArrayList<>(numberOfCloseables);
@@ -126,8 +124,8 @@ public class IOUtilsTests extends ESTestCase {
         runDeleteFilesIgnoringExceptionsTest((Function<Path[], List<Path>>) Arrays::asList, IOUtils::deleteFilesIgnoringExceptions);
     }
 
-    private <T> void runDeleteFilesIgnoringExceptionsTest(final Function<Path[], T> function,
-            CheckedConsumer<T, IOException> deleteFilesIgnoringExceptions) throws IOException {
+    private <T> void runDeleteFilesIgnoringExceptionsTest(
+            final Function<Path[], T> function, CheckedConsumer<T, IOException> deleteFilesIgnoringExceptions) throws IOException {
         final int numberOfFiles = randomIntBetween(0, 7);
         final Path[] files = new Path[numberOfFiles];
         for (int i = 0; i < numberOfFiles; i++) {
@@ -231,8 +229,10 @@ public class IOUtilsTests extends ESTestCase {
         }
 
         @Override
-        public FileChannel newFileChannel(final Path path, final Set<? extends OpenOption> options, final FileAttribute<?>... attrs)
-                throws IOException {
+        public FileChannel newFileChannel(
+                final Path path,
+                final Set<? extends OpenOption> options,
+                final FileAttribute<?>... attrs) throws IOException {
             if (Files.isDirectory(path)) {
                 throw new AccessDeniedException(path.toString());
             }

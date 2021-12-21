@@ -19,9 +19,13 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.search.SearchHit;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,13 +34,9 @@ import java.util.OptionalInt;
 
 import javax.naming.directory.SearchResult;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.SearchHit;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.index.rankeval.EvaluationMetric.joinHitsWithRatings;
 
 /**
  * Metric implementing Precision@K
@@ -104,8 +104,10 @@ public class PrecisionAtK implements EvaluationMetric {
         Integer relevantRatingThreshold = (Integer) args[0];
         Boolean ignoreUnlabeled = (Boolean) args[1];
         Integer k = (Integer) args[2];
-        return new PrecisionAtK(relevantRatingThreshold == null ? DEFAULT_RELEVANT_RATING_THRESHOLD : relevantRatingThreshold,
-                ignoreUnlabeled == null ? DEFAULT_IGNORE_UNLABELED : ignoreUnlabeled, k == null ? DEFAULT_K : k);
+        return new PrecisionAtK(
+            relevantRatingThreshold == null ? DEFAULT_RELEVANT_RATING_THRESHOLD : relevantRatingThreshold,
+            ignoreUnlabeled == null ? DEFAULT_IGNORE_UNLABELED : ignoreUnlabeled,
+            k == null ? DEFAULT_K : k);
     });
 
     static {
@@ -186,7 +188,8 @@ public class PrecisionAtK implements EvaluationMetric {
      * @return precision at k for above {@link SearchResult} list.
      **/
     @Override
-    public EvalQueryQuality evaluate(String taskId, SearchHit[] hits, List<RatedDocument> ratedDocs) {
+    public EvalQueryQuality evaluate(String taskId, SearchHit[] hits,
+                                     List<RatedDocument> ratedDocs) {
 
         List<RatedSearchHit> ratedSearchHits = joinHitsWithRatings(hits, ratedDocs);
 
@@ -226,7 +229,8 @@ public class PrecisionAtK implements EvaluationMetric {
         }
         PrecisionAtK other = (PrecisionAtK) obj;
         return Objects.equals(relevantRatingThreshold, other.relevantRatingThreshold)
-                && Objects.equals(ignoreUnlabeled, other.ignoreUnlabeled) && Objects.equals(k, other.k);
+            && Objects.equals(ignoreUnlabeled, other.ignoreUnlabeled)
+            && Objects.equals(k, other.k);
     }
 
     @Override
@@ -252,7 +256,7 @@ public class PrecisionAtK implements EvaluationMetric {
         }
 
         private static final ConstructingObjectParser<Detail, Void> PARSER =
-                new ConstructingObjectParser<>(NAME, true, args -> new Detail((Integer) args[0], (Integer) args[1]));
+            new ConstructingObjectParser<>(NAME, true, args -> new Detail((Integer) args[0], (Integer) args[1]));
 
         static {
             PARSER.declareInt(constructorArg(), RELEVANT_DOCS_RETRIEVED_FIELD);
@@ -270,7 +274,8 @@ public class PrecisionAtK implements EvaluationMetric {
         }
 
         @Override
-        public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder innerToXContent(XContentBuilder builder, Params params)
+            throws IOException {
             builder.field(RELEVANT_DOCS_RETRIEVED_FIELD.getPreferredName(), relevantRetrieved);
             builder.field(DOCS_RETRIEVED_FIELD.getPreferredName(), retrieved);
             return builder;
@@ -298,7 +303,8 @@ public class PrecisionAtK implements EvaluationMetric {
                 return false;
             }
             PrecisionAtK.Detail other = (PrecisionAtK.Detail) obj;
-            return Objects.equals(relevantRetrieved, other.relevantRetrieved) && Objects.equals(retrieved, other.retrieved);
+            return Objects.equals(relevantRetrieved, other.relevantRetrieved)
+                    && Objects.equals(retrieved, other.retrieved);
         }
 
         @Override

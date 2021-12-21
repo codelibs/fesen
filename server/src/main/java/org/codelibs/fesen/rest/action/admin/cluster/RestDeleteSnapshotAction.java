@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.client.Requests.deleteSnapshotRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +28,10 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.client.Requests.deleteSnapshotRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
 
 /**
  * Deletes a snapshot
@@ -50,8 +50,8 @@ public class RestDeleteSnapshotAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
-        DeleteSnapshotRequest deleteSnapshotRequest =
-                deleteSnapshotRequest(request.param("repository"), Strings.splitStringByCommaToArray(request.param("snapshot")));
+        DeleteSnapshotRequest deleteSnapshotRequest = deleteSnapshotRequest(request.param("repository"),
+                Strings.splitStringByCommaToArray(request.param("snapshot")));
         deleteSnapshotRequest.masterNodeTimeout(request.paramAsTime("master_timeout", deleteSnapshotRequest.masterNodeTimeout()));
         return channel -> client.admin().cluster().deleteSnapshot(deleteSnapshotRequest, new RestToXContentListener<>(channel));
     }

@@ -49,33 +49,45 @@ public abstract class DateHistogramAggregatorTestCase extends AggregatorTestCase
     protected final <R extends InternalAggregation> void asSubAggTestCase(AggregationBuilder builder, Consumer<R> verify)
             throws IOException {
         CheckedBiConsumer<RandomIndexWriter, DateFieldMapper.DateFieldType, IOException> buildIndex = (iw, dft) -> {
-            iw.addDocument(
-                    org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-02-01T00:00:00Z")),
-                            new SortedSetDocValuesField("k1", new BytesRef("a")), new SortedSetDocValuesField("k2", new BytesRef("a")),
-                            new SortedNumericDocValuesField("n", 1)));
-            iw.addDocument(
-                    org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-03-01T00:00:00Z")),
-                            new SortedSetDocValuesField("k1", new BytesRef("a")), new SortedSetDocValuesField("k2", new BytesRef("a")),
-                            new SortedNumericDocValuesField("n", 2)));
-            iw.addDocument(
-                    org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2021-02-01T00:00:00Z")),
-                            new SortedSetDocValuesField("k1", new BytesRef("a")), new SortedSetDocValuesField("k2", new BytesRef("a")),
-                            new SortedNumericDocValuesField("n", 3)));
-            iw.addDocument(
-                    org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2021-03-01T00:00:00Z")),
-                            new SortedSetDocValuesField("k1", new BytesRef("a")), new SortedSetDocValuesField("k2", new BytesRef("b")),
-                            new SortedNumericDocValuesField("n", 4)));
-            iw.addDocument(
-                    org.codelibs.fesen.core.List.of(new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-02-01T00:00:00Z")),
-                            new SortedSetDocValuesField("k1", new BytesRef("b")), new SortedSetDocValuesField("k2", new BytesRef("b")),
-                            new SortedNumericDocValuesField("n", 5)));
+            iw.addDocument(org.codelibs.fesen.core.List.of(
+                new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-02-01T00:00:00Z")),
+                new SortedSetDocValuesField("k1", new BytesRef("a")),
+                new SortedSetDocValuesField("k2", new BytesRef("a")),
+                new SortedNumericDocValuesField("n", 1)
+            ));
+            iw.addDocument(org.codelibs.fesen.core.List.of(
+                new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-03-01T00:00:00Z")),
+                new SortedSetDocValuesField("k1", new BytesRef("a")),
+                new SortedSetDocValuesField("k2", new BytesRef("a")),
+                new SortedNumericDocValuesField("n", 2)
+            ));
+            iw.addDocument(org.codelibs.fesen.core.List.of(
+                new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2021-02-01T00:00:00Z")),
+                new SortedSetDocValuesField("k1", new BytesRef("a")),
+                new SortedSetDocValuesField("k2", new BytesRef("a")),
+                new SortedNumericDocValuesField("n", 3)
+            ));
+            iw.addDocument(org.codelibs.fesen.core.List.of(
+                new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2021-03-01T00:00:00Z")),
+                new SortedSetDocValuesField("k1", new BytesRef("a")),
+                new SortedSetDocValuesField("k2", new BytesRef("b")),
+                new SortedNumericDocValuesField("n", 4)
+            ));
+            iw.addDocument(org.codelibs.fesen.core.List.of(
+                new SortedNumericDocValuesField(AGGREGABLE_DATE, dft.parse("2020-02-01T00:00:00Z")),
+                new SortedSetDocValuesField("k1", new BytesRef("b")),
+                new SortedSetDocValuesField("k2", new BytesRef("b")),
+                new SortedNumericDocValuesField("n", 5)
+            ));
         };
         asSubAggTestCase(builder, buildIndex, verify);
     }
 
-    protected final <R extends InternalAggregation> void asSubAggTestCase(AggregationBuilder builder,
-            CheckedBiConsumer<RandomIndexWriter, DateFieldMapper.DateFieldType, IOException> buildIndex, Consumer<R> verify)
-            throws IOException {
+    protected final <R extends InternalAggregation> void asSubAggTestCase(
+        AggregationBuilder builder,
+        CheckedBiConsumer<RandomIndexWriter, DateFieldMapper.DateFieldType, IOException> buildIndex,
+        Consumer<R> verify
+    ) throws IOException {
         KeywordFieldMapper.KeywordFieldType k1ft = new KeywordFieldMapper.KeywordFieldType("k1");
         KeywordFieldMapper.KeywordFieldType k2ft = new KeywordFieldMapper.KeywordFieldType("k2");
         NumberFieldMapper.NumberFieldType nft = new NumberFieldMapper.NumberFieldType("n", NumberType.LONG);
@@ -84,8 +96,9 @@ public abstract class DateHistogramAggregatorTestCase extends AggregatorTestCase
     }
 
     protected final DateFieldMapper.DateFieldType aggregableDateFieldType(boolean useNanosecondResolution, boolean isSearchable) {
-        return new DateFieldMapper.DateFieldType(AGGREGABLE_DATE, isSearchable, false, true, DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER,
-                useNanosecondResolution ? DateFieldMapper.Resolution.NANOSECONDS : DateFieldMapper.Resolution.MILLISECONDS, null,
-                Collections.emptyMap());
+        return new DateFieldMapper.DateFieldType(AGGREGABLE_DATE, isSearchable, false, true,
+            DateFieldMapper.DEFAULT_DATE_TIME_FORMATTER,
+            useNanosecondResolution ? DateFieldMapper.Resolution.NANOSECONDS : DateFieldMapper.Resolution.MILLISECONDS,
+            null, Collections.emptyMap());
     }
 }

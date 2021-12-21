@@ -120,8 +120,11 @@ public class DocumentFieldMapperTests extends LuceneTestCase {
 
         Analyzer defaultIndex = new FakeAnalyzer("default_index");
 
-        MappingLookup mappingLookup = new MappingLookup(Arrays.asList(fieldMapper1, fieldMapper2), Collections.emptyList(),
-                Collections.emptyList(), 0, defaultIndex);
+        MappingLookup mappingLookup = new MappingLookup(
+            Arrays.asList(fieldMapper1, fieldMapper2),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            0, defaultIndex);
 
         assertAnalyzes(mappingLookup.indexAnalyzer(), "field1", "index");
 

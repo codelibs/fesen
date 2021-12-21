@@ -18,9 +18,11 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.parseTypedKeysObject;
+import org.apache.lucene.util.SetOnce;
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,11 +34,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.parseTypedKeysObject;
 
 /**
  * Represents a set of {@link Aggregation}s

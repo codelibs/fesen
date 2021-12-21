@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.shards;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.internal.AliasFilter;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 public class ClusterSearchShardsResponse extends ActionResponse implements ToXContentObject {
 
@@ -52,7 +52,7 @@ public class ClusterSearchShardsResponse extends ActionResponse implements ToXCo
     }
 
     public ClusterSearchShardsResponse(ClusterSearchShardsGroup[] groups, DiscoveryNode[] nodes,
-            Map<String, AliasFilter> indicesAndFilters) {
+                                       Map<String, AliasFilter> indicesAndFilters) {
         this.groups = groups;
         this.nodes = nodes;
         this.indicesAndFilters = indicesAndFilters;

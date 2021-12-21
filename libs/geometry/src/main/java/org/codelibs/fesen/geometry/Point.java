@@ -81,18 +81,13 @@ public class Point implements Geometry {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Point point = (Point) o;
-        if (point.empty != empty)
-            return false;
-        if (Double.compare(point.y, y) != 0)
-            return false;
-        if (Double.compare(point.x, x) != 0)
-            return false;
+        if (point.empty != empty) return false;
+        if (Double.compare(point.y, y) != 0) return false;
+        if (Double.compare(point.x, x) != 0) return false;
         return Double.compare(point.z, z) == 0;
     }
 

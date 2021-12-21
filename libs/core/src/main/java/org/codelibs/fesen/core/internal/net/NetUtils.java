@@ -77,8 +77,9 @@ public class NetUtils {
                 final Boolean keepalive = socketChannel.getOption(StandardSocketOptions.SO_KEEPALIVE);
                 assert keepalive != null;
                 if (keepalive.booleanValue()) {
-                    for (SocketOption<Integer> option : Arrays.asList(NetUtils.getTcpKeepIdleSocketOptionOrNull(),
-                            NetUtils.getTcpKeepIntervalSocketOptionOrNull())) {
+                    for (SocketOption<Integer> option : Arrays.asList(
+                        NetUtils.getTcpKeepIdleSocketOptionOrNull(),
+                        NetUtils.getTcpKeepIntervalSocketOptionOrNull())) {
                         setMinValueForSocketOption(socketChannel, option, 300);
                     }
                 }

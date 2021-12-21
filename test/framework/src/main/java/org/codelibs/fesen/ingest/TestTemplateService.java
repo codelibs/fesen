@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.ingest;
 
-import static org.codelibs.fesen.script.Script.DEFAULT_TEMPLATE_LANG;
-
-import java.util.Collections;
-import java.util.Map;
-
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.script.MockScriptEngine;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptContext;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.script.TemplateScript;
+
+import static org.codelibs.fesen.script.Script.DEFAULT_TEMPLATE_LANG;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class TestTemplateService extends ScriptService {
     private boolean compilationException;
@@ -55,6 +55,7 @@ public class TestTemplateService extends ScriptService {
             return (FactoryType) new MockTemplateScript.Factory(script.getIdOrCode());
         }
     }
+
 
     public static class MockTemplateScript extends TemplateScript {
         private final String expected;

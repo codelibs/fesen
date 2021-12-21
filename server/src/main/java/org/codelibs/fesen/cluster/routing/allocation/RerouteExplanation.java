@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.cluster.routing.allocation.command.AllocationCommand;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+
+import java.io.IOException;
 
 /**
  * Class encapsulating the explanation for a single {@link AllocationCommand}

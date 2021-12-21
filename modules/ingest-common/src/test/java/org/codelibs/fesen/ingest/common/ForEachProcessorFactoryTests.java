@@ -19,20 +19,21 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.TestProcessor;
+import org.codelibs.fesen.ingest.common.ForEachProcessor;
+import org.codelibs.fesen.script.ScriptService;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.TestProcessor;
-import org.codelibs.fesen.script.ScriptService;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
 
 public class ForEachProcessorFactoryTests extends ESTestCase {
 
@@ -40,7 +41,7 @@ public class ForEachProcessorFactoryTests extends ESTestCase {
     private final Consumer<Runnable> genericExecutor = Runnable::run;
 
     public void testCreate() throws Exception {
-        Processor processor = new TestProcessor(ingestDocument -> {});
+        Processor processor = new TestProcessor(ingestDocument -> { });
         Map<String, Processor.Factory> registry = new HashMap<>();
         registry.put("_name", (r, t, description, c) -> processor);
         ForEachProcessor.Factory forEachFactory = new ForEachProcessor.Factory(scriptService);
@@ -56,7 +57,7 @@ public class ForEachProcessorFactoryTests extends ESTestCase {
     }
 
     public void testSetIgnoreMissing() throws Exception {
-        Processor processor = new TestProcessor(ingestDocument -> {});
+        Processor processor = new TestProcessor(ingestDocument -> { });
         Map<String, Processor.Factory> registry = new HashMap<>();
         registry.put("_name", (r, t, description, c) -> processor);
         ForEachProcessor.Factory forEachFactory = new ForEachProcessor.Factory(scriptService);
@@ -73,7 +74,7 @@ public class ForEachProcessorFactoryTests extends ESTestCase {
     }
 
     public void testCreateWithTooManyProcessorTypes() throws Exception {
-        Processor processor = new TestProcessor(ingestDocument -> {});
+        Processor processor = new TestProcessor(ingestDocument -> { });
         Map<String, Processor.Factory> registry = new HashMap<>();
         registry.put("_first", (r, t, description, c) -> processor);
         registry.put("_second", (r, t, description, c) -> processor);
@@ -94,13 +95,13 @@ public class ForEachProcessorFactoryTests extends ESTestCase {
         Map<String, Object> config = new HashMap<>();
         config.put("field", "_field");
         config.put("processor", Collections.singletonMap("_name", Collections.emptyMap()));
-        Exception expectedException =
-                expectThrows(FesenParseException.class, () -> forEachFactory.create(Collections.emptyMap(), null, null, config));
+        Exception expectedException = expectThrows(FesenParseException.class,
+            () -> forEachFactory.create(Collections.emptyMap(), null, null, config));
         assertThat(expectedException.getMessage(), equalTo("No processor type exists with name [_name]"));
     }
 
     public void testCreateWithMissingField() throws Exception {
-        Processor processor = new TestProcessor(ingestDocument -> {});
+        Processor processor = new TestProcessor(ingestDocument -> { });
         Map<String, Processor.Factory> registry = new HashMap<>();
         registry.put("_name", (r, t, description, c) -> processor);
         ForEachProcessor.Factory forEachFactory = new ForEachProcessor.Factory(scriptService);

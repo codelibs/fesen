@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.script.expression;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.DoubleValues;
@@ -29,6 +26,9 @@ import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.search.MultiValueMode;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A {@link ValueSource} wrapper for field data.
@@ -44,15 +44,12 @@ class FieldDataValueSource extends FieldDataBasedDoubleValuesSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         FieldDataValueSource that = (FieldDataValueSource) o;
 
-        if (!fieldData.equals(that.fieldData))
-            return false;
+        if (!fieldData.equals(that.fieldData)) return false;
         return multiValueMode == that.multiValueMode;
 
     }

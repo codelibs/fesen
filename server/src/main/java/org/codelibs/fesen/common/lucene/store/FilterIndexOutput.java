@@ -18,9 +18,9 @@
  */
 package org.codelibs.fesen.common.lucene.store;
 
-import java.io.IOException;
-
 import org.apache.lucene.store.IndexOutput;
+
+import java.io.IOException;
 
 /**
  * IndexOutput that delegates all calls to another IndexOutput

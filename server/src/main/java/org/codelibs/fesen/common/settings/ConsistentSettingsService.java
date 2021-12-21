@@ -19,6 +19,20 @@
 
 package org.codelibs.fesen.common.settings;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.cluster.ClusterState;
+import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
+import org.codelibs.fesen.cluster.LocalNodeMasterListener;
+import org.codelibs.fesen.cluster.metadata.Metadata;
+import org.codelibs.fesen.cluster.service.ClusterService;
+import org.codelibs.fesen.common.Priority;
+import org.codelibs.fesen.common.UUIDs;
+import org.codelibs.fesen.common.hash.MessageDigests;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -33,21 +47,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.cluster.ClusterState;
-import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
-import org.codelibs.fesen.cluster.LocalNodeMasterListener;
-import org.codelibs.fesen.cluster.metadata.Metadata;
-import org.codelibs.fesen.cluster.service.ClusterService;
-import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.hash.MessageDigests;
-
 /**
  * Used to publish secure setting hashes in the cluster state and to validate those hashes against the local values of those same settings.
  * This is colloquially referred to as the secure setting consistency check. It will publish and verify hashes only for the collection
@@ -61,7 +60,8 @@ public final class ConsistentSettingsService {
     private final Collection<Setting<?>> secureSettingsCollection;
     private final SecretKeyFactory pbkdf2KeyFactory;
 
-    public ConsistentSettingsService(Settings settings, ClusterService clusterService, Collection<Setting<?>> secureSettingsCollection) {
+    public ConsistentSettingsService(Settings settings, ClusterService clusterService,
+                                     Collection<Setting<?>> secureSettingsCollection) {
         this.settings = settings;
         this.clusterService = clusterService;
         this.secureSettingsCollection = secureSettingsCollection;
@@ -162,9 +162,9 @@ public final class ConsistentSettingsService {
         for (Setting<?> setting : secureSettingsCollection) {
             assert setting.isConsistent() : "[" + setting.getKey() + "] is not a consistent setting";
             if (setting instanceof Setting.AffixSetting<?>) {
-                ((Setting.AffixSetting<?>) setting).getAllConcreteSettings(settings).forEach(concreteSetting -> {
+                ((Setting.AffixSetting<?>)setting).getAllConcreteSettings(settings).forEach(concreteSetting -> {
                     assert concreteSetting instanceof SecureSetting<?> : "[" + concreteSetting.getKey() + "] is not a secure setting";
-                    secureSettingConsumer.accept((SecureSetting<?>) concreteSetting);
+                    secureSettingConsumer.accept((SecureSetting<?>)concreteSetting);
                 });
             } else if (setting instanceof SecureSetting<?>) {
                 secureSettingConsumer.accept((SecureSetting<?>) setting);
@@ -222,14 +222,14 @@ public final class ConsistentSettingsService {
             clusterService.submitStateUpdateTask("publish-secure-settings-hashes", new ClusterStateUpdateTask(Priority.URGENT) {
                 @Override
                 public ClusterState execute(ClusterState currentState) {
-                    final Map<String, String> publishedHashesOfConsistentSettings = currentState.metadata().hashesOfConsistentSettings();
+                    final Map<String, String> publishedHashesOfConsistentSettings = currentState.metadata()
+                            .hashesOfConsistentSettings();
                     if (computedHashesOfConsistentSettings.equals(publishedHashesOfConsistentSettings)) {
                         logger.debug("Nothing to publish. What is already published matches this node's view.");
                         return currentState;
                     } else {
-                        return ClusterState.builder(currentState).metadata(
-                                Metadata.builder(currentState.metadata()).hashesOfConsistentSettings(computedHashesOfConsistentSettings))
-                                .build();
+                        return ClusterState.builder(currentState).metadata(Metadata.builder(currentState.metadata())
+                                .hashesOfConsistentSettings(computedHashesOfConsistentSettings)).build();
                     }
                 }
 

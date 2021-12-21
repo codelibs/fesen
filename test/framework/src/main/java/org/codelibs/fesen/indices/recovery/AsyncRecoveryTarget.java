@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.indices.recovery;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesArray;
@@ -31,6 +28,11 @@ import org.codelibs.fesen.index.seqno.RetentionLeases;
 import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.store.StoreFileMetadata;
 import org.codelibs.fesen.index.translog.Translog;
+import org.codelibs.fesen.indices.recovery.RecoveryTarget;
+import org.codelibs.fesen.indices.recovery.RecoveryTargetHandler;
+
+import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * Wraps a {@link RecoveryTarget} to make all remote calls to be executed asynchronously using the provided {@code executor}.
@@ -60,29 +62,29 @@ public class AsyncRecoveryTarget implements RecoveryTargetHandler {
     }
 
     @Override
-    public void indexTranslogOperations(List<Translog.Operation> operations, int totalTranslogOps, long maxSeenAutoIdTimestampOnPrimary,
-            long maxSeqNoOfDeletesOrUpdatesOnPrimary, RetentionLeases retentionLeases, long mappingVersionOnPrimary,
-            ActionListener<Long> listener) {
+    public void indexTranslogOperations(List<Translog.Operation> operations, int totalTranslogOps,
+                                        long maxSeenAutoIdTimestampOnPrimary, long maxSeqNoOfDeletesOrUpdatesOnPrimary,
+                                        RetentionLeases retentionLeases, long mappingVersionOnPrimary, ActionListener<Long> listener) {
         executor.execute(() -> target.indexTranslogOperations(operations, totalTranslogOps, maxSeenAutoIdTimestampOnPrimary,
-                maxSeqNoOfDeletesOrUpdatesOnPrimary, retentionLeases, mappingVersionOnPrimary, listener));
+            maxSeqNoOfDeletesOrUpdatesOnPrimary, retentionLeases, mappingVersionOnPrimary, listener));
     }
 
     @Override
     public void receiveFileInfo(List<String> phase1FileNames, List<Long> phase1FileSizes, List<String> phase1ExistingFileNames,
-            List<Long> phase1ExistingFileSizes, int totalTranslogOps, ActionListener<Void> listener) {
-        executor.execute(() -> target.receiveFileInfo(phase1FileNames, phase1FileSizes, phase1ExistingFileNames, phase1ExistingFileSizes,
-                totalTranslogOps, listener));
+                                List<Long> phase1ExistingFileSizes, int totalTranslogOps, ActionListener<Void> listener) {
+        executor.execute(() -> target.receiveFileInfo(
+            phase1FileNames, phase1FileSizes, phase1ExistingFileNames, phase1ExistingFileSizes, totalTranslogOps, listener));
     }
 
     @Override
     public void cleanFiles(int totalTranslogOps, long globalCheckpoint, Store.MetadataSnapshot sourceMetadata,
-            ActionListener<Void> listener) {
+                           ActionListener<Void> listener) {
         executor.execute(() -> target.cleanFiles(totalTranslogOps, globalCheckpoint, sourceMetadata, listener));
     }
 
     @Override
-    public void writeFileChunk(StoreFileMetadata fileMetadata, long position, BytesReference content, boolean lastChunk,
-            int totalTranslogOps, ActionListener<Void> listener) {
+    public void writeFileChunk(StoreFileMetadata fileMetadata, long position, BytesReference content,
+                               boolean lastChunk, int totalTranslogOps, ActionListener<Void> listener) {
         final BytesReference copy = new BytesArray(BytesRef.deepCopyOf(content.toBytesRef()));
         executor.execute(() -> target.writeFileChunk(fileMetadata, position, copy, lastChunk, totalTranslogOps, listener));
     }

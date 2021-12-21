@@ -19,9 +19,7 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import java.util.List;
 import java.util.Map;
@@ -38,13 +36,17 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestTemplatesAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_cat/templates"), new Route(GET, "/_cat/templates/{name}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_cat/templates"),
+            new Route(GET, "/_cat/templates/{name}")));
     }
 
     @Override

@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.test;
 
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.Tuple;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +31,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.Tuple;
 
 /** Utilities for selecting versions in tests */
 public class VersionUtils {
@@ -47,14 +47,14 @@ public class VersionUtils {
      */
     static Tuple<List<Version>, List<Version>> resolveReleasedVersions(Version current, Class<?> versionClass) {
         // group versions into major version
-        Map<Integer, List<Version>> majorVersions =
-                Version.getDeclaredVersions(versionClass).stream().collect(Collectors.groupingBy(v -> (int) v.major));
+        Map<Integer, List<Version>> majorVersions = Version.getDeclaredVersions(versionClass).stream()
+            .collect(Collectors.groupingBy(v -> (int)v.major));
         // this breaks b/c 5.x is still in version list but master doesn't care about it!
         //assert majorVersions.size() == 2;
         // TODO: remove oldVersions, we should only ever have 2 majors in Version
-        List<List<Version>> oldVersions = splitByMinor(majorVersions.getOrDefault((int) current.major - 2, Collections.emptyList()));
-        List<List<Version>> previousMajor = splitByMinor(majorVersions.get((int) current.major - 1));
-        List<List<Version>> currentMajor = splitByMinor(majorVersions.get((int) current.major));
+        List<List<Version>> oldVersions = splitByMinor(majorVersions.getOrDefault((int)current.major - 2, Collections.emptyList()));
+        List<List<Version>> previousMajor = splitByMinor(majorVersions.get((int)current.major - 1));
+        List<List<Version>> currentMajor = splitByMinor(majorVersions.get((int)current.major));
 
         List<Version> unreleasedVersions = new ArrayList<>();
         final List<List<Version>> stableVersions;
@@ -95,15 +95,15 @@ public class VersionUtils {
             // bugix of the old version is also being staged
             moveLastToUnreleased(oldVersions, unreleasedVersions);
         }
-        List<Version> releasedVersions = Stream.of(oldVersions, previousMajor, currentMajor).flatMap(List::stream).flatMap(List::stream)
-                .collect(Collectors.toList());
+        List<Version> releasedVersions = Stream.of(oldVersions, previousMajor, currentMajor)
+            .flatMap(List::stream).flatMap(List::stream).collect(Collectors.toList());
         Collections.sort(unreleasedVersions); // we add unreleased out of order, so need to sort here
         return new Tuple<>(Collections.unmodifiableList(releasedVersions), Collections.unmodifiableList(unreleasedVersions));
     }
 
     // split the given versions into sub lists grouped by minor version
     private static List<List<Version>> splitByMinor(List<Version> versions) {
-        Map<Integer, List<Version>> byMinor = versions.stream().collect(Collectors.groupingBy(v -> (int) v.minor));
+        Map<Integer, List<Version>> byMinor = versions.stream().collect(Collectors.groupingBy(v -> (int)v.minor));
         return byMinor.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).collect(Collectors.toList());
     }
 
@@ -247,8 +247,8 @@ public class VersionUtils {
 
     /** Returns the maximum {@link Version} that is compatible with the given version. */
     public static Version maxCompatibleVersion(Version version) {
-        final List<Version> compatible =
-                ALL_VERSIONS.stream().filter(version::isCompatible).filter(version::onOrBefore).collect(Collectors.toList());
+        final List<Version> compatible = ALL_VERSIONS.stream().filter(version::isCompatible).filter(version::onOrBefore)
+            .collect(Collectors.toList());
         assert compatible.size() > 0;
         return compatible.get(compatible.size() - 1);
     }

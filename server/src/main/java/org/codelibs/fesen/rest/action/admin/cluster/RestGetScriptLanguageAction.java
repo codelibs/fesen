@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +29,9 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestGetScriptLanguageAction extends BaseRestHandler {
 
     @Override
@@ -39,15 +39,14 @@ public class RestGetScriptLanguageAction extends BaseRestHandler {
         return singletonList(new Route(GET, "/_script_language"));
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return "script_language_action";
     }
 
-    @Override
-    protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
-        return channel -> client.execute(GetScriptLanguageAction.INSTANCE, new GetScriptLanguageRequest(),
-                new RestToXContentListener<>(channel));
+    @Override protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
+        return channel -> client.execute(GetScriptLanguageAction.INSTANCE,
+            new GetScriptLanguageRequest(),
+            new RestToXContentListener<>(channel));
     }
 
 }

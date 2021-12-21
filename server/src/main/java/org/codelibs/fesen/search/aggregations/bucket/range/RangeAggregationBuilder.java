@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
@@ -34,12 +31,18 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBui
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregationBuilder, Range> {
     public static final String NAME = "range";
-    public static final ValuesSourceRegistry.RegistryKey<RangeAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, RangeAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<RangeAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        RangeAggregatorSupplier.class
+    );
 
-    public static final ObjectParser<RangeAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, RangeAggregationBuilder::new);
+    public static final ObjectParser<RangeAggregationBuilder, String> PARSER =
+            ObjectParser.fromBuilder(NAME, RangeAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
         PARSER.declareBoolean(RangeAggregationBuilder::keyed, RangeAggregator.KEYED_FIELD);
@@ -66,8 +69,9 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
         super(in, InternalRange.FACTORY, Range::new);
     }
 
-    protected RangeAggregationBuilder(RangeAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected RangeAggregationBuilder(RangeAggregationBuilder clone,
+                                      AggregatorFactories.Builder factoriesBuilder,
+                                      Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -143,8 +147,9 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
     }
 
     @Override
-    protected RangeAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config, AggregatorFactory parent,
-            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected RangeAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+                                                AggregatorFactory parent,
+                                                AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         // We need to call processRanges here so they are parsed before we make the decision of whether to cache the request
         Range[] ranges = processRanges(range -> {
             DocValueFormat parser = config.format();

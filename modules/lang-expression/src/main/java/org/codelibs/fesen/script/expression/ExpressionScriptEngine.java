@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.script.expression;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.apache.lucene.expressions.Expression;
 import org.apache.lucene.expressions.SimpleBindings;
 import org.apache.lucene.expressions.js.JavascriptCompiler;
@@ -42,8 +30,8 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;
 import org.codelibs.fesen.index.mapper.DateFieldMapper;
-import org.codelibs.fesen.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
 import org.codelibs.fesen.script.AggregationScript;
 import org.codelibs.fesen.script.BucketAggregationScript;
 import org.codelibs.fesen.script.BucketAggregationSelectorScript;
@@ -58,6 +46,18 @@ import org.codelibs.fesen.script.ScriptException;
 import org.codelibs.fesen.script.TermsSetQueryScript;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
 /**
  * Provides the infrastructure for Lucene expressions as a scripting language for Fesen.
  *
@@ -67,88 +67,94 @@ public class ExpressionScriptEngine implements ScriptEngine {
 
     public static final String NAME = "expression";
 
-    private static Map<ScriptContext<?>, Function<Expression, Object>> contexts;
+    private static Map<ScriptContext<?>, Function<Expression,Object>> contexts;
 
     static {
-        Map<ScriptContext<?>, Function<Expression, Object>> contexts = new HashMap<ScriptContext<?>, Function<Expression, Object>>();
-        contexts.put(BucketAggregationScript.CONTEXT, ExpressionScriptEngine::newBucketAggregationScriptFactory);
+        Map<ScriptContext<?>, Function<Expression,Object>> contexts = new HashMap<ScriptContext<?>, Function<Expression,Object>>();
+        contexts.put(BucketAggregationScript.CONTEXT,
+            ExpressionScriptEngine::newBucketAggregationScriptFactory);
 
-        contexts.put(BucketAggregationSelectorScript.CONTEXT, (Expression expr) -> {
-            BucketAggregationScript.Factory factory = newBucketAggregationScriptFactory(expr);
-            BucketAggregationSelectorScript.Factory wrappedFactory = parameters -> new BucketAggregationSelectorScript(parameters) {
+        contexts.put(BucketAggregationSelectorScript.CONTEXT,
+            (Expression expr) -> {
+                BucketAggregationScript.Factory factory = newBucketAggregationScriptFactory(expr);
+                BucketAggregationSelectorScript.Factory wrappedFactory = parameters -> new BucketAggregationSelectorScript(parameters) {
+                    @Override
+                    public boolean execute() {
+                        return factory.newInstance(getParams()).execute().doubleValue() == 1.0;
+                    }
+                };
+                return wrappedFactory; });
+
+        contexts.put(FilterScript.CONTEXT,
+            (Expression expr) -> new FilterScript.Factory() {
                 @Override
-                public boolean execute() {
-                    return factory.newInstance(getParams()).execute().doubleValue() == 1.0;
+                public boolean isResultDeterministic() {
+                    return true;
                 }
-            };
-            return wrappedFactory;
-        });
 
-        contexts.put(FilterScript.CONTEXT, (Expression expr) -> new FilterScript.Factory() {
-            @Override
-            public boolean isResultDeterministic() {
-                return true;
-            }
+                @Override
+                public FilterScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
+                    return newFilterScript(expr, lookup, params);
+                }
+            });
 
-            @Override
-            public FilterScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
-                return newFilterScript(expr, lookup, params);
-            }
-        });
+        contexts.put(ScoreScript.CONTEXT,
+            (Expression expr) -> new ScoreScript.Factory() {
+                @Override
+                public ScoreScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
+                    return newScoreScript(expr, lookup, params);
+                }
 
-        contexts.put(ScoreScript.CONTEXT, (Expression expr) -> new ScoreScript.Factory() {
-            @Override
-            public ScoreScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
-                return newScoreScript(expr, lookup, params);
-            }
-
-            @Override
-            public boolean isResultDeterministic() {
-                return true;
-            }
-        });
+                @Override
+                public boolean isResultDeterministic() {
+                    return true;
+                }
+            });
 
         contexts.put(TermsSetQueryScript.CONTEXT,
-                (Expression expr) -> (TermsSetQueryScript.Factory) (p, lookup) -> newTermsSetQueryScript(expr, lookup, p));
+            (Expression expr) -> (TermsSetQueryScript.Factory) (p, lookup) -> newTermsSetQueryScript(expr, lookup, p));
 
-        contexts.put(AggregationScript.CONTEXT, (Expression expr) -> new AggregationScript.Factory() {
-            @Override
-            public AggregationScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
-                return newAggregationScript(expr, lookup, params);
-            }
+        contexts.put(AggregationScript.CONTEXT,
+            (Expression expr) -> new AggregationScript.Factory() {
+                @Override
+                public AggregationScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
+                    return newAggregationScript(expr, lookup, params);
+                }
 
-            @Override
-            public boolean isResultDeterministic() {
-                return true;
-            }
-        });
+                @Override
+                public boolean isResultDeterministic() {
+                    return true;
+                }
+            });
 
-        contexts.put(NumberSortScript.CONTEXT, (Expression expr) -> new NumberSortScript.Factory() {
-            @Override
-            public NumberSortScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
-                return newSortScript(expr, lookup, params);
-            }
+        contexts.put(NumberSortScript.CONTEXT,
+            (Expression expr) -> new NumberSortScript.Factory() {
+                @Override
+                public NumberSortScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
+                    return newSortScript(expr, lookup, params);
+                }
 
-            @Override
-            public boolean isResultDeterministic() {
-                return true;
-            }
-        });
+                @Override
+                public boolean isResultDeterministic() {
+                    return true;
+                }
+            });
 
-        contexts.put(FieldScript.CONTEXT, (Expression expr) -> new FieldScript.Factory() {
-            @Override
-            public FieldScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
-                return newFieldScript(expr, lookup, params);
-            }
+        contexts.put(FieldScript.CONTEXT,
+            (Expression expr) -> new FieldScript.Factory() {
+                @Override
+                public FieldScript.LeafFactory newFactory(Map<String, Object> params, SearchLookup lookup) {
+                    return newFieldScript(expr, lookup, params);
+                }
 
-            @Override
-            public boolean isResultDeterministic() {
-                return true;
-            }
-        });
+                @Override
+                public boolean isResultDeterministic() {
+                    return true;
+                }
+            });
 
-        ExpressionScriptEngine.contexts = Collections.unmodifiableMap(contexts);
-    }
+            ExpressionScriptEngine.contexts = Collections.unmodifiableMap(contexts);
+        }
 
     @Override
     public String getType() {
@@ -156,7 +162,12 @@ public class ExpressionScriptEngine implements ScriptEngine {
     }
 
     @Override
-    public <T> T compile(String scriptName, String scriptSource, ScriptContext<T> context, Map<String, String> params) {
+    public <T> T compile(
+        String scriptName,
+        String scriptSource,
+        ScriptContext<T> context,
+        Map<String, String> params
+    ) {
         // classloader created here
         final SecurityManager sm = System.getSecurityManager();
         SpecialPermission.check();
@@ -200,7 +211,8 @@ public class ExpressionScriptEngine implements ScriptEngine {
 
     private static BucketAggregationScript.Factory newBucketAggregationScriptFactory(Expression expr) {
         return parameters -> {
-            ReplaceableConstDoubleValues[] functionValuesArray = new ReplaceableConstDoubleValues[expr.variables.length];
+            ReplaceableConstDoubleValues[] functionValuesArray =
+                new ReplaceableConstDoubleValues[expr.variables.length];
             Map<String, ReplaceableConstDoubleValues> functionValuesMap = new HashMap<>();
             for (int i = 0; i < expr.variables.length; ++i) {
                 functionValuesArray[i] = new ReplaceableConstDoubleValues();
@@ -212,12 +224,12 @@ public class ExpressionScriptEngine implements ScriptEngine {
                     getParams().forEach((name, value) -> {
                         ReplaceableConstDoubleValues placeholder = functionValuesMap.get(name);
                         if (placeholder == null) {
-                            throw new IllegalArgumentException("Error using " + expr + ". " + "The variable [" + name
-                                    + "] does not exist in the executable expressions script.");
+                            throw new IllegalArgumentException("Error using " + expr + ". " +
+                                "The variable [" + name + "] does not exist in the executable expressions script.");
                         } else if (value instanceof Number == false) {
-                            throw new IllegalArgumentException(
-                                    "Error using " + expr + ". " + "Executable expressions scripts can only process numbers."
-                                            + "  The variable [" + name + "] is not a number.");
+                            throw new IllegalArgumentException("Error using " + expr + ". " +
+                                "Executable expressions scripts can only process numbers." +
+                                "  The variable [" + name + "] is not a number.");
                         } else {
                             placeholder.setValue(((Number) value).doubleValue());
                         }
@@ -256,7 +268,7 @@ public class ExpressionScriptEngine implements ScriptEngine {
     }
 
     private static TermsSetQueryScript.LeafFactory newTermsSetQueryScript(Expression expr, SearchLookup lookup,
-            @Nullable Map<String, Object> vars) {
+        @Nullable Map<String, Object> vars) {
         // NOTE: if we need to do anything complicated with bindings in the future, we can just extend Bindings,
         // instead of complicating SimpleBindings (which should stay simple)
         SimpleBindings bindings = new SimpleBindings();
@@ -278,7 +290,7 @@ public class ExpressionScriptEngine implements ScriptEngine {
     }
 
     private static AggregationScript.LeafFactory newAggregationScript(Expression expr, SearchLookup lookup,
-            @Nullable Map<String, Object> vars) {
+        @Nullable Map<String, Object> vars) {
         // NOTE: if we need to do anything complicated with bindings in the future, we can just extend Bindings,
         // instead of complicating SimpleBindings (which should stay simple)
         SimpleBindings bindings = new SimpleBindings();
@@ -342,7 +354,6 @@ public class ExpressionScriptEngine implements ScriptEngine {
                 public boolean execute() {
                     return script.execute(null) != 0.0;
                 }
-
                 @Override
                 public void setDocument(int docid) {
                     script.setDocument(docid);
@@ -422,7 +433,8 @@ public class ExpressionScriptEngine implements ScriptEngine {
                 variablename = parts[2].text;
             } else {
                 throw new IllegalArgumentException(
-                        "Only member variables or member methods may be accessed on a field when not accessing the field directly");
+                    "Only member variables or member methods may be accessed on a field when not accessing the field directly"
+                );
             }
         }
         // true if the variable is of type doc['field'].date.xxx
@@ -440,7 +452,8 @@ public class ExpressionScriptEngine implements ScriptEngine {
             }
             if (!dateAccessor) {
                 throw new IllegalArgumentException(
-                        "Variable [" + variable + "] does not follow an allowed format of either doc['field'] or doc['field'].method()");
+                    "Variable [" + variable + "] does not follow an allowed format of either doc['field'] or doc['field'].method()"
+                );
             }
         }
 
@@ -492,13 +505,13 @@ public class ExpressionScriptEngine implements ScriptEngine {
     // TODO: document and/or error if params contains _score?
     // NOTE: by checking for the variable in params first, it allows masking document fields with a global constant,
     // but if we were to reverse it, we could provide a way to supply dynamic defaults for documents missing the field?
-    private static void bindFromParams(@Nullable final Map<String, Object> params, final SimpleBindings bindings, final String variable)
-            throws ParseException {
+    private static void bindFromParams(@Nullable final Map<String, Object> params,
+            final SimpleBindings bindings, final String variable) throws ParseException {
         // NOTE: by checking for the variable in vars first, it allows masking document fields with a global constant,
         // but if we were to reverse it, we could provide a way to supply dynamic defaults for documents missing the field?
         Object value = params.get(variable);
         if (value instanceof Number) {
-            bindings.add(variable, DoubleValuesSource.constant(((Number) value).doubleValue()));
+            bindings.add(variable, DoubleValuesSource.constant(((Number)value).doubleValue()));
         } else {
             throw new ParseException("Parameter [" + variable + "] must be a numeric type", 0);
         }

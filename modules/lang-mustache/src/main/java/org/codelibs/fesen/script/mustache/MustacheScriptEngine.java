@@ -18,15 +18,9 @@
  */
 package org.codelibs.fesen.script.mustache;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheException;
+import com.github.mustachejava.MustacheFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -39,9 +33,14 @@ import org.codelibs.fesen.script.ScriptEngine;
 import org.codelibs.fesen.script.ScriptException;
 import org.codelibs.fesen.script.TemplateScript;
 
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheException;
-import com.github.mustachejava.MustacheFactory;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Main entry point handling template registration, compilation and
@@ -64,7 +63,12 @@ public final class MustacheScriptEngine implements ScriptEngine {
      * @return a compiled template object for later execution.
      * */
     @Override
-    public <T> T compile(String templateName, String templateSource, ScriptContext<T> context, Map<String, String> options) {
+    public <T> T compile(
+        String templateName,
+        String templateSource,
+        ScriptContext<T> context,
+        Map<String, String> options
+    ) {
         if (context.instanceClazz.equals(TemplateScript.class) == false) {
             throw new IllegalArgumentException("mustache engine does not know how to handle context [" + context.name + "]");
         }

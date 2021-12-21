@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.common.bytes;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.io.stream.BytesStream;
@@ -30,6 +27,9 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.ByteArray;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * An in-memory {@link StreamOutput} which first fills the given {@code byte[]} and then allocates more space from the given
@@ -65,8 +65,8 @@ public class RecyclingBytesStreamOutput extends BytesStream {
     private void ensureCapacity(int size) {
         final int overflowSize = size - buffer.length;
         assert overflowSize > 0 : "no need to ensureCapacity(" + size + ") with buffer of size [" + buffer.length + "]";
-        assert position >= buffer.length : "no need to ensureCapacity(" + size + ") with buffer of size [" + buffer.length
-                + "] at position [" + position + "]";
+        assert position >= buffer.length
+                : "no need to ensureCapacity(" + size + ") with buffer of size [" + buffer.length + "] at position [" + position + "]";
         if (overflow == null) {
             overflow = bigArrays.newByteArray(overflowSize, false);
         } else if (overflowSize > overflow.size()) {
@@ -140,7 +140,8 @@ public class RecyclingBytesStreamOutput extends BytesStream {
             assert overflow == null;
             return new BytesArray(buffer, 0, position);
         } else {
-            return CompositeBytesReference.of(new BytesArray(buffer, 0, buffer.length),
+            return CompositeBytesReference.of(
+                    new BytesArray(buffer, 0, buffer.length),
                     BytesReference.fromByteArray(overflow, position - buffer.length));
         }
     }

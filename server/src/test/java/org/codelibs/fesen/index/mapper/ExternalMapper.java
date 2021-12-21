@@ -71,8 +71,10 @@ public class ExternalMapper extends ParametrizedFieldMapper {
     }
 
     private static final IndexAnalyzers INDEX_ANALYZERS = new IndexAnalyzers(
-            Collections.singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
-            Collections.emptyMap(), Collections.emptyMap());
+        Collections.singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
+        Collections.emptyMap(),
+        Collections.emptyMap()
+    );
 
     public static class Builder extends ParametrizedFieldMapper.Builder {
 
@@ -103,12 +105,14 @@ public class ExternalMapper extends ParametrizedFieldMapper {
             BinaryFieldMapper binMapper = binBuilder.build(context);
             BooleanFieldMapper boolMapper = boolBuilder.build(context);
             GeoPointFieldMapper pointMapper = (GeoPointFieldMapper) latLonPointBuilder.build(context);
-            AbstractShapeGeometryFieldMapper<?, ?> shapeMapper = shapeBuilder.build(context);
-            FieldMapper stringMapper = (FieldMapper) stringBuilder.build(context);
+            AbstractShapeGeometryFieldMapper<?, ?> shapeMapper = (context.indexCreatedVersion().before(Version.V_6_6_0))
+                ? legacyShapeBuilder.build(context)
+                : shapeBuilder.build(context);
+            FieldMapper stringMapper = (FieldMapper)stringBuilder.build(context);
             context.path().remove();
 
-            return new ExternalMapper(name, buildFullName(context), generatedValue, mapperName, binMapper, boolMapper, pointMapper,
-                    shapeMapper, stringMapper, multiFieldsBuilder.build(this, context), copyTo.build());
+            return new ExternalMapper(name, buildFullName(context), generatedValue, mapperName, binMapper, boolMapper,
+                pointMapper, shapeMapper, stringMapper, multiFieldsBuilder.build(this, context), copyTo.build());
         }
     }
 
@@ -142,9 +146,11 @@ public class ExternalMapper extends ParametrizedFieldMapper {
     private final AbstractShapeGeometryFieldMapper<?, ?> shapeMapper;
     private final FieldMapper stringMapper;
 
-    public ExternalMapper(String simpleName, String contextName, String generatedValue, String mapperName, BinaryFieldMapper binMapper,
-            BooleanFieldMapper boolMapper, GeoPointFieldMapper pointMapper, AbstractShapeGeometryFieldMapper<?, ?> shapeMapper,
-            FieldMapper stringMapper, MultiFields multiFields, CopyTo copyTo) {
+    public ExternalMapper(String simpleName, String contextName,
+                          String generatedValue, String mapperName,
+                          BinaryFieldMapper binMapper, BooleanFieldMapper boolMapper, GeoPointFieldMapper pointMapper,
+                          AbstractShapeGeometryFieldMapper<?, ?> shapeMapper, FieldMapper stringMapper,
+                          MultiFields multiFields, CopyTo copyTo) {
         super(simpleName, new ExternalFieldType(contextName, true, true, false), multiFields, copyTo);
         this.generatedValue = generatedValue;
         this.mapperName = mapperName;

@@ -57,7 +57,8 @@ public class SimilarityServiceTests extends ESTestCase {
     }
 
     public void testOverrideDefaultSimilarity() {
-        Settings settings = Settings.builder().put("index.similarity.default.type", "boolean").build();
+        Settings settings = Settings.builder().put("index.similarity.default.type", "boolean")
+                .build();
         IndexSettings indexSettings = IndexSettingsModule.newIndexSettings("test", settings);
         SimilarityService service = new SimilarityService(indexSettings, null, Collections.emptyMap());
         assertTrue(service.getDefaultSimilarity() instanceof BooleanSimilarity);

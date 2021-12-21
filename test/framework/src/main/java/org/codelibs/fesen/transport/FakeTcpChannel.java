@@ -18,12 +18,13 @@
  */
 package org.codelibs.fesen.transport;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.core.CompletableContext;
+import org.codelibs.fesen.transport.TcpChannel;
+
+import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FakeTcpChannel implements TcpChannel {
 
@@ -52,12 +53,13 @@ public class FakeTcpChannel implements TcpChannel {
         this(isServer, "profile", messageCaptor);
     }
 
+
     public FakeTcpChannel(boolean isServer, String profile, AtomicReference<BytesReference> messageCaptor) {
         this(isServer, null, null, profile, messageCaptor);
     }
 
     public FakeTcpChannel(boolean isServer, InetSocketAddress localAddress, InetSocketAddress remoteAddress, String profile,
-            AtomicReference<BytesReference> messageCaptor) {
+                          AtomicReference<BytesReference> messageCaptor) {
         this.isServer = isServer;
         this.localAddress = localAddress;
         this.remoteAddress = remoteAddress;

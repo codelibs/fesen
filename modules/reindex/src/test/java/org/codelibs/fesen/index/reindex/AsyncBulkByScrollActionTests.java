@@ -19,48 +19,9 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.newSetFromMap;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.synchronizedSet;
-import static org.apache.lucene.util.TestUtil.randomSimpleString;
-import static org.codelibs.fesen.action.bulk.BackoffPolicy.constantBackoff;
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
-import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
-
 import org.apache.lucene.search.TotalHits;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
@@ -72,9 +33,9 @@ import org.codelibs.fesen.action.DocWriteResponse.Result;
 import org.codelibs.fesen.action.admin.indices.refresh.RefreshRequest;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
 import org.codelibs.fesen.action.bulk.BulkItemResponse;
-import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.action.bulk.BulkRequest;
 import org.codelibs.fesen.action.bulk.BulkResponse;
+import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.action.delete.DeleteRequest;
 import org.codelibs.fesen.action.delete.DeleteResponse;
 import org.codelibs.fesen.action.index.IndexRequest;
@@ -106,6 +67,13 @@ import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.engine.VersionConflictEngineException;
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.ClientScrollableHitSource;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource;
+import org.codelibs.fesen.index.reindex.WorkerBulkByScrollTaskState;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.Hit;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
 import org.codelibs.fesen.index.shard.ShardId;
@@ -118,12 +86,50 @@ import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskManager;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.client.NoOpClient;
-import org.codelibs.fesen.threadpool.Scheduler.ScheduledCancellable;
 import org.codelibs.fesen.threadpool.TestThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.newSetFromMap;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.synchronizedSet;
+import static org.apache.lucene.util.TestUtil.randomSimpleString;
+import static org.codelibs.fesen.action.bulk.BackoffPolicy.constantBackoff;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import static org.codelibs.fesen.core.TimeValue.timeValueSeconds;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.either;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class AsyncBulkByScrollActionTests extends ESTestCase {
     private MyMockClient client;
@@ -213,9 +219,10 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
         // this test primarily tests ClientScrollableHitSource but left it to test integration to status
         client.scrollsToReject = randomIntBetween(0, testRequest.getMaxRetries() - 1);
         // use fail() onResponse handler because mocked search never fires on listener.
-        ClientScrollableHitSource hitSource = new ClientScrollableHitSource(logger, buildTestBackoffPolicy(), threadPool,
-                testTask.getWorkerState()::countSearchRetry, r -> fail(), ExceptionsHelper::reThrowIfNotNull,
-                new ParentTaskAssigningClient(client, localNode, testTask), testRequest.getSearchRequest());
+        ClientScrollableHitSource hitSource = new ClientScrollableHitSource(logger, buildTestBackoffPolicy(),
+            threadPool,
+            testTask.getWorkerState()::countSearchRetry, r -> fail(), ExceptionsHelper::reThrowIfNotNull,
+            new ParentTaskAssigningClient(client, localNode, testTask), testRequest.getSearchRequest());
         hitSource.setScroll(scrollId());
         hitSource.startNextScroll(TimeValue.timeValueSeconds(0));
         assertBusy(() -> assertEquals(client.scrollsToReject + 1, client.scrollAttempts.get()));
@@ -230,18 +237,21 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
     public void testStartNextScrollRetriesOnRejectionButFailsOnTooManyRejections() throws Exception {
         // this test primarily tests ClientScrollableHitSource but left it to test integration to status
         client.scrollsToReject = testRequest.getMaxRetries() + randomIntBetween(1, 100);
-        assertExactlyOnce(onFail -> {
-            Consumer<Exception> validingOnFail = e -> {
-                assertNotNull(ExceptionsHelper.unwrap(e, EsRejectedExecutionException.class));
-                onFail.run();
-            };
-            ClientScrollableHitSource hitSource = new ClientScrollableHitSource(logger, buildTestBackoffPolicy(), threadPool,
+        assertExactlyOnce(
+            onFail -> {
+                Consumer<Exception> validingOnFail = e -> {
+                    assertNotNull(ExceptionsHelper.unwrap(e, EsRejectedExecutionException.class));
+                    onFail.run();
+                };
+                ClientScrollableHitSource hitSource = new ClientScrollableHitSource(logger, buildTestBackoffPolicy(),
+                    threadPool,
                     testTask.getWorkerState()::countSearchRetry, r -> fail(), validingOnFail,
                     new ParentTaskAssigningClient(client, localNode, testTask), testRequest.getSearchRequest());
-            hitSource.setScroll(scrollId());
-            hitSource.startNextScroll(TimeValue.timeValueSeconds(0));
-            assertBusy(() -> assertEquals(testRequest.getMaxRetries() + 1, client.scrollAttempts.get()));
-        });
+                hitSource.setScroll(scrollId());
+                hitSource.startNextScroll(TimeValue.timeValueSeconds(0));
+                assertBusy(() -> assertEquals(testRequest.getMaxRetries() + 1, client.scrollAttempts.get()));
+            }
+        );
         assertNull("There shouldn't be a scroll attempt pending that we didn't reject", client.lastScroll.get());
         assertEquals(testRequest.getMaxRetries(), testTask.getStatus().getSearchRetries());
     }
@@ -286,8 +296,9 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
                 ShardId shardId = new ShardId(new Index("name", "uid"), 0);
                 if (rarely()) {
                     versionConflicts++;
-                    responses[i] = new BulkItemResponse(i, randomFrom(DocWriteRequest.OpType.values()), new Failure(shardId.getIndexName(),
-                            "type", "id" + i, new VersionConflictEngineException(shardId, "id", "test")));
+                    responses[i] = new BulkItemResponse(i, randomFrom(DocWriteRequest.OpType.values()),
+                        new Failure(shardId.getIndexName(), "type", "id" + i,
+                            new VersionConflictEngineException(shardId, "id", "test")));
                     continue;
                 }
                 boolean createdResponse;
@@ -317,7 +328,10 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
                         new IndexResponse(shardId, "type", "id" + i, seqNo, primaryTerm, randomInt(), createdResponse);
                 responses[i] = new BulkItemResponse(i, opType, response);
             }
-            assertExactlyOnce(onSuccess -> new DummyAsyncBulkByScrollAction().onBulkResponse(new BulkResponse(responses, 0), onSuccess));
+            assertExactlyOnce(onSuccess ->
+                new DummyAsyncBulkByScrollAction().onBulkResponse(new BulkResponse(responses, 0),
+                    onSuccess)
+            );
             assertEquals(versionConflicts, testTask.getStatus().getVersionConflicts());
             assertEquals(updated, testTask.getStatus().getUpdated());
             assertEquals(created, testTask.getStatus().getCreated());
@@ -363,8 +377,8 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
      */
     public void testShardFailuresAbortRequest() throws Exception {
         SearchFailure shardFailure = new SearchFailure(new RuntimeException("test"));
-        ScrollableHitSource.Response scrollResponse =
-                new ScrollableHitSource.Response(false, singletonList(shardFailure), 0, emptyList(), null);
+        ScrollableHitSource.Response scrollResponse = new ScrollableHitSource.Response(false, singletonList(shardFailure), 0,
+                emptyList(), null);
         simulateScrollResponse(new DummyAsyncBulkByScrollAction(), System.nanoTime(), 0, scrollResponse);
         BulkByScrollResponse response = listener.get();
         assertThat(response.getBulkFailures(), empty());
@@ -394,8 +408,8 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
     public void testBulkFailuresAbortRequest() throws Exception {
         Failure failure = new Failure("index", "type", "id", new RuntimeException("test"));
         DummyAsyncBulkByScrollAction action = new DummyAsyncBulkByScrollAction();
-        BulkResponse bulkResponse =
-                new BulkResponse(new BulkItemResponse[] { new BulkItemResponse(0, DocWriteRequest.OpType.CREATE, failure) }, randomLong());
+        BulkResponse bulkResponse = new BulkResponse(new BulkItemResponse[]
+            {new BulkItemResponse(0, DocWriteRequest.OpType.CREATE, failure)}, randomLong());
         action.onBulkResponse(bulkResponse, Assert::fail);
         BulkByScrollResponse response = listener.get();
         assertThat(response.getBulkFailures(), contains(failure));
@@ -457,7 +471,6 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
                 capturedCommand.set(command);
                 return new ScheduledCancellable() {
                     private boolean cancelled = false;
-
                     @Override
                     public long getDelay(TimeUnit unit) {
                         return unit.convert(delay.millis(), TimeUnit.MILLISECONDS);
@@ -500,10 +513,10 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
         // create a simulated response.
         SearchHit hit = new SearchHit(0, "id", new Text("type"), emptyMap(), emptyMap()).sourceRef(new BytesArray("{}"));
         SearchHits hits = new SearchHits(IntStream.range(0, 100).mapToObj(i -> hit).toArray(SearchHit[]::new),
-                new TotalHits(0, TotalHits.Relation.EQUAL_TO), 0);
+            new TotalHits(0, TotalHits.Relation.EQUAL_TO),0);
         InternalSearchResponse internalResponse = new InternalSearchResponse(hits, null, null, null, false, false, 1);
-        SearchResponse searchResponse =
-                new SearchResponse(internalResponse, scrollId(), 5, 4, 0, randomLong(), null, SearchResponse.Clusters.EMPTY);
+        SearchResponse searchResponse = new SearchResponse(internalResponse, scrollId(), 5, 4, 0, randomLong(), null,
+            SearchResponse.Clusters.EMPTY);
 
         client.lastSearch.get().listener.onResponse(searchResponse);
 
@@ -553,7 +566,9 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
             assertThat(response.getSearchFailures(), empty());
             assertNull(response.getReasonCancelled());
         } else {
-            assertExactlyOnce(onSuccess -> action.sendBulkRequest(request, onSuccess));
+            assertExactlyOnce(onSuccess ->
+                action.sendBulkRequest(request, onSuccess)
+            );
         }
     }
 
@@ -600,7 +615,7 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
         }
         action.refreshAndFinish(emptyList(), emptyList(), false);
         if (shouldRefresh) {
-            assertArrayEquals(new String[] { "foo" }, client.lastRefreshRequest.get().indices());
+            assertArrayEquals(new String[] {"foo"}, client.lastRefreshRequest.get().indices());
         } else {
             assertNull("No refresh was attempted", client.lastRefreshRequest.get());
         }
@@ -616,12 +631,13 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
     }
 
     public void testCancelBeforeSendBulkRequest() throws Exception {
-        cancelTaskCase((DummyAsyncBulkByScrollAction action) -> action.sendBulkRequest(new BulkRequest(), Assert::fail));
+        cancelTaskCase((DummyAsyncBulkByScrollAction action) ->
+            action.sendBulkRequest(new BulkRequest(), Assert::fail));
     }
 
     public void testCancelBeforeOnBulkResponse() throws Exception {
-        cancelTaskCase(
-                (DummyAsyncBulkByScrollAction action) -> action.onBulkResponse(new BulkResponse(new BulkItemResponse[0], 0), Assert::fail));
+        cancelTaskCase((DummyAsyncBulkByScrollAction action) ->
+                action.onBulkResponse(new BulkResponse(new BulkItemResponse[0], 0), Assert::fail));
     }
 
     public void testCancelBeforeStartNextScroll() throws Exception {
@@ -720,10 +736,10 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
     }
 
     private class DummyAsyncBulkByScrollAction
-            extends AbstractAsyncBulkByScrollAction<DummyAbstractBulkByScrollRequest, DummyTransportAsyncBulkByScrollAction> {
+        extends AbstractAsyncBulkByScrollAction<DummyAbstractBulkByScrollRequest, DummyTransportAsyncBulkByScrollAction> {
         DummyAsyncBulkByScrollAction() {
             super(testTask, randomBoolean(), randomBoolean(), AsyncBulkByScrollActionTests.this.logger,
-                    new ParentTaskAssigningClient(client, localNode, testTask), client.threadPool(), testRequest, listener, null, null);
+                new ParentTaskAssigningClient(client, localNode, testTask), client.threadPool(), testRequest, listener, null, null);
         }
 
         @Override
@@ -748,7 +764,8 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
     }
 
     private static class DummyTransportAsyncBulkByScrollAction
-            extends TransportAction<DummyAbstractBulkByScrollRequest, BulkByScrollResponse> {
+        extends TransportAction<DummyAbstractBulkByScrollRequest, BulkByScrollResponse> {
+
 
         protected DummyTransportAsyncBulkByScrollAction(String actionName, ActionFilters actionFilters, TaskManager taskManager) {
             super(actionName, actionFilters, taskManager);
@@ -805,8 +822,8 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
 
         @Override
         @SuppressWarnings("unchecked")
-        protected <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action,
-                Request request, ActionListener<Response> listener) {
+        protected <Request extends ActionRequest, Response extends ActionResponse>
+        void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
             if (false == expectedHeaders.equals(threadPool().getThreadContext().getHeaders())) {
                 listener.onFailure(
                         new RuntimeException("Expected " + expectedHeaders + " but got " + threadPool().getThreadContext().getHeaders()));
@@ -863,16 +880,30 @@ public class AsyncBulkByScrollActionTests extends ESTestCase {
                     ShardId shardId = new ShardId(new Index(item.index(), "uuid"), 0);
                     if (item instanceof IndexRequest) {
                         IndexRequest index = (IndexRequest) item;
-                        response = new IndexResponse(shardId, index.type(), index.id() == null ? "dummy_id" : index.id(), randomInt(20),
-                                randomIntBetween(1, 16), randomIntBetween(0, Integer.MAX_VALUE), true);
+                        response =
+                            new IndexResponse(
+                                shardId,
+                                index.type(),
+                                index.id() == null ? "dummy_id" : index.id(),
+                                randomInt(20),
+                                randomIntBetween(1, 16),
+                                randomIntBetween(0, Integer.MAX_VALUE),
+                                true);
                     } else if (item instanceof UpdateRequest) {
                         UpdateRequest update = (UpdateRequest) item;
                         response = new UpdateResponse(shardId, update.type(), update.id(), randomNonNegativeLong(),
-                                randomIntBetween(1, Integer.MAX_VALUE), randomIntBetween(0, Integer.MAX_VALUE), Result.CREATED);
+                            randomIntBetween(1, Integer.MAX_VALUE), randomIntBetween(0, Integer.MAX_VALUE), Result.CREATED);
                     } else if (item instanceof DeleteRequest) {
                         DeleteRequest delete = (DeleteRequest) item;
-                        response = new DeleteResponse(shardId, delete.type(), delete.id(), randomInt(20), randomIntBetween(1, 16),
-                                randomIntBetween(0, Integer.MAX_VALUE), true);
+                        response =
+                            new DeleteResponse(
+                                shardId,
+                                delete.type(),
+                                delete.id(),
+                                randomInt(20),
+                                randomIntBetween(1, 16),
+                                randomIntBetween(0, Integer.MAX_VALUE),
+                                true);
                     } else {
                         throw new RuntimeException("Unknown request:  " + item);
                     }

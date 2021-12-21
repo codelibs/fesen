@@ -123,9 +123,8 @@ public class BytesKeyedBucketOrdsTests extends ESTestCase {
             OwningBucketOrdAndValue[] values = new OwningBucketOrdAndValue[scaledRandomIntBetween(1, 10000)];
             long maxOwningBucketOrd = scaledRandomIntBetween(0, values.length);
             for (int i = 0; i < values.length; i++) {
-                values[i] =
-                        randomValueOtherThanMany(seen::contains, () -> new OwningBucketOrdAndValue(randomLongBetween(0, maxOwningBucketOrd),
-                                new BytesRef(Long.toString(randomLong()))));
+                values[i] = randomValueOtherThanMany(seen::contains, () ->
+                        new OwningBucketOrdAndValue(randomLongBetween(0, maxOwningBucketOrd), new BytesRef(Long.toString(randomLong()))));
                 seen.add(values[i]);
             }
             for (int i = 0; i < values.length; i++) {
@@ -183,7 +182,7 @@ public class BytesKeyedBucketOrdsTests extends ESTestCase {
 
         @Override
         public String toString() {
-            return owningBucketOrd + "/" + value;
+            return owningBucketOrd + "/" + value; 
         }
 
         @Override
@@ -192,7 +191,7 @@ public class BytesKeyedBucketOrdsTests extends ESTestCase {
                 return false;
             }
             OwningBucketOrdAndValue other = (OwningBucketOrdAndValue) obj;
-            return owningBucketOrd == other.owningBucketOrd && value == other.value;
+            return owningBucketOrd == other.owningBucketOrd && value == other.value; 
         }
 
         @Override

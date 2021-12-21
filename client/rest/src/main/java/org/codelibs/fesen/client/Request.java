@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.client;
 
-import static java.util.Collections.unmodifiableMap;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * HTTP Request to Fesen.
@@ -81,7 +81,7 @@ public final class Request {
         }
     }
 
-    public void addParameters(Map<String, String> paramSource) {
+    public void addParameters(Map<String, String> paramSource){
         paramSource.forEach(this::addParameter);
     }
 
@@ -173,8 +173,11 @@ public final class Request {
         }
 
         Request other = (Request) obj;
-        return method.equals(other.method) && endpoint.equals(other.endpoint) && parameters.equals(other.parameters)
-                && Objects.equals(entity, other.entity) && options.equals(other.options);
+        return method.equals(other.method)
+                && endpoint.equals(other.endpoint)
+                && parameters.equals(other.parameters)
+                && Objects.equals(entity, other.entity)
+                && options.equals(other.options);
     }
 
     @Override

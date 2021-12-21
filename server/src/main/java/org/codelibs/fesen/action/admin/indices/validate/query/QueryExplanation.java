@@ -19,12 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.validate.query;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -33,6 +28,12 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class QueryExplanation implements Writeable, ToXContentFragment {
 
@@ -44,13 +45,23 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
 
     public static final int RANDOM_SHARD = -1;
 
-    static final ConstructingObjectParser<QueryExplanation, Void> PARSER = new ConstructingObjectParser<>("query_explanation", true, a -> {
-        int shard = RANDOM_SHARD;
-        if (a[1] != null) {
-            shard = (int) a[1];
+    static final ConstructingObjectParser<QueryExplanation, Void> PARSER = new ConstructingObjectParser<>(
+        "query_explanation",
+        true,
+        a -> {
+            int shard = RANDOM_SHARD;
+            if (a[1] != null) {
+                shard = (int)a[1];
+            }
+            return new QueryExplanation(
+                (String)a[0],
+                shard,
+                (boolean)a[2],
+                (String)a[3],
+                (String)a[4]
+            );
         }
-        return new QueryExplanation((String) a[0], shard, (boolean) a[2], (String) a[3], (String) a[4]);
-    });
+    );
     static {
         PARSER.declareString(optionalConstructorArg(), new ParseField(INDEX_FIELD));
         PARSER.declareInt(optionalConstructorArg(), new ParseField(SHARD_FIELD));
@@ -70,14 +81,19 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
     private String error;
 
     public QueryExplanation(StreamInput in) throws IOException {
-        index = in.readOptionalString();
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            index = in.readOptionalString();
+        } else {
+            index = in.readString();
+        }
         shard = in.readInt();
         valid = in.readBoolean();
         explanation = in.readOptionalString();
         error = in.readOptionalString();
     }
 
-    public QueryExplanation(String index, int shard, boolean valid, String explanation, String error) {
+    public QueryExplanation(String index, int shard, boolean valid, String explanation,
+                            String error) {
         this.index = index;
         this.shard = shard;
         this.valid = valid;
@@ -107,7 +123,11 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        out.writeOptionalString(index);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            out.writeOptionalString(index);
+        } else {
+            out.writeString(index);
+        }
         out.writeInt(shard);
         out.writeBoolean(valid);
         out.writeOptionalString(explanation);
@@ -119,7 +139,7 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
         if (getIndex() != null) {
             builder.field(INDEX_FIELD, getIndex());
         }
-        if (getShard() >= 0) {
+        if(getShard() >= 0) {
             builder.field(SHARD_FIELD, getShard());
         }
         builder.field(VALID_FIELD, isValid());
@@ -138,14 +158,14 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         QueryExplanation other = (QueryExplanation) o;
-        return Objects.equals(getIndex(), other.getIndex()) && Objects.equals(getShard(), other.getShard())
-                && Objects.equals(isValid(), other.isValid()) && Objects.equals(getError(), other.getError())
-                && Objects.equals(getExplanation(), other.getExplanation());
+        return Objects.equals(getIndex(), other.getIndex()) &&
+            Objects.equals(getShard(), other.getShard()) &&
+            Objects.equals(isValid(), other.isValid()) &&
+            Objects.equals(getError(), other.getError()) &&
+            Objects.equals(getExplanation(), other.getExplanation());
     }
 
     @Override

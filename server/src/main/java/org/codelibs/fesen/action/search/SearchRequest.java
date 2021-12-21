@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -43,6 +35,14 @@ import org.codelibs.fesen.search.builder.PointInTimeBuilder;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.tasks.TaskId;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * A request to execute search against one or more indices (or all). Best created using
@@ -96,7 +96,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     private boolean ccsMinimizeRoundtrips = true;
 
-    public static final IndicesOptions DEFAULT_INDICES_OPTIONS = IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
+    public static final IndicesOptions DEFAULT_INDICES_OPTIONS =
+        IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
 
     private IndicesOptions indicesOptions = DEFAULT_INDICES_OPTIONS;
 
@@ -110,8 +111,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * Constructs a new search request from the provided search request
      */
     public SearchRequest(SearchRequest searchRequest) {
-        this(searchRequest, searchRequest.indices, searchRequest.localClusterAlias, searchRequest.absoluteStartMillis,
-                searchRequest.finalReduce);
+        this(searchRequest, searchRequest.indices, searchRequest.localClusterAlias,
+            searchRequest.absoluteStartMillis, searchRequest.finalReduce);
     }
 
     /**
@@ -147,8 +148,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * @param absoluteStartMillis the absolute start time to be used on the remote clusters to ensure that the same value is used
      * @param finalReduce whether the reduction should be final or not
      */
-    static SearchRequest subSearchRequest(SearchRequest originalSearchRequest, String[] indices, String clusterAlias,
-            long absoluteStartMillis, boolean finalReduce) {
+    static SearchRequest subSearchRequest(SearchRequest originalSearchRequest, String[] indices,
+                                          String clusterAlias, long absoluteStartMillis, boolean finalReduce) {
         Objects.requireNonNull(originalSearchRequest, "search request must not be null");
         validateIndices(indices);
         Objects.requireNonNull(clusterAlias, "cluster alias must not be null");
@@ -159,7 +160,7 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     private SearchRequest(SearchRequest searchRequest, String[] indices, String localClusterAlias, long absoluteStartMillis,
-            boolean finalReduce) {
+                          boolean finalReduce) {
         this.allowPartialSearchResults = searchRequest.allowPartialSearchResults;
         this.batchedReduceSize = searchRequest.batchedReduceSize;
         this.ccsMinimizeRoundtrips = searchRequest.ccsMinimizeRoundtrips;
@@ -203,12 +204,20 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         } else {
             preFilterShardSize = in.readVInt();
         }
-        allowPartialSearchResults = in.readOptionalBoolean();
-        localClusterAlias = in.readOptionalString();
-        if (localClusterAlias != null) {
-            absoluteStartMillis = in.readVLong();
-            finalReduce = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+            allowPartialSearchResults = in.readOptionalBoolean();
+        }
+        if (in.getVersion().onOrAfter(Version.V_6_7_0)) {
+            localClusterAlias = in.readOptionalString();
+            if (localClusterAlias != null) {
+                absoluteStartMillis = in.readVLong();
+                finalReduce = in.readBoolean();
+            } else {
+                absoluteStartMillis = DEFAULT_ABSOLUTE_START_MILLIS;
+                finalReduce = true;
+            }
         } else {
+            localClusterAlias = null;
             absoluteStartMillis = DEFAULT_ABSOLUTE_START_MILLIS;
             finalReduce = true;
         }
@@ -236,11 +245,15 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         } else {
             out.writeVInt(preFilterShardSize == null ? DEFAULT_BATCHED_REDUCE_SIZE : preFilterShardSize);
         }
-        out.writeOptionalBoolean(allowPartialSearchResults);
-        out.writeOptionalString(localClusterAlias);
-        if (localClusterAlias != null) {
-            out.writeVLong(absoluteStartMillis);
-            out.writeBoolean(finalReduce);
+        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+            out.writeOptionalBoolean(allowPartialSearchResults);
+        }
+        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
+            out.writeOptionalString(localClusterAlias);
+            if (localClusterAlias != null) {
+                out.writeVLong(absoluteStartMillis);
+                out.writeBoolean(finalReduce);
+            }
         }
         if (out.getVersion().onOrAfter(Version.V_7_0_0)) {
             out.writeBoolean(ccsMinimizeRoundtrips);
@@ -255,20 +268,23 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
             if (source != null) {
                 if (source.trackTotalHitsUpTo() != null && source.trackTotalHitsUpTo() != SearchContext.TRACK_TOTAL_HITS_ACCURATE) {
                     validationException =
-                            addValidationError("disabling [track_total_hits] is not allowed in a scroll context", validationException);
+                        addValidationError("disabling [track_total_hits] is not allowed in a scroll context", validationException);
                 }
                 if (source.from() > 0) {
-                    validationException = addValidationError("using [from] is not allowed in a scroll context", validationException);
+                    validationException =
+                        addValidationError("using [from] is not allowed in a scroll context", validationException);
                 }
                 if (source.size() == 0) {
                     validationException = addValidationError("[size] cannot be [0] in a scroll context", validationException);
                 }
                 if (source.rescores() != null && source.rescores().isEmpty() == false) {
-                    validationException = addValidationError("using [rescore] is not allowed in a scroll context", validationException);
+                    validationException =
+                        addValidationError("using [rescore] is not allowed in a scroll context", validationException);
                 }
             }
             if (requestCache != null && requestCache) {
-                validationException = addValidationError("[request_cache] cannot be used in a scroll context", validationException);
+                validationException =
+                    addValidationError("[request_cache] cannot be used in a scroll context", validationException);
             }
         }
         if (source != null) {
@@ -581,7 +597,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         }
         this.maxConcurrentShardRequests = maxConcurrentShardRequests;
     }
-
     /**
      * Sets a threshold that enforces a pre-filter roundtrip to pre-filter search shards based on query rewriting if the number of shards
      * the search request expands to exceeds the threshold. This filter roundtrip can limit the number of shards significantly if for
@@ -637,8 +652,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
             // no matter what the value of track_total_hits is
             return SearchContext.TRACK_TOTAL_HITS_ACCURATE;
         }
-        return source == null ? SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO
-                : source.trackTotalHitsUpTo() == null ? SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO : source.trackTotalHitsUpTo();
+        return source == null ? SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO : source.trackTotalHitsUpTo() == null ?
+            SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO : source.trackTotalHitsUpTo();
     }
 
     @Override
@@ -675,32 +690,49 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
             return false;
         }
         SearchRequest that = (SearchRequest) o;
-        return searchType == that.searchType && Arrays.equals(indices, that.indices) && Objects.equals(routing, that.routing)
-                && Objects.equals(preference, that.preference) && Objects.equals(source, that.source)
-                && Objects.equals(requestCache, that.requestCache) && Objects.equals(scroll, that.scroll)
-                && Arrays.equals(types, that.types) && Objects.equals(batchedReduceSize, that.batchedReduceSize)
-                && Objects.equals(maxConcurrentShardRequests, that.maxConcurrentShardRequests)
-                && Objects.equals(preFilterShardSize, that.preFilterShardSize) && Objects.equals(indicesOptions, that.indicesOptions)
-                && Objects.equals(allowPartialSearchResults, that.allowPartialSearchResults)
-                && Objects.equals(localClusterAlias, that.localClusterAlias) && absoluteStartMillis == that.absoluteStartMillis
-                && ccsMinimizeRoundtrips == that.ccsMinimizeRoundtrips;
+        return searchType == that.searchType &&
+                Arrays.equals(indices, that.indices) &&
+                Objects.equals(routing, that.routing) &&
+                Objects.equals(preference, that.preference) &&
+                Objects.equals(source, that.source) &&
+                Objects.equals(requestCache, that.requestCache)  &&
+                Objects.equals(scroll, that.scroll) &&
+                Arrays.equals(types, that.types) &&
+                Objects.equals(batchedReduceSize, that.batchedReduceSize) &&
+                Objects.equals(maxConcurrentShardRequests, that.maxConcurrentShardRequests) &&
+                Objects.equals(preFilterShardSize, that.preFilterShardSize) &&
+                Objects.equals(indicesOptions, that.indicesOptions) &&
+                Objects.equals(allowPartialSearchResults, that.allowPartialSearchResults) &&
+                Objects.equals(localClusterAlias, that.localClusterAlias) &&
+                absoluteStartMillis == that.absoluteStartMillis &&
+                ccsMinimizeRoundtrips == that.ccsMinimizeRoundtrips;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(searchType, Arrays.hashCode(indices), routing, preference, source, requestCache, scroll, Arrays.hashCode(types),
-                indicesOptions, batchedReduceSize, maxConcurrentShardRequests, preFilterShardSize, allowPartialSearchResults,
-                localClusterAlias, absoluteStartMillis, ccsMinimizeRoundtrips);
+        return Objects.hash(searchType, Arrays.hashCode(indices), routing, preference, source, requestCache,
+                scroll, Arrays.hashCode(types), indicesOptions, batchedReduceSize, maxConcurrentShardRequests, preFilterShardSize,
+                allowPartialSearchResults, localClusterAlias, absoluteStartMillis, ccsMinimizeRoundtrips);
     }
 
     @Override
     public String toString() {
-        return "SearchRequest{" + "searchType=" + searchType + ", indices=" + Arrays.toString(indices) + ", indicesOptions="
-                + indicesOptions + ", types=" + Arrays.toString(types) + ", routing='" + routing + '\'' + ", preference='" + preference
-                + '\'' + ", requestCache=" + requestCache + ", scroll=" + scroll + ", maxConcurrentShardRequests="
-                + maxConcurrentShardRequests + ", batchedReduceSize=" + batchedReduceSize + ", preFilterShardSize=" + preFilterShardSize
-                + ", allowPartialSearchResults=" + allowPartialSearchResults + ", localClusterAlias=" + localClusterAlias
-                + ", getOrCreateAbsoluteStartMillis=" + absoluteStartMillis + ", ccsMinimizeRoundtrips=" + ccsMinimizeRoundtrips
-                + ", source=" + source + '}';
+        return "SearchRequest{" +
+                "searchType=" + searchType +
+                ", indices=" + Arrays.toString(indices) +
+                ", indicesOptions=" + indicesOptions +
+                ", types=" + Arrays.toString(types) +
+                ", routing='" + routing + '\'' +
+                ", preference='" + preference + '\'' +
+                ", requestCache=" + requestCache +
+                ", scroll=" + scroll +
+                ", maxConcurrentShardRequests=" + maxConcurrentShardRequests +
+                ", batchedReduceSize=" + batchedReduceSize +
+                ", preFilterShardSize=" + preFilterShardSize +
+                ", allowPartialSearchResults=" + allowPartialSearchResults +
+                ", localClusterAlias=" + localClusterAlias +
+                ", getOrCreateAbsoluteStartMillis=" + absoluteStartMillis +
+                ", ccsMinimizeRoundtrips=" + ccsMinimizeRoundtrips +
+                ", source=" + source + '}';
     }
 }

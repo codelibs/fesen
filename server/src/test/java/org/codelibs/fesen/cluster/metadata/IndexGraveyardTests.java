@@ -73,8 +73,9 @@ public class IndexGraveyardTests extends ESTestCase {
         builder.endObject();
         if (graveyard.getTombstones().size() > 0) {
             // check that date properly printed
-            assertThat(Strings.toString(graveyard, false, true), containsString(
-                    XContentFesenExtension.DEFAULT_DATE_PRINTER.print(graveyard.getTombstones().get(0).getDeleteDateInMillis())));
+            assertThat(Strings.toString(graveyard, false, true),
+                containsString(XContentFesenExtension.DEFAULT_DATE_PRINTER
+                        .print(graveyard.getTombstones().get(0).getDeleteDateInMillis())));
         }
         XContentParser parser = createParser(JsonXContent.jsonXContent, BytesReference.bytes(builder));
         parser.nextToken(); // the beginning of the parser

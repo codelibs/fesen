@@ -19,23 +19,27 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import static org.codelibs.fesen.common.ssl.SslConfigurationLoader.DEFAULT_CIPHERS;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import org.codelibs.fesen.common.ssl.SslClientAuthenticationMode;
+import org.codelibs.fesen.common.ssl.SslConfiguration;
+import org.codelibs.fesen.common.ssl.SslConfigurationLoader;
+import org.codelibs.fesen.common.ssl.SslKeyConfig;
+import org.codelibs.fesen.common.ssl.SslTrustConfig;
+import org.codelibs.fesen.common.ssl.SslVerificationMode;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.EqualsHashCodeTestUtils;
+import org.hamcrest.Matchers;
+import org.mockito.Mockito;
 
+import javax.net.ssl.SSLContext;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
-
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.EqualsHashCodeTestUtils;
-import org.hamcrest.Matchers;
-import org.mockito.Mockito;
+import static org.codelibs.fesen.common.ssl.SslConfigurationLoader.DEFAULT_CIPHERS;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class SslConfigurationTests extends ESTestCase {
 
@@ -51,7 +55,7 @@ public class SslConfigurationTests extends ESTestCase {
         final List<String> ciphers = randomSubsetOf(randomIntBetween(1, DEFAULT_CIPHERS.size()), DEFAULT_CIPHERS);
         final List<String> protocols = randomSubsetOf(randomIntBetween(1, 4), VALID_PROTOCOLS);
         final SslConfiguration configuration =
-                new SslConfiguration(trustConfig, keyConfig, verificationMode, clientAuth, ciphers, protocols);
+            new SslConfiguration(trustConfig, keyConfig, verificationMode, clientAuth, ciphers, protocols);
 
         assertThat(configuration.getTrustConfig(), is(trustConfig));
         assertThat(configuration.getKeyConfig(), is(keyConfig));
@@ -76,37 +80,38 @@ public class SslConfigurationTests extends ESTestCase {
         final List<String> ciphers = randomSubsetOf(randomIntBetween(1, DEFAULT_CIPHERS.size() - 1), DEFAULT_CIPHERS);
         final List<String> protocols = randomSubsetOf(randomIntBetween(1, VALID_PROTOCOLS.length - 1), VALID_PROTOCOLS);
         final SslConfiguration configuration =
-                new SslConfiguration(trustConfig, keyConfig, verificationMode, clientAuth, ciphers, protocols);
+            new SslConfiguration(trustConfig, keyConfig, verificationMode, clientAuth, ciphers, protocols);
 
         EqualsHashCodeTestUtils.checkEqualsAndHashCode(configuration,
-                orig -> new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(), orig.getVerificationMode(), orig.getClientAuth(),
-                        orig.getCipherSuites(), orig.getSupportedProtocols()),
-                orig -> {
-                    switch (randomIntBetween(1, 4)) {
+            orig -> new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(), orig.getVerificationMode(), orig.getClientAuth(),
+                orig.getCipherSuites(), orig.getSupportedProtocols()),
+            orig -> {
+                switch (randomIntBetween(1, 4)) {
                     case 1:
                         return new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(),
-                                randomValueOtherThan(orig.getVerificationMode(), () -> randomFrom(SslVerificationMode.values())),
-                                orig.getClientAuth(), orig.getCipherSuites(), orig.getSupportedProtocols());
+                            randomValueOtherThan(orig.getVerificationMode(), () -> randomFrom(SslVerificationMode.values())),
+                            orig.getClientAuth(), orig.getCipherSuites(), orig.getSupportedProtocols());
                     case 2:
                         return new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(), orig.getVerificationMode(),
-                                randomValueOtherThan(orig.getClientAuth(), () -> randomFrom(SslClientAuthenticationMode.values())),
-                                orig.getCipherSuites(), orig.getSupportedProtocols());
+                            randomValueOtherThan(orig.getClientAuth(), () -> randomFrom(SslClientAuthenticationMode.values())),
+                            orig.getCipherSuites(), orig.getSupportedProtocols());
                     case 3:
-                        return new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(), orig.getVerificationMode(),
-                                orig.getClientAuth(), DEFAULT_CIPHERS, orig.getSupportedProtocols());
+                        return new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(),
+                            orig.getVerificationMode(), orig.getClientAuth(), DEFAULT_CIPHERS, orig.getSupportedProtocols());
                     case 4:
                     default:
                         return new SslConfiguration(orig.getTrustConfig(), orig.getKeyConfig(), orig.getVerificationMode(),
-                                orig.getClientAuth(), orig.getCipherSuites(), Arrays.asList(VALID_PROTOCOLS));
-                    }
-                });
+                            orig.getClientAuth(), orig.getCipherSuites(), Arrays.asList(VALID_PROTOCOLS));
+                }
+            });
     }
 
     public void testDependentFiles() {
         final SslTrustConfig trustConfig = Mockito.mock(SslTrustConfig.class);
         final SslKeyConfig keyConfig = Mockito.mock(SslKeyConfig.class);
-        final SslConfiguration configuration = new SslConfiguration(trustConfig, keyConfig, randomFrom(SslVerificationMode.values()),
-                randomFrom(SslClientAuthenticationMode.values()), DEFAULT_CIPHERS, SslConfigurationLoader.DEFAULT_PROTOCOLS);
+        final SslConfiguration configuration = new SslConfiguration(trustConfig, keyConfig,
+            randomFrom(SslVerificationMode.values()), randomFrom(SslClientAuthenticationMode.values()),
+            DEFAULT_CIPHERS, SslConfigurationLoader.DEFAULT_PROTOCOLS);
 
         final Path dir = createTempDir();
         final Path file1 = dir.resolve(randomAlphaOfLength(1) + ".pem");
@@ -124,8 +129,9 @@ public class SslConfigurationTests extends ESTestCase {
         final SslTrustConfig trustConfig = Mockito.mock(SslTrustConfig.class);
         final SslKeyConfig keyConfig = Mockito.mock(SslKeyConfig.class);
         final String protocol = randomFrom(SslConfigurationLoader.DEFAULT_PROTOCOLS);
-        final SslConfiguration configuration = new SslConfiguration(trustConfig, keyConfig, randomFrom(SslVerificationMode.values()),
-                randomFrom(SslClientAuthenticationMode.values()), DEFAULT_CIPHERS, Collections.singletonList(protocol));
+        final SslConfiguration configuration = new SslConfiguration(trustConfig, keyConfig,
+            randomFrom(SslVerificationMode.values()), randomFrom(SslClientAuthenticationMode.values()),
+            DEFAULT_CIPHERS, Collections.singletonList(protocol));
 
         Mockito.when(trustConfig.createTrustManager()).thenReturn(null);
         Mockito.when(keyConfig.createKeyManager()).thenReturn(null);

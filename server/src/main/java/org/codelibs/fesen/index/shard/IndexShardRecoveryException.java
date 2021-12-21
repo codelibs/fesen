@@ -30,7 +30,7 @@ public class IndexShardRecoveryException extends FesenException {
         setShard(shardId);
     }
 
-    public IndexShardRecoveryException(StreamInput in) throws IOException {
+    public IndexShardRecoveryException(StreamInput in) throws IOException{
         super(in);
     }
 }

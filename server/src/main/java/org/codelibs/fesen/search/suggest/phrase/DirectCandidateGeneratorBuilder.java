@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import org.apache.lucene.search.spell.DirectSpellChecker;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.LevenshteinDistance;
@@ -43,6 +38,11 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.search.suggest.SortBy;
 import org.codelibs.fesen.search.suggest.phrase.PhraseSuggestionBuilder.CandidateGenerator;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class DirectCandidateGeneratorBuilder implements CandidateGenerator {
 
@@ -387,8 +387,8 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
         }
     }
 
-    public static final ConstructingObjectParser<DirectCandidateGeneratorBuilder, Void> PARSER =
-            new ConstructingObjectParser<>(TYPE, args -> new DirectCandidateGeneratorBuilder((String) args[0]));
+    public static final ConstructingObjectParser<DirectCandidateGeneratorBuilder, Void> PARSER = new ConstructingObjectParser<>(
+            TYPE, args -> new DirectCandidateGeneratorBuilder((String) args[0]));
 
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), FIELDNAME_FIELD);
@@ -496,7 +496,8 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
 
     @Override
     public int hashCode() {
-        return Objects.hash(field, preFilter, postFilter, suggestMode, accuracy, size, sort, stringDistance, maxEdits, maxInspections,
+        return Objects.hash(field, preFilter, postFilter, suggestMode, accuracy,
+                size, sort, stringDistance, maxEdits, maxInspections,
                 maxTermFreq, prefixLength, minWordLength, minDocFreq);
     }
 
@@ -509,12 +510,19 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
             return false;
         }
         DirectCandidateGeneratorBuilder other = (DirectCandidateGeneratorBuilder) obj;
-        return Objects.equals(field, other.field) && Objects.equals(preFilter, other.preFilter)
-                && Objects.equals(postFilter, other.postFilter) && Objects.equals(suggestMode, other.suggestMode)
-                && Objects.equals(accuracy, other.accuracy) && Objects.equals(size, other.size) && Objects.equals(sort, other.sort)
-                && Objects.equals(stringDistance, other.stringDistance) && Objects.equals(maxEdits, other.maxEdits)
-                && Objects.equals(maxInspections, other.maxInspections) && Objects.equals(maxTermFreq, other.maxTermFreq)
-                && Objects.equals(prefixLength, other.prefixLength) && Objects.equals(minWordLength, other.minWordLength)
-                && Objects.equals(minDocFreq, other.minDocFreq);
+        return Objects.equals(field, other.field) &&
+                Objects.equals(preFilter, other.preFilter) &&
+                Objects.equals(postFilter, other.postFilter) &&
+                Objects.equals(suggestMode, other.suggestMode) &&
+                Objects.equals(accuracy, other.accuracy) &&
+                Objects.equals(size, other.size) &&
+                Objects.equals(sort, other.sort) &&
+                Objects.equals(stringDistance, other.stringDistance) &&
+                Objects.equals(maxEdits, other.maxEdits) &&
+                Objects.equals(maxInspections, other.maxInspections) &&
+                Objects.equals(maxTermFreq, other.maxTermFreq) &&
+                Objects.equals(prefixLength, other.prefixLength) &&
+                Objects.equals(minWordLength, other.minWordLength) &&
+                Objects.equals(minDocFreq, other.minDocFreq);
     }
 }

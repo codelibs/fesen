@@ -55,8 +55,11 @@ public class SpanNearQueryBuilderTests extends AbstractQueryTestCase<SpanNearQue
 
     @Override
     protected void doAssertLuceneQuery(SpanNearQueryBuilder queryBuilder, Query query, QueryShardContext context) throws IOException {
-        assertThat(query, either(instanceOf(SpanNearQuery.class)).or(instanceOf(SpanTermQuery.class)).or(instanceOf(SpanBoostQuery.class))
-                .or(instanceOf(SpanMatchNoDocsQuery.class)).or(instanceOf(MatchAllQueryBuilder.class)));
+        assertThat(query, either(instanceOf(SpanNearQuery.class))
+            .or(instanceOf(SpanTermQuery.class))
+            .or(instanceOf(SpanBoostQuery.class))
+            .or(instanceOf(SpanMatchNoDocsQuery.class))
+            .or(instanceOf(MatchAllQueryBuilder.class)));
         if (query instanceof SpanNearQuery) {
             SpanNearQuery spanNearQuery = (SpanNearQuery) query;
             assertThat(spanNearQuery.getSlop(), equalTo(queryBuilder.slop()));
@@ -73,12 +76,12 @@ public class SpanNearQueryBuilderTests extends AbstractQueryTestCase<SpanNearQue
     }
 
     public void testIllegalArguments() {
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> new SpanNearQueryBuilder(null, 1));
-        assertEquals("[span_near] must include at least one clause", e.getMessage());
+            IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> new SpanNearQueryBuilder(null, 1));
+            assertEquals("[span_near] must include at least one clause", e.getMessage());
 
-        SpanNearQueryBuilder spanNearQueryBuilder = new SpanNearQueryBuilder(new SpanTermQueryBuilder("field", "value"), 1);
-        e = expectThrows(IllegalArgumentException.class, () -> spanNearQueryBuilder.addClause(null));
-        assertEquals("[span_near]  clauses cannot be null", e.getMessage());
+            SpanNearQueryBuilder spanNearQueryBuilder = new SpanNearQueryBuilder(new SpanTermQueryBuilder("field", "value"), 1);
+            e = expectThrows(IllegalArgumentException.class, () -> spanNearQueryBuilder.addClause(null));
+            assertEquals("[span_near]  clauses cannot be null", e.getMessage());
     }
 
     public void testClausesUnmodifiable() {
@@ -88,13 +91,36 @@ public class SpanNearQueryBuilderTests extends AbstractQueryTestCase<SpanNearQue
     }
 
     public void testFromJson() throws IOException {
-        String json = "{\n" + "  \"span_near\" : {\n" + "    \"clauses\" : [ {\n" + "      \"span_term\" : {\n" + "        \"field\" : {\n"
-                + "          \"value\" : \"value1\",\n" + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }, {\n"
-                + "      \"span_term\" : {\n" + "        \"field\" : {\n" + "          \"value\" : \"value2\",\n"
-                + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }, {\n" + "      \"span_term\" : {\n"
-                + "        \"field\" : {\n" + "          \"value\" : \"value3\",\n" + "          \"boost\" : 1.0\n" + "        }\n"
-                + "      }\n" + "    } ],\n" + "    \"slop\" : 12,\n" + "    \"in_order\" : false,\n" + "    \"boost\" : 2.0\n" + "  }\n"
-                + "}";
+        String json =
+                "{\n" +
+                "  \"span_near\" : {\n" +
+                "    \"clauses\" : [ {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value1\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value2\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value3\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    } ],\n" +
+                "    \"slop\" : 12,\n" +
+                "    \"in_order\" : false,\n" +
+                "    \"boost\" : 2.0\n" +
+                "  }\n" +
+                "}";
 
         SpanNearQueryBuilder parsed = (SpanNearQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -106,9 +132,19 @@ public class SpanNearQueryBuilderTests extends AbstractQueryTestCase<SpanNearQue
     }
 
     public void testParsingSlopDefault() throws IOException {
-        String json = "{\n" + "  \"span_near\" : {\n" + "    \"clauses\" : [ {\n" + "      \"span_term\" : {\n" + "        \"field\" : {\n"
-                + "          \"value\" : \"value1\",\n" + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }]\n" + "  }\n"
-                + "}";
+        String json =
+                "{\n" +
+                "  \"span_near\" : {\n" +
+                "    \"clauses\" : [ {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value1\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }]\n" +
+                "  }\n" +
+                "}";
 
         SpanNearQueryBuilder parsed = (SpanNearQueryBuilder) parseQuery(json);
         assertEquals(json, 1, parsed.clauses().size());
@@ -118,28 +154,78 @@ public class SpanNearQueryBuilderTests extends AbstractQueryTestCase<SpanNearQue
     }
 
     public void testCollectPayloadsNoLongerSupported() throws Exception {
-        String json = "{\n" + "  \"span_near\" : {\n" + "    \"clauses\" : [ {\n" + "      \"span_term\" : {\n" + "        \"field\" : {\n"
-                + "          \"value\" : \"value1\",\n" + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }, {\n"
-                + "      \"span_term\" : {\n" + "        \"field\" : {\n" + "          \"value\" : \"value2\",\n"
-                + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }, {\n" + "      \"span_term\" : {\n"
-                + "        \"field\" : {\n" + "          \"value\" : \"value3\",\n" + "          \"boost\" : 1.0\n" + "        }\n"
-                + "      }\n" + "    } ],\n" + "    \"slop\" : 12,\n" + "    \"in_order\" : false,\n"
-                + "    \"collect_payloads\" : false,\n" + "    \"boost\" : 1.0\n" + "  }\n" + "}";
+        String json =
+                "{\n" +
+                "  \"span_near\" : {\n" +
+                "    \"clauses\" : [ {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value1\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value2\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value3\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    } ],\n" +
+                "    \"slop\" : 12,\n" +
+                "    \"in_order\" : false,\n" +
+                "    \"collect_payloads\" : false,\n" +
+                "    \"boost\" : 1.0\n" +
+                "  }\n" +
+                "}";
 
-        final ParsingException e = expectThrows(ParsingException.class, () -> parseQuery(json));
+        final ParsingException e = expectThrows(
+                ParsingException.class,
+                () -> parseQuery(json));
         assertThat(e.getMessage(), containsString("[span_near] query does not support [collect_payloads]"));
     }
 
     public void testFromJsonWithNonDefaultBoostInInnerQuery() {
-        String json = "{\n" + "  \"span_near\" : {\n" + "    \"clauses\" : [ {\n" + "      \"span_term\" : {\n" + "        \"field\" : {\n"
-                + "          \"value\" : \"value1\",\n" + "          \"boost\" : 2.0\n" + "        }\n" + "      }\n" + "    }, {\n"
-                + "      \"span_term\" : {\n" + "        \"field\" : {\n" + "          \"value\" : \"value2\",\n"
-                + "          \"boost\" : 1.0\n" + "        }\n" + "      }\n" + "    }, {\n" + "      \"span_term\" : {\n"
-                + "        \"field\" : {\n" + "          \"value\" : \"value3\",\n" + "          \"boost\" : 1.0\n" + "        }\n"
-                + "      }\n" + "    } ],\n" + "    \"slop\" : 12,\n" + "    \"in_order\" : false,\n" + "    \"boost\" : 1.0\n" + "  }\n"
-                + "}";
+        String json =
+                "{\n" +
+                "  \"span_near\" : {\n" +
+                "    \"clauses\" : [ {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value1\",\n" +
+                "          \"boost\" : 2.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value2\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }, {\n" +
+                "      \"span_term\" : {\n" +
+                "        \"field\" : {\n" +
+                "          \"value\" : \"value3\",\n" +
+                "          \"boost\" : 1.0\n" +
+                "        }\n" +
+                "      }\n" +
+                "    } ],\n" +
+                "    \"slop\" : 12,\n" +
+                "    \"in_order\" : false,\n" +
+                "    \"boost\" : 1.0\n" +
+                "  }\n" +
+                "}";
 
         Exception exception = expectThrows(ParsingException.class, () -> parseQuery(json));
-        assertThat(exception.getMessage(), equalTo("span_near [clauses] as a nested span clause can't have non-default boost value [2.0]"));
+        assertThat(exception.getMessage(),
+            equalTo("span_near [clauses] as a nested span clause can't have non-default boost value [2.0]"));
     }
 }

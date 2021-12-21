@@ -87,7 +87,8 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
         NumberType type = randomFrom(NumberType.values());
         NumberFieldType fieldType = new NumberFieldType("foo", type);
 
-        NumberType otherType = randomValueOtherThan(type, () -> randomFrom(NumberType.values()));
+        NumberType otherType = randomValueOtherThan(type,
+            () -> randomFrom(NumberType.values()));
         NumberFieldType otherFieldType = new NumberFieldType("foo", otherType);
 
         assertNotEquals(fieldType, otherFieldType);
@@ -96,8 +97,8 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
     public void testIsFieldWithinQuery() throws IOException {
         MappedFieldType ft = new NumberFieldType("field", NumberType.INTEGER);
         // current impl ignores args and should always return INTERSECTS
-        assertEquals(Relation.INTERSECTS,
-                ft.isFieldWithinQuery(null, randomDouble(), randomDouble(), randomBoolean(), randomBoolean(), null, null, null));
+        assertEquals(Relation.INTERSECTS, ft.isFieldWithinQuery(null, randomDouble(), randomDouble(),
+                randomBoolean(), randomBoolean(), null, null, null));
     }
 
     public void testIntegerTermsQueryWithDecimalPart() {
@@ -143,7 +144,8 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
         assertEquals(LongPoint.newExactQuery("field", 42), ft.termQuery("42", null));
 
         MappedFieldType unsearchable = unsearchable();
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> unsearchable.termQuery("42", null));
+        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
+                () -> unsearchable.termQuery("42", null));
         assertEquals("Cannot search on field [field] since it is not indexed.", e.getMessage());
     }
 
@@ -253,7 +255,8 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
 
     public void testRangeQuery() {
         MappedFieldType ft = new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG);
-        Query expected = new IndexOrDocValuesQuery(LongPoint.newRangeQuery("field", 1, 3),
+        Query expected = new IndexOrDocValuesQuery(
+                LongPoint.newRangeQuery("field", 1, 3),
                 SortedNumericDocValuesField.newSlowRangeQuery("field", 1, 3));
         assertEquals(expected, ft.rangeQuery("1", "3", true, true, null, null, null, MOCK_QSC));
 
@@ -359,11 +362,14 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
     }
 
     public void testNegativeZero() {
-        assertEquals(NumberType.DOUBLE.rangeQuery("field", null, -0d, true, true, false, MOCK_QSC),
+        assertEquals(
+                NumberType.DOUBLE.rangeQuery("field", null, -0d, true, true, false, MOCK_QSC),
                 NumberType.DOUBLE.rangeQuery("field", null, +0d, true, false, false, MOCK_QSC));
-        assertEquals(NumberType.FLOAT.rangeQuery("field", null, -0f, true, true, false, MOCK_QSC),
+        assertEquals(
+                NumberType.FLOAT.rangeQuery("field", null, -0f, true, true, false, MOCK_QSC),
                 NumberType.FLOAT.rangeQuery("field", null, +0f, true, false, false, MOCK_QSC));
-        assertEquals(NumberType.HALF_FLOAT.rangeQuery("field", null, -0f, true, true, false, MOCK_QSC),
+        assertEquals(
+                NumberType.HALF_FLOAT.rangeQuery("field", null, -0f, true, true, false, MOCK_QSC),
                 NumberType.HALF_FLOAT.rangeQuery("field", null, +0f, true, false, false, MOCK_QSC));
 
         assertFalse(NumberType.DOUBLE.termQuery("field", -0d).equals(NumberType.DOUBLE.termQuery("field", +0d)));
@@ -413,11 +419,15 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
         w.close();
         final int iters = 10;
         for (int iter = 0; iter < iters; ++iter) {
-            Query query = type.rangeQuery("foo", random().nextBoolean() ? null : valueSupplier.get(),
-                    random().nextBoolean() ? null : valueSupplier.get(), randomBoolean(), randomBoolean(), true, MOCK_QSC);
+            Query query = type.rangeQuery("foo",
+                    random().nextBoolean() ? null : valueSupplier.get(),
+                    random().nextBoolean() ? null : valueSupplier.get(),
+                    randomBoolean(), randomBoolean(), true, MOCK_QSC);
             assertThat(query, instanceOf(IndexOrDocValuesQuery.class));
             IndexOrDocValuesQuery indexOrDvQuery = (IndexOrDocValuesQuery) query;
-            assertEquals(searcher.count(indexOrDvQuery.getIndexQuery()), searcher.count(indexOrDvQuery.getRandomAccessQuery()));
+            assertEquals(
+                    searcher.count(indexOrDvQuery.getIndexQuery()),
+                    searcher.count(indexOrDvQuery.getRandomAccessQuery()));
         }
         reader.close();
         dir.close();
@@ -433,11 +443,16 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
 
     public void doTestIndexSortRangeQueries(NumberType type, Supplier<Number> valueSupplier) throws IOException {
         // Create index settings with an index sort.
-        Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)
-                .put("index.sort.field", "field").build();
+        Settings settings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)
+            .put("index.sort.field", "field")
+            .build();
 
-        IndexMetadata indexMetadata = new IndexMetadata.Builder("index").settings(settings).build();
+        IndexMetadata indexMetadata = new IndexMetadata.Builder("index")
+            .settings(settings)
+            .build();
         IndexSettings indexSettings = new IndexSettings(indexMetadata, settings);
 
         // Create an index writer configured with the same index sort.
@@ -461,20 +476,25 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
         DirectoryReader reader = DirectoryReader.open(w);
         IndexSearcher searcher = newSearcher(reader);
 
-        QueryShardContext context = new QueryShardContext(0, indexSettings, BigArrays.NON_RECYCLING_INSTANCE, null, null, null, null, null,
-                xContentRegistry(), writableRegistry(), null, null, () -> 0L, null, null, () -> true, null);
+        QueryShardContext context = new QueryShardContext(0, indexSettings,
+            BigArrays.NON_RECYCLING_INSTANCE, null, null, null, null, null, xContentRegistry(), writableRegistry(),
+            null, null, () -> 0L, null, null, () -> true, null);
 
         final int iters = 10;
         for (int iter = 0; iter < iters; ++iter) {
-            Query query = type.rangeQuery("field", random().nextBoolean() ? null : valueSupplier.get(),
-                    random().nextBoolean() ? null : valueSupplier.get(), randomBoolean(), randomBoolean(), true, context);
+            Query query = type.rangeQuery("field",
+                random().nextBoolean() ? null : valueSupplier.get(),
+                random().nextBoolean() ? null : valueSupplier.get(),
+                randomBoolean(), randomBoolean(), true, context);
             assertThat(query, instanceOf(IndexSortSortedNumericDocValuesRangeQuery.class));
 
             Query fallbackQuery = ((IndexSortSortedNumericDocValuesRangeQuery) query).getFallbackQuery();
             assertThat(fallbackQuery, instanceOf(IndexOrDocValuesQuery.class));
 
             IndexOrDocValuesQuery indexOrDvQuery = (IndexOrDocValuesQuery) fallbackQuery;
-            assertEquals(searcher.count(query), searcher.count(indexOrDvQuery.getIndexQuery()));
+            assertEquals(
+                searcher.count(query),
+                searcher.count(indexOrDvQuery.getIndexQuery()));
         }
 
         reader.close();
@@ -483,53 +503,55 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
     }
 
     public void testParseOutOfRangeValues() throws IOException {
-        final List<OutOfRangeSpec> inputs = Arrays.asList(OutOfRangeSpec.of(NumberType.BYTE, "128", "out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.BYTE, 128, "is out of range for a byte"),
-                OutOfRangeSpec.of(NumberType.BYTE, -129, "is out of range for a byte"),
+        final List<OutOfRangeSpec> inputs = Arrays.asList(
+            OutOfRangeSpec.of(NumberType.BYTE, "128", "out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.BYTE, 128, "is out of range for a byte"),
+            OutOfRangeSpec.of(NumberType.BYTE, -129, "is out of range for a byte"),
 
-                OutOfRangeSpec.of(NumberType.SHORT, "32768", "out of range for a short"),
-                OutOfRangeSpec.of(NumberType.SHORT, 32768, "is out of range for a short"),
-                OutOfRangeSpec.of(NumberType.SHORT, -32769, "is out of range for a short"),
+            OutOfRangeSpec.of(NumberType.SHORT, "32768", "out of range for a short"),
+            OutOfRangeSpec.of(NumberType.SHORT, 32768, "is out of range for a short"),
+            OutOfRangeSpec.of(NumberType.SHORT, -32769, "is out of range for a short"),
 
-                OutOfRangeSpec.of(NumberType.INTEGER, "2147483648", "out of range for an integer"),
-                OutOfRangeSpec.of(NumberType.INTEGER, 2147483648L, "is out of range for an integer"),
-                OutOfRangeSpec.of(NumberType.INTEGER, -2147483649L, "is out of range for an integer"),
+            OutOfRangeSpec.of(NumberType.INTEGER, "2147483648", "out of range for an integer"),
+            OutOfRangeSpec.of(NumberType.INTEGER, 2147483648L, "is out of range for an integer"),
+            OutOfRangeSpec.of(NumberType.INTEGER, -2147483649L, "is out of range for an integer"),
 
-                OutOfRangeSpec.of(NumberType.LONG, "9223372036854775808", "out of range for a long"),
-                OutOfRangeSpec.of(NumberType.LONG, new BigInteger("9223372036854775808"), " is out of range for a long"),
-                OutOfRangeSpec.of(NumberType.LONG, new BigInteger("-9223372036854775809"), " is out of range for a long"),
+            OutOfRangeSpec.of(NumberType.LONG, "9223372036854775808", "out of range for a long"),
+            OutOfRangeSpec.of(NumberType.LONG, new BigInteger("9223372036854775808"), " is out of range for a long"),
+            OutOfRangeSpec.of(NumberType.LONG, new BigInteger("-9223372036854775809"), " is out of range for a long"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, "65520", "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, "3.4028235E39", "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, "1.7976931348623157E309", "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, "65520", "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, "3.4028235E39", "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, "1.7976931348623157E309", "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, 65520f, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, 3.4028235E39d, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, new BigDecimal("1.7976931348623157E309"), "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, 65520f, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, 3.4028235E39d, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, new BigDecimal("1.7976931348623157E309"), "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, -65520f, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, -3.4028235E39d, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, new BigDecimal("-1.7976931348623157E309"), "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, -65520f, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, -3.4028235E39d, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, new BigDecimal("-1.7976931348623157E309"), "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NaN, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.NaN, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.NaN, "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NaN, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.NaN, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.NaN, "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.POSITIVE_INFINITY, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.POSITIVE_INFINITY, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.POSITIVE_INFINITY, "[double] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.POSITIVE_INFINITY, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.POSITIVE_INFINITY, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.POSITIVE_INFINITY, "[double] supports only finite values"),
 
-                OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NEGATIVE_INFINITY, "[half_float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.FLOAT, Float.NEGATIVE_INFINITY, "[float] supports only finite values"),
-                OutOfRangeSpec.of(NumberType.DOUBLE, Double.NEGATIVE_INFINITY, "[double] supports only finite values"));
+            OutOfRangeSpec.of(NumberType.HALF_FLOAT, Float.NEGATIVE_INFINITY, "[half_float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.FLOAT, Float.NEGATIVE_INFINITY, "[float] supports only finite values"),
+            OutOfRangeSpec.of(NumberType.DOUBLE, Double.NEGATIVE_INFINITY, "[double] supports only finite values")
+        );
 
-        for (OutOfRangeSpec item : inputs) {
+        for (OutOfRangeSpec item: inputs) {
             try {
                 item.type.parse(item.value, false);
                 fail("Parsing exception expected for [" + item.type + "] with value [" + item.value + "]");
             } catch (IllegalArgumentException e) {
-                assertThat("Incorrect error message for [" + item.type + "] with value [" + item.value + "]", e.getMessage(),
-                        containsString(item.message));
+                assertThat("Incorrect error message for [" + item.type + "] with value [" + item.value + "]",
+                    e.getMessage(), containsString(item.message));
             }
         }
     }
@@ -629,12 +651,16 @@ public class NumberFieldTypeTests extends FieldTypeTestCase {
         Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT.id).build();
         Mapper.BuilderContext context = new Mapper.BuilderContext(settings, new ContentPath());
 
-        MappedFieldType mapper = new NumberFieldMapper.Builder("field", NumberType.INTEGER, false, true).build(context).fieldType();
+        MappedFieldType mapper = new NumberFieldMapper.Builder("field", NumberType.INTEGER, false, true)
+            .build(context)
+            .fieldType();
         assertEquals(Collections.singletonList(3), fetchSourceValue(mapper, 3.14));
         assertEquals(Collections.singletonList(42), fetchSourceValue(mapper, "42.9"));
 
-        MappedFieldType nullValueMapper =
-                new NumberFieldMapper.Builder("field", NumberType.FLOAT, false, true).nullValue(2.71f).build(context).fieldType();
+        MappedFieldType nullValueMapper = new NumberFieldMapper.Builder("field", NumberType.FLOAT, false, true)
+            .nullValue(2.71f)
+            .build(context)
+            .fieldType();
         assertEquals(Collections.singletonList(2.71f), fetchSourceValue(nullValueMapper, ""));
         assertEquals(Collections.singletonList(2.71f), fetchSourceValue(nullValueMapper, null));
     }

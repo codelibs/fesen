@@ -58,7 +58,7 @@ public class TransportHandshakerTests extends ESTestCase {
         channel = mock(TcpChannel.class);
         requestSender = mock(TransportHandshaker.HandshakeRequestSender.class);
         node = new DiscoveryNode(nodeId, nodeId, nodeId, "host", "host_address", buildNewFakeTransportAddress(), Collections.emptyMap(),
-                Collections.emptySet(), Version.CURRENT);
+            Collections.emptySet(), Version.CURRENT);
         threadPool = new TestThreadPool("thread-poll");
         handshaker = new TransportHandshaker(Version.CURRENT, threadPool, requestSender);
     }

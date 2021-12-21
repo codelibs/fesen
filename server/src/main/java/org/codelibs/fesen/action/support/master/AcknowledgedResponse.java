@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.action.support.master;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A response that indicates that a request has been acknowledged
  */
@@ -42,7 +42,7 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
 
     protected static <T extends AcknowledgedResponse> void declareAcknowledgedField(ConstructingObjectParser<T, Void> objectParser) {
         objectParser.declareField(constructorArg(), (parser, context) -> parser.booleanValue(), ACKNOWLEDGED,
-                ObjectParser.ValueType.BOOLEAN);
+            ObjectParser.ValueType.BOOLEAN);
     }
 
     protected boolean acknowledged;
@@ -92,8 +92,8 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
     /**
      * A generic parser that simply parses the acknowledged flag
      */
-    private static final ConstructingObjectParser<Boolean, Void> ACKNOWLEDGED_FLAG_PARSER =
-            new ConstructingObjectParser<>("acknowledged_flag", true, args -> (Boolean) args[0]);
+    private static final ConstructingObjectParser<Boolean, Void> ACKNOWLEDGED_FLAG_PARSER = new ConstructingObjectParser<>(
+            "acknowledged_flag", true, args -> (Boolean) args[0]);
 
     static {
         ACKNOWLEDGED_FLAG_PARSER.declareField(constructorArg(), (parser, context) -> parser.booleanValue(), ACKNOWLEDGED,

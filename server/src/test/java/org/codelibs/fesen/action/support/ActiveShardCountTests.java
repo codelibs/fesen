@@ -84,7 +84,8 @@ public class ActiveShardCountTests extends ESTestCase {
         activeShardCount.writeTo(out);
         final ByteBufferStreamInput in = new ByteBufferStreamInput(ByteBuffer.wrap(out.bytes().toBytesRef().bytes));
         ActiveShardCount readActiveShardCount = ActiveShardCount.readFrom(in);
-        if (activeShardCount == ActiveShardCount.DEFAULT || activeShardCount == ActiveShardCount.ALL
+        if (activeShardCount == ActiveShardCount.DEFAULT
+                || activeShardCount == ActiveShardCount.ALL
                 || activeShardCount == ActiveShardCount.NONE) {
             assertSame(activeShardCount, readActiveShardCount);
         } else {
@@ -195,8 +196,11 @@ public class ActiveShardCountTests extends ESTestCase {
     private ClusterState initializeWithNewIndex(final String indexName, final int numShards, final int numReplicas) {
         // initial index creation and new routing table info
         final IndexMetadata indexMetadata = IndexMetadata.builder(indexName)
-                .settings(settings(Version.CURRENT).put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
-                .numberOfShards(numShards).numberOfReplicas(numReplicas).build();
+                                                .settings(settings(Version.CURRENT)
+                                                              .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
+                                                .numberOfShards(numShards)
+                                                .numberOfReplicas(numReplicas)
+                                                .build();
         final Metadata metadata = Metadata.builder().put(indexMetadata, true).build();
         final RoutingTable routingTable = RoutingTable.builder().addAsNew(indexMetadata).build();
         return ClusterState.builder(new ClusterName("test_cluster")).metadata(metadata).routingTable(routingTable).build();
@@ -204,8 +208,12 @@ public class ActiveShardCountTests extends ESTestCase {
 
     private ClusterState initializeWithClosedIndex(final String indexName, final int numShards, final int numReplicas) {
         final IndexMetadata indexMetadata = IndexMetadata.builder(indexName)
-                .settings(settings(Version.CURRENT).put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
-                .numberOfShards(numShards).numberOfReplicas(numReplicas).state(IndexMetadata.State.CLOSE).build();
+            .settings(settings(Version.CURRENT)
+                .put(IndexMetadata.SETTING_INDEX_UUID, UUIDs.randomBase64UUID()))
+            .numberOfShards(numShards)
+            .numberOfReplicas(numReplicas)
+            .state(IndexMetadata.State.CLOSE)
+            .build();
         final Metadata metadata = Metadata.builder().put(indexMetadata, true).build();
         return ClusterState.builder(new ClusterName("test_cluster")).metadata(metadata).build();
     }
@@ -218,8 +226,8 @@ public class ActiveShardCountTests extends ESTestCase {
             final IndexShardRoutingTable shardRoutingTable = shardEntry.value;
             for (ShardRouting shardRouting : shardRoutingTable.getShards()) {
                 if (shardRouting.primary()) {
-                    shardRouting =
-                            shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize()).moveToStarted();
+                    shardRouting = shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize())
+                                       .moveToStarted();
                 }
                 newIndexRoutingTable.addShard(shardRouting);
             }
@@ -242,8 +250,8 @@ public class ActiveShardCountTests extends ESTestCase {
                     assertTrue(shardRouting.active());
                 } else {
                     if (numToStart > 0) {
-                        shardRouting =
-                                shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize()).moveToStarted();
+                        shardRouting = shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize())
+                                           .moveToStarted();
                         numToStart--;
                     }
                 }
@@ -269,7 +277,7 @@ public class ActiveShardCountTests extends ESTestCase {
                     if (shardRouting.active() == false) {
                         if (numToStart > 0) {
                             shardRouting = shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize())
-                                    .moveToStarted();
+                                               .moveToStarted();
                             numToStart--;
                         }
                     } else {
@@ -294,8 +302,8 @@ public class ActiveShardCountTests extends ESTestCase {
                     assertTrue(shardRouting.active());
                 } else {
                     if (shardRouting.active() == false) {
-                        shardRouting =
-                                shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize()).moveToStarted();
+                        shardRouting = shardRouting.initialize(randomAlphaOfLength(8), null, shardRouting.getExpectedShardSize())
+                                           .moveToStarted();
                     }
                 }
                 newIndexRoutingTable.addShard(shardRouting);

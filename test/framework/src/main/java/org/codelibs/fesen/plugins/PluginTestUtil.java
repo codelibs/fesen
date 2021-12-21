@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import org.codelibs.fesen.plugins.PluginInfo;
+
 /** Utility methods for testing plugins */
 public class PluginTestUtil {
 
@@ -36,7 +38,7 @@ public class PluginTestUtil {
     private static void writeProperties(Path propertiesFile, String... stringProps) throws IOException {
         assert stringProps.length % 2 == 0;
         Files.createDirectories(propertiesFile.getParent());
-        Properties properties = new Properties();
+        Properties properties =  new Properties();
         for (int i = 0; i < stringProps.length; i += 2) {
             properties.put(stringProps[i], stringProps[i + 1]);
         }

@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.shard;
 
-import static java.util.Collections.emptyMap;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +28,8 @@ import org.codelibs.fesen.common.metrics.CounterMetric;
 import org.codelibs.fesen.common.metrics.MeanMetric;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.index.engine.Engine;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Internal class that maintains relevant indexing statistics / metrics.
@@ -76,21 +76,21 @@ final class InternalIndexingStats implements IndexingOperationListener {
     @Override
     public void postIndex(ShardId shardId, Engine.Index index, Engine.IndexResult result) {
         switch (result.getResultType()) {
-        case SUCCESS:
-            if (index.origin().isRecovery() == false) {
-                long took = result.getTook();
-                totalStats.indexMetric.inc(took);
-                totalStats.indexCurrent.dec();
-                StatsHolder typeStats = typeStats(index.type());
-                typeStats.indexMetric.inc(took);
-                typeStats.indexCurrent.dec();
-            }
-            break;
-        case FAILURE:
-            postIndex(shardId, index, result.getFailure());
-            break;
-        default:
-            throw new IllegalArgumentException("unknown result type: " + result.getResultType());
+            case SUCCESS:
+                if (index.origin().isRecovery() == false) {
+                    long took = result.getTook();
+                    totalStats.indexMetric.inc(took);
+                    totalStats.indexCurrent.dec();
+                    StatsHolder typeStats = typeStats(index.type());
+                    typeStats.indexMetric.inc(took);
+                    typeStats.indexCurrent.dec();
+                }
+                break;
+            case FAILURE:
+                postIndex(shardId, index, result.getFailure());
+                break;
+            default:
+                throw new IllegalArgumentException("unknown result type: " + result.getResultType());
         }
     }
 
@@ -117,21 +117,21 @@ final class InternalIndexingStats implements IndexingOperationListener {
     @Override
     public void postDelete(ShardId shardId, Engine.Delete delete, Engine.DeleteResult result) {
         switch (result.getResultType()) {
-        case SUCCESS:
-            if (!delete.origin().isRecovery()) {
-                long took = result.getTook();
-                totalStats.deleteMetric.inc(took);
-                totalStats.deleteCurrent.dec();
-                StatsHolder typeStats = typeStats(delete.type());
-                typeStats.deleteMetric.inc(took);
-                typeStats.deleteCurrent.dec();
-            }
-            break;
-        case FAILURE:
-            postDelete(shardId, delete, result.getFailure());
-            break;
-        default:
-            throw new IllegalArgumentException("unknown result type: " + result.getResultType());
+            case SUCCESS:
+                if (!delete.origin().isRecovery()) {
+                    long took = result.getTook();
+                    totalStats.deleteMetric.inc(took);
+                    totalStats.deleteCurrent.dec();
+                    StatsHolder typeStats = typeStats(delete.type());
+                    typeStats.deleteMetric.inc(took);
+                    typeStats.deleteCurrent.dec();
+                }
+                break;
+            case FAILURE:
+                postDelete(shardId, delete, result.getFailure());
+                break;
+            default:
+                throw new IllegalArgumentException("unknown result type: " + result.getResultType());
         }
     }
 
@@ -171,9 +171,10 @@ final class InternalIndexingStats implements IndexingOperationListener {
         private final CounterMetric noopUpdates = new CounterMetric();
 
         IndexingStats.Stats stats(boolean isThrottled, long currentThrottleMillis) {
-            return new IndexingStats.Stats(indexMetric.count(), TimeUnit.NANOSECONDS.toMillis(indexMetric.sum()), indexCurrent.count(),
-                    indexFailed.count(), deleteMetric.count(), TimeUnit.NANOSECONDS.toMillis(deleteMetric.sum()), deleteCurrent.count(),
-                    noopUpdates.count(), isThrottled, TimeUnit.MILLISECONDS.toMillis(currentThrottleMillis));
+            return new IndexingStats.Stats(
+                indexMetric.count(), TimeUnit.NANOSECONDS.toMillis(indexMetric.sum()), indexCurrent.count(), indexFailed.count(),
+                deleteMetric.count(), TimeUnit.NANOSECONDS.toMillis(deleteMetric.sum()), deleteCurrent.count(),
+                noopUpdates.count(), isThrottled, TimeUnit.MILLISECONDS.toMillis(currentThrottleMillis));
         }
     }
 }

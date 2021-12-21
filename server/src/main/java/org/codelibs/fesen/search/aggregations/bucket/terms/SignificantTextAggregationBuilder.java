@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -37,64 +31,80 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationInitializationException;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.bucket.terms.TermsAggregator.BucketCountThresholds;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class SignificantTextAggregationBuilder extends AbstractAggregationBuilder<SignificantTextAggregationBuilder> {
     public static final String NAME = "significant_text";
 
     static final ParseField FIELD_NAME = new ParseField("field");
     static final ParseField SOURCE_FIELDS_NAME = new ParseField("source_fields");
-    static final ParseField FILTER_DUPLICATE_TEXT_FIELD_NAME = new ParseField("filter_duplicate_text");
+    static final ParseField FILTER_DUPLICATE_TEXT_FIELD_NAME = new ParseField(
+            "filter_duplicate_text");
 
     static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS =
             SignificantTermsAggregationBuilder.DEFAULT_BUCKET_COUNT_THRESHOLDS;
     static final SignificanceHeuristic DEFAULT_SIGNIFICANCE_HEURISTIC = SignificantTermsAggregationBuilder.DEFAULT_SIGNIFICANCE_HEURISTIC;
 
     private String fieldName = null;
-    private String[] sourceFieldNames = null;
+    private String [] sourceFieldNames = null;
     private boolean filterDuplicateText = false;
     private IncludeExclude includeExclude = null;
     private QueryBuilder filterBuilder = null;
-    private TermsAggregator.BucketCountThresholds bucketCountThresholds = new BucketCountThresholds(DEFAULT_BUCKET_COUNT_THRESHOLDS);
+    private TermsAggregator.BucketCountThresholds bucketCountThresholds = new BucketCountThresholds(
+            DEFAULT_BUCKET_COUNT_THRESHOLDS);
     private SignificanceHeuristic significanceHeuristic = DEFAULT_SIGNIFICANCE_HEURISTIC;
 
-    private static final ObjectParser<SignificantTextAggregationBuilder, Void> PARSER =
-            new ObjectParser<>(SignificantTextAggregationBuilder.NAME, SignificanceHeuristic.class,
-                    SignificantTextAggregationBuilder::significanceHeuristic, null);
+    private static final ObjectParser<SignificantTextAggregationBuilder, Void> PARSER = new ObjectParser<>(
+                SignificantTextAggregationBuilder.NAME,
+                SignificanceHeuristic.class, SignificantTextAggregationBuilder::significanceHeuristic, null);
     static {
-        PARSER.declareInt(SignificantTextAggregationBuilder::shardSize, TermsAggregationBuilder.SHARD_SIZE_FIELD_NAME);
+        PARSER.declareInt(SignificantTextAggregationBuilder::shardSize,
+                TermsAggregationBuilder.SHARD_SIZE_FIELD_NAME);
 
-        PARSER.declareLong(SignificantTextAggregationBuilder::minDocCount, TermsAggregationBuilder.MIN_DOC_COUNT_FIELD_NAME);
+        PARSER.declareLong(SignificantTextAggregationBuilder::minDocCount,
+                TermsAggregationBuilder.MIN_DOC_COUNT_FIELD_NAME);
 
-        PARSER.declareLong(SignificantTextAggregationBuilder::shardMinDocCount, TermsAggregationBuilder.SHARD_MIN_DOC_COUNT_FIELD_NAME);
+        PARSER.declareLong(SignificantTextAggregationBuilder::shardMinDocCount,
+                TermsAggregationBuilder.SHARD_MIN_DOC_COUNT_FIELD_NAME);
 
-        PARSER.declareInt(SignificantTextAggregationBuilder::size, TermsAggregationBuilder.REQUIRED_SIZE_FIELD_NAME);
+        PARSER.declareInt(SignificantTextAggregationBuilder::size,
+                TermsAggregationBuilder.REQUIRED_SIZE_FIELD_NAME);
 
         PARSER.declareString(SignificantTextAggregationBuilder::fieldName, FIELD_NAME);
 
         PARSER.declareStringArray(SignificantTextAggregationBuilder::sourceFieldNames, SOURCE_FIELDS_NAME);
 
-        PARSER.declareBoolean(SignificantTextAggregationBuilder::filterDuplicateText, FILTER_DUPLICATE_TEXT_FIELD_NAME);
+
+        PARSER.declareBoolean(SignificantTextAggregationBuilder::filterDuplicateText,
+                FILTER_DUPLICATE_TEXT_FIELD_NAME);
 
         PARSER.declareObject(SignificantTextAggregationBuilder::backgroundFilter,
-                (p, context) -> AbstractQueryBuilder.parseInnerQueryBuilder(p), SignificantTermsAggregationBuilder.BACKGROUND_FILTER);
+                (p, context) -> AbstractQueryBuilder.parseInnerQueryBuilder(p),
+                SignificantTermsAggregationBuilder.BACKGROUND_FILTER);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())), IncludeExclude::parseInclude,
-                IncludeExclude.INCLUDE_FIELD, ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())),
+                IncludeExclude::parseInclude, IncludeExclude.INCLUDE_FIELD,
+                ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)), IncludeExclude::parseExclude,
-                IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)),
+                IncludeExclude::parseExclude, IncludeExclude.EXCLUDE_FIELD,
+                ObjectParser.ValueType.STRING_ARRAY);
     }
-
     public static SignificantTextAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, new SignificantTextAggregationBuilder(aggregationName, null), null);
     }
 
-    protected SignificantTextAggregationBuilder(SignificantTextAggregationBuilder clone, Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected SignificantTextAggregationBuilder(SignificantTextAggregationBuilder clone,
+                                                Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.bucketCountThresholds = new BucketCountThresholds(clone.bucketCountThresholds);
         this.fieldName = clone.fieldName;
@@ -118,21 +128,24 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return bucketCountThresholds;
     }
 
+
     @Override
     public SignificantTextAggregationBuilder subAggregations(Builder subFactories) {
-        throw new AggregationInitializationException(
-                "Aggregator [" + name + "] of type [" + getType() + "] cannot accept sub-aggregations");
+        throw new AggregationInitializationException("Aggregator [" + name + "] of type ["
+                + getType() + "] cannot accept sub-aggregations");
     }
 
     @Override
     public SignificantTextAggregationBuilder subAggregation(AggregationBuilder aggregation) {
-        throw new AggregationInitializationException(
-                "Aggregator [" + name + "] of type [" + getType() + "] cannot accept sub-aggregations");
+        throw new AggregationInitializationException("Aggregator [" + name + "] of type ["
+                + getType() + "] cannot accept sub-aggregations");
     }
 
-    public SignificantTextAggregationBuilder bucketCountThresholds(TermsAggregator.BucketCountThresholds bucketCountThresholds) {
+    public SignificantTextAggregationBuilder bucketCountThresholds(
+            TermsAggregator.BucketCountThresholds bucketCountThresholds) {
         if (bucketCountThresholds == null) {
-            throw new IllegalArgumentException("[bucketCountThresholds] must not be null: [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[bucketCountThresholds] must not be null: [" + name + "]");
         }
         this.bucketCountThresholds = bucketCountThresholds;
         return this;
@@ -144,7 +157,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
      */
     public SignificantTextAggregationBuilder size(int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("[size] must be greater than 0. Found [" + size + "] in [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[size] must be greater than 0. Found [" + size + "] in [" + name + "]");
         }
         bucketCountThresholds.setRequiredSize(size);
         return this;
@@ -158,7 +172,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
      */
     public SignificantTextAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
-            throw new IllegalArgumentException("[shardSize] must be greater than  0. Found [" + shardSize + "] in [" + name + "]");
+            throw new IllegalArgumentException("[shardSize] must be greater than  0. Found ["
+                    + shardSize + "] in [" + name + "]");
         }
         bucketCountThresholds.setShardSize(shardSize);
         return this;
@@ -173,15 +188,17 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return this;
     }
 
+
     /**
      * Selects the fields to load from _source JSON and analyze.
      * If none are specified, the indexed "fieldName" value is assumed
      * to also be the name of the JSON field holding the value
      */
     public SignificantTextAggregationBuilder sourceFieldNames(List<String> names) {
-        this.sourceFieldNames = names.toArray(new String[names.size()]);
+        this.sourceFieldNames = names.toArray(new String [names.size()]);
         return this;
     }
+
 
     /**
      * Control if duplicate paragraphs of text should try be filtered from the
@@ -200,7 +217,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     public SignificantTextAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
             throw new IllegalArgumentException(
-                    "[minDocCount] must be greater than or equal to 0. Found [" + minDocCount + "] in [" + name + "]");
+                    "[minDocCount] must be greater than or equal to 0. Found [" + minDocCount
+                            + "] in [" + name + "]");
         }
         bucketCountThresholds.setMinDocCount(minDocCount);
         return this;
@@ -213,7 +231,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     public SignificantTextAggregationBuilder shardMinDocCount(long shardMinDocCount) {
         if (shardMinDocCount < 0) {
             throw new IllegalArgumentException(
-                    "[shardMinDocCount] must be greater than or equal to 0. Found [" + shardMinDocCount + "] in [" + name + "]");
+                    "[shardMinDocCount] must be greater than or equal to 0. Found ["
+                            + shardMinDocCount + "] in [" + name + "]");
         }
         bucketCountThresholds.setShardMinDocCount(shardMinDocCount);
         return this;
@@ -221,7 +240,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
 
     public SignificantTextAggregationBuilder backgroundFilter(QueryBuilder backgroundFilter) {
         if (backgroundFilter == null) {
-            throw new IllegalArgumentException("[backgroundFilter] must not be null: [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[backgroundFilter] must not be null: [" + name + "]");
         }
         this.filterBuilder = backgroundFilter;
         return this;
@@ -246,9 +266,11 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return includeExclude;
     }
 
-    public SignificantTextAggregationBuilder significanceHeuristic(SignificanceHeuristic significanceHeuristic) {
+    public SignificantTextAggregationBuilder significanceHeuristic(
+            SignificanceHeuristic significanceHeuristic) {
         if (significanceHeuristic == null) {
-            throw new IllegalArgumentException("[significanceHeuristic] must not be null: [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[significanceHeuristic] must not be null: [" + name + "]");
         }
         this.significanceHeuristic = significanceHeuristic;
         return this;
@@ -302,16 +324,18 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     }
 
     @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-            throws IOException {
+    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent,
+                                        Builder subFactoriesBuilder) throws IOException {
         SignificanceHeuristic executionHeuristic = this.significanceHeuristic.rewrite(queryShardContext);
 
-        return new SignificantTextAggregatorFactory(name, includeExclude, filterBuilder, bucketCountThresholds, executionHeuristic,
-                queryShardContext, parent, subFactoriesBuilder, fieldName, sourceFieldNames, filterDuplicateText, metadata);
+        return new SignificantTextAggregatorFactory(name, includeExclude, filterBuilder,
+                bucketCountThresholds, executionHeuristic, queryShardContext, parent, subFactoriesBuilder,
+                fieldName, sourceFieldNames, filterDuplicateText, metadata);
     }
 
     @Override
-    protected XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {
+    protected XContentBuilder internalXContent(XContentBuilder builder, Params params)
+            throws IOException {
         builder.startObject();
         bucketCountThresholds.toXContent(builder, params);
         if (fieldName != null) {
@@ -325,7 +349,8 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
             builder.field(FILTER_DUPLICATE_TEXT_FIELD_NAME.getPreferredName(), filterDuplicateText);
         }
         if (filterBuilder != null) {
-            builder.field(SignificantTermsAggregationBuilder.BACKGROUND_FILTER.getPreferredName(), filterBuilder);
+            builder.field(SignificantTermsAggregationBuilder.BACKGROUND_FILTER.getPreferredName(),
+                    filterBuilder);
         }
         if (includeExclude != null) {
             includeExclude.toXContent(builder, params);
@@ -338,22 +363,23 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), bucketCountThresholds, fieldName, filterDuplicateText, filterBuilder, includeExclude,
-                significanceHeuristic, Arrays.hashCode(sourceFieldNames));
+        return Objects.hash(super.hashCode(), bucketCountThresholds, fieldName,
+            filterDuplicateText, filterBuilder,
+            includeExclude, significanceHeuristic, Arrays.hashCode(sourceFieldNames));
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         SignificantTextAggregationBuilder other = (SignificantTextAggregationBuilder) obj;
-        return Objects.equals(bucketCountThresholds, other.bucketCountThresholds) && Objects.equals(fieldName, other.fieldName)
-                && Arrays.equals(sourceFieldNames, other.sourceFieldNames) && filterDuplicateText == other.filterDuplicateText
-                && Objects.equals(filterBuilder, other.filterBuilder) && Objects.equals(includeExclude, other.includeExclude)
+        return Objects.equals(bucketCountThresholds, other.bucketCountThresholds)
+                && Objects.equals(fieldName, other.fieldName)
+                && Arrays.equals(sourceFieldNames, other.sourceFieldNames)
+                && filterDuplicateText == other.filterDuplicateText
+                && Objects.equals(filterBuilder, other.filterBuilder)
+                && Objects.equals(includeExclude, other.includeExclude)
                 && Objects.equals(significanceHeuristic, other.significanceHeuristic);
     }
 

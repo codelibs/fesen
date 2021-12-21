@@ -19,8 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.stats;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -32,6 +31,8 @@ import org.codelibs.fesen.index.engine.CommitStats;
 import org.codelibs.fesen.index.seqno.RetentionLeaseStats;
 import org.codelibs.fesen.index.seqno.SeqNoStats;
 import org.codelibs.fesen.index.shard.ShardPath;
+
+import java.io.IOException;
 
 public class ShardStats implements Writeable, ToXContentFragment {
 
@@ -65,12 +66,21 @@ public class ShardStats implements Writeable, ToXContentFragment {
         statePath = in.readString();
         dataPath = in.readString();
         isCustomDataPath = in.readBoolean();
-        seqNoStats = in.readOptionalWriteable(SeqNoStats::new);
-        retentionLeaseStats = in.readOptionalWriteable(RetentionLeaseStats::new);
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            seqNoStats = in.readOptionalWriteable(SeqNoStats::new);
+        }
+        if (in.getVersion().onOrAfter(Version.V_6_7_0)) {
+            retentionLeaseStats = in.readOptionalWriteable(RetentionLeaseStats::new);
+        }
     }
 
-    public ShardStats(final ShardRouting routing, final ShardPath shardPath, final CommonStats commonStats, final CommitStats commitStats,
-            final SeqNoStats seqNoStats, final RetentionLeaseStats retentionLeaseStats) {
+    public ShardStats(
+            final ShardRouting routing,
+            final ShardPath shardPath,
+            final CommonStats commonStats,
+            final CommitStats commitStats,
+            final SeqNoStats seqNoStats,
+            final RetentionLeaseStats retentionLeaseStats) {
         this.shardRouting = routing;
         this.dataPath = shardPath.getRootDataPath().toString();
         this.statePath = shardPath.getRootStatePath().toString();
@@ -122,14 +132,21 @@ public class ShardStats implements Writeable, ToXContentFragment {
         out.writeString(statePath);
         out.writeString(dataPath);
         out.writeBoolean(isCustomDataPath);
-        out.writeOptionalWriteable(seqNoStats);
-        out.writeOptionalWriteable(retentionLeaseStats);
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            out.writeOptionalWriteable(seqNoStats);
+        }
+        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
+            out.writeOptionalWriteable(retentionLeaseStats);
+        }
     }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        builder.startObject(Fields.ROUTING).field(Fields.STATE, shardRouting.state()).field(Fields.PRIMARY, shardRouting.primary())
-                .field(Fields.NODE, shardRouting.currentNodeId()).field(Fields.RELOCATING_NODE, shardRouting.relocatingNodeId())
+        builder.startObject(Fields.ROUTING)
+                .field(Fields.STATE, shardRouting.state())
+                .field(Fields.PRIMARY, shardRouting.primary())
+                .field(Fields.NODE, shardRouting.currentNodeId())
+                .field(Fields.RELOCATING_NODE, shardRouting.relocatingNodeId())
                 .endObject();
 
         commonStats.toXContent(builder, params);

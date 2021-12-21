@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.action.fieldcaps;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -40,6 +31,15 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.core.Tuple;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Response for {@link FieldCapabilitiesRequest} requests.
@@ -61,7 +61,7 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
     }
 
     private FieldCapabilitiesResponse(String[] indices, Map<String, Map<String, FieldCapabilities>> responseMap,
-            List<FieldCapabilitiesIndexResponse> indexResponses) {
+                                      List<FieldCapabilitiesIndexResponse> indexResponses) {
         this.responseMap = Objects.requireNonNull(responseMap);
         this.indexResponses = Objects.requireNonNull(indexResponses);
         this.indices = indices;
@@ -92,12 +92,14 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
         return indices;
     }
 
+
     /**
      * Get the field capabilities map.
      */
     public Map<String, Map<String, FieldCapabilities>> get() {
         return responseMap;
     }
+
 
     /**
      * Returns the actual per-index field caps responses
@@ -149,11 +151,11 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
 
     @SuppressWarnings("unchecked")
     private static final ConstructingObjectParser<FieldCapabilitiesResponse, Void> PARSER =
-            new ConstructingObjectParser<>("field_capabilities_response", true, a -> {
+        new ConstructingObjectParser<>("field_capabilities_response", true,
+            a -> {
                 List<String> indices = a[0] == null ? Collections.emptyList() : (List<String>) a[0];
                 return new FieldCapabilitiesResponse(indices.stream().toArray(String[]::new),
-                        ((List<Tuple<String, Map<String, FieldCapabilities>>>) a[1]).stream()
-                                .collect(Collectors.toMap(Tuple::v1, Tuple::v2)));
+                    ((List<Tuple<String, Map<String, FieldCapabilities>>>) a[1]).stream().collect(Collectors.toMap(Tuple::v1, Tuple::v2)));
             });
 
     static {
@@ -180,13 +182,12 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FieldCapabilitiesResponse that = (FieldCapabilitiesResponse) o;
-        return Arrays.equals(indices, that.indices) && Objects.equals(responseMap, that.responseMap)
-                && Objects.equals(indexResponses, that.indexResponses);
+        return Arrays.equals(indices, that.indices) &&
+            Objects.equals(responseMap, that.responseMap) &&
+            Objects.equals(indexResponses, that.indexResponses);
     }
 
     @Override

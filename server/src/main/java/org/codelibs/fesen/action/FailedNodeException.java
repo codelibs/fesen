@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.action;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 public class FailedNodeException extends FesenException {
 

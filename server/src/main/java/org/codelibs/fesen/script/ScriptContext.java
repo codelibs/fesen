@@ -82,7 +82,7 @@ public final class ScriptContext<FactoryType> {
 
     /** Construct a context with the related instance and compiled classes with caller provided cache defaults */
     public ScriptContext(String name, Class<FactoryType> factoryClazz, int cacheSizeDefault, TimeValue cacheExpireDefault,
-            Tuple<Integer, TimeValue> maxCompilationRateDefault) {
+                        Tuple<Integer, TimeValue> maxCompilationRateDefault) {
         this.name = name;
         this.factoryClazz = factoryClazz;
         Method newInstanceMethod = findMethod("FactoryType", factoryClazz, "newInstance");
@@ -93,14 +93,14 @@ public final class ScriptContext<FactoryType> {
             newInstanceMethod = findMethod("StatefulFactoryType", statefulFactoryClazz, "newInstance");
             if (newInstanceMethod == null) {
                 throw new IllegalArgumentException("Could not find method newInstance StatefulFactoryType class ["
-                        + statefulFactoryClazz.getName() + "] for script context [" + name + "]");
+                    + statefulFactoryClazz.getName() + "] for script context [" + name + "]");
             }
         } else if (newInstanceMethod != null) {
             assert newFactoryMethod == null;
             statefulFactoryClazz = null;
         } else {
             throw new IllegalArgumentException("Could not find method newInstance or method newFactory on FactoryType class ["
-                    + factoryClazz.getName() + "] for script context [" + name + "]");
+                + factoryClazz.getName() + "] for script context [" + name + "]");
         }
         instanceClazz = newInstanceMethod.getReturnType();
 
@@ -123,7 +123,7 @@ public final class ScriptContext<FactoryType> {
             if (method.getName().equals(methodName)) {
                 if (foundMethod != null) {
                     throw new IllegalArgumentException("Cannot have multiple " + methodName + " methods on " + type + " class ["
-                            + clazz.getName() + "] for script context [" + name + "]");
+                        + clazz.getName() + "] for script context [" + name + "]");
                 }
                 foundMethod = method;
             }

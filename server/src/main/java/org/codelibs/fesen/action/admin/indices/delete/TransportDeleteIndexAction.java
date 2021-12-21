@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.delete;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -45,6 +40,11 @@ import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Delete index action.
  */
@@ -57,10 +57,11 @@ public class TransportDeleteIndexAction extends TransportMasterNodeAction<Delete
 
     @Inject
     public TransportDeleteIndexAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            MetadataDeleteIndexService deleteIndexService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations) {
+                                      MetadataDeleteIndexService deleteIndexService, ActionFilters actionFilters,
+                                      IndexNameExpressionResolver indexNameExpressionResolver,
+                                      DestructiveOperations destructiveOperations) {
         super(DeleteIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, DeleteIndexRequest::new,
-                indexNameExpressionResolver);
+            indexNameExpressionResolver );
         this.deleteIndexService = deleteIndexService;
         this.destructiveOperations = destructiveOperations;
     }
@@ -88,15 +89,16 @@ public class TransportDeleteIndexAction extends TransportMasterNodeAction<Delete
 
     @Override
     protected void masterOperation(final DeleteIndexRequest request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         final Set<Index> concreteIndices = new HashSet<>(Arrays.asList(indexNameExpressionResolver.concreteIndices(state, request)));
         if (concreteIndices.isEmpty()) {
             listener.onResponse(new AcknowledgedResponse(true));
             return;
         }
 
-        DeleteIndexClusterStateUpdateRequest deleteRequest = new DeleteIndexClusterStateUpdateRequest().ackTimeout(request.timeout())
-                .masterNodeTimeout(request.masterNodeTimeout()).indices(concreteIndices.toArray(new Index[concreteIndices.size()]));
+        DeleteIndexClusterStateUpdateRequest deleteRequest = new DeleteIndexClusterStateUpdateRequest()
+            .ackTimeout(request.timeout()).masterNodeTimeout(request.masterNodeTimeout())
+            .indices(concreteIndices.toArray(new Index[concreteIndices.size()]));
 
         deleteIndexService.deleteIndices(deleteRequest, new ActionListener<ClusterStateUpdateResponse>() {
 

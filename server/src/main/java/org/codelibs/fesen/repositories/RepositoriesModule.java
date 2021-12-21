@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.repositories;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -34,6 +29,11 @@ import org.codelibs.fesen.repositories.fs.FsRepository;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Sets up classes for Snapshot/Restore.
  */
@@ -42,15 +42,15 @@ public final class RepositoriesModule {
     private final RepositoriesService repositoriesService;
 
     public RepositoriesModule(Environment env, List<RepositoryPlugin> repoPlugins, TransportService transportService,
-            ClusterService clusterService, ThreadPool threadPool, NamedXContentRegistry namedXContentRegistry,
-            RecoverySettings recoverySettings) {
+                              ClusterService clusterService, ThreadPool threadPool, NamedXContentRegistry namedXContentRegistry,
+                              RecoverySettings recoverySettings) {
         Map<String, Repository.Factory> factories = new HashMap<>();
-        factories.put(FsRepository.TYPE,
-                metadata -> new FsRepository(metadata, env, namedXContentRegistry, clusterService, recoverySettings));
+        factories.put(FsRepository.TYPE, metadata -> new FsRepository(metadata, env, namedXContentRegistry, clusterService,
+            recoverySettings));
 
         for (RepositoryPlugin repoPlugin : repoPlugins) {
-            Map<String, Repository.Factory> newRepoTypes =
-                    repoPlugin.getRepositories(env, namedXContentRegistry, clusterService, recoverySettings);
+            Map<String, Repository.Factory> newRepoTypes = repoPlugin.getRepositories(env, namedXContentRegistry, clusterService,
+                recoverySettings);
             for (Map.Entry<String, Repository.Factory> entry : newRepoTypes.entrySet()) {
                 if (factories.put(entry.getKey(), entry.getValue()) != null) {
                     throw new IllegalArgumentException("Repository type [" + entry.getKey() + "] is already registered");
@@ -60,15 +60,15 @@ public final class RepositoriesModule {
 
         Map<String, Repository.Factory> internalFactories = new HashMap<>();
         for (RepositoryPlugin repoPlugin : repoPlugins) {
-            Map<String, Repository.Factory> newRepoTypes =
-                    repoPlugin.getInternalRepositories(env, namedXContentRegistry, clusterService, recoverySettings);
+            Map<String, Repository.Factory> newRepoTypes = repoPlugin.getInternalRepositories(env, namedXContentRegistry, clusterService,
+                recoverySettings);
             for (Map.Entry<String, Repository.Factory> entry : newRepoTypes.entrySet()) {
                 if (internalFactories.put(entry.getKey(), entry.getValue()) != null) {
                     throw new IllegalArgumentException("Internal repository type [" + entry.getKey() + "] is already registered");
                 }
                 if (factories.put(entry.getKey(), entry.getValue()) != null) {
-                    throw new IllegalArgumentException(
-                            "Internal repository type [" + entry.getKey() + "] is already registered as a " + "non-internal repository");
+                    throw new IllegalArgumentException("Internal repository type [" + entry.getKey() + "] is already registered as a " +
+                        "non-internal repository");
                 }
             }
         }
@@ -76,8 +76,8 @@ public final class RepositoriesModule {
         Settings settings = env.settings();
         Map<String, Repository.Factory> repositoryTypes = Collections.unmodifiableMap(factories);
         Map<String, Repository.Factory> internalRepositoryTypes = Collections.unmodifiableMap(internalFactories);
-        repositoriesService =
-                new RepositoriesService(settings, clusterService, transportService, repositoryTypes, internalRepositoryTypes, threadPool);
+        repositoriesService = new RepositoriesService(settings, clusterService, transportService, repositoryTypes,
+            internalRepositoryTypes, threadPool);
     }
 
     public RepositoriesService getRepositoryService() {

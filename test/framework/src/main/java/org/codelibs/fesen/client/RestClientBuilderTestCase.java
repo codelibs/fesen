@@ -22,10 +22,10 @@ package org.codelibs.fesen.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.codelibs.fesen.test.ESTestCase;
-
 import joptsimple.internal.Strings;
+import org.apache.http.Header;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.test.ESTestCase;
 
 /**
  * A test case with access to internals of a RestClient.

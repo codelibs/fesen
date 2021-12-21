@@ -48,8 +48,14 @@ public class DiscoveryNodeTests extends ESTestCase {
 
     public void testRolesAreSorted() {
         final Set<DiscoveryNodeRole> roles = new HashSet<>(randomSubsetOf(DiscoveryNodeRole.BUILT_IN_ROLES));
-        final DiscoveryNode node = new DiscoveryNode("name", "id", new TransportAddress(TransportAddress.META_ADDRESS, 9200), emptyMap(),
-                roles, Version.CURRENT);
+        final DiscoveryNode node = new DiscoveryNode(
+            "name",
+            "id",
+            new TransportAddress(TransportAddress.META_ADDRESS, 9200),
+            emptyMap(),
+            roles,
+            Version.CURRENT
+        );
         DiscoveryNodeRole previous = null;
         for (final DiscoveryNodeRole current : node.getRoles()) {
             if (previous != null) {
@@ -61,8 +67,8 @@ public class DiscoveryNodeTests extends ESTestCase {
     }
 
     public void testDiscoveryNodeIsCreatedWithHostFromInetAddress() throws Exception {
-        InetAddress inetAddress = randomBoolean() ? InetAddress.getByName("192.0.2.1")
-                : InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1 });
+        InetAddress inetAddress = randomBoolean() ? InetAddress.getByName("192.0.2.1") :
+            InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1});
         TransportAddress transportAddress = new TransportAddress(inetAddress, randomIntBetween(0, 65535));
         DiscoveryNode node = new DiscoveryNode("name1", "id1", transportAddress, emptyMap(), emptySet(), Version.CURRENT);
         assertEquals(transportAddress.address().getHostString(), node.getHostName());
@@ -70,7 +76,7 @@ public class DiscoveryNodeTests extends ESTestCase {
     }
 
     public void testDiscoveryNodeSerializationKeepsHost() throws Exception {
-        InetAddress inetAddress = InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1 });
+        InetAddress inetAddress = InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1});
         TransportAddress transportAddress = new TransportAddress(inetAddress, randomIntBetween(0, 65535));
         DiscoveryNode node = new DiscoveryNode("name1", "id1", transportAddress, emptyMap(), emptySet(), Version.CURRENT);
 
@@ -88,7 +94,7 @@ public class DiscoveryNodeTests extends ESTestCase {
     }
 
     public void testDiscoveryNodeRoleWithOldVersion() throws Exception {
-        InetAddress inetAddress = InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1 });
+        InetAddress inetAddress = InetAddress.getByAddress("name1", new byte[] { (byte) 192, (byte) 168, (byte) 0, (byte) 1});
         TransportAddress transportAddress = new TransportAddress(inetAddress, randomIntBetween(0, 65535));
 
         DiscoveryNodeRole customRole = new DiscoveryNodeRole("custom_role", "z", true) {
@@ -107,8 +113,8 @@ public class DiscoveryNodeTests extends ESTestCase {
             }
         };
 
-        DiscoveryNode node =
-                new DiscoveryNode("name1", "id1", transportAddress, emptyMap(), Collections.singleton(customRole), Version.CURRENT);
+        DiscoveryNode node = new DiscoveryNode("name1", "id1", transportAddress, emptyMap(),
+            Collections.singleton(customRole), Version.CURRENT);
 
         {
             BytesStreamOutput streamOutput = new BytesStreamOutput();
@@ -119,7 +125,7 @@ public class DiscoveryNodeTests extends ESTestCase {
             in.setVersion(Version.CURRENT);
             DiscoveryNode serialized = new DiscoveryNode(in);
             assertThat(serialized.getRoles().stream().map(DiscoveryNodeRole::roleName).collect(Collectors.joining()),
-                    equalTo("custom_role"));
+                equalTo("custom_role"));
         }
 
         {
@@ -130,7 +136,8 @@ public class DiscoveryNodeTests extends ESTestCase {
             StreamInput in = StreamInput.wrap(streamOutput.bytes().toBytesRef().bytes);
             in.setVersion(Version.V_7_9_0);
             DiscoveryNode serialized = new DiscoveryNode(in);
-            assertThat(serialized.getRoles().stream().map(DiscoveryNodeRole::roleName).collect(Collectors.joining()), equalTo("data"));
+            assertThat(serialized.getRoles().stream().map(DiscoveryNodeRole::roleName).collect(Collectors.joining()),
+                equalTo("data"));
         }
 
     }

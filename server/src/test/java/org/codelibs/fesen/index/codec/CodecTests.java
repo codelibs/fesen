@@ -88,7 +88,9 @@ public class CodecTests extends ESTestCase {
     }
 
     private CodecService createCodecService() throws IOException {
-        Settings nodeSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings nodeSettings = Settings.builder()
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
         IndexSettings settings = IndexSettingsModule.newIndexSettings("_na", nodeSettings);
         SimilarityService similarityService = new SimilarityService(settings, null, Collections.emptyMap());
         IndexAnalyzers indexAnalyzers = createTestAnalysis(settings, nodeSettings).indexAnalyzers;

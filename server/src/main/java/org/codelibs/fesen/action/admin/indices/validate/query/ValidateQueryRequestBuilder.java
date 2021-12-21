@@ -24,7 +24,7 @@ import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.index.query.QueryBuilder;
 
 public class ValidateQueryRequestBuilder
-        extends BroadcastOperationRequestBuilder<ValidateQueryRequest, ValidateQueryResponse, ValidateQueryRequestBuilder> {
+    extends BroadcastOperationRequestBuilder<ValidateQueryRequest, ValidateQueryResponse, ValidateQueryRequestBuilder> {
 
     public ValidateQueryRequestBuilder(FesenClient client, ValidateQueryAction action) {
         super(client, action, new ValidateQueryRequest());

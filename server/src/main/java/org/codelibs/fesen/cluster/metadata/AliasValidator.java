@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.function.Function;
-
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -38,6 +32,12 @@ import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.Rewriteable;
 import org.codelibs.fesen.indices.InvalidAliasNameException;
+
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.Function;
 
 /**
  * Validator for an alias, to be used before adding an alias to the index metadata
@@ -114,8 +114,8 @@ public class AliasValidator {
     public void validateAliasFilter(String alias, String filter, QueryShardContext queryShardContext,
             NamedXContentRegistry xContentRegistry) {
         assert queryShardContext != null;
-        try (XContentParser parser =
-                XContentFactory.xContent(filter).createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, filter)) {
+        try (XContentParser parser = XContentFactory.xContent(filter)
+            .createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, filter)) {
             validateAliasFilter(parser, queryShardContext);
         } catch (Exception e) {
             throw new IllegalArgumentException("failed to parse filter for alias [" + alias + "]", e);
@@ -128,12 +128,12 @@ public class AliasValidator {
      * @throws IllegalArgumentException if the filter is not valid
      */
     public void validateAliasFilter(String alias, BytesReference filter, QueryShardContext queryShardContext,
-            NamedXContentRegistry xContentRegistry) {
+                                    NamedXContentRegistry xContentRegistry) {
         assert queryShardContext != null;
 
         try (InputStream inputStream = filter.streamInput();
-                XContentParser parser = XContentFactory.xContentType(inputStream).xContent().createParser(xContentRegistry,
-                        LoggingDeprecationHandler.INSTANCE, filter.streamInput())) {
+             XContentParser parser = XContentFactory.xContentType(inputStream).xContent()
+                     .createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, filter.streamInput())) {
             validateAliasFilter(parser, queryShardContext);
         } catch (Exception e) {
             throw new IllegalArgumentException("failed to parse filter for alias [" + alias + "]", e);

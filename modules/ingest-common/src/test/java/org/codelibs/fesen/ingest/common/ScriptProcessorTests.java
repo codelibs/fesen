@@ -19,16 +19,10 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.core.Is.is;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.ingest.IngestDocument;
 import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.ScriptProcessor;
 import org.codelibs.fesen.script.IngestScript;
 import org.codelibs.fesen.script.MockScriptEngine;
 import org.codelibs.fesen.script.Script;
@@ -37,6 +31,13 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.script.ScriptType;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.core.Is.is;
 
 public class ScriptProcessorTests extends ESTestCase {
 
@@ -47,13 +48,23 @@ public class ScriptProcessorTests extends ESTestCase {
     @Before
     public void setupScripting() {
         String scriptName = "script";
-        scriptService = new ScriptService(Settings.builder().build(), Collections.singletonMap(Script.DEFAULT_SCRIPT_LANG,
-                new MockScriptEngine(Script.DEFAULT_SCRIPT_LANG, Collections.singletonMap(scriptName, ctx -> {
-                    Integer bytesIn = (Integer) ctx.get("bytes_in");
-                    Integer bytesOut = (Integer) ctx.get("bytes_out");
-                    ctx.put("bytes_total", bytesIn + bytesOut);
-                    return null;
-                }), Collections.emptyMap())), new HashMap<>(ScriptModule.CORE_CONTEXTS));
+        scriptService = new ScriptService(Settings.builder().build(),
+            Collections.singletonMap(
+                Script.DEFAULT_SCRIPT_LANG, new MockScriptEngine(
+                    Script.DEFAULT_SCRIPT_LANG,
+                    Collections.singletonMap(
+                        scriptName, ctx -> {
+                            Integer bytesIn = (Integer) ctx.get("bytes_in");
+                            Integer bytesOut = (Integer) ctx.get("bytes_out");
+                            ctx.put("bytes_total", bytesIn + bytesOut);
+                            return null;
+                        }
+                    ),
+                    Collections.emptyMap()
+                )
+            ),
+            new HashMap<>(ScriptModule.CORE_CONTEXTS)
+        );
         script = new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG, scriptName, Collections.emptyMap());
         ingestScript = scriptService.compile(script, IngestScript.CONTEXT).newInstance(script.getParams());
     }
@@ -89,11 +100,21 @@ public class ScriptProcessorTests extends ESTestCase {
 
     public void testTypeDeprecation() throws Exception {
         String scriptName = "script";
-        ScriptService scriptService = new ScriptService(Settings.builder().build(), Collections.singletonMap(Script.DEFAULT_SCRIPT_LANG,
-                new MockScriptEngine(Script.DEFAULT_SCRIPT_LANG, Collections.singletonMap(scriptName, ctx -> {
-                    ctx.get("_type");
-                    return null;
-                }), Collections.emptyMap())), new HashMap<>(ScriptModule.CORE_CONTEXTS));
+        ScriptService scriptService = new ScriptService(Settings.builder().build(),
+                Collections.singletonMap(
+                        Script.DEFAULT_SCRIPT_LANG, new MockScriptEngine(
+                                Script.DEFAULT_SCRIPT_LANG,
+                                Collections.singletonMap(
+                                        scriptName, ctx -> {
+                                            ctx.get("_type");
+                                            return null;
+                                        }
+                                ),
+                                Collections.emptyMap()
+                        )
+                ),
+                new HashMap<>(ScriptModule.CORE_CONTEXTS)
+        );
         Script script = new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG, scriptName, Collections.emptyMap());
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random(), Collections.emptyMap());
         ScriptProcessor processor = new ScriptProcessor(randomAlphaOfLength(10), null, script, null, scriptService);

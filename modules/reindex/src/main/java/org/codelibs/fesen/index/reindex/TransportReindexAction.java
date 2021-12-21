@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyList;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -33,12 +31,18 @@ import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.ReindexAction;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
+
+import static java.util.Collections.emptyList;
 
 public class TransportReindexAction extends HandledTransportAction<ReindexRequest, BulkByScrollResponse> {
     public static final Setting<List<String>> REMOTE_CLUSTER_WHITELIST =

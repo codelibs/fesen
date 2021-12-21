@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.AutoDateHistogramAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
@@ -86,7 +87,7 @@ public class PipelineAggregationHelperTests extends ESTestCase {
         }
 
         if (emptyHisto) {
-            int idx = randomIntBetween(0, values.size() - 1);
+            int idx = randomIntBetween(0, values.size()-1);
             MockBucket bucket = values.get(idx);
             bucket.count = randomIntBetween(1, 50);
             bucket.docValues = new double[bucket.count];
@@ -147,7 +148,9 @@ public class PipelineAggregationHelperTests extends ESTestCase {
 
     static AggregationBuilder getRandomSequentiallyOrderedParentAgg() throws IOException {
         @SuppressWarnings("unchecked")
-        Function<String, AggregationBuilder> builder = randomFrom(HistogramAggregationBuilder::new, DateHistogramAggregationBuilder::new,
+        Function<String, AggregationBuilder> builder = randomFrom(
+                HistogramAggregationBuilder::new,
+                DateHistogramAggregationBuilder::new,
                 AutoDateHistogramAggregationBuilder::new);
         return builder.apply("name");
     }

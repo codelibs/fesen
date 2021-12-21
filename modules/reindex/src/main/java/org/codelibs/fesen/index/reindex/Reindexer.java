@@ -19,21 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.index.VersionType.INTERNAL;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -64,10 +49,32 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.index.mapper.VersionFieldMapper;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.ReindexAction;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.RemoteInfo;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource;
+import org.codelibs.fesen.index.reindex.WorkerBulkByScrollTaskState;
 import org.codelibs.fesen.index.reindex.remote.RemoteScrollableHitSource;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.synchronizedList;
+import static java.util.Objects.requireNonNull;
+import static org.codelibs.fesen.index.VersionType.INTERNAL;
 
 public class Reindexer {
 
@@ -80,7 +87,7 @@ public class Reindexer {
     private final ReindexSslConfig reindexSslConfig;
 
     Reindexer(ClusterService clusterService, Client client, ThreadPool threadPool, ScriptService scriptService,
-            ReindexSslConfig reindexSslConfig) {
+              ReindexSslConfig reindexSslConfig) {
         this.clusterService = clusterService;
         this.client = client;
         this.threadPool = threadPool;
@@ -94,12 +101,13 @@ public class Reindexer {
 
     public void execute(BulkByScrollTask task, ReindexRequest request, ActionListener<BulkByScrollResponse> listener) {
         BulkByScrollParallelizationHelper.executeSlicedAction(task, request, ReindexAction.INSTANCE, listener, client,
-                clusterService.localNode(), () -> {
-                    ParentTaskAssigningClient assigningClient = new ParentTaskAssigningClient(client, clusterService.localNode(), task);
-                    AsyncIndexBySearchAction searchAction = new AsyncIndexBySearchAction(task, logger, assigningClient, threadPool,
-                            scriptService, reindexSslConfig, request, listener);
-                    searchAction.start();
-                });
+            clusterService.localNode(),
+            () -> {
+                ParentTaskAssigningClient assigningClient = new ParentTaskAssigningClient(client, clusterService.localNode(), task);
+                AsyncIndexBySearchAction searchAction = new AsyncIndexBySearchAction(task, logger, assigningClient, threadPool,
+                    scriptService, reindexSslConfig, request, listener);
+                searchAction.start();
+            });
 
     }
 
@@ -117,33 +125,35 @@ public class Reindexer {
             clientHeaders[i++] = new BasicHeader(header.getKey(), header.getValue());
         }
         final RestClientBuilder builder =
-                RestClient.builder(new HttpHost(remoteInfo.getHost(), remoteInfo.getPort(), remoteInfo.getScheme()))
-                        .setDefaultHeaders(clientHeaders).setRequestConfigCallback(c -> {
-                            c.setConnectTimeout(Math.toIntExact(remoteInfo.getConnectTimeout().millis()));
-                            c.setSocketTimeout(Math.toIntExact(remoteInfo.getSocketTimeout().millis()));
-                            return c;
-                        }).setHttpClientConfigCallback(c -> {
-                            // Enable basic auth if it is configured
-                            if (remoteInfo.getUsername() != null) {
-                                UsernamePasswordCredentials creds =
-                                        new UsernamePasswordCredentials(remoteInfo.getUsername(), remoteInfo.getPassword());
-                                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                                credentialsProvider.setCredentials(AuthScope.ANY, creds);
-                                c.setDefaultCredentialsProvider(credentialsProvider);
-                            }
-                            // Stick the task id in the thread name so we can track down tasks from stack traces
-                            AtomicInteger threads = new AtomicInteger();
-                            c.setThreadFactory(r -> {
-                                String name = "es-client-" + taskId + "-" + threads.getAndIncrement();
-                                Thread t = new Thread(r, name);
-                                threadCollector.add(t);
-                                return t;
-                            });
-                            // Limit ourselves to one reactor thread because for now the search process is single threaded.
-                            c.setDefaultIOReactorConfig(IOReactorConfig.custom().setIoThreadCount(1).build());
-                            c.setSSLStrategy(sslConfig.getStrategy());
-                            return c;
-                        });
+            RestClient.builder(new HttpHost(remoteInfo.getHost(), remoteInfo.getPort(), remoteInfo.getScheme()))
+                .setDefaultHeaders(clientHeaders)
+                .setRequestConfigCallback(c -> {
+                    c.setConnectTimeout(Math.toIntExact(remoteInfo.getConnectTimeout().millis()));
+                    c.setSocketTimeout(Math.toIntExact(remoteInfo.getSocketTimeout().millis()));
+                    return c;
+                })
+                .setHttpClientConfigCallback(c -> {
+                    // Enable basic auth if it is configured
+                    if (remoteInfo.getUsername() != null) {
+                        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(remoteInfo.getUsername(),
+                            remoteInfo.getPassword());
+                        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                        credentialsProvider.setCredentials(AuthScope.ANY, creds);
+                        c.setDefaultCredentialsProvider(credentialsProvider);
+                    }
+                    // Stick the task id in the thread name so we can track down tasks from stack traces
+                    AtomicInteger threads = new AtomicInteger();
+                    c.setThreadFactory(r -> {
+                        String name = "es-client-" + taskId + "-" + threads.getAndIncrement();
+                        Thread t = new Thread(r, name);
+                        threadCollector.add(t);
+                        return t;
+                    });
+                    // Limit ourselves to one reactor thread because for now the search process is single threaded.
+                    c.setDefaultIOReactorConfig(IOReactorConfig.custom().setIoThreadCount(1).build());
+                    c.setSSLStrategy(sslConfig.getStrategy());
+                    return c;
+                });
         if (Strings.hasLength(remoteInfo.getPathPrefix()) && "/".equals(remoteInfo.getPathPrefix()) == false) {
             builder.setPathPrefix(remoteInfo.getPathPrefix());
         }
@@ -166,16 +176,16 @@ public class Reindexer {
          */
         private List<Thread> createdThreads = emptyList();
 
-        AsyncIndexBySearchAction(BulkByScrollTask task, Logger logger, ParentTaskAssigningClient client, ThreadPool threadPool,
-                ScriptService scriptService, ReindexSslConfig sslConfig, ReindexRequest request,
-                ActionListener<BulkByScrollResponse> listener) {
+        AsyncIndexBySearchAction(BulkByScrollTask task, Logger logger, ParentTaskAssigningClient client,
+                                 ThreadPool threadPool, ScriptService scriptService, ReindexSslConfig sslConfig, ReindexRequest request,
+                                 ActionListener<BulkByScrollResponse> listener) {
             super(task,
-                    /*
-                     * We only need the source version if we're going to use it when write and we only do that when the destination request uses
-                     * external versioning.
-                     */
-                    request.getDestination().versionType() != VersionType.INTERNAL, false, logger, client, threadPool, request, listener,
-                    scriptService, sslConfig);
+                /*
+                 * We only need the source version if we're going to use it when write and we only do that when the destination request uses
+                 * external versioning.
+                 */
+                request.getDestination().versionType() != VersionType.INTERNAL,
+                false, logger, client, threadPool, request, listener, scriptService, sslConfig);
         }
 
         @Override
@@ -185,20 +195,21 @@ public class Reindexer {
                 createdThreads = synchronizedList(new ArrayList<>());
                 assert sslConfig != null : "Reindex ssl config must be set";
                 RestClient restClient = buildRestClient(remoteInfo, sslConfig, task.getId(), createdThreads);
-                return new RemoteScrollableHitSource(logger, backoffPolicy, threadPool, worker::countSearchRetry, this::onScrollResponse,
-                        this::finishHim, restClient, remoteInfo.getQuery(), mainRequest.getSearchRequest());
+                return new RemoteScrollableHitSource(logger, backoffPolicy, threadPool, worker::countSearchRetry,
+                    this::onScrollResponse, this::finishHim,
+                    restClient, remoteInfo.getQuery(), mainRequest.getSearchRequest());
             }
             return super.buildScrollableResultSource(backoffPolicy);
         }
 
         @Override
         protected void finishHim(Exception failure, List<BulkItemResponse.Failure> indexingFailures,
-                List<ScrollableHitSource.SearchFailure> searchFailures, boolean timedOut) {
+                                 List<ScrollableHitSource.SearchFailure> searchFailures, boolean timedOut) {
             super.finishHim(failure, indexingFailures, searchFailures, timedOut);
             // A little extra paranoia so we log something if we leave any threads running
             for (Thread thread : createdThreads) {
                 if (thread.isAlive()) {
-                    assert false : "Failed to properly stop client thread [" + thread.getName() + "]";
+                    assert false: "Failed to properly stop client thread [" + thread.getName() + "]";
                     logger.error("Failed to properly stop client thread [{}]", thread.getName());
                 }
             }
@@ -249,15 +260,15 @@ public class Reindexer {
             if (mainRequestXContentType != null && doc.getXContentType() != mainRequestXContentType) {
                 // we need to convert
                 try (InputStream stream = doc.getSource().streamInput();
-                        XContentParser parser = sourceXContentType.xContent().createParser(NamedXContentRegistry.EMPTY,
-                                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream);
-                        XContentBuilder builder = XContentBuilder.builder(mainRequestXContentType.xContent())) {
+                     XContentParser parser = sourceXContentType.xContent()
+                         .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream);
+                     XContentBuilder builder = XContentBuilder.builder(mainRequestXContentType.xContent())) {
                     parser.nextToken();
                     builder.copyCurrentStructure(parser);
                     index.source(BytesReference.bytes(builder), builder.contentType());
                 } catch (IOException e) {
-                    throw new UncheckedIOException("failed to convert hit from " + sourceXContentType + " to " + mainRequestXContentType,
-                            e);
+                    throw new UncheckedIOException("failed to convert hit from " + sourceXContentType + " to "
+                        + mainRequestXContentType, e);
                 }
             } else {
                 index.source(doc.getSource(), doc.getXContentType());
@@ -291,21 +302,21 @@ public class Reindexer {
                 return;
             }
             switch (routingSpec) {
-            case "keep":
-                super.copyRouting(request, routing);
-                break;
-            case "discard":
-                super.copyRouting(request, null);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported routing command");
+                case "keep":
+                    super.copyRouting(request, routing);
+                    break;
+                case "discard":
+                    super.copyRouting(request, null);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported routing command");
             }
         }
 
         class ReindexScriptApplier extends ScriptApplier {
 
             ReindexScriptApplier(WorkerBulkByScrollTaskState taskWorker, ScriptService scriptService, Script script,
-                    Map<String, Object> params) {
+                                 Map<String, Object> params) {
                 super(taskWorker, scriptService, script, params);
             }
 

@@ -79,39 +79,43 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
     private static final String AGG_NAME = "scriptedMetric";
     private static final Script INIT_SCRIPT = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScript", Collections.emptyMap());
     private static final Script MAP_SCRIPT = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScript", Collections.emptyMap());
-    private static final Script COMBINE_SCRIPT =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScript", Collections.emptyMap());
-    private static final Script REDUCE_SCRIPT =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "reduceScript", Collections.emptyMap());
+    private static final Script COMBINE_SCRIPT = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScript",
+            Collections.emptyMap());
+    private static final Script REDUCE_SCRIPT = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "reduceScript",
+        Collections.emptyMap());
 
-    private static final Script INIT_SCRIPT_SCORE =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptScore", Collections.emptyMap());
-    private static final Script MAP_SCRIPT_SCORE =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptScore", Collections.emptyMap());
-    private static final Script COMBINE_SCRIPT_SCORE =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptScore", Collections.emptyMap());
-    private static final Script COMBINE_SCRIPT_NOOP =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptNoop", Collections.emptyMap());
+    private static final Script INIT_SCRIPT_SCORE = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptScore",
+            Collections.emptyMap());
+    private static final Script MAP_SCRIPT_SCORE = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptScore",
+            Collections.emptyMap());
+    private static final Script COMBINE_SCRIPT_SCORE = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptScore",
+            Collections.emptyMap());
+    private static final Script COMBINE_SCRIPT_NOOP = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptNoop",
+        Collections.emptyMap());
 
-    private static final Script INIT_SCRIPT_PARAMS =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptParams", Collections.singletonMap("initialValue", 24));
-    private static final Script MAP_SCRIPT_PARAMS =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptParams", Collections.singletonMap("itemValue", 12));
-    private static final Script COMBINE_SCRIPT_PARAMS =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptParams", Collections.singletonMap("multiplier", 4));
-    private static final Script REDUCE_SCRIPT_PARAMS =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "reduceScriptParams", Collections.singletonMap("additional", 2));
+    private static final Script INIT_SCRIPT_PARAMS = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptParams",
+            Collections.singletonMap("initialValue", 24));
+    private static final Script MAP_SCRIPT_PARAMS = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptParams",
+            Collections.singletonMap("itemValue", 12));
+    private static final Script COMBINE_SCRIPT_PARAMS = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptParams",
+            Collections.singletonMap("multiplier", 4));
+    private static final Script REDUCE_SCRIPT_PARAMS = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "reduceScriptParams",
+            Collections.singletonMap("additional", 2));
     private static final String CONFLICTING_PARAM_NAME = "initialValue";
 
-    private static final Script INIT_SCRIPT_SELF_REF =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptSelfRef", Collections.emptyMap());
-    private static final Script MAP_SCRIPT_SELF_REF =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptSelfRef", Collections.emptyMap());
-    private static final Script COMBINE_SCRIPT_SELF_REF =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptSelfRef", Collections.emptyMap());
+    private static final Script INIT_SCRIPT_SELF_REF = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptSelfRef",
+            Collections.emptyMap());
+    private static final Script MAP_SCRIPT_SELF_REF = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "mapScriptSelfRef",
+            Collections.emptyMap());
+    private static final Script COMBINE_SCRIPT_SELF_REF = new Script(ScriptType.INLINE, MockScriptEngine.NAME, "combineScriptSelfRef",
+            Collections.emptyMap());
 
-    private static final Script INIT_SCRIPT_MAKING_ARRAY =
-            new Script(ScriptType.INLINE, MockScriptEngine.NAME, "initScriptMakingArray", Collections.emptyMap());
+    private static final Script INIT_SCRIPT_MAKING_ARRAY = new Script(
+        ScriptType.INLINE,
+        MockScriptEngine.NAME,
+        "initScriptMakingArray",
+        Collections.emptyMap()
+    );
 
     private static final Map<String, Function<Map<String, Object>, Object>> SCRIPTS = new HashMap<>();
 
@@ -138,7 +142,10 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
         });
         SCRIPTS.put("reduceScript", params -> {
             List<?> states = (List<?>) params.get("states");
-            return states.stream().filter(a -> a instanceof Number).map(a -> (Number) a).mapToInt(Number::intValue).sum();
+            return states.stream()
+                .filter(a -> a instanceof Number)
+                .map(a -> (Number) a)
+                .mapToInt(Number::intValue).sum();
         });
 
         SCRIPTS.put("initScriptScore", params -> {
@@ -158,7 +165,7 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
         SCRIPTS.put("initScriptParams", params -> {
             Map<String, Object> state = (Map<String, Object>) params.get("state");
-            Integer initialValue = (Integer) params.get("initialValue");
+            Integer initialValue = (Integer)params.get("initialValue");
             ArrayList<Integer> collector = new ArrayList<>();
             collector.add(initialValue);
             state.put("collector", collector);
@@ -175,8 +182,11 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             int multiplier = ((Integer) params.get("multiplier"));
             return ((List<Integer>) state.get("collector")).stream().mapToInt(Integer::intValue).map(i -> i * multiplier).sum();
         });
-        SCRIPTS.put("reduceScriptParams", params -> ((List) params.get("states")).stream().mapToInt(i -> (int) i).sum()
-                + (int) params.get("aggs_param") + (int) params.get("additional") - ((List) params.get("states")).size() * 24 * 4);
+        SCRIPTS.put("reduceScriptParams", params ->
+            ((List)params.get("states")).stream().mapToInt(i -> (int)i).sum() +
+                    (int)params.get("aggs_param") + (int)params.get("additional") -
+                    ((List)params.get("states")).size()*24*4
+        );
 
         SCRIPTS.put("initScriptSelfRef", params -> {
             Map<String, Object> state = (Map<String, Object>) params.get("state");
@@ -192,16 +202,16 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
         });
 
         SCRIPTS.put("combineScriptSelfRef", params -> {
-            Map<String, Object> state = (Map<String, Object>) params.get("state");
-            state.put("selfRef", state);
-            return state;
+           Map<String, Object> state = (Map<String, Object>) params.get("state");
+           state.put("selfRef", state);
+           return state;
         });
         SCRIPTS.put("initScriptMakingArray", params -> {
             Map<String, Object> state = (Map<String, Object>) params.get("state");
-            state.put("array", new String[] { "foo", "bar" });
+            state.put("array", new String[] {"foo", "bar"});
             state.put("collector", new ArrayList<Integer>());
             return state;
-        });
+         });
     }
 
     private CircuitBreakerService circuitBreakerService;
@@ -240,11 +250,14 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
     @Override
     protected ScriptService getMockScriptService() {
-        MockScriptEngine scriptEngine = new MockScriptEngine(MockScriptEngine.NAME, SCRIPTS, Collections.emptyMap());
+        MockScriptEngine scriptEngine = new MockScriptEngine(MockScriptEngine.NAME,
+            SCRIPTS,
+            Collections.emptyMap());
         Map<String, ScriptEngine> engines = Collections.singletonMap(scriptEngine.getType(), scriptEngine);
 
         return new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
     }
+
 
     @SuppressWarnings("unchecked")
     public void testNoDocs() throws IOException {
@@ -256,7 +269,7 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
                 aggregationBuilder.mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT_NOOP).reduceScript(REDUCE_SCRIPT);
                 ScriptedMetric scriptedMetric =
-                        searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
                 assertEquals(AGG_NAME, scriptedMetric.getName());
                 assertNotNull(scriptedMetric.aggregation());
                 assertEquals(0, scriptedMetric.aggregation());
@@ -276,7 +289,7 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
                 aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT).reduceScript(REDUCE_SCRIPT);
                 IllegalArgumentException exception = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                    () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
                 assertEquals(exception.getMessage(), "[combineScript] must not be null: [scriptedMetric]");
             }
         }
@@ -294,7 +307,7 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
                 aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT);
                 IllegalArgumentException exception = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                    () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
                 assertEquals(exception.getMessage(), "[reduceScript] must not be null: [scriptedMetric]");
             }
         }
@@ -313,9 +326,10 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             }
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT).reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT)
+                    .combineScript(COMBINE_SCRIPT).reduceScript(REDUCE_SCRIPT);
                 ScriptedMetric scriptedMetric =
-                        searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
                 assertEquals(AGG_NAME, scriptedMetric.getName());
                 assertNotNull(scriptedMetric.aggregation());
                 assertEquals(numDocs, scriptedMetric.aggregation());
@@ -336,10 +350,10 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             }
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT_SCORE).mapScript(MAP_SCRIPT_SCORE).combineScript(COMBINE_SCRIPT_SCORE)
-                        .reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT_SCORE).mapScript(MAP_SCRIPT_SCORE)
+                    .combineScript(COMBINE_SCRIPT_SCORE).reduceScript(REDUCE_SCRIPT);
                 ScriptedMetric scriptedMetric =
-                        searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
                 assertEquals(AGG_NAME, scriptedMetric.getName());
                 assertNotNull(scriptedMetric.aggregation());
                 // all documents have score of 1.0
@@ -360,10 +374,10 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT_PARAMS).mapScript(MAP_SCRIPT_PARAMS).combineScript(COMBINE_SCRIPT_PARAMS)
-                        .reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT_PARAMS).mapScript(MAP_SCRIPT_PARAMS)
+                    .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT);
                 ScriptedMetric scriptedMetric =
-                        searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder);
 
                 // The result value depends on the script params.
                 assertEquals(4896, scriptedMetric.aggregation());
@@ -374,7 +388,7 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
     public void testAggParamsPassedToReduceScript() throws IOException {
         MockScriptEngine scriptEngine = new MockScriptEngine(MockScriptEngine.NAME, SCRIPTS, Collections.emptyMap());
         Map<String, ScriptEngine> engines = Collections.singletonMap(scriptEngine.getType(), scriptEngine);
-        ScriptService scriptService = new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
+        ScriptService scriptService =  new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
 
         try (Directory directory = newDirectory()) {
             try (RandomIndexWriter indexWriter = new RandomIndexWriter(random(), directory)) {
@@ -385,10 +399,11 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.params(Collections.singletonMap("aggs_param", 1)).initScript(INIT_SCRIPT_PARAMS)
-                        .mapScript(MAP_SCRIPT_PARAMS).combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT_PARAMS);
-                ScriptedMetric scriptedMetric =
-                        searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder, 0);
+                aggregationBuilder.params(Collections.singletonMap("aggs_param", 1))
+                        .initScript(INIT_SCRIPT_PARAMS).mapScript(MAP_SCRIPT_PARAMS)
+                        .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT_PARAMS);
+                ScriptedMetric scriptedMetric = searchAndReduce(
+                        newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder, 0);
 
                 // The result value depends on the script params.
                 assertEquals(4803, scriptedMetric.aggregation());
@@ -408,12 +423,13 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
                 Map<String, Object> aggParams = Collections.singletonMap(CONFLICTING_PARAM_NAME, "blah");
                 aggregationBuilder.params(aggParams).initScript(INIT_SCRIPT_PARAMS).mapScript(MAP_SCRIPT_PARAMS)
-                        .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT);
+                    .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT);
 
-                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () ->
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder)
+                );
                 assertEquals("Parameter name \"" + CONFLICTING_PARAM_NAME + "\" used in both aggregation and script parameters",
-                        ex.getMessage());
+                    ex.getMessage());
             }
         }
     }
@@ -425,11 +441,12 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             }
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT_SELF_REF).mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT_PARAMS)
-                        .reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT_SELF_REF).mapScript(MAP_SCRIPT)
+                    .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT);
 
-                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () ->
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder)
+                );
                 assertEquals("Iterable object is self-referencing itself (Scripted metric aggs init script)", ex.getMessage());
             }
         }
@@ -445,11 +462,12 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             }
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT_SELF_REF).combineScript(COMBINE_SCRIPT_PARAMS)
-                        .reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT_SELF_REF)
+                    .combineScript(COMBINE_SCRIPT_PARAMS).reduceScript(REDUCE_SCRIPT);
 
-                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () ->
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder)
+                );
                 assertEquals("Iterable object is self-referencing itself (Scripted metric aggs map script)", ex.getMessage());
             }
         }
@@ -462,11 +480,12 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
             }
             try (IndexReader indexReader = DirectoryReader.open(directory)) {
                 ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT_SELF_REF)
-                        .reduceScript(REDUCE_SCRIPT);
+                aggregationBuilder.initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT)
+                    .combineScript(COMBINE_SCRIPT_SELF_REF).reduceScript(REDUCE_SCRIPT);
 
-                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                        () -> searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder));
+                IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () ->
+                    searchAndReduce(newSearcher(indexReader, true, true), new MatchAllDocsQuery(), aggregationBuilder)
+                );
                 assertEquals("Iterable object is self-referencing itself (Scripted metric aggs combine script)", ex.getMessage());
             }
         }
@@ -474,8 +493,8 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
     public void testInitScriptMakesArray() throws IOException {
         ScriptedMetricAggregationBuilder aggregationBuilder = new ScriptedMetricAggregationBuilder(AGG_NAME);
-        aggregationBuilder.initScript(INIT_SCRIPT_MAKING_ARRAY).mapScript(MAP_SCRIPT).combineScript(COMBINE_SCRIPT)
-                .reduceScript(REDUCE_SCRIPT);
+        aggregationBuilder.initScript(INIT_SCRIPT_MAKING_ARRAY).mapScript(MAP_SCRIPT)
+            .combineScript(COMBINE_SCRIPT).reduceScript(REDUCE_SCRIPT);
         testCase(aggregationBuilder, new MatchAllDocsQuery(), iw -> {
             iw.addDocument(new Document());
         }, (InternalScriptedMetric r) -> {
@@ -485,8 +504,12 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
 
     public void testAsSubAgg() throws IOException {
         AggregationBuilder aggregationBuilder = new TermsAggregationBuilder("t").field("t").executionHint("map")
-                .subAggregation(new ScriptedMetricAggregationBuilder("scripted").initScript(INIT_SCRIPT).mapScript(MAP_SCRIPT)
-                        .combineScript(COMBINE_SCRIPT).reduceScript(REDUCE_SCRIPT));
+            .subAggregation(
+                new ScriptedMetricAggregationBuilder("scripted").initScript(INIT_SCRIPT)
+                    .mapScript(MAP_SCRIPT)
+                    .combineScript(COMBINE_SCRIPT)
+                    .reduceScript(REDUCE_SCRIPT)
+            );
         CheckedConsumer<RandomIndexWriter, IOException> buildIndex = iw -> {
             for (int i = 0; i < 99; i++) {
                 iw.addDocument(singleton(new SortedSetDocValuesField("t", i % 2 == 0 ? new BytesRef("even") : new BytesRef("odd"))));
@@ -505,10 +528,22 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
         testCase(aggregationBuilder, new MatchAllDocsQuery(), buildIndex, verify, keywordField("t"), longField("number"));
     }
 
-    protected <A extends Aggregator> A createAggregator(Query query, AggregationBuilder aggregationBuilder, IndexSearcher indexSearcher,
-            IndexSettings indexSettings, MultiBucketConsumer bucketConsumer, MappedFieldType... fieldTypes) throws IOException {
-        SearchContext searchContext =
-                createSearchContext(indexSearcher, indexSettings, query, bucketConsumer, circuitBreakerService, fieldTypes);
+    protected <A extends Aggregator> A createAggregator(
+        Query query,
+        AggregationBuilder aggregationBuilder,
+        IndexSearcher indexSearcher,
+        IndexSettings indexSettings,
+        MultiBucketConsumer bucketConsumer,
+        MappedFieldType... fieldTypes
+    ) throws IOException {
+        SearchContext searchContext = createSearchContext(
+            indexSearcher,
+            indexSettings,
+            query,
+            bucketConsumer,
+            circuitBreakerService,
+            fieldTypes
+        );
         return createAggregator(aggregationBuilder, searchContext);
     }
 
@@ -518,13 +553,32 @@ public class ScriptedMetricAggregatorTests extends AggregatorTestCase {
      * is final and cannot be mocked
      */
     @Override
-    protected QueryShardContext queryShardContextMock(IndexSearcher searcher, MapperService mapperService, IndexSettings indexSettings,
-            CircuitBreakerService circuitBreakerService, BigArrays bigArrays) {
+    protected QueryShardContext queryShardContextMock(IndexSearcher searcher,
+                                                        MapperService mapperService,
+                                                        IndexSettings indexSettings,
+                                                        CircuitBreakerService circuitBreakerService,
+                                                        BigArrays bigArrays) {
         MockScriptEngine scriptEngine = new MockScriptEngine(MockScriptEngine.NAME, SCRIPTS, Collections.emptyMap());
         Map<String, ScriptEngine> engines = Collections.singletonMap(scriptEngine.getType(), scriptEngine);
-        ScriptService scriptService = new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
-        return new QueryShardContext(0, indexSettings, BigArrays.NON_RECYCLING_INSTANCE, null,
-                getIndexFieldDataLookup(mapperService, circuitBreakerService), mapperService, null, scriptService, xContentRegistry(),
-                writableRegistry(), null, null, System::currentTimeMillis, null, null, () -> true, valuesSourceRegistry);
+        ScriptService scriptService =  new ScriptService(Settings.EMPTY, engines, ScriptModule.CORE_CONTEXTS);
+        return new QueryShardContext(
+            0,
+            indexSettings,
+            BigArrays.NON_RECYCLING_INSTANCE,
+            null,
+            getIndexFieldDataLookup(mapperService, circuitBreakerService),
+            mapperService,
+            null,
+            scriptService,
+            xContentRegistry(),
+            writableRegistry(),
+            null,
+            null,
+            System::currentTimeMillis,
+            null,
+            null,
+            () -> true,
+            valuesSourceRegistry
+        );
     }
 }

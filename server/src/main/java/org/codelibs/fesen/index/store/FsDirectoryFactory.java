@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.store;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.FileSwitchDirectory;
@@ -45,18 +39,25 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.shard.ShardPath;
 import org.codelibs.fesen.plugins.IndexStorePlugin;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+
 public class FsDirectoryFactory implements IndexStorePlugin.DirectoryFactory {
 
     public static final Setting<LockFactory> INDEX_LOCK_FACTOR_SETTING = new Setting<>("index.store.fs.fs_lock", "native", (s) -> {
         switch (s) {
-        case "native":
-            return NativeFSLockFactory.INSTANCE;
-        case "simple":
-            return SimpleFSLockFactory.INSTANCE;
-        default:
-            throw new IllegalArgumentException("unrecognized [index.store.fs.fs_lock] \"" + s + "\": must be native or simple");
+            case "native":
+                return NativeFSLockFactory.INSTANCE;
+            case "simple":
+                return SimpleFSLockFactory.INSTANCE;
+            default:
+                throw new IllegalArgumentException("unrecognized [index.store.fs.fs_lock] \"" + s + "\": must be native or simple");
         } // can we set on both - node and index level, some nodes might be running on NFS so they might need simple rather than native
     }, Property.IndexScope, Property.NodeScope);
+
 
     @Override
     public Directory newDirectory(IndexSettings indexSettings, ShardPath path) throws IOException {
@@ -75,30 +76,31 @@ public class FsDirectoryFactory implements IndexStorePlugin.DirectoryFactory {
         } else {
             type = IndexModule.Type.fromSettingsKey(storeType);
         }
-        Set<String> preLoadExtensions = new HashSet<>(indexSettings.getValue(IndexModule.INDEX_STORE_PRE_LOAD_SETTING));
+        Set<String> preLoadExtensions = new HashSet<>(
+            indexSettings.getValue(IndexModule.INDEX_STORE_PRE_LOAD_SETTING));
         switch (type) {
-        case HYBRIDFS:
-            // Use Lucene defaults
-            final FSDirectory primaryDirectory = FSDirectory.open(location, lockFactory);
-            if (primaryDirectory instanceof MMapDirectory) {
-                MMapDirectory mMapDirectory = (MMapDirectory) primaryDirectory;
-                return new HybridDirectory(lockFactory, setPreload(mMapDirectory, lockFactory, preLoadExtensions));
-            } else {
-                return primaryDirectory;
-            }
-        case MMAPFS:
-            return setPreload(new MMapDirectory(location, lockFactory), lockFactory, preLoadExtensions);
-        case SIMPLEFS:
-            return new SimpleFSDirectory(location, lockFactory);
-        case NIOFS:
-            return new NIOFSDirectory(location, lockFactory);
-        default:
-            throw new AssertionError("unexpected built-in store type [" + type + "]");
+            case HYBRIDFS:
+                // Use Lucene defaults
+                final FSDirectory primaryDirectory = FSDirectory.open(location, lockFactory);
+                if (primaryDirectory instanceof MMapDirectory) {
+                    MMapDirectory mMapDirectory = (MMapDirectory) primaryDirectory;
+                    return new HybridDirectory(lockFactory, setPreload(mMapDirectory, lockFactory, preLoadExtensions));
+                } else {
+                    return primaryDirectory;
+                }
+            case MMAPFS:
+                return setPreload(new MMapDirectory(location, lockFactory), lockFactory, preLoadExtensions);
+            case SIMPLEFS:
+                return new SimpleFSDirectory(location, lockFactory);
+            case NIOFS:
+                return new NIOFSDirectory(location, lockFactory);
+            default:
+                throw new AssertionError("unexpected built-in store type [" + type + "]");
         }
     }
 
-    public static MMapDirectory setPreload(MMapDirectory mMapDirectory, LockFactory lockFactory, Set<String> preLoadExtensions)
-            throws IOException {
+    public static MMapDirectory setPreload(MMapDirectory mMapDirectory, LockFactory lockFactory,
+            Set<String> preLoadExtensions) throws IOException {
         assert mMapDirectory.getPreload() == false;
         if (preLoadExtensions.isEmpty() == false) {
             if (preLoadExtensions.contains("*")) {
@@ -149,33 +151,33 @@ public class FsDirectoryFactory implements IndexStorePlugin.DirectoryFactory {
 
         boolean useDelegate(String name) {
             String extension = FileSwitchDirectory.getExtension(name);
-            switch (extension) {
-            // Norms, doc values and term dictionaries are typically performance-sensitive and hot in the page
-            // cache, so we use mmap, which provides better performance.
-            case "nvd":
-            case "dvd":
-            case "tim":
+            switch(extension) {
+                // Norms, doc values and term dictionaries are typically performance-sensitive and hot in the page
+                // cache, so we use mmap, which provides better performance.
+                case "nvd":
+                case "dvd":
+                case "tim":
                 // We want to open the terms index and KD-tree index off-heap to save memory, but this only performs
                 // well if using mmap.
-            case "tip":
+                case "tip":
                 // dim files only apply up to lucene 8.x indices. It can be removed once we are in lucene 10
-            case "dim":
-            case "kdd":
-            case "kdi":
+                case "dim":
+                case "kdd":
+                case "kdi":
                 // Compound files are tricky because they store all the information for the segment. Benchmarks
                 // suggested that not mapping them hurts performance.
-            case "cfs":
+                case "cfs":
                 // MMapDirectory has special logic to read long[] arrays in little-endian order that helps speed
                 // up the decoding of postings. The same logic applies to positions (.pos) of offsets (.pay) but we
                 // are not mmaping them as queries that leverage positions are more costly and the decoding of postings
                 // tends to be less a bottleneck.
-            case "doc":
-                return true;
-            // Other files are either less performance-sensitive (e.g. stored field index, norms metadata)
-            // or are large and have a random access pattern and mmap leads to page cache trashing
-            // (e.g. stored fields and term vectors).
-            default:
-                return false;
+                case "doc":
+                    return true;
+                // Other files are either less performance-sensitive (e.g. stored field index, norms metadata)
+                // or are large and have a random access pattern and mmap leads to page cache trashing
+                // (e.g. stored fields and term vectors).
+                default:
+                    return false;
             }
         }
 
@@ -183,7 +185,6 @@ public class FsDirectoryFactory implements IndexStorePlugin.DirectoryFactory {
             return delegate;
         }
     }
-
     // TODO it would be nice to share code between PreLoadMMapDirectory and HybridDirectory but due to the nesting aspect of
     // directories here makes it tricky. It would be nice to allow MMAPDirectory to pre-load on a per IndexInput basis.
     static final class PreLoadMMapDirectory extends MMapDirectory {

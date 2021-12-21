@@ -76,8 +76,10 @@ public class InternalRangeTests extends InternalRangeTestCase<InternalRange> {
     }
 
     @Override
-    protected InternalRange createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggregations,
-            boolean keyed) {
+    protected InternalRange createTestInstance(String name,
+                                               Map<String, Object> metadata,
+                                               InternalAggregations aggregations,
+                                               boolean keyed) {
         final List<InternalRange.Bucket> buckets = new ArrayList<>();
         for (int i = 0; i < ranges.size(); ++i) {
             Tuple<Double, Double> range = ranges.get(i);

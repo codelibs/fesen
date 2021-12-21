@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.command;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 /**
  * Abstract base class for allocating an unassigned primary shard to a node

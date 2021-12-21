@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.common.recycler;
 
-import java.util.ArrayDeque;
-
 import com.carrotsearch.hppc.BitMixer;
+
+import java.util.ArrayDeque;
 
 public enum Recyclers {
     ;

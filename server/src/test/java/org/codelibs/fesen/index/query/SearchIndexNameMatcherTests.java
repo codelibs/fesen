@@ -43,22 +43,25 @@ public class SearchIndexNameMatcherTests extends ESTestCase {
 
     @Before
     public void setUpMatchers() {
-        Metadata.Builder metadataBuilder = Metadata.builder().put(indexBuilder("index1").putAlias(AliasMetadata.builder("alias")))
-                .put(indexBuilder("index2").putAlias(AliasMetadata.builder("alias"))).put(indexBuilder("index3"));
+        Metadata.Builder metadataBuilder = Metadata.builder()
+            .put(indexBuilder("index1").putAlias(AliasMetadata.builder("alias")))
+            .put(indexBuilder("index2").putAlias(AliasMetadata.builder("alias")))
+            .put(indexBuilder("index3"));
         ClusterState state = ClusterState.builder(new ClusterName("_name")).metadata(metadataBuilder).build();
 
         ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.state()).thenReturn(state);
 
         matcher = new SearchIndexNameMatcher("index1", "", clusterService,
-                new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
+            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
         remoteMatcher = new SearchIndexNameMatcher("index1", "cluster", clusterService,
-                new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
+            new IndexNameExpressionResolver(new ThreadContext(Settings.EMPTY)));
     }
 
     private static IndexMetadata.Builder indexBuilder(String index) {
-        Settings.Builder settings =
-                settings(Version.CURRENT).put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0);
+        Settings.Builder settings = settings(Version.CURRENT).
+                put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
+                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0);
         return IndexMetadata.builder(index).settings(settings);
     }
 

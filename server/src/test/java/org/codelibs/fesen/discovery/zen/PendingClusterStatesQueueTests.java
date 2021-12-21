@@ -115,7 +115,8 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
         // now check that queue doesn't contain anything pending from another master
         for (ClusterStateContext context : queue.pendingStates) {
             final String pendingMaster = context.state.nodes().getMasterNodeId();
-            assertThat("found a cluster state from [" + pendingMaster + "], after a state from [" + processedMaster + "] was processed",
+            assertThat("found a cluster state from [" + pendingMaster
+                            + "], after a state from [" + processedMaster + "] was processed",
                     pendingMaster, equalTo(processedMaster));
         }
         // and check all committed contexts from another master were failed
@@ -140,8 +141,9 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
         // now check that queue doesn't contain superseded states
         for (ClusterStateContext context : queue.pendingStates) {
             if (context.committed()) {
-                assertFalse("found a committed cluster state, which is superseded by a failed state.\nFound:" + context.state + "\nfailed:"
-                        + toFail, toFail.supersedes(context.state));
+                assertFalse("found a committed cluster state, which is superseded by a failed state.\nFound:" +
+                        context.state + "\nfailed:" + toFail,
+                        toFail.supersedes(context.state));
             }
         }
         // check no state has been erroneously removed
@@ -198,8 +200,8 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
         assert highestCommitted != null;
 
         queue.markAsProcessed(highestCommitted);
-        assertThat((long) queue.stats().getTotal(), equalTo(states.size() - (1 + highestCommitted.version())));
-        assertThat((long) queue.stats().getPending(), equalTo(states.size() - (1 + highestCommitted.version())));
+        assertThat((long)queue.stats().getTotal(), equalTo(states.size() - (1 + highestCommitted.version())));
+        assertThat((long)queue.stats().getPending(), equalTo(states.size() - (1 + highestCommitted.version())));
         assertThat(queue.stats().getCommitted(), equalTo(0));
     }
 
@@ -235,12 +237,10 @@ public class PendingClusterStatesQueueTests extends ESTestCase {
             int masterIndex = randomInt(masters.length - 1);
             ClusterState state = lastClusterStatePerMaster[masterIndex];
             if (state == null) {
-                state = ClusterState
-                        .builder(
-                                ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-                        .nodes(DiscoveryNodes.builder().add(new DiscoveryNode(masters[masterIndex], buildNewFakeTransportAddress(),
-                                emptyMap(), emptySet(), Version.CURRENT)).masterNodeId(masters[masterIndex]).build())
-                        .build();
+                state = ClusterState.builder(ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY)).nodes(DiscoveryNodes.builder()
+                                .add(new DiscoveryNode(masters[masterIndex], buildNewFakeTransportAddress(),
+                                        emptyMap(), emptySet(),Version.CURRENT)).masterNodeId(masters[masterIndex]).build()
+                ).build();
             } else {
                 state = ClusterState.builder(state).incrementVersion().build();
             }

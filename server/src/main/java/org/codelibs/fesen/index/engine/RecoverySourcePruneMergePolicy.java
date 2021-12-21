@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.apache.lucene.codecs.DocValuesProducer;
 import org.apache.lucene.codecs.StoredFieldsReader;
 import org.apache.lucene.index.BinaryDocValues;
@@ -48,6 +43,11 @@ import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.BitSetIterator;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 final class RecoverySourcePruneMergePolicy extends OneMergeWrappingMergePolicy {
     RecoverySourcePruneMergePolicy(String recoverySourceField, Supplier<Query> retainSourceQuerySupplier, MergePolicy in) {
         super(in, toWrap -> new OneMerge(toWrap.segments) {
@@ -60,7 +60,7 @@ final class RecoverySourcePruneMergePolicy extends OneMergeWrappingMergePolicy {
     }
 
     private static CodecReader wrapReader(String recoverySourceField, CodecReader reader, Supplier<Query> retainSourceQuerySupplier)
-            throws IOException {
+        throws IOException {
         NumericDocValues recoverySource = reader.getNumericDocValues(recoverySourceField);
         if (recoverySource == null || recoverySource.nextDoc() == DocIdSetIterator.NO_MORE_DOCS) {
             return reader; // early terminate - nothing to do here since non of the docs has a recovery source anymore.
@@ -106,8 +106,8 @@ final class RecoverySourcePruneMergePolicy extends OneMergeWrappingMergePolicy {
                             // we can't return null here lucenes DocIdMerger expects an instance
                             intersection = DocIdSetIterator.empty();
                         } else {
-                            intersection = ConjunctionDISI.intersectIterators(
-                                    Arrays.asList(numeric, new BitSetIterator(recoverySourceToKeep, recoverySourceToKeep.length())));
+                            intersection = ConjunctionDISI.intersectIterators(Arrays.asList(numeric,
+                                new BitSetIterator(recoverySourceToKeep, recoverySourceToKeep.length())));
                         }
                         return new FilterNumericDocValues(numeric) {
                             @Override
@@ -134,7 +134,8 @@ final class RecoverySourcePruneMergePolicy extends OneMergeWrappingMergePolicy {
 
         @Override
         public StoredFieldsReader getFieldsReader() {
-            return new RecoverySourcePruningStoredFieldsReader(super.getFieldsReader(), recoverySourceToKeep, recoverySourceField);
+            return new RecoverySourcePruningStoredFieldsReader(
+                    super.getFieldsReader(), recoverySourceToKeep, recoverySourceField);
         }
 
         @Override

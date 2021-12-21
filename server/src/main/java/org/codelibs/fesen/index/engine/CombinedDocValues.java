@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.NumericDocValues;
 import org.codelibs.fesen.index.mapper.SeqNoFieldMapper;
 import org.codelibs.fesen.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.index.mapper.VersionFieldMapper;
+
+import java.io.IOException;
+import java.util.Objects;
 
 final class CombinedDocValues {
     private final NumericDocValues versionDV;
@@ -38,8 +38,8 @@ final class CombinedDocValues {
     CombinedDocValues(LeafReader leafReader) throws IOException {
         this.versionDV = Objects.requireNonNull(leafReader.getNumericDocValues(VersionFieldMapper.NAME), "VersionDV is missing");
         this.seqNoDV = Objects.requireNonNull(leafReader.getNumericDocValues(SeqNoFieldMapper.NAME), "SeqNoDV is missing");
-        this.primaryTermDV =
-                Objects.requireNonNull(leafReader.getNumericDocValues(SeqNoFieldMapper.PRIMARY_TERM_NAME), "PrimaryTermDV is missing");
+        this.primaryTermDV = Objects.requireNonNull(
+            leafReader.getNumericDocValues(SeqNoFieldMapper.PRIMARY_TERM_NAME), "PrimaryTermDV is missing");
         this.tombstoneDV = leafReader.getNumericDocValues(SeqNoFieldMapper.TOMBSTONE_NAME);
         this.recoverySource = leafReader.getNumericDocValues(SourceFieldMapper.RECOVERY_SOURCE_NAME);
     }

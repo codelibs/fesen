@@ -32,8 +32,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
  */
 public class RecoveryRequest extends BroadcastRequest<RecoveryRequest> {
 
-    private boolean detailed = false; // Provides extra details in the response
-    private boolean activeOnly = false; // Only reports on active recoveries
+    private boolean detailed = false;       // Provides extra details in the response
+    private boolean activeOnly = false;     // Only reports on active recoveries
 
     /**
      * Constructs a request for recovery information for all shards

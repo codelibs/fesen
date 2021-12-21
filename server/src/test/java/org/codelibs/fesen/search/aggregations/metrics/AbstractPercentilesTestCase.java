@@ -66,8 +66,8 @@ public abstract class AbstractPercentilesTestCase<T extends InternalAggregation 
         return createTestInstance(name, metadata, keyed, format, percents, values);
     }
 
-    protected abstract T createTestInstance(String name, Map<String, Object> metadata, boolean keyed, DocValueFormat format,
-            double[] percents, double[] values);
+    protected abstract T createTestInstance(String name, Map<String, Object> metadata,
+                                            boolean keyed, DocValueFormat format, double[] percents, double[] values);
 
     protected abstract Class<? extends ParsedPercentiles> implementationClass();
 
@@ -102,7 +102,7 @@ public abstract class AbstractPercentilesTestCase<T extends InternalAggregation 
     protected abstract void assertPercentile(T agg, Double value);
 
     public void testEmptyRanksXContent() throws IOException {
-        double[] percents = new double[] { 1, 2, 3 };
+        double[] percents = new double[]{1,2,3};
         boolean keyed = randomBoolean();
         DocValueFormat docValueFormat = randomNumericDocValueFormat();
 
@@ -119,12 +119,30 @@ public abstract class AbstractPercentilesTestCase<T extends InternalAggregation 
         builder.endObject();
         String expected;
         if (keyed) {
-            expected = "{\n" + "  \"values\" : {\n" + "    \"1.0\" : null,\n" + "    \"2.0\" : null,\n" + "    \"3.0\" : null\n" + "  }\n"
-                    + "}";
+            expected = "{\n" +
+                "  \"values\" : {\n" +
+                "    \"1.0\" : null,\n" +
+                "    \"2.0\" : null,\n" +
+                "    \"3.0\" : null\n" +
+                "  }\n" +
+                "}";
         } else {
-            expected = "{\n" + "  \"values\" : [\n" + "    {\n" + "      \"key\" : 1.0,\n" + "      \"value\" : null\n" + "    },\n"
-                    + "    {\n" + "      \"key\" : 2.0,\n" + "      \"value\" : null\n" + "    },\n" + "    {\n" + "      \"key\" : 3.0,\n"
-                    + "      \"value\" : null\n" + "    }\n" + "  ]\n" + "}";
+            expected = "{\n" +
+                "  \"values\" : [\n" +
+                "    {\n" +
+                "      \"key\" : 1.0,\n" +
+                "      \"value\" : null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"key\" : 2.0,\n" +
+                "      \"value\" : null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"key\" : 3.0,\n" +
+                "      \"value\" : null\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
         }
 
         assertThat(Strings.toString(builder), equalTo(expected));

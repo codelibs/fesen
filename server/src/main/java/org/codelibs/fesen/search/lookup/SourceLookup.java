@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.search.lookup;
 
-import static java.util.Collections.emptyMap;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.FesenParseException;
@@ -40,6 +31,15 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.fieldvisitor.FieldsVisitor;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.emptyMap;
 
 public class SourceLookup implements Map {
 
@@ -104,7 +104,10 @@ public class SourceLookup implements Map {
         return sourceAsMapAndType(source).v2();
     }
 
-    public void setSegmentAndDocument(LeafReaderContext context, int docId) {
+    public void setSegmentAndDocument(
+        LeafReaderContext context,
+        int docId
+    ) {
         if (this.reader == context.reader() && this.docId == docId) {
             // if we are called with the same document, don't invalidate source
             return;

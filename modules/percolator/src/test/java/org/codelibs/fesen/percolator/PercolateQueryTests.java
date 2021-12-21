@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.percolator;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -52,9 +44,18 @@ import org.apache.lucene.search.spans.SpanNearQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.store.Directory;
 import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.percolator.PercolateQuery;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.After;
 import org.junit.Before;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class PercolateQueryTests extends ESTestCase {
 
@@ -152,7 +153,7 @@ public class PercolateQueryTests extends ESTestCase {
         assertThat(topDocs.totalHits.value, equalTo(4L));
 
         query = new PercolateQuery("_name", queryStore, Collections.singletonList(new BytesArray("{}")),
-                new TermQuery(new Term("select", "b")), percolateSearcher, null, new MatchNoDocsQuery(""));
+            new TermQuery(new Term("select", "b")), percolateSearcher, null, new MatchNoDocsQuery(""));
         topDocs = shardSearcher.search(query, 10);
         assertThat(topDocs.totalHits.value, equalTo(3L));
         assertThat(topDocs.scoreDocs.length, equalTo(3));

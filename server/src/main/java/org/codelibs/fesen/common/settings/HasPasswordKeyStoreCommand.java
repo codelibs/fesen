@@ -19,22 +19,22 @@
 
 package org.codelibs.fesen.common.settings;
 
-import java.nio.file.Path;
+import joptsimple.OptionSet;
 
 import org.codelibs.fesen.cli.KeyStoreAwareCommand;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
 import org.codelibs.fesen.env.Environment;
 
-import joptsimple.OptionSet;
+import java.nio.file.Path;
 
 public class HasPasswordKeyStoreCommand extends KeyStoreAwareCommand {
 
     static final int NO_PASSWORD_EXIT_CODE = 1;
 
     HasPasswordKeyStoreCommand() {
-        super("Succeeds if the keystore exists and is password-protected, " + "fails with exit code " + NO_PASSWORD_EXIT_CODE
-                + " otherwise.");
+        super("Succeeds if the keystore exists and is password-protected, " +
+            "fails with exit code " + NO_PASSWORD_EXIT_CODE + " otherwise.");
     }
 
     @Override

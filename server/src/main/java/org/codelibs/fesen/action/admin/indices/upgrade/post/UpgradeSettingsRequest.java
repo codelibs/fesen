@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.action.admin.indices.upgrade.post;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Tuple;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Request for an update index settings action
@@ -55,6 +55,7 @@ public class UpgradeSettingsRequest extends AcknowledgedRequest<UpgradeSettingsR
         this.versions = versions;
     }
 
+
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;
@@ -63,6 +64,7 @@ public class UpgradeSettingsRequest extends AcknowledgedRequest<UpgradeSettingsR
         }
         return validationException;
     }
+
 
     Map<String, Tuple<Version, String>> versions() {
         return versions;

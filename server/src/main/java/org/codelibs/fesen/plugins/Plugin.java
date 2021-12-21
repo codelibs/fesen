@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.plugins;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-
 import org.codelibs.fesen.bootstrap.BootstrapCheck;
 import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -56,6 +45,17 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.threadpool.ExecutorBuilder;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * An extension point allowing to plug in custom functionality. This class has a number of extension points that are available to all
@@ -123,9 +123,11 @@ public abstract class Plugin implements Closeable {
      *                                   is called, but will return the repositories service once the node is initialized.
      */
     public Collection<Object> createComponents(Client client, ClusterService clusterService, ThreadPool threadPool,
-            ResourceWatcherService resourceWatcherService, ScriptService scriptService, NamedXContentRegistry xContentRegistry,
-            Environment environment, NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
-            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<RepositoriesService> repositoriesServiceSupplier) {
+                                               ResourceWatcherService resourceWatcherService, ScriptService scriptService,
+                                               NamedXContentRegistry xContentRegistry, Environment environment,
+                                               NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
+                                               IndexNameExpressionResolver indexNameExpressionResolver,
+                                               Supplier<RepositoriesService> repositoriesServiceSupplier) {
         return Collections.emptyList();
     }
 
@@ -157,22 +159,17 @@ public abstract class Plugin implements Closeable {
      * Called before a new index is created on a node. The given module can be used to register index-level
      * extensions.
      */
-    public void onIndexModule(IndexModule indexModule) {
-    }
+    public void onIndexModule(IndexModule indexModule) {}
 
     /**
      * Returns a list of additional {@link Setting} definitions for this plugin.
      */
-    public List<Setting<?>> getSettings() {
-        return Collections.emptyList();
-    }
+    public List<Setting<?>> getSettings() { return Collections.emptyList(); }
 
     /**
      * Returns a list of additional settings filter for this plugin
      */
-    public List<String> getSettingsFilter() {
-        return Collections.emptyList();
-    }
+    public List<String> getSettingsFilter() { return Collections.emptyList(); }
 
     /**
      * Get the setting upgraders provided by this plugin.
@@ -216,9 +213,7 @@ public abstract class Plugin implements Closeable {
      * to provide a better out of the box experience by pre-configuring otherwise (in production) mandatory settings or to enforce certain
      * configurations like OS settings or 3rd party resources.
      */
-    public List<BootstrapCheck> getBootstrapChecks() {
-        return Collections.emptyList();
-    }
+    public List<BootstrapCheck> getBootstrapChecks() { return Collections.emptyList(); }
 
     public Set<DiscoveryNodeRole> getRoles() {
         return Collections.emptySet();

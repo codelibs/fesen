@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.common.lucene;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LeafReader;
+import org.codelibs.fesen.Assertions;
+import org.codelibs.fesen.index.shard.ShardId;
+import org.codelibs.fesen.index.shard.ShardUtils;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,12 +33,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReader;
-import org.codelibs.fesen.Assertions;
-import org.codelibs.fesen.index.shard.ShardId;
-import org.codelibs.fesen.index.shard.ShardUtils;
 
 /**
  * A map between segment core cache keys and the shard that these segments

@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.stats;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
 import org.codelibs.fesen.cluster.ClusterName;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 public class NodesStatsResponse extends BaseNodesResponse<NodeStats> implements ToXContentFragment {
 

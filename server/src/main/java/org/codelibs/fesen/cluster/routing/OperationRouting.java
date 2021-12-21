@@ -19,17 +19,7 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import static org.codelibs.fesen.core.Booleans.parseBoolean;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
@@ -44,17 +34,28 @@ import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.node.ResponseCollectorService;
 
+import static org.codelibs.fesen.core.Booleans.parseBoolean;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class OperationRouting {
 
-    public static final Setting<Boolean> USE_ADAPTIVE_REPLICA_SELECTION_SETTING = Setting
-            .boolSetting("cluster.routing.use_adaptive_replica_selection", true, Setting.Property.Dynamic, Setting.Property.NodeScope);
+    public static final Setting<Boolean> USE_ADAPTIVE_REPLICA_SELECTION_SETTING =
+            Setting.boolSetting("cluster.routing.use_adaptive_replica_selection", true,
+                    Setting.Property.Dynamic, Setting.Property.NodeScope);
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(OperationRouting.class);
     private static final String IGNORE_AWARENESS_ATTRIBUTES_PROPERTY = "es.search.ignore_awareness_attributes";
     static final String IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE =
-            "searches will not be routed based on awareness attributes starting in version 8.0.0; "
-                    + "to opt into this behaviour now please set the system property [" + IGNORE_AWARENESS_ATTRIBUTES_PROPERTY
-                    + "] to [true]";
+        "searches will not be routed based on awareness attributes starting in version 8.0.0; " +
+            "to opt into this behaviour now please set the system property [" + IGNORE_AWARENESS_ATTRIBUTES_PROPERTY + "] to [true]";
 
     private List<String> awarenessAttributes;
     private boolean useAdaptiveReplicaSelection;
@@ -65,10 +66,11 @@ public class OperationRouting {
         if (ignoreAwarenessAttr == false) {
             awarenessAttributes = AwarenessAllocationDecider.CLUSTER_ROUTING_ALLOCATION_AWARENESS_ATTRIBUTE_SETTING.get(settings);
             if (awarenessAttributes.isEmpty() == false) {
-                deprecationLogger.deprecate("searches_not_routed_on_awareness_attributes", IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE);
+                deprecationLogger.deprecate("searches_not_routed_on_awareness_attributes",
+                    IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE);
             }
             clusterSettings.addSettingsUpdateConsumer(AwarenessAllocationDecider.CLUSTER_ROUTING_ALLOCATION_AWARENESS_ATTRIBUTE_SETTING,
-                    this::setAwarenessAttributes);
+                this::setAwarenessAttributes);
         } else {
             awarenessAttributes = Collections.emptyList();
         }
@@ -89,7 +91,8 @@ public class OperationRouting {
         boolean ignoreAwarenessAttr = parseBoolean(System.getProperty(IGNORE_AWARENESS_ATTRIBUTES_PROPERTY), false);
         if (ignoreAwarenessAttr == false) {
             if (this.awarenessAttributes.isEmpty() && awarenessAttributes.isEmpty() == false) {
-                deprecationLogger.deprecate("searches_not_routed_on_awareness_attributes", IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE);
+                deprecationLogger.deprecate("searches_not_routed_on_awareness_attributes",
+                    IGNORE_AWARENESS_ATTRIBUTES_DEPRECATION_MESSAGE);
             }
             this.awarenessAttributes = awarenessAttributes;
         }
@@ -100,30 +103,36 @@ public class OperationRouting {
     }
 
     public ShardIterator getShards(ClusterState clusterState, String index, String id, @Nullable String routing,
-            @Nullable String preference) {
+                                   @Nullable String preference) {
         return preferenceActiveShardIterator(shards(clusterState, index, id, routing), clusterState.nodes().getLocalNodeId(),
-                clusterState.nodes(), preference, null, null);
+            clusterState.nodes(), preference, null, null);
     }
 
     public ShardIterator getShards(ClusterState clusterState, String index, int shardId, @Nullable String preference) {
         final IndexShardRoutingTable indexShard = clusterState.getRoutingTable().shardRoutingTable(index, shardId);
-        return preferenceActiveShardIterator(indexShard, clusterState.nodes().getLocalNodeId(), clusterState.nodes(), preference, null,
-                null);
+        return preferenceActiveShardIterator(indexShard, clusterState.nodes().getLocalNodeId(), clusterState.nodes(),
+            preference, null, null);
     }
 
-    public GroupShardsIterator<ShardIterator> searchShards(ClusterState clusterState, String[] concreteIndices,
-            @Nullable Map<String, Set<String>> routing, @Nullable String preference) {
+    public GroupShardsIterator<ShardIterator> searchShards(ClusterState clusterState,
+                                                           String[] concreteIndices,
+                                                           @Nullable Map<String, Set<String>> routing,
+                                                           @Nullable String preference) {
         return searchShards(clusterState, concreteIndices, routing, preference, null, null);
     }
 
-    public GroupShardsIterator<ShardIterator> searchShards(ClusterState clusterState, String[] concreteIndices,
-            @Nullable Map<String, Set<String>> routing, @Nullable String preference, @Nullable ResponseCollectorService collectorService,
-            @Nullable Map<String, Long> nodeCounts) {
+
+    public GroupShardsIterator<ShardIterator> searchShards(ClusterState clusterState,
+                                                           String[] concreteIndices,
+                                                           @Nullable Map<String, Set<String>> routing,
+                                                           @Nullable String preference,
+                                                           @Nullable ResponseCollectorService collectorService,
+                                                           @Nullable Map<String, Long> nodeCounts) {
         final Set<IndexShardRoutingTable> shards = computeTargetedShards(clusterState, concreteIndices, routing);
         final Set<ShardIterator> set = new HashSet<>(shards.size());
         for (IndexShardRoutingTable shard : shards) {
-            ShardIterator iterator = preferenceActiveShardIterator(shard, clusterState.nodes().getLocalNodeId(), clusterState.nodes(),
-                    preference, collectorService, nodeCounts);
+            ShardIterator iterator = preferenceActiveShardIterator(shard,
+                    clusterState.nodes().getLocalNodeId(), clusterState.nodes(), preference, collectorService, nodeCounts);
             if (iterator != null) {
                 set.add(iterator);
             }
@@ -139,7 +148,7 @@ public class OperationRouting {
     private static final Map<String, Set<String>> EMPTY_ROUTING = Collections.emptyMap();
 
     private Set<IndexShardRoutingTable> computeTargetedShards(ClusterState clusterState, String[] concreteIndices,
-            @Nullable Map<String, Set<String>> routing) {
+                                                              @Nullable Map<String, Set<String>> routing) {
         routing = routing == null ? EMPTY_ROUTING : routing; // just use an empty map
         final Set<IndexShardRoutingTable> set = new HashSet<>();
         // we use set here and not list since we might get duplicates
@@ -163,8 +172,10 @@ public class OperationRouting {
         return set;
     }
 
-    private ShardIterator preferenceActiveShardIterator(IndexShardRoutingTable indexShard, String localNodeId, DiscoveryNodes nodes,
-            @Nullable String preference, @Nullable ResponseCollectorService collectorService, @Nullable Map<String, Long> nodeCounts) {
+    private ShardIterator preferenceActiveShardIterator(IndexShardRoutingTable indexShard, String localNodeId,
+                                                        DiscoveryNodes nodes, @Nullable String preference,
+                                                        @Nullable ResponseCollectorService collectorService,
+                                                        @Nullable Map<String, Long> nodeCounts) {
         if (preference == null || preference.isEmpty()) {
             return shardRoutings(indexShard, nodes, collectorService, nodeCounts);
         }
@@ -201,30 +212,34 @@ public class OperationRouting {
             }
             preferenceType = Preference.parse(preference);
             switch (preferenceType) {
-            case PREFER_NODES:
-                final Set<String> nodesIds = Arrays.stream(preference.substring(Preference.PREFER_NODES.type().length() + 1).split(","))
-                        .collect(Collectors.toSet());
-                return indexShard.preferNodeActiveInitializingShardsIt(nodesIds);
-            case LOCAL:
-                return indexShard.preferNodeActiveInitializingShardsIt(Collections.singleton(localNodeId));
-            case ONLY_LOCAL:
-                return indexShard.onlyNodeActiveInitializingShardsIt(localNodeId);
-            case ONLY_NODES:
-                String nodeAttributes = preference.substring(Preference.ONLY_NODES.type().length() + 1);
-                return indexShard.onlyNodeSelectorActiveInitializingShardsIt(nodeAttributes.split(","), nodes);
-            default:
-                throw new IllegalArgumentException("unknown preference [" + preferenceType + "]");
+                case PREFER_NODES:
+                    final Set<String> nodesIds =
+                            Arrays.stream(
+                                    preference.substring(Preference.PREFER_NODES.type().length() + 1).split(",")
+                            ).collect(Collectors.toSet());
+                    return indexShard.preferNodeActiveInitializingShardsIt(nodesIds);
+                case LOCAL:
+                    return indexShard.preferNodeActiveInitializingShardsIt(Collections.singleton(localNodeId));
+                case ONLY_LOCAL:
+                    return indexShard.onlyNodeActiveInitializingShardsIt(localNodeId);
+                case ONLY_NODES:
+                    String nodeAttributes = preference.substring(Preference.ONLY_NODES.type().length() + 1);
+                    return indexShard.onlyNodeSelectorActiveInitializingShardsIt(nodeAttributes.split(","), nodes);
+                default:
+                    throw new IllegalArgumentException("unknown preference [" + preferenceType + "]");
             }
         }
         // if not, then use it as the index
         int routingHash = Murmur3HashFunction.hash(preference);
-        // The AllocationService lists shards in a fixed order based on nodes
-        // so earlier versions of this class would have a tendency to
-        // select the same node across different shardIds.
-        // Better overall balancing can be achieved if each shardId opts
-        // for a different element in the list by also incorporating the
-        // shard ID into the hash of the user-supplied preference key.
-        routingHash = 31 * routingHash + indexShard.shardId.hashCode();
+        if (nodes.getMinNodeVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            // The AllocationService lists shards in a fixed order based on nodes
+            // so earlier versions of this class would have a tendency to
+            // select the same node across different shardIds.
+            // Better overall balancing can be achieved if each shardId opts
+            // for a different element in the list by also incorporating the
+            // shard ID into the hash of the user-supplied preference key.
+            routingHash = 31 * routingHash + indexShard.shardId.hashCode();
+        }
         if (awarenessAttributes.isEmpty()) {
             return indexShard.activeInitializingShardsIt(routingHash);
         } else {
@@ -276,7 +291,7 @@ public class OperationRouting {
         final int partitionOffset;
 
         if (routing == null) {
-            assert (indexMetadata.isRoutingPartitionedIndex() == false) : "A routing value is required for gets from a partitioned index";
+            assert(indexMetadata.isRoutingPartitionedIndex() == false) : "A routing value is required for gets from a partitioned index";
             effectiveRouting = id;
         } else {
             effectiveRouting = routing;

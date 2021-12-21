@@ -80,7 +80,7 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
             try (XContentBuilder builder = JsonXContent.contentBuilder().prettyPrint()) {
                 BytesReference query = BytesReference.bytes(matchAllQuery().toXContent(builder, ToXContent.EMPTY_PARAMS));
                 reindexRequest.setRemoteInfo(new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, Integer.MAX_VALUE),
-                        null, query, "user", "pass", emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
+                    null, query, "user", "pass", emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
@@ -142,8 +142,9 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
 
     public void testReindexFromRemoteDoesNotSupportSearchQuery() {
         ReindexRequest reindex = newRequest();
-        reindex.setRemoteInfo(new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, Integer.MAX_VALUE), null, matchAll,
-                null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
+        reindex.setRemoteInfo(
+                new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, Integer.MAX_VALUE), null,
+                    matchAll, null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
         reindex.getSearchRequest().source().query(matchAllQuery()); // Unsupported place to put query
         ActionRequestValidationException e = reindex.validate();
         assertEquals("Validation Failed: 1: reindex from remote sources should use RemoteInfo's query instead of source's query;",
@@ -152,11 +153,13 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
 
     public void testReindexFromRemoteDoesNotSupportSlices() {
         ReindexRequest reindex = newRequest();
-        reindex.setRemoteInfo(new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, Integer.MAX_VALUE), null, matchAll,
-                null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
+        reindex.setRemoteInfo(
+                new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, Integer.MAX_VALUE), null,
+                    matchAll, null, null, emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT, RemoteInfo.DEFAULT_CONNECT_TIMEOUT));
         reindex.setSlices(between(2, Integer.MAX_VALUE));
         ActionRequestValidationException e = reindex.validate();
-        assertEquals("Validation Failed: 1: reindex from remote sources doesn't support slices > 1 but was [" + reindex.getSlices() + "];",
+        assertEquals(
+                "Validation Failed: 1: reindex from remote sources doesn't support slices > 1 but was [" + reindex.getSlices() + "];",
                 e.getMessage());
     }
 
@@ -175,8 +178,8 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
         }
         if (randomBoolean()) {
             original.setRemoteInfo(new RemoteInfo(randomAlphaOfLength(5), randomAlphaOfLength(5), between(1, 10000), null, matchAll, null,
-                    null, emptyMap(), parseTimeValue(randomPositiveTimeValue(), "socket_timeout"),
-                    parseTimeValue(randomPositiveTimeValue(), "connect_timeout")));
+                null, emptyMap(), parseTimeValue(randomPositiveTimeValue(), "socket_timeout"),
+                parseTimeValue(randomPositiveTimeValue(), "connect_timeout")));
         }
     }
 
@@ -281,27 +284,25 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
         assertEquals(RemoteInfo.DEFAULT_SOCKET_TIMEOUT, info.getSocketTimeout());
         assertEquals(RemoteInfo.DEFAULT_CONNECT_TIMEOUT, info.getConnectTimeout());
 
-        final IllegalArgumentException exception = expectThrows(IllegalArgumentException.class, () -> buildRemoteInfoHostTestCase("https"));
-        assertEquals("[host] must be of the form [scheme]://[host]:[port](/[pathPrefix])? but was [https]", exception.getMessage());
+        final IllegalArgumentException exception = expectThrows(IllegalArgumentException.class,
+            () -> buildRemoteInfoHostTestCase("https"));
+        assertEquals("[host] must be of the form [scheme]://[host]:[port](/[pathPrefix])? but was [https]",
+            exception.getMessage());
     }
 
     public void testReindexFromRemoteRequestParsing() throws IOException {
         BytesReference request;
         try (XContentBuilder b = JsonXContent.contentBuilder()) {
-            b.startObject();
-            {
-                b.startObject("source");
-                {
-                    b.startObject("remote");
-                    {
+            b.startObject(); {
+                b.startObject("source"); {
+                    b.startObject("remote"); {
                         b.field("host", "http://localhost:9200");
                     }
                     b.endObject();
                     b.field("index", "source");
                 }
                 b.endObject();
-                b.startObject("dest");
-                {
+                b.startObject("dest"); {
                     b.field("index", "dest");
                 }
                 b.endObject();
@@ -312,7 +313,7 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
         try (XContentParser p = createParser(JsonXContent.jsonXContent, request)) {
             ReindexRequest r = ReindexRequest.fromXContent(p);
             assertEquals("localhost", r.getRemoteInfo().getHost());
-            assertArrayEquals(new String[] { "source" }, r.getSearchRequest().indices());
+            assertArrayEquals(new String[] {"source"}, r.getSearchRequest().indices());
         }
     }
 
@@ -328,12 +329,12 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
 
     public void testCommaSeparatedSourceIndices() throws IOException {
         ReindexRequest r = parseRequestWithSourceIndices("a,b");
-        assertArrayEquals(new String[] { "a", "b" }, r.getSearchRequest().indices());
+        assertArrayEquals(new String[]{"a", "b"}, r.getSearchRequest().indices());
     }
 
     public void testArraySourceIndices() throws IOException {
-        ReindexRequest r = parseRequestWithSourceIndices(new String[] { "a", "b" });
-        assertArrayEquals(new String[] { "a", "b" }, r.getSearchRequest().indices());
+        ReindexRequest r = parseRequestWithSourceIndices(new String[]{"a", "b"});
+        assertArrayEquals(new String[]{"a", "b"}, r.getSearchRequest().indices());
     }
 
     public void testEmptyStringSourceIndices() throws IOException {
@@ -342,21 +343,18 @@ public class ReindexRequestTests extends AbstractBulkByScrollRequestTestCase<Rei
         ActionRequestValidationException validationException = r.validate();
         assertNotNull(validationException);
         assertEquals(Collections.singletonList("use _all if you really want to copy from all existing indexes"),
-                validationException.validationErrors());
+            validationException.validationErrors());
     }
 
     private ReindexRequest parseRequestWithSourceIndices(Object sourceIndices) throws IOException {
         BytesReference request;
         try (XContentBuilder b = JsonXContent.contentBuilder()) {
-            b.startObject();
-            {
-                b.startObject("source");
-                {
+            b.startObject(); {
+                b.startObject("source"); {
                     b.field("index", sourceIndices);
                 }
                 b.endObject();
-                b.startObject("dest");
-                {
+                b.startObject("dest"); {
                     b.field("index", "dest");
                 }
                 b.endObject();

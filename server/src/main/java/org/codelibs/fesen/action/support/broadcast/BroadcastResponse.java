@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.action.support.broadcast;
 
-import static org.codelibs.fesen.action.support.DefaultShardOperationFailedException.readShardOperationFailed;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.common.ParseField;
@@ -36,6 +29,13 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestActions;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.codelibs.fesen.action.support.DefaultShardOperationFailedException.readShardOperationFailed;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 /**
  * Base class for all broadcast operation based responses.
@@ -56,19 +56,17 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
     private DefaultShardOperationFailedException[] shardFailures = EMPTY;
 
     protected static <T extends BroadcastResponse> void declareBroadcastFields(ConstructingObjectParser<T, Void> PARSER) {
-        ConstructingObjectParser<BroadcastResponse, Void> shardsParser =
-                new ConstructingObjectParser<>("_shards", true, arg -> new BroadcastResponse((int) arg[0], (int) arg[1], (int) arg[2],
-                        (List<DefaultShardOperationFailedException>) arg[3]));
+        ConstructingObjectParser<BroadcastResponse, Void> shardsParser = new ConstructingObjectParser<>("_shards", true,
+            arg -> new BroadcastResponse((int) arg[0], (int) arg[1], (int) arg[2], (List<DefaultShardOperationFailedException>) arg[3]));
         shardsParser.declareInt(constructorArg(), TOTAL_FIELD);
         shardsParser.declareInt(constructorArg(), SUCCESSFUL_FIELD);
         shardsParser.declareInt(constructorArg(), FAILED_FIELD);
-        shardsParser.declareObjectArray(optionalConstructorArg(), (p, c) -> DefaultShardOperationFailedException.fromXContent(p),
-                FAILURES_FIELD);
+        shardsParser.declareObjectArray(optionalConstructorArg(),
+            (p, c) -> DefaultShardOperationFailedException.fromXContent(p), FAILURES_FIELD);
         PARSER.declareObject(constructorArg(), shardsParser, _SHARDS_FIELD);
     }
 
-    public BroadcastResponse() {
-    }
+    public BroadcastResponse() {}
 
     public BroadcastResponse(StreamInput in) throws IOException {
         totalShards = in.readVInt();
@@ -84,7 +82,7 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
     }
 
     public BroadcastResponse(int totalShards, int successfulShards, int failedShards,
-            List<DefaultShardOperationFailedException> shardFailures) {
+                             List<DefaultShardOperationFailedException> shardFailures) {
         this.totalShards = totalShards;
         this.successfulShards = successfulShards;
         this.failedShards = failedShards;

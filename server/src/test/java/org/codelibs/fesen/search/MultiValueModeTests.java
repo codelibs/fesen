@@ -221,8 +221,8 @@ public class MultiValueModeTests extends ESTestCase {
             for (MultiValueMode mode : new MultiValueMode[] { MultiValueMode.MIN, MultiValueMode.MAX, MultiValueMode.SUM,
                     MultiValueMode.AVG }) {
                 SortedNumericDocValues values = supplier.get();
-                final NumericDocValues selected =
-                        mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc, maxChildren);
+                final NumericDocValues selected = mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc,
+                        maxChildren);
                 int prevRoot = -1;
                 for (int root = rootDocs.nextSetBit(0); root != -1; root = root + 1 < maxDoc ? rootDocs.nextSetBit(root + 1) : -1) {
                     assertTrue(selected.advanceExact(root));
@@ -237,8 +237,8 @@ public class MultiValueModeTests extends ESTestCase {
                     }
                     int numValues = 0;
                     int count = 0;
-                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1 && child < root; child =
-                            innerDocs.nextSetBit(child + 1)) {
+                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1
+                            && child < root; child = innerDocs.nextSetBit(child + 1)) {
                         if (values.advanceExact(child)) {
                             if (++count > maxChildren) {
                                 break;
@@ -408,8 +408,8 @@ public class MultiValueModeTests extends ESTestCase {
             for (MultiValueMode mode : new MultiValueMode[] { MultiValueMode.MIN, MultiValueMode.MAX, MultiValueMode.SUM,
                     MultiValueMode.AVG }) {
                 SortedNumericDoubleValues values = supplier.get();
-                final NumericDoubleValues selected =
-                        mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc, maxChildren);
+                final NumericDoubleValues selected = mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc,
+                        maxChildren);
                 int prevRoot = -1;
                 for (int root = rootDocs.nextSetBit(0); root != -1; root = root + 1 < maxDoc ? rootDocs.nextSetBit(root + 1) : -1) {
                     assertTrue(selected.advanceExact(root));
@@ -424,8 +424,8 @@ public class MultiValueModeTests extends ESTestCase {
                     }
                     int numValues = 0;
                     int count = 0;
-                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1 && child < root; child =
-                            innerDocs.nextSetBit(child + 1)) {
+                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1
+                            && child < root; child = innerDocs.nextSetBit(child + 1)) {
                         if (values.advanceExact(child)) {
                             if (++count > maxChildren) {
                                 break;
@@ -582,8 +582,8 @@ public class MultiValueModeTests extends ESTestCase {
         for (BytesRef missingValue : new BytesRef[] { new BytesRef(), new BytesRef(randomAlphaOfLengthBetween(8, 8)) }) {
             for (MultiValueMode mode : new MultiValueMode[] { MultiValueMode.MIN, MultiValueMode.MAX }) {
                 SortedBinaryDocValues values = supplier.get();
-                final BinaryDocValues selected =
-                        mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc, maxChildren);
+                final BinaryDocValues selected = mode.select(values, missingValue, rootDocs, new BitSetIterator(innerDocs, 0L), maxDoc,
+                        maxChildren);
                 int prevRoot = -1;
                 for (int root = rootDocs.nextSetBit(0); root != -1; root = root + 1 < maxDoc ? rootDocs.nextSetBit(root + 1) : -1) {
                     assertTrue(selected.advanceExact(root));
@@ -592,8 +592,8 @@ public class MultiValueModeTests extends ESTestCase {
 
                     BytesRef expected = null;
                     int count = 0;
-                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1 && child < root; child =
-                            innerDocs.nextSetBit(child + 1)) {
+                    for (int child = innerDocs.nextSetBit(prevRoot + 1); child != -1
+                            && child < root; child = innerDocs.nextSetBit(child + 1)) {
                         if (values.advanceExact(child)) {
                             if (++count > maxChildren) {
                                 break;

@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.xcontent.ObjectParser;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
+import org.codelibs.fesen.common.xcontent.XContentParser.Token;
+import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 
 public class ParsedScriptedMetric extends ParsedAggregation implements ScriptedMetric {
     private List<Object> aggregation;
@@ -55,8 +55,8 @@ public class ParsedScriptedMetric extends ParsedAggregation implements ScriptedM
 
     static {
         declareAggregationFields(PARSER);
-        PARSER.declareField((agg, value) -> agg.aggregation = Collections.singletonList(value), ParsedScriptedMetric::parseValue,
-                CommonFields.VALUE, ValueType.VALUE_OBJECT_ARRAY);
+        PARSER.declareField((agg, value) -> agg.aggregation = Collections.singletonList(value),
+                ParsedScriptedMetric::parseValue, CommonFields.VALUE, ValueType.VALUE_OBJECT_ARRAY);
     }
 
     private static Object parseValue(XContentParser parser) throws IOException {

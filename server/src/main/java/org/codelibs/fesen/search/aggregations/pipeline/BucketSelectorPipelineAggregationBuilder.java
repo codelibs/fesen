@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
+
 import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.BUCKETS_PATH;
 import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.GAP_POLICY;
 
@@ -29,14 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 
 public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<BucketSelectorPipelineAggregationBuilder> {
     public static final String NAME = "bucket_selector";
@@ -201,16 +201,14 @@ public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAg
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         BucketSelectorPipelineAggregationBuilder other = (BucketSelectorPipelineAggregationBuilder) obj;
-        return Objects.equals(bucketsPathsMap, other.bucketsPathsMap) && Objects.equals(script, other.script)
-                && Objects.equals(gapPolicy, other.gapPolicy);
+        return Objects.equals(bucketsPathsMap, other.bucketsPathsMap)
+            && Objects.equals(script, other.script)
+            && Objects.equals(gapPolicy, other.gapPolicy);
     }
 
     @Override

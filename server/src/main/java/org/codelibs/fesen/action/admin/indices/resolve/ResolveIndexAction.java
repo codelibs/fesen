@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.resolve;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.SortedMap;
-import java.util.Spliterators;
-import java.util.TreeMap;
-import java.util.stream.StreamSupport;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -65,6 +52,19 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.RemoteClusterAware;
 import org.codelibs.fesen.transport.RemoteClusterService;
 import org.codelibs.fesen.transport.TransportService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SortedMap;
+import java.util.Spliterators;
+import java.util.TreeMap;
+import java.util.stream.StreamSupport;
 
 public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> {
 
@@ -111,10 +111,8 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Request request = (Request) o;
             return Arrays.equals(names, request.names);
         }
@@ -152,8 +150,7 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         private String name;
 
-        ResolvedIndexAbstraction() {
-        }
+        ResolvedIndexAbstraction() {}
 
         ResolvedIndexAbstraction(String name) {
             this.name = name;
@@ -233,13 +230,11 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             ResolvedIndex index = (ResolvedIndex) o;
-            return getName().equals(index.getName()) && Objects.equals(dataStream, index.dataStream)
-                    && Arrays.equals(aliases, index.aliases) && Arrays.equals(attributes, index.attributes);
+            return getName().equals(index.getName()) && Objects.equals(dataStream, index.dataStream) &&
+                Arrays.equals(aliases, index.aliases) && Arrays.equals(attributes, index.attributes);
         }
 
         @Override
@@ -294,10 +289,8 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             ResolvedAlias alias = (ResolvedAlias) o;
             return getName().equals(alias.getName()) && Arrays.equals(indices, alias.indices);
         }
@@ -361,13 +354,11 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             ResolvedDataStream dataStream = (ResolvedDataStream) o;
-            return getName().equals(dataStream.getName()) && timestampField.equals(dataStream.timestampField)
-                    && Arrays.equals(backingIndices, dataStream.backingIndices);
+            return getName().equals(dataStream.getName()) && timestampField.equals(dataStream.timestampField) &&
+                Arrays.equals(backingIndices, dataStream.backingIndices);
         }
 
         @Override
@@ -431,10 +422,8 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Response response = (Response) o;
             return indices.equals(response.indices) && aliases.equals(response.aliases) && dataStreams.equals(response.dataStreams);
         }
@@ -455,7 +444,7 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
 
         @Inject
         public TransportAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
             super(NAME, transportService, actionFilters, Request::new);
             this.threadPool = threadPool;
             this.clusterService = clusterService;
@@ -468,7 +457,7 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         protected void doExecute(Task task, Request request, final ActionListener<Response> listener) {
             final ClusterState clusterState = clusterService.state();
             final Map<String, OriginalIndices> remoteClusterIndices = remoteClusterService.groupIndices(request.indicesOptions(),
-                    request.indices(), idx -> indexNameExpressionResolver.hasIndexAbstraction(idx, clusterState));
+                request.indices(), idx -> indexNameExpressionResolver.hasIndexAbstraction(idx, clusterState));
             final OriginalIndices localIndices = remoteClusterIndices.remove(RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY);
             final Metadata metadata = clusterState.metadata();
             List<ResolvedIndex> indices = new ArrayList<>();
@@ -476,7 +465,7 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             List<ResolvedDataStream> dataStreams = new ArrayList<>();
             if (localIndices != null) {
                 resolveIndices(localIndices.indices(), request.indicesOptions, metadata, indexAbstractionResolver, indices, aliases,
-                        dataStreams, request.includeDataStreams());
+                    dataStreams, request.includeDataStreams());
             }
 
             if (remoteClusterIndices.size() > 0) {
@@ -519,9 +508,10 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
          */
         // visible for testing
         static void resolveIndices(String[] names, IndicesOptions indicesOptions, Metadata metadata, IndexAbstractionResolver resolver,
-                List<ResolvedIndex> indices, List<ResolvedAlias> aliases, List<ResolvedDataStream> dataStreams,
-                boolean includeDataStreams) {
-            List<String> resolvedIndexAbstractions = resolver.resolveIndexAbstractions(names, indicesOptions, metadata, includeDataStreams);
+                                   List<ResolvedIndex> indices, List<ResolvedAlias> aliases, List<ResolvedDataStream> dataStreams,
+                                   boolean includeDataStreams) {
+            List<String> resolvedIndexAbstractions = resolver.resolveIndexAbstractions(names, indicesOptions, metadata,
+                includeDataStreams);
             SortedMap<String, IndexAbstraction> lookup = metadata.getIndicesLookup();
             for (String s : resolvedIndexAbstractions) {
                 enrichIndexAbstraction(s, lookup, indices, aliases, dataStreams);
@@ -533,8 +523,8 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         }
 
         private static void mergeResults(Map<String, Response> remoteResponses, List<ResolvedIndex> indices, List<ResolvedAlias> aliases,
-                List<ResolvedDataStream> dataStreams) {
-            for (Map.Entry<String, Response> responseEntry : remoteResponses.entrySet()) {
+                                         List<ResolvedDataStream> dataStreams) {
+            for (Map.Entry<String, Response> responseEntry: remoteResponses.entrySet()) {
                 String clusterAlias = responseEntry.getKey();
                 Response response = responseEntry.getValue();
                 for (ResolvedIndex index : response.indices) {
@@ -550,47 +540,53 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         }
 
         private static void enrichIndexAbstraction(String indexAbstraction, SortedMap<String, IndexAbstraction> lookup,
-                List<ResolvedIndex> indices, List<ResolvedAlias> aliases, List<ResolvedDataStream> dataStreams) {
+                                                   List<ResolvedIndex> indices, List<ResolvedAlias> aliases,
+                                                   List<ResolvedDataStream> dataStreams) {
             IndexAbstraction ia = lookup.get(indexAbstraction);
             if (ia != null) {
                 switch (ia.getType()) {
-                case CONCRETE_INDEX:
-                    IndexAbstraction.Index index = (IndexAbstraction.Index) ia;
+                    case CONCRETE_INDEX:
+                        IndexAbstraction.Index index = (IndexAbstraction.Index) ia;
 
-                    String[] aliasNames =
-                            StreamSupport.stream(Spliterators.spliteratorUnknownSize(index.getWriteIndex().getAliases().keysIt(), 0), false)
-                                    .toArray(String[]::new);
-                    Arrays.sort(aliasNames);
+                        String[] aliasNames = StreamSupport.stream(
+                            Spliterators.spliteratorUnknownSize(index.getWriteIndex().getAliases().keysIt(), 0), false)
+                            .toArray(String[]::new);
+                        Arrays.sort(aliasNames);
 
-                    List<String> attributes = new ArrayList<>();
-                    attributes.add(index.getWriteIndex().getState() == IndexMetadata.State.OPEN ? "open" : "closed");
-                    if (ia.isHidden()) {
-                        attributes.add("hidden");
-                    }
-                    final boolean isFrozen = Boolean.parseBoolean(ia.getWriteIndex().getSettings().get("index.frozen"));
-                    if (isFrozen) {
-                        attributes.add("frozen");
-                    }
-                    attributes.sort(String::compareTo);
+                        List<String> attributes = new ArrayList<>();
+                        attributes.add(index.getWriteIndex().getState() == IndexMetadata.State.OPEN ? "open" : "closed");
+                        if (ia.isHidden()) {
+                            attributes.add("hidden");
+                        }
+                        final boolean isFrozen = Boolean.parseBoolean(ia.getWriteIndex().getSettings().get("index.frozen"));
+                        if (isFrozen) {
+                            attributes.add("frozen");
+                        }
+                        attributes.sort(String::compareTo);
 
-                    indices.add(new ResolvedIndex(index.getName(), aliasNames, attributes.toArray(Strings.EMPTY_ARRAY),
+                        indices.add(new ResolvedIndex(
+                            index.getName(),
+                            aliasNames,
+                            attributes.toArray(Strings.EMPTY_ARRAY),
                             index.getParentDataStream() == null ? null : index.getParentDataStream().getName()));
-                    break;
-                case ALIAS:
-                    IndexAbstraction.Alias alias = (IndexAbstraction.Alias) ia;
-                    String[] indexNames = alias.getIndices().stream().map(i -> i.getIndex().getName()).toArray(String[]::new);
-                    Arrays.sort(indexNames);
-                    aliases.add(new ResolvedAlias(alias.getName(), indexNames));
-                    break;
-                case DATA_STREAM:
-                    IndexAbstraction.DataStream dataStream = (IndexAbstraction.DataStream) ia;
-                    String[] backingIndices = dataStream.getIndices().stream().map(i -> i.getIndex().getName()).toArray(String[]::new);
-                    Arrays.sort(backingIndices);
-                    dataStreams.add(new ResolvedDataStream(dataStream.getName(), backingIndices,
+                        break;
+                    case ALIAS:
+                        IndexAbstraction.Alias alias = (IndexAbstraction.Alias) ia;
+                        String[] indexNames = alias.getIndices().stream().map(i -> i.getIndex().getName()).toArray(String[]::new);
+                        Arrays.sort(indexNames);
+                        aliases.add(new ResolvedAlias(alias.getName(), indexNames));
+                        break;
+                    case DATA_STREAM:
+                        IndexAbstraction.DataStream dataStream = (IndexAbstraction.DataStream) ia;
+                        String[] backingIndices = dataStream.getIndices().stream().map(i -> i.getIndex().getName()).toArray(String[]::new);
+                        Arrays.sort(backingIndices);
+                        dataStreams.add(new ResolvedDataStream(
+                            dataStream.getName(),
+                            backingIndices,
                             dataStream.getDataStream().getTimeStampField().getName()));
-                    break;
-                default:
-                    throw new IllegalStateException("unknown index abstraction type: " + ia.getType());
+                        break;
+                    default:
+                        throw new IllegalStateException("unknown index abstraction type: " + ia.getType());
                 }
             }
         }

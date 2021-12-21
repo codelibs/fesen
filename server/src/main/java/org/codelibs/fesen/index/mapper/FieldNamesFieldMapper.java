@@ -19,19 +19,22 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A mapper that indexes the field names of a document under <code>_field_names</code>. This mapper is typically useful in order
@@ -72,13 +75,14 @@ public class FieldNamesFieldMapper extends MetadataFieldMapper {
     }
 
     public static final String ENABLED_DEPRECATION_MESSAGE =
-            "Disabling _field_names is not necessary because it no longer carries a large index overhead. Support for the `enabled` "
-                    + "setting will be removed in a future major version. Please remove it from your mappings and templates.";
+        "Disabling _field_names is not necessary because it no longer carries a large index overhead. Support for the `enabled` " +
+        "setting will be removed in a future major version. Please remove it from your mappings and templates.";
+
 
     static class Builder extends MetadataFieldMapper.Builder {
 
-        private final Parameter<Explicit<Boolean>> enabled =
-                updateableBoolParam("enabled", m -> toType(m).enabled, Defaults.ENABLED.value());
+        private final Parameter<Explicit<Boolean>> enabled
+            = updateableBoolParam("enabled", m -> toType(m).enabled, Defaults.ENABLED.value());
 
         private final Version indexVersionCreated;
 
@@ -103,8 +107,9 @@ public class FieldNamesFieldMapper extends MetadataFieldMapper {
     }
 
     public static final TypeParser PARSER = new ConfigurableTypeParser(
-            c -> new FieldNamesFieldMapper(Defaults.ENABLED, c.indexVersionCreated(), new FieldNamesFieldType(Defaults.ENABLED.value())),
-            c -> new Builder(c.indexVersionCreated()));
+        c -> new FieldNamesFieldMapper(Defaults.ENABLED, c.indexVersionCreated(), new FieldNamesFieldType(Defaults.ENABLED.value())),
+        c -> new Builder(c.indexVersionCreated())
+    );
 
     public static final class FieldNamesFieldType extends TermBasedFieldType {
 
@@ -140,7 +145,7 @@ public class FieldNamesFieldMapper extends MetadataFieldMapper {
                 throw new IllegalStateException("Cannot run [exists] queries if the [_field_names] field is disabled");
             }
             deprecationLogger.deprecate("terms_query_on_field_names",
-                    "terms query on the _field_names field is deprecated and will be removed, use exists query instead");
+                "terms query on the _field_names field is deprecated and will be removed, use exists query instead");
             return super.termQuery(value, context);
         }
     }
@@ -161,6 +166,32 @@ public class FieldNamesFieldMapper extends MetadataFieldMapper {
 
     @Override
     public void postParse(ParseContext context) throws IOException {
+        if (context.indexSettings().getIndexVersionCreated().before(Version.V_6_1_0)) {
+            if (fieldType().isEnabled() == false) {
+                return;
+            }
+            for (ParseContext.Document document : context) {
+                final List<String> paths = new ArrayList<>(document.getFields().size());
+                String previousPath = ""; // used as a sentinel - field names can't be empty
+                for (IndexableField field : document.getFields()) {
+                    final String path = field.name();
+                    if (path.equals(previousPath)) {
+                        // Sometimes mappers create multiple Lucene fields, eg. one for indexing,
+                        // one for doc values and one for storing. Deduplicating is not required
+                        // for correctness but this simple check helps save utf-8 conversions and
+                        // gives Lucene fewer values to deal with.
+                        continue;
+                    }
+                    paths.add(path);
+                    previousPath = path;
+                }
+                for (String path : paths) {
+                    for (String fieldName : extractFieldNames(path)) {
+                        document.add(new Field(fieldType().name(), fieldName, Defaults.FIELD_TYPE));
+                    }
+                }
+            }
+        }
     }
 
     static Iterable<String> extractFieldNames(final String fullPath) {

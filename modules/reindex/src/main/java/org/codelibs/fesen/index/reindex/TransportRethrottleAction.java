@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.FailedNodeException;
@@ -31,19 +29,23 @@ import org.codelibs.fesen.action.support.tasks.TransportTasksAction;
 import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.inject.Inject;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.LeaderBulkByScrollTaskState;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskInfo;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.util.List;
+
 public class TransportRethrottleAction extends TransportTasksAction<BulkByScrollTask, RethrottleRequest, ListTasksResponse, TaskInfo> {
     private final Client client;
 
     @Inject
-    public TransportRethrottleAction(ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
-            Client client) {
-        super(RethrottleAction.NAME, clusterService, transportService, actionFilters, RethrottleRequest::new, ListTasksResponse::new,
-                TaskInfo::new, ThreadPool.Names.MANAGEMENT);
+    public TransportRethrottleAction(ClusterService clusterService, TransportService transportService,
+                                     ActionFilters actionFilters, Client client) {
+        super(RethrottleAction.NAME, clusterService, transportService, actionFilters,
+            RethrottleRequest::new, ListTasksResponse::new, TaskInfo::new, ThreadPool.Names.MANAGEMENT);
         this.client = client;
     }
 
@@ -65,12 +67,12 @@ public class TransportRethrottleAction extends TransportTasksAction<BulkByScroll
             return;
         }
 
-        throw new IllegalArgumentException(
-                "task [" + task.getId() + "] has not yet been initialized to the point where it knows how to " + "rethrottle itself");
+        throw new IllegalArgumentException("task [" + task.getId() + "] has not yet been initialized to the point where it knows how to " +
+            "rethrottle itself");
     }
 
     private static void rethrottleParentTask(Logger logger, String localNodeId, Client client, BulkByScrollTask task,
-            float newRequestsPerSecond, ActionListener<TaskInfo> listener) {
+                                             float newRequestsPerSecond, ActionListener<TaskInfo> listener) {
         final LeaderBulkByScrollTaskState leaderState = task.getLeaderState();
         final int runningSubtasks = leaderState.runningSliceSubTasks();
 
@@ -78,11 +80,14 @@ public class TransportRethrottleAction extends TransportTasksAction<BulkByScroll
             RethrottleRequest subRequest = new RethrottleRequest();
             subRequest.setRequestsPerSecond(newRequestsPerSecond / runningSubtasks);
             subRequest.setParentTaskId(new TaskId(localNodeId, task.getId()));
-            logger.debug("rethrottling children of task [{}] to [{}] requests per second", task.getId(), subRequest.getRequestsPerSecond());
-            client.execute(RethrottleAction.INSTANCE, subRequest, ActionListener.wrap(r -> {
-                r.rethrowFailures("Rethrottle");
-                listener.onResponse(task.taskInfoGivenSubtaskInfo(localNodeId, r.getTasks()));
-            }, listener::onFailure));
+            logger.debug("rethrottling children of task [{}] to [{}] requests per second", task.getId(),
+                subRequest.getRequestsPerSecond());
+            client.execute(RethrottleAction.INSTANCE, subRequest, ActionListener.wrap(
+                r -> {
+                    r.rethrowFailures("Rethrottle");
+                    listener.onResponse(task.taskInfoGivenSubtaskInfo(localNodeId, r.getTasks()));
+                },
+                listener::onFailure));
         } else {
             logger.debug("children of task [{}] are already finished, nothing to rethrottle", task.getId());
             listener.onResponse(task.taskInfo(localNodeId, true));
@@ -90,7 +95,7 @@ public class TransportRethrottleAction extends TransportTasksAction<BulkByScroll
     }
 
     private static void rethrottleChildTask(Logger logger, String localNodeId, BulkByScrollTask task, float newRequestsPerSecond,
-            ActionListener<TaskInfo> listener) {
+                                            ActionListener<TaskInfo> listener) {
         logger.debug("rethrottling local task [{}] to [{}] requests per second", task.getId(), newRequestsPerSecond);
         task.getWorkerState().rethrottle(newRequestsPerSecond);
         listener.onResponse(task.taskInfo(localNodeId, true));

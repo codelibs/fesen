@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.HdrHistogram.DoubleHistogram;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -28,10 +25,14 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 class HDRPercentileRanksAggregator extends AbstractHDRPercentilesAggregator {
 
-    HDRPercentileRanksAggregator(String name, ValuesSource valuesSource, SearchContext context, Aggregator parent, double[] percents,
-            int numberOfSignificantValueDigits, boolean keyed, DocValueFormat format, Map<String, Object> metadata) throws IOException {
+    HDRPercentileRanksAggregator(String name, ValuesSource valuesSource, SearchContext context, Aggregator parent,
+            double[] percents, int numberOfSignificantValueDigits, boolean keyed, DocValueFormat format,
+            Map<String, Object> metadata) throws IOException {
         super(name, valuesSource, context, parent, percents, numberOfSignificantValueDigits, keyed, format, metadata);
     }
 

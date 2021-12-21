@@ -56,7 +56,10 @@ public class PutStoredScriptRequestTests extends ESTestCase {
         XContentType xContentType = randomFrom(XContentType.values());
         XContentBuilder builder = XContentBuilder.builder(xContentType.xContent());
         builder.startObject();
-        builder.startObject("script").field("lang", "painless").field("source", "Math.log(_score * 2) + params.multiplier").endObject();
+        builder.startObject("script")
+            .field("lang", "painless")
+            .field("source", "Math.log(_score * 2) + params.multiplier")
+            .endObject();
         builder.endObject();
 
         BytesReference expectedRequestBody = BytesReference.bytes(builder);

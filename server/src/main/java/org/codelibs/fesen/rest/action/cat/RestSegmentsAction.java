@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +39,17 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestActionListener;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestSegmentsAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_cat/segments"), new Route(GET, "/_cat/segments/{index}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_cat/segments"),
+            new Route(GET, "/_cat/segments/{index}")));
     }
 
     @Override

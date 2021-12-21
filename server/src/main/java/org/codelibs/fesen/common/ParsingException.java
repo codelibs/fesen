@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.common;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
 
 /**
  * Exception that can be used when parsing queries with a given {@link
@@ -66,7 +66,7 @@ public class ParsingException extends FesenException {
         this.columnNumber = col;
     }
 
-    public ParsingException(StreamInput in) throws IOException {
+    public ParsingException(StreamInput in) throws IOException{
         super(in);
         lineNumber = in.readInt();
         columnNumber = in.readInt();

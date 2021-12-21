@@ -71,7 +71,7 @@ public abstract class RemoteClusterAware {
      * @return a map of grouped remote and local indices
      */
     protected Map<String, List<String>> groupClusterIndices(Set<String> remoteClusterNames, String[] requestIndices,
-            Predicate<String> indexExists) {
+                                                            Predicate<String> indexExists) {
         Map<String, List<String>> perClusterIndices = new HashMap<>();
         for (String index : requestIndices) {
             int i = index.indexOf(RemoteClusterService.REMOTE_CLUSTER_INDEX_SEPARATOR);
@@ -84,8 +84,8 @@ public abstract class RemoteClusterAware {
                         //remote_cluster_alias:index_name - for this case we fail the request. The user can easily change the cluster alias
                         //if that happens. Note that indices and aliases can be created with ":" in their names names up to 6.last, which
                         //means such names need to be supported until 7.last. It will be possible to remove this check from 8.0 on.
-                        throw new IllegalArgumentException("Can not filter indices; index " + index
-                                + " exists but there is also a remote cluster named: " + remoteClusterName);
+                        throw new IllegalArgumentException("Can not filter indices; index " + index +
+                            " exists but there is also a remote cluster named: " + remoteClusterName);
                     }
                     String indexName = index.substring(i + 1);
                     for (String clusterName : clusters) {
@@ -120,17 +120,23 @@ public abstract class RemoteClusterAware {
      * Registers this instance to listen to updates on the cluster settings.
      */
     public void listenForUpdates(ClusterSettings clusterSettings) {
-        List<Setting.AffixSetting<?>> remoteClusterSettings = Arrays.asList(RemoteClusterService.REMOTE_CLUSTER_COMPRESS,
-                RemoteClusterService.REMOTE_CLUSTER_PING_SCHEDULE, RemoteConnectionStrategy.REMOTE_CONNECTION_MODE,
-                SniffConnectionStrategy.SEARCH_REMOTE_CLUSTERS_SEEDS, SniffConnectionStrategy.SEARCH_REMOTE_CLUSTERS_PROXY,
-                SniffConnectionStrategy.REMOTE_CLUSTERS_PROXY, SniffConnectionStrategy.REMOTE_CLUSTER_SEEDS,
-                SniffConnectionStrategy.REMOTE_NODE_CONNECTIONS, ProxyConnectionStrategy.PROXY_ADDRESS,
-                ProxyConnectionStrategy.REMOTE_SOCKET_CONNECTIONS, ProxyConnectionStrategy.SERVER_NAME);
+        List<Setting.AffixSetting<?>> remoteClusterSettings = Arrays.asList(
+            RemoteClusterService.REMOTE_CLUSTER_COMPRESS,
+            RemoteClusterService.REMOTE_CLUSTER_PING_SCHEDULE,
+            RemoteConnectionStrategy.REMOTE_CONNECTION_MODE,
+            SniffConnectionStrategy.SEARCH_REMOTE_CLUSTERS_SEEDS,
+            SniffConnectionStrategy.SEARCH_REMOTE_CLUSTERS_PROXY,
+            SniffConnectionStrategy.REMOTE_CLUSTERS_PROXY,
+            SniffConnectionStrategy.REMOTE_CLUSTER_SEEDS,
+            SniffConnectionStrategy.REMOTE_NODE_CONNECTIONS,
+            ProxyConnectionStrategy.PROXY_ADDRESS,
+            ProxyConnectionStrategy.REMOTE_SOCKET_CONNECTIONS,
+            ProxyConnectionStrategy.SERVER_NAME);
         clusterSettings.addAffixGroupUpdateConsumer(remoteClusterSettings, this::validateAndUpdateRemoteCluster);
     }
 
     public static String buildRemoteIndexName(String clusterAlias, String indexName) {
-        return clusterAlias == null || LOCAL_CLUSTER_GROUP_KEY.equals(clusterAlias) ? indexName
-                : clusterAlias + REMOTE_CLUSTER_INDEX_SEPARATOR + indexName;
+        return clusterAlias == null || LOCAL_CLUSTER_GROUP_KEY.equals(clusterAlias)
+            ? indexName : clusterAlias + REMOTE_CLUSTER_INDEX_SEPARATOR + indexName;
     }
 }

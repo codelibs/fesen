@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest;
 
-import java.util.Comparator;
-
 import org.apache.lucene.search.spell.DirectSpellChecker;
 import org.apache.lucene.search.spell.StringDistance;
 import org.apache.lucene.search.spell.SuggestMode;
@@ -28,7 +26,9 @@ import org.apache.lucene.search.spell.SuggestWordFrequencyComparator;
 import org.apache.lucene.search.spell.SuggestWordQueue;
 import org.apache.lucene.util.automaton.LevenshteinAutomata;
 
-public class DirectSpellcheckerSettings {
+import java.util.Comparator;
+
+public class DirectSpellcheckerSettings  {
 
     // NB: If this changes, make sure to change the default in TermBuilderSuggester
     public static SuggestMode DEFAULT_SUGGEST_MODE = SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX;
@@ -143,14 +143,14 @@ public class DirectSpellcheckerSettings {
         directSpellChecker.setAccuracy(accuracy());
         Comparator<SuggestWord> comparator;
         switch (sort()) {
-        case SCORE:
-            comparator = SCORE_COMPARATOR;
-            break;
-        case FREQUENCY:
-            comparator = LUCENE_FREQUENCY;
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal suggest sort: " + sort());
+            case SCORE:
+                comparator = SCORE_COMPARATOR;
+                break;
+            case FREQUENCY:
+                comparator = LUCENE_FREQUENCY;
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal suggest sort: " + sort());
         }
         directSpellChecker.setComparator(comparator);
         directSpellChecker.setDistance(stringDistance());
@@ -166,9 +166,18 @@ public class DirectSpellcheckerSettings {
 
     @Override
     public String toString() {
-        return "[" + "suggestMode=" + suggestMode + ",sort=" + sort + ",stringDistance=" + stringDistance + ",accuracy=" + accuracy
-                + ",maxEdits=" + maxEdits + ",maxInspections=" + maxInspections + ",maxTermFreq=" + maxTermFreq + ",prefixLength="
-                + prefixLength + ",minWordLength=" + minWordLength + ",minDocFreq=" + minDocFreq + "]";
+        return "[" +
+                   "suggestMode=" + suggestMode +
+                   ",sort=" + sort +
+                   ",stringDistance=" + stringDistance +
+                   ",accuracy=" + accuracy +
+                   ",maxEdits=" + maxEdits +
+                   ",maxInspections=" + maxInspections +
+                   ",maxTermFreq=" + maxTermFreq +
+                   ",prefixLength=" + prefixLength +
+                   ",minWordLength=" + minWordLength +
+                   ",minDocFreq=" + minDocFreq +
+               "]";
     }
 
 }

@@ -19,7 +19,14 @@
 
 package org.codelibs.fesen.index.reindex;
 
-public abstract class AbstractAsyncBulkByScrollActionMetadataTestCase<Request extends AbstractBulkByScrollRequest<Request>, Response extends BulkByScrollResponse>
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource;
+
+public abstract class AbstractAsyncBulkByScrollActionMetadataTestCase<
+                Request extends AbstractBulkByScrollRequest<Request>,
+                Response extends BulkByScrollResponse>
         extends AbstractAsyncBulkByScrollActionTestCase<Request, Response> {
 
     protected ScrollableHitSource.BasicHit doc() {

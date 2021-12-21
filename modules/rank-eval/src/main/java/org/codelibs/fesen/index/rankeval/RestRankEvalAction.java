@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.search.SearchType;
 import org.codelibs.fesen.action.support.IndicesOptions;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -35,6 +27,14 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 /**
  *  {
@@ -94,8 +94,11 @@ public class RestRankEvalAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/" + ENDPOINT), new Route(POST, "/" + ENDPOINT),
-                new Route(GET, "/{index}/" + ENDPOINT), new Route(POST, "/{index}/" + ENDPOINT)));
+        return unmodifiableList(asList(
+            new Route(GET, "/" + ENDPOINT),
+            new Route(POST, "/" + ENDPOINT),
+            new Route(GET, "/{index}/" + ENDPOINT),
+            new Route(POST, "/{index}/" + ENDPOINT)));
     }
 
     @Override

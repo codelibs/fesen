@@ -42,7 +42,11 @@ public class TransportRequestOptions {
     public static final TransportRequestOptions EMPTY = new TransportRequestOptions.Builder().build();
 
     public enum Type {
-        RECOVERY, BULK, REG, STATE, PING
+        RECOVERY,
+        BULK,
+        REG,
+        STATE,
+        PING
     }
 
     public static Builder builder() {

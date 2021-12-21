@@ -51,10 +51,13 @@ public class PutPipelineTransportAction extends TransportMasterNodeAction<PutPip
     private final OriginSettingClient client;
 
     @Inject
-    public PutPipelineTransportAction(ThreadPool threadPool, TransportService transportService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver, IngestService ingestService, NodeClient client) {
-        super(PutPipelineAction.NAME, transportService, ingestService.getClusterService(), threadPool, actionFilters,
-                PutPipelineRequest::new, indexNameExpressionResolver);
+    public PutPipelineTransportAction(ThreadPool threadPool, TransportService transportService,
+        ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+        IngestService ingestService, NodeClient client) {
+        super(
+            PutPipelineAction.NAME, transportService, ingestService.getClusterService(),
+            threadPool, actionFilters, PutPipelineRequest::new, indexNameExpressionResolver
+        );
         // This client is only used to perform an internal implementation detail,
         // so uses an internal origin context rather than the user context
         this.client = new OriginSettingClient(client, INGEST_ORIGIN);
@@ -75,7 +78,8 @@ public class PutPipelineTransportAction extends TransportMasterNodeAction<PutPip
     protected void masterOperation(PutPipelineRequest request, ClusterState state, ActionListener<AcknowledgedResponse> listener)
             throws Exception {
         NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
-        nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.INGEST.metricName());
+        nodesInfoRequest.clear()
+            .addMetric(NodesInfoRequest.Metric.INGEST.metricName());
         client.admin().cluster().nodesInfo(nodesInfoRequest, ActionListener.wrap(nodeInfos -> {
             Map<DiscoveryNode, IngestInfo> ingestInfos = new HashMap<>();
             for (NodeInfo nodeInfo : nodeInfos.getNodes()) {

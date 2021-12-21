@@ -19,6 +19,19 @@
 
 package org.codelibs.fesen.common.blobstore.url;
 
+import com.sun.net.httpserver.HttpServer;
+
+import org.codelibs.fesen.common.blobstore.BlobContainer;
+import org.codelibs.fesen.common.blobstore.BlobPath;
+import org.codelibs.fesen.common.blobstore.url.URLBlobStore;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.elasticsearch.mocksocket.MockHttpServer;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,18 +40,6 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.NoSuchFileException;
-
-import org.codelibs.fesen.common.blobstore.BlobContainer;
-import org.codelibs.fesen.common.blobstore.BlobPath;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.test.ESTestCase;
-import org.elasticsearch.mocksocket.MockHttpServer;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
-import com.sun.net.httpserver.HttpServer;
 
 @SuppressForbidden(reason = "use http server")
 public class URLBlobStoreTests extends ESTestCase {

@@ -18,26 +18,27 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.greaterThan;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
 import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.rest.yaml.ESClientYamlSuiteTestCase;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.greaterThan;
 
 public class ESClientYamlSuiteTestCaseTests extends ESTestCase {
 
     public void testLoadAllYamlSuites() throws Exception {
-        Map<String, Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("");
+        Map<String,Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("");
         assertEquals(2, yamlSuites.size());
     }
 
     public void testLoadSingleYamlSuite() throws Exception {
-        Map<String, Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("suite1/10_basic");
+        Map<String,Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("suite1/10_basic");
         assertSingleFile(yamlSuites, "suite1", "10_basic.yml");
 
         //extension .yaml is optional
@@ -47,7 +48,7 @@ public class ESClientYamlSuiteTestCaseTests extends ESTestCase {
 
     public void testLoadMultipleYamlSuites() throws Exception {
         //single directory
-        Map<String, Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("suite1");
+        Map<String,Set<Path>> yamlSuites = ESClientYamlSuiteTestCase.loadSuites("suite1");
         assertThat(yamlSuites, notNullValue());
         assertThat(yamlSuites.size(), equalTo(1));
         assertThat(yamlSuites.containsKey("suite1"), equalTo(true));

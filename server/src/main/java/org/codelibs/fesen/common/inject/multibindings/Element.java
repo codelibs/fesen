@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.codelibs.fesen.common.inject.multibindings;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.codelibs.fesen.common.inject.multibindings;
 
 import java.lang.annotation.Retention;
 
 import org.codelibs.fesen.common.inject.BindingAnnotation;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * An internal binding annotation applied to each element in a multibinding.

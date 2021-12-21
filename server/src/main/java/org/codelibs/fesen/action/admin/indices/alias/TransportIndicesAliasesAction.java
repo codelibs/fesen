@@ -19,17 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.alias;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -57,7 +47,16 @@ import org.codelibs.fesen.rest.action.admin.indices.AliasesNotFoundException;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Add/remove aliases action
@@ -70,12 +69,16 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
     private final RequestValidators<IndicesAliasesRequest> requestValidators;
 
     @Inject
-    public TransportIndicesAliasesAction(final TransportService transportService, final ClusterService clusterService,
-            final ThreadPool threadPool, final MetadataIndexAliasesService indexAliasesService, final ActionFilters actionFilters,
+    public TransportIndicesAliasesAction(
+            final TransportService transportService,
+            final ClusterService clusterService,
+            final ThreadPool threadPool,
+            final MetadataIndexAliasesService indexAliasesService,
+            final ActionFilters actionFilters,
             final IndexNameExpressionResolver indexNameExpressionResolver,
             final RequestValidators<IndicesAliasesRequest> requestValidators) {
         super(IndicesAliasesAction.NAME, transportService, clusterService, threadPool, actionFilters, IndicesAliasesRequest::new,
-                indexNameExpressionResolver);
+            indexNameExpressionResolver);
         this.indexAliasesService = indexAliasesService;
         this.requestValidators = Objects.requireNonNull(requestValidators);
     }
@@ -102,7 +105,7 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
 
     @Override
     protected void masterOperation(final IndicesAliasesRequest request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
 
         //Expand the indices names
         List<AliasActions> actions = request.aliasActions();
@@ -110,15 +113,15 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
         // Resolve all the AliasActions into AliasAction instances and gather all the aliases
         Set<String> aliases = new HashSet<>();
         for (AliasActions action : actions) {
-            final Index[] concreteIndices =
-                    indexNameExpressionResolver.concreteIndices(state, request.indicesOptions(), false, action.indices());
+            final Index[] concreteIndices = indexNameExpressionResolver.concreteIndices(state, request.indicesOptions(), false,
+                action.indices());
             for (Index concreteIndex : concreteIndices) {
                 IndexAbstraction indexAbstraction = state.metadata().getIndicesLookup().get(concreteIndex.getName());
                 assert indexAbstraction != null : "invalid cluster metadata. index [" + concreteIndex.getName() + "] was not found";
                 if (indexAbstraction.getParentDataStream() != null) {
                     throw new IllegalArgumentException("The provided expressions [" + String.join(",", action.indices())
-                            + "] match a backing index belonging to data stream [" + indexAbstraction.getParentDataStream().getName()
-                            + "]. Data streams and their backing indices don't support aliases.");
+                        + "] match a backing index belonging to data stream [" + indexAbstraction.getParentDataStream().getName()
+                        + "]. Data streams and their backing indices don't support aliases.");
                 }
             }
             final Optional<Exception> maybeException = requestValidators.validateRequest(request, state, concreteIndices);
@@ -133,7 +136,7 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
                 case ADD:
                     for (String alias : concreteAliases(action, state.metadata(), index.getName())) {
                         finalActions.add(new AliasAction.Add(index.getName(), alias, action.filter(), action.indexRouting(),
-                                action.searchRouting(), action.writeIndex(), action.isHidden()));
+                            action.searchRouting(), action.writeIndex(), action.isHidden()));
                     }
                     break;
                 case REMOVE:
@@ -173,11 +176,11 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
     private static String[] concreteAliases(AliasActions action, Metadata metadata, String concreteIndex) {
         if (action.expandAliasesWildcards()) {
             //for DELETE we expand the aliases
-            String[] indexAsArray = { concreteIndex };
+            String[] indexAsArray = {concreteIndex};
             ImmutableOpenMap<String, List<AliasMetadata>> aliasMetadata = metadata.findAliases(action, indexAsArray);
             List<String> finalAliases = new ArrayList<>();
             for (ObjectCursor<List<AliasMetadata>> curAliases : aliasMetadata.values()) {
-                for (AliasMetadata aliasMeta : curAliases.value) {
+                for (AliasMetadata aliasMeta: curAliases.value) {
                     finalAliases.add(aliasMeta.alias());
                 }
             }

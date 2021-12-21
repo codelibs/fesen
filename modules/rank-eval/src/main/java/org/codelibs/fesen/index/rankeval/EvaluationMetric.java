@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.index.rankeval;
 
+import org.codelibs.fesen.common.io.stream.NamedWriteable;
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.index.rankeval.RatedDocument.DocumentKey;
+import org.codelibs.fesen.search.SearchHit;
+import org.codelibs.fesen.search.SearchHits;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
-
-import org.codelibs.fesen.common.io.stream.NamedWriteable;
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.index.rankeval.RatedDocument.DocumentKey;
-import org.codelibs.fesen.search.SearchHit;
-import org.codelibs.fesen.search.SearchHits;
 
 /**
  * Implementations of {@link EvaluationMetric} need to provide a way to compute the quality metric for
@@ -57,8 +57,8 @@ public interface EvaluationMetric extends ToXContentObject, NamedWriteable {
      * Joins hits with rated documents using the joint _index/_id document key.
      */
     static List<RatedSearchHit> joinHitsWithRatings(SearchHit[] hits, List<RatedDocument> ratedDocs) {
-        Map<DocumentKey, RatedDocument> ratedDocumentMap =
-                ratedDocs.stream().collect(Collectors.toMap(RatedDocument::getKey, item -> item));
+        Map<DocumentKey, RatedDocument> ratedDocumentMap = ratedDocs.stream()
+                .collect(Collectors.toMap(RatedDocument::getKey, item -> item));
         List<RatedSearchHit> ratedSearchHits = new ArrayList<>(hits.length);
         for (SearchHit hit : hits) {
             DocumentKey key = new DocumentKey(hit.getIndex(), hit.getId());

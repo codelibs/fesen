@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.search.profile.query;
 
-import java.util.Objects;
-
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.search.profile.AbstractProfiler;
+
+import java.util.Objects;
 
 /**
  * This class acts as a thread-local storage for profiling a query.  It also
@@ -85,5 +85,6 @@ public final class QueryProfiler extends AbstractProfiler<QueryProfileBreakdown,
     public CollectorResult getCollector() {
         return collector.getCollectorTree();
     }
+
 
 }

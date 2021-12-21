@@ -18,30 +18,31 @@
  */
 package org.codelibs.fesen.search.aggregations.support;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Class to encapsulate a set of ValuesSource objects labeled by field name
  */
-public abstract class MultiValuesSource<VS extends ValuesSource> {
+public abstract class MultiValuesSource <VS extends ValuesSource> {
     protected Map<String, VS> values;
 
     public static class NumericMultiValuesSource extends MultiValuesSource<ValuesSource.Numeric> {
-        public NumericMultiValuesSource(Map<String, ValuesSourceConfig> valuesSourceConfigs, QueryShardContext context) {
+        public NumericMultiValuesSource(Map<String, ValuesSourceConfig> valuesSourceConfigs,
+                                        QueryShardContext context) {
             values = new HashMap<>(valuesSourceConfigs.size());
             for (Map.Entry<String, ValuesSourceConfig> entry : valuesSourceConfigs.entrySet()) {
                 final ValuesSource valuesSource = entry.getValue().getValuesSource();
                 if (valuesSource instanceof ValuesSource.Numeric == false) {
-                    throw new AggregationExecutionException(
-                            "ValuesSource type " + valuesSource.toString() + "is not supported for multi-valued aggregation");
+                    throw new AggregationExecutionException("ValuesSource type " + valuesSource.toString() +
+                        "is not supported for multi-valued aggregation");
                 }
                 values.put(entry.getKey(), (ValuesSource.Numeric) valuesSource);
             }

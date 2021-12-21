@@ -19,17 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.get;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
-import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.fesen.Version;
@@ -47,7 +37,17 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.mapper.MapperService;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.rest.BaseRestHandler.DEFAULT_INCLUDE_TYPE_NAME_POLICY;
+import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A response for a get index action.
@@ -61,9 +61,12 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
     private ImmutableOpenMap<String, String> dataStreams = ImmutableOpenMap.of();
     private final String[] indices;
 
-    public GetIndexResponse(String[] indices, ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings,
-            ImmutableOpenMap<String, List<AliasMetadata>> aliases, ImmutableOpenMap<String, Settings> settings,
-            ImmutableOpenMap<String, Settings> defaultSettings, ImmutableOpenMap<String, String> dataStreams) {
+    public GetIndexResponse(String[] indices,
+                     ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings,
+                     ImmutableOpenMap<String, List<AliasMetadata>> aliases,
+                     ImmutableOpenMap<String, Settings> settings,
+                     ImmutableOpenMap<String, Settings> defaultSettings,
+                     ImmutableOpenMap<String, String> dataStreams) {
         this.indices = indices;
         // to have deterministic order
         Arrays.sort(indices);
@@ -271,7 +274,8 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
                     builder.endObject();
 
                     ImmutableOpenMap<String, MappingMetadata> indexMappings = mappings.get(index);
-                    boolean includeTypeName = params.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+                    boolean includeTypeName = params.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER,
+                        DEFAULT_INCLUDE_TYPE_NAME_POLICY);
                     if (includeTypeName) {
                         builder.startObject("mappings");
                         if (indexMappings != null) {
@@ -361,20 +365,20 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
             parser.nextToken();
             if (parser.currentToken() == Token.START_OBJECT) {
                 switch (parser.currentName()) {
-                case "aliases":
-                    indexAliases = parseAliases(parser);
-                    break;
-                case "mappings":
-                    indexMappings = parseMappings(parser);
-                    break;
-                case "settings":
-                    indexSettings = Settings.fromXContent(parser);
-                    break;
-                case "defaults":
-                    indexDefaultSettings = Settings.fromXContent(parser);
-                    break;
-                default:
-                    parser.skipChildren();
+                    case "aliases":
+                        indexAliases = parseAliases(parser);
+                        break;
+                    case "mappings":
+                        indexMappings = parseMappings(parser);
+                        break;
+                    case "settings":
+                        indexSettings = Settings.fromXContent(parser);
+                        break;
+                    case "defaults":
+                        indexDefaultSettings = Settings.fromXContent(parser);
+                        break;
+                    default:
+                        parser.skipChildren();
                 }
             } else if (parser.currentToken() == Token.VALUE_STRING) {
                 if (parser.currentName().equals("data_stream")) {
@@ -395,19 +399,13 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
         Settings indexSettings = Settings.EMPTY;
         Settings indexDefaultSettings = Settings.EMPTY;
         String dataStream;
-
-        IndexEntry(List<AliasMetadata> indexAliases, ImmutableOpenMap<String, MappingMetadata> indexMappings, Settings indexSettings,
-                Settings indexDefaultSettings, String dataStream) {
-            if (indexAliases != null)
-                this.indexAliases = indexAliases;
-            if (indexMappings != null)
-                this.indexMappings = indexMappings;
-            if (indexSettings != null)
-                this.indexSettings = indexSettings;
-            if (indexDefaultSettings != null)
-                this.indexDefaultSettings = indexDefaultSettings;
-            if (dataStream != null)
-                this.dataStream = dataStream;
+        IndexEntry(List<AliasMetadata> indexAliases, ImmutableOpenMap<String, MappingMetadata> indexMappings,
+                   Settings indexSettings, Settings indexDefaultSettings, String dataStream) {
+            if (indexAliases != null) this.indexAliases = indexAliases;
+            if (indexMappings != null) this.indexMappings = indexMappings;
+            if (indexSettings != null) this.indexSettings = indexSettings;
+            if (indexDefaultSettings != null) this.indexDefaultSettings = indexDefaultSettings;
+            if (dataStream != null) this.dataStream = dataStream;
         }
     }
 
@@ -448,8 +446,11 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
                 parser.nextToken();
             }
         }
-        return new GetIndexResponse(indices.toArray(new String[0]), mappings.build(), aliases.build(), settings.build(),
-                defaultSettings.build(), dataStreams.build());
+        return
+            new GetIndexResponse(
+                indices.toArray(new String[0]), mappings.build(), aliases.build(),
+                settings.build(), defaultSettings.build(), dataStreams.build()
+            );
     }
 
     @Override
@@ -459,18 +460,27 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o== null || getClass() != o.getClass()) return false;
         GetIndexResponse that = (GetIndexResponse) o;
-        return Arrays.equals(indices, that.indices) && Objects.equals(aliases, that.aliases) && Objects.equals(mappings, that.mappings)
-                && Objects.equals(settings, that.settings) && Objects.equals(defaultSettings, that.defaultSettings)
-                && Objects.equals(dataStreams, that.dataStreams);
+        return Arrays.equals(indices, that.indices) &&
+            Objects.equals(aliases, that.aliases) &&
+            Objects.equals(mappings, that.mappings) &&
+            Objects.equals(settings, that.settings) &&
+            Objects.equals(defaultSettings, that.defaultSettings) &&
+            Objects.equals(dataStreams, that.dataStreams);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(indices), aliases, mappings, settings, defaultSettings, dataStreams);
+        return
+            Objects.hash(
+                Arrays.hashCode(indices),
+                aliases,
+                mappings,
+                settings,
+                defaultSettings,
+                dataStreams
+            );
     }
 }

@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.alias;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.ObjectParser.fromList;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -48,14 +35,27 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.index.query.QueryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.ObjectParser.fromList;
 
 /**
  * A request to add/remove aliases for one or more indices.
@@ -105,7 +105,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         private static final ParseField REMOVE_INDEX = new ParseField("remove_index");
 
         public enum Type {
-            ADD((byte) 0, AliasActions.ADD), REMOVE((byte) 1, AliasActions.REMOVE), REMOVE_INDEX((byte) 2, AliasActions.REMOVE_INDEX);
+            ADD((byte) 0, AliasActions.ADD),
+            REMOVE((byte) 1, AliasActions.REMOVE),
+            REMOVE_INDEX((byte) 2, AliasActions.REMOVE_INDEX);
 
             private final byte value;
             private final String fieldName;
@@ -121,14 +123,10 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
             public static Type fromValue(byte value) {
                 switch (value) {
-                case 0:
-                    return ADD;
-                case 1:
-                    return REMOVE;
-                case 2:
-                    return REMOVE_INDEX;
-                default:
-                    throw new IllegalArgumentException("No type for action [" + value + "]");
+                    case 0: return ADD;
+                    case 1: return REMOVE;
+                    case 2: return REMOVE_INDEX;
+                    default: throw new IllegalArgumentException("No type for action [" + value + "]");
                 }
             }
         }
@@ -201,26 +199,27 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             ADD_PARSER.declareField(AliasActions::mustExist, XContentParser::booleanValue, MUST_EXIST, ValueType.BOOLEAN);
         }
         private static final ObjectParser<AliasActions, Void> REMOVE_PARSER = parser(REMOVE.getPreferredName(), AliasActions::remove);
-        private static final ObjectParser<AliasActions, Void> REMOVE_INDEX_PARSER =
-                parser(REMOVE_INDEX.getPreferredName(), AliasActions::removeIndex);
+        private static final ObjectParser<AliasActions, Void> REMOVE_INDEX_PARSER = parser(REMOVE_INDEX.getPreferredName(),
+                AliasActions::removeIndex);
 
         /**
          * Parser for any one {@link AliasAction}.
          */
-        public static final ConstructingObjectParser<AliasActions, Void> PARSER = new ConstructingObjectParser<>("alias_action", a -> {
-            // Take the first action and complain if there are more than one actions
-            AliasActions action = null;
-            for (Object o : a) {
-                if (o != null) {
-                    if (action == null) {
-                        action = (AliasActions) o;
-                    } else {
-                        throw new IllegalArgumentException("Too many operations declared on operation entry");
+        public static final ConstructingObjectParser<AliasActions, Void> PARSER = new ConstructingObjectParser<>(
+                "alias_action", a -> {
+                    // Take the first action and complain if there are more than one actions
+                    AliasActions action = null;
+                    for (Object o : a) {
+                        if (o != null) {
+                            if (action == null) {
+                                action = (AliasActions) o;
+                            } else {
+                                throw new IllegalArgumentException("Too many operations declared on operation entry");
+                            }
+                        }
                     }
-                }
-            }
-            return action;
-        });
+                    return action;
+                });
         static {
             PARSER.declareObject(optionalConstructorArg(), ADD_PARSER, ADD);
             PARSER.declareObject(optionalConstructorArg(), REMOVE_PARSER, REMOVE);
@@ -254,7 +253,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             routing = in.readOptionalString();
             searchRouting = in.readOptionalString();
             indexRouting = in.readOptionalString();
-            writeIndex = in.readOptionalBoolean();
+            if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+                writeIndex = in.readOptionalBoolean();
+            }
             if (in.getVersion().onOrAfter(Version.V_7_7_0)) { //TODO fix for backport of https://github.com/elastic/elasticsearch/pull/52547
                 isHidden = in.readOptionalBoolean();
             }
@@ -277,7 +278,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             out.writeOptionalString(routing);
             out.writeOptionalString(searchRouting);
             out.writeOptionalString(indexRouting);
-            out.writeOptionalBoolean(writeIndex);
+            if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+                out.writeOptionalBoolean(writeIndex);
+            }
             if (out.getVersion().onOrAfter(Version.V_7_7_0)) { //TODO fix for backport https://github.com/elastic/elasticsearch/pull/52547
                 out.writeOptionalBoolean(isHidden);
             }
@@ -330,7 +333,7 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             if (false == Strings.hasLength(index)) {
                 throw new IllegalArgumentException("[index] can't be empty string");
             }
-            this.indices = new String[] { index };
+            this.indices = new String[] {index};
             return this;
         }
 
@@ -364,7 +367,7 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             if (false == Strings.hasLength(alias)) {
                 throw new IllegalArgumentException("[alias] can't be empty string");
             }
-            this.aliases = new String[] { alias };
+            this.aliases = new String[] {alias};
             this.originalAliases = aliases;
             return this;
         }
@@ -555,9 +558,16 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         @Override
         public String toString() {
-            return "AliasActions[" + "type=" + type + ",indices=" + Arrays.toString(indices) + ",aliases=" + Arrays.deepToString(aliases)
-                    + ",filter=" + filter + ",routing=" + routing + ",indexRouting=" + indexRouting + ",searchRouting=" + searchRouting
-                    + ",writeIndex=" + writeIndex + "]";
+            return "AliasActions["
+                    + "type=" + type
+                    + ",indices=" + Arrays.toString(indices)
+                    + ",aliases=" + Arrays.deepToString(aliases)
+                    + ",filter=" + filter
+                    + ",routing=" + routing
+                    + ",indexRouting=" + indexRouting
+                    + ",searchRouting=" + searchRouting
+                    + ",writeIndex=" + writeIndex
+                    + "]";
         }
 
         // equals, and hashCode implemented for easy testing of round trip
@@ -567,10 +577,15 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
                 return false;
             }
             AliasActions other = (AliasActions) obj;
-            return Objects.equals(type, other.type) && Arrays.equals(indices, other.indices) && Arrays.equals(aliases, other.aliases)
-                    && Objects.equals(filter, other.filter) && Objects.equals(routing, other.routing)
-                    && Objects.equals(indexRouting, other.indexRouting) && Objects.equals(searchRouting, other.searchRouting)
-                    && Objects.equals(writeIndex, other.writeIndex) && Objects.equals(isHidden, other.isHidden);
+            return Objects.equals(type, other.type)
+                    && Arrays.equals(indices, other.indices)
+                    && Arrays.equals(aliases, other.aliases)
+                    && Objects.equals(filter, other.filter)
+                    && Objects.equals(routing, other.routing)
+                    && Objects.equals(indexRouting, other.indexRouting)
+                    && Objects.equals(searchRouting, other.searchRouting)
+                    && Objects.equals(writeIndex, other.writeIndex)
+                    && Objects.equals(isHidden, other.isHidden);
         }
 
         @Override

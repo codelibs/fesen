@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.test.hamcrest;
 
-import java.util.Optional;
-
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.util.Optional;
 
 public class OptionalMatchers {
 

@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.Collections;
-import java.util.function.Supplier;
-
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.Strings;
@@ -30,6 +27,9 @@ import org.codelibs.fesen.index.fielddata.plain.ConstantIndexFieldData;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.util.Collections;
+import java.util.function.Supplier;
 
 public class IndexFieldMapper extends MetadataFieldMapper {
 

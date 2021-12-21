@@ -75,7 +75,7 @@ public class FesenNodeCommandTests extends ESTestCase {
 
         Metadata loadedMetadata;
         try (XContentParser parser = createParser(hasMissingCustoms ? FesenNodeCommand.namedXContentRegistry : xContentRegistry(),
-                JsonXContent.jsonXContent, BytesReference.bytes(builder))) {
+            JsonXContent.jsonXContent, BytesReference.bytes(builder))) {
             loadedMetadata = Metadata.fromXContent(parser);
         }
         assertThat(loadedMetadata.clusterUUID(), not(equalTo("_na_")));
@@ -94,7 +94,7 @@ public class FesenNodeCommandTests extends ESTestCase {
                 final Metadata reloadedMetadata = Metadata.FORMAT.loadLatestState(logger, xContentRegistry(), tempdir);
                 assertThat(reloadedMetadata.indexGraveyard(), equalTo(latestMetadata.indexGraveyard()));
             }
-        } else {
+        }  else {
             assertThat(loadedMetadata.indexGraveyard(), equalTo(latestMetadata.indexGraveyard()));
         }
     }
@@ -112,7 +112,8 @@ public class FesenNodeCommandTests extends ESTestCase {
             for (int i = 0; i < numDataStreams; i++) {
                 String dataStreamName = "name" + 1;
                 IndexMetadata backingIndex = createFirstBackingIndex(dataStreamName).build();
-                mdBuilder.put(new DataStream(dataStreamName, createTimestampField("@timestamp"), List.of(backingIndex.getIndex())));
+                mdBuilder.put(new DataStream(dataStreamName, createTimestampField("@timestamp"),
+                    List.of(backingIndex.getIndex())));
             }
         }
         mdBuilder.indexGraveyard(graveyard.build());
@@ -121,7 +122,10 @@ public class FesenNodeCommandTests extends ESTestCase {
 
     @Override
     protected NamedXContentRegistry xContentRegistry() {
-        return new NamedXContentRegistry(Stream.of(ClusterModule.getNamedXWriteables().stream(), IndicesModule.getNamedXContents().stream())
-                .flatMap(Function.identity()).collect(Collectors.toList()));
+        return new NamedXContentRegistry(
+            Stream.of(ClusterModule.getNamedXWriteables().stream(), IndicesModule.getNamedXContents().stream())
+            .flatMap(Function.identity())
+            .collect(Collectors.toList())
+        );
     }
 }

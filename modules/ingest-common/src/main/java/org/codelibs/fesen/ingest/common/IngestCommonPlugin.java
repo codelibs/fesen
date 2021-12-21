@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver;
@@ -47,12 +40,19 @@ import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.rest.RestController;
 import org.codelibs.fesen.rest.RestHandler;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPlugin {
 
     static final Setting<TimeValue> WATCHDOG_INTERVAL =
-            Setting.timeSetting("ingest.grok.watchdog.interval", TimeValue.timeValueSeconds(1), Setting.Property.NodeScope);
+        Setting.timeSetting("ingest.grok.watchdog.interval", TimeValue.timeValueSeconds(1), Setting.Property.NodeScope);
     static final Setting<TimeValue> WATCHDOG_MAX_EXECUTION_TIME =
-            Setting.timeSetting("ingest.grok.watchdog.max_execution_time", TimeValue.timeValueSeconds(1), Setting.Property.NodeScope);
+        Setting.timeSetting("ingest.grok.watchdog.max_execution_time", TimeValue.timeValueSeconds(1), Setting.Property.NodeScope);
 
     public IngestCommonPlugin() {
     }
@@ -98,8 +98,9 @@ public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPl
 
     @Override
     public List<RestHandler> getRestHandlers(Settings settings, RestController restController, ClusterSettings clusterSettings,
-            IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver,
-            Supplier<DiscoveryNodes> nodesInCluster) {
+                                             IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter,
+                                             IndexNameExpressionResolver indexNameExpressionResolver,
+                                             Supplier<DiscoveryNodes> nodesInCluster) {
         return Collections.singletonList(new GrokProcessorGetAction.RestAction());
     }
 
@@ -111,8 +112,8 @@ public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPl
     private static MatcherWatchdog createGrokThreadWatchdog(Processor.Parameters parameters) {
         long intervalMillis = WATCHDOG_INTERVAL.get(parameters.env.settings()).getMillis();
         long maxExecutionTimeMillis = WATCHDOG_MAX_EXECUTION_TIME.get(parameters.env.settings()).getMillis();
-        return MatcherWatchdog.newInstance(intervalMillis, maxExecutionTimeMillis, parameters.relativeTimeSupplier,
-                parameters.scheduler::apply);
+        return MatcherWatchdog.newInstance(intervalMillis, maxExecutionTimeMillis,
+            parameters.relativeTimeSupplier, parameters.scheduler::apply);
     }
 
 }

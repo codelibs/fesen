@@ -49,9 +49,12 @@ public class AdjacencyMatrixAggregationBuilderTests extends ESTestCase {
         // filter size grater than max size should thrown a exception
         QueryShardContext queryShardContext = mock(QueryShardContext.class);
         IndexShard indexShard = mock(IndexShard.class);
-        Settings settings =
-                Settings.builder().put("index.max_adjacency_matrix_filters", 2).put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                        .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1).put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 2).build();
+        Settings settings = Settings.builder()
+            .put("index.max_adjacency_matrix_filters", 2)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 2)
+            .build();
         IndexMetadata indexMetadata = IndexMetadata.builder("index").settings(settings).build();
         IndexSettings indexSettings = new IndexSettings(indexMetadata, Settings.EMPTY);
         when(indexShard.indexSettings()).thenReturn(indexSettings);
@@ -67,11 +70,10 @@ public class AdjacencyMatrixAggregationBuilderTests extends ESTestCase {
         }
         AdjacencyMatrixAggregationBuilder builder = new AdjacencyMatrixAggregationBuilder("dummy", filters);
         IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                () -> builder.doBuild(context.getQueryShardContext(), null, new AggregatorFactories.Builder()));
-        assertThat(ex.getMessage(),
-                equalTo("Number of filters is too large, must be less than or equal to: [2] but was [3]."
-                        + "This limit can be set by changing the [" + IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey()
-                        + "] index level setting."));
+            () -> builder.doBuild(context.getQueryShardContext(), null, new AggregatorFactories.Builder()));
+        assertThat(ex.getMessage(), equalTo("Number of filters is too large, must be less than or equal to: [2] but was [3]."
+            + "This limit can be set by changing the [" + IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey()
+            + "] index level setting."));
 
         // filter size not grater than max size should return an instance of AdjacencyMatrixAggregatorFactory
         Map<String, QueryBuilder> emptyFilters = Collections.emptyMap();

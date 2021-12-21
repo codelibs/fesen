@@ -42,8 +42,8 @@ public class RestClearScrollActionTests extends ESTestCase {
 
     public void testParseClearScrollRequestWithInvalidJsonThrowsException() throws Exception {
         RestClearScrollAction action = new RestClearScrollAction();
-        RestRequest request =
-                new FakeRestRequest.Builder(xContentRegistry()).withContent(new BytesArray("{invalid_json}"), XContentType.JSON).build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+            .withContent(new BytesArray("{invalid_json}"), XContentType.JSON).build();
         Exception e = expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, null));
         assertThat(e.getMessage(), equalTo("Failed to parse request body"));
     }
@@ -59,9 +59,9 @@ public class RestClearScrollActionTests extends ESTestCase {
             }
         }) {
             RestClearScrollAction action = new RestClearScrollAction();
-            RestRequest request =
-                    new FakeRestRequest.Builder(xContentRegistry()).withParams(Collections.singletonMap("scroll_id", "QUERY_STRING"))
-                            .withContent(new BytesArray("{\"scroll_id\": [\"BODY\"]}"), XContentType.JSON).build();
+            RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+                .withParams(Collections.singletonMap("scroll_id", "QUERY_STRING"))
+                .withContent(new BytesArray("{\"scroll_id\": [\"BODY\"]}"), XContentType.JSON).build();
             FakeRestChannel channel = new FakeRestChannel(request, false, 0);
             action.handleRequest(request, channel, nodeClient);
 

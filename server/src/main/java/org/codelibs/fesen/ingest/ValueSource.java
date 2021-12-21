@@ -105,10 +105,8 @@ public interface ValueSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             MapValue mapValue = (MapValue) o;
             return map.equals(mapValue.map);
@@ -140,10 +138,8 @@ public interface ValueSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             ListValue listValue = (ListValue) o;
             return values.equals(listValue.values);
@@ -171,10 +167,8 @@ public interface ValueSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             ObjectValue objectValue = (ObjectValue) o;
             return Objects.equals(value, objectValue.value);
@@ -201,10 +195,8 @@ public interface ValueSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             ByteValue objectValue = (ByteValue) o;
             return Arrays.equals(value, objectValue.value);
@@ -232,10 +224,8 @@ public interface ValueSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             TemplatedValue templatedValue = (TemplatedValue) o;
             return Objects.equals(template, templatedValue.template);

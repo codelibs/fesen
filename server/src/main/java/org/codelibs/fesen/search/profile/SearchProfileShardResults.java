@@ -1,5 +1,17 @@
 package org.codelibs.fesen.search.profile;
 
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+import org.codelibs.fesen.search.profile.aggregation.AggregationProfileShardResult;
+import org.codelibs.fesen.search.profile.aggregation.AggregationProfiler;
+import org.codelibs.fesen.search.profile.query.QueryProfileShardResult;
+import org.codelibs.fesen.search.profile.query.QueryProfiler;
+
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
@@ -9,17 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.search.profile.aggregation.AggregationProfileShardResult;
-import org.codelibs.fesen.search.profile.aggregation.AggregationProfiler;
-import org.codelibs.fesen.search.profile.query.QueryProfileShardResult;
-import org.codelibs.fesen.search.profile.query.QueryProfiler;
 
 /**
  * A container class to hold all the profile results across all shards.  Internally
@@ -35,7 +36,7 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
     private Map<String, ProfileShardResult> shardResults;
 
     public SearchProfileShardResults(Map<String, ProfileShardResult> shardResults) {
-        this.shardResults = Collections.unmodifiableMap(shardResults);
+        this.shardResults =  Collections.unmodifiableMap(shardResults);
     }
 
     public SearchProfileShardResults(StreamInput in) throws IOException {
@@ -105,8 +106,8 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
         return new SearchProfileShardResults(searchProfileResults);
     }
 
-    private static void parseSearchProfileResultsEntry(XContentParser parser, Map<String, ProfileShardResult> searchProfileResults)
-            throws IOException {
+    private static void parseSearchProfileResultsEntry(XContentParser parser,
+            Map<String, ProfileShardResult> searchProfileResults) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
         List<QueryProfileShardResult> queryProfileResults = new ArrayList<>();
@@ -153,8 +154,8 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
         AggregationProfiler aggProfiler = profilers.getAggregationProfiler();
         List<QueryProfileShardResult> queryResults = new ArrayList<>(queryProfilers.size());
         for (QueryProfiler queryProfiler : queryProfilers) {
-            QueryProfileShardResult result =
-                    new QueryProfileShardResult(queryProfiler.getTree(), queryProfiler.getRewriteTime(), queryProfiler.getCollector());
+            QueryProfileShardResult result = new QueryProfileShardResult(queryProfiler.getTree(), queryProfiler.getRewriteTime(),
+                    queryProfiler.getCollector());
             queryResults.add(result);
         }
         AggregationProfileShardResult aggResults = new AggregationProfileShardResult(aggProfiler.getTree());

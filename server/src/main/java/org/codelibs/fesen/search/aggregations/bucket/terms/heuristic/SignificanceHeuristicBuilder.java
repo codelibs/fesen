@@ -17,9 +17,11 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
 
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+
 
 public interface SignificanceHeuristicBuilder extends ToXContentFragment {
 }

@@ -19,16 +19,17 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import static org.hamcrest.Matchers.equalTo;
-
-import java.io.IOException;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.codelibs.fesen.analysis.common.UniqueTokenFilter;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.io.IOException;
+
+import static org.hamcrest.Matchers.equalTo;
 
 public class UniqueTokenFilterTests extends ESTestCase {
     public void testSimple() throws IOException {

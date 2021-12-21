@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.spatial4j.shape.Point;
+
+import java.io.IOException;
 
 public class PointBuilder extends ShapeBuilder<Point, org.codelibs.fesen.geometry.Point, PointBuilder> {
     public static final GeoShapeType TYPE = GeoShapeType.POINT;
@@ -75,11 +75,11 @@ public class PointBuilder extends ShapeBuilder<Point, org.codelibs.fesen.geometr
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        builder.startObject();
-        builder.field(ShapeParser.FIELD_TYPE.getPreferredName(), TYPE.shapeName());
-        builder.field(ShapeParser.FIELD_COORDINATES.getPreferredName());
-        toXContent(builder, coordinates.get(0));
-        return builder.endObject();
+       builder.startObject();
+       builder.field(ShapeParser.FIELD_TYPE.getPreferredName(), TYPE.shapeName());
+       builder.field(ShapeParser.FIELD_COORDINATES.getPreferredName());
+       toXContent(builder, coordinates.get(0));
+       return builder.endObject();
     }
 
     @Override

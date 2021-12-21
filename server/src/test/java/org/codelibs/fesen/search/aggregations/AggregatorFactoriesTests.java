@@ -87,18 +87,30 @@ public class AggregatorFactoriesTests extends ESTestCase {
     }
 
     public void testGetPipelineAggregatorFactories_returnsUnmodifiableList() {
-        AggregatorFactories.Builder builder =
-                new AggregatorFactories.Builder().addPipelineAggregator(PipelineAggregatorBuilders.avgBucket("foo", "path1"));
+        AggregatorFactories.Builder builder = new AggregatorFactories.Builder().addPipelineAggregator(
+            PipelineAggregatorBuilders.avgBucket("foo", "path1"));
         Collection<PipelineAggregationBuilder> pipelineAggregatorFactories = builder.getPipelineAggregatorFactories();
         assertThat(pipelineAggregatorFactories.size(), equalTo(1));
         expectThrows(UnsupportedOperationException.class,
-                () -> pipelineAggregatorFactories.add(PipelineAggregatorBuilders.avgBucket("bar", "path2")));
+            () -> pipelineAggregatorFactories.add(PipelineAggregatorBuilders.avgBucket("bar", "path2")));
     }
 
     public void testTwoTypes() throws Exception {
-        XContentBuilder source = JsonXContent.contentBuilder().startObject().startObject("in_stock").startObject("filter")
-                .startObject("range").startObject("stock").field("gt", 0).endObject().endObject().endObject().startObject("terms")
-                .field("field", "stock").endObject().endObject().endObject();
+        XContentBuilder source = JsonXContent.contentBuilder()
+                .startObject()
+                    .startObject("in_stock")
+                        .startObject("filter")
+                            .startObject("range")
+                                .startObject("stock")
+                                    .field("gt", 0)
+                                .endObject()
+                            .endObject()
+                        .endObject()
+                        .startObject("terms")
+                            .field("field", "stock")
+                        .endObject()
+                    .endObject()
+                .endObject();
         XContentParser parser = createParser(source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(ParsingException.class, () -> AggregatorFactories.parseAggregators(parser));
@@ -121,8 +133,18 @@ public class AggregatorFactoriesTests extends ESTestCase {
             }
         }
 
-        XContentBuilder source = JsonXContent.contentBuilder().startObject().startObject(name).startObject("filter").startObject("range")
-                .startObject("stock").field("gt", 0).endObject().endObject().endObject().endObject().endObject();
+        XContentBuilder source = JsonXContent.contentBuilder()
+                .startObject()
+                    .startObject(name)
+                        .startObject("filter")
+                            .startObject("range")
+                                .startObject("stock")
+                                    .field("gt", 0)
+                                .endObject()
+                            .endObject()
+                        .endObject()
+                    .endObject()
+                .endObject();
         XContentParser parser = createParser(source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(ParsingException.class, () -> AggregatorFactories.parseAggregators(parser));
@@ -130,13 +152,23 @@ public class AggregatorFactoriesTests extends ESTestCase {
     }
 
     public void testMissingName() throws Exception {
-        XContentBuilder source = JsonXContent.contentBuilder().startObject().startObject("by_date").startObject("date_histogram")
-                .field("field", "timestamp").field("calendar_interval", "month").endObject().startObject("aggs")
-                // the aggregation name is missing
-                //.startObject("tag_count")
-                .startObject("cardinality").field("field", "tag").endObject()
-                //.endObject()
-                .endObject().endObject().endObject();
+        XContentBuilder source = JsonXContent.contentBuilder()
+                .startObject()
+                    .startObject("by_date")
+                        .startObject("date_histogram")
+                            .field("field", "timestamp")
+                            .field("calendar_interval", "month")
+                        .endObject()
+                        .startObject("aggs")
+                            // the aggregation name is missing
+                            //.startObject("tag_count")
+                            .startObject("cardinality")
+                                .field("field", "tag")
+                            .endObject()
+                            //.endObject()
+                        .endObject()
+                    .endObject()
+                .endObject();
         XContentParser parser = createParser(source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(ParsingException.class, () -> AggregatorFactories.parseAggregators(parser));
@@ -144,13 +176,23 @@ public class AggregatorFactoriesTests extends ESTestCase {
     }
 
     public void testMissingType() throws Exception {
-        XContentBuilder source = JsonXContent.contentBuilder().startObject().startObject("by_date").startObject("date_histogram")
-                .field("field", "timestamp").field("calendar_interval", "month").endObject().startObject("aggs").startObject("tag_count")
-                // the aggregation type is missing
-                //.startObject("cardinality")
-                .field("field", "tag")
-                //.endObject()
-                .endObject().endObject().endObject().endObject();
+        XContentBuilder source = JsonXContent.contentBuilder()
+                .startObject()
+                    .startObject("by_date")
+                        .startObject("date_histogram")
+                            .field("field", "timestamp")
+                            .field("calendar_interval", "month")
+                        .endObject()
+                        .startObject("aggs")
+                            .startObject("tag_count")
+                                // the aggregation type is missing
+                                //.startObject("cardinality")
+                                .field("field", "tag")
+                                //.endObject()
+                            .endObject()
+                        .endObject()
+                    .endObject()
+                .endObject();
         XContentParser parser = createParser(source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(ParsingException.class, () -> AggregatorFactories.parseAggregators(parser));
@@ -158,10 +200,23 @@ public class AggregatorFactoriesTests extends ESTestCase {
     }
 
     public void testInvalidType() throws Exception {
-        XContentBuilder source = JsonXContent.contentBuilder().startObject().startObject("by_date").startObject("date_histogram")
-                .field("field", "timestamp").field("calendar_interval", "month").endObject().startObject("aggs").startObject("tags")
-                // the aggregation type is invalid
-                .startObject("term").field("field", "tag").endObject().endObject().endObject().endObject().endObject();
+        XContentBuilder source = JsonXContent.contentBuilder()
+                .startObject()
+                    .startObject("by_date")
+                        .startObject("date_histogram")
+                            .field("field", "timestamp")
+                            .field("calendar_interval", "month")
+                        .endObject()
+                        .startObject("aggs")
+                            .startObject("tags")
+                                // the aggregation type is invalid
+                                .startObject("term")
+                                    .field("field", "tag")
+                                .endObject()
+                            .endObject()
+                        .endObject()
+                    .endObject()
+                .endObject();
         XContentParser parser = createParser(source);
         assertSame(XContentParser.Token.START_OBJECT, parser.nextToken());
         Exception e = expectThrows(ParsingException.class, () -> AggregatorFactories.parseAggregators(parser));
@@ -185,9 +240,10 @@ public class AggregatorFactoriesTests extends ESTestCase {
         }
         FilterAggregationBuilder filterAggBuilder = new FilterAggregationBuilder("titles", new WrapperQueryBuilder(bytesReference));
         BucketScriptPipelineAggregationBuilder pipelineAgg = new BucketScriptPipelineAggregationBuilder("const", new Script("1"));
-        AggregatorFactories.Builder builder =
-                new AggregatorFactories.Builder().addAggregator(filterAggBuilder).addPipelineAggregator(pipelineAgg);
-        AggregatorFactories.Builder rewritten = builder.rewrite(new QueryRewriteContext(xContentRegistry, null, null, () -> 0L));
+        AggregatorFactories.Builder builder = new AggregatorFactories.Builder().addAggregator(filterAggBuilder)
+                .addPipelineAggregator(pipelineAgg);
+        AggregatorFactories.Builder rewritten = builder
+                .rewrite(new QueryRewriteContext(xContentRegistry, null, null, () -> 0L));
         assertNotSame(builder, rewritten);
         Collection<AggregationBuilder> aggregatorFactories = rewritten.getAggregatorFactories();
         assertEquals(1, aggregatorFactories.size());
@@ -200,13 +256,14 @@ public class AggregatorFactoriesTests extends ESTestCase {
         assertThat(rewrittenFilter, instanceOf(TermsQueryBuilder.class));
 
         // Check that a further rewrite returns the same aggregation factories builder
-        AggregatorFactories.Builder secondRewritten = rewritten.rewrite(new QueryRewriteContext(xContentRegistry, null, null, () -> 0L));
+        AggregatorFactories.Builder secondRewritten = rewritten
+                .rewrite(new QueryRewriteContext(xContentRegistry, null, null, () -> 0L));
         assertSame(rewritten, secondRewritten);
     }
 
     public void testRewritePipelineAggregationUnderAggregation() throws Exception {
         FilterAggregationBuilder filterAggBuilder = new FilterAggregationBuilder("titles", new MatchAllQueryBuilder())
-                .subAggregation(new RewrittenPipelineAggregationBuilder());
+            .subAggregation(new RewrittenPipelineAggregationBuilder());
         AggregatorFactories.Builder builder = new AggregatorFactories.Builder().addAggregator(filterAggBuilder);
         QueryRewriteContext context = new QueryRewriteContext(xContentRegistry, null, null, () -> 0L);
         AggregatorFactories.Builder rewritten = builder.rewrite(context);
@@ -234,7 +291,7 @@ public class AggregatorFactoriesTests extends ESTestCase {
     public void testRewriteAggregationAtTopLevel() throws Exception {
         FilterAggregationBuilder filterAggBuilder = new FilterAggregationBuilder("titles", new MatchAllQueryBuilder());
         AggregatorFactories.Builder builder = new AggregatorFactories.Builder().addAggregator(filterAggBuilder)
-                .addPipelineAggregator(new RewrittenPipelineAggregationBuilder());
+            .addPipelineAggregator(new RewrittenPipelineAggregationBuilder());
         QueryRewriteContext context = new QueryRewriteContext(xContentRegistry, null, null, () -> 0L);
         AggregatorFactories.Builder rewritten = builder.rewrite(context);
         CountDownLatch latch = new CountDownLatch(1);
@@ -261,7 +318,8 @@ public class AggregatorFactoriesTests extends ESTestCase {
         builder.addPipelineAggregator(PipelineAggregatorBuilders.avgBucket("foo", "real"));
         builder.addAggregator(AggregationBuilders.avg("real").field("target"));
         PipelineTree tree = builder.buildPipelineTree();
-        assertThat(tree.aggregators().stream().map(PipelineAggregator::name).collect(toList()), equalTo(Arrays.asList("foo", "bar")));
+        assertThat(tree.aggregators().stream().map(PipelineAggregator::name).collect(toList()),
+                equalTo(Arrays.asList("foo", "bar")));
     }
 
     @Override

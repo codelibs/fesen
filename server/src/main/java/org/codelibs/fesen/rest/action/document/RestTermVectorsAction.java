@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.rest.action.document;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.codelibs.fesen.action.termvectors.TermVectorsRequest;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.Strings;
@@ -41,21 +31,37 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 /**
  * This class parses the json request and translates it into a
  * TermVectorsRequest.
  */
 public class RestTermVectorsAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestTermVectorsAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] " + "Specifying types in term vector requests is deprecated.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] " +
+        "Specifying types in term vector requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/{index}/_termvectors"), new Route(POST, "/{index}/_termvectors"),
-                new Route(GET, "/{index}/_termvectors/{id}"), new Route(POST, "/{index}/_termvectors/{id}"),
-                // Deprecated typed endpoints.
-                new Route(GET, "/{index}/{type}/_termvectors"), new Route(POST, "/{index}/{type}/_termvectors"),
-                new Route(GET, "/{index}/{type}/{id}/_termvectors"), new Route(POST, "/{index}/{type}/{id}/_termvectors")));
+        return unmodifiableList(asList(
+            new Route(GET, "/{index}/_termvectors"),
+            new Route(POST, "/{index}/_termvectors"),
+            new Route(GET, "/{index}/_termvectors/{id}"),
+            new Route(POST, "/{index}/_termvectors/{id}"),
+            // Deprecated typed endpoints.
+            new Route(GET, "/{index}/{type}/_termvectors"),
+            new Route(POST, "/{index}/{type}/_termvectors"),
+            new Route(GET, "/{index}/{type}/{id}/_termvectors"),
+            new Route(POST, "/{index}/{type}/{id}/_termvectors")));
     }
 
     @Override
@@ -68,9 +74,13 @@ public class RestTermVectorsAction extends BaseRestHandler {
         TermVectorsRequest termVectorsRequest;
         if (request.hasParam("type")) {
             deprecationLogger.deprecate("termvectors_with_types", TYPES_DEPRECATION_MESSAGE);
-            termVectorsRequest = new TermVectorsRequest(request.param("index"), request.param("type"), request.param("id"));
+            termVectorsRequest = new TermVectorsRequest(request.param("index"),
+                request.param("type"),
+                request.param("id"));
         } else {
-            termVectorsRequest = new TermVectorsRequest(request.param("index"), MapperService.SINGLE_MAPPING_NAME, request.param("id"));
+            termVectorsRequest = new TermVectorsRequest(request.param("index"),
+                MapperService.SINGLE_MAPPING_NAME,
+                request.param("id"));
         }
 
         if (request.hasContentOrSourceParam()) {

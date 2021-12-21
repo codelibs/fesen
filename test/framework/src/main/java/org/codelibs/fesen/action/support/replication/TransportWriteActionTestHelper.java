@@ -18,18 +18,22 @@
  */
 package org.codelibs.fesen.action.support.replication;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.support.WriteRequest;
+import org.codelibs.fesen.action.support.replication.TransportWriteAction;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.translog.Translog;
 
+import java.util.concurrent.CountDownLatch;
+
 public abstract class TransportWriteActionTestHelper {
 
-    public static void performPostWriteActions(final IndexShard indexShard, final WriteRequest<?> request,
-            @Nullable final Translog.Location location, final Logger logger) {
+
+    public static void performPostWriteActions(final IndexShard indexShard,
+                                              final WriteRequest<?> request,
+                                              @Nullable final Translog.Location location,
+                                              final Logger logger) {
         final CountDownLatch latch = new CountDownLatch(1);
         TransportWriteAction.RespondingWriteResult writerResult = new TransportWriteAction.RespondingWriteResult() {
             @Override

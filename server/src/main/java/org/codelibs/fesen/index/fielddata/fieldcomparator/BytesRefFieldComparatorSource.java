@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata.fieldcomparator;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedDocValues;
@@ -40,6 +38,8 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
 
 /**
  * Comparator source for string/binary values.
@@ -75,8 +75,7 @@ public class BytesRefFieldComparatorSource extends IndexFieldData.XFieldComparat
         return indexFieldData.load(context).getBytesValues();
     }
 
-    protected void setScorer(Scorable scorer) {
-    }
+    protected void setScorer(Scorable scorer) {}
 
     @Override
     public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) {
@@ -96,8 +95,8 @@ public class BytesRefFieldComparatorSource extends IndexFieldData.XFieldComparat
                     } else {
                         final BitSet rootDocs = nested.rootDocs(context);
                         final DocIdSetIterator innerDocs = nested.innerDocs(context);
-                        final int maxChildren =
-                                nested.getNestedSort() != null ? nested.getNestedSort().getMaxChildren() : Integer.MAX_VALUE;
+                        final int maxChildren = nested.getNestedSort() != null ?
+                            nested.getNestedSort().getMaxChildren() : Integer.MAX_VALUE;
                         selectedValues = sortMode.select(values, rootDocs, innerDocs, maxChildren);
                     }
                     if (sortMissingFirst(missingValue) || sortMissingLast(missingValue)) {
@@ -141,8 +140,8 @@ public class BytesRefFieldComparatorSource extends IndexFieldData.XFieldComparat
     }
 
     @Override
-    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format, int bucketSize,
-            BucketedSort.ExtraData extra) {
+    public BucketedSort newBucketedSort(BigArrays bigArrays, SortOrder sortOrder, DocValueFormat format,
+            int bucketSize, BucketedSort.ExtraData extra) {
         throw new IllegalArgumentException("only supported on numeric fields");
     }
 
@@ -163,7 +162,7 @@ public class BytesRefFieldComparatorSource extends IndexFieldData.XFieldComparat
             this.substituteTerm = term;
             int sub = in.lookupTerm(term);
             if (sub < 0) {
-                substituteOrd = -sub - 1;
+                substituteOrd = -sub-1;
                 exists = false;
             } else {
                 substituteOrd = sub;
@@ -209,7 +208,7 @@ public class BytesRefFieldComparatorSource extends IndexFieldData.XFieldComparat
             if (ord == substituteOrd) {
                 return substituteTerm;
             } else if (exists == false && ord > substituteOrd) {
-                return in.lookupOrd(ord - 1);
+                return in.lookupOrd(ord-1);
             } else {
                 return in.lookupOrd(ord);
             }

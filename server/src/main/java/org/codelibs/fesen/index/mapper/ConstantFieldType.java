@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.MultiTermQuery;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link MappedFieldType} that has the same value for all documents.
@@ -62,7 +62,9 @@ public abstract class ConstantFieldType extends MappedFieldType {
     protected abstract boolean matches(String pattern, boolean caseInsensitive, QueryShardContext context);
 
     private static String valueToString(Object value) {
-        return value instanceof BytesRef ? ((BytesRef) value).utf8ToString() : value.toString();
+        return value instanceof BytesRef
+                ? ((BytesRef) value).utf8ToString()
+                : value.toString();
     }
 
     @Override
@@ -98,8 +100,10 @@ public abstract class ConstantFieldType extends MappedFieldType {
     }
 
     @Override
-    public final Query prefixQuery(String prefix, @Nullable MultiTermQuery.RewriteMethod method, boolean caseInsensitive,
-            QueryShardContext context) {
+    public final Query prefixQuery(String prefix,
+                             @Nullable MultiTermQuery.RewriteMethod method,
+                             boolean caseInsensitive,
+                             QueryShardContext context) {
         String pattern = prefix + "*";
         if (matches(pattern, caseInsensitive, context)) {
             return Queries.newMatchAllQuery();
@@ -109,8 +113,10 @@ public abstract class ConstantFieldType extends MappedFieldType {
     }
 
     @Override
-    public final Query wildcardQuery(String value, @Nullable MultiTermQuery.RewriteMethod method, boolean caseInsensitive,
-            QueryShardContext context) {
+    public final Query wildcardQuery(String value,
+                               @Nullable MultiTermQuery.RewriteMethod method,
+                               boolean caseInsensitive,
+                               QueryShardContext context) {
         if (matches(value, caseInsensitive, context)) {
             return Queries.newMatchAllQuery();
         } else {

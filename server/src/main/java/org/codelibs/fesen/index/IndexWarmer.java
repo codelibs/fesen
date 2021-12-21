@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -41,13 +32,23 @@ import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.shard.IndexShardState;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+
 public final class IndexWarmer {
 
     private static final Logger logger = LogManager.getLogger(IndexWarmer.class);
 
     private final List<Listener> listeners;
 
-    IndexWarmer(ThreadPool threadPool, IndexFieldDataService indexFieldDataService, Listener... listeners) {
+    IndexWarmer(ThreadPool threadPool, IndexFieldDataService indexFieldDataService,
+                Listener... listeners) {
         ArrayList<Listener> list = new ArrayList<>();
         final Executor executor = threadPool.executor(ThreadPool.Names.WARMER);
         list.add(new FieldDataWarmer(executor, indexFieldDataService));
@@ -98,7 +99,6 @@ public final class IndexWarmer {
         /** Wait until execution of the warm-up action completes. */
         void awaitTermination() throws InterruptedException;
     }
-
     public interface Listener {
         /** Queue tasks to warm-up the given segments and return handles that allow to wait for termination of the
          *  execution of those tasks. */
@@ -131,22 +131,27 @@ public final class IndexWarmer {
                 executor.execute(() -> {
                     try {
                         final long start = System.nanoTime();
-                        IndexFieldData.Global<?> ifd =
-                                indexFieldDataService.getForField(fieldType, indexFieldDataService.index().getName(), () -> {
-                                    throw new UnsupportedOperationException("search lookup not available when warming an index");
-                                });
+                        IndexFieldData.Global<?> ifd = indexFieldDataService.getForField(fieldType,
+                            indexFieldDataService.index().getName(),
+                            () -> {
+                                throw new UnsupportedOperationException("search lookup not available when warming an index");
+                            });
                         IndexFieldData<?> global = ifd.loadGlobal(reader);
                         if (reader.leaves().isEmpty() == false) {
                             global.load(reader.leaves().get(0));
                         }
 
                         if (indexShard.warmerService().logger().isTraceEnabled()) {
-                            indexShard.warmerService().logger().trace("warmed global ordinals for [{}], took [{}]", fieldType.name(),
-                                    TimeValue.timeValueNanos(System.nanoTime() - start));
+                            indexShard.warmerService().logger().trace(
+                                "warmed global ordinals for [{}], took [{}]",
+                                fieldType.name(),
+                                TimeValue.timeValueNanos(System.nanoTime() - start));
                         }
                     } catch (Exception e) {
-                        indexShard.warmerService().logger()
-                                .warn(() -> new ParameterizedMessage("failed to warm-up global ordinals for [{}]", fieldType.name()), e);
+                        indexShard
+                            .warmerService()
+                            .logger()
+                            .warn(() -> new ParameterizedMessage("failed to warm-up global ordinals for [{}]", fieldType.name()), e);
                     } finally {
                         latch.countDown();
                     }

@@ -34,13 +34,15 @@ import org.codelibs.fesen.transport.TransportService;
 
 /** use transport bulk action directly */
 @Deprecated
-public abstract class TransportSingleItemBulkWriteAction<Request extends ReplicatedWriteRequest<Request>, Response extends ReplicationResponse & WriteResponse>
-        extends HandledTransportAction<Request, Response> {
+public abstract class TransportSingleItemBulkWriteAction<
+    Request extends ReplicatedWriteRequest<Request>,
+    Response extends ReplicationResponse & WriteResponse
+    > extends HandledTransportAction<Request, Response> {
 
     private final TransportBulkAction bulkAction;
 
     protected TransportSingleItemBulkWriteAction(String actionName, TransportService transportService, ActionFilters actionFilters,
-            Writeable.Reader<Request> requestReader, TransportBulkAction bulkAction) {
+                                                 Writeable.Reader<Request> requestReader, TransportBulkAction bulkAction) {
         super(actionName, transportService, actionFilters, requestReader);
         this.bulkAction = bulkAction;
     }
@@ -50,8 +52,8 @@ public abstract class TransportSingleItemBulkWriteAction<Request extends Replica
         bulkAction.execute(task, toSingleItemBulkRequest(request), wrapBulkResponse(listener));
     }
 
-    public static <Response extends ReplicationResponse & WriteResponse> ActionListener<BulkResponse> wrapBulkResponse(
-            ActionListener<Response> listener) {
+    public static <Response extends ReplicationResponse & WriteResponse>
+    ActionListener<BulkResponse> wrapBulkResponse(ActionListener<Response> listener) {
         return ActionListener.wrap(bulkItemResponses -> {
             assert bulkItemResponses.getItems().length == 1 : "expected only one item in bulk request";
             BulkItemResponse bulkItemResponse = bulkItemResponses.getItems()[0];

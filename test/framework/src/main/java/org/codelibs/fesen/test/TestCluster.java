@@ -19,14 +19,7 @@
 
 package org.codelibs.fesen.test;
 
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Random;
-import java.util.Set;
-
+import com.carrotsearch.hppc.ObjectArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateResponse;
@@ -40,7 +33,13 @@ import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.indices.IndexTemplateMissingException;
 import org.codelibs.fesen.repositories.RepositoryMissingException;
 
-import com.carrotsearch.hppc.ObjectArrayList;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertAcked;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Base test cluster that exposes the basis to run tests against any fesen cluster, whose layout
@@ -142,7 +141,7 @@ public abstract class TestCluster implements Closeable {
             try {
                 // include wiping hidden indices!
                 assertAcked(client().admin().indices().prepareDelete(indices)
-                        .setIndicesOptions(IndicesOptions.fromOptions(false, true, true, true, true, false, false, true, false)));
+                    .setIndicesOptions(IndicesOptions.fromOptions(false, true, true, true, true, false, false, true, false)));
             } catch (IndexNotFoundException e) {
                 // ignore
             } catch (IllegalArgumentException e) {
@@ -189,7 +188,7 @@ public abstract class TestCluster implements Closeable {
         if (size() > 0) {
             // if nothing is provided, delete all
             if (templates.length == 0) {
-                templates = new String[] { "*" };
+                templates = new String[]{"*"};
             }
             for (String template : templates) {
                 try {
@@ -208,7 +207,7 @@ public abstract class TestCluster implements Closeable {
         if (size() > 0) {
             // if nothing is provided, delete all
             if (repositories.length == 0) {
-                repositories = new String[] { "*" };
+                repositories = new String[]{"*"};
             }
             for (String repository : repositories) {
                 try {

@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.tools.launchers;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.codelibs.fesen.tools.java_version_checker.JavaVersion;
+import org.codelibs.fesen.tools.launchers.JvmErgonomics;
+
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,15 +43,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.codelibs.fesen.tools.java_version_checker.JavaVersion;
-
 public class JvmErgonomicsTests extends LaunchersTestCase {
 
     public void testExtractValidHeapSizeUsingXmx() throws InterruptedException, IOException {
@@ -49,8 +50,10 @@ public class JvmErgonomicsTests extends LaunchersTestCase {
     }
 
     public void testExtractValidHeapSizeUsingMaxHeapSize() throws InterruptedException, IOException {
-        assertThat(JvmErgonomics.extractHeapSize(JvmErgonomics.finalJvmOptions(Collections.singletonList("-XX:MaxHeapSize=2g"))),
-                equalTo(2L << 30));
+        assertThat(
+            JvmErgonomics.extractHeapSize(JvmErgonomics.finalJvmOptions(Collections.singletonList("-XX:MaxHeapSize=2g"))),
+            equalTo(2L << 30)
+        );
     }
 
     public void testExtractValidHeapSizeNoOptionPresent() throws InterruptedException, IOException {
@@ -75,8 +78,10 @@ public class JvmErgonomicsTests extends LaunchersTestCase {
             fail("expected starting java to fail");
         } catch (final RuntimeException e) {
             assertThat(e, hasToString(containsString(("starting java failed"))));
-            assertThat(e,
-                    anyOf(hasToString(containsString("Too small initial heap")), hasToString(containsString("Too small maximum heap"))));
+            assertThat(
+                e,
+                anyOf(hasToString(containsString("Too small initial heap")), hasToString(containsString("Too small maximum heap")))
+            );
         }
     }
 
@@ -91,13 +96,19 @@ public class JvmErgonomicsTests extends LaunchersTestCase {
     }
 
     public void testMaxDirectMemorySizeUnset() throws InterruptedException, IOException {
-        assertThat(JvmErgonomics.extractMaxDirectMemorySize(JvmErgonomics.finalJvmOptions(Collections.singletonList("-Xmx1g"))),
-                equalTo(0L));
+        assertThat(
+            JvmErgonomics.extractMaxDirectMemorySize(JvmErgonomics.finalJvmOptions(Collections.singletonList("-Xmx1g"))),
+            equalTo(0L)
+        );
     }
 
     public void testMaxDirectMemorySizeSet() throws InterruptedException, IOException {
-        assertThat(JvmErgonomics.extractMaxDirectMemorySize(
-                JvmErgonomics.finalJvmOptions(Arrays.asList("-Xmx1g", "-XX:MaxDirectMemorySize=512m"))), equalTo(512L << 20));
+        assertThat(
+            JvmErgonomics.extractMaxDirectMemorySize(
+                JvmErgonomics.finalJvmOptions(Arrays.asList("-Xmx1g", "-XX:MaxDirectMemorySize=512m"))
+            ),
+            equalTo(512L << 20)
+        );
     }
 
     public void testExtractSystemProperties() {
@@ -105,8 +116,9 @@ public class JvmErgonomicsTests extends LaunchersTestCase {
         expectedSystemProperties.put("file.encoding", "UTF-8");
         expectedSystemProperties.put("kv.setting", "ABC=DEF");
 
-        Map<String, String> parsedSystemProperties =
-                JvmErgonomics.extractSystemProperties(Arrays.asList("-Dfile.encoding=UTF-8", "-Dkv.setting=ABC=DEF"));
+        Map<String, String> parsedSystemProperties = JvmErgonomics.extractSystemProperties(
+            Arrays.asList("-Dfile.encoding=UTF-8", "-Dkv.setting=ABC=DEF")
+        );
 
         assertEquals(expectedSystemProperties, parsedSystemProperties);
     }
@@ -128,15 +140,19 @@ public class JvmErgonomicsTests extends LaunchersTestCase {
         heapMaxDirectMemorySize.put("2G", Long.toString((2L << 30) / 2));
         heapMaxDirectMemorySize.put("8G", Long.toString((8L << 30) / 2));
         final String heapSize = randomFrom(heapMaxDirectMemorySize.keySet().toArray(new String[0]));
-        assertThat(JvmErgonomics.choose(Arrays.asList("-Xms" + heapSize, "-Xmx" + heapSize)),
-                hasItem("-XX:MaxDirectMemorySize=" + heapMaxDirectMemorySize.get(heapSize)));
+        assertThat(
+            JvmErgonomics.choose(Arrays.asList("-Xms" + heapSize, "-Xmx" + heapSize)),
+            hasItem("-XX:MaxDirectMemorySize=" + heapMaxDirectMemorySize.get(heapSize))
+        );
     }
 
     public void testMaxDirectMemorySizeChoiceWhenSet() throws InterruptedException, IOException {
         List<String> derivedSettingList = JvmErgonomics.choose(Arrays.asList("-Xms5g", "-Xmx5g", "-XX:MaxDirectMemorySize=4g"));
-        assertThat(derivedSettingList,
-                // if MaxDirectMemorySize is set, we shouldn't derive our own value for it
-                everyItem(not(startsWith("-XX:MaxDirectMemorySize="))));
+        assertThat(
+            derivedSettingList,
+            // if MaxDirectMemorySize is set, we shouldn't derive our own value for it
+            everyItem(not(startsWith("-XX:MaxDirectMemorySize=")))
+        );
     }
 
 }

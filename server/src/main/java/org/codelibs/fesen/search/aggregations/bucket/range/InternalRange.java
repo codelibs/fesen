@@ -18,12 +18,7 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -35,6 +30,12 @@ import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValueType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class InternalRange<B extends InternalRange.Bucket, R extends InternalRange<B, R>> extends InternalMultiBucketAggregation<R, B>
         implements Range {
@@ -148,14 +149,20 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
         }
 
         private static String generateKey(double from, double to, DocValueFormat format) {
-            StringBuilder builder = new StringBuilder().append(Double.isInfinite(from) ? "*" : format.format(from)).append("-")
-                    .append(Double.isInfinite(to) ? "*" : format.format(to));
+            StringBuilder builder = new StringBuilder()
+                .append(Double.isInfinite(from) ? "*" : format.format(from))
+                .append("-")
+                .append(Double.isInfinite(to) ? "*" : format.format(to));
             return builder.toString();
         }
 
         @Override
         public void writeTo(StreamOutput out) throws IOException {
-            out.writeString(key);
+            if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+                out.writeString(key);
+            } else {
+                out.writeOptionalString(key);
+            }
             out.writeDouble(from);
             out.writeDouble(to);
             out.writeVLong(docCount);
@@ -171,8 +178,11 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
                 return false;
             }
             Bucket that = (Bucket) other;
-            return Objects.equals(from, that.from) && Objects.equals(to, that.to) && Objects.equals(docCount, that.docCount)
-                    && Objects.equals(aggregations, that.aggregations) && Objects.equals(key, that.key);
+            return Objects.equals(from, that.from)
+                    && Objects.equals(to, that.to)
+                    && Objects.equals(docCount, that.docCount)
+                    && Objects.equals(aggregations, that.aggregations)
+                    && Objects.equals(key, that.key);
         }
 
         @Override
@@ -234,9 +244,11 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
         int size = in.readVInt();
         List<B> ranges = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            String key = in.readString();
-            ranges.add(getFactory().createBucket(key, in.readDouble(), in.readDouble(), in.readVLong(), InternalAggregations.readFrom(in),
-                    keyed, format));
+            String key = in.getVersion().onOrAfter(Version.V_6_4_0)
+                ? in.readString()
+                : in.readOptionalString();
+            ranges.add(getFactory().createBucket(key, in.readDouble(), in.readDouble(), in.readVLong(),
+                    InternalAggregations.readFrom(in), keyed, format));
         }
         this.ranges = ranges;
     }
@@ -338,14 +350,13 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
-        InternalRange<?, ?> that = (InternalRange<?, ?>) obj;
-        return Objects.equals(ranges, that.ranges) && Objects.equals(format, that.format) && Objects.equals(keyed, that.keyed);
+        InternalRange<?,?> that = (InternalRange<?,?>) obj;
+        return Objects.equals(ranges, that.ranges)
+                && Objects.equals(format, that.format)
+                && Objects.equals(keyed, that.keyed);
     }
 }

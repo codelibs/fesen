@@ -19,6 +19,14 @@
 
 package org.codelibs.fesen.script;
 
+import org.codelibs.fesen.common.SuppressLoggerChecks;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.time.DateFormatter;
+import org.codelibs.fesen.common.time.DateFormatters;
+import org.codelibs.fesen.common.time.DateUtils;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.joda.time.DateTime;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.time.DayOfWeek;
@@ -45,14 +53,6 @@ import java.time.temporal.TemporalUnit;
 import java.time.temporal.ValueRange;
 import java.util.Locale;
 import java.util.Objects;
-
-import org.codelibs.fesen.common.SuppressLoggerChecks;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.time.DateFormatter;
-import org.codelibs.fesen.common.time.DateFormatters;
-import org.codelibs.fesen.common.time.DateUtils;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.joda.time.DateTime;
 
 /**
  * A wrapper around ZonedDateTime that exposes joda methods for backcompat.
@@ -91,10 +91,8 @@ public class JodaCompatibleZonedDateTime
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null)
-            return false;
+        if (this == o) return true;
+        if (o == null)return false;
         if (o.getClass() == JodaCompatibleZonedDateTime.class) {
             JodaCompatibleZonedDateTime that = (JodaCompatibleZonedDateTime) o;
             return Objects.equals(dt, that.dt);
@@ -294,7 +292,7 @@ public class JodaCompatibleZonedDateTime
     }
 
     @Override
-    public ZonedDateTime plus(long amount, TemporalUnit unit) {
+    public ZonedDateTime plus(long amount,TemporalUnit unit) {
         return dt.plus(amount, unit);
     }
 
@@ -521,7 +519,7 @@ public class JodaCompatibleZonedDateTime
     @Deprecated
     public int getDayOfWeek() {
         logDeprecated("getDayOfWeek()",
-                "The return type of [getDayOfWeek()] will change to an enum in 7.0. Use getDayOfWeekEnum().getValue().");
+            "The return type of [getDayOfWeek()] will change to an enum in 7.0. Use getDayOfWeekEnum().getValue().");
         return dt.getDayOfWeek().getValue();
     }
 }

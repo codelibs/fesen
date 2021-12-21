@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.action.ActionRequest;
@@ -51,6 +41,16 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A bulk request holds an ordered {@link IndexRequest}s, {@link DeleteRequest}s and {@link UpdateRequest}s
@@ -84,8 +84,7 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     private long sizeInBytes = 0;
 
-    public BulkRequest() {
-    }
+    public BulkRequest() {}
 
     public BulkRequest(StreamInput in) throws IOException {
         super(in);
@@ -243,14 +242,16 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      */
     @Deprecated
     public BulkRequest add(byte[] data, int from, int length, @Nullable String defaultIndex, @Nullable String defaultType,
-            XContentType xContentType) throws IOException {
+                           XContentType xContentType) throws IOException {
         return add(new BytesArray(data, from, length), defaultIndex, defaultType, xContentType);
     }
+
 
     /**
      * Adds a framed data in binary format
      */
-    public BulkRequest add(byte[] data, int from, int length, @Nullable String defaultIndex, XContentType xContentType) throws IOException {
+    public BulkRequest add(byte[] data, int from, int length, @Nullable String defaultIndex,
+                           XContentType xContentType) throws IOException {
         return add(new BytesArray(data, from, length), defaultIndex, MapperService.SINGLE_MAPPING_NAME, xContentType);
     }
 
@@ -259,15 +260,16 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      * @deprecated use {@link #add(BytesReference, String, XContentType)} instead
      */
     @Deprecated
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType, XContentType xContentType)
-            throws IOException {
+    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType,
+                           XContentType xContentType) throws IOException {
         return add(data, defaultIndex, defaultType, null, null, null, null, true, xContentType);
     }
 
     /**
      * Adds a framed data in binary format
      */
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, XContentType xContentType) throws IOException {
+    public BulkRequest add(BytesReference data, @Nullable String defaultIndex,
+                           XContentType xContentType) throws IOException {
         return add(data, defaultIndex, MapperService.SINGLE_MAPPING_NAME, null, null, null, null, true, xContentType);
     }
 
@@ -277,23 +279,24 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      */
     @Deprecated
     public BulkRequest add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType, boolean allowExplicitIndex,
-            XContentType xContentType) throws IOException {
+                           XContentType xContentType) throws IOException {
         return add(data, defaultIndex, defaultType, null, null, null, null, allowExplicitIndex, xContentType);
     }
 
     /**
      * Adds a framed data in binary format
      */
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, boolean allowExplicitIndex, XContentType xContentType)
-            throws IOException {
+    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, boolean allowExplicitIndex,
+                           XContentType xContentType) throws IOException {
         return add(data, defaultIndex, MapperService.SINGLE_MAPPING_NAME, null, null, null, null, allowExplicitIndex, xContentType);
     }
 
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultRouting,
-            @Nullable FetchSourceContext defaultFetchSourceContext, @Nullable String defaultPipeline, boolean allowExplicitIndex,
+    public BulkRequest add(BytesReference data, @Nullable String defaultIndex,
+            @Nullable String defaultRouting, @Nullable FetchSourceContext defaultFetchSourceContext,
+            @Nullable String defaultPipeline, boolean allowExplicitIndex,
             XContentType xContentType) throws IOException {
-        return add(data, defaultIndex, MapperService.SINGLE_MAPPING_NAME, defaultRouting, defaultFetchSourceContext, defaultPipeline, null,
-                allowExplicitIndex, xContentType);
+        return add(data, defaultIndex, MapperService.SINGLE_MAPPING_NAME, defaultRouting, defaultFetchSourceContext,
+                defaultPipeline, null, allowExplicitIndex, xContentType);
     }
 
     /**
@@ -301,8 +304,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      */
     @Deprecated
     public BulkRequest add(BytesReference data, @Nullable String defaultIndex, @Nullable String defaultType,
-            @Nullable String defaultRouting, @Nullable FetchSourceContext defaultFetchSourceContext, @Nullable String defaultPipeline,
-            @Nullable Boolean defaultRequireAlias, boolean allowExplicitIndex, XContentType xContentType) throws IOException {
+                           @Nullable String defaultRouting, @Nullable FetchSourceContext defaultFetchSourceContext,
+                           @Nullable String defaultPipeline, @Nullable Boolean defaultRequireAlias, boolean allowExplicitIndex,
+                           XContentType xContentType) throws IOException {
         String routing = valueOrDefault(defaultRouting, globalRouting);
         String pipeline = valueOrDefault(defaultPipeline, globalPipeline);
         Boolean requireAlias = valueOrDefault(defaultRequireAlias, globalRequireAlias);
@@ -381,11 +385,10 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      * @param globalRouting the global default setting
      * @return Bulk request with global setting set
      */
-    public final BulkRequest routing(String globalRouting) {
+    public final BulkRequest routing(String globalRouting){
         this.globalRouting = globalRouting;
         return this;
     }
-
     /**
      * A timeout to wait if the index operation can't be performed immediately. Defaults to {@code 1m}.
      */

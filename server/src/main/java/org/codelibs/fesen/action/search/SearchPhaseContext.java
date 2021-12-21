@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.action.search;
 
-import java.util.concurrent.Executor;
-
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.lease.Releasable;
@@ -31,6 +29,8 @@ import org.codelibs.fesen.search.internal.InternalSearchResponse;
 import org.codelibs.fesen.search.internal.ShardSearchContextId;
 import org.codelibs.fesen.search.internal.ShardSearchRequest;
 import org.codelibs.fesen.transport.Transport;
+
+import java.util.concurrent.Executor;
 
 /**
  * This class provide contextual state and access to resources across multiple search phases.
@@ -105,8 +105,9 @@ interface SearchPhaseContext extends Executor {
      * @see org.codelibs.fesen.search.fetch.FetchSearchResult#getContextId()
      *
      */
-    default void sendReleaseSearchContext(ShardSearchContextId contextId, Transport.Connection connection,
-            OriginalIndices originalIndices) {
+    default void sendReleaseSearchContext(ShardSearchContextId contextId,
+                                          Transport.Connection connection,
+                                          OriginalIndices originalIndices) {
         if (connection != null) {
             getSearchTransport().sendFreeContext(connection, contextId, originalIndices);
         }

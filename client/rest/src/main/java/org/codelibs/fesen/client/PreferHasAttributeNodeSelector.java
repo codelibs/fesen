@@ -89,7 +89,8 @@ public final class PreferHasAttributeNodeSelector implements NodeSelector {
             return false;
         }
         PreferHasAttributeNodeSelector that = (PreferHasAttributeNodeSelector) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+        return Objects.equals(key, that.key) &&
+            Objects.equals(value, that.value);
     }
 
     @Override

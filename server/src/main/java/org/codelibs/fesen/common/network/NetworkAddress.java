@@ -50,8 +50,7 @@ import org.codelibs.fesen.common.transport.PortsRange;
  */
 public final class NetworkAddress {
     /** No instantiation */
-    private NetworkAddress() {
-    }
+    private NetworkAddress() {}
 
     /**
      * Formats a network address for display purposes.

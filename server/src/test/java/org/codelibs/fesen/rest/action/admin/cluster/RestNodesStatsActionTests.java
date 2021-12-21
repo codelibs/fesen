@@ -49,8 +49,9 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final String metric = randomAlphaOfLength(64);
         params.put("metric", metric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
         assertThat(e, hasToString(containsString("request [/_nodes/stats] contains unrecognized metric: [" + metric + "]")));
     }
 
@@ -58,10 +59,14 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final HashMap<String, String> params = new HashMap<>();
         params.put("metric", "os,transprot,unrecognized");
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
-        assertThat(e, hasToString(containsString(
-                "request [/_nodes/stats] contains unrecognized metrics: [transprot] -> did you mean [transport]?, [unrecognized]")));
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        assertThat(
+            e,
+            hasToString(
+                containsString(
+                    "request [/_nodes/stats] contains unrecognized metrics: [transprot] -> did you mean [transport]?, [unrecognized]")));
     }
 
     public void testAllRequestWithOtherMetrics() throws IOException {
@@ -69,8 +74,9 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final String metric = randomSubsetOf(1, RestNodesStatsAction.METRICS.keySet()).get(0);
         params.put("metric", "_all," + metric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
         assertThat(e, hasToString(containsString("request [/_nodes/stats] contains _all and individual metrics [_all," + metric + "]")));
     }
 
@@ -80,8 +86,9 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final String indexMetric = randomAlphaOfLength(64);
         params.put("index_metric", indexMetric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
         assertThat(e, hasToString(containsString("request [/_nodes/stats] contains unrecognized index metric: [" + indexMetric + "]")));
     }
 
@@ -90,10 +97,14 @@ public class RestNodesStatsActionTests extends ESTestCase {
         params.put("metric", "indices");
         params.put("index_metric", "indexing,stroe,unrecognized");
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
-        assertThat(e, hasToString(containsString(
-                "request [/_nodes/stats] contains unrecognized index metrics: [stroe] -> did you mean [store]?, [unrecognized]")));
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        assertThat(
+            e,
+            hasToString(
+                containsString(
+                    "request [/_nodes/stats] contains unrecognized index metrics: [stroe] -> did you mean [store]?, [unrecognized]")));
     }
 
     public void testIndexMetricsRequestWithoutIndicesMetric() throws IOException {
@@ -104,9 +115,12 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final String indexMetric = randomSubsetOf(1, RestNodesStatsAction.FLAGS.keySet()).get(0);
         params.put("index_metric", indexMetric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
-        assertThat(e, hasToString(
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        assertThat(
+            e,
+            hasToString(
                 containsString("request [/_nodes/stats] contains index metrics [" + indexMetric + "] but indices stats not requested")));
     }
 
@@ -116,9 +130,12 @@ public class RestNodesStatsActionTests extends ESTestCase {
         final String indexMetric = randomSubsetOf(1, RestNodesStatsAction.FLAGS.keySet()).get(0);
         params.put("index_metric", indexMetric);
         final RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withPath("/_nodes/stats").withParams(params).build();
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> action.prepareRequest(request, mock(NodeClient.class)));
-        assertThat(e, hasToString(
+        final IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> action.prepareRequest(request, mock(NodeClient.class)));
+        assertThat(
+            e,
+            hasToString(
                 containsString("request [/_nodes/stats] contains index metrics [" + indexMetric + "] but all stats requested")));
     }
 

@@ -45,10 +45,10 @@ public class TransportDeleteRepositoryAction extends TransportMasterNodeAction<D
 
     @Inject
     public TransportDeleteRepositoryAction(TransportService transportService, ClusterService clusterService,
-            RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(DeleteRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, DeleteRepositoryRequest::new,
-                indexNameExpressionResolver);
+                                           RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
+                                           IndexNameExpressionResolver indexNameExpressionResolver) {
+        super(DeleteRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters,
+              DeleteRepositoryRequest::new, indexNameExpressionResolver);
         this.repositoriesService = repositoriesService;
     }
 
@@ -69,9 +69,10 @@ public class TransportDeleteRepositoryAction extends TransportMasterNodeAction<D
 
     @Override
     protected void masterOperation(final DeleteRepositoryRequest request, ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
-        repositoriesService.unregisterRepository(request,
-                ActionListener.delegateFailure(listener, (delegatedListener, unregisterRepositoryResponse) -> delegatedListener
-                        .onResponse(new AcknowledgedResponse(unregisterRepositoryResponse.isAcknowledged()))));
+                                   final ActionListener<AcknowledgedResponse> listener) {
+        repositoriesService.unregisterRepository(
+            request, ActionListener.delegateFailure(listener,
+                (delegatedListener, unregisterRepositoryResponse) ->
+                    delegatedListener.onResponse(new AcknowledgedResponse(unregisterRepositoryResponse.isAcknowledged()))));
     }
 }

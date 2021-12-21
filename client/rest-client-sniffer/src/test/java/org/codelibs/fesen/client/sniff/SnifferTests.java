@@ -19,26 +19,16 @@
 
 package org.codelibs.fesen.client.sniff;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import org.apache.http.HttpHost;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.sniff.NodesSniffer;
+import org.codelibs.fesen.client.sniff.Sniffer;
+import org.codelibs.fesen.client.sniff.Sniffer.DefaultScheduler;
+import org.codelibs.fesen.client.sniff.Sniffer.Scheduler;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,14 +50,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.http.HttpHost;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.RestClient;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.sniff.Sniffer.DefaultScheduler;
-import org.codelibs.fesen.client.sniff.Sniffer.Scheduler;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class SnifferTests extends RestClientTestCase {
 
@@ -91,7 +93,7 @@ public class SnifferTests extends RestClientTestCase {
             };
             CountingNodesSniffer nodesSniffer = new CountingNodesSniffer();
             int iters = randomIntBetween(5, 30);
-            try (Sniffer sniffer = new Sniffer(restClient, nodesSniffer, noOpScheduler, 1000L, -1)) {
+            try (Sniffer sniffer = new Sniffer(restClient, nodesSniffer, noOpScheduler, 1000L, -1)){
                 {
                     assertEquals(1, restClient.getNodes().size());
                     Node node = restClient.getNodes().get(0);
@@ -118,7 +120,7 @@ public class SnifferTests extends RestClientTestCase {
                             assertEquals(expectedNodes, restClient.getNodes());
                             lastNodes = restClient.getNodes();
                         }
-                    } catch (IOException e) {
+                    } catch(IOException e) {
                         if (nodesSniffer.failures.get() > failures) {
                             failures++;
                             assertEquals("communication breakdown", e.getMessage());
@@ -430,12 +432,13 @@ public class SnifferTests extends RestClientTestCase {
             try {
                 task.future.get();
                 fail("cancellation exception should have been thrown");
-            } catch (CancellationException ignore) {}
+            } catch(CancellationException ignore) {
+            }
             return false;
         } else {
             try {
                 assertNull(task.future.get());
-            } catch (CancellationException ignore) {
+            } catch(CancellationException ignore) {
                 assertTrue(task.future.isCancelled());
             }
             assertTrue(task.future.isDone());
@@ -474,7 +477,7 @@ public class SnifferTests extends RestClientTestCase {
                 boolean skip = scheduledTask.skip();
                 try {
                     assertNull(future.get());
-                } catch (CancellationException ignore) {
+                } catch(CancellationException ignore) {
                     assertTrue(future.isCancelled());
                 }
 
@@ -601,7 +604,7 @@ public class SnifferTests extends RestClientTestCase {
                     public ScheduledFuture<?> answer(InvocationOnMock invocationOnMock) {
                         return mockedFuture;
                     }
-                });
+        });
         DefaultScheduler scheduler = new DefaultScheduler(scheduledExecutorService);
         long delay = randomLongBetween(1, Long.MAX_VALUE);
         Future<?> future = scheduler.schedule(task, delay);

@@ -121,7 +121,7 @@ public class ActionListenerTests extends ESTestCase {
         List<AtomicReference<Exception>> excList = new ArrayList<>();
         List<ActionListener<Boolean>> listeners = new ArrayList<>();
 
-        final int listenerToFail = randomBoolean() ? -1 : randomIntBetween(0, numListeners - 1);
+        final int listenerToFail = randomBoolean() ? -1 : randomIntBetween(0, numListeners-1);
         for (int i = 0; i < numListeners; i++) {
             AtomicReference<Boolean> reference = new AtomicReference<>();
             AtomicReference<Exception> exReference = new AtomicReference<>();
@@ -175,13 +175,15 @@ public class ActionListenerTests extends ESTestCase {
     public void testRunBefore() {
         {
             AtomicBoolean afterSuccess = new AtomicBoolean();
-            ActionListener<Object> listener = ActionListener.runBefore(ActionListener.wrap(r -> {}, e -> {}), () -> afterSuccess.set(true));
+            ActionListener<Object> listener =
+                ActionListener.runBefore(ActionListener.wrap(r -> {}, e -> {}), () -> afterSuccess.set(true));
             listener.onResponse(null);
             assertThat(afterSuccess.get(), equalTo(true));
         }
         {
             AtomicBoolean afterFailure = new AtomicBoolean();
-            ActionListener<Object> listener = ActionListener.runBefore(ActionListener.wrap(r -> {}, e -> {}), () -> afterFailure.set(true));
+            ActionListener<Object> listener =
+                ActionListener.runBefore(ActionListener.wrap(r -> {}, e -> {}), () -> afterFailure.set(true));
             listener.onFailure(null);
             assertThat(afterFailure.get(), equalTo(true));
         }
@@ -195,7 +197,6 @@ public class ActionListenerTests extends ESTestCase {
             public void onResponse(Object o) {
                 onResponseTimes.getAndIncrement();
             }
-
             @Override
             public void onFailure(Exception e) {
                 onFailureTimes.getAndIncrement();
@@ -230,9 +231,7 @@ public class ActionListenerTests extends ESTestCase {
         assertThat(onResponseListener.actionGet(), equalTo(100));
 
         PlainActionFuture<Integer> onFailureListener = new PlainActionFuture<>();
-        ActionListener.completeWith(onFailureListener, () -> {
-            throw new IOException("not found");
-        });
+        ActionListener.completeWith(onFailureListener, () -> { throw new IOException("not found"); });
         assertThat(onFailureListener.isDone(), equalTo(true));
         assertThat(expectThrows(ExecutionException.class, onFailureListener::get).getCause(), instanceOf(IOException.class));
 
@@ -258,9 +257,8 @@ public class ActionListenerTests extends ESTestCase {
         assertThat(assertionError.getCause(), instanceOf(IllegalArgumentException.class));
         assertNull(exReference.get());
 
-        assertionError = expectThrows(AssertionError.class, () -> ActionListener.completeWith(listener, () -> {
-            throw new IllegalArgumentException();
-        }));
+        assertionError = expectThrows(AssertionError.class, () -> ActionListener.completeWith(listener,
+            () -> { throw new IllegalArgumentException(); }));
         assertThat(assertionError.getCause(), instanceOf(IllegalArgumentException.class));
         assertThat(exReference.get(), instanceOf(IllegalArgumentException.class));
     }

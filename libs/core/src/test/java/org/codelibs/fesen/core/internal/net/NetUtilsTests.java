@@ -19,11 +19,9 @@
 
 package org.codelibs.fesen.core.internal.net;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
-
 import org.apache.lucene.util.Constants;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.core.internal.net.NetUtils;
 import org.codelibs.fesen.jdk.JavaVersion;
 import org.codelibs.fesen.test.ESTestCase;
 

@@ -87,7 +87,9 @@ public abstract class AbstractSortTestCase<T extends SortBuilder<T>> extends EST
 
     @BeforeClass
     public static void init() {
-        Settings baseSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings baseSettings = Settings.builder()
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+                .build();
         Map<String, Function<Map<String, Object>, Object>> scripts = Collections.singletonMap(MOCK_SCRIPT_NAME, p -> null);
         ScriptEngine engine = new MockScriptEngine(MockScriptEngine.NAME, scripts, Collections.emptyMap());
         scriptService = new ScriptService(baseSettings, Collections.singletonMap(engine.getType(), engine), ScriptModule.CORE_CONTEXTS);
@@ -157,7 +159,8 @@ public abstract class AbstractSortTestCase<T extends SortBuilder<T>> extends EST
         QueryShardContext mockShardContext = createMockShardContext();
         for (int runs = 0; runs < NUMBER_OF_TESTBUILDERS; runs++) {
             T sortBuilder = createTestItem();
-            SortFieldAndFormat sortField = Rewriteable.rewrite(sortBuilder, mockShardContext).build(mockShardContext);
+            SortFieldAndFormat sortField = Rewriteable.rewrite(sortBuilder, mockShardContext)
+                    .build(mockShardContext);
             sortFieldAssertions(sortBuilder, sortField.field, sortField.format);
         }
     }
@@ -193,16 +196,16 @@ public abstract class AbstractSortTestCase<T extends SortBuilder<T>> extends EST
     protected final QueryShardContext createMockShardContext(IndexSearcher searcher) {
         Index index = new Index(randomAlphaOfLengthBetween(1, 10), "_na_");
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings(index,
-                Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
+            Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build());
         BitsetFilterCache bitsetFilterCache = new BitsetFilterCache(idxSettings, Mockito.mock(BitsetFilterCache.Listener.class));
         TriFunction<MappedFieldType, String, Supplier<SearchLookup>, IndexFieldData<?>> indexFieldDataLookup =
-                (fieldType, fieldIndexName, searchLookup) -> {
-                    IndexFieldData.Builder builder = fieldType.fielddataBuilder(fieldIndexName, searchLookup);
-                    return builder.build(new IndexFieldDataCache.None(), null);
-                };
-        return new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE, bitsetFilterCache, indexFieldDataLookup, null, null,
-                scriptService, xContentRegistry(), namedWriteableRegistry, null, searcher, () -> randomNonNegativeLong(), null, null,
-                () -> true, null) {
+            (fieldType, fieldIndexName, searchLookup) -> {
+            IndexFieldData.Builder builder = fieldType.fielddataBuilder(fieldIndexName, searchLookup);
+            return builder.build(new IndexFieldDataCache.None(), null);
+        };
+        return new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE, bitsetFilterCache, indexFieldDataLookup,
+                null, null, scriptService, xContentRegistry(), namedWriteableRegistry, null, searcher,
+                () -> randomNonNegativeLong(), null, null, () -> true, null) {
 
             @Override
             public MappedFieldType fieldMapper(String name) {
@@ -222,8 +225,8 @@ public abstract class AbstractSortTestCase<T extends SortBuilder<T>> extends EST
      * Tests that require other field types can override this.
      */
     protected MappedFieldType provideMappedFieldType(String name) {
-        NumberFieldMapper.NumberFieldType doubleFieldType =
-                new NumberFieldMapper.NumberFieldType(name, NumberFieldMapper.NumberType.DOUBLE);
+        NumberFieldMapper.NumberFieldType doubleFieldType
+            = new NumberFieldMapper.NumberFieldType(name, NumberFieldMapper.NumberType.DOUBLE);
         return doubleFieldType;
     }
 
@@ -234,15 +237,13 @@ public abstract class AbstractSortTestCase<T extends SortBuilder<T>> extends EST
 
     protected static QueryBuilder randomNestedFilter() {
         int id = randomIntBetween(0, 2);
-        switch (id) {
-        case 0:
-            return (new MatchAllQueryBuilder()).boost(randomFloat());
-        case 1:
-            return (new IdsQueryBuilder()).boost(randomFloat());
-        case 2:
-            return (new TermQueryBuilder(randomAlphaOfLengthBetween(1, 10), randomDouble()).boost(randomFloat()));
-        default:
-            throw new IllegalStateException("Only three query builders supported for testing sort");
+        switch(id) {
+            case 0: return (new MatchAllQueryBuilder()).boost(randomFloat());
+            case 1: return (new IdsQueryBuilder()).boost(randomFloat());
+            case 2: return (new TermQueryBuilder(
+                    randomAlphaOfLengthBetween(1, 10),
+                    randomDouble()).boost(randomFloat()));
+            default: throw new IllegalStateException("Only three query builders supported for testing sort");
         }
     }
 

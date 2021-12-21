@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.common.io;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.Constants;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,19 +33,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.StreamSupport;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-
 /**
  * Fesen utils to work with {@link java.nio.file.Path}
  */
 public final class FileSystemUtils {
 
-    private FileSystemUtils() {
-    } // only static methods
+    private FileSystemUtils() {} // only static methods
 
     /**
      * Returns <code>true</code> iff one of the files exists otherwise <code>false</code>
@@ -105,6 +104,7 @@ public final class FileSystemUtils {
             }
         }
     }
+
 
     /**
      * Check that a directory exists, is a directory and is readable

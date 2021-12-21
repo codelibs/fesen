@@ -45,7 +45,7 @@ public class GeoTileGridValuesSourceBuilderTests extends ESTestCase {
     }
 
     public void testBWCBounds() throws IOException {
-        Version noBoundsSupportVersion = VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.V_7_5_0);
+        Version noBoundsSupportVersion = VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.V_7_5_0);
         GeoTileGridValuesSourceBuilder builder = new GeoTileGridValuesSourceBuilder("name");
         if (randomBoolean()) {
             builder.geoBoundingBox(GeoBoundingBoxTests.randomBBox());
@@ -53,12 +53,12 @@ public class GeoTileGridValuesSourceBuilderTests extends ESTestCase {
         try (BytesStreamOutput output = new BytesStreamOutput()) {
             output.setVersion(Version.V_7_6_0);
             builder.writeTo(output);
-            try (StreamInput in =
-                    new NamedWriteableAwareStreamInput(output.bytes().streamInput(), new NamedWriteableRegistry(Collections.emptyList()))) {
+            try (StreamInput in = new NamedWriteableAwareStreamInput(output.bytes().streamInput(),
+                new NamedWriteableRegistry(Collections.emptyList()))) {
                 in.setVersion(noBoundsSupportVersion);
                 GeoTileGridValuesSourceBuilder readBuilder = new GeoTileGridValuesSourceBuilder(in);
-                assertThat(readBuilder.geoBoundingBox(),
-                        equalTo(new GeoBoundingBox(new GeoPoint(Double.NaN, Double.NaN), new GeoPoint(Double.NaN, Double.NaN))));
+                assertThat(readBuilder.geoBoundingBox(), equalTo(new GeoBoundingBox(
+                    new GeoPoint(Double.NaN, Double.NaN), new GeoPoint(Double.NaN, Double.NaN))));
             }
         }
     }

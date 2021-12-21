@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.rest.action.ingest;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.ingest.SimulatePipelineRequest;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -36,13 +28,23 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 public class RestSimulatePipelineAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(
-                asList(new Route(GET, "/_ingest/pipeline/{id}/_simulate"), new Route(POST, "/_ingest/pipeline/{id}/_simulate"),
-                        new Route(GET, "/_ingest/pipeline/_simulate"), new Route(POST, "/_ingest/pipeline/_simulate")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_ingest/pipeline/{id}/_simulate"),
+            new Route(POST, "/_ingest/pipeline/{id}/_simulate"),
+            new Route(GET, "/_ingest/pipeline/_simulate"),
+            new Route(POST, "/_ingest/pipeline/_simulate")));
     }
 
     @Override

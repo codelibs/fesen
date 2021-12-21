@@ -21,8 +21,8 @@ package org.codelibs.fesen.action.support;
 
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 
 /**
  * Helper for dealing with destructive operations and wildcard usage.
@@ -33,7 +33,7 @@ public final class DestructiveOperations {
      * Setting which controls whether wildcard usage (*, prefix*, _all) is allowed.
      */
     public static final Setting<Boolean> REQUIRES_NAME_SETTING =
-            Setting.boolSetting("action.destructive_requires_name", false, Property.Dynamic, Property.NodeScope);
+        Setting.boolSetting("action.destructive_requires_name", false, Property.Dynamic, Property.NodeScope);
     private volatile boolean destructiveRequiresName;
 
     public DestructiveOperations(Settings settings, ClusterSettings clusterSettings) {

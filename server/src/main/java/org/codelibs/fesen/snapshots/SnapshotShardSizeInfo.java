@@ -34,12 +34,13 @@ public class SnapshotShardSizeInfo {
     }
 
     public Long getShardSize(ShardRouting shardRouting) {
-        if (shardRouting.primary() && shardRouting.active() == false
-                && shardRouting.recoverySource().getType() == RecoverySource.Type.SNAPSHOT) {
+        if (shardRouting.primary()
+            && shardRouting.active() == false
+            && shardRouting.recoverySource().getType() == RecoverySource.Type.SNAPSHOT) {
             final RecoverySource.SnapshotRecoverySource snapshotRecoverySource =
-                    (RecoverySource.SnapshotRecoverySource) shardRouting.recoverySource();
-            return snapshotShardSizes.get(new InternalSnapshotsInfoService.SnapshotShard(snapshotRecoverySource.snapshot(),
-                    snapshotRecoverySource.index(), shardRouting.shardId()));
+                (RecoverySource.SnapshotRecoverySource) shardRouting.recoverySource();
+            return snapshotShardSizes.get(new InternalSnapshotsInfoService.SnapshotShard(
+                snapshotRecoverySource.snapshot(), snapshotRecoverySource.index(), shardRouting.shardId()));
         }
         assert false : "Expected shard with snapshot recovery source but was " + shardRouting;
         return null;

@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.delete;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -38,21 +36,24 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+
 /**
  * Delete index action.
  */
-public class TransportDeleteIndexTemplateAction extends TransportMasterNodeAction<DeleteIndexTemplateRequest, AcknowledgedResponse> {
+public class TransportDeleteIndexTemplateAction
+        extends TransportMasterNodeAction<DeleteIndexTemplateRequest, AcknowledgedResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportDeleteIndexTemplateAction.class);
 
     private final MetadataIndexTemplateService indexTemplateService;
 
     @Inject
-    public TransportDeleteIndexTemplateAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            MetadataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(DeleteIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters, DeleteIndexTemplateRequest::new,
-                indexNameExpressionResolver);
+    public TransportDeleteIndexTemplateAction(TransportService transportService, ClusterService clusterService,
+                                              ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService,
+                                              ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+        super(DeleteIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
+            DeleteIndexTemplateRequest::new, indexNameExpressionResolver);
         this.indexTemplateService = indexTemplateService;
     }
 
@@ -74,20 +75,22 @@ public class TransportDeleteIndexTemplateAction extends TransportMasterNodeActio
 
     @Override
     protected void masterOperation(final DeleteIndexTemplateRequest request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         indexTemplateService.removeTemplates(
-                new MetadataIndexTemplateService.RemoveRequest(request.name()).masterTimeout(request.masterNodeTimeout()),
-                new MetadataIndexTemplateService.RemoveListener() {
-                    @Override
-                    public void onResponse(MetadataIndexTemplateService.RemoveResponse response) {
-                        listener.onResponse(new AcknowledgedResponse(response.acknowledged()));
-                    }
+            new MetadataIndexTemplateService
+                .RemoveRequest(request.name())
+                .masterTimeout(request.masterNodeTimeout()),
+            new MetadataIndexTemplateService.RemoveListener() {
+                @Override
+                public void onResponse(MetadataIndexTemplateService.RemoveResponse response) {
+                    listener.onResponse(new AcknowledgedResponse(response.acknowledged()));
+                }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        logger.debug(() -> new ParameterizedMessage("failed to delete templates [{}]", request.name()), e);
-                        listener.onFailure(e);
-                    }
-                });
+                @Override
+                public void onFailure(Exception e) {
+                    logger.debug(() -> new ParameterizedMessage("failed to delete templates [{}]", request.name()), e);
+                    listener.onFailure(e);
+                }
+            });
     }
 }

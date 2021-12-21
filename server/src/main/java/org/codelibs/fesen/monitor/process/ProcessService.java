@@ -22,8 +22,8 @@ package org.codelibs.fesen.monitor.process;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.util.SingleObjectCache;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
@@ -36,8 +36,9 @@ public final class ProcessService implements ReportingService<ProcessInfo> {
     private final ProcessInfo info;
     private final SingleObjectCache<ProcessStats> processStatsCache;
 
-    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING = Setting.timeSetting("monitor.process.refresh_interval",
-            TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1), Property.NodeScope);
+    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING =
+        Setting.timeSetting("monitor.process.refresh_interval", TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1),
+            Property.NodeScope);
 
     public ProcessService(Settings settings) {
         this.probe = ProcessProbe.getInstance();

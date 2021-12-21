@@ -50,17 +50,22 @@ public class ClusterStatsNodesTests extends ESTestCase {
      */
     public void testNetworkTypesToXContent() throws Exception {
         ClusterStatsNodes.NetworkTypes stats = new ClusterStatsNodes.NetworkTypes(emptyList());
-        assertEquals("{\"transport_types\":{},\"http_types\":{}}", toXContent(stats, XContentType.JSON, randomBoolean()).utf8ToString());
+        assertEquals("{\"transport_types\":{},\"http_types\":{}}",
+                toXContent(stats, XContentType.JSON, randomBoolean()).utf8ToString());
 
         List<NodeInfo> nodeInfos = singletonList(createNodeInfo("node_0", null, null));
         stats = new ClusterStatsNodes.NetworkTypes(nodeInfos);
-        assertEquals("{\"transport_types\":{},\"http_types\":{}}", toXContent(stats, XContentType.JSON, randomBoolean()).utf8ToString());
-
-        nodeInfos = Arrays.asList(createNodeInfo("node_1", "", ""), createNodeInfo("node_2", "custom", "custom"),
-                createNodeInfo("node_3", null, "custom"));
-        stats = new ClusterStatsNodes.NetworkTypes(nodeInfos);
-        assertEquals("{" + "\"transport_types\":{\"custom\":1}," + "\"http_types\":{\"custom\":2}" + "}",
+        assertEquals("{\"transport_types\":{},\"http_types\":{}}",
                 toXContent(stats, XContentType.JSON, randomBoolean()).utf8ToString());
+
+        nodeInfos = Arrays.asList(createNodeInfo("node_1", "", ""),
+                                  createNodeInfo("node_2", "custom", "custom"),
+                                  createNodeInfo("node_3", null, "custom"));
+        stats = new ClusterStatsNodes.NetworkTypes(nodeInfos);
+        assertEquals("{"
+                + "\"transport_types\":{\"custom\":1},"
+                + "\"http_types\":{\"custom\":2}"
+        + "}", toXContent(stats, XContentType.JSON, randomBoolean()).utf8ToString());
     }
 
     public void testIngestStats() throws Exception {
@@ -72,7 +77,7 @@ public class ClusterStatsNodesTests extends ESTestCase {
                 processorStats.compute(stat.getType(), (key, value) -> {
                     if (value == null) {
                         return new long[] { stat.getStats().getIngestCount(), stat.getStats().getIngestFailedCount(),
-                                stat.getStats().getIngestCurrent(), stat.getStats().getIngestTimeInMillis() };
+                            stat.getStats().getIngestCurrent(), stat.getStats().getIngestTimeInMillis()};
                     } else {
                         value[0] += stat.getStats().getIngestCount();
                         value[1] += stat.getStats().getIngestFailedCount();
@@ -95,26 +100,35 @@ public class ClusterStatsNodesTests extends ESTestCase {
             long failedCount = statValues[1];
             long current = statValues[2];
             long timeInMillis = statValues[3];
-            processorStatsString += "\"" + entry.getKey() + "\":{\"count\":" + count + ",\"failed\":" + failedCount + ",\"current\":"
-                    + current + ",\"time_in_millis\":" + timeInMillis + "}";
+            processorStatsString += "\"" + entry.getKey() + "\":{\"count\":" + count
+                + ",\"failed\":" + failedCount
+                + ",\"current\":" + current
+                + ",\"time_in_millis\":" + timeInMillis
+                + "}";
             if (iter.hasNext()) {
                 processorStatsString += ",";
             }
         }
         processorStatsString += "}";
-        assertThat(toXContent(stats, XContentType.JSON, false).utf8ToString(), equalTo("{\"ingest\":{" + "\"number_of_pipelines\":"
-                + stats.pipelineCount + "," + "\"processor_stats\":" + processorStatsString + "}}"));
+        assertThat(toXContent(stats, XContentType.JSON, false).utf8ToString(), equalTo(
+            "{\"ingest\":{"
+                + "\"number_of_pipelines\":" + stats.pipelineCount + ","
+                + "\"processor_stats\":" + processorStatsString
+                + "}}"));
     }
 
     private static NodeInfo createNodeInfo(String nodeId, String transportType, String httpType) {
         Settings.Builder settings = Settings.builder();
         if (transportType != null) {
-            settings.put(randomFrom(NetworkModule.TRANSPORT_TYPE_KEY, NetworkModule.TRANSPORT_TYPE_DEFAULT_KEY), transportType);
+            settings.put(randomFrom(NetworkModule.TRANSPORT_TYPE_KEY,
+                    NetworkModule.TRANSPORT_TYPE_DEFAULT_KEY), transportType);
         }
         if (httpType != null) {
-            settings.put(randomFrom(NetworkModule.HTTP_TYPE_KEY, NetworkModule.HTTP_TYPE_DEFAULT_KEY), httpType);
+            settings.put(randomFrom(NetworkModule.HTTP_TYPE_KEY,
+                    NetworkModule.HTTP_TYPE_DEFAULT_KEY), httpType);
         }
-        return new NodeInfo(null, null, new DiscoveryNode(nodeId, buildNewFakeTransportAddress(), null), settings.build(), null, null, null,
-                null, null, null, null, null, null, null);
+        return new NodeInfo(null, null,
+                new DiscoveryNode(nodeId, buildNewFakeTransportAddress(), null),
+                settings.build(), null, null, null, null, null, null, null, null, null, null);
     }
 }

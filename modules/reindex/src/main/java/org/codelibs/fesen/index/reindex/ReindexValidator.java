@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.util.List;
-
 import org.apache.lucene.util.automaton.Automata;
 import org.apache.lucene.util.automaton.Automaton;
 import org.apache.lucene.util.automaton.CharacterRunAutomaton;
@@ -39,12 +37,16 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexNotFoundException;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.RemoteInfo;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+
+import java.util.List;
 
 class ReindexValidator {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(ReindexValidator.class);
-    static final String SORT_DEPRECATED_MESSAGE =
-            "The sort option in reindex is deprecated. " + "Instead consider using query filtering to find the desired subset of data.";
+    static final String SORT_DEPRECATED_MESSAGE = "The sort option in reindex is deprecated. " +
+        "Instead consider using query filtering to find the desired subset of data.";
 
     private final CharacterRunAutomaton remoteWhitelist;
     private final ClusterService clusterService;
@@ -52,7 +54,7 @@ class ReindexValidator {
     private final AutoCreateIndex autoCreateIndex;
 
     ReindexValidator(Settings settings, ClusterService clusterService, IndexNameExpressionResolver resolver,
-            AutoCreateIndex autoCreateIndex) {
+                     AutoCreateIndex autoCreateIndex) {
         this.remoteWhitelist = buildRemoteWhitelist(TransportReindexAction.REMOTE_CLUSTER_WHITELIST.get(settings));
         this.clusterService = clusterService;
         this.resolver = resolver;
@@ -63,7 +65,7 @@ class ReindexValidator {
         checkRemoteWhitelist(remoteWhitelist, request.getRemoteInfo());
         ClusterState state = clusterService.state();
         validateAgainstAliases(request.getSearchRequest(), request.getDestination(), request.getRemoteInfo(), resolver, autoCreateIndex,
-                state);
+            state);
         SearchSourceBuilder searchSource = request.getSearchRequest().source();
         if (searchSource != null && searchSource.sorts() != null && searchSource.sorts().isEmpty() == false) {
             deprecationLogger.deprecate("reindex_sort", SORT_DEPRECATED_MESSAGE);
@@ -91,11 +93,11 @@ class ReindexValidator {
             return new CharacterRunAutomaton(Automata.makeEmpty());
         }
         Automaton automaton = Regex.simpleMatchToAutomaton(whitelist.toArray(Strings.EMPTY_ARRAY));
-        automaton = MinimizationOperations.minimize(automaton, Operations.DEFAULT_MAX_DETERMINIZED_STATES);
+        automaton = MinimizationOperations.minimize(automaton, Operations.DEFAULT_DETERMINIZE_WORK_LIMIT);
         if (Operations.isTotal(automaton)) {
             throw new IllegalArgumentException("Refusing to start because whitelist " + whitelist + " accepts all addresses. "
-                    + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs "
-                    + "for them.");
+                + "This would allow users to reindex-from-remote any URL they like effectively having Fesen make HTTP GETs "
+                + "for them.");
         }
         return new CharacterRunAutomaton(automaton);
     }
@@ -107,14 +109,19 @@ class ReindexValidator {
      * isn't available then. Package private for testing.
      */
     static void validateAgainstAliases(SearchRequest source, IndexRequest destination, RemoteInfo remoteInfo,
-            IndexNameExpressionResolver indexNameExpressionResolver, AutoCreateIndex autoCreateIndex, ClusterState clusterState) {
+                                       IndexNameExpressionResolver indexNameExpressionResolver, AutoCreateIndex autoCreateIndex,
+                                       ClusterState clusterState) {
         if (remoteInfo != null) {
             return;
         }
         String target = destination.index();
         if (destination.isRequireAlias() && (false == clusterState.getMetadata().hasAlias(target))) {
-            throw new IndexNotFoundException(
-                    "[" + DocWriteRequest.REQUIRE_ALIAS + "] request flag is [true] and [" + target + "] is not an alias", target);
+            throw new IndexNotFoundException("["
+                + DocWriteRequest.REQUIRE_ALIAS
+                + "] request flag is [true] and ["
+                + target
+                + "] is not an alias",
+                target);
         }
         if (false == autoCreateIndex.shouldAutoCreate(target, clusterState)) {
             /*

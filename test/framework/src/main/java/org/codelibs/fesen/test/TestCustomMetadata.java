@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.test;
 
-import java.io.IOException;
-import java.util.function.Function;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.cluster.AbstractNamedDiffable;
 import org.codelibs.fesen.cluster.NamedDiff;
@@ -30,6 +27,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.function.Function;
 
 public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.Custom> implements Metadata.Custom {
     private final String data;
@@ -44,15 +44,12 @@ public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TestCustomMetadata that = (TestCustomMetadata) o;
 
-        if (!data.equals(that.data))
-            return false;
+        if (!data.equals(that.data)) return false;
 
         return true;
     }
@@ -66,7 +63,7 @@ public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.
         return supplier.apply(in.readString());
     }
 
-    public static NamedDiff<Metadata.Custom> readDiffFrom(String name, StreamInput in) throws IOException {
+    public static NamedDiff<Metadata.Custom> readDiffFrom(String name, StreamInput in)  throws IOException {
         return readDiffFrom(Metadata.Custom.class, name, in);
     }
 
@@ -77,7 +74,7 @@ public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.
 
     @SuppressWarnings("unchecked")
     public static <T extends Metadata.Custom> T fromXContent(Function<String, Metadata.Custom> supplier, XContentParser parser)
-            throws IOException {
+        throws IOException {
         XContentParser.Token token;
         String data = null;
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -109,6 +106,6 @@ public abstract class TestCustomMetadata extends AbstractNamedDiffable<Metadata.
 
     @Override
     public String toString() {
-        return "[" + getWriteableName() + "][" + data + "]";
+        return "[" + getWriteableName() + "][" + data +"]";
     }
 }

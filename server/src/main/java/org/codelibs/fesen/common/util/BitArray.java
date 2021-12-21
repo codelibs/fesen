@@ -69,9 +69,9 @@ public final class BitArray implements Releasable {
         if (wordNum >= bits.size()) {
             return Long.MAX_VALUE;
         }
-        long word = bits.get(wordNum) >> index; // skip all the bits to the right of index
+        long word = bits.get(wordNum) >> index;  // skip all the bits to the right of index
 
-        if (word != 0) {
+        if (word!=0) {
             return index + Long.numberOfTrailingZeros(word);
         }
 

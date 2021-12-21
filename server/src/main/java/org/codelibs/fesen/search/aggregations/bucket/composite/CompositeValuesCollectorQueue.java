@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.util.PriorityQueue;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.common.lease.Releasables;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.IntArray;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A specialized {@link PriorityQueue} implementation for composite buckets.
@@ -45,10 +45,8 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Slot slot = (Slot) o;
             return CompositeValuesCollectorQueue.this.equals(value, slot.value);
         }
@@ -126,7 +124,6 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
     Comparable getUpperValueLeadSource() throws IOException {
         return size() >= maxSize ? arrays[0].toComparable(top()) : null;
     }
-
     /**
      * Returns the document count in <code>slot</code>.
      */
@@ -141,7 +138,7 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
         for (int i = 0; i < arrays.length; i++) {
             arrays[i].copyCurrent(slot);
         }
-        docCounts = bigArrays.grow(docCounts, slot + 1);
+        docCounts = bigArrays.grow(docCounts, slot+1);
         docCounts.set(slot, 1);
     }
 
@@ -158,7 +155,7 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
                 cmp = arrays[i].compare(slot1, slot2);
             }
             if (cmp != 0) {
-                return cmp > 0 ? i + 1 : -(i + 1);
+                return cmp > 0 ? i+1 : -(i+1);
             }
         }
         return 0;
@@ -201,7 +198,7 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
         for (int i = 0; i < arrays.length; i++) {
             int cmp = arrays[i].compareCurrentWithAfter();
             if (cmp != 0) {
-                return cmp > 0 ? i + 1 : -(i + 1);
+                return cmp > 0 ? i+1 : -(i+1);
             }
         }
         return 0;
@@ -226,15 +223,14 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
     LeafBucketCollector getLeafCollector(LeafReaderContext context, LeafBucketCollector in) throws IOException {
         return getLeafCollector(null, context, in);
     }
-
     /**
      * Creates the collector that will visit the composite buckets of the matching documents.
      * If <code>forceLeadSourceValue</code> is not null, the leading source will use this value
      * for each document.
      * The provided collector <code>in</code> is called on each composite bucket.
      */
-    LeafBucketCollector getLeafCollector(Comparable forceLeadSourceValue, LeafReaderContext context, LeafBucketCollector in)
-            throws IOException {
+    LeafBucketCollector getLeafCollector(Comparable forceLeadSourceValue,
+                                         LeafReaderContext context, LeafBucketCollector in) throws IOException {
         int last = arrays.length - 1;
         LeafBucketCollector collector = in;
         while (last > 0) {
@@ -255,6 +251,7 @@ final class CompositeValuesCollectorQueue extends PriorityQueue<Integer> impleme
     boolean addIfCompetitive() {
         return addIfCompetitive(0);
     }
+
 
     /**
      * Add or update the current composite key in the queue if the values are competitive.

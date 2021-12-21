@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.rest;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
 
 /**
  * A channel used to construct bytes / builder based outputs, and send responses.
@@ -36,9 +36,9 @@ public interface RestChannel {
     XContentBuilder newErrorBuilder() throws IOException;
 
     XContentBuilder newBuilder(@Nullable XContentType xContentType, boolean useFiltering) throws IOException;
-
-    XContentBuilder newBuilder(@Nullable XContentType xContentType, @Nullable XContentType responseContentType, boolean useFiltering)
-            throws IOException;
+    
+    XContentBuilder newBuilder(@Nullable XContentType xContentType, @Nullable XContentType responseContentType,
+            boolean useFiltering) throws IOException;
 
     BytesStreamOutput bytesOutput();
 

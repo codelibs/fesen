@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
-import static java.util.Collections.singleton;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.lucene.search.highlight.DefaultEncoder;
 import org.apache.lucene.search.highlight.Encoder;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
@@ -31,6 +25,12 @@ import org.codelibs.fesen.index.fieldvisitor.CustomFieldsVisitor;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.singleton;
 
 public final class HighlightUtils {
 
@@ -45,8 +45,9 @@ public final class HighlightUtils {
     /**
      * Load field values for highlighting.
      */
-    public static List<Object> loadFieldValues(MappedFieldType fieldType, FetchSubPhase.HitContext hitContext, boolean forceSource)
-            throws IOException {
+    public static List<Object> loadFieldValues(MappedFieldType fieldType,
+                                               FetchSubPhase.HitContext hitContext,
+                                               boolean forceSource) throws IOException {
         //percolator needs to always load from source, thus it sets the global force source to true
         List<Object> textsToHighlight;
         if (forceSource == false && fieldType.isStored()) {

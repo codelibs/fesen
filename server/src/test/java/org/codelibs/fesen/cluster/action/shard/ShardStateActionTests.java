@@ -92,8 +92,8 @@ public class ShardStateActionTests extends ESTestCase {
     private ClusterService clusterService;
 
     private static class TestShardStateAction extends ShardStateAction {
-        TestShardStateAction(ClusterService clusterService, TransportService transportService, AllocationService allocationService,
-                RerouteService rerouteService) {
+        TestShardStateAction(ClusterService clusterService, TransportService transportService,
+                             AllocationService allocationService, RerouteService rerouteService) {
             super(clusterService, transportService, allocationService, rerouteService, THREAD_POOL);
         }
 
@@ -111,7 +111,7 @@ public class ShardStateActionTests extends ESTestCase {
 
         @Override
         protected void waitForNewMasterAndRetry(String actionName, ClusterStateObserver observer, TransportRequest request,
-                ActionListener<Void> listener, Predicate<ClusterState> changePredicate) {
+                                                ActionListener<Void> listener, Predicate<ClusterState> changePredicate) {
             onBeforeWaitForNewMasterAndRetry.run();
             super.waitForNewMasterAndRetry(actionName, observer, request, listener, changePredicate);
             onAfterWaitForNewMasterAndRetry.run();
@@ -130,12 +130,14 @@ public class ShardStateActionTests extends ESTestCase {
         this.transport = new CapturingTransport();
         clusterService = createClusterService(THREAD_POOL);
         transportService = transport.createTransportService(clusterService.getSettings(), THREAD_POOL,
-                TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
+            TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
         transportService.start();
         transportService.acceptIncomingRequests();
         shardStateAction = new TestShardStateAction(clusterService, transportService, null, null);
-        shardStateAction.setOnBeforeWaitForNewMasterAndRetry(() -> {});
-        shardStateAction.setOnAfterWaitForNewMasterAndRetry(() -> {});
+        shardStateAction.setOnBeforeWaitForNewMasterAndRetry(() -> {
+        });
+        shardStateAction.setOnAfterWaitForNewMasterAndRetry(() -> {
+        });
     }
 
     @Override
@@ -192,7 +194,8 @@ public class ShardStateActionTests extends ESTestCase {
         AtomicInteger retries = new AtomicInteger();
         AtomicBoolean success = new AtomicBoolean();
 
-        setUpMasterRetryVerification(1, retries, latch, requestId -> {});
+        setUpMasterRetryVerification(1, retries, latch, requestId -> {
+        });
 
         ShardRouting failedShard = getRandomShardRouting(index);
         shardStateAction.localShardFailed(failedShard, "test", getSimulatedFailure(), new ActionListener<Void>() {
@@ -228,7 +231,8 @@ public class ShardStateActionTests extends ESTestCase {
 
         LongConsumer retryLoop = requestId -> {
             if (randomBoolean()) {
-                transport.handleRemoteError(requestId,
+                transport.handleRemoteError(
+                        requestId,
                         randomFrom(new NotMasterException("simulated"), new FailedToCommitClusterStateException("simulated")));
             } else {
                 if (randomBoolean()) {
@@ -314,8 +318,8 @@ public class ShardStateActionTests extends ESTestCase {
         final TestListener listener = new TestListener();
         long primaryTerm = clusterService.state().metadata().index(index).primaryTerm(failedShard.id());
         assertThat(primaryTerm, greaterThanOrEqualTo(1L));
-        shardStateAction.remoteShardFailed(failedShard.shardId(), failedShard.allocationId().getId(), primaryTerm + 1, randomBoolean(),
-                "test", getSimulatedFailure(), listener);
+        shardStateAction.remoteShardFailed(failedShard.shardId(), failedShard.allocationId().getId(),
+            primaryTerm + 1, randomBoolean(), "test", getSimulatedFailure(), listener);
 
         ShardStateAction.NoLongerPrimaryShardException catastrophicError =
                 new ShardStateAction.NoLongerPrimaryShardException(failedShard.shardId(), "dummy failure");
@@ -339,18 +343,17 @@ public class ShardStateActionTests extends ESTestCase {
         CountDownLatch latch = new CountDownLatch(numListeners);
         long primaryTerm = randomLongBetween(1, Long.MAX_VALUE);
         for (int i = 0; i < numListeners; i++) {
-            shardStateAction.remoteShardFailed(failedShard.shardId(), failedShard.allocationId().getId(), primaryTerm, markAsStale, "test",
-                    getSimulatedFailure(), new ActionListener<Void>() {
-                        @Override
-                        public void onResponse(Void aVoid) {
-                            latch.countDown();
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            latch.countDown();
-                        }
-                    });
+            shardStateAction.remoteShardFailed(failedShard.shardId(), failedShard.allocationId().getId(),
+                primaryTerm, markAsStale, "test", getSimulatedFailure(), new ActionListener<Void>() {
+                    @Override
+                    public void onResponse(Void aVoid) {
+                        latch.countDown();
+                    }
+                    @Override
+                    public void onFailure(Exception e) {
+                        latch.countDown();
+                    }
+                });
         }
         CapturingTransport.CapturedRequest[] capturedRequests = transport.getCapturedRequestsAndClear();
         assertThat(capturedRequests, arrayWithSize(1));
@@ -391,18 +394,17 @@ public class ShardStateActionTests extends ESTestCase {
                 for (int i = 0; i < iterationsPerThread; i++) {
                     ShardRouting failedShard = randomFrom(failedShards);
                     shardStateAction.remoteShardFailed(failedShard.shardId(), failedShard.allocationId().getId(),
-                            randomLongBetween(1, Long.MAX_VALUE), randomBoolean(), "test", getSimulatedFailure(),
-                            new ActionListener<Void>() {
-                                @Override
-                                public void onResponse(Void aVoid) {
-                                    notifiedResponses.incrementAndGet();
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    notifiedResponses.incrementAndGet();
-                                }
-                            });
+                        randomLongBetween(1, Long.MAX_VALUE), randomBoolean(), "test", getSimulatedFailure(),
+                        new ActionListener<Void>() {
+                            @Override
+                            public void onResponse(Void aVoid) {
+                                notifiedResponses.incrementAndGet();
+                            }
+                            @Override
+                            public void onFailure(Exception e) {
+                                notifiedResponses.incrementAndGet();
+                            }
+                        });
                 }
             });
             clientThreads[t].start();
@@ -478,6 +480,30 @@ public class ShardStateActionTests extends ESTestCase {
         return new CorruptIndexException("simulated", (String) null);
     }
 
+    public void testShardEntryBWCSerialize() throws Exception {
+        final Version bwcVersion = randomValueOtherThanMany(
+            version -> version.onOrAfter(Version.V_6_3_0), () -> VersionUtils.randomVersion(random()));
+        final ShardId shardId = new ShardId(randomRealisticUnicodeOfLengthBetween(10, 100), UUID.randomUUID().toString(), between(0, 1000));
+        final String allocationId = randomRealisticUnicodeOfCodepointLengthBetween(10, 100);
+        final String reason = randomRealisticUnicodeOfCodepointLengthBetween(10, 100);
+        try (StreamInput in = serialize(new StartedShardEntry(shardId, allocationId, 0L, reason), bwcVersion).streamInput()) {
+            in.setVersion(bwcVersion);
+            final FailedShardEntry failedShardEntry = new FailedShardEntry(in);
+            assertThat(failedShardEntry.shardId, equalTo(shardId));
+            assertThat(failedShardEntry.allocationId, equalTo(allocationId));
+            assertThat(failedShardEntry.message, equalTo(reason));
+            assertThat(failedShardEntry.failure, nullValue());
+            assertThat(failedShardEntry.markAsStale, equalTo(true));
+        }
+        try (StreamInput in = serialize(new FailedShardEntry(shardId, allocationId, 0L, reason, null, false), bwcVersion).streamInput()) {
+            in.setVersion(bwcVersion);
+            final StartedShardEntry startedShardEntry = new StartedShardEntry(in);
+            assertThat(startedShardEntry.shardId, equalTo(shardId));
+            assertThat(startedShardEntry.allocationId, equalTo(allocationId));
+            assertThat(startedShardEntry.message, equalTo(reason));
+        }
+    }
+
     public void testFailedShardEntrySerialization() throws Exception {
         final ShardId shardId = new ShardId(randomRealisticUnicodeOfLengthBetween(10, 100), UUID.randomUUID().toString(), between(0, 1000));
         final String allocationId = randomRealisticUnicodeOfCodepointLengthBetween(10, 100);
@@ -519,7 +545,11 @@ public class ShardStateActionTests extends ESTestCase {
             final StartedShardEntry deserialized = new StartedShardEntry(in);
             assertThat(deserialized.shardId, equalTo(shardId));
             assertThat(deserialized.allocationId, equalTo(allocationId));
-            assertThat(deserialized.primaryTerm, equalTo(primaryTerm));
+            if (version.onOrAfter(Version.V_6_7_0)) {
+                assertThat(deserialized.primaryTerm, equalTo(primaryTerm));
+            } else {
+                assertThat(deserialized.primaryTerm, equalTo(0L));
+            }
             assertThat(deserialized.message, equalTo(message));
         }
     }

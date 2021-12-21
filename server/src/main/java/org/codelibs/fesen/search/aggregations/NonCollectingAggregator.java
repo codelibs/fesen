@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.search.aggregations;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * An aggregator that is not collected, this can typically be used when running an aggregation over a field that doesn't have

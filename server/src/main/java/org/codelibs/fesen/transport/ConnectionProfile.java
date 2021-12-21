@@ -18,6 +18,11 @@
  */
 package org.codelibs.fesen.transport;
 
+import org.codelibs.fesen.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,11 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.TimeValue;
 
 /**
  * A connection profile describes how many connection are established to specific node for each of the available request types.
@@ -45,8 +45,8 @@ public final class ConnectionProfile {
         Objects.requireNonNull(fallbackProfile);
         if (profile == null) {
             return fallbackProfile;
-        } else if (profile.getConnectTimeout() != null && profile.getHandshakeTimeout() != null && profile.getPingInterval() != null
-                && profile.getCompressionEnabled() != null) {
+        } else if (profile.getConnectTimeout() != null && profile.getHandshakeTimeout() != null
+            && profile.getPingInterval() != null && profile.getCompressionEnabled() != null) {
             return profile;
         } else {
             ConnectionProfile.Builder builder = new ConnectionProfile.Builder(profile);
@@ -106,7 +106,8 @@ public final class ConnectionProfile {
      * handshake timeouts and compression settings.
      */
     public static ConnectionProfile buildSingleChannelProfile(TransportRequestOptions.Type channelType, @Nullable TimeValue connectTimeout,
-            @Nullable TimeValue handshakeTimeout, @Nullable TimeValue pingInterval, @Nullable Boolean compressionEnabled) {
+                                                              @Nullable TimeValue handshakeTimeout, @Nullable TimeValue pingInterval,
+                                                              @Nullable Boolean compressionEnabled) {
         Builder builder = new Builder();
         builder.addConnections(1, channelType);
         final EnumSet<TransportRequestOptions.Type> otherTypes = EnumSet.allOf(TransportRequestOptions.Type.class);
@@ -134,8 +135,8 @@ public final class ConnectionProfile {
     private final TimeValue pingInterval;
     private final Boolean compressionEnabled;
 
-    private ConnectionProfile(List<ConnectionTypeHandle> handles, int numConnections, TimeValue connectTimeout, TimeValue handshakeTimeout,
-            TimeValue pingInterval, Boolean compressionEnabled) {
+    private ConnectionProfile(List<ConnectionTypeHandle> handles, int numConnections, TimeValue connectTimeout,
+                              TimeValue handshakeTimeout, TimeValue pingInterval, Boolean compressionEnabled) {
         this.handles = handles;
         this.numConnections = numConnections;
         this.connectTimeout = connectTimeout;
@@ -170,7 +171,6 @@ public final class ConnectionProfile {
             compressionEnabled = source.getCompressionEnabled();
             pingInterval = source.getPingInterval();
         }
-
         /**
          * Sets a connect timeout for this connection profile
          */
@@ -240,7 +240,7 @@ public final class ConnectionProfile {
                 throw new IllegalStateException("not all types are added for this connection profile - missing types: " + types);
             }
             return new ConnectionProfile(Collections.unmodifiableList(handles), numConnections, connectTimeout, handshakeTimeout,
-                    pingInterval, compressionEnabled);
+                pingInterval, compressionEnabled);
         }
 
     }
@@ -294,7 +294,7 @@ public final class ConnectionProfile {
                 return handle.length;
             }
         }
-        throw new AssertionError("no handle found for type: " + type);
+        throw new AssertionError("no handle found for type: "  + type);
     }
 
     /**

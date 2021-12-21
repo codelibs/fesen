@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.PipelineAggregationBuilder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Base implementation of a {@link PipelineAggregationBuilder}.
@@ -134,13 +134,13 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         AbstractPipelineAggregationBuilder<PAB> other = (AbstractPipelineAggregationBuilder<PAB>) obj;
-        return Objects.equals(type, other.type) && Objects.equals(name, other.name) && Objects.equals(metadata, other.metadata)
-                && Objects.deepEquals(bucketsPaths, other.bucketsPaths);
+        return Objects.equals(type, other.type)
+            && Objects.equals(name, other.name)
+            && Objects.equals(metadata, other.metadata)
+            && Objects.deepEquals(bucketsPaths, other.bucketsPaths);
     }
 
     @Override

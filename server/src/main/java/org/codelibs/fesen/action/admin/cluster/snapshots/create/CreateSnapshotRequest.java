@@ -19,20 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.snapshots.create;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.Strings.EMPTY_ARRAY;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-import static org.codelibs.fesen.snapshots.SnapshotInfo.METADATA_FIELD_INTRODUCED;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -48,6 +34,20 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.Strings.EMPTY_ARRAY;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
+import static org.codelibs.fesen.snapshots.SnapshotInfo.METADATA_FIELD_INTRODUCED;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Create snapshot request
@@ -156,8 +156,8 @@ public class CreateSnapshotRequest extends MasterNodeRequest<CreateSnapshotReque
         }
         final int metadataSize = metadataSize(userMetadata);
         if (metadataSize > MAXIMUM_METADATA_BYTES) {
-            validationException =
-                    addValidationError("metadata must be smaller than 1024 bytes, but was [" + metadataSize + "]", validationException);
+            validationException = addValidationError("metadata must be smaller than 1024 bytes, but was [" + metadataSize + "]",
+                validationException);
         }
         return validationException;
     }
@@ -492,31 +492,42 @@ public class CreateSnapshotRequest extends MasterNodeRequest<CreateSnapshotReque
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         CreateSnapshotRequest that = (CreateSnapshotRequest) o;
-        return partial == that.partial && includeGlobalState == that.includeGlobalState && waitForCompletion == that.waitForCompletion
-                && Objects.equals(snapshot, that.snapshot) && Objects.equals(repository, that.repository)
-                && Arrays.equals(indices, that.indices) && Objects.equals(indicesOptions, that.indicesOptions)
-                && Objects.equals(settings, that.settings) && Objects.equals(masterNodeTimeout, that.masterNodeTimeout)
-                && Objects.equals(userMetadata, that.userMetadata);
+        return partial == that.partial &&
+            includeGlobalState == that.includeGlobalState &&
+            waitForCompletion == that.waitForCompletion &&
+            Objects.equals(snapshot, that.snapshot) &&
+            Objects.equals(repository, that.repository) &&
+            Arrays.equals(indices, that.indices) &&
+            Objects.equals(indicesOptions, that.indicesOptions) &&
+            Objects.equals(settings, that.settings) &&
+            Objects.equals(masterNodeTimeout, that.masterNodeTimeout) &&
+            Objects.equals(userMetadata, that.userMetadata);
     }
 
     @Override
     public int hashCode() {
-        int result =
-                Objects.hash(snapshot, repository, indicesOptions, partial, settings, includeGlobalState, waitForCompletion, userMetadata);
+        int result = Objects.hash(snapshot, repository, indicesOptions, partial, settings, includeGlobalState,
+            waitForCompletion, userMetadata);
         result = 31 * result + Arrays.hashCode(indices);
         return result;
     }
 
     @Override
     public String toString() {
-        return "CreateSnapshotRequest{" + "snapshot='" + snapshot + '\'' + ", repository='" + repository + '\'' + ", indices="
-                + (indices == null ? null : Arrays.asList(indices)) + ", indicesOptions=" + indicesOptions + ", partial=" + partial
-                + ", settings=" + settings + ", includeGlobalState=" + includeGlobalState + ", waitForCompletion=" + waitForCompletion
-                + ", masterNodeTimeout=" + masterNodeTimeout + ", metadata=" + userMetadata + '}';
+        return "CreateSnapshotRequest{" +
+            "snapshot='" + snapshot + '\'' +
+            ", repository='" + repository + '\'' +
+            ", indices=" + (indices == null ? null : Arrays.asList(indices)) +
+            ", indicesOptions=" + indicesOptions +
+            ", partial=" + partial +
+            ", settings=" + settings +
+            ", includeGlobalState=" + includeGlobalState +
+            ", waitForCompletion=" + waitForCompletion +
+            ", masterNodeTimeout=" + masterNodeTimeout +
+            ", metadata=" + userMetadata +
+            '}';
     }
 }

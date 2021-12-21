@@ -52,13 +52,14 @@ public class MergeSchedulerSettingsTests extends ESTestCase {
         @Override
         public void append(LogEvent event) {
             String message = event.getMessage().getFormattedMessage();
-            if (event.getLevel() == Level.TRACE && event.getLoggerName().endsWith("lucene.iw")) {}
+            if (event.getLevel() == Level.TRACE && event.getLoggerName().endsWith("lucene.iw")) {
+            }
             if (event.getLevel() == Level.INFO
-                    && message.contains("updating [index.merge.scheduler.max_thread_count] from [10000] to [1]")) {
+                && message.contains("updating [index.merge.scheduler.max_thread_count] from [10000] to [1]")) {
                 sawUpdateMaxThreadCount = true;
             }
             if (event.getLevel() == Level.INFO
-                    && message.contains("updating [index.merge.scheduler.auto_throttle] from [true] to [false]")) {
+                && message.contains("updating [index.merge.scheduler.auto_throttle] from [true] to [false]")) {
                 sawUpdateAutoThrottle = true;
             }
         }
@@ -77,13 +78,15 @@ public class MergeSchedulerSettingsTests extends ESTestCase {
         Loggers.addAppender(settingsLogger, mockAppender);
         Loggers.setLevel(settingsLogger, Level.TRACE);
         try {
-            Settings.Builder builder = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                    .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, "1").put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, "0")
-                    .put(MergePolicyConfig.INDEX_MERGE_POLICY_MAX_MERGE_AT_ONCE_SETTING.getKey(), "2")
-                    .put(MergePolicyConfig.INDEX_MERGE_POLICY_SEGMENTS_PER_TIER_SETTING.getKey(), "2")
-                    .put(MergeSchedulerConfig.MAX_THREAD_COUNT_SETTING.getKey(), "1")
-                    .put(MergeSchedulerConfig.MAX_MERGE_COUNT_SETTING.getKey(), "2")
-                    .put(MergeSchedulerConfig.AUTO_THROTTLE_SETTING.getKey(), "true");
+            Settings.Builder builder = Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, "1")
+                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, "0")
+                .put(MergePolicyConfig.INDEX_MERGE_POLICY_MAX_MERGE_AT_ONCE_SETTING.getKey(), "2")
+                .put(MergePolicyConfig.INDEX_MERGE_POLICY_SEGMENTS_PER_TIER_SETTING.getKey(), "2")
+                .put(MergeSchedulerConfig.MAX_THREAD_COUNT_SETTING.getKey(), "1")
+                .put(MergeSchedulerConfig.MAX_MERGE_COUNT_SETTING.getKey(), "2")
+                .put(MergeSchedulerConfig.AUTO_THROTTLE_SETTING.getKey(), "true");
             IndexSettings settings = new IndexSettings(newIndexMeta("index", builder.build()), Settings.EMPTY);
             assertEquals(settings.getMergeSchedulerConfig().isAutoThrottle(), true);
             builder.put(MergeSchedulerConfig.AUTO_THROTTLE_SETTING.getKey(), "false");
@@ -106,12 +109,14 @@ public class MergeSchedulerSettingsTests extends ESTestCase {
         Loggers.addAppender(settingsLogger, mockAppender);
         Loggers.setLevel(settingsLogger, Level.TRACE);
         try {
-            Settings.Builder builder = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                    .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, "1").put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, "0")
-                    .put(MergePolicyConfig.INDEX_MERGE_POLICY_MAX_MERGE_AT_ONCE_SETTING.getKey(), "2")
-                    .put(MergePolicyConfig.INDEX_MERGE_POLICY_SEGMENTS_PER_TIER_SETTING.getKey(), "2")
-                    .put(MergeSchedulerConfig.MAX_THREAD_COUNT_SETTING.getKey(), "10000")
-                    .put(MergeSchedulerConfig.MAX_MERGE_COUNT_SETTING.getKey(), "10000");
+            Settings.Builder builder = Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, "1")
+                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, "0")
+                .put(MergePolicyConfig.INDEX_MERGE_POLICY_MAX_MERGE_AT_ONCE_SETTING.getKey(), "2")
+                .put(MergePolicyConfig.INDEX_MERGE_POLICY_SEGMENTS_PER_TIER_SETTING.getKey(), "2")
+                .put(MergeSchedulerConfig.MAX_THREAD_COUNT_SETTING.getKey(), "10000")
+                .put(MergeSchedulerConfig.MAX_MERGE_COUNT_SETTING.getKey(), "10000");
             IndexSettings settings = new IndexSettings(newIndexMeta("index", builder.build()), Settings.EMPTY);
             assertEquals(settings.getMergeSchedulerConfig().getMaxMergeCount(), 10000);
             assertEquals(settings.getMergeSchedulerConfig().getMaxThreadCount(), 10000);
@@ -143,7 +148,8 @@ public class MergeSchedulerSettingsTests extends ESTestCase {
     }
 
     public void testMaxThreadAndMergeCount() {
-        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
+        IllegalArgumentException exc =
+            expectThrows(IllegalArgumentException.class,
                 () -> new MergeSchedulerConfig(new IndexSettings(createMetadata(10, 4, -1), Settings.EMPTY)));
         assertThat(exc.getMessage(), containsString("maxThreadCount (= 10) should be <= maxMergeCount (= 4)"));
 
@@ -169,10 +175,12 @@ public class MergeSchedulerSettingsTests extends ESTestCase {
         assertEquals(45, settings.getMergeSchedulerConfig().getMaxMergeCount());
 
         final IndexSettings finalSettings = settings;
-        exc = expectThrows(IllegalArgumentException.class, () -> finalSettings.updateIndexMetadata(createMetadata(40, 30, -1)));
+        exc = expectThrows(IllegalArgumentException.class,
+            () -> finalSettings.updateIndexMetadata(createMetadata(40, 30, -1)));
         assertThat(exc.getMessage(), containsString("maxThreadCount (= 40) should be <= maxMergeCount (= 30)"));
 
-        exc = expectThrows(IllegalArgumentException.class, () -> finalSettings.updateIndexMetadata(createMetadata(-1, 3, 8)));
+        exc = expectThrows(IllegalArgumentException.class,
+            () -> finalSettings.updateIndexMetadata(createMetadata(-1, 3, 8)));
         assertThat(exc.getMessage(), containsString("maxThreadCount (= 4) should be <= maxMergeCount (= 3)"));
     }
 }

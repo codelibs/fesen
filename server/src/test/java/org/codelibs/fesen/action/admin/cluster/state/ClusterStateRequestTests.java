@@ -42,9 +42,9 @@ public class ClusterStateRequestTests extends ESTestCase {
             ClusterStateRequest clusterStateRequest = new ClusterStateRequest().routingTable(randomBoolean()).metadata(randomBoolean())
                     .nodes(randomBoolean()).blocks(randomBoolean()).indices("testindex", "testindex2").indicesOptions(indicesOptions);
 
-            Version testVersion =
-                    VersionUtils.randomVersionBetween(random(), Version.CURRENT.minimumCompatibilityVersion(), Version.CURRENT);
-            // TODO: change version to 6.6.0 after backporting:
+            Version testVersion = VersionUtils.randomVersionBetween(random(),
+                Version.CURRENT.minimumCompatibilityVersion(), Version.CURRENT);
+            // TODO: change version to V_6_6_0 after backporting:
             if (testVersion.onOrAfter(Version.V_7_0_0)) {
                 if (randomBoolean()) {
                     clusterStateRequest.waitForMetadataVersion(randomLongBetween(1, Long.MAX_VALUE));
@@ -68,15 +68,17 @@ public class ClusterStateRequestTests extends ESTestCase {
             assertThat(deserializedCSRequest.blocks(), equalTo(clusterStateRequest.blocks()));
             assertThat(deserializedCSRequest.indices(), equalTo(clusterStateRequest.indices()));
             assertOptionsMatch(deserializedCSRequest.indicesOptions(), clusterStateRequest.indicesOptions());
-            assertThat(deserializedCSRequest.waitForMetadataVersion(), equalTo(clusterStateRequest.waitForMetadataVersion()));
-            assertThat(deserializedCSRequest.waitForTimeout(), equalTo(clusterStateRequest.waitForTimeout()));
+            if (testVersion.onOrAfter(Version.V_6_6_0)) {
+                assertThat(deserializedCSRequest.waitForMetadataVersion(), equalTo(clusterStateRequest.waitForMetadataVersion()));
+                assertThat(deserializedCSRequest.waitForTimeout(), equalTo(clusterStateRequest.waitForTimeout()));
+            }
         }
     }
 
     public void testWaitForMetadataVersion() {
         ClusterStateRequest clusterStateRequest = new ClusterStateRequest();
         expectThrows(IllegalArgumentException.class,
-                () -> clusterStateRequest.waitForMetadataVersion(randomLongBetween(Long.MIN_VALUE, 0)));
+            () -> clusterStateRequest.waitForMetadataVersion(randomLongBetween(Long.MIN_VALUE, 0)));
         clusterStateRequest.waitForMetadataVersion(randomLongBetween(1, Long.MAX_VALUE));
     }
 

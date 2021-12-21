@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Tuple;
+
+import java.io.IOException;
+
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Represents a gte assert section:
@@ -40,8 +40,8 @@ import org.codelibs.fesen.core.Tuple;
 public class GreaterThanEqualToAssertion extends Assertion {
     public static GreaterThanEqualToAssertion parse(XContentParser parser) throws IOException {
         XContentLocation location = parser.getTokenLocation();
-        Tuple<String, Object> stringObjectTuple = ParserUtils.parseTuple(parser);
-        if (!(stringObjectTuple.v2() instanceof Comparable)) {
+        Tuple<String,Object> stringObjectTuple = ParserUtils.parseTuple(parser);
+        if (! (stringObjectTuple.v2() instanceof Comparable) ) {
             throw new IllegalArgumentException("gte section can only be used with objects that support natural ordering, found "
                     + stringObjectTuple.v2().getClass().getSimpleName());
         }
@@ -57,10 +57,10 @@ public class GreaterThanEqualToAssertion extends Assertion {
     @Override
     protected void doAssert(Object actualValue, Object expectedValue) {
         logger.trace("assert that [{}] is greater than or equal to [{}] (field: [{}])", actualValue, expectedValue, getField());
-        assertThat("value of [" + getField() + "] is not comparable (got [" + safeClass(actualValue) + "])", actualValue,
-                instanceOf(Comparable.class));
-        assertThat("expected value of [" + getField() + "] is not comparable (got [" + expectedValue.getClass() + "])", expectedValue,
-                instanceOf(Comparable.class));
+        assertThat("value of [" + getField() + "] is not comparable (got [" + safeClass(actualValue) + "])",
+                actualValue, instanceOf(Comparable.class));
+        assertThat("expected value of [" + getField() + "] is not comparable (got [" + expectedValue.getClass() + "])",
+                expectedValue, instanceOf(Comparable.class));
         try {
             assertThat(errorMessage(), (Comparable) actualValue, greaterThanOrEqualTo((Comparable) expectedValue));
         } catch (ClassCastException e) {

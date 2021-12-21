@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.reindex.BulkByScrollTask.StatusBuilder;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Helps build a {@link BulkByScrollResponse}. Used by an instance of {@link ObjectParser} when parsing from XContent.
@@ -39,8 +39,7 @@ class BulkByScrollResponseBuilder extends StatusBuilder {
     private List<SearchFailure> searchFailures = new ArrayList<>();
     private boolean timedOut;
 
-    BulkByScrollResponseBuilder() {
-    }
+    BulkByScrollResponseBuilder() {}
 
     public void setTook(long took) {
         setTook(new TimeValue(took, TimeUnit.MILLISECONDS));
@@ -56,7 +55,7 @@ class BulkByScrollResponseBuilder extends StatusBuilder {
 
     public void setFailures(List<Object> failures) {
         if (failures != null) {
-            for (Object object : failures) {
+            for (Object object: failures) {
                 if (object instanceof Failure) {
                     bulkFailures.add((Failure) object);
                 } else if (object instanceof SearchFailure) {

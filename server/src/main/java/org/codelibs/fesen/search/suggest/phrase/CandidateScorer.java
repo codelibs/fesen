@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-
 import org.apache.lucene.util.PriorityQueue;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.CandidateSet;
+
+import java.io.IOException;
 
 final class CandidateScorer {
     private final WordScorer scorer;
@@ -34,6 +34,7 @@ final class CandidateScorer {
         this.maxNumCorrections = maxNumCorrections;
         this.gramSize = gramSize;
     }
+
 
     public Correction[] findBestCandiates(CandidateSet[] sets, float errorFraction, double cutoffScore) throws IOException {
         if (sets.length == 0) {
@@ -77,25 +78,25 @@ final class CandidateScorer {
             if (numMissspellingsLeft > 0) {
                 path[ord] = current.originalTerm;
                 findCandidates(candidates, path, ord + 1, numMissspellingsLeft, corrections, cutoffScore,
-                        pathScore + scorer.score(path, candidates, ord, gramSize));
+                    pathScore + scorer.score(path, candidates, ord, gramSize));
                 for (int i = 0; i < current.candidates.length; i++) {
                     path[ord] = current.candidates[i];
                     findCandidates(candidates, path, ord + 1, numMissspellingsLeft - 1, corrections, cutoffScore,
-                            pathScore + scorer.score(path, candidates, ord, gramSize));
+                        pathScore + scorer.score(path, candidates, ord, gramSize));
                 }
             } else {
                 path[ord] = current.originalTerm;
                 findCandidates(candidates, path, ord + 1, 0, corrections, cutoffScore,
-                        pathScore + scorer.score(path, candidates, ord, gramSize));
+                    pathScore + scorer.score(path, candidates, ord, gramSize));
             }
         }
 
     }
 
-    private void updateTop(CandidateSet[] candidates, Candidate[] path, PriorityQueue<Correction> corrections, double cutoffScore,
-            double score) throws IOException {
+    private void updateTop(CandidateSet[] candidates, Candidate[] path,
+                                PriorityQueue<Correction> corrections, double cutoffScore, double score) throws IOException {
         score = Math.exp(score);
-        assert Math.abs(score - score(path, candidates)) < 0.00001 : "cur_score=" + score + ", path_score=" + score(path, candidates);
+        assert Math.abs(score - score(path, candidates)) < 0.00001 : "cur_score=" + score + ", path_score=" + score(path,candidates);
         if (score > cutoffScore) {
             if (corrections.size() < maxNumCorrections) {
                 Candidate[] c = new Candidate[candidates.length];
@@ -113,7 +114,7 @@ final class CandidateScorer {
     public double score(Candidate[] path, CandidateSet[] candidates) throws IOException {
         double score = 0.0d;
         for (int i = 0; i < candidates.length; i++) {
-            score += scorer.score(path, candidates, i, gramSize);
+           score += scorer.score(path, candidates, i, gramSize);
         }
         return Math.exp(score);
     }

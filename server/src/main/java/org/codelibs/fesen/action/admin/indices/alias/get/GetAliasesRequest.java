@@ -20,6 +20,7 @@ package org.codelibs.fesen.action.admin.indices.alias.get;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.AliasesRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -48,7 +49,9 @@ public class GetAliasesRequest extends MasterNodeReadRequest<GetAliasesRequest> 
         indices = in.readStringArray();
         aliases = in.readStringArray();
         indicesOptions = IndicesOptions.readIndicesOptions(in);
-        originalAliases = in.readStringArray();
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            originalAliases = in.readStringArray();
+        }
     }
 
     @Override
@@ -57,7 +60,9 @@ public class GetAliasesRequest extends MasterNodeReadRequest<GetAliasesRequest> 
         out.writeStringArray(indices);
         out.writeStringArray(aliases);
         indicesOptions.writeIndicesOptions(out);
-        out.writeStringArray(originalAliases);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            out.writeStringArray(originalAliases);
+        }
     }
 
     @Override

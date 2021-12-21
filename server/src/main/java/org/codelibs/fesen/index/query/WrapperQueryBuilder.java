@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.ParseField;
@@ -35,6 +31,10 @@ import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * A Query builder which allows building a query given JSON string or binary data provided as input. This is useful when you want
@@ -122,7 +122,7 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
             throw new ParsingException(parser.getTokenLocation(), "[wrapper] query malformed");
         }
         String fieldName = parser.currentName();
-        if (!QUERY_FIELD.match(fieldName, parser.getDeprecationHandler())) {
+        if (! QUERY_FIELD.match(fieldName, parser.getDeprecationHandler())) {
             throw new ParsingException(parser.getTokenLocation(), "[wrapper] query malformed, expected `query` but was " + fieldName);
         }
         parser.nextToken();
@@ -154,13 +154,13 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
 
     @Override
     protected boolean doEquals(WrapperQueryBuilder other) {
-        return Arrays.equals(source, other.source); // otherwise we compare pointers
+        return Arrays.equals(source, other.source);   // otherwise we compare pointers
     }
 
     @Override
     protected QueryBuilder doRewrite(QueryRewriteContext context) throws IOException {
-        try (XContentParser qSourceParser =
-                XContentFactory.xContent(source).createParser(context.getXContentRegistry(), LoggingDeprecationHandler.INSTANCE, source)) {
+        try (XContentParser qSourceParser = XContentFactory.xContent(source)
+                .createParser(context.getXContentRegistry(), LoggingDeprecationHandler.INSTANCE, source)) {
 
             final QueryBuilder queryBuilder = parseInnerQueryBuilder(qSourceParser).rewrite(context);
             if (boost() != DEFAULT_BOOST || queryName() != null) {
@@ -171,5 +171,6 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
             return queryBuilder;
         }
     }
+
 
 }

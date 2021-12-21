@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import org.apache.lucene.queries.intervals.IntervalQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParsingException;
@@ -33,6 +27,12 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.apache.lucene.queries.intervals.IntervalQuery;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Builder for {@link IntervalQuery}
@@ -94,29 +94,31 @@ public class IntervalQueryBuilder extends AbstractQueryBuilder<IntervalQueryBuil
         String providerName = null;
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             if (parser.currentToken() != XContentParser.Token.FIELD_NAME) {
-                throw new ParsingException(parser.getTokenLocation(), "Expected [FIELD_NAME] but got [" + parser.currentToken() + "]");
+                throw new ParsingException(parser.getTokenLocation(),
+                    "Expected [FIELD_NAME] but got [" + parser.currentToken() + "]");
             }
             switch (parser.currentName()) {
-            case "_name":
-                parser.nextToken();
-                name = parser.text();
-                break;
-            case "boost":
-                parser.nextToken();
-                boost = parser.floatValue();
-                break;
-            default:
-                if (providerName != null) {
-                    throw new ParsingException(parser.getTokenLocation(),
+                case "_name":
+                    parser.nextToken();
+                    name = parser.text();
+                    break;
+                case "boost":
+                    parser.nextToken();
+                    boost = parser.floatValue();
+                    break;
+                default:
+                    if (providerName != null) {
+                        throw new ParsingException(parser.getTokenLocation(),
                             "Only one interval rule can be specified, found [" + providerName + "] and [" + parser.currentName() + "]");
-                }
-                providerName = parser.currentName();
-                provider = IntervalsSourceProvider.fromXContent(parser);
+                    }
+                    providerName = parser.currentName();
+                    provider = IntervalsSourceProvider.fromXContent(parser);
 
             }
         }
         if (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-            throw new ParsingException(parser.getTokenLocation(), "Expected [END_OBJECT] but got [" + parser.currentToken() + "]");
+            throw new ParsingException(parser.getTokenLocation(),
+                "Expected [END_OBJECT] but got [" + parser.currentToken() + "]");
         }
         if (provider == null) {
             throw new ParsingException(parser.getTokenLocation(), "Missing intervals from interval query definition");

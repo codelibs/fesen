@@ -38,7 +38,7 @@ import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHash
 
 import java.io.IOException;
 
-public abstract class AbstractShapeBuilderTestCase<SB extends ShapeBuilder<?, ?, ?>> extends ESTestCase {
+public abstract class AbstractShapeBuilderTestCase<SB extends ShapeBuilder<?,?,?>> extends ESTestCase {
 
     private static final int NUMBER_OF_TESTBUILDERS = 20;
     private static NamedWriteableRegistry namedWriteableRegistry;

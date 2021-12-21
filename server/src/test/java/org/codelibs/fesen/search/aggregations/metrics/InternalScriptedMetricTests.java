@@ -56,10 +56,11 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
     private static final String REDUCE_SCRIPT_NAME = "reduceScript";
     private boolean hasReduceScript;
     private Supplier<Object>[] valueTypes;
-    private final Supplier<Object>[] leafValueSuppliers =
-            new Supplier[] { () -> randomInt(), () -> randomLong(), () -> randomDouble(), () -> randomFloat(), () -> randomBoolean(),
-                    () -> randomAlphaOfLength(5), () -> new GeoPoint(randomDouble(), randomDouble()), () -> null };
-    private final Supplier<Object>[] nestedValueSuppliers = new Supplier[] { () -> new HashMap<String, Object>(), () -> new ArrayList<>() };
+    private final Supplier<Object>[] leafValueSuppliers = new Supplier[] { () -> randomInt(), () -> randomLong(), () -> randomDouble(),
+            () -> randomFloat(), () -> randomBoolean(), () -> randomAlphaOfLength(5), () -> new GeoPoint(randomDouble(), randomDouble()),
+            () -> null };
+    private final Supplier<Object>[] nestedValueSuppliers = new Supplier[] { () -> new HashMap<String, Object>(),
+            () -> new ArrayList<>() };
 
     @Override
     public void setUp() throws Exception {
@@ -121,7 +122,7 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
                 map.put(randomAlphaOfLength(5), randomValue(valueTypes, level + 1));
             }
         } else if (value instanceof List) {
-            int elements = randomIntBetween(1, 5);
+            int elements = randomIntBetween(1,5);
             List<Object> list = (List<Object>) value;
             for (int i = 0; i < elements; i++) {
                 list.add(randomValue(valueTypes, level + 1));
@@ -163,8 +164,10 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
     @Override
     public InternalScriptedMetric createTestInstanceForXContent() {
         InternalScriptedMetric aggregation = createTestInstance();
-        return (InternalScriptedMetric) aggregation.reduce(singletonList(aggregation),
-                ReduceContext.forFinalReduction(null, mockScriptService(), null, PipelineTree.EMPTY));
+        return (InternalScriptedMetric) aggregation.reduce(
+            singletonList(aggregation),
+            ReduceContext.forFinalReduction(null, mockScriptService(), null, PipelineTree.EMPTY)
+        );
     }
 
     @Override
@@ -204,13 +207,13 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
                 assertValues(expectedMap.get(key), actualMap.get(key));
             }
         } else if (expected instanceof List) {
-            List<Object> expectedList = (List<Object>) expected;
-            List<Object> actualList = (List<Object>) actual;
-            assertEquals(expectedList.size(), actualList.size());
-            Iterator<Object> actualIterator = actualList.iterator();
-            for (Object element : expectedList) {
-                assertValues(element, actualIterator.next());
-            }
+                List<Object> expectedList = (List<Object>) expected;
+                List<Object> actualList = (List<Object>) actual;
+                assertEquals(expectedList.size(), actualList.size());
+                Iterator<Object> actualIterator = actualList.iterator();
+                for (Object element : expectedList) {
+                    assertValues(element, actualIterator.next());
+                }
         } else {
             assertEquals(expected, actual);
         }
@@ -253,21 +256,35 @@ public class InternalScriptedMetricTests extends InternalAggregationTestCase<Int
 
     public void testOldSerialization() throws IOException {
         // A single element list looks like a fully reduced agg
-        InternalScriptedMetric original =
-                new InternalScriptedMetric("test", org.codelibs.fesen.core.List.of("foo"), new Script("test"), null);
+        InternalScriptedMetric original = new InternalScriptedMetric(
+            "test",
+            org.codelibs.fesen.core.List.of("foo"),
+            new Script("test"),
+            null
+        );
         original.mergePipelineTreeForBWCSerialization(PipelineTree.EMPTY);
-        InternalScriptedMetric roundTripped =
-                (InternalScriptedMetric) copyNamedWriteable(original, getNamedWriteableRegistry(), InternalAggregation.class,
-                        VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_8_0)));
+        InternalScriptedMetric roundTripped = (InternalScriptedMetric) copyNamedWriteable(
+            original,
+            getNamedWriteableRegistry(),
+            InternalAggregation.class,
+            VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_8_0))
+        );
         assertThat(roundTripped, equalTo(original));
 
         // A multi-element list looks like a non-reduced agg
-        InternalScriptedMetric unreduced =
-                new InternalScriptedMetric("test", org.codelibs.fesen.core.List.of("foo", "bar"), new Script("test"), null);
+        InternalScriptedMetric unreduced = new InternalScriptedMetric(
+            "test",
+            org.codelibs.fesen.core.List.of("foo", "bar"),
+            new Script("test"),
+            null
+        );
         unreduced.mergePipelineTreeForBWCSerialization(PipelineTree.EMPTY);
-        Exception e = expectThrows(IllegalArgumentException.class,
-                () -> copyNamedWriteable(unreduced, getNamedWriteableRegistry(), InternalAggregation.class,
-                        VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_8_0))));
+        Exception e = expectThrows(IllegalArgumentException.class, () -> copyNamedWriteable(
+            unreduced,
+            getNamedWriteableRegistry(),
+            InternalAggregation.class,
+            VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_8_0))
+        ));
         assertThat(e.getMessage(), equalTo("scripted_metric doesn't support cross cluster search until 7.8.0"));
     }
 }

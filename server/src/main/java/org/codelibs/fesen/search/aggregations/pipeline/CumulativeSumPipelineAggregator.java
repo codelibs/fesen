@@ -32,9 +32,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.codelibs.fesen.search.aggregations.bucket.histogram.HistogramFactory;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
@@ -42,7 +42,8 @@ import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 public class CumulativeSumPipelineAggregator extends PipelineAggregator {
     private final DocValueFormat formatter;
 
-    CumulativeSumPipelineAggregator(String name, String[] bucketsPaths, DocValueFormat formatter, Map<String, Object> metadata) {
+    CumulativeSumPipelineAggregator(String name, String[] bucketsPaths, DocValueFormat formatter,
+                                    Map<String, Object> metadata) {
         super(name, bucketsPaths, metadata);
         this.formatter = formatter;
     }
@@ -67,8 +68,9 @@ public class CumulativeSumPipelineAggregator extends PipelineAggregator {
 
     @Override
     public InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext) {
-        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket> histo =
-                (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>) aggregation;
+        InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends InternalMultiBucketAggregation.InternalBucket>
+                histo = (InternalMultiBucketAggregation<? extends InternalMultiBucketAggregation, ? extends
+                InternalMultiBucketAggregation.InternalBucket>) aggregation;
         List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = histo.getBuckets();
         HistogramFactory factory = (HistogramFactory) histo;
         List<Bucket> newBuckets = new ArrayList<>(buckets.size());
@@ -82,7 +84,8 @@ public class CumulativeSumPipelineAggregator extends PipelineAggregator {
             }
 
             List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
-                    .map((p) -> (InternalAggregation) p).collect(Collectors.toList());
+                .map((p) -> (InternalAggregation) p)
+                .collect(Collectors.toList());
             aggs.add(new InternalSimpleValue(name(), sum, formatter, metadata()));
             Bucket newBucket = factory.createBucket(factory.getKey(bucket), bucket.getDocCount(), InternalAggregations.from(aggs));
             newBuckets.add(newBucket);

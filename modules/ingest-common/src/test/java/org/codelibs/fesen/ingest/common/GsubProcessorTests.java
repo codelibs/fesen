@@ -21,6 +21,9 @@ package org.codelibs.fesen.ingest.common;
 
 import java.util.regex.Pattern;
 
+import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
+import org.codelibs.fesen.ingest.common.GsubProcessor;
+
 public class GsubProcessorTests extends AbstractStringProcessorTestCase<String> {
 
     @Override

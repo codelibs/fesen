@@ -47,29 +47,29 @@ public class SnapshotShardsStats implements ToXContentObject {
         for (SnapshotIndexShardStatus shard : shards) {
             totalShards++;
             switch (shard.getStage()) {
-            case INIT:
-                initializingShards++;
-                break;
-            case STARTED:
-                startedShards++;
-                break;
-            case FINALIZE:
-                finalizingShards++;
-                break;
-            case DONE:
-                doneShards++;
-                break;
-            case FAILURE:
-                failedShards++;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown stage type " + shard.getStage());
+                case INIT:
+                    initializingShards++;
+                    break;
+                case STARTED:
+                    startedShards++;
+                    break;
+                case FINALIZE:
+                    finalizingShards++;
+                    break;
+                case DONE:
+                    doneShards++;
+                    break;
+                case FAILURE:
+                    failedShards++;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown stage type " + shard.getStage());
             }
         }
     }
 
     public SnapshotShardsStats(int initializingShards, int startedShards, int finalizingShards, int doneShards, int failedShards,
-            int totalShards) {
+                               int totalShards) {
         this.initializingShards = initializingShards;
         this.startedShards = startedShards;
         this.finalizingShards = finalizingShards;
@@ -145,17 +145,19 @@ public class SnapshotShardsStats implements ToXContentObject {
         return builder;
     }
 
-    static final ConstructingObjectParser<SnapshotShardsStats, Void> PARSER =
-            new ConstructingObjectParser<>(Fields.SHARDS_STATS, true, (Object[] parsedObjects) -> {
-                int i = 0;
-                int initializingShards = (int) parsedObjects[i++];
-                int startedShards = (int) parsedObjects[i++];
-                int finalizingShards = (int) parsedObjects[i++];
-                int doneShards = (int) parsedObjects[i++];
-                int failedShards = (int) parsedObjects[i++];
-                int totalShards = (int) parsedObjects[i];
-                return new SnapshotShardsStats(initializingShards, startedShards, finalizingShards, doneShards, failedShards, totalShards);
-            });
+    static final ConstructingObjectParser<SnapshotShardsStats, Void> PARSER = new ConstructingObjectParser<>(
+        Fields.SHARDS_STATS, true,
+        (Object[] parsedObjects) -> {
+            int i = 0;
+            int initializingShards = (int) parsedObjects[i++];
+            int startedShards = (int) parsedObjects[i++];
+            int finalizingShards = (int) parsedObjects[i++];
+            int doneShards = (int) parsedObjects[i++];
+            int failedShards = (int) parsedObjects[i++];
+            int totalShards = (int) parsedObjects[i];
+            return new SnapshotShardsStats(initializingShards, startedShards, finalizingShards, doneShards, failedShards, totalShards);
+        }
+    );
     static {
         PARSER.declareInt(constructorArg(), new ParseField(Fields.INITIALIZING));
         PARSER.declareInt(constructorArg(), new ParseField(Fields.STARTED));
@@ -171,23 +173,16 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         SnapshotShardsStats that = (SnapshotShardsStats) o;
 
-        if (initializingShards != that.initializingShards)
-            return false;
-        if (startedShards != that.startedShards)
-            return false;
-        if (finalizingShards != that.finalizingShards)
-            return false;
-        if (doneShards != that.doneShards)
-            return false;
-        if (failedShards != that.failedShards)
-            return false;
+        if (initializingShards != that.initializingShards) return false;
+        if (startedShards != that.startedShards) return false;
+        if (finalizingShards != that.finalizingShards) return false;
+        if (doneShards != that.doneShards) return false;
+        if (failedShards != that.failedShards) return false;
         return totalShards == that.totalShards;
     }
 

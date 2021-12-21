@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.info;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.Build;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
@@ -41,6 +37,10 @@ import org.codelibs.fesen.node.ReportingService;
 import org.codelibs.fesen.search.aggregations.support.AggregationInfo;
 import org.codelibs.fesen.threadpool.ThreadPoolInfo;
 import org.codelibs.fesen.transport.TransportInfo;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Node information (static, does not change over time).
@@ -88,10 +88,10 @@ public class NodeInfo extends BaseNodeResponse {
         }
     }
 
-    public NodeInfo(Version version, Build build, DiscoveryNode node, @Nullable Settings settings, @Nullable OsInfo os,
-            @Nullable ProcessInfo process, @Nullable JvmInfo jvm, @Nullable ThreadPoolInfo threadPool, @Nullable TransportInfo transport,
-            @Nullable HttpInfo http, @Nullable PluginsAndModules plugins, @Nullable IngestInfo ingest, @Nullable AggregationInfo aggsInfo,
-            @Nullable ByteSizeValue totalIndexingBuffer) {
+    public NodeInfo(Version version, Build build, DiscoveryNode node, @Nullable Settings settings,
+                    @Nullable OsInfo os, @Nullable ProcessInfo process, @Nullable JvmInfo jvm, @Nullable ThreadPoolInfo threadPool,
+                    @Nullable TransportInfo transport, @Nullable HttpInfo http, @Nullable PluginsAndModules plugins,
+                    @Nullable IngestInfo ingest, @Nullable AggregationInfo aggsInfo, @Nullable ByteSizeValue totalIndexingBuffer) {
         super(node);
         this.version = version;
         this.build = build;

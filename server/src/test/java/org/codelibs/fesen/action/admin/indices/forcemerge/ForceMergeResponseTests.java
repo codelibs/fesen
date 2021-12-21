@@ -29,7 +29,7 @@ import java.util.List;
 public class ForceMergeResponseTests extends AbstractBroadcastResponseTestCase<ForceMergeResponse> {
     @Override
     protected ForceMergeResponse createTestInstance(int totalShards, int successfulShards, int failedShards,
-            List<DefaultShardOperationFailedException> failures) {
+                                                    List<DefaultShardOperationFailedException> failures) {
         return new ForceMergeResponse(totalShards, successfulShards, failedShards, failures);
     }
 

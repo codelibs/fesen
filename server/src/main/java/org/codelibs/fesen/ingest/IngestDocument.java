@@ -63,8 +63,8 @@ public final class IngestDocument {
     // Contains all pipelines that have been executed for this document
     private final Set<String> executedPipelines = new LinkedHashSet<>();
 
-    public IngestDocument(String index, String type, String id, String routing, Long version, VersionType versionType,
-            Map<String, Object> source) {
+    public IngestDocument(String index, String type, String id, String routing,
+                          Long version, VersionType versionType, Map<String, Object> source) {
         this.sourceAndMetadata = new HashMap<>();
         this.sourceAndMetadata.putAll(source);
         this.sourceAndMetadata.put(Metadata.INDEX.getFieldName(), index);
@@ -184,8 +184,8 @@ public final class IngestDocument {
         } else if (object instanceof String) {
             return Base64.getDecoder().decode(object.toString());
         } else {
-            throw new IllegalArgumentException(
-                    "Content field [" + path + "] of unknown type [" + object.getClass().getName() + "], must be string or byte array");
+            throw new IllegalArgumentException("Content field [" + path + "] of unknown type [" + object.getClass().getName() +
+                "], must be string or byte array");
         }
     }
 
@@ -235,8 +235,8 @@ public final class IngestDocument {
                     int index = Integer.parseInt(pathElement);
                     if (index < 0 || index >= list.size()) {
                         if (failOutOfRange) {
-                            throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" + list.size()
-                                    + "] as part of path [" + path + "]");
+                            throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" +
+                                    list.size() + "] as part of path [" + path +"]");
                         } else {
                             return false;
                         }
@@ -266,8 +266,8 @@ public final class IngestDocument {
                     return true;
                 } else {
                     if (failOutOfRange) {
-                        throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" + list.size()
-                                + "] as part of path [" + path + "]");
+                        throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" +
+                                list.size() + "] as part of path [" + path +"]");
                     } else {
                         return false;
                     }
@@ -317,12 +317,12 @@ public final class IngestDocument {
             try {
                 index = Integer.parseInt(leafKey);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        "[" + leafKey + "] is not an integer, cannot be used as an index as part of path [" + path + "]", e);
+                throw new IllegalArgumentException("[" + leafKey + "] is not an integer, cannot be used as an index as part of path [" +
+                        path + "]", e);
             }
             if (index < 0 || index >= list.size()) {
-                throw new IllegalArgumentException(
-                        "[" + index + "] is out of bounds for array with length [" + list.size() + "] as part of path [" + path + "]");
+                throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" + list.size() +
+                        "] as part of path [" + path + "]");
             }
             list.remove(index);
             return;
@@ -331,8 +331,8 @@ public final class IngestDocument {
         if (context == null) {
             throw new IllegalArgumentException("cannot remove [" + leafKey + "] from null as part of path [" + path + "]");
         }
-        throw new IllegalArgumentException("cannot remove [" + leafKey + "] from object of type [" + context.getClass().getName()
-                + "] as part of path [" + path + "]");
+        throw new IllegalArgumentException("cannot remove [" + leafKey + "] from object of type [" + context.getClass().getName() +
+                "] as part of path [" + path + "]");
     }
 
     private static Object resolve(String pathElement, String fullPath, Object context) {
@@ -354,17 +354,17 @@ public final class IngestDocument {
             try {
                 index = Integer.parseInt(pathElement);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        "[" + pathElement + "] is not an integer, cannot be used as an index as part of path [" + fullPath + "]", e);
+                throw new IllegalArgumentException("[" + pathElement + "] is not an integer, cannot be used as an index as part of path ["
+                        + fullPath + "]", e);
             }
             if (index < 0 || index >= list.size()) {
-                throw new IllegalArgumentException(
-                        "[" + index + "] is out of bounds for array with length [" + list.size() + "] as part of path [" + fullPath + "]");
+                throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" + list.size() +
+                        "] as part of path [" + fullPath + "]");
             }
             return list.get(index);
         }
-        throw new IllegalArgumentException("cannot resolve [" + pathElement + "] from object of type [" + context.getClass().getName()
-                + "] as part of path [" + fullPath + "]");
+        throw new IllegalArgumentException("cannot resolve [" + pathElement + "] from object of type [" + context.getClass().getName() +
+                "] as part of path [" + fullPath + "]");
     }
 
     /**
@@ -518,17 +518,17 @@ public final class IngestDocument {
                 try {
                     index = Integer.parseInt(pathElement);
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "[" + pathElement + "] is not an integer, cannot be used as an index as part of path [" + path + "]", e);
+                    throw new IllegalArgumentException("[" + pathElement +
+                            "] is not an integer, cannot be used as an index as part of path [" + path + "]", e);
                 }
                 if (index < 0 || index >= list.size()) {
-                    throw new IllegalArgumentException(
-                            "[" + index + "] is out of bounds for array with length [" + list.size() + "] as part of path [" + path + "]");
+                    throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" +
+                            list.size() + "] as part of path [" + path + "]");
                 }
                 context = list.get(index);
             } else {
-                throw new IllegalArgumentException("cannot resolve [" + pathElement + "] from object of type ["
-                        + context.getClass().getName() + "] as part of path [" + path + "]");
+                throw new IllegalArgumentException("cannot resolve [" + pathElement + "] from object of type [" +
+                        context.getClass().getName() + "] as part of path [" + path + "]");
             }
         }
 
@@ -561,12 +561,12 @@ public final class IngestDocument {
             try {
                 index = Integer.parseInt(leafKey);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        "[" + leafKey + "] is not an integer, cannot be used as an index as part of path [" + path + "]", e);
+                throw new IllegalArgumentException("[" + leafKey + "] is not an integer, cannot be used as an index as part of path [" +
+                        path + "]", e);
             }
             if (index < 0 || index >= list.size()) {
-                throw new IllegalArgumentException(
-                        "[" + index + "] is out of bounds for array with length [" + list.size() + "] as part of path [" + path + "]");
+                throw new IllegalArgumentException("[" + index + "] is out of bounds for array with length [" + list.size() +
+                        "] as part of path [" + path + "]");
             }
             if (append) {
                 Object object = list.get(index);
@@ -578,8 +578,8 @@ public final class IngestDocument {
             }
             list.set(index, value);
         } else {
-            throw new IllegalArgumentException("cannot set [" + leafKey + "] with parent object of type [" + context.getClass().getName()
-                    + "] as part of path [" + path + "]");
+            throw new IllegalArgumentException("cannot set [" + leafKey + "] with parent object of type [" +
+                    context.getClass().getName() + "] as part of path [" + path + "]");
         }
     }
 
@@ -637,8 +637,8 @@ public final class IngestDocument {
         if (clazz.isInstance(object)) {
             return clazz.cast(object);
         }
-        throw new IllegalArgumentException(
-                "field [" + path + "] of type [" + object.getClass().getName() + "] cannot be cast to [" + clazz.getName() + "]");
+        throw new IllegalArgumentException("field [" + path + "] of type [" + object.getClass().getName() + "] cannot be cast to [" +
+                clazz.getName() + "]");
     }
 
     public String renderTemplate(TemplateScript.Factory template) {
@@ -717,8 +717,10 @@ public final class IngestDocument {
         } else if (value instanceof byte[]) {
             byte[] bytes = (byte[]) value;
             return Arrays.copyOf(bytes, bytes.length);
-        } else if (value == null || value instanceof String || value instanceof Integer || value instanceof Long || value instanceof Float
-                || value instanceof Double || value instanceof Boolean || value instanceof ZonedDateTime) {
+        } else if (value == null || value instanceof String || value instanceof Integer ||
+            value instanceof Long || value instanceof Float ||
+            value instanceof Double || value instanceof Boolean ||
+            value instanceof ZonedDateTime) {
             return value;
         } else if (value instanceof Date) {
             return ((Date) value).clone();
@@ -762,15 +764,14 @@ public final class IngestDocument {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
+        if (obj == this) { return true; }
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
 
         IngestDocument other = (IngestDocument) obj;
-        return Objects.equals(sourceAndMetadata, other.sourceAndMetadata) && Objects.equals(ingestMetadata, other.ingestMetadata);
+        return Objects.equals(sourceAndMetadata, other.sourceAndMetadata) &&
+                Objects.equals(ingestMetadata, other.ingestMetadata);
     }
 
     @Override
@@ -780,12 +781,21 @@ public final class IngestDocument {
 
     @Override
     public String toString() {
-        return "IngestDocument{" + " sourceAndMetadata=" + sourceAndMetadata + ", ingestMetadata=" + ingestMetadata + '}';
+        return "IngestDocument{" +
+                " sourceAndMetadata=" + sourceAndMetadata +
+                ", ingestMetadata=" + ingestMetadata +
+                '}';
     }
 
     public enum Metadata {
-        INDEX(IndexFieldMapper.NAME), TYPE(TypeFieldMapper.NAME), ID(IdFieldMapper.NAME), ROUTING(RoutingFieldMapper.NAME), VERSION(
-                VersionFieldMapper.NAME), VERSION_TYPE("_version_type"), IF_SEQ_NO("_if_seq_no"), IF_PRIMARY_TERM("_if_primary_term");
+        INDEX(IndexFieldMapper.NAME),
+        TYPE(TypeFieldMapper.NAME),
+        ID(IdFieldMapper.NAME),
+        ROUTING(RoutingFieldMapper.NAME),
+        VERSION(VersionFieldMapper.NAME),
+        VERSION_TYPE("_version_type"),
+        IF_SEQ_NO("_if_seq_no"),
+        IF_PRIMARY_TERM("_if_primary_term");
 
         private final String fieldName;
 

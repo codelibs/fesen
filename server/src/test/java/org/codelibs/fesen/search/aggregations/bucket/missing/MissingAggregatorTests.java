@@ -80,18 +80,26 @@ public class MissingAggregatorTests extends AggregatorTestCase {
     public void testMatchNoDocs() throws IOException {
         final int numDocs = randomIntBetween(10, 200);
 
-        final MappedFieldType fieldType = new NumberFieldMapper.NumberFieldType("field", NumberType.LONG);
+        final MappedFieldType fieldType
+            = new NumberFieldMapper.NumberFieldType("field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(fieldType.name());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(fieldType.name());
 
-        testCase(newMatchAllQuery(), builder, writer -> {
-            for (int i = 0; i < numDocs; i++) {
-                writer.addDocument(singleton(new SortedNumericDocValuesField(fieldType.name(), randomLong())));
-            }
-        }, internalMissing -> {
-            assertEquals(0, internalMissing.getDocCount());
-            assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
-        }, singleton(fieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> {
+                for (int i = 0; i < numDocs; i++) {
+                    writer.addDocument(singleton(new SortedNumericDocValuesField(fieldType.name(), randomLong())));
+                }
+            },
+            internalMissing -> {
+                assertEquals(0, internalMissing.getDocCount());
+                assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            singleton(fieldType)
+        );
     }
 
     public void testMatchAllDocs() throws IOException {
@@ -100,23 +108,31 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
         final MappedFieldType anotherFieldType = new NumberFieldMapper.NumberFieldType("another_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name());
 
-        testCase(newMatchAllQuery(), builder, writer -> {
-            for (int i = 0; i < numDocs; i++) {
-                writer.addDocument(singleton(new SortedNumericDocValuesField(anotherFieldType.name(), randomLong())));
-            }
-        }, internalMissing -> {
-            assertEquals(numDocs, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> {
+                for (int i = 0; i < numDocs; i++) {
+                    writer.addDocument(singleton(new SortedNumericDocValuesField(anotherFieldType.name(), randomLong())));
+                }
+            },
+            internalMissing -> {
+                assertEquals(numDocs, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testMatchSparse() throws IOException {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
         final MappedFieldType anotherFieldType = new NumberFieldMapper.NumberFieldType("another_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name());
 
         final int numDocs = randomIntBetween(100, 200);
         int docsMissingAggField = 0;
@@ -131,10 +147,16 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         }
         final int finalDocsMissingAggField = docsMissingAggField;
 
-        testCase(newMatchAllQuery(), builder, writer -> writer.addDocuments(docs), internalMissing -> {
-            assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> writer.addDocuments(docs),
+            internalMissing -> {
+                assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testMatchSparseRangeField() throws IOException {
@@ -146,7 +168,8 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         final BytesRef encodedRange = rangeType.encodeRanges(singleton(range));
         final BinaryDocValuesField encodedRangeField = new BinaryDocValuesField(aggFieldType.name(), encodedRange);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name());
 
         final int numDocs = randomIntBetween(100, 200);
         int docsMissingAggField = 0;
@@ -161,42 +184,63 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         }
         final int finalDocsMissingAggField = docsMissingAggField;
 
-        testCase(newMatchAllQuery(), builder, writer -> writer.addDocuments(docs), internalMissing -> {
-            assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, Arrays.asList(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> writer.addDocuments(docs),
+            internalMissing -> {
+                assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            Arrays.asList(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testUnmappedWithoutMissingParam() throws IOException {
         final int numDocs = randomIntBetween(10, 20);
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field("unknown_field");
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field("unknown_field");
 
-        testCase(newMatchAllQuery(), builder, writer -> {
-            for (int i = 0; i < numDocs; i++) {
-                writer.addDocument(singleton(new SortedNumericDocValuesField(aggFieldType.name(), randomLong())));
-            }
-        }, internalMissing -> {
-            assertEquals(numDocs, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, singleton(aggFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> {
+                for (int i = 0; i < numDocs; i++) {
+                    writer.addDocument(singleton(new SortedNumericDocValuesField(aggFieldType.name(), randomLong())));
+                }
+            },
+            internalMissing -> {
+                assertEquals(numDocs, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            singleton(aggFieldType)
+        );
     }
 
     public void testUnmappedWithMissingParam() throws IOException {
         final int numDocs = randomIntBetween(10, 20);
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field("unknown_field").missing(randomLong());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field("unknown_field")
+            .missing(randomLong());
 
-        testCase(newMatchAllQuery(), builder, writer -> {
-            for (int i = 0; i < numDocs; i++) {
-                writer.addDocument(singleton(new SortedNumericDocValuesField(aggFieldType.name(), randomLong())));
-            }
-        }, internalMissing -> {
-            assertEquals(0, internalMissing.getDocCount());
-            assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
-        }, singleton(aggFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> {
+                for (int i = 0; i < numDocs; i++) {
+                    writer.addDocument(singleton(new SortedNumericDocValuesField(aggFieldType.name(), randomLong())));
+                }
+            },
+            internalMissing -> {
+                assertEquals(0, internalMissing.getDocCount());
+                assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            singleton(aggFieldType)
+        );
     }
 
     public void testMissingParam() throws IOException {
@@ -205,23 +249,32 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
         final MappedFieldType anotherFieldType = new NumberFieldMapper.NumberFieldType("another_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name()).missing(randomLong());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name())
+            .missing(randomLong());
 
-        testCase(newMatchAllQuery(), builder, writer -> {
-            for (int i = 0; i < numDocs; i++) {
-                writer.addDocument(singleton(new SortedNumericDocValuesField(anotherFieldType.name(), randomLong())));
-            }
-        }, internalMissing -> {
-            assertEquals(0, internalMissing.getDocCount());
-            assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
-        }, org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> {
+                for (int i = 0; i < numDocs; i++) {
+                    writer.addDocument(singleton(new SortedNumericDocValuesField(anotherFieldType.name(), randomLong())));
+                }
+            },
+            internalMissing -> {
+                assertEquals(0, internalMissing.getDocCount());
+                assertFalse(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testMultiValuedField() throws IOException {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
         final MappedFieldType anotherFieldType = new NumberFieldMapper.NumberFieldType("another_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name());
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name());
 
         final int numDocs = randomIntBetween(100, 200);
         int docsMissingAggField = 0;
@@ -229,8 +282,10 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         for (int i = 0; i < numDocs; i++) {
             if (randomBoolean()) {
                 final long randomLong = randomLong();
-                docs.add(org.codelibs.fesen.core.Set.of(new SortedNumericDocValuesField(aggFieldType.name(), randomLong),
-                        new SortedNumericDocValuesField(aggFieldType.name(), randomLong + 1)));
+                docs.add(org.codelibs.fesen.core.Set.of(
+                    new SortedNumericDocValuesField(aggFieldType.name(), randomLong),
+                    new SortedNumericDocValuesField(aggFieldType.name(), randomLong + 1)
+                ));
             } else {
                 docs.add(singleton(new SortedNumericDocValuesField(anotherFieldType.name(), randomLong())));
                 docsMissingAggField++;
@@ -238,10 +293,16 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         }
         final int finalDocsMissingAggField = docsMissingAggField;
 
-        testCase(newMatchAllQuery(), builder, writer -> writer.addDocuments(docs), internalMissing -> {
-            assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> writer.addDocuments(docs),
+            internalMissing -> {
+                assertEquals(finalDocsMissingAggField, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testSingleValuedFieldWithValueScript() throws IOException {
@@ -256,7 +317,9 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
         final MappedFieldType anotherFieldType = new NumberFieldMapper.NumberFieldType("another_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").field(aggFieldType.name()).script(script);
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .field(aggFieldType.name())
+            .script(script);
 
         final int numDocs = randomIntBetween(100, 200);
         int docsMissingAggField = 0;
@@ -271,10 +334,16 @@ public class MissingAggregatorTests extends AggregatorTestCase {
         }
         final int finalDocsMissingField = docsMissingAggField;
 
-        testCase(newMatchAllQuery(), builder, writer -> writer.addDocuments(docs), internalMissing -> {
-            assertEquals(finalDocsMissingField, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> writer.addDocuments(docs),
+            internalMissing -> {
+                assertEquals(finalDocsMissingField, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            org.codelibs.fesen.core.List.of(aggFieldType, anotherFieldType)
+        );
     }
 
     public void testMultiValuedFieldWithFieldScriptWithParams() throws IOException {
@@ -285,13 +354,14 @@ public class MissingAggregatorTests extends AggregatorTestCase {
 
     public void testMultiValuedFieldWithFieldScript() throws IOException {
         fieldScriptTestCase(new Script(ScriptType.INLINE, MockScriptEngine.NAME, FIELD_SCRIPT, singletonMap("field", "agg_field")),
-                DEFAULT_THRESHOLD_PARAM);
+            DEFAULT_THRESHOLD_PARAM);
     }
 
     private void fieldScriptTestCase(Script script, long threshold) throws IOException {
         final MappedFieldType aggFieldType = new NumberFieldMapper.NumberFieldType("agg_field", NumberType.LONG);
 
-        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name").script(script);
+        final MissingAggregationBuilder builder = new MissingAggregationBuilder("_name")
+            .script(script);
 
         final int numDocs = randomIntBetween(100, 200);
         int docsBelowThreshold = 0;
@@ -302,19 +372,30 @@ public class MissingAggregatorTests extends AggregatorTestCase {
             if (firstValue < threshold && secondValue < threshold) {
                 docsBelowThreshold++;
             }
-            docs.add(org.codelibs.fesen.core.Set.of(new SortedNumericDocValuesField(aggFieldType.name(), firstValue),
-                    new SortedNumericDocValuesField(aggFieldType.name(), secondValue)));
+            docs.add(org.codelibs.fesen.core.Set.of(
+                new SortedNumericDocValuesField(aggFieldType.name(), firstValue),
+                new SortedNumericDocValuesField(aggFieldType.name(), secondValue)
+            ));
         }
         final int finalDocsBelowThreshold = docsBelowThreshold;
 
-        testCase(newMatchAllQuery(), builder, writer -> writer.addDocuments(docs), internalMissing -> {
-            assertEquals(finalDocsBelowThreshold, internalMissing.getDocCount());
-            assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
-        }, singleton(aggFieldType));
+        testCase(
+            newMatchAllQuery(),
+            builder,
+            writer -> writer.addDocuments(docs),
+            internalMissing -> {
+                assertEquals(finalDocsBelowThreshold, internalMissing.getDocCount());
+                assertTrue(AggregationInspectionHelper.hasValue(internalMissing));
+            },
+            singleton(aggFieldType)
+        );
     }
 
-    private void testCase(Query query, MissingAggregationBuilder builder, CheckedConsumer<RandomIndexWriter, IOException> writeIndex,
-            Consumer<InternalMissing> verify, Collection<MappedFieldType> fieldTypes) throws IOException {
+    private void testCase(Query query,
+                          MissingAggregationBuilder builder,
+                          CheckedConsumer<RandomIndexWriter, IOException> writeIndex,
+                          Consumer<InternalMissing> verify,
+                          Collection<MappedFieldType> fieldTypes) throws IOException {
         try (Directory directory = newDirectory()) {
             try (RandomIndexWriter indexWriter = new RandomIndexWriter(random(), directory)) {
                 writeIndex.accept(indexWriter);
@@ -331,13 +412,21 @@ public class MissingAggregatorTests extends AggregatorTestCase {
 
     @Override
     protected AggregationBuilder createAggBuilderForTypeTest(MappedFieldType fieldType, String fieldName) {
-        return new MissingAggregationBuilder("_name").field(fieldName);
+        return new MissingAggregationBuilder("_name")
+            .field(fieldName);
     }
 
     @Override
     protected List<ValuesSourceType> getSupportedValuesSourceTypes() {
-        return org.codelibs.fesen.core.List.of(CoreValuesSourceType.NUMERIC, CoreValuesSourceType.BYTES, CoreValuesSourceType.GEOPOINT,
-                CoreValuesSourceType.RANGE, CoreValuesSourceType.IP, CoreValuesSourceType.BOOLEAN, CoreValuesSourceType.DATE);
+        return org.codelibs.fesen.core.List.of(
+            CoreValuesSourceType.NUMERIC,
+            CoreValuesSourceType.BYTES,
+            CoreValuesSourceType.GEOPOINT,
+            CoreValuesSourceType.RANGE,
+            CoreValuesSourceType.IP,
+            CoreValuesSourceType.BOOLEAN,
+            CoreValuesSourceType.DATE
+        );
     }
 
     @Override
@@ -368,7 +457,9 @@ public class MissingAggregatorTests extends AggregatorTestCase {
 
     private static List<Long> threshold(String fieldName, long threshold, Map<String, Object> vars) {
         final LeafDocLookup lookup = (LeafDocLookup) vars.get("doc");
-        return lookup.get(fieldName).stream().map(value -> ((Number) value).longValue()).filter(value -> value >= threshold)
-                .collect(toList());
+        return lookup.get(fieldName).stream()
+            .map(value -> ((Number) value).longValue())
+            .filter(value -> value >= threshold)
+            .collect(toList());
     }
 }

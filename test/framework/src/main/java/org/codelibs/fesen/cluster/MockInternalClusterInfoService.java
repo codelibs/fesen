@@ -18,14 +18,10 @@
  */
 package org.codelibs.fesen.cluster;
 
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.codelibs.fesen.action.admin.cluster.node.stats.NodeStats;
 import org.codelibs.fesen.client.node.NodeClient;
+import org.codelibs.fesen.cluster.ClusterInfo;
+import org.codelibs.fesen.cluster.InternalClusterInfoService;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.cluster.service.ClusterService;
@@ -36,11 +32,16 @@ import org.codelibs.fesen.monitor.fs.FsInfo;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 public class MockInternalClusterInfoService extends InternalClusterInfoService {
 
     /** This is a marker plugin used to trigger MockNode to use this mock info service. */
-    public static class TestPlugin extends Plugin {
-    }
+    public static class TestPlugin extends Plugin {}
 
     @Nullable // if no fakery should take place
     private volatile Function<ShardRouting, Long> shardSizeFunction;
@@ -48,7 +49,8 @@ public class MockInternalClusterInfoService extends InternalClusterInfoService {
     @Nullable // if no fakery should take place
     private volatile BiFunction<DiscoveryNode, FsInfo.Path, FsInfo.Path> diskUsageFunction;
 
-    public MockInternalClusterInfoService(Settings settings, ClusterService clusterService, ThreadPool threadPool, NodeClient client) {
+    public MockInternalClusterInfoService(Settings settings, ClusterService clusterService,
+                                          ThreadPool threadPool, NodeClient client) {
         super(settings, clusterService, threadPool, client);
     }
 
@@ -78,21 +80,22 @@ public class MockInternalClusterInfoService extends InternalClusterInfoService {
         return nodesStats.stream().map(nodeStats -> {
             final DiscoveryNode discoveryNode = nodeStats.getNode();
             final FsInfo oldFsInfo = nodeStats.getFs();
-            return new NodeStats(discoveryNode, nodeStats.getTimestamp(), nodeStats.getIndices(), nodeStats.getOs(), nodeStats.getProcess(),
-                    nodeStats.getJvm(), nodeStats.getThreadPool(),
-                    new FsInfo(oldFsInfo.getTimestamp(), oldFsInfo.getIoStats(),
-                            StreamSupport.stream(oldFsInfo.spliterator(), false)
-                                    .map(fsInfoPath -> diskUsageFunction.apply(discoveryNode, fsInfoPath)).toArray(FsInfo.Path[]::new)),
-                    nodeStats.getTransport(), nodeStats.getHttp(), nodeStats.getBreaker(), nodeStats.getScriptStats(),
-                    nodeStats.getDiscoveryStats(), nodeStats.getIngestStats(), nodeStats.getAdaptiveSelectionStats(),
-                    nodeStats.getScriptCacheStats(), nodeStats.getIndexingPressureStats());
+            return new NodeStats(discoveryNode, nodeStats.getTimestamp(), nodeStats.getIndices(), nodeStats.getOs(),
+                nodeStats.getProcess(), nodeStats.getJvm(), nodeStats.getThreadPool(), new FsInfo(oldFsInfo.getTimestamp(),
+                oldFsInfo.getIoStats(),
+                StreamSupport.stream(oldFsInfo.spliterator(), false)
+                    .map(fsInfoPath -> diskUsageFunction.apply(discoveryNode, fsInfoPath))
+                    .toArray(FsInfo.Path[]::new)), nodeStats.getTransport(),
+                nodeStats.getHttp(), nodeStats.getBreaker(), nodeStats.getScriptStats(), nodeStats.getDiscoveryStats(),
+                nodeStats.getIngestStats(), nodeStats.getAdaptiveSelectionStats(), nodeStats.getScriptCacheStats(),
+                nodeStats.getIndexingPressureStats());
         }).collect(Collectors.toList());
     }
 
     class SizeFakingClusterInfo extends ClusterInfo {
         SizeFakingClusterInfo(ClusterInfo delegate) {
-            super(delegate.getNodeLeastAvailableDiskUsages(), delegate.getNodeMostAvailableDiskUsages(), delegate.shardSizes,
-                    delegate.routingToDataPath, delegate.reservedSpace);
+            super(delegate.getNodeLeastAvailableDiskUsages(), delegate.getNodeMostAvailableDiskUsages(),
+                delegate.shardSizes, delegate.routingToDataPath, delegate.reservedSpace);
         }
 
         @Override

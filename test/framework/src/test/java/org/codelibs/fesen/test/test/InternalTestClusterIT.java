@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.test.test;
 
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.test.ESIntegTestCase;
-import org.codelibs.fesen.test.ESIntegTestCase.ClusterScope;
 import org.codelibs.fesen.test.InternalTestCluster;
+import org.codelibs.fesen.test.ESIntegTestCase.ClusterScope;
+
+import java.io.IOException;
+
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 @ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 0)
 public class InternalTestClusterIT extends ESIntegTestCase {

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.TypeTokenFilter;
 import org.codelibs.fesen.common.settings.Settings;
@@ -31,6 +26,11 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A {@link TokenFilterFactory} for {@link TypeTokenFilter}. This filter only

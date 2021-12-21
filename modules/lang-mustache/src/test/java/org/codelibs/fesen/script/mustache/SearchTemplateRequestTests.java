@@ -19,18 +19,19 @@
 
 package org.codelibs.fesen.script.mustache;
 
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.script.ScriptType;
+import org.codelibs.fesen.script.mustache.SearchTemplateRequest;
+import org.codelibs.fesen.search.RandomSearchRequestGenerator;
+import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.script.ScriptType;
-import org.codelibs.fesen.search.RandomSearchRequestGenerator;
-import org.codelibs.fesen.search.builder.SearchSourceBuilder;
-import org.codelibs.fesen.test.AbstractWireSerializingTestCase;
 
 public class SearchTemplateRequestTests extends AbstractWireSerializingTestCase<SearchTemplateRequest> {
 
@@ -48,9 +49,10 @@ public class SearchTemplateRequestTests extends AbstractWireSerializingTestCase<
     protected SearchTemplateRequest mutateInstance(SearchTemplateRequest instance) throws IOException {
         List<Consumer<SearchTemplateRequest>> mutators = new ArrayList<>();
 
-        mutators.add(
-                request -> request.setScriptType(randomValueOtherThan(request.getScriptType(), () -> randomFrom(ScriptType.values()))));
-        mutators.add(request -> request.setScript(randomValueOtherThan(request.getScript(), () -> randomAlphaOfLength(50))));
+        mutators.add(request -> request.setScriptType(
+            randomValueOtherThan(request.getScriptType(), () -> randomFrom(ScriptType.values()))));
+        mutators.add(request -> request.setScript(
+            randomValueOtherThan(request.getScript(), () -> randomAlphaOfLength(50))));
 
         mutators.add(request -> {
             Map<String, Object> mutatedScriptParams = new HashMap<>(request.getScriptParams());
@@ -63,13 +65,15 @@ public class SearchTemplateRequestTests extends AbstractWireSerializingTestCase<
         mutators.add(request -> request.setExplain(!request.isExplain()));
         mutators.add(request -> request.setSimulate(!request.isSimulate()));
 
-        mutators.add(request -> request.setRequest(RandomSearchRequestGenerator.randomSearchRequest(SearchSourceBuilder::searchSource)));
+        mutators.add(request -> request.setRequest(
+            RandomSearchRequestGenerator.randomSearchRequest(SearchSourceBuilder::searchSource)));
 
         SearchTemplateRequest mutatedInstance = copyInstance(instance);
         Consumer<SearchTemplateRequest> mutator = randomFrom(mutators);
         mutator.accept(mutatedInstance);
         return mutatedInstance;
     }
+
 
     public static SearchTemplateRequest createRandomRequest() {
         SearchTemplateRequest request = new SearchTemplateRequest();
@@ -86,7 +90,8 @@ public class SearchTemplateRequestTests extends AbstractWireSerializingTestCase<
         request.setProfile(randomBoolean());
         request.setSimulate(randomBoolean());
 
-        request.setRequest(RandomSearchRequestGenerator.randomSearchRequest(SearchSourceBuilder::searchSource));
+        request.setRequest(RandomSearchRequestGenerator.randomSearchRequest(
+            SearchSourceBuilder::searchSource));
         return request;
     }
 }

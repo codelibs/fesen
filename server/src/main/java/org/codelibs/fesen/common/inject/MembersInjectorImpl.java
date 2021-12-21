@@ -16,9 +16,6 @@
 
 package org.codelibs.fesen.common.inject;
 
-import static java.util.Collections.unmodifiableSet;
-import static java.util.stream.Collectors.toSet;
-
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +24,9 @@ import org.codelibs.fesen.common.inject.internal.ErrorsException;
 import org.codelibs.fesen.common.inject.internal.InternalContext;
 import org.codelibs.fesen.common.inject.spi.InjectionListener;
 import org.codelibs.fesen.common.inject.spi.InjectionPoint;
+
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Injects members of instances of a given type.
@@ -40,8 +40,8 @@ class MembersInjectorImpl<T> implements MembersInjector<T> {
     private final List<MembersInjector<? super T>> userMembersInjectors;
     private final List<InjectionListener<? super T>> injectionListeners;
 
-    MembersInjectorImpl(InjectorImpl injector, TypeLiteral<T> typeLiteral, EncounterImpl<T> encounter,
-            List<SingleMemberInjector> memberInjectors) {
+    MembersInjectorImpl(InjectorImpl injector, TypeLiteral<T> typeLiteral,
+                        EncounterImpl<T> encounter, List<SingleMemberInjector> memberInjectors) {
         this.injector = injector;
         this.typeLiteral = typeLiteral;
         this.memberInjectors = memberInjectors;
@@ -116,6 +116,8 @@ class MembersInjectorImpl<T> implements MembersInjector<T> {
     }
 
     public Set<InjectionPoint> getInjectionPoints() {
-        return unmodifiableSet(memberInjectors.stream().map(SingleMemberInjector::getInjectionPoint).collect(toSet()));
+        return unmodifiableSet(memberInjectors.stream()
+                .map(SingleMemberInjector::getInjectionPoint)
+                .collect(toSet()));
     }
 }

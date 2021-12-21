@@ -37,15 +37,17 @@ class MembersInjectorStore {
     private final InjectorImpl injector;
     private final List<TypeListenerBinding> typeListenerBindings;
 
-    private final FailableCache<TypeLiteral<?>, MembersInjectorImpl<?>> cache =
-            new FailableCache<TypeLiteral<?>, MembersInjectorImpl<?>>() {
-                @Override
-                protected MembersInjectorImpl<?> create(TypeLiteral<?> type, Errors errors) throws ErrorsException {
-                    return createWithListeners(type, errors);
-                }
-            };
+    private final FailableCache<TypeLiteral<?>, MembersInjectorImpl<?>> cache
+            = new FailableCache<TypeLiteral<?>, MembersInjectorImpl<?>>() {
+        @Override
+        protected MembersInjectorImpl<?> create(TypeLiteral<?> type, Errors errors)
+                throws ErrorsException {
+            return createWithListeners(type, errors);
+        }
+    };
 
-    MembersInjectorStore(InjectorImpl injector, List<TypeListenerBinding> typeListenerBindings) {
+    MembersInjectorStore(InjectorImpl injector,
+                         List<TypeListenerBinding> typeListenerBindings) {
         this.injector = injector;
         this.typeListenerBindings = Collections.unmodifiableList(typeListenerBindings);
     }
@@ -69,7 +71,8 @@ class MembersInjectorStore {
     /**
      * Creates a new members injector and attaches both injection listeners and method aspects.
      */
-    private <T> MembersInjectorImpl<T> createWithListeners(TypeLiteral<T> type, Errors errors) throws ErrorsException {
+    private <T> MembersInjectorImpl<T> createWithListeners(TypeLiteral<T> type, Errors errors)
+            throws ErrorsException {
         int numErrorsBefore = errors.size();
 
         Set<InjectionPoint> injectionPoints;
@@ -101,11 +104,14 @@ class MembersInjectorStore {
     /**
      * Returns the injectors for the specified injection points.
      */
-    List<SingleMemberInjector> getInjectors(Set<InjectionPoint> injectionPoints, Errors errors) {
+    List<SingleMemberInjector> getInjectors(
+            Set<InjectionPoint> injectionPoints, Errors errors) {
         List<SingleMemberInjector> injectors = new ArrayList<>();
         for (InjectionPoint injectionPoint : injectionPoints) {
             try {
-                Errors errorsForMember = injectionPoint.isOptional() ? new Errors(injectionPoint) : errors.withSource(injectionPoint);
+                Errors errorsForMember = injectionPoint.isOptional()
+                        ? new Errors(injectionPoint)
+                        : errors.withSource(injectionPoint);
                 SingleMemberInjector injector = injectionPoint.getMember() instanceof Field
                         ? new SingleFieldInjector(this.injector, injectionPoint, errorsForMember)
                         : new SingleMethodInjector(this.injector, injectionPoint, errorsForMember);

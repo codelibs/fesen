@@ -19,14 +19,18 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.hamcrest.Matchers.containsString;
+import org.codelibs.fesen.action.index.IndexRequest;
+import org.codelibs.fesen.common.lucene.uid.Versions;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.ReindexSslConfig;
+import org.codelibs.fesen.index.reindex.Reindexer;
+import org.codelibs.fesen.script.ScriptService;
+import org.mockito.Mockito;
 
 import java.util.Map;
 
-import org.codelibs.fesen.action.index.IndexRequest;
-import org.codelibs.fesen.common.lucene.uid.Versions;
-import org.codelibs.fesen.script.ScriptService;
-import org.mockito.Mockito;
+import static org.hamcrest.Matchers.containsString;
 
 /**
  * Tests index-by-search with a script modifying the documents.
@@ -34,7 +38,7 @@ import org.mockito.Mockito;
 public class ReindexScriptTests extends AbstractAsyncBulkByScrollActionScriptTestCase<ReindexRequest, BulkByScrollResponse> {
 
     public void testSetIndex() throws Exception {
-        Object dest = randomFrom(new Object[] { 234, 234L, "pancake" });
+        Object dest = randomFrom(new Object[] {234, 234L, "pancake"});
         IndexRequest index = applyScript((Map<String, Object> ctx) -> ctx.put("_index", dest));
         assertEquals(dest.toString(), index.index());
     }
@@ -48,7 +52,7 @@ public class ReindexScriptTests extends AbstractAsyncBulkByScrollActionScriptTes
     }
 
     public void testSetType() throws Exception {
-        Object type = randomFrom(new Object[] { 234, 234L, "pancake" });
+        Object type = randomFrom(new Object[] {234, 234L, "pancake"});
         IndexRequest index = applyScript((Map<String, Object> ctx) -> ctx.put("_type", type));
         assertEquals(type.toString(), index.type());
     }
@@ -62,7 +66,7 @@ public class ReindexScriptTests extends AbstractAsyncBulkByScrollActionScriptTes
     }
 
     public void testSetId() throws Exception {
-        Object id = randomFrom(new Object[] { null, 234, 234L, "pancake" });
+        Object id = randomFrom(new Object[] {null, 234, 234L, "pancake"});
         IndexRequest index = applyScript((Map<String, Object> ctx) -> ctx.put("_id", id));
         if (id == null) {
             assertNull(index.id());
@@ -72,7 +76,7 @@ public class ReindexScriptTests extends AbstractAsyncBulkByScrollActionScriptTes
     }
 
     public void testSetVersion() throws Exception {
-        Number version = randomFrom(new Number[] { null, 234, 234L });
+        Number version = randomFrom(new Number[] {null, 234, 234L});
         IndexRequest index = applyScript((Map<String, Object> ctx) -> ctx.put("_version", version));
         if (version == null) {
             assertEquals(Versions.MATCH_ANY, index.version());

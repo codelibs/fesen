@@ -18,13 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.LongToIntFunction;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.ScoreMode;
@@ -52,6 +45,13 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.LongToIntFunction;
+
 /**
  * An aggregator for date values that attempts to return a specific number of
  * buckets, reconfiguring how it rounds dates to buckets on the fly as new
@@ -65,14 +65,41 @@ import org.codelibs.fesen.search.internal.SearchContext;
  * performance.
  */
 abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
-    static AutoDateHistogramAggregator build(String name, AggregatorFactories factories, int targetBuckets, RoundingInfo[] roundingInfos,
-            Function<Rounding, Rounding.Prepared> roundingPreparer, ValuesSourceConfig valuesSourceConfig, SearchContext aggregationContext,
-            Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
+    static AutoDateHistogramAggregator build(
+        String name,
+        AggregatorFactories factories,
+        int targetBuckets,
+        RoundingInfo[] roundingInfos,
+        Function<Rounding, Rounding.Prepared> roundingPreparer,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext aggregationContext,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
         return cardinality == CardinalityUpperBound.ONE
-                ? new FromSingle(name, factories, targetBuckets, roundingInfos, roundingPreparer, valuesSourceConfig, aggregationContext,
-                        parent, metadata)
-                : new FromMany(name, factories, targetBuckets, roundingInfos, roundingPreparer, valuesSourceConfig, aggregationContext,
-                        parent, metadata);
+            ? new FromSingle(
+                name,
+                factories,
+                targetBuckets,
+                roundingInfos,
+                roundingPreparer,
+                valuesSourceConfig,
+                aggregationContext,
+                parent,
+                metadata
+            )
+            : new FromMany(
+                name,
+                factories,
+                targetBuckets,
+                roundingInfos,
+                roundingPreparer,
+                valuesSourceConfig,
+                aggregationContext,
+                parent,
+                metadata
+            );
     }
 
     private final ValuesSource.Numeric valuesSource;
@@ -87,9 +114,17 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
     protected final RoundingInfo[] roundingInfos;
     protected final int targetBuckets;
 
-    private AutoDateHistogramAggregator(String name, AggregatorFactories factories, int targetBuckets, RoundingInfo[] roundingInfos,
-            Function<Rounding, Rounding.Prepared> roundingPreparer, ValuesSourceConfig valuesSourceConfig, SearchContext aggregationContext,
-            Aggregator parent, Map<String, Object> metadata) throws IOException {
+    private AutoDateHistogramAggregator(
+        String name,
+        AggregatorFactories factories,
+        int targetBuckets,
+        RoundingInfo[] roundingInfos,
+        Function<Rounding, Rounding.Prepared> roundingPreparer,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext aggregationContext,
+        Aggregator parent,
+        Map<String, Object> metadata
+    ) throws IOException {
 
         super(name, factories, aggregationContext, parent, metadata);
         this.targetBuckets = targetBuckets;
@@ -129,27 +164,44 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
         return getLeafCollector(valuesSource.longValues(ctx), sub);
     }
 
-    protected final InternalAggregation[] buildAggregations(LongKeyedBucketOrds bucketOrds, LongToIntFunction roundingIndexFor,
-            long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForVariableBuckets(owningBucketOrds, bucketOrds, (bucketValue, docCount,
-                subAggregationResults) -> new InternalAutoDateHistogram.Bucket(bucketValue, docCount, formatter, subAggregationResults),
-                (owningBucketOrd, buckets) -> {
-                    // the contract of the histogram aggregation is that shards must return
-                    // buckets ordered by key in ascending order
-                    CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
+    protected final InternalAggregation[] buildAggregations(
+        LongKeyedBucketOrds bucketOrds,
+        LongToIntFunction roundingIndexFor,
+        long[] owningBucketOrds
+    ) throws IOException {
+        return buildAggregationsForVariableBuckets(
+            owningBucketOrds,
+            bucketOrds,
+            (bucketValue, docCount, subAggregationResults) -> new InternalAutoDateHistogram.Bucket(
+                bucketValue,
+                docCount,
+                formatter,
+                subAggregationResults
+            ),
+            (owningBucketOrd, buckets) -> {
+                // the contract of the histogram aggregation is that shards must return
+                // buckets ordered by key in ascending order
+                CollectionUtil.introSort(buckets, BucketOrder.key(true).comparator());
 
-                    // value source will be null for unmapped fields
-                    InternalAutoDateHistogram.BucketInfo emptyBucketInfo = new InternalAutoDateHistogram.BucketInfo(roundingInfos,
-                            roundingIndexFor.applyAsInt(owningBucketOrd), buildEmptySubAggregations());
+                // value source will be null for unmapped fields
+                InternalAutoDateHistogram.BucketInfo emptyBucketInfo = new InternalAutoDateHistogram.BucketInfo(
+                    roundingInfos,
+                    roundingIndexFor.applyAsInt(owningBucketOrd),
+                    buildEmptySubAggregations()
+                );
 
-                    return new InternalAutoDateHistogram(name, buckets, targetBuckets, emptyBucketInfo, formatter, metadata(), 1);
-                });
+                return new InternalAutoDateHistogram(name, buckets, targetBuckets, emptyBucketInfo, formatter, metadata(), 1);
+            }
+        );
     }
 
     @Override
     public final InternalAggregation buildEmptyAggregation() {
-        InternalAutoDateHistogram.BucketInfo emptyBucketInfo =
-                new InternalAutoDateHistogram.BucketInfo(roundingInfos, 0, buildEmptySubAggregations());
+        InternalAutoDateHistogram.BucketInfo emptyBucketInfo = new InternalAutoDateHistogram.BucketInfo(
+            roundingInfos,
+            0,
+            buildEmptySubAggregations()
+        );
         return new InternalAutoDateHistogram(name, Collections.emptyList(), targetBuckets, emptyBucketInfo, formatter, metadata(), 1);
     }
 
@@ -194,11 +246,28 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
         private long min = Long.MAX_VALUE;
         private long max = Long.MIN_VALUE;
 
-        FromSingle(String name, AggregatorFactories factories, int targetBuckets, RoundingInfo[] roundingInfos,
-                Function<Rounding, Prepared> roundingPreparer, ValuesSourceConfig valuesSourceConfig, SearchContext aggregationContext,
-                Aggregator parent, Map<String, Object> metadata) throws IOException {
-            super(name, factories, targetBuckets, roundingInfos, roundingPreparer, valuesSourceConfig, aggregationContext, parent,
-                    metadata);
+        FromSingle(
+            String name,
+            AggregatorFactories factories,
+            int targetBuckets,
+            RoundingInfo[] roundingInfos,
+            Function<Rounding, Prepared> roundingPreparer,
+            ValuesSourceConfig valuesSourceConfig,
+            SearchContext aggregationContext,
+            Aggregator parent,
+            Map<String, Object> metadata
+        ) throws IOException {
+            super(
+                name,
+                factories,
+                targetBuckets,
+                roundingInfos,
+                roundingPreparer,
+                valuesSourceConfig,
+                aggregationContext,
+                parent,
+                metadata
+            );
 
             preparedRounding = prepareRounding(0);
             bucketOrds = new LongKeyedBucketOrds.FromSingle(context.bigArrays());
@@ -246,7 +315,7 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
                     min = Math.min(min, rounded);
                     max = Math.max(max, rounded);
                     if (bucketOrds.size() <= targetBuckets * roundingInfos[roundingIdx].getMaximumInnerInterval()
-                            && max - min <= targetBuckets * roundingInfos[roundingIdx].getMaximumRoughEstimateDurationMillis()) {
+                        && max - min <= targetBuckets * roundingInfos[roundingIdx].getMaximumRoughEstimateDurationMillis()) {
                         return;
                     }
                     do {
@@ -264,8 +333,8 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
                             merge(mergeMap, bucketOrds.size());
                         }
                     } while (roundingIdx < roundingInfos.length - 1
-                            && (bucketOrds.size() > targetBuckets * roundingInfos[roundingIdx].getMaximumInnerInterval()
-                                    || max - min > targetBuckets * roundingInfos[roundingIdx].getMaximumRoughEstimateDurationMillis()));
+                        && (bucketOrds.size() > targetBuckets * roundingInfos[roundingIdx].getMaximumInnerInterval()
+                            || max - min > targetBuckets * roundingInfos[roundingIdx].getMaximumRoughEstimateDurationMillis()));
                 }
             };
         }
@@ -383,12 +452,29 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
          */
         private int rebucketCount = 0;
 
-        FromMany(String name, AggregatorFactories factories, int targetBuckets, RoundingInfo[] roundingInfos,
-                Function<Rounding, Rounding.Prepared> roundingPreparer, ValuesSourceConfig valuesSourceConfig,
-                SearchContext aggregationContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
+        FromMany(
+            String name,
+            AggregatorFactories factories,
+            int targetBuckets,
+            RoundingInfo[] roundingInfos,
+            Function<Rounding, Rounding.Prepared> roundingPreparer,
+            ValuesSourceConfig valuesSourceConfig,
+            SearchContext aggregationContext,
+            Aggregator parent,
+            Map<String, Object> metadata
+        ) throws IOException {
 
-            super(name, factories, targetBuckets, roundingInfos, roundingPreparer, valuesSourceConfig, aggregationContext, parent,
-                    metadata);
+            super(
+                name,
+                factories,
+                targetBuckets,
+                roundingInfos,
+                roundingPreparer,
+                valuesSourceConfig,
+                aggregationContext,
+                parent,
+                metadata
+            );
             assert roundingInfos.length < 127 : "Rounding must fit in a signed byte";
             roundingIndices = context.bigArrays().newByteArray(1, true);
             mins = context.bigArrays().newLongArray(1, false);
@@ -464,7 +550,7 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
                     long max = Math.max(maxes.get(owningBucketOrd), newKey);
                     maxes.set(owningBucketOrd, max);
                     if (oldEstimatedBucketCount <= targetBuckets * roundingInfos[oldRounding].getMaximumInnerInterval()
-                            && max - min <= targetBuckets * roundingInfos[oldRounding].getMaximumRoughEstimateDurationMillis()) {
+                        && max - min <= targetBuckets * roundingInfos[oldRounding].getMaximumRoughEstimateDurationMillis()) {
                         return oldRounding;
                     }
                     long oldRoughDuration = roundingInfos[oldRounding].roughEstimateDurationMillis;
@@ -475,8 +561,8 @@ abstract class AutoDateHistogramAggregator extends DeferableBucketAggregator {
                         double ratio = (double) oldRoughDuration / (double) roundingInfos[newRounding].getRoughEstimateDurationMillis();
                         newEstimatedBucketCount = (int) Math.ceil(oldEstimatedBucketCount * ratio);
                     } while (newRounding < roundingInfos.length - 1
-                            && (newEstimatedBucketCount > targetBuckets * roundingInfos[newRounding].getMaximumInnerInterval()
-                                    || max - min > targetBuckets * roundingInfos[newRounding].getMaximumRoughEstimateDurationMillis()));
+                        && (newEstimatedBucketCount > targetBuckets * roundingInfos[newRounding].getMaximumInnerInterval()
+                            || max - min > targetBuckets * roundingInfos[newRounding].getMaximumRoughEstimateDurationMillis()));
                     setRounding(owningBucketOrd, newRounding);
                     mins.set(owningBucketOrd, preparedRoundings[newRounding].round(mins.get(owningBucketOrd)));
                     maxes.set(owningBucketOrd, preparedRoundings[newRounding].round(maxes.get(owningBucketOrd)));

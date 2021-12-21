@@ -55,7 +55,7 @@ public class DeleteIndexRequest extends AcknowledgedRequest<DeleteIndexRequest> 
      * @param index The index to delete. Use "_all" to delete all indices.
      */
     public DeleteIndexRequest(String index) {
-        this.indices = new String[] { index };
+        this.indices = new String[]{index};
     }
 
     /**

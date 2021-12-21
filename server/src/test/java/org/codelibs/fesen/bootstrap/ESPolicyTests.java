@@ -45,8 +45,11 @@ public class ESPolicyTests extends ESTestCase {
         }
 
         PermissionCollection noPermissions = new Permissions();
-        AccessControlContext noPermissionsAcc =
-                new AccessControlContext(new ProtectionDomain[] { new ProtectionDomain(null, noPermissions) });
+        AccessControlContext noPermissionsAcc = new AccessControlContext(
+            new ProtectionDomain[] {
+                new ProtectionDomain(null, noPermissions)
+            }
+        );
         try {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
                 public Void run() {

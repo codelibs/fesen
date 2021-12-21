@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.action.admin.cluster.settings;
 
-import java.util.Map;
-
 import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
+import java.util.Map;
+
 /**
  * Builder for a cluster update settings request
  */
-public class ClusterUpdateSettingsRequestBuilder extends
-        AcknowledgedRequestBuilder<ClusterUpdateSettingsRequest, ClusterUpdateSettingsResponse, ClusterUpdateSettingsRequestBuilder> {
+public class ClusterUpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<ClusterUpdateSettingsRequest,
+        ClusterUpdateSettingsResponse, ClusterUpdateSettingsRequestBuilder> {
 
     public ClusterUpdateSettingsRequestBuilder(FesenClient client, ClusterUpdateSettingsAction action) {
         super(client, action, new ClusterUpdateSettingsRequest());

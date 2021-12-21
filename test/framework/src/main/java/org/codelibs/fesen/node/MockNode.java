@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.node;
 
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.cluster.ClusterInfoService;
 import org.codelibs.fesen.cluster.MockInternalClusterInfoService;
@@ -44,6 +37,9 @@ import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.indices.recovery.RecoverySettings;
+import org.codelibs.fesen.node.InternalSettingsPreparer;
+import org.codelibs.fesen.node.Node;
+import org.codelibs.fesen.node.ResponseCollectorService;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.script.MockScriptService;
 import org.codelibs.fesen.script.ScriptContext;
@@ -58,6 +54,13 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.Transport;
 import org.codelibs.fesen.transport.TransportInterceptor;
 import org.codelibs.fesen.transport.TransportService;
+
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * A node for testing which allows:
@@ -74,18 +77,27 @@ public class MockNode extends Node {
         this(settings, classpathPlugins, true);
     }
 
-    public MockNode(final Settings settings, final Collection<Class<? extends Plugin>> classpathPlugins,
+    public MockNode(
+            final Settings settings,
+            final Collection<Class<? extends Plugin>> classpathPlugins,
             final boolean forbidPrivateIndexSettings) {
         this(settings, classpathPlugins, null, forbidPrivateIndexSettings);
     }
 
-    public MockNode(final Settings settings, final Collection<Class<? extends Plugin>> classpathPlugins, final Path configPath,
+    public MockNode(
+            final Settings settings,
+            final Collection<Class<? extends Plugin>> classpathPlugins,
+            final Path configPath,
             final boolean forbidPrivateIndexSettings) {
-        this(InternalSettingsPreparer.prepareEnvironment(settings, Collections.emptyMap(), configPath, () -> "mock_ node"),
-                classpathPlugins, forbidPrivateIndexSettings);
+        this(
+                InternalSettingsPreparer.prepareEnvironment(settings, Collections.emptyMap(), configPath, () -> "mock_ node"),
+                classpathPlugins,
+                forbidPrivateIndexSettings);
     }
 
-    private MockNode(final Environment environment, final Collection<Class<? extends Plugin>> classpathPlugins,
+    private MockNode(
+            final Environment environment,
+            final Collection<Class<? extends Plugin>> classpathPlugins,
             final boolean forbidPrivateIndexSettings) {
         super(environment, classpathPlugins, forbidPrivateIndexSettings);
         this.classpathPlugins = classpathPlugins;
@@ -114,16 +126,18 @@ public class MockNode extends Node {
         return new MockPageCacheRecycler(settings);
     }
 
+
     @Override
-    protected SearchService newSearchService(ClusterService clusterService, IndicesService indicesService, ThreadPool threadPool,
-            ScriptService scriptService, BigArrays bigArrays, FetchPhase fetchPhase, ResponseCollectorService responseCollectorService,
-            CircuitBreakerService circuitBreakerService) {
+    protected SearchService newSearchService(ClusterService clusterService, IndicesService indicesService,
+                                             ThreadPool threadPool, ScriptService scriptService, BigArrays bigArrays,
+                                             FetchPhase fetchPhase, ResponseCollectorService responseCollectorService,
+                                             CircuitBreakerService circuitBreakerService) {
         if (getPluginsService().filterPlugins(MockSearchService.TestPlugin.class).isEmpty()) {
             return super.newSearchService(clusterService, indicesService, threadPool, scriptService, bigArrays, fetchPhase,
-                    responseCollectorService, circuitBreakerService);
+                responseCollectorService, circuitBreakerService);
         }
-        return new MockSearchService(clusterService, indicesService, threadPool, scriptService, bigArrays, fetchPhase,
-                circuitBreakerService);
+        return new MockSearchService(clusterService, indicesService, threadPool, scriptService,
+            bigArrays, fetchPhase, circuitBreakerService);
     }
 
     @Override
@@ -136,8 +150,9 @@ public class MockNode extends Node {
 
     @Override
     protected TransportService newTransportService(Settings settings, Transport transport, ThreadPool threadPool,
-            TransportInterceptor interceptor, Function<BoundTransportAddress, DiscoveryNode> localNodeFactory,
-            ClusterSettings clusterSettings, Set<String> taskHeaders) {
+                                                   TransportInterceptor interceptor,
+                                                   Function<BoundTransportAddress, DiscoveryNode> localNodeFactory,
+                                                   ClusterSettings clusterSettings, Set<String> taskHeaders) {
         // we use the MockTransportService.TestPlugin class as a marker to create a network
         // module with this MockNetworkService. NetworkService is such an integral part of the systme
         // we don't allow to plug it in from plugins or anything. this is a test-only override and
@@ -157,8 +172,8 @@ public class MockNode extends Node {
     }
 
     @Override
-    protected ClusterInfoService newClusterInfoService(Settings settings, ClusterService clusterService, ThreadPool threadPool,
-            NodeClient client) {
+    protected ClusterInfoService newClusterInfoService(Settings settings, ClusterService clusterService,
+                                                       ThreadPool threadPool, NodeClient client) {
         if (getPluginsService().filterPlugins(MockInternalClusterInfoService.TestPlugin.class).isEmpty()) {
             return super.newClusterInfoService(settings, clusterService, threadPool, client);
         } else {

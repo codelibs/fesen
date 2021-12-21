@@ -27,7 +27,8 @@ import org.codelibs.fesen.client.FesenClient;
 /**
  * Builder for close index request
  */
-public class CloseIndexRequestBuilder extends AcknowledgedRequestBuilder<CloseIndexRequest, CloseIndexResponse, CloseIndexRequestBuilder> {
+public class CloseIndexRequestBuilder
+    extends AcknowledgedRequestBuilder<CloseIndexRequest, CloseIndexResponse, CloseIndexRequestBuilder> {
 
     public CloseIndexRequestBuilder(FesenClient client, CloseIndexAction action) {
         super(client, action, new CloseIndexRequest());

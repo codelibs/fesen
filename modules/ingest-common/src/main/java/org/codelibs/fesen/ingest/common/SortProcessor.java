@@ -64,7 +64,8 @@ public final class SortProcessor extends AbstractProcessor {
             } else if (value.equals(DESCENDING.toString())) {
                 return DESCENDING;
             }
-            throw new IllegalArgumentException("Sort direction [" + value + "] not recognized." + " Valid values are: [asc, desc]");
+            throw new IllegalArgumentException("Sort direction [" + value + "] not recognized."
+                    + " Valid values are: [asc, desc]");
         }
     }
 
@@ -120,13 +121,18 @@ public final class SortProcessor extends AbstractProcessor {
     public static final class Factory implements Processor.Factory {
 
         @Override
-        public SortProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
-                Map<String, Object> config) throws Exception {
+        public SortProcessor create(Map<String, Processor.Factory> registry, String processorTag,
+                                    String description, Map<String, Object> config) throws Exception {
             String field = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, FIELD);
             String targetField = ConfigurationUtils.readStringProperty(TYPE, processorTag, config, "target_field", field);
             try {
-                SortOrder direction =
-                        SortOrder.fromString(ConfigurationUtils.readStringProperty(TYPE, processorTag, config, ORDER, DEFAULT_ORDER));
+                SortOrder direction = SortOrder.fromString(
+                    ConfigurationUtils.readStringProperty(
+                        TYPE,
+                        processorTag,
+                        config,
+                        ORDER,
+                        DEFAULT_ORDER));
                 return new SortProcessor(processorTag, description, field, direction, targetField);
             } catch (IllegalArgumentException e) {
                 throw ConfigurationUtils.newConfigurationException(TYPE, processorTag, ORDER, e.getMessage());
@@ -134,3 +140,4 @@ public final class SortProcessor extends AbstractProcessor {
         }
     }
 }
+

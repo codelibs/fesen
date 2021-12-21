@@ -19,14 +19,10 @@
 
 package org.codelibs.fesen.tasks;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenSecurityException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.StepListener;
@@ -44,6 +40,10 @@ import org.codelibs.fesen.transport.TransportRequestHandler;
 import org.codelibs.fesen.transport.TransportResponse;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
 public class TaskCancellationService {
     public static final String BAN_PARENT_ACTION_NAME = "internal:admin/tasks/ban";
     private static final Logger logger = LogManager.getLogger(TaskCancellationService.class);
@@ -54,7 +54,7 @@ public class TaskCancellationService {
         this.transportService = transportService;
         this.taskManager = transportService.getTaskManager();
         transportService.registerRequestHandler(BAN_PARENT_ACTION_NAME, ThreadPool.Names.SAME, BanParentTaskRequest::new,
-                new BanParentRequestHandler());
+            new BanParentRequestHandler());
     }
 
     private String localNodeId() {
@@ -80,8 +80,8 @@ public class TaskCancellationService {
             banOnNodesListener.whenComplete(groupedListener::onResponse, groupedListener::onFailure);
             // If we start unbanning when the last child task completed and that child task executed with a specific user, then unban
             // requests are denied because internal requests can't run with a user. We need to remove bans with the current thread context.
-            final Runnable removeBansRunnable =
-                    transportService.getThreadPool().getThreadContext().preserveContext(() -> removeBanOnNodes(task, childrenNodes));
+            final Runnable removeBansRunnable = transportService.getThreadPool().getThreadContext()
+                .preserveContext(() -> removeBanOnNodes(task, childrenNodes));
             // We remove bans after all child tasks are completed although in theory we can do it on a per-node basis.
             completedListener.whenComplete(r -> removeBansRunnable.run(), e -> removeBansRunnable.run());
             // if wait_for_completion is true, then only return when (1) bans are placed on child nodes, (2) child tasks are
@@ -102,8 +102,8 @@ public class TaskCancellationService {
         }
     }
 
-    private void setBanOnNodes(String reason, boolean waitForCompletion, CancellableTask task, Collection<DiscoveryNode> childNodes,
-            ActionListener<Void> listener) {
+    private void setBanOnNodes(String reason, boolean waitForCompletion, CancellableTask task,
+                               Collection<DiscoveryNode> childNodes, ActionListener<Void> listener) {
         if (childNodes.isEmpty()) {
             listener.onResponse(null);
             return;
@@ -111,29 +111,30 @@ public class TaskCancellationService {
         final TaskId taskId = new TaskId(localNodeId(), task.getId());
         logger.trace("cancelling child tasks of [{}] on child nodes {}", taskId, childNodes);
         GroupedActionListener<Void> groupedListener =
-                new GroupedActionListener<>(ActionListener.map(listener, r -> null), childNodes.size());
+            new GroupedActionListener<>(ActionListener.map(listener, r -> null), childNodes.size());
         final BanParentTaskRequest banRequest = BanParentTaskRequest.createSetBanParentTaskRequest(taskId, reason, waitForCompletion);
         for (DiscoveryNode node : childNodes) {
             transportService.sendRequest(node, BAN_PARENT_ACTION_NAME, banRequest,
-                    new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
-                        @Override
-                        public void handleResponse(TransportResponse.Empty response) {
-                            logger.trace("sent ban for tasks with the parent [{}] to the node [{}]", taskId, node);
-                            groupedListener.onResponse(null);
-                        }
+                new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
+                    @Override
+                    public void handleResponse(TransportResponse.Empty response) {
+                        logger.trace("sent ban for tasks with the parent [{}] to the node [{}]", taskId, node);
+                        groupedListener.onResponse(null);
+                    }
 
-                        @Override
-                        public void handleException(TransportException exp) {
-                            assert ExceptionsHelper.unwrapCause(exp) instanceof FesenSecurityException == false;
-                            logger.warn("Cannot send ban for tasks with the parent [{}] to the node [{}]", taskId, node);
-                            groupedListener.onFailure(exp);
-                        }
-                    });
+                    @Override
+                    public void handleException(TransportException exp) {
+                        assert ExceptionsHelper.unwrapCause(exp) instanceof FesenSecurityException == false;
+                        logger.warn("Cannot send ban for tasks with the parent [{}] to the node [{}]", taskId, node);
+                        groupedListener.onFailure(exp);
+                    }
+                });
         }
     }
 
     private void removeBanOnNodes(CancellableTask task, Collection<DiscoveryNode> childNodes) {
-        final BanParentTaskRequest request = BanParentTaskRequest.createRemoveBanParentTaskRequest(new TaskId(localNodeId(), task.getId()));
+        final BanParentTaskRequest request =
+            BanParentTaskRequest.createRemoveBanParentTaskRequest(new TaskId(localNodeId(), task.getId()));
         for (DiscoveryNode node : childNodes) {
             logger.trace("Sending remove ban for tasks with the parent [{}] to the node [{}]", request.parentTaskId, node);
             transportService.sendRequest(node, BAN_PARENT_ACTION_NAME, request, new EmptyTransportResponseHandler(ThreadPool.Names.SAME) {
@@ -205,12 +206,12 @@ public class TaskCancellationService {
         @Override
         public void messageReceived(final BanParentTaskRequest request, final TransportChannel channel, Task task) throws Exception {
             if (request.ban) {
-                logger.debug("Received ban for the parent [{}] on the node [{}], reason: [{}]", request.parentTaskId, localNodeId(),
-                        request.reason);
+                logger.debug("Received ban for the parent [{}] on the node [{}], reason: [{}]", request.parentTaskId,
+                    localNodeId(), request.reason);
                 final List<CancellableTask> childTasks = taskManager.setBan(request.parentTaskId, request.reason);
-                final GroupedActionListener<Void> listener = new GroupedActionListener<>(ActionListener
-                        .map(new ChannelActionListener<>(channel, BAN_PARENT_ACTION_NAME, request), r -> TransportResponse.Empty.INSTANCE),
-                        childTasks.size() + 1);
+                final GroupedActionListener<Void> listener = new GroupedActionListener<>(ActionListener.map(
+                    new ChannelActionListener<>(channel, BAN_PARENT_ACTION_NAME, request), r -> TransportResponse.Empty.INSTANCE),
+                    childTasks.size() + 1);
                 for (CancellableTask childTask : childTasks) {
                     cancelTaskAndDescendants(childTask, request.reason, request.waitForCompletion, listener);
                 }

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.codelibs.fesen.Version;
@@ -37,6 +31,12 @@ import org.codelibs.fesen.client.RestClientBuilder;
 import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.test.rest.yaml.restspec.ClientYamlSuiteRestSpec;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Used to execute REST requests according to the docs snippets that need to be tests. Wraps a
  * {@link RestClient} instance used to send the REST requests. Holds the {@link ClientYamlSuiteRestSpec} used to translate api calls into
@@ -44,15 +44,19 @@ import org.codelibs.fesen.test.rest.yaml.restspec.ClientYamlSuiteRestSpec;
  */
 public final class ClientYamlDocsTestClient extends ClientYamlTestClient {
 
-    public ClientYamlDocsTestClient(final ClientYamlSuiteRestSpec restSpec, final RestClient restClient, final List<HttpHost> hosts,
-            final Version esVersion, final Version masterVersion,
+    public ClientYamlDocsTestClient(
+            final ClientYamlSuiteRestSpec restSpec,
+            final RestClient restClient,
+            final List<HttpHost> hosts,
+            final Version esVersion,
+            final Version masterVersion,
             final CheckedSupplier<RestClientBuilder, IOException> clientBuilderWithSniffedNodes) {
         super(restSpec, restClient, hosts, esVersion, masterVersion, clientBuilderWithSniffedNodes);
     }
 
     @Override
-    public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, HttpEntity entity, Map<String, String> headers,
-            NodeSelector nodeSelector) throws IOException {
+    public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, HttpEntity entity,
+            Map<String, String> headers, NodeSelector nodeSelector) throws IOException {
 
         if ("raw".equals(apiName)) {
             // Raw requests don't use the rest spec at all and are configured entirely by their parameters

@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.index.query;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.LongSupplier;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.client.Client;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.util.concurrent.CountDown;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.LongSupplier;
 
 /**
  * Context object used to rewrite {@link QueryBuilder} instances into simplified version.
@@ -40,7 +40,8 @@ public class QueryRewriteContext {
     protected final LongSupplier nowInMillis;
     private final List<BiConsumer<Client, ActionListener<?>>> asyncActions = new ArrayList<>();
 
-    public QueryRewriteContext(NamedXContentRegistry xContentRegistry, NamedWriteableRegistry writeableRegistry, Client client,
+    public QueryRewriteContext(
+            NamedXContentRegistry xContentRegistry, NamedWriteableRegistry writeableRegistry,Client client,
             LongSupplier nowInMillis) {
 
         this.xContentRegistry = xContentRegistry;

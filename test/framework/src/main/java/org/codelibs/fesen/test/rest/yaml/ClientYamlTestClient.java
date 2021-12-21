@@ -18,19 +18,7 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.carrotsearch.randomizedtesting.RandomizedTest;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
@@ -51,7 +39,18 @@ import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.test.rest.yaml.restspec.ClientYamlSuiteRestApi;
 import org.codelibs.fesen.test.rest.yaml.restspec.ClientYamlSuiteRestSpec;
 
-import com.carrotsearch.randomizedtesting.RandomizedTest;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Used by {@link ESClientYamlSuiteTestCase} to execute REST requests according to the tests written in yaml suite files. Wraps a
@@ -69,8 +68,12 @@ public class ClientYamlTestClient implements Closeable {
     private final Version masterVersion;
     private final CheckedSupplier<RestClientBuilder, IOException> clientBuilderWithSniffedNodes;
 
-    ClientYamlTestClient(final ClientYamlSuiteRestSpec restSpec, final RestClient restClient, final List<HttpHost> hosts,
-            final Version esVersion, final Version masterVersion,
+    ClientYamlTestClient(
+            final ClientYamlSuiteRestSpec restSpec,
+            final RestClient restClient,
+            final List<HttpHost> hosts,
+            final Version esVersion,
+            final Version masterVersion,
             final CheckedSupplier<RestClientBuilder, IOException> clientBuilderWithSniffedNodes) {
         assert hosts.size() > 0;
         this.restSpec = restSpec;
@@ -91,13 +94,13 @@ public class ClientYamlTestClient implements Closeable {
     /**
      * Calls an api with the provided parameters and body
      */
-    public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, HttpEntity entity, Map<String, String> headers,
-            NodeSelector nodeSelector) throws IOException {
+    public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, HttpEntity entity,
+            Map<String, String> headers, NodeSelector nodeSelector) throws IOException {
 
         ClientYamlSuiteRestApi restApi = restApi(apiName);
 
-        Set<String> apiRequiredParameters =
-                restApi.getParams().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet());
+        Set<String> apiRequiredParameters = restApi.getParams().entrySet().stream().filter(Entry::getValue).map(Entry::getKey)
+                .collect(Collectors.toSet());
 
         List<ClientYamlSuiteRestApi.Path> bestPaths = restApi.getBestMatchingPaths(params.keySet());
         //the rest path to use is randomized out of the matching ones (if more than one)
@@ -110,7 +113,8 @@ public class ClientYamlTestClient implements Closeable {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             if (path.getParts().contains(entry.getKey())) {
                 pathParts.put(entry.getKey(), entry.getValue());
-            } else if (restApi.getParams().containsKey(entry.getKey()) || restSpec.isGlobalParameter(entry.getKey())
+            } else if (restApi.getParams().containsKey(entry.getKey())
+                    || restSpec.isGlobalParameter(entry.getKey())
                     || restSpec.isClientParameter(entry.getKey())) {
                 queryStringParams.put(entry.getKey(), entry.getValue());
                 apiRequiredParameters.remove(entry.getKey());
@@ -127,8 +131,8 @@ public class ClientYamlTestClient implements Closeable {
 
         Set<String> partNames = pathParts.keySet();
         if (path.getParts().size() != partNames.size() || path.getParts().containsAll(partNames) == false) {
-            throw new IllegalStateException(
-                    "provided path parts don't match the best matching path: " + path.getParts() + " - " + partNames);
+            throw new IllegalStateException("provided path parts don't match the best matching path: "
+                + path.getParts() + " - " + partNames);
         }
 
         String finalPath = path.getPath();
@@ -181,7 +185,7 @@ public class ClientYamlTestClient implements Closeable {
         try {
             Response response = getRestClient(nodeSelector).performRequest(request);
             return new ClientYamlTestResponse(response);
-        } catch (ResponseException e) {
+        } catch(ResponseException e) {
             throw new ClientYamlTestResponseException(e);
         }
     }

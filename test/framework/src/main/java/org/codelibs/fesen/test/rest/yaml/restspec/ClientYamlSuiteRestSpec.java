@@ -18,6 +18,12 @@
  */
 package org.codelibs.fesen.test.rest.yaml.restspec;
 
+import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.core.PathUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -30,12 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.core.PathUtils;
-
 /**
  * Holds the specification used to turn {@code do} actions in the YAML suite into REST api calls.
  */
@@ -43,8 +43,7 @@ public class ClientYamlSuiteRestSpec {
     private final Set<String> globalParameters = new HashSet<>();
     private final Map<String, ClientYamlSuiteRestApi> restApiMap = new HashMap<>();
 
-    ClientYamlSuiteRestSpec() {
-    }
+    ClientYamlSuiteRestSpec() {}
 
     private void addApi(ClientYamlSuiteRestApi restApi) {
         ClientYamlSuiteRestApi previous = restApiMap.putIfAbsent(restApi.getName(), restApi);
@@ -97,7 +96,7 @@ public class ClientYamlSuiteRestSpec {
     private static void parseSpecFile(ClientYamlSuiteRestApiParser restApiParser, Path jsonFile, ClientYamlSuiteRestSpec restSpec) {
         try (InputStream stream = Files.newInputStream(jsonFile)) {
             try (XContentParser parser =
-                    JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, stream)) {
+                     JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, stream)) {
                 String filename = jsonFile.getFileName().toString();
                 if (filename.equals("_common.json")) {
                     parseCommonSpec(parser, restSpec);
@@ -105,8 +104,8 @@ public class ClientYamlSuiteRestSpec {
                     ClientYamlSuiteRestApi restApi = restApiParser.parse(jsonFile.toString(), parser);
                     String expectedApiName = filename.substring(0, filename.lastIndexOf('.'));
                     if (restApi.getName().equals(expectedApiName) == false) {
-                        throw new IllegalArgumentException("found api [" + restApi.getName() + "] in [" + jsonFile.toString() + "]. "
-                                + "Each api is expected to have the same name as the file that defines it.");
+                        throw new IllegalArgumentException("found api [" + restApi.getName() + "] in [" + jsonFile.toString() + "]. " +
+                            "Each api is expected to have the same name as the file that defines it.");
                     }
                     restSpec.addApi(restApi);
                 }
@@ -133,7 +132,8 @@ public class ClientYamlSuiteRestSpec {
                         restSpec.globalParameters.add(param);
                         parser.nextToken();
                         if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
-                            throw new IllegalArgumentException("Expected params field in rest api definition to " + "contain an object");
+                            throw new IllegalArgumentException("Expected params field in rest api definition to " +
+                                "contain an object");
                         }
                         parser.skipChildren();
                     }

@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.repositories.url;
 
+import org.codelibs.fesen.core.SuppressForbidden;
+import org.codelibs.fesen.rest.RestStatus;
+import org.codelibs.fesen.test.fixture.AbstractHttpFixture;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codelibs.fesen.core.SuppressForbidden;
-import org.codelibs.fesen.rest.RestStatus;
-import org.codelibs.fesen.test.fixture.AbstractHttpFixture;
 
 /**
  * This {@link URLFixture} exposes a filesystem directory over HTTP. It is used in repository-url

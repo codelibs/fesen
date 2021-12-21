@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.action.fieldcaps;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -37,6 +31,12 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public final class FieldCapabilitiesRequest extends ActionRequest implements IndicesRequest.Replaceable, ToXContentObject {
     public static final String NAME = "field_caps_request";
@@ -197,14 +197,16 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FieldCapabilitiesRequest that = (FieldCapabilitiesRequest) o;
-        return includeUnmapped == that.includeUnmapped && mergeResults == that.mergeResults && Arrays.equals(indices, that.indices)
-                && indicesOptions.equals(that.indicesOptions) && Arrays.equals(fields, that.fields)
-                && Objects.equals(indexFilter, that.indexFilter) && Objects.equals(nowInMillis, that.nowInMillis);
+        return includeUnmapped == that.includeUnmapped &&
+            mergeResults == that.mergeResults &&
+            Arrays.equals(indices, that.indices) &&
+            indicesOptions.equals(that.indicesOptions) &&
+            Arrays.equals(fields, that.fields) &&
+            Objects.equals(indexFilter, that.indexFilter) &&
+            Objects.equals(nowInMillis, that.nowInMillis);
     }
 
     @Override

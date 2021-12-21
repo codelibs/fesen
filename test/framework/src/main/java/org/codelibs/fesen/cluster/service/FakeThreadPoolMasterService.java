@@ -18,20 +18,13 @@
  */
 package org.codelibs.fesen.cluster.service;
 
-import static org.apache.lucene.util.LuceneTestCase.random;
-import static org.codelibs.fesen.test.ESTestCase.randomInt;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.ClusterChangedEvent;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.coordination.ClusterStatePublisher.AckListener;
+import org.codelibs.fesen.cluster.service.MasterService;
 import org.codelibs.fesen.common.UUIDs;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Settings;
@@ -41,6 +34,14 @@ import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static org.apache.lucene.util.LuceneTestCase.random;
+import static org.codelibs.fesen.test.ESTestCase.randomInt;
 
 public class FakeThreadPoolMasterService extends MasterService {
     private static final Logger logger = LogManager.getLogger(FakeThreadPoolMasterService.class);
@@ -53,16 +54,17 @@ public class FakeThreadPoolMasterService extends MasterService {
     private boolean waitForPublish = false;
 
     public FakeThreadPoolMasterService(String nodeName, String serviceName, ThreadPool threadPool,
-            Consumer<Runnable> onTaskAvailableToRun) {
+                                       Consumer<Runnable> onTaskAvailableToRun) {
         super(Settings.builder().put(Node.NODE_NAME_SETTING.getKey(), nodeName).build(),
-                new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), threadPool);
+            new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), threadPool);
         this.name = serviceName;
         this.onTaskAvailableToRun = onTaskAvailableToRun;
     }
 
     @Override
     protected PrioritizedEsThreadPoolExecutor createThreadPoolExecutor() {
-        return new PrioritizedEsThreadPoolExecutor(name, 1, 1, 1, TimeUnit.SECONDS, EsExecutors.daemonThreadFactory(name), null, null) {
+        return new PrioritizedEsThreadPoolExecutor(name, 1, 1, 1, TimeUnit.SECONDS, EsExecutors.daemonThreadFactory(name),
+            null, null) {
 
             @Override
             public void execute(Runnable command, final TimeValue timeout, final Runnable timeoutCallback) {
@@ -165,8 +167,8 @@ public class FakeThreadPoolMasterService extends MasterService {
 
             @Override
             public String toString() {
-                return "publish change of cluster state from version [" + clusterChangedEvent.previousState().version() + "] in term ["
-                        + clusterChangedEvent.previousState().term() + "] to version [" + clusterChangedEvent.state().version()
+                return "publish change of cluster state from version [" + clusterChangedEvent.previousState().version() + "] in term [" +
+                        clusterChangedEvent.previousState().term() + "] to version [" + clusterChangedEvent.state().version()
                         + "] in term [" + clusterChangedEvent.state().term() + "]";
             }
         }));

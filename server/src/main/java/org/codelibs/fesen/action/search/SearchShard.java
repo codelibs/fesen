@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.util.Comparator;
-import java.util.Objects;
-
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
+
+import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * A class that encapsulates the {@link ShardId} and the cluster alias
@@ -62,12 +62,11 @@ public final class SearchShard implements Comparable<SearchShard> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SearchShard that = (SearchShard) o;
-        return Objects.equals(clusterAlias, that.clusterAlias) && shardId.equals(that.shardId);
+        return Objects.equals(clusterAlias, that.clusterAlias)
+            && shardId.equals(that.shardId);
     }
 
     @Override
@@ -77,6 +76,9 @@ public final class SearchShard implements Comparable<SearchShard> {
 
     @Override
     public String toString() {
-        return "SearchShard{" + "clusterAlias='" + clusterAlias + '\'' + ", shardId=" + shardId + '}';
+        return "SearchShard{" +
+            "clusterAlias='" + clusterAlias + '\'' +
+            ", shardId=" + shardId +
+            '}';
     }
 }

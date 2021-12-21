@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.transport;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.Version;
@@ -29,6 +27,8 @@ import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import java.io.IOException;
 
 public final class TransportLogger {
 
@@ -106,8 +106,10 @@ public final class TransportLogger {
                 ThreadContext.readHeadersFromStream(streamInput);
 
                 if (isRequest) {
-                    // discard features
-                    streamInput.readStringArray();
+                    if (streamInput.getVersion().onOrAfter(Version.V_6_3_0)) {
+                        // discard features
+                        streamInput.readStringArray();
+                    }
                     sb.append(", action: ").append(streamInput.readString());
                 }
                 sb.append(']');

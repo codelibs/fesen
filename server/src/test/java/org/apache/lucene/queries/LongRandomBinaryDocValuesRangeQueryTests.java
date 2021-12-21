@@ -44,23 +44,23 @@ public class LongRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryDo
 
     private long nextLongInternal() {
         switch (random().nextInt(5)) {
-        case 0:
-            return Long.MIN_VALUE;
-        case 1:
-            return Long.MAX_VALUE;
-        default:
-            int bpv = random().nextInt(64);
-            switch (bpv) {
-            case 64:
-                return random().nextLong();
+            case 0:
+                return Long.MIN_VALUE;
+            case 1:
+                return Long.MAX_VALUE;
             default:
-                long v = TestUtil.nextLong(random(), 0, (1L << bpv) - 1);
-                if (bpv > 0) {
-                    // negative values sometimes
-                    v -= 1L << (bpv - 1);
+                int bpv = random().nextInt(64);
+                switch (bpv) {
+                    case 64:
+                        return random().nextLong();
+                    default:
+                        long v = TestUtil.nextLong(random(), 0, (1L << bpv) - 1);
+                        if (bpv > 0) {
+                            // negative values sometimes
+                            v -= 1L << (bpv - 1);
+                        }
+                        return v;
                 }
-                return v;
-            }
         }
     }
 
@@ -81,7 +81,7 @@ public class LongRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryDo
         @Override
         protected void setMin(int dim, Object val) {
             assert dim == 0;
-            long v = (Long) val;
+            long v = (Long)val;
             if (min < v) {
                 max = v;
             } else {
@@ -97,7 +97,7 @@ public class LongRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryDo
         @Override
         protected void setMax(int dim, Object val) {
             assert dim == 0;
-            long v = (Long) val;
+            long v = (Long)val;
             if (max > v) {
                 min = v;
             } else {
@@ -107,13 +107,13 @@ public class LongRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinaryDo
 
         @Override
         protected boolean isDisjoint(Range o) {
-            LongTestRange other = (LongTestRange) o;
+            LongTestRange other = (LongTestRange)o;
             return this.min > other.max || this.max < other.min;
         }
 
         @Override
         protected boolean isWithin(Range o) {
-            LongTestRange other = (LongTestRange) o;
+            LongTestRange other = (LongTestRange)o;
             if ((this.min >= other.min && this.max <= other.max) == false) {
                 // not within:
                 return false;

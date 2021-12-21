@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.util.Collection;
-
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.Collection;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 public class BulkIndexByScrollResponseMatcher extends TypeSafeMatcher<BulkByScrollResponse> {
 
@@ -132,10 +132,14 @@ public class BulkIndexByScrollResponseMatcher extends TypeSafeMatcher<BulkByScro
 
     @Override
     protected boolean matchesSafely(BulkByScrollResponse item) {
-        return updatedMatcher.matches(item.getUpdated()) && createdMatcher.matches(item.getCreated())
-                && deletedMatcher.matches(item.getDeleted()) && (batchesMatcher == null || batchesMatcher.matches(item.getBatches()))
-                && versionConflictsMatcher.matches(item.getVersionConflicts()) && failuresMatcher.matches(item.getBulkFailures().size())
-                && reasonCancelledMatcher.matches(item.getReasonCancelled()) && slicesMatcher.matches(item.getStatus().getSliceStatuses());
+        return updatedMatcher.matches(item.getUpdated()) &&
+                createdMatcher.matches(item.getCreated()) &&
+                deletedMatcher.matches(item.getDeleted()) &&
+                (batchesMatcher == null || batchesMatcher.matches(item.getBatches())) &&
+                versionConflictsMatcher.matches(item.getVersionConflicts()) &&
+                failuresMatcher.matches(item.getBulkFailures().size()) &&
+                reasonCancelledMatcher.matches(item.getReasonCancelled()) &&
+                slicesMatcher.matches(item.getStatus().getSliceStatuses());
     }
 
     @Override

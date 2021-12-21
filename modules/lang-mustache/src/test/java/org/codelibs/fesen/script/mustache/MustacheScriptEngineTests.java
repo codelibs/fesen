@@ -18,7 +18,16 @@
  */
 package org.codelibs.fesen.script.mustache;
 
-import static org.hamcrest.Matchers.equalTo;
+import com.github.mustachejava.MustacheFactory;
+
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.script.TemplateScript;
+import org.codelibs.fesen.script.mustache.CustomMustacheFactory;
+import org.codelibs.fesen.script.mustache.MustacheScriptEngine;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -26,14 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.script.TemplateScript;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
-
-import com.github.mustachejava.MustacheFactory;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Mustache based templating test
@@ -57,7 +59,8 @@ public class MustacheScriptEngineTests extends ESTestCase {
             vars.put("boost_val", "0.3");
             String o = qe.compile(null, template, TemplateScript.CONTEXT, compileParams).newInstance(vars).execute();
             assertEquals("GET _search {\"query\": {\"boosting\": {\"positive\": {\"match\": {\"body\": \"gift\"}},"
-                    + "\"negative\": {\"term\": {\"body\": {\"value\": \"solr\"}}}, \"negative_boost\": 0.3 } }}", o);
+                    + "\"negative\": {\"term\": {\"body\": {\"value\": \"solr\"}}}, \"negative_boost\": 0.3 } }}",
+                    o);
         }
         {
             String template = "GET _search {\"query\": " + "{\"boosting\": {" + "\"positive\": {\"match\": {\"body\": \"gift\"}},"
@@ -66,15 +69,18 @@ public class MustacheScriptEngineTests extends ESTestCase {
             vars.put("boost_val", "0.3");
             vars.put("body_val", "\"quick brown\"");
             String o = qe.compile(null, template, TemplateScript.CONTEXT, compileParams).newInstance(vars).execute();
-            assertEquals(
-                    "GET _search {\"query\": {\"boosting\": {\"positive\": {\"match\": {\"body\": \"gift\"}},"
-                            + "\"negative\": {\"term\": {\"body\": {\"value\": \"\\\"quick brown\\\"\"}}}, \"negative_boost\": 0.3 } }}",
+            assertEquals("GET _search {\"query\": {\"boosting\": {\"positive\": {\"match\": {\"body\": \"gift\"}},"
+                    + "\"negative\": {\"term\": {\"body\": {\"value\": \"\\\"quick brown\\\"\"}}}, \"negative_boost\": 0.3 } }}",
                     o);
         }
     }
 
     public void testSimple() throws IOException {
-        String templateString = "{" + "\"source\":{\"match_{{template}}\": {}}," + "\"params\":{\"template\":\"all\"}" + "}";
+        String templateString =
+                  "{" 
+                + "\"source\":{\"match_{{template}}\": {}},"
+                + "\"params\":{\"template\":\"all\"}"
+                + "}";
         XContentParser parser = createParser(JsonXContent.jsonXContent, templateString);
         Script script = Script.parse(parser);
         TemplateScript.Factory compiled = qe.compile(null, script.getIdOrCode(), TemplateScript.CONTEXT, Collections.emptyMap());
@@ -83,8 +89,13 @@ public class MustacheScriptEngineTests extends ESTestCase {
     }
 
     public void testParseTemplateAsSingleStringWithConditionalClause() throws IOException {
-        String templateString = "{" + "  \"source\" : \"{ \\\"match_{{#use_it}}{{template}}{{/use_it}}\\\":{} }\"," + "  \"params\":{"
-                + "    \"template\":\"all\"," + "    \"use_it\": true" + "  }" + "}";
+        String templateString =
+                  "{"
+                + "  \"source\" : \"{ \\\"match_{{#use_it}}{{template}}{{/use_it}}\\\":{} }\"," + "  \"params\":{"
+                + "    \"template\":\"all\","
+                + "    \"use_it\": true"
+                + "  }"
+                + "}";
         XContentParser parser = createParser(JsonXContent.jsonXContent, templateString);
         Script script = Script.parse(parser);
         TemplateScript.Factory compiled = qe.compile(null, script.getIdOrCode(), TemplateScript.CONTEXT, Collections.emptyMap());
@@ -104,10 +115,42 @@ public class MustacheScriptEngineTests extends ESTestCase {
             assertThat(writer.toString(), equalTo("\\n"));
         }
 
-        Character[] specialChars = new Character[] { '\"', '\\', '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006',
-                '\u0007', '\u0008', '\u0009', '\u000B', '\u000C', '\u000E', '\u000F', '\u001F' };
-        String[] escapedChars = new String[] { "\\\"", "\\\\", "\\u0000", "\\u0001", "\\u0002", "\\u0003", "\\u0004", "\\u0005", "\\u0006",
-                "\\u0007", "\\u0008", "\\u0009", "\\u000B", "\\u000C", "\\u000E", "\\u000F", "\\u001F" };
+        Character[] specialChars = new Character[]{
+                '\"',
+                '\\',
+                '\u0000',
+                '\u0001',
+                '\u0002',
+                '\u0003',
+                '\u0004',
+                '\u0005',
+                '\u0006',
+                '\u0007',
+                '\u0008',
+                '\u0009',
+                '\u000B',
+                '\u000C',
+                '\u000E',
+                '\u000F',
+                '\u001F'};
+        String[] escapedChars = new String[]{
+                "\\\"",
+                "\\\\",
+                "\\u0000",
+                "\\u0001",
+                "\\u0002",
+                "\\u0003",
+                "\\u0004",
+                "\\u0005",
+                "\\u0006",
+                "\\u0007",
+                "\\u0008",
+                "\\u0009",
+                "\\u000B",
+                "\\u000C",
+                "\\u000E",
+                "\\u000F",
+                "\\u001F"};
         int iters = scaledRandomIntBetween(100, 1000);
         for (int i = 0; i < iters; i++) {
             int rounds = scaledRandomIntBetween(1, 20);

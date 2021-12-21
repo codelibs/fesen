@@ -19,16 +19,21 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.lucene.document.FeatureField;
 import org.apache.lucene.index.IndexableField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.index.mapper.DocumentMapper;
+import org.codelibs.fesen.index.mapper.MapperExtrasPlugin;
+import org.codelibs.fesen.index.mapper.MapperParsingException;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.ParsedDocument;
 import org.codelibs.fesen.plugins.Plugin;
 import org.hamcrest.Matchers;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class RankFeaturesFieldMapperTests extends MapperTestCase {
 
@@ -92,10 +97,12 @@ public class RankFeaturesFieldMapperTests extends MapperTestCase {
             b.endObject().endObject();
         }));
 
-        MapperParsingException e = expectThrows(MapperParsingException.class,
-                () -> mapper.parse(source(b -> b.startObject("field").field("foo", Arrays.asList(10, 20)).endObject())));
-        assertEquals("[rank_features] fields take hashes that map a feature to a strictly positive float, but got unexpected token "
-                + "START_ARRAY", e.getCause().getMessage());
+        MapperParsingException e = expectThrows(
+            MapperParsingException.class,
+            () -> mapper.parse(source(b -> b.startObject("field").field("foo", Arrays.asList(10, 20)).endObject()))
+        );
+        assertEquals("[rank_features] fields take hashes that map a feature to a strictly positive float, but got unexpected token " +
+                "START_ARRAY", e.getCause().getMessage());
 
         e = expectThrows(MapperParsingException.class, () -> mapper.parse(source(b -> {
             b.startArray("foo");
@@ -105,7 +112,7 @@ public class RankFeaturesFieldMapperTests extends MapperTestCase {
             }
             b.endArray();
         })));
-        assertEquals("[rank_features] fields do not support indexing multiple values for the same rank feature [foo.field.bar] in "
-                + "the same document", e.getCause().getMessage());
+        assertEquals("[rank_features] fields do not support indexing multiple values for the same rank feature [foo.field.bar] in " +
+                "the same document", e.getCause().getMessage());
     }
 }

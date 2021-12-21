@@ -31,7 +31,7 @@ import org.codelibs.fesen.index.stats.IndexingPressureStats;
 public class IndexingPressure {
 
     public static final Setting<ByteSizeValue> MAX_INDEXING_BYTES =
-            Setting.memorySizeSetting("indexing_pressure.memory.limit", "10%", Setting.Property.NodeScope);
+        Setting.memorySizeSetting("indexing_pressure.memory.limit", "10%", Setting.Property.NodeScope);
 
     private final AtomicLong currentCombinedCoordinatingAndPrimaryBytes = new AtomicLong(0);
     private final AtomicLong currentCoordinatingBytes = new AtomicLong(0);
@@ -64,10 +64,12 @@ public class IndexingPressure {
             long totalBytesWithoutOperation = totalBytes - bytes;
             this.currentCombinedCoordinatingAndPrimaryBytes.getAndAdd(-bytes);
             this.coordinatingRejections.getAndIncrement();
-            throw new EsRejectedExecutionException("rejected execution of coordinating operation [" + "coordinating_and_primary_bytes="
-                    + bytesWithoutOperation + ", " + "replica_bytes=" + replicaWriteBytes + ", " + "all_bytes=" + totalBytesWithoutOperation
-                    + ", " + "coordinating_operation_bytes=" + bytes + ", " + "max_coordinating_and_primary_bytes="
-                    + primaryAndCoordinatingLimits + "]", false);
+            throw new EsRejectedExecutionException("rejected execution of coordinating operation [" +
+                "coordinating_and_primary_bytes=" + bytesWithoutOperation + ", " +
+                "replica_bytes=" + replicaWriteBytes + ", " +
+                "all_bytes=" + totalBytesWithoutOperation + ", " +
+                "coordinating_operation_bytes=" + bytes + ", " +
+                "max_coordinating_and_primary_bytes=" + primaryAndCoordinatingLimits + "]", false);
         }
         currentCoordinatingBytes.getAndAdd(bytes);
         totalCombinedCoordinatingAndPrimaryBytes.getAndAdd(bytes);
@@ -93,10 +95,12 @@ public class IndexingPressure {
             long totalBytesWithoutOperation = totalBytes - bytes;
             this.currentCombinedCoordinatingAndPrimaryBytes.getAndAdd(-bytes);
             this.primaryRejections.getAndIncrement();
-            throw new EsRejectedExecutionException("rejected execution of primary operation [" + "coordinating_and_primary_bytes="
-                    + bytesWithoutOperation + ", " + "replica_bytes=" + replicaWriteBytes + ", " + "all_bytes=" + totalBytesWithoutOperation
-                    + ", " + "primary_operation_bytes=" + bytes + ", " + "max_coordinating_and_primary_bytes="
-                    + primaryAndCoordinatingLimits + "]", false);
+            throw new EsRejectedExecutionException("rejected execution of primary operation [" +
+                "coordinating_and_primary_bytes=" + bytesWithoutOperation + ", " +
+                "replica_bytes=" + replicaWriteBytes + ", " +
+                "all_bytes=" + totalBytesWithoutOperation + ", " +
+                "primary_operation_bytes=" + bytes + ", " +
+                "max_coordinating_and_primary_bytes=" + primaryAndCoordinatingLimits + "]", false);
         }
         currentPrimaryBytes.getAndAdd(bytes);
         totalCombinedCoordinatingAndPrimaryBytes.getAndAdd(bytes);
@@ -113,10 +117,10 @@ public class IndexingPressure {
             long replicaBytesWithoutOperation = replicaWriteBytes - bytes;
             this.currentReplicaBytes.getAndAdd(-bytes);
             this.replicaRejections.getAndIncrement();
-            throw new EsRejectedExecutionException(
-                    "rejected execution of replica operation [" + "replica_bytes=" + replicaBytesWithoutOperation + ", "
-                            + "replica_operation_bytes=" + bytes + ", " + "max_replica_bytes=" + replicaLimits + "]",
-                    false);
+            throw new EsRejectedExecutionException("rejected execution of replica operation [" +
+                "replica_bytes=" + replicaBytesWithoutOperation + ", " +
+                "replica_operation_bytes=" + bytes + ", " +
+                "max_replica_bytes=" + replicaLimits + "]", false);
         }
         totalReplicaBytes.getAndAdd(bytes);
         return () -> this.currentReplicaBytes.getAndAdd(-bytes);
@@ -140,8 +144,8 @@ public class IndexingPressure {
 
     public IndexingPressureStats stats() {
         return new IndexingPressureStats(totalCombinedCoordinatingAndPrimaryBytes.get(), totalCoordinatingBytes.get(),
-                totalPrimaryBytes.get(), totalReplicaBytes.get(), currentCombinedCoordinatingAndPrimaryBytes.get(),
-                currentCoordinatingBytes.get(), currentPrimaryBytes.get(), currentReplicaBytes.get(), coordinatingRejections.get(),
-                primaryRejections.get(), replicaRejections.get(), primaryAndCoordinatingLimits);
+            totalPrimaryBytes.get(), totalReplicaBytes.get(), currentCombinedCoordinatingAndPrimaryBytes.get(),
+            currentCoordinatingBytes.get(), currentPrimaryBytes.get(), currentReplicaBytes.get(), coordinatingRejections.get(),
+            primaryRejections.get(), replicaRejections.get(), primaryAndCoordinatingLimits);
     }
 }

@@ -46,20 +46,36 @@ import static org.hamcrest.Matchers.instanceOf;
 public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksResponse> {
 
     public void testEmptyToString() {
-        assertEquals("{\n" + "  \"tasks\" : [ ]\n" + "}", new ListTasksResponse(null, null, null).toString());
+        assertEquals("{\n" +
+                "  \"tasks\" : [ ]\n" +
+                "}", new ListTasksResponse(null, null, null).toString());
     }
 
     public void testNonEmptyToString() {
-        TaskInfo info = new TaskInfo(new TaskId("node1", 1), "dummy-type", "dummy-action", "dummy-description", null, 0, 1, true,
-                new TaskId("node1", 0), Collections.singletonMap("foo", "bar"));
+        TaskInfo info = new TaskInfo(
+            new TaskId("node1", 1), "dummy-type", "dummy-action", "dummy-description", null, 0, 1, true, new TaskId("node1", 0),
+            Collections.singletonMap("foo", "bar"));
         ListTasksResponse tasksResponse = new ListTasksResponse(singletonList(info), emptyList(), emptyList());
-        assertEquals("{\n" + "  \"tasks\" : [\n" + "    {\n" + "      \"node\" : \"node1\",\n" + "      \"id\" : 1,\n"
-                + "      \"type\" : \"dummy-type\",\n" + "      \"action\" : \"dummy-action\",\n"
-                + "      \"description\" : \"dummy-description\",\n" + "      \"start_time\" : \"1970-01-01T00:00:00.000Z\",\n"
-                + "      \"start_time_in_millis\" : 0,\n" + "      \"running_time\" : \"1nanos\",\n"
-                + "      \"running_time_in_nanos\" : 1,\n" + "      \"cancellable\" : true,\n" + "      \"parent_task_id\" : \"node1:0\",\n"
-                + "      \"headers\" : {\n" + "        \"foo\" : \"bar\"\n" + "      }\n" + "    }\n" + "  ]\n" + "}",
-                tasksResponse.toString());
+        assertEquals("{\n" +
+                "  \"tasks\" : [\n" +
+                "    {\n" +
+                "      \"node\" : \"node1\",\n" +
+                "      \"id\" : 1,\n" +
+                "      \"type\" : \"dummy-type\",\n" +
+                "      \"action\" : \"dummy-action\",\n" +
+                "      \"description\" : \"dummy-description\",\n" +
+                "      \"start_time\" : \"1970-01-01T00:00:00.000Z\",\n" +
+                "      \"start_time_in_millis\" : 0,\n" +
+                "      \"running_time\" : \"1nanos\",\n" +
+                "      \"running_time_in_nanos\" : 1,\n" +
+                "      \"cancellable\" : true,\n" +
+                "      \"parent_task_id\" : \"node1:0\",\n" +
+                "      \"headers\" : {\n" +
+                "        \"foo\" : \"bar\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}", tasksResponse.toString());
     }
 
     @Override
@@ -100,12 +116,13 @@ public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksRe
         assertOnTaskFailures(newInstance.getTaskFailures(), expectedInstance.getTaskFailures());
     }
 
-    protected static void assertOnNodeFailures(List<FesenException> nodeFailures, List<FesenException> expectedFailures) {
+    protected static void assertOnNodeFailures(List<FesenException> nodeFailures,
+                                               List<FesenException> expectedFailures) {
         assertThat(nodeFailures.size(), equalTo(expectedFailures.size()));
         for (int i = 0; i < nodeFailures.size(); i++) {
             FesenException newException = nodeFailures.get(i);
             FesenException expectedException = expectedFailures.get(i);
-            assertThat(newException.getMetadata("es.node_id").get(0), equalTo(((FailedNodeException) expectedException).nodeId()));
+            assertThat(newException.getMetadata("es.node_id").get(0), equalTo(((FailedNodeException)expectedException).nodeId()));
             assertThat(newException.getMessage(), equalTo("Fesen exception [type=failed_node_exception, reason=error message]"));
             assertThat(newException.getCause(), instanceOf(FesenException.class));
             FesenException cause = (FesenException) newException.getCause();
@@ -113,7 +130,8 @@ public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksRe
         }
     }
 
-    protected static void assertOnTaskFailures(List<TaskOperationFailure> taskFailures, List<TaskOperationFailure> expectedFailures) {
+    protected static void assertOnTaskFailures(List<TaskOperationFailure> taskFailures,
+                                               List<TaskOperationFailure> expectedFailures) {
         assertThat(taskFailures.size(), equalTo(expectedFailures.size()));
         for (int i = 0; i < taskFailures.size(); i++) {
             TaskOperationFailure newFailure = taskFailures.get(i);
@@ -140,8 +158,8 @@ public class ListTasksResponseTests extends AbstractXContentTestCase<ListTasksRe
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-                getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance, this::assertEqualInstances,
-                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+                getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
+                this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 
     private static ListTasksResponse createTestInstanceWithFailures() {

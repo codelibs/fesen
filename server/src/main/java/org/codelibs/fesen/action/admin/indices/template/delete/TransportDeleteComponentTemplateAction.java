@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.template.delete;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -38,19 +36,21 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+
 public class TransportDeleteComponentTemplateAction
-        extends TransportMasterNodeAction<DeleteComponentTemplateAction.Request, AcknowledgedResponse> {
+    extends TransportMasterNodeAction<DeleteComponentTemplateAction.Request, AcknowledgedResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportDeleteComponentTemplateAction.class);
 
     private final MetadataIndexTemplateService indexTemplateService;
 
     @Inject
-    public TransportDeleteComponentTemplateAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            MetadataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportDeleteComponentTemplateAction(TransportService transportService, ClusterService clusterService,
+                                                  ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService,
+                                                  ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(DeleteComponentTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                DeleteComponentTemplateAction.Request::new, indexNameExpressionResolver);
+            DeleteComponentTemplateAction.Request::new, indexNameExpressionResolver);
         this.indexTemplateService = indexTemplateService;
     }
 
@@ -72,7 +72,7 @@ public class TransportDeleteComponentTemplateAction
 
     @Override
     protected void masterOperation(final DeleteComponentTemplateAction.Request request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         indexTemplateService.removeComponentTemplate(request.name(), request.masterNodeTimeout(), listener);
     }
 }

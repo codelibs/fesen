@@ -76,8 +76,8 @@ public class DerivativeTests extends BasePipelineAggregationTestCase<DerivativeP
         AggregationBuilder parent = mock(AggregationBuilder.class);
         when(parent.getName()).thenReturn("name");
 
-        assertThat(validate(parent, new DerivativePipelineAggregationBuilder("name", "invalid_agg>metric")),
-                equalTo("Validation Failed: 1: derivative aggregation [name] must have a histogram, "
-                        + "date_histogram or auto_date_histogram as parent;"));
+        assertThat(validate(parent, new DerivativePipelineAggregationBuilder("name", "invalid_agg>metric")), equalTo(
+                "Validation Failed: 1: derivative aggregation [name] must have a histogram, "
+                + "date_histogram or auto_date_histogram as parent;"));
     }
 }

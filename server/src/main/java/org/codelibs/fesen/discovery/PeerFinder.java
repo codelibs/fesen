@@ -19,22 +19,7 @@
 
 package org.codelibs.fesen.discovery;
 
-import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.cluster.coordination.Coordinator.isZen1Node;
-import static org.codelibs.fesen.cluster.coordination.DiscoveryUpgradeService.createDiscoveryNodeWithImpossiblyHighId;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -66,7 +51,21 @@ import org.codelibs.fesen.transport.TransportRequestOptions;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static org.codelibs.fesen.cluster.coordination.Coordinator.isZen1Node;
+import static org.codelibs.fesen.cluster.coordination.DiscoveryUpgradeService.createDiscoveryNodeWithImpossiblyHighId;
 
 public abstract class PeerFinder {
 
@@ -75,10 +74,12 @@ public abstract class PeerFinder {
     public static final String REQUEST_PEERS_ACTION_NAME = "internal:discovery/request_peers";
 
     // the time between attempts to find all peers
-    public static final Setting<TimeValue> DISCOVERY_FIND_PEERS_INTERVAL_SETTING = Setting.timeSetting("discovery.find_peers_interval",
+    public static final Setting<TimeValue> DISCOVERY_FIND_PEERS_INTERVAL_SETTING =
+        Setting.timeSetting("discovery.find_peers_interval",
             TimeValue.timeValueMillis(1000), TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
 
-    public static final Setting<TimeValue> DISCOVERY_REQUEST_PEERS_TIMEOUT_SETTING = Setting.timeSetting("discovery.request_peers_timeout",
+    public static final Setting<TimeValue> DISCOVERY_REQUEST_PEERS_TIMEOUT_SETTING =
+        Setting.timeSetting("discovery.request_peers_timeout",
             TimeValue.timeValueMillis(3000), TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
 
     private final Settings settings;
@@ -99,7 +100,7 @@ public abstract class PeerFinder {
     private volatile List<TransportAddress> lastResolvedAddresses = emptyList();
 
     public PeerFinder(Settings settings, TransportService transportService, TransportAddressConnector transportAddressConnector,
-            ConfiguredHostsResolver configuredHostsResolver) {
+                      ConfiguredHostsResolver configuredHostsResolver) {
         this.settings = settings;
         findPeersInterval = DISCOVERY_FIND_PEERS_INTERVAL_SETTING.get(settings);
         requestPeersTimeout = DISCOVERY_REQUEST_PEERS_TIMEOUT_SETTING.get(settings);
@@ -107,11 +108,12 @@ public abstract class PeerFinder {
         this.transportAddressConnector = transportAddressConnector;
         this.configuredHostsResolver = configuredHostsResolver;
 
-        transportService.registerRequestHandler(REQUEST_PEERS_ACTION_NAME, Names.GENERIC, false, false, PeersRequest::new,
-                (request, channel, task) -> channel.sendResponse(handlePeersRequest(request)));
+        transportService.registerRequestHandler(REQUEST_PEERS_ACTION_NAME, Names.GENERIC, false, false,
+            PeersRequest::new,
+            (request, channel, task) -> channel.sendResponse(handlePeersRequest(request)));
 
         transportService.registerRequestHandler(UnicastZenPing.ACTION_NAME, Names.GENERIC, false, false,
-                UnicastZenPing.UnicastPingRequest::new, new Zen1UnicastPingRequestHandler());
+            UnicastZenPing.UnicastPingRequest::new, new Zen1UnicastPingRequestHandler());
     }
 
     public void activate(final DiscoveryNodes lastAcceptedNodes) {
@@ -239,8 +241,8 @@ public abstract class PeerFinder {
 
     private List<DiscoveryNode> getFoundPeersUnderLock() {
         assert holdsLock() : "PeerFinder mutex not held";
-        return peersByAddress.values().stream().map(Peer::getDiscoveryNode).filter(Objects::nonNull).distinct()
-                .collect(Collectors.toList());
+        return peersByAddress.values().stream()
+            .map(Peer::getDiscoveryNode).filter(Objects::nonNull).distinct().collect(Collectors.toList());
     }
 
     private Peer createConnectingPeer(TransportAddress transportAddress) {
@@ -457,16 +459,17 @@ public abstract class PeerFinder {
             if (isZen1Node(discoveryNode)) {
                 actionName = UnicastZenPing.ACTION_NAME;
                 transportRequest = new UnicastZenPing.UnicastPingRequest(1, ZenDiscovery.PING_TIMEOUT_SETTING.get(settings),
-                        new ZenPing.PingResponse(createDiscoveryNodeWithImpossiblyHighId(getLocalNode()), null,
-                                ClusterName.CLUSTER_NAME_SETTING.get(settings), ClusterState.UNKNOWN_VERSION));
+                    new ZenPing.PingResponse(createDiscoveryNodeWithImpossiblyHighId(getLocalNode()), null,
+                        ClusterName.CLUSTER_NAME_SETTING.get(settings), ClusterState.UNKNOWN_VERSION));
                 transportResponseHandler = peersResponseHandler.wrap(ucResponse -> {
                     Optional<DiscoveryNode> optionalMasterNode = Arrays.stream(ucResponse.pingResponses)
-                            .filter(pr -> discoveryNode.equals(pr.node()) && discoveryNode.equals(pr.master()))
-                            .map(ZenPing.PingResponse::node).findFirst();
+                        .filter(pr -> discoveryNode.equals(pr.node()) && discoveryNode.equals(pr.master()))
+                        .map(ZenPing.PingResponse::node)
+                        .findFirst();
                     List<DiscoveryNode> discoveredNodes = new ArrayList<>();
                     if (optionalMasterNode.isPresent() == false) {
                         Arrays.stream(ucResponse.pingResponses).map(PingResponse::master).filter(Objects::nonNull)
-                                .forEach(discoveredNodes::add);
+                            .forEach(discoveredNodes::add);
                         Arrays.stream(ucResponse.pingResponses).map(PingResponse::node).forEach(discoveredNodes::add);
                     }
                     return new PeersResponse(optionalMasterNode, discoveredNodes, 0L);
@@ -476,14 +479,19 @@ public abstract class PeerFinder {
                 transportRequest = new PeersRequest(getLocalNode(), knownNodes);
                 transportResponseHandler = peersResponseHandler;
             }
-            transportService.sendRequest(discoveryNode, actionName, transportRequest,
-                    TransportRequestOptions.builder().withTimeout(requestPeersTimeout).build(), transportResponseHandler);
+            transportService.sendRequest(discoveryNode, actionName,
+                transportRequest,
+                TransportRequestOptions.builder().withTimeout(requestPeersTimeout).build(),
+                transportResponseHandler);
         }
 
         @Override
         public String toString() {
-            return "Peer{" + "transportAddress=" + transportAddress + ", discoveryNode=" + discoveryNode.get() + ", peersRequestInFlight="
-                    + peersRequestInFlight + '}';
+            return "Peer{" +
+                "transportAddress=" + transportAddress +
+                ", discoveryNode=" + discoveryNode.get() +
+                ", peersRequestInFlight=" + peersRequestInFlight +
+                '}';
         }
     }
 
@@ -491,13 +499,15 @@ public abstract class PeerFinder {
         @Override
         public void messageReceived(UnicastZenPing.UnicastPingRequest request, TransportChannel channel, Task task) throws Exception {
             final PeersRequest peersRequest = new PeersRequest(request.pingResponse.node(),
-                    Optional.ofNullable(request.pingResponse.master()).map(Collections::singletonList).orElse(emptyList()));
+                Optional.ofNullable(request.pingResponse.master()).map(Collections::singletonList).orElse(emptyList()));
             final PeersResponse peersResponse = handlePeersRequest(peersRequest);
             final List<ZenPing.PingResponse> pingResponses = new ArrayList<>();
             final ClusterName clusterName = ClusterName.CLUSTER_NAME_SETTING.get(settings);
             pingResponses.add(new ZenPing.PingResponse(createDiscoveryNodeWithImpossiblyHighId(transportService.getLocalNode()),
-                    peersResponse.getMasterNode().orElse(null), clusterName, ClusterState.UNKNOWN_VERSION));
-            peersResponse.getKnownPeers().forEach(dn -> pingResponses.add(new ZenPing.PingResponse(ZenPing.PingResponse.FAKE_PING_ID,
+                peersResponse.getMasterNode().orElse(null),
+                clusterName, ClusterState.UNKNOWN_VERSION));
+            peersResponse.getKnownPeers().forEach(dn -> pingResponses.add(
+                new ZenPing.PingResponse(ZenPing.PingResponse.FAKE_PING_ID,
                     isZen1Node(dn) ? dn : createDiscoveryNodeWithImpossiblyHighId(dn), null, clusterName, ClusterState.UNKNOWN_VERSION)));
             channel.sendResponse(new UnicastZenPing.UnicastPingResponse(request.id, pingResponses.toArray(new ZenPing.PingResponse[0])));
         }

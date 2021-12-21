@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.index.mapper.MapperExtrasPlugin;
+import org.codelibs.fesen.plugins.Plugin;
+import org.codelibs.fesen.test.ESSingleNodeTestCase;
+
 import static org.codelibs.fesen.test.StreamsUtils.copyToBytesFromClasspath;
 
 import java.util.Collection;
-
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.plugins.Plugin;
-import org.codelibs.fesen.test.ESSingleNodeTestCase;
 
 /**
  * Rudimentary tests that the templates used by Logstash and Beats

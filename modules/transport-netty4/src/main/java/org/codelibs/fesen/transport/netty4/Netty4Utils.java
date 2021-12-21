@@ -19,23 +19,22 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.util.NettyRuntime;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.core.Booleans;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.util.NettyRuntime;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Netty4Utils {
 
@@ -65,8 +64,11 @@ public class Netty4Utils {
              * We have previously set the available processors yet either we are trying to set it to a different value now or there is a bug
              * in Netty and our previous value did not take, bail.
              */
-            final String message = String.format(Locale.ROOT, "available processors value [%d] did not match current value [%d]",
-                    availableProcessors, NettyRuntime.availableProcessors());
+            final String message = String.format(
+                    Locale.ROOT,
+                    "available processors value [%d] did not match current value [%d]",
+                    availableProcessors,
+                    NettyRuntime.availableProcessors());
             throw new IllegalStateException(message);
         }
     }

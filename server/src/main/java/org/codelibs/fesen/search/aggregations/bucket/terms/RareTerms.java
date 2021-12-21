@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 
+
 public interface RareTerms extends MultiBucketsAggregation {
 
     /**
@@ -44,3 +45,4 @@ public interface RareTerms extends MultiBucketsAggregation {
     Bucket getBucketByKey(String term);
 
 }
+

@@ -25,7 +25,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 
 public class SnapshotFailedEngineException extends EngineException {
 
-    public SnapshotFailedEngineException(StreamInput in) throws IOException {
+    public SnapshotFailedEngineException(StreamInput in) throws IOException{
         super(in);
     }
 }

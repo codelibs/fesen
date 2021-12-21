@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.lucene.document.LatLonShape;
 import org.apache.lucene.geo.LatLonGeometry;
 import org.apache.lucene.search.MatchNoDocsQuery;
@@ -44,12 +41,17 @@ import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.Polygon;
 import org.codelibs.fesen.geometry.Rectangle;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class VectorGeoShapeQueryProcessor {
 
     public Query geoShapeQuery(Geometry shape, String fieldName, ShapeRelation relation, QueryShardContext context) {
         // CONTAINS queries are not supported by VECTOR strategy for indices created before version 7.5.0 (Lucene 8.3.0)
         if (relation == ShapeRelation.CONTAINS && context.indexVersionCreated().before(Version.V_7_5_0)) {
-            throw new QueryShardException(context, ShapeRelation.CONTAINS + " query relation not supported for Field [" + fieldName + "].");
+            throw new QueryShardException(context,
+                ShapeRelation.CONTAINS + " query relation not supported for Field [" + fieldName + "].");
         }
         // wrap geoQuery as a ConstantScoreQuery
         return getVectorQueryFromShape(shape, fieldName, relation, context);
@@ -63,7 +65,7 @@ public class VectorGeoShapeQueryProcessor {
             return new MatchNoDocsQuery();
         }
         return LatLonShape.newGeometryQuery(fieldName, relation.getLuceneRelation(),
-                geometries.toArray(new LatLonGeometry[geometries.size()]));
+            geometries.toArray(new LatLonGeometry[geometries.size()]));
     }
 
     private static class LuceneGeometryCollector implements GeometryVisitor<Void, RuntimeException> {
@@ -165,7 +167,7 @@ public class VectorGeoShapeQueryProcessor {
         }
 
         private void collectLines(List<org.codelibs.fesen.geometry.Line> geometryLines) {
-            for (Line line : geometryLines) {
+            for (Line line: geometryLines) {
                 geometries.add(GeoShapeUtils.toLuceneLine(line));
             }
         }
@@ -177,3 +179,4 @@ public class VectorGeoShapeQueryProcessor {
         }
     }
 }
+

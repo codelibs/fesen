@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Represents a document (specified by its _index/_id) and its corresponding rating
@@ -52,8 +52,8 @@ public class RatedDocument implements Writeable, ToXContentObject {
     static final ParseField DOC_ID_FIELD = new ParseField("_id");
     static final ParseField INDEX_FIELD = new ParseField("_index");
 
-    private static final ConstructingObjectParser<RatedDocument, Void> PARSER =
-            new ConstructingObjectParser<>("rated_document", a -> new RatedDocument((String) a[0], (String) a[1], (Integer) a[2]));
+    private static final ConstructingObjectParser<RatedDocument, Void> PARSER = new ConstructingObjectParser<>("rated_document",
+            a -> new RatedDocument((String) a[0], (String) a[1], (Integer) a[2]));
 
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), INDEX_FIELD);

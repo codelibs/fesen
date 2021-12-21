@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.action.search.SearchPhaseController.mergeTopDocs;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SortField;
@@ -55,6 +42,19 @@ import org.codelibs.fesen.search.profile.ProfileShardResult;
 import org.codelibs.fesen.search.profile.SearchProfileShardResults;
 import org.codelibs.fesen.search.suggest.Suggest;
 import org.codelibs.fesen.search.suggest.completion.CompletionSuggestion;
+
+import static org.codelibs.fesen.action.search.SearchPhaseController.mergeTopDocs;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Merges multiple search responses into one. Used in cross-cluster search when reduction is performed locally on each cluster.
@@ -84,7 +84,7 @@ final class SearchResponseMerger {
     private final List<SearchResponse> searchResponses = new CopyOnWriteArrayList<>();
 
     SearchResponseMerger(int from, int size, int trackTotalHitsUpTo, SearchTimeProvider searchTimeProvider,
-            InternalAggregation.ReduceContextBuilder aggReduceContextBuilder) {
+                         InternalAggregation.ReduceContextBuilder aggReduceContextBuilder) {
         this.from = from;
         this.size = size;
         this.trackTotalHitsUpTo = trackTotalHitsUpTo;
@@ -179,8 +179,8 @@ final class SearchResponseMerger {
             }
 
             TopDocs topDocs = searchHitsToTopDocs(searchHits, totalHits, shards);
-            topDocsStats.add(new TopDocsAndMaxScore(topDocs, searchHits.getMaxScore()), searchResponse.isTimedOut(),
-                    searchResponse.isTerminatedEarly());
+            topDocsStats.add(new TopDocsAndMaxScore(topDocs, searchHits.getMaxScore()),
+                searchResponse.isTimedOut(), searchResponse.isTerminatedEarly());
             if (searchHits.getHits().length > 0) {
                 //there is no point in adding empty search hits and merging them with the others. Also, empty search hits always come
                 //without sort fields and collapse info, despite sort by field and/or field collapsing was requested, which causes
@@ -201,10 +201,10 @@ final class SearchResponseMerger {
         //make failures ordering consistent between ordinary search and CCS by looking at the shard they come from
         Arrays.sort(shardFailures, FAILURES_COMPARATOR);
         InternalSearchResponse response = new InternalSearchResponse(mergedSearchHits, reducedAggs, suggest, profileShardResults,
-                topDocsStats.timedOut, topDocsStats.terminatedEarly, numReducePhases);
+            topDocsStats.timedOut, topDocsStats.terminatedEarly, numReducePhases);
         long tookInMillis = searchTimeProvider.buildTookInMillis();
-        return new SearchResponse(response, null, totalShards, successfulShards, skippedShards, tookInMillis, shardFailures, clusters,
-                null);
+        return new SearchResponse(response, null, totalShards, successfulShards, skippedShards, tookInMillis, shardFailures,
+            clusters, null);
     }
 
     private static final Comparator<ShardSearchFailure> FAILURES_COMPARATOR = new Comparator<ShardSearchFailure>() {
@@ -263,8 +263,8 @@ final class SearchResponseMerger {
         if (searchHits.getSortFields() != null) {
             if (searchHits.getCollapseField() != null) {
                 assert searchHits.getCollapseValues() != null;
-                topDocs = new CollapseTopFieldDocs(searchHits.getCollapseField(), totalHits, scoreDocs, searchHits.getSortFields(),
-                        searchHits.getCollapseValues());
+                topDocs = new CollapseTopFieldDocs(searchHits.getCollapseField(), totalHits, scoreDocs,
+                    searchHits.getSortFields(), searchHits.getCollapseValues());
             } else {
                 topDocs = new TopFieldDocs(totalHits, scoreDocs, searchHits.getSortFields());
             }
@@ -283,7 +283,7 @@ final class SearchResponseMerger {
                 sortValues = null;
             } else {
                 if (sortFields.length == 1 && sortFields[0].getType() == SortField.Type.SCORE) {
-                    sortValues = new Object[] { hit.getScore() };
+                    sortValues = new Object[]{hit.getScore()};
                 } else {
                     sortValues = hit.getRawSortValues();
                 }
@@ -308,7 +308,7 @@ final class SearchResponseMerger {
     }
 
     private static void setSuggestShardIndex(Map<ShardIdAndClusterAlias, Integer> shards,
-            Map<String, List<Suggest.Suggestion>> groupedSuggestions) {
+                                             Map<String, List<Suggest.Suggestion>> groupedSuggestions) {
         assignShardIndex(shards);
         for (List<Suggest.Suggestion> suggestions : groupedSuggestions.values()) {
             for (Suggest.Suggestion suggestion : suggestions) {
@@ -343,7 +343,7 @@ final class SearchResponseMerger {
         } else {
             searchHits = new SearchHit[topDocs.scoreDocs.length];
             for (int i = 0; i < topDocs.scoreDocs.length; i++) {
-                FieldDocAndSearchHit scoreDoc = (FieldDocAndSearchHit) topDocs.scoreDocs[i];
+                FieldDocAndSearchHit scoreDoc = (FieldDocAndSearchHit)topDocs.scoreDocs[i];
                 searchHits[i] = scoreDoc.searchHit;
             }
         }
@@ -351,15 +351,15 @@ final class SearchResponseMerger {
         String collapseField = null;
         Object[] collapseValues = null;
         if (topDocs instanceof TopFieldDocs) {
-            sortFields = ((TopFieldDocs) topDocs).fields;
+            sortFields = ((TopFieldDocs)topDocs).fields;
             if (topDocs instanceof CollapseTopFieldDocs) {
-                CollapseTopFieldDocs collapseTopFieldDocs = (CollapseTopFieldDocs) topDocs;
+                CollapseTopFieldDocs collapseTopFieldDocs = (CollapseTopFieldDocs)topDocs;
                 collapseField = collapseTopFieldDocs.field;
                 collapseValues = collapseTopFieldDocs.collapseValues;
             }
         }
-        return new SearchHits(searchHits, topDocsStats.getTotalHits(), topDocsStats.getMaxScore(), sortFields, collapseField,
-                collapseValues);
+        return new SearchHits(searchHits, topDocsStats.getTotalHits(), topDocsStats.getMaxScore(),
+            sortFields, collapseField, collapseValues);
     }
 
     private static final class FieldDocAndSearchHit extends FieldDoc {
@@ -398,7 +398,8 @@ final class SearchResponseMerger {
                 return false;
             }
             ShardIdAndClusterAlias that = (ShardIdAndClusterAlias) o;
-            return shardId.equals(that.shardId) && clusterAlias.equals(that.clusterAlias);
+            return shardId.equals(that.shardId) &&
+                clusterAlias.equals(that.clusterAlias);
         }
 
         @Override

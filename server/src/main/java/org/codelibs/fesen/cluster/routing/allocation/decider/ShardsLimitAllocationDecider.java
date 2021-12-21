@@ -28,8 +28,8 @@ import org.codelibs.fesen.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 
 /**
  * This {@link AllocationDecider} limits the number of shards per node on a per
@@ -62,14 +62,16 @@ public class ShardsLimitAllocationDecider extends AllocationDecider {
      * node. Negative values are interpreted as unlimited.
      */
     public static final Setting<Integer> INDEX_TOTAL_SHARDS_PER_NODE_SETTING =
-            Setting.intSetting("index.routing.allocation.total_shards_per_node", -1, -1, Property.Dynamic, Property.IndexScope);
+        Setting.intSetting("index.routing.allocation.total_shards_per_node", -1, -1,
+            Property.Dynamic, Property.IndexScope);
 
     /**
      * Controls the maximum number of shards per node on a global level.
      * Negative values are interpreted as unlimited.
      */
     public static final Setting<Integer> CLUSTER_TOTAL_SHARDS_PER_NODE_SETTING =
-            Setting.intSetting("cluster.routing.allocation.total_shards_per_node", -1, -1, Property.Dynamic, Property.NodeScope);
+        Setting.intSetting("cluster.routing.allocation.total_shards_per_node", -1,  -1,
+            Property.Dynamic, Property.NodeScope);
 
     private final Settings settings;
 
@@ -95,7 +97,7 @@ public class ShardsLimitAllocationDecider extends AllocationDecider {
     }
 
     private Decision doDecide(ShardRouting shardRouting, RoutingNode node, RoutingAllocation allocation,
-            BiPredicate<Integer, Integer> decider) {
+                              BiPredicate<Integer, Integer> decider) {
         IndexMetadata indexMd = allocation.metadata().getIndexSafe(shardRouting.index());
         final int indexShardLimit = INDEX_TOTAL_SHARDS_PER_NODE_SETTING.get(indexMd.getSettings(), settings);
         // Capture the limit here in case it changes during this method's
@@ -110,20 +112,21 @@ public class ShardsLimitAllocationDecider extends AllocationDecider {
         final int nodeShardCount = node.numberOfOwningShards();
 
         if (clusterShardLimit > 0 && decider.test(nodeShardCount, clusterShardLimit)) {
-            return allocation.decision(Decision.NO, NAME, "too many shards [%d] allocated to this node, cluster setting [%s=%d]",
-                    nodeShardCount, CLUSTER_TOTAL_SHARDS_PER_NODE_SETTING.getKey(), clusterShardLimit);
+            return allocation.decision(Decision.NO, NAME,
+                "too many shards [%d] allocated to this node, cluster setting [%s=%d]",
+                nodeShardCount, CLUSTER_TOTAL_SHARDS_PER_NODE_SETTING.getKey(), clusterShardLimit);
         }
         if (indexShardLimit > 0) {
             final int indexShardCount = node.numberOfOwningShardsForIndex(shardRouting.index());
             if (decider.test(indexShardCount, indexShardLimit)) {
                 return allocation.decision(Decision.NO, NAME,
-                        "too many shards [%d] allocated to this node for index [%s], index setting [%s=%d]", indexShardCount,
-                        shardRouting.getIndexName(), INDEX_TOTAL_SHARDS_PER_NODE_SETTING.getKey(), indexShardLimit);
+                    "too many shards [%d] allocated to this node for index [%s], index setting [%s=%d]",
+                    indexShardCount, shardRouting.getIndexName(), INDEX_TOTAL_SHARDS_PER_NODE_SETTING.getKey(), indexShardLimit);
             }
         }
         return allocation.decision(Decision.YES, NAME,
-                "the shard count [%d] for this node is under the index limit [%d] and cluster level node limit [%d]", nodeShardCount,
-                indexShardLimit, clusterShardLimit);
+            "the shard count [%d] for this node is under the index limit [%d] and cluster level node limit [%d]",
+            nodeShardCount, indexShardLimit, clusterShardLimit);
     }
 
 }

@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -53,6 +40,10 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AnalyzerScope;
 import org.codelibs.fesen.index.analysis.IndexAnalyzers;
 import org.codelibs.fesen.index.analysis.NamedAnalyzer;
+import org.codelibs.fesen.index.mapper.DocumentMapper;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.Mapping;
+import org.codelibs.fesen.index.mapper.SourceToParse;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.similarity.SimilarityService;
 import org.codelibs.fesen.indices.IndicesModule;
@@ -65,12 +56,25 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.test.ESTestCase;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public abstract class MapperServiceTestCase extends ESTestCase {
 
     protected static final Settings SETTINGS = Settings.builder().put("index.version.created", Version.CURRENT).build();
 
-    protected static final ToXContent.Params INCLUDE_DEFAULTS =
-            new ToXContent.MapParams(Collections.singletonMap("include_defaults", "true"));
+    protected static final ToXContent.Params INCLUDE_DEFAULTS
+        = new ToXContent.MapParams(Collections.singletonMap("include_defaults", "true"));
 
     protected Collection<? extends Plugin> getPlugins() {
         return emptyList();
@@ -81,8 +85,11 @@ public abstract class MapperServiceTestCase extends ESTestCase {
     }
 
     protected IndexAnalyzers createIndexAnalyzers(IndexSettings indexSettings) {
-        return new IndexAnalyzers(singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
-                emptyMap(), emptyMap());
+        return new IndexAnalyzers(
+            singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
+            emptyMap(),
+            emptyMap()
+        );
     }
 
     protected final String randomIndexOptions() {
@@ -117,28 +124,44 @@ public abstract class MapperServiceTestCase extends ESTestCase {
      * Create a {@link MapperService} like we would for an index.
      */
     protected final MapperService createMapperService(Version version, XContentBuilder mapping) throws IOException {
-        IndexMetadata meta = IndexMetadata.builder("index").settings(Settings.builder().put("index.version.created", version))
-                .numberOfReplicas(0).numberOfShards(1).build();
+        IndexMetadata meta = IndexMetadata.builder("index")
+            .settings(Settings.builder().put("index.version.created", version))
+            .numberOfReplicas(0)
+            .numberOfShards(1)
+            .build();
         IndexSettings indexSettings = new IndexSettings(meta, getIndexSettings());
-        MapperRegistry mapperRegistry =
-                new IndicesModule(getPlugins().stream().filter(p -> p instanceof MapperPlugin).map(p -> (MapperPlugin) p).collect(toList()))
-                        .getMapperRegistry();
-        ScriptModule scriptModule = new ScriptModule(Settings.EMPTY,
-                getPlugins().stream().filter(p -> p instanceof ScriptPlugin).map(p -> (ScriptPlugin) p).collect(toList()));
+        MapperRegistry mapperRegistry = new IndicesModule(
+            getPlugins().stream().filter(p -> p instanceof MapperPlugin).map(p -> (MapperPlugin) p).collect(toList())
+        ).getMapperRegistry();
+        ScriptModule scriptModule = new ScriptModule(
+            Settings.EMPTY,
+            getPlugins().stream().filter(p -> p instanceof ScriptPlugin).map(p -> (ScriptPlugin) p).collect(toList())
+        );
         ScriptService scriptService = new ScriptService(getIndexSettings(), scriptModule.engines, scriptModule.contexts);
         SimilarityService similarityService = new SimilarityService(indexSettings, scriptService, emptyMap());
-        MapperService mapperService = new MapperService(indexSettings, createIndexAnalyzers(indexSettings), xContentRegistry(),
-                similarityService, mapperRegistry, () -> {
-                    throw new UnsupportedOperationException();
-                }, () -> true, scriptService);
+        MapperService mapperService = new MapperService(
+            indexSettings,
+            createIndexAnalyzers(indexSettings),
+            xContentRegistry(),
+            similarityService,
+            mapperRegistry,
+            () -> { throw new UnsupportedOperationException(); },
+            () -> true,
+            scriptService
+        );
         merge(mapperService, mapping);
         return mapperService;
     }
 
-    protected final void withLuceneIndex(MapperService mapperService, CheckedConsumer<RandomIndexWriter, IOException> builder,
-            CheckedConsumer<IndexReader, IOException> test) throws IOException {
-        try (Directory dir = newDirectory();
-                RandomIndexWriter iw = new RandomIndexWriter(random(), dir, new IndexWriterConfig(mapperService.indexAnalyzer()))) {
+    protected final void withLuceneIndex(
+        MapperService mapperService,
+        CheckedConsumer<RandomIndexWriter, IOException> builder,
+        CheckedConsumer<IndexReader, IOException> test
+    ) throws IOException {
+        try (
+            Directory dir = newDirectory();
+            RandomIndexWriter iw = new RandomIndexWriter(random(), dir, new IndexWriterConfig(mapperService.indexAnalyzer()))
+        ) {
             builder.accept(iw);
             try (IndexReader reader = iw.getReader()) {
                 test.accept(reader);
@@ -174,7 +197,9 @@ public abstract class MapperServiceTestCase extends ESTestCase {
     /**
      * Merge a new mapping into the one in the provided {@link MapperService} with a specific {@code MergeReason}
      */
-    protected final void merge(MapperService mapperService, MapperService.MergeReason reason, XContentBuilder mapping) throws IOException {
+    protected final void merge(MapperService mapperService,
+                               MapperService.MergeReason reason,
+                               XContentBuilder mapping) throws IOException {
         mapperService.merge("_doc", new CompressedXContent(BytesReference.bytes(mapping)), reason);
     }
 
@@ -212,12 +237,16 @@ public abstract class MapperServiceTestCase extends ESTestCase {
         when(queryShardContext.getSearchQuoteAnalyzer(anyObject())).thenCallRealMethod();
         when(queryShardContext.getSearchAnalyzer(anyObject())).thenCallRealMethod();
         when(queryShardContext.getIndexSettings()).thenReturn(mapperService.getIndexSettings());
-        when(queryShardContext.simpleMatchToIndexNames(anyObject()))
-                .thenAnswer(inv -> mapperService.simpleMatchToFullName(inv.getArguments()[0].toString()));
+        when(queryShardContext.simpleMatchToIndexNames(anyObject())).thenAnswer(
+            inv -> mapperService.simpleMatchToFullName(inv.getArguments()[0].toString())
+        );
         when(queryShardContext.allowExpensiveQueries()).thenReturn(true);
-        when(queryShardContext.lookup()).thenReturn(new SearchLookup(mapperService, (ft, s) -> {
-            throw new UnsupportedOperationException("search lookup not available");
-        }, null));
+        when(queryShardContext.lookup()).thenReturn(new SearchLookup(
+            mapperService,
+            (ft, s) -> {
+                throw new UnsupportedOperationException("search lookup not available");
+            },
+            null));
         return queryShardContext;
     }
 }

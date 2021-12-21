@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.client;
 
-import java.util.concurrent.CancellationException;
-
 import org.apache.http.client.methods.AbstractExecutionAwareRequest;
 import org.apache.http.client.methods.HttpRequestBase;
+
+import java.util.concurrent.CancellationException;
 
 /**
  * Represents an operation that can be cancelled.

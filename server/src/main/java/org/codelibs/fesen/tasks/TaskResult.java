@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.tasks;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.convertToMap;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.client.Requests;
 import org.codelibs.fesen.common.ParseField;
@@ -44,6 +34,16 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.requireNonNull;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.convertToMap;
 
 /**
  * Information about a running task or a task that stored its result. Running tasks just have a {@link #getTask()} while
@@ -177,8 +177,8 @@ public final class TaskResult implements Writeable, ToXContentObject {
     public static final InstantiatingObjectParser<TaskResult, Void> PARSER;
 
     static {
-        InstantiatingObjectParser.Builder<TaskResult, Void> parser =
-                InstantiatingObjectParser.builder("stored_task_result", true, TaskResult.class);
+        InstantiatingObjectParser.Builder<TaskResult, Void> parser = InstantiatingObjectParser.builder(
+            "stored_task_result", true, TaskResult.class);
         parser.declareBoolean(constructorArg(), new ParseField("completed"));
         parser.declareObject(constructorArg(), TaskInfo.PARSER, new ParseField("task"));
         ObjectParserHelper<TaskResult, Void> parserHelper = new ObjectParserHelper<>();
@@ -203,8 +203,10 @@ public final class TaskResult implements Writeable, ToXContentObject {
          * Equality of error and result is done by converting them to a map first. Not efficient but ignores field order and spacing
          * differences so perfect for testing.
          */
-        return Objects.equals(completed, other.completed) && Objects.equals(task, other.task)
-                && Objects.equals(getErrorAsMap(), other.getErrorAsMap()) && Objects.equals(getResponseAsMap(), other.getResponseAsMap());
+        return Objects.equals(completed, other.completed)
+                && Objects.equals(task, other.task)
+                && Objects.equals(getErrorAsMap(), other.getErrorAsMap())
+                && Objects.equals(getResponseAsMap(), other.getResponseAsMap());
     }
 
     @Override

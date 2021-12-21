@@ -19,13 +19,12 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Utility class for handling the standard setting keys for use in SSL configuration.
@@ -138,7 +137,8 @@ public class SslConfigurationKeys {
     public static final String KEY_LEGACY_PASSPHRASE = "key_passphrase";
 
     private static final Set<String> DEPRECATED_KEYS = new HashSet<>(
-            Arrays.asList(TRUSTSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_KEY_PASSWORD, KEY_LEGACY_PASSPHRASE));
+        Arrays.asList(TRUSTSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_KEY_PASSWORD, KEY_LEGACY_PASSPHRASE)
+    );
 
     private SslConfigurationKeys() {
         throw new IllegalStateException("Utility class should not be instantiated");
@@ -148,9 +148,12 @@ public class SslConfigurationKeys {
      * The list of keys that are used to load a non-secure, non-list setting
      */
     public static List<String> getStringKeys() {
-        return Arrays.asList(VERIFICATION_MODE, CLIENT_AUTH, TRUSTSTORE_PATH, TRUSTSTORE_LEGACY_PASSWORD, TRUSTSTORE_TYPE, TRUSTSTORE_TYPE,
-                KEYSTORE_PATH, KEYSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_KEY_PASSWORD, KEYSTORE_TYPE, KEYSTORE_ALGORITHM, CERTIFICATE, KEY,
-                KEY_LEGACY_PASSPHRASE);
+        return Arrays.asList(
+            VERIFICATION_MODE, CLIENT_AUTH,
+            TRUSTSTORE_PATH, TRUSTSTORE_LEGACY_PASSWORD, TRUSTSTORE_TYPE, TRUSTSTORE_TYPE,
+            KEYSTORE_PATH, KEYSTORE_LEGACY_PASSWORD, KEYSTORE_LEGACY_KEY_PASSWORD, KEYSTORE_TYPE, KEYSTORE_ALGORITHM,
+            CERTIFICATE, KEY, KEY_LEGACY_PASSPHRASE
+        );
     }
 
     /**

@@ -22,6 +22,7 @@ package org.codelibs.fesen.index;
 import org.codelibs.fesen.index.SlowLogLevel;
 import org.codelibs.fesen.test.ESTestCase;
 
+
 public class SlowLogLevelTests extends ESTestCase {
 
     public void testTracePrecedence() {

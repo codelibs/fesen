@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
-import static org.hamcrest.Matchers.hasSize;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +27,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.codelibs.fesen.action.index.IndexRequestBuilder;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.UpdateByQueryRequestBuilder;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.hamcrest.Matchers.hasSize;
 
 public class UpdateByQueryBasicTests extends ReindexTestCase {
     public void testBasics() throws Exception {
@@ -72,10 +75,11 @@ public class UpdateByQueryBasicTests extends ReindexTestCase {
     }
 
     public void testSlices() throws Exception {
-        indexRandom(true, client().prepareIndex("test", "test", "1").setSource("foo", "a"),
-                client().prepareIndex("test", "test", "2").setSource("foo", "a"),
-                client().prepareIndex("test", "test", "3").setSource("foo", "b"),
-                client().prepareIndex("test", "test", "4").setSource("foo", "c"));
+        indexRandom(true,
+            client().prepareIndex("test", "test", "1").setSource("foo", "a"),
+            client().prepareIndex("test", "test", "2").setSource("foo", "a"),
+            client().prepareIndex("test", "test", "3").setSource("foo", "b"),
+            client().prepareIndex("test", "test", "4").setSource("foo", "c"));
         assertHitCount(client().prepareSearch("test").setTypes("test").setSize(0).get(), 4);
         assertEquals(1, client().prepareGet("test", "test", "1").get().getVersion());
         assertEquals(1, client().prepareGet("test", "test", "4").get().getVersion());
@@ -84,20 +88,40 @@ public class UpdateByQueryBasicTests extends ReindexTestCase {
         int expectedSlices = expectedSliceStatuses(slices, "test");
 
         // Reindex all the docs
-        assertThat(updateByQuery().source("test").refresh(true).setSlices(slices).get(),
-                matcher().updated(4).slices(hasSize(expectedSlices)));
+        assertThat(
+            updateByQuery()
+                .source("test")
+                .refresh(true)
+                .setSlices(slices).get(),
+            matcher()
+                .updated(4)
+                .slices(hasSize(expectedSlices)));
         assertEquals(2, client().prepareGet("test", "test", "1").get().getVersion());
         assertEquals(2, client().prepareGet("test", "test", "4").get().getVersion());
 
         // Now none of them
-        assertThat(updateByQuery().source("test").filter(termQuery("foo", "no_match")).setSlices(slices).refresh(true).get(),
-                matcher().updated(0).slices(hasSize(expectedSlices)));
+        assertThat(
+            updateByQuery()
+                .source("test")
+                .filter(termQuery("foo", "no_match"))
+                .setSlices(slices)
+                .refresh(true).get(),
+            matcher()
+                .updated(0)
+                .slices(hasSize(expectedSlices)));
         assertEquals(2, client().prepareGet("test", "test", "1").get().getVersion());
         assertEquals(2, client().prepareGet("test", "test", "4").get().getVersion());
 
         // Now half of them
-        assertThat(updateByQuery().source("test").filter(termQuery("foo", "a")).refresh(true).setSlices(slices).get(),
-                matcher().updated(2).slices(hasSize(expectedSlices)));
+        assertThat(
+            updateByQuery()
+                .source("test")
+                .filter(termQuery("foo", "a"))
+                .refresh(true)
+                .setSlices(slices).get(),
+            matcher()
+                .updated(2)
+                .slices(hasSize(expectedSlices)));
         assertEquals(3, client().prepareGet("test", "test", "1").get().getVersion());
         assertEquals(3, client().prepareGet("test", "test", "2").get().getVersion());
         assertEquals(2, client().prepareGet("test", "test", "3").get().getVersion());
@@ -139,8 +163,11 @@ public class UpdateByQueryBasicTests extends ReindexTestCase {
     }
 
     public void testMissingSources() {
-        BulkByScrollResponse response =
-                updateByQuery().source("missing-index-*").refresh(true).setSlices(AbstractBulkByScrollRequest.AUTO_SLICES).get();
+        BulkByScrollResponse response = updateByQuery()
+            .source("missing-index-*")
+            .refresh(true)
+            .setSlices(AbstractBulkByScrollRequest.AUTO_SLICES)
+            .get();
         assertThat(response, matcher().updated(0).slices(hasSize(0)));
     }
 }

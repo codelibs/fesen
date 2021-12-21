@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.plugins;
 
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.cli.Terminal.Verbosity;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,12 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.cli.Terminal.Verbosity;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.core.internal.io.IOUtils;
 
 class PluginSecurity {
 

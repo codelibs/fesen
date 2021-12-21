@@ -18,6 +18,7 @@
  */
 package org.codelibs.fesen.index.fielddata;
 
+
 /**
  * {@link LeafFieldData} specialization for geo points.
  */

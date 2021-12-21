@@ -19,15 +19,47 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.action.bulk.BackoffPolicy.exponentialBackoff;
-import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
-import static org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES;
-import static org.codelibs.fesen.rest.RestStatus.CONFLICT;
-import static org.codelibs.fesen.search.sort.SortBuilders.fieldSort;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.DocWriteRequest;
+import org.codelibs.fesen.action.DocWriteResponse;
+import org.codelibs.fesen.action.admin.indices.refresh.RefreshRequest;
+import org.codelibs.fesen.action.admin.indices.refresh.RefreshResponse;
+import org.codelibs.fesen.action.bulk.BackoffPolicy;
+import org.codelibs.fesen.action.bulk.BulkItemResponse;
+import org.codelibs.fesen.action.bulk.BulkRequest;
+import org.codelibs.fesen.action.bulk.BulkResponse;
+import org.codelibs.fesen.action.bulk.Retry;
+import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
+import org.codelibs.fesen.action.delete.DeleteRequest;
+import org.codelibs.fesen.action.index.IndexRequest;
+import org.codelibs.fesen.action.support.TransportAction;
+import org.codelibs.fesen.client.ParentTaskAssigningClient;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.index.VersionType;
+import org.codelibs.fesen.index.mapper.IdFieldMapper;
+import org.codelibs.fesen.index.mapper.IndexFieldMapper;
+import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
+import org.codelibs.fesen.index.mapper.SourceFieldMapper;
+import org.codelibs.fesen.index.mapper.TypeFieldMapper;
+import org.codelibs.fesen.index.mapper.VersionFieldMapper;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.ClientScrollableHitSource;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource;
+import org.codelibs.fesen.index.reindex.WorkerBulkByScrollTaskState;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.script.ScriptService;
+import org.codelibs.fesen.script.UpdateScript;
+import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.search.sort.SortBuilder;
+import org.codelibs.fesen.threadpool.ThreadPool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,47 +76,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.DocWriteRequest;
-import org.codelibs.fesen.action.DocWriteResponse;
-import org.codelibs.fesen.action.admin.indices.refresh.RefreshRequest;
-import org.codelibs.fesen.action.admin.indices.refresh.RefreshResponse;
-import org.codelibs.fesen.action.bulk.BackoffPolicy;
-import org.codelibs.fesen.action.bulk.BulkItemResponse;
-import org.codelibs.fesen.action.bulk.BulkItemResponse.Failure;
-import org.codelibs.fesen.action.bulk.BulkRequest;
-import org.codelibs.fesen.action.bulk.BulkResponse;
-import org.codelibs.fesen.action.bulk.Retry;
-import org.codelibs.fesen.action.delete.DeleteRequest;
-import org.codelibs.fesen.action.index.IndexRequest;
-import org.codelibs.fesen.action.support.TransportAction;
-import org.codelibs.fesen.client.ParentTaskAssigningClient;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.index.VersionType;
-import org.codelibs.fesen.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.index.mapper.IndexFieldMapper;
-import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
-import org.codelibs.fesen.index.mapper.SourceFieldMapper;
-import org.codelibs.fesen.index.mapper.TypeFieldMapper;
-import org.codelibs.fesen.index.mapper.VersionFieldMapper;
-import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.script.ScriptService;
-import org.codelibs.fesen.script.UpdateScript;
-import org.codelibs.fesen.search.builder.SearchSourceBuilder;
-import org.codelibs.fesen.search.sort.SortBuilder;
-import org.codelibs.fesen.threadpool.ThreadPool;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.action.bulk.BackoffPolicy.exponentialBackoff;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
+import static org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest.MAX_DOCS_ALL_MATCHES;
+import static org.codelibs.fesen.rest.RestStatus.CONFLICT;
+import static org.codelibs.fesen.search.sort.SortBuilders.fieldSort;
 
 /**
  * Abstract base for scrolling across a search and executing bulk actions on all results. All package private methods are package private so
  * their tests can use them. Most methods run in the listener thread pool because the are meant to be fast and don't expect to block.
  */
-public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBulkByScrollRequest<Request>, Action extends TransportAction<Request, ?>> {
+public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBulkByScrollRequest<Request>,
+    Action extends TransportAction<Request, ?>> {
 
     protected final Logger logger;
     protected final BulkByScrollTask task;
@@ -116,9 +123,9 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
     private int lastBatchSize;
 
     AbstractAsyncBulkByScrollAction(BulkByScrollTask task, boolean needsSourceDocumentVersions,
-            boolean needsSourceDocumentSeqNoAndPrimaryTerm, Logger logger, ParentTaskAssigningClient client, ThreadPool threadPool,
-            Request mainRequest, ActionListener<BulkByScrollResponse> listener, @Nullable ScriptService scriptService,
-            @Nullable ReindexSslConfig sslConfig) {
+                                    boolean needsSourceDocumentSeqNoAndPrimaryTerm, Logger logger, ParentTaskAssigningClient client,
+                                    ThreadPool threadPool, Request mainRequest, ActionListener<BulkByScrollResponse> listener,
+                                    @Nullable ScriptService scriptService, @Nullable ReindexSslConfig sslConfig) {
         this.task = task;
         this.scriptService = scriptService;
         this.sslConfig = sslConfig;
@@ -213,15 +220,16 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
     }
 
     protected ScrollableHitSource buildScrollableResultSource(BackoffPolicy backoffPolicy) {
-        return new ClientScrollableHitSource(logger, backoffPolicy, threadPool, worker::countSearchRetry, this::onScrollResponse,
-                this::finishHim, client, mainRequest.getSearchRequest());
+        return new ClientScrollableHitSource(logger, backoffPolicy, threadPool, worker::countSearchRetry,
+            this::onScrollResponse, this::finishHim, client,
+                mainRequest.getSearchRequest());
     }
 
     /**
      * Build the response for reindex actions.
      */
     protected BulkByScrollResponse buildResponse(TimeValue took, List<BulkItemResponse.Failure> indexingFailures,
-            List<SearchFailure> searchFailures, boolean timedOut) {
+                                                      List<SearchFailure> searchFailures, boolean timedOut) {
         return new BulkByScrollResponse(took, task.getStatus(), indexingFailures, searchFailures, timedOut);
     }
 
@@ -263,10 +271,11 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
             finishHim(null);
             return;
         }
-        if ( // If any of the shards failed that should abort the request.
-        (response.getFailures().size() > 0)
+        if (    // If any of the shards failed that should abort the request.
+                (response.getFailures().size() > 0)
                 // Timeouts aren't shard failures but we still need to pass them back to the user.
-                || response.isTimedOut()) {
+                || response.isTimedOut()
+                ) {
             refreshAndFinish(emptyList(), response.getFailures(), response.isTimedOut());
             return;
         }
@@ -372,20 +381,20 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
                     continue;
                 }
                 switch (item.getOpType()) {
-                case CREATE:
-                case INDEX:
-                    if (item.getResponse().getResult() == DocWriteResponse.Result.CREATED) {
-                        worker.countCreated();
-                    } else {
+                    case CREATE:
+                    case INDEX:
+                        if (item.getResponse().getResult() == DocWriteResponse.Result.CREATED) {
+                            worker.countCreated();
+                        } else {
+                            worker.countUpdated();
+                        }
+                        break;
+                    case UPDATE:
                         worker.countUpdated();
-                    }
-                    break;
-                case UPDATE:
-                    worker.countUpdated();
-                    break;
-                case DELETE:
-                    worker.countDeleted();
-                    break;
+                        break;
+                    case DELETE:
+                        worker.countDeleted();
+                        break;
                 }
                 // Track the indexes we've seen so we can refresh them if requested
                 destinationIndicesThisBatch.add(item.getIndex());
@@ -478,12 +487,14 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
      * @param searchFailures any search failures accumulated during the request
      * @param timedOut have any of the sub-requests timed out?
      */
-    protected void finishHim(Exception failure, List<Failure> indexingFailures, List<SearchFailure> searchFailures, boolean timedOut) {
+    protected void finishHim(Exception failure, List<Failure> indexingFailures,
+            List<SearchFailure> searchFailures, boolean timedOut) {
         logger.debug("[{}]: finishing without any catastrophic failures", task.getId());
         scrollSource.close(() -> {
             if (failure == null) {
-                BulkByScrollResponse response =
-                        buildResponse(timeValueNanos(System.nanoTime() - startTime.get()), indexingFailures, searchFailures, timedOut);
+                BulkByScrollResponse response = buildResponse(
+                        timeValueNanos(System.nanoTime() - startTime.get()),
+                        indexingFailures, searchFailures, timedOut);
                 listener.onResponse(response);
             } else {
                 listener.onFailure(failure);
@@ -735,8 +746,10 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
         private final Script script;
         private final Map<String, Object> params;
 
-        public ScriptApplier(WorkerBulkByScrollTaskState taskWorker, ScriptService scriptService, Script script,
-                Map<String, Object> params) {
+        public ScriptApplier(WorkerBulkByScrollTaskState taskWorker,
+                             ScriptService scriptService,
+                             Script script,
+                             Map<String, Object> params) {
             this.taskWorker = taskWorker;
             this.scriptService = scriptService;
             this.script = script;
@@ -844,7 +857,9 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
 
     public enum OpType {
 
-        NOOP("noop"), INDEX("index"), DELETE("delete");
+        NOOP("noop"),
+        INDEX("index"),
+        DELETE("delete");
 
         private final String id;
 
@@ -855,15 +870,15 @@ public abstract class AbstractAsyncBulkByScrollAction<Request extends AbstractBu
         public static OpType fromString(String opType) {
             String lowerOpType = opType.toLowerCase(Locale.ROOT);
             switch (lowerOpType) {
-            case "noop":
-                return OpType.NOOP;
-            case "index":
-                return OpType.INDEX;
-            case "delete":
-                return OpType.DELETE;
-            default:
-                throw new IllegalArgumentException(
-                        "Operation type [" + lowerOpType + "] not allowed, only " + Arrays.toString(values()) + " are allowed");
+                case "noop":
+                    return OpType.NOOP;
+                case "index":
+                    return OpType.INDEX;
+                case "delete":
+                    return OpType.DELETE;
+                default:
+                    throw new IllegalArgumentException("Operation type [" + lowerOpType + "] not allowed, only " +
+                            Arrays.toString(values()) + " are allowed");
             }
         }
 

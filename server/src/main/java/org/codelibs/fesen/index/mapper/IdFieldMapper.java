@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
@@ -38,11 +32,11 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.LeafFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
 import org.codelibs.fesen.index.fielddata.plain.PagedBytesIndexFieldData;
 import org.codelibs.fesen.index.query.QueryShardContext;
@@ -56,6 +50,12 @@ import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
+
 /**
  * A mapper for the _id field. It does nothing since _id is neither indexed nor
  * stored, but we need to keep it so that its FieldType can be used to generate
@@ -64,9 +64,9 @@ import org.codelibs.fesen.search.sort.SortOrder;
 public class IdFieldMapper extends MetadataFieldMapper {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(IdFieldMapper.class);
     static final String ID_FIELD_DATA_DEPRECATION_MESSAGE =
-            "Loading the fielddata on the _id field is deprecated and will be removed in future versions. "
-                    + "If you require sorting or aggregating on this field you should also include the id in the "
-                    + "body of your documents, and map this field as a keyword field that has [doc_values] enabled";
+        "Loading the fielddata on the _id field is deprecated and will be removed in future versions. "
+            + "If you require sorting or aggregating on this field you should also include the id in the "
+            + "body of your documents, and map this field as a keyword field that has [doc_values] enabled";
 
     public static final String NAME = "_id";
 
@@ -151,15 +151,21 @@ public class IdFieldMapper extends MetadataFieldMapper {
         public IndexFieldData.Builder fielddataBuilder(String fullyQualifiedIndexName, Supplier<SearchLookup> searchLookup) {
             if (fieldDataEnabled.get() == false) {
                 throw new IllegalArgumentException("Fielddata access on the _id field is disallowed, "
-                        + "you can re-enable it by updating the dynamic cluster setting: "
-                        + IndicesService.INDICES_ID_FIELD_DATA_ENABLED_SETTING.getKey());
+                    + "you can re-enable it by updating the dynamic cluster setting: "
+                    + IndicesService.INDICES_ID_FIELD_DATA_ENABLED_SETTING.getKey());
             }
-            final IndexFieldData.Builder fieldDataBuilder = new PagedBytesIndexFieldData.Builder(name(),
-                    TextFieldMapper.Defaults.FIELDDATA_MIN_FREQUENCY, TextFieldMapper.Defaults.FIELDDATA_MAX_FREQUENCY,
-                    TextFieldMapper.Defaults.FIELDDATA_MIN_SEGMENT_SIZE, CoreValuesSourceType.BYTES);
+            final IndexFieldData.Builder fieldDataBuilder = new PagedBytesIndexFieldData.Builder(
+                    name(),
+                    TextFieldMapper.Defaults.FIELDDATA_MIN_FREQUENCY,
+                    TextFieldMapper.Defaults.FIELDDATA_MAX_FREQUENCY,
+                    TextFieldMapper.Defaults.FIELDDATA_MIN_SEGMENT_SIZE,
+                    CoreValuesSourceType.BYTES);
             return new IndexFieldData.Builder() {
                 @Override
-                public IndexFieldData<?> build(IndexFieldDataCache cache, CircuitBreakerService breakerService) {
+                public IndexFieldData<?> build(
+                    IndexFieldDataCache cache,
+                    CircuitBreakerService breakerService
+                ) {
                     deprecationLogger.deprecate("id_field_data", ID_FIELD_DATA_DEPRECATION_MESSAGE);
                     final IndexFieldData<?> fieldData = fieldDataBuilder.build(cache, breakerService);
                     return new IndexFieldData<LeafFieldData>() {
@@ -185,7 +191,8 @@ public class IdFieldMapper extends MetadataFieldMapper {
 
                         @Override
                         public SortField sortField(Object missingValue, MultiValueMode sortMode, Nested nested, boolean reverse) {
-                            XFieldComparatorSource source = new BytesRefFieldComparatorSource(this, missingValue, sortMode, nested);
+                            XFieldComparatorSource source = new BytesRefFieldComparatorSource(this, missingValue,
+                                sortMode, nested);
                             return new SortField(getFieldName(), source, reverse);
                         }
 
@@ -226,8 +233,8 @@ public class IdFieldMapper extends MetadataFieldMapper {
                     @Override
                     public BytesRef nextValue() throws IOException {
                         BytesRef encoded = inValues.nextValue();
-                        return new BytesRef(
-                                Uid.decodeId(Arrays.copyOfRange(encoded.bytes, encoded.offset, encoded.offset + encoded.length)));
+                        return new BytesRef(Uid.decodeId(
+                                Arrays.copyOfRange(encoded.bytes, encoded.offset, encoded.offset + encoded.length)));
                     }
 
                     @Override

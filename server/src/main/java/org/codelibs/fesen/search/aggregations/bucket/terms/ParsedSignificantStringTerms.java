@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.nio.CharBuffer;
-
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.nio.CharBuffer;
 
 public class ParsedSignificantStringTerms extends ParsedSignificantTerms {
 

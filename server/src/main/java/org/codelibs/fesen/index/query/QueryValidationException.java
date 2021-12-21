@@ -38,7 +38,7 @@ public class QueryValidationException extends ValidationException {
      * @return a {@link QueryValidationException} with added validation error message
      */
     public static QueryValidationException addValidationError(String queryId, String validationError,
-            QueryValidationException validationException) {
+                                                                    QueryValidationException validationException) {
         if (validationException == null) {
             validationException = new QueryValidationException();
         }
@@ -54,7 +54,7 @@ public class QueryValidationException extends ValidationException {
      * @return a {@link QueryValidationException} with added validation error message
      */
     public static QueryValidationException addValidationErrors(List<String> validationErrors,
-            QueryValidationException validationException) {
+                                                                    QueryValidationException validationException) {
         if (validationException == null) {
             validationException = new QueryValidationException();
         }

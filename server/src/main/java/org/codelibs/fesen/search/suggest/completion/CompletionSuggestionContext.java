@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.completion;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.search.suggest.document.CompletionQuery;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.unit.Fuzziness;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
 import org.codelibs.fesen.search.suggest.completion.context.ContextMapping;
 import org.codelibs.fesen.search.suggest.completion.context.ContextMappings;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class CompletionSuggestionContext extends SuggestionSearchContext.SuggestionContext {
 
@@ -95,7 +95,8 @@ public class CompletionSuggestionContext extends SuggestionSearchContext.Suggest
             if (regexOptions == null) {
                 regexOptions = RegexOptions.builder().build();
             }
-            query = fieldType.regexpQuery(getRegex(), regexOptions.getFlagsValue(), regexOptions.getMaxDeterminizedStates());
+            query = fieldType.regexpQuery(getRegex(), regexOptions.getFlagsValue(),
+                    regexOptions.getMaxDeterminizedStates());
         } else if (getText() != null) {
             query = createCompletionQuery(getText(), fieldType);
         } else {
@@ -111,9 +112,11 @@ public class CompletionSuggestionContext extends SuggestionSearchContext.Suggest
     private CompletionQuery createCompletionQuery(BytesRef prefix, CompletionFieldMapper.CompletionFieldType fieldType) {
         final CompletionQuery query;
         if (fuzzyOptions != null) {
-            query = fieldType.fuzzyQuery(prefix.utf8ToString(), Fuzziness.fromEdits(fuzzyOptions.getEditDistance()),
-                    fuzzyOptions.getFuzzyPrefixLength(), fuzzyOptions.getFuzzyMinLength(), fuzzyOptions.getMaxDeterminizedStates(),
-                    fuzzyOptions.isTranspositions(), fuzzyOptions.isUnicodeAware());
+            query = fieldType.fuzzyQuery(prefix.utf8ToString(),
+                    Fuzziness.fromEdits(fuzzyOptions.getEditDistance()),
+                    fuzzyOptions.getFuzzyPrefixLength(), fuzzyOptions.getFuzzyMinLength(),
+                    fuzzyOptions.getMaxDeterminizedStates(), fuzzyOptions.isTranspositions(),
+                    fuzzyOptions.isUnicodeAware());
         } else {
             query = fieldType.prefixQuery(prefix);
         }

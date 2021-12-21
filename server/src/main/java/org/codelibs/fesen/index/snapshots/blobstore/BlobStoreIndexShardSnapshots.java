@@ -19,7 +19,13 @@
 
 package org.codelibs.fesen.index.snapshots.blobstore;
 
-import static java.util.Collections.unmodifiableMap;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentParserUtils;
+import org.codelibs.fesen.index.snapshots.blobstore.BlobStoreIndexShardSnapshot.FileInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,13 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParserUtils;
-import org.codelibs.fesen.index.snapshots.blobstore.BlobStoreIndexShardSnapshot.FileInfo;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Contains information about all snapshots for the given shard in repository
@@ -284,8 +284,8 @@ public class BlobStoreIndexShardSnapshots implements Iterable<SnapshotFiles>, To
                         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                             if (token == XContentParser.Token.FIELD_NAME) {
                                 currentFieldName = parser.currentName();
-                                if (ParseFields.FILES.match(currentFieldName, parser.getDeprecationHandler())
-                                        && parser.nextToken() == XContentParser.Token.START_ARRAY) {
+                                if (ParseFields.FILES.match(currentFieldName, parser.getDeprecationHandler()) &&
+                                    parser.nextToken() == XContentParser.Token.START_ARRAY) {
                                     List<String> fileNames = new ArrayList<>();
                                     while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
                                         fileNames.add(parser.text());
@@ -312,8 +312,8 @@ public class BlobStoreIndexShardSnapshots implements Iterable<SnapshotFiles>, To
                 assert fileInfo != null;
                 fileInfosBuilder.add(fileInfo);
             }
-            snapshots.add(
-                    new SnapshotFiles(entry.getKey(), Collections.unmodifiableList(fileInfosBuilder), historyUUIDs.get(entry.getKey())));
+            snapshots.add(new SnapshotFiles(entry.getKey(), Collections.unmodifiableList(fileInfosBuilder),
+                historyUUIDs.get(entry.getKey())));
         }
         return new BlobStoreIndexShardSnapshots(files, Collections.unmodifiableList(snapshots));
     }

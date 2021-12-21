@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.cluster.repositories.cleanup;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -52,6 +49,9 @@ import org.codelibs.fesen.snapshots.SnapshotsService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Collections;
+
 /**
  * Repository cleanup action for repository implementations based on {@link BlobStoreRepository}.
  *
@@ -69,7 +69,8 @@ import org.codelibs.fesen.transport.TransportService;
  * and any delete/write operations. TODO: This will not work if we also want to clean up at the shard level as those will involve writes
  *                                        as well as deletes.
  */
-public final class TransportCleanupRepositoryAction extends TransportMasterNodeAction<CleanupRepositoryRequest, CleanupRepositoryResponse> {
+public final class TransportCleanupRepositoryAction extends TransportMasterNodeAction<CleanupRepositoryRequest,
+                                                                                      CleanupRepositoryResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportCleanupRepositoryAction.class);
 
@@ -86,10 +87,11 @@ public final class TransportCleanupRepositoryAction extends TransportMasterNodeA
 
     @Inject
     public TransportCleanupRepositoryAction(TransportService transportService, ClusterService clusterService,
-            RepositoriesService repositoriesService, SnapshotsService snapshotsService, ThreadPool threadPool, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(CleanupRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, CleanupRepositoryRequest::new,
-                indexNameExpressionResolver);
+                                            RepositoriesService repositoriesService, SnapshotsService snapshotsService,
+                                            ThreadPool threadPool, ActionFilters actionFilters,
+                                            IndexNameExpressionResolver indexNameExpressionResolver) {
+        super(CleanupRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters,
+            CleanupRepositoryRequest::new, indexNameExpressionResolver);
         this.repositoriesService = repositoriesService;
         this.snapshotsService = snapshotsService;
         // We add a state applier that will remove any dangling repository cleanup actions on master failover.
@@ -104,36 +106,36 @@ public final class TransportCleanupRepositoryAction extends TransportMasterNodeA
         clusterService.addStateApplier(event -> {
             if (event.localNodeMaster() && event.previousState().nodes().isLocalNodeElectedMaster() == false) {
                 final RepositoryCleanupInProgress repositoryCleanupInProgress =
-                        event.state().custom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY);
+                    event.state().custom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY);
                 if (repositoryCleanupInProgress.hasCleanupInProgress() == false) {
                     return;
                 }
                 clusterService.submitStateUpdateTask("clean up repository cleanup task after master failover",
-                        new ClusterStateUpdateTask() {
-                            @Override
-                            public ClusterState execute(ClusterState currentState) {
-                                return removeInProgressCleanup(currentState);
-                            }
+                    new ClusterStateUpdateTask() {
+                        @Override
+                        public ClusterState execute(ClusterState currentState) {
+                            return removeInProgressCleanup(currentState);
+                        }
 
-                            @Override
-                            public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
-                                logger.debug("Removed repository cleanup task [{}] from cluster state", repositoryCleanupInProgress);
-                            }
+                        @Override
+                        public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
+                            logger.debug("Removed repository cleanup task [{}] from cluster state", repositoryCleanupInProgress);
+                        }
 
-                            @Override
-                            public void onFailure(String source, Exception e) {
-                                logger.warn("Failed to remove repository cleanup task [{}] from cluster state",
-                                        repositoryCleanupInProgress);
-                            }
-                        });
+                        @Override
+                        public void onFailure(String source, Exception e) {
+                            logger.warn(
+                                "Failed to remove repository cleanup task [{}] from cluster state", repositoryCleanupInProgress);
+                        }
+                    });
             }
         });
     }
 
     private static ClusterState removeInProgressCleanup(final ClusterState currentState) {
         return currentState.custom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY).hasCleanupInProgress()
-                ? ClusterState.builder(currentState).putCustom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY).build()
-                : currentState;
+            ? ClusterState.builder(currentState).putCustom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY).build()
+            : currentState;
     }
 
     @Override
@@ -143,12 +145,12 @@ public final class TransportCleanupRepositoryAction extends TransportMasterNodeA
 
     @Override
     protected void masterOperation(CleanupRepositoryRequest request, ClusterState state,
-            ActionListener<CleanupRepositoryResponse> listener) {
+                                   ActionListener<CleanupRepositoryResponse> listener) {
         if (state.nodes().getMinNodeVersion().onOrAfter(MIN_VERSION)) {
             cleanupRepo(request.name(), ActionListener.map(listener, CleanupRepositoryResponse::new));
         } else {
             throw new IllegalArgumentException("Repository cleanup is only supported from version [" + MIN_VERSION
-                    + "] but the oldest node version in the cluster is [" + state.nodes().getMinNodeVersion() + ']');
+                + "] but the oldest node version in the cluster is [" + state.nodes().getMinNodeVersion() + ']');
         }
     }
 
@@ -176,99 +178,100 @@ public final class TransportCleanupRepositoryAction extends TransportMasterNodeA
             final long repositoryStateId = repositoryData.getGenId();
             logger.info("Running cleanup operations on repository [{}][{}]", repositoryName, repositoryStateId);
             clusterService.submitStateUpdateTask("cleanup repository [" + repositoryName + "][" + repositoryStateId + ']',
-                    new ClusterStateUpdateTask() {
+                new ClusterStateUpdateTask() {
 
-                        private boolean startedCleanup = false;
+                    private boolean startedCleanup = false;
 
-                        @Override
-                        public ClusterState execute(ClusterState currentState) {
-                            final RepositoryCleanupInProgress repositoryCleanupInProgress =
-                                    currentState.custom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY);
-                            if (repositoryCleanupInProgress.hasCleanupInProgress()) {
-                                throw new IllegalStateException("Cannot cleanup [" + repositoryName
-                                        + "] - a repository cleanup is already in-progress in [" + repositoryCleanupInProgress + "]");
-                            }
-                            final SnapshotDeletionsInProgress deletionsInProgress =
-                                    currentState.custom(SnapshotDeletionsInProgress.TYPE, SnapshotDeletionsInProgress.EMPTY);
-                            if (deletionsInProgress.hasDeletionsInProgress()) {
-                                throw new IllegalStateException("Cannot cleanup [" + repositoryName
-                                        + "] - a snapshot is currently being deleted in [" + deletionsInProgress + "]");
-                            }
-                            SnapshotsInProgress snapshots = currentState.custom(SnapshotsInProgress.TYPE, SnapshotsInProgress.EMPTY);
-                            if (snapshots.entries().isEmpty() == false) {
-                                throw new IllegalStateException(
-                                        "Cannot cleanup [" + repositoryName + "] - a snapshot is currently running in [" + snapshots + "]");
-                            }
-                            return ClusterState.builder(currentState)
-                                    .putCustom(RepositoryCleanupInProgress.TYPE, new RepositoryCleanupInProgress(Collections
-                                            .singletonList(RepositoryCleanupInProgress.startedEntry(repositoryName, repositoryStateId))))
-                                    .build();
+                    @Override
+                    public ClusterState execute(ClusterState currentState) {
+                        final RepositoryCleanupInProgress repositoryCleanupInProgress =
+                            currentState.custom(RepositoryCleanupInProgress.TYPE, RepositoryCleanupInProgress.EMPTY);
+                        if (repositoryCleanupInProgress.hasCleanupInProgress()) {
+                            throw new IllegalStateException(
+                                "Cannot cleanup [" + repositoryName + "] - a repository cleanup is already in-progress in ["
+                                    + repositoryCleanupInProgress + "]");
                         }
-
-                        @Override
-                        public void onFailure(String source, Exception e) {
-                            after(e, null);
+                        final SnapshotDeletionsInProgress deletionsInProgress =
+                            currentState.custom(SnapshotDeletionsInProgress.TYPE, SnapshotDeletionsInProgress.EMPTY);
+                        if (deletionsInProgress.hasDeletionsInProgress()) {
+                            throw new IllegalStateException("Cannot cleanup [" + repositoryName
+                                + "] - a snapshot is currently being deleted in [" + deletionsInProgress + "]");
                         }
-
-                        @Override
-                        public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
-                            startedCleanup = true;
-                            logger.debug("Initialized repository cleanup in cluster state for [{}][{}]", repositoryName, repositoryStateId);
-                            threadPool.executor(ThreadPool.Names.SNAPSHOT)
-                                    .execute(ActionRunnable.wrap(listener,
-                                            l -> blobStoreRepository.cleanup(repositoryStateId,
-                                                    snapshotsService.minCompatibleVersion(newState.nodes().getMinNodeVersion(),
-                                                            repositoryData, null),
-                                                    ActionListener.wrap(result -> after(null, result), e -> after(e, null)))));
+                        SnapshotsInProgress snapshots = currentState.custom(SnapshotsInProgress.TYPE, SnapshotsInProgress.EMPTY);
+                        if (snapshots.entries().isEmpty() == false) {
+                            throw new IllegalStateException(
+                                "Cannot cleanup [" + repositoryName + "] - a snapshot is currently running in [" + snapshots + "]");
                         }
+                        return ClusterState.builder(currentState).putCustom(RepositoryCleanupInProgress.TYPE,
+                            new RepositoryCleanupInProgress(Collections.singletonList(
+                                    RepositoryCleanupInProgress.startedEntry(repositoryName, repositoryStateId)))).build();
+                    }
 
-                        private void after(@Nullable Exception failure, @Nullable RepositoryCleanupResult result) {
-                            if (failure == null) {
-                                logger.debug("Finished repository cleanup operations on [{}][{}]", repositoryName, repositoryStateId);
-                            } else {
-                                logger.debug(() -> new ParameterizedMessage("Failed to finish repository cleanup operations on [{}][{}]",
-                                        repositoryName, repositoryStateId), failure);
-                            }
-                            assert failure != null || result != null;
-                            if (startedCleanup == false) {
-                                logger.debug("No cleanup task to remove from cluster state because we failed to start one", failure);
-                                listener.onFailure(failure);
-                                return;
-                            }
-                            clusterService.submitStateUpdateTask(
-                                    "remove repository cleanup task [" + repositoryName + "][" + repositoryStateId + ']',
-                                    new ClusterStateUpdateTask() {
-                                        @Override
-                                        public ClusterState execute(ClusterState currentState) {
-                                            return removeInProgressCleanup(currentState);
-                                        }
+                    @Override
+                    public void onFailure(String source, Exception e) {
+                        after(e, null);
+                    }
 
-                                        @Override
-                                        public void onFailure(String source, Exception e) {
-                                            if (failure != null) {
-                                                e.addSuppressed(failure);
-                                            }
-                                            logger.warn(() -> new ParameterizedMessage("[{}] failed to remove repository cleanup task",
-                                                    repositoryName), e);
-                                            listener.onFailure(e);
-                                        }
+                    @Override
+                    public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
+                        startedCleanup = true;
+                        logger.debug("Initialized repository cleanup in cluster state for [{}][{}]", repositoryName, repositoryStateId);
+                        threadPool.executor(ThreadPool.Names.SNAPSHOT).execute(ActionRunnable.wrap(listener,
+                            l -> blobStoreRepository.cleanup(
+                                repositoryStateId,
+                                snapshotsService.minCompatibleVersion(
+                                    newState.nodes().getMinNodeVersion(), repositoryData, null),
+                                ActionListener.wrap(result -> after(null, result), e -> after(e, null)))
+                        ));
+                    }
 
-                                        @Override
-                                        public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
-                                            if (failure == null) {
-                                                logger.info("Done with repository cleanup on [{}][{}] with result [{}]", repositoryName,
-                                                        repositoryStateId, result);
-                                                listener.onResponse(result);
-                                            } else {
-                                                logger.warn(() -> new ParameterizedMessage(
-                                                        "Failed to run repository cleanup operations on [{}][{}]", repositoryName,
-                                                        repositoryStateId), failure);
-                                                listener.onFailure(failure);
-                                            }
-                                        }
-                                    });
+                    private void after(@Nullable Exception failure, @Nullable RepositoryCleanupResult result) {
+                        if (failure == null) {
+                            logger.debug("Finished repository cleanup operations on [{}][{}]", repositoryName, repositoryStateId);
+                        } else {
+                            logger.debug(() -> new ParameterizedMessage(
+                                "Failed to finish repository cleanup operations on [{}][{}]", repositoryName, repositoryStateId), failure);
                         }
-                    });
+                        assert failure != null || result != null;
+                        if (startedCleanup == false) {
+                            logger.debug("No cleanup task to remove from cluster state because we failed to start one", failure);
+                            listener.onFailure(failure);
+                            return;
+                        }
+                        clusterService.submitStateUpdateTask(
+                            "remove repository cleanup task [" + repositoryName + "][" + repositoryStateId + ']',
+                            new ClusterStateUpdateTask() {
+                                @Override
+                                public ClusterState execute(ClusterState currentState) {
+                                    return removeInProgressCleanup(currentState);
+                                }
+
+                                @Override
+                                public void onFailure(String source, Exception e) {
+                                    if (failure != null) {
+                                        e.addSuppressed(failure);
+                                    }
+                                    logger.warn(() ->
+                                        new ParameterizedMessage("[{}] failed to remove repository cleanup task", repositoryName), e);
+                                    listener.onFailure(e);
+                                }
+
+                                @Override
+                                public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
+                                    if (failure == null) {
+                                        logger.info("Done with repository cleanup on [{}][{}] with result [{}]",
+                                            repositoryName, repositoryStateId, result);
+                                        listener.onResponse(result);
+                                    } else {
+                                        logger.warn(() -> new ParameterizedMessage(
+                                            "Failed to run repository cleanup operations on [{}][{}]",
+                                            repositoryName, repositoryStateId), failure);
+                                        listener.onFailure(failure);
+                                    }
+                                }
+                            });
+                    }
+                });
         }, listener::onFailure);
     }
 }

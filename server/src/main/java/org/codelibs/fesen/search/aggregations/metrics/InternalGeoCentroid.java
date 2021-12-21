@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.geo.GeoEncodingUtils;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Serialization and merge logic for {@link GeoCentroidAggregator}.
  */
@@ -41,8 +41,8 @@ public class InternalGeoCentroid extends InternalAggregation implements GeoCentr
     private final long count;
 
     public static long encodeLatLon(double lat, double lon) {
-        return (Integer.toUnsignedLong(GeoEncodingUtils.encodeLatitude(lat)) << 32)
-                | Integer.toUnsignedLong(GeoEncodingUtils.encodeLongitude(lon));
+        return (Integer.toUnsignedLong(GeoEncodingUtils.encodeLatitude(lat)) << 32) |
+                    Integer.toUnsignedLong(GeoEncodingUtils.encodeLongitude(lon));
     }
 
     public static double decodeLatitude(long encodedLatLon) {
@@ -129,7 +129,7 @@ public class InternalGeoCentroid extends InternalAggregation implements GeoCentr
                 }
             }
         }
-        final GeoPoint result = (Double.isNaN(lonSum)) ? null : new GeoPoint(latSum / totalCount, lonSum / totalCount);
+        final GeoPoint result = (Double.isNaN(lonSum)) ? null : new GeoPoint(latSum/totalCount, lonSum/totalCount);
         return new InternalGeoCentroid(name, result, totalCount, getMetadata());
     }
 
@@ -145,16 +145,16 @@ public class InternalGeoCentroid extends InternalAggregation implements GeoCentr
         } else if (path.size() == 1) {
             String coordinate = path.get(0);
             switch (coordinate) {
-            case "value":
-                return centroid;
-            case "lat":
-                return centroid.lat();
-            case "lon":
-                return centroid.lon();
-            case "count":
-                return count;
-            default:
-                throw new IllegalArgumentException("Found unknown path element [" + coordinate + "] in [" + getName() + "]");
+                case "value":
+                    return centroid;
+                case "lat":
+                    return centroid.lat();
+                case "lon":
+                    return centroid.lon();
+                case "count":
+                    return count;
+                default:
+                    throw new IllegalArgumentException("Found unknown path element [" + coordinate + "] in [" + getName() + "]");
             }
         } else {
             throw new IllegalArgumentException("path not supported for [" + getName() + "]: " + path);
@@ -184,14 +184,12 @@ public class InternalGeoCentroid extends InternalAggregation implements GeoCentr
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         InternalGeoCentroid that = (InternalGeoCentroid) obj;
-        return count == that.count && Objects.equals(centroid, that.centroid);
+        return count == that.count &&
+                Objects.equals(centroid, that.centroid);
     }
 
     @Override
@@ -201,6 +199,9 @@ public class InternalGeoCentroid extends InternalAggregation implements GeoCentr
 
     @Override
     public String toString() {
-        return "InternalGeoCentroid{" + "centroid=" + centroid + ", count=" + count + '}';
+        return "InternalGeoCentroid{" +
+                "centroid=" + centroid +
+                ", count=" + count +
+                '}';
     }
 }

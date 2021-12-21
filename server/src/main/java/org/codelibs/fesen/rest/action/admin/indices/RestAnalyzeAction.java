@@ -18,14 +18,6 @@
  */
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction;
 import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.ParseField;
@@ -33,6 +25,14 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
 
 public class RestAnalyzeAction extends BaseRestHandler {
 
@@ -50,8 +50,11 @@ public class RestAnalyzeAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_analyze"), new Route(POST, "/_analyze"), new Route(GET, "/{index}/_analyze"),
-                new Route(POST, "/{index}/_analyze")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_analyze"),
+            new Route(POST, "/_analyze"),
+            new Route(GET, "/{index}/_analyze"),
+            new Route(POST, "/{index}/_analyze")));
     }
 
     @Override

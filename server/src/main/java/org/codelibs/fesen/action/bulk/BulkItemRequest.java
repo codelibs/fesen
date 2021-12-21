@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.bulk;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.codelibs.fesen.action.DocWriteRequest;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class BulkItemRequest implements Writeable, Accountable {
 
@@ -92,17 +92,17 @@ public class BulkItemRequest implements Writeable, Accountable {
      */
     public void abort(String index, Exception cause) {
         if (primaryResponse == null) {
-            final BulkItemResponse.Failure failure =
-                    new BulkItemResponse.Failure(index, request.type(), request.id(), Objects.requireNonNull(cause), true);
+            final BulkItemResponse.Failure failure = new BulkItemResponse.Failure(index, request.type(), request.id(),
+                    Objects.requireNonNull(cause), true);
             setPrimaryResponse(new BulkItemResponse(id, request.opType(), failure));
         } else {
-            assert primaryResponse.isFailed() && primaryResponse.getFailure().isAborted() : "response [" + Strings.toString(primaryResponse)
-                    + "]; cause [" + cause + "]";
+            assert primaryResponse.isFailed() && primaryResponse.getFailure().isAborted()
+                    : "response [" + Strings.toString(primaryResponse) + "]; cause [" + cause + "]";
             if (primaryResponse.isFailed() && primaryResponse.getFailure().isAborted()) {
                 primaryResponse.getFailure().getCause().addSuppressed(cause);
             } else {
-                throw new IllegalStateException("aborting item that with response [" + primaryResponse + "] that was previously processed",
-                        cause);
+                throw new IllegalStateException(
+                        "aborting item that with response [" + primaryResponse + "] that was previously processed", cause);
             }
         }
     }

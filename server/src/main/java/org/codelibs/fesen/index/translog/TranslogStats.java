@@ -18,8 +18,7 @@
  */
 package org.codelibs.fesen.index.translog;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -28,12 +27,14 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
+import java.io.IOException;
+
 public class TranslogStats implements Writeable, ToXContentFragment {
 
     private long translogSizeInBytes;
     private int numberOfOperations;
     private long uncommittedSizeInBytes;
-    private int uncommittedOperations;
+    private int  uncommittedOperations;
     private long earliestLastModifiedAge;
 
     public TranslogStats() {
@@ -42,13 +43,20 @@ public class TranslogStats implements Writeable, ToXContentFragment {
     public TranslogStats(StreamInput in) throws IOException {
         numberOfOperations = in.readVInt();
         translogSizeInBytes = in.readVLong();
-        uncommittedOperations = in.readVInt();
-        uncommittedSizeInBytes = in.readVLong();
-        earliestLastModifiedAge = in.readVLong();
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_beta1)) {
+            uncommittedOperations = in.readVInt();
+            uncommittedSizeInBytes = in.readVLong();
+        } else {
+            uncommittedOperations = numberOfOperations;
+            uncommittedSizeInBytes = translogSizeInBytes;
+        }
+        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+            earliestLastModifiedAge = in.readVLong();
+        }
     }
 
     public TranslogStats(int numberOfOperations, long translogSizeInBytes, int uncommittedOperations, long uncommittedSizeInBytes,
-            long earliestLastModifiedAge) {
+                         long earliestLastModifiedAge) {
         if (numberOfOperations < 0) {
             throw new IllegalArgumentException("numberOfOperations must be >= 0");
         }
@@ -83,7 +91,8 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         if (this.earliestLastModifiedAge == 0) {
             this.earliestLastModifiedAge = translogStats.earliestLastModifiedAge;
         } else {
-            this.earliestLastModifiedAge = Math.min(this.earliestLastModifiedAge, translogStats.earliestLastModifiedAge);
+            this.earliestLastModifiedAge =
+                Math.min(this.earliestLastModifiedAge, translogStats.earliestLastModifiedAge);
         }
     }
 
@@ -105,9 +114,7 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         return uncommittedOperations;
     }
 
-    public long getEarliestLastModifiedAge() {
-        return earliestLastModifiedAge;
-    }
+    public long getEarliestLastModifiedAge() { return earliestLastModifiedAge; }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -130,8 +137,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVInt(numberOfOperations);
         out.writeVLong(translogSizeInBytes);
-        out.writeVInt(uncommittedOperations);
-        out.writeVLong(uncommittedSizeInBytes);
-        out.writeVLong(earliestLastModifiedAge);
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_beta1)) {
+            out.writeVInt(uncommittedOperations);
+            out.writeVLong(uncommittedSizeInBytes);
+        }
+        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+            out.writeVLong(earliestLastModifiedAge);
+        }
     }
 }

@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.tasks.TaskId;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
 
 /**
  * A request to get node tasks
@@ -41,8 +41,7 @@ public class GetTaskRequest extends ActionRequest {
     /**
      * Get the TaskId to look up.
      */
-    public GetTaskRequest() {
-    }
+    public GetTaskRequest() {}
 
     public GetTaskRequest(StreamInput in) throws IOException {
         super(in);

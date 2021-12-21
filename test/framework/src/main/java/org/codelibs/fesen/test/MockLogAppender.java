@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Pattern;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.filter.RegexFilter;
 import org.codelibs.fesen.common.regex.Regex;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test appender that can be used to verify that certain events were logged correctly
@@ -138,8 +138,13 @@ public class MockLogAppender extends AbstractAppender {
         private final Class<? extends Exception> clazz;
         private final String exceptionMessage;
 
-        public ExceptionSeenEventExpectation(final String name, final String logger, final Level level, final String message,
-                final Class<? extends Exception> clazz, final String exceptionMessage) {
+        public ExceptionSeenEventExpectation(
+                final String name,
+                final String logger,
+                final Level level,
+                final String message,
+                final Class<? extends Exception> clazz,
+                final String exceptionMessage) {
             super(name, logger, level, message);
             this.clazz = clazz;
             this.exceptionMessage = exceptionMessage;
@@ -147,7 +152,8 @@ public class MockLogAppender extends AbstractAppender {
 
         @Override
         public boolean innerMatch(final LogEvent event) {
-            return event.getThrown() != null && event.getThrown().getClass() == clazz
+            return event.getThrown() != null
+                    && event.getThrown().getClass() == clazz
                     && event.getThrown().getMessage().equals(exceptionMessage);
         }
 

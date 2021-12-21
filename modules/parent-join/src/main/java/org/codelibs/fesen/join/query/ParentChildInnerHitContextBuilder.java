@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.join.query;
 
-import static org.codelibs.fesen.search.fetch.subphase.InnerHitsContext.intersect;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.ReaderUtil;
 import org.apache.lucene.index.SortedDocValues;
@@ -55,12 +49,18 @@ import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.fetch.subphase.InnerHitsContext;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import static org.codelibs.fesen.search.fetch.subphase.InnerHitsContext.intersect;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
     private final String typeName;
     private final boolean fetchChildInnerHits;
 
-    ParentChildInnerHitContextBuilder(String typeName, boolean fetchChildInnerHits, QueryBuilder query, InnerHitBuilder innerHitBuilder,
-            Map<String, InnerHitContextBuilder> children) {
+    ParentChildInnerHitContextBuilder(String typeName, boolean fetchChildInnerHits, QueryBuilder query,
+                                      InnerHitBuilder innerHitBuilder, Map<String, InnerHitContextBuilder> children) {
         super(query, innerHitBuilder, children);
         this.typeName = typeName;
         this.fetchChildInnerHits = fetchChildInnerHits;
@@ -72,8 +72,8 @@ class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
         ParentJoinFieldMapper joinFieldMapper = ParentJoinFieldMapper.getMapper(context.mapperService());
         if (joinFieldMapper != null) {
             String name = innerHitBuilder.getName() != null ? innerHitBuilder.getName() : typeName;
-            JoinFieldInnerHitSubContext joinFieldInnerHits =
-                    new JoinFieldInnerHitSubContext(name, context, typeName, fetchChildInnerHits, joinFieldMapper);
+            JoinFieldInnerHitSubContext joinFieldInnerHits = new JoinFieldInnerHitSubContext(name, context, typeName,
+                fetchChildInnerHits, joinFieldMapper);
             setupInnerHitsContext(queryShardContext, joinFieldInnerHits);
             innerHitsContext.addInnerHitDefinition(joinFieldInnerHits);
         } else {
@@ -89,7 +89,7 @@ class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
         private final ParentJoinFieldMapper joinFieldMapper;
 
         JoinFieldInnerHitSubContext(String name, SearchContext context, String typeName, boolean fetchChildInnerHits,
-                ParentJoinFieldMapper joinFieldMapper) {
+                                    ParentJoinFieldMapper joinFieldMapper) {
             super(name, context);
             this.typeName = typeName;
             this.fetchChildInnerHits = fetchChildInnerHits;
@@ -105,7 +105,8 @@ class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
             }
 
             QueryShardContext qsc = context.getQueryShardContext();
-            ParentIdFieldMapper parentIdFieldMapper = joinFieldMapper.getParentIdFieldMapper(typeName, fetchChildInnerHits == false);
+            ParentIdFieldMapper parentIdFieldMapper =
+                joinFieldMapper.getParentIdFieldMapper(typeName, fetchChildInnerHits == false);
             if (parentIdFieldMapper == null) {
                 return new TopDocsAndMaxScore(Lucene.EMPTY_TOP_DOCS, Float.NaN);
             }
@@ -114,10 +115,11 @@ class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
             if (fetchChildInnerHits) {
                 Query hitQuery = parentIdFieldMapper.fieldType().termQuery(hit.getId(), qsc);
                 q = new BooleanQuery.Builder()
-                        // Only include child documents that have the current hit as parent:
-                        .add(hitQuery, BooleanClause.Occur.FILTER)
-                        // and only include child documents of a single relation:
-                        .add(joinFieldMapper.fieldType().termQuery(typeName, qsc), BooleanClause.Occur.FILTER).build();
+                    // Only include child documents that have the current hit as parent:
+                    .add(hitQuery, BooleanClause.Occur.FILTER)
+                    // and only include child documents of a single relation:
+                    .add(joinFieldMapper.fieldType().termQuery(typeName, qsc), BooleanClause.Occur.FILTER)
+                    .build();
             } else {
                 String parentId = getSortedDocValue(parentIdFieldMapper.name(), context, hit.docId());
                 if (parentId == null) {
@@ -132,8 +134,11 @@ class ParentChildInnerHitContextBuilder extends InnerHitContextBuilder {
                 for (LeafReaderContext ctx : context.searcher().getIndexReader().leaves()) {
                     intersect(weight, innerHitQueryWeight, totalHitCountCollector, ctx);
                 }
-                return new TopDocsAndMaxScore(new TopDocs(new TotalHits(totalHitCountCollector.getTotalHits(), TotalHits.Relation.EQUAL_TO),
-                        Lucene.EMPTY_SCORE_DOCS), Float.NaN);
+                return new TopDocsAndMaxScore(
+                    new TopDocs(
+                        new TotalHits(totalHitCountCollector.getTotalHits(), TotalHits.Relation.EQUAL_TO),
+                        Lucene.EMPTY_SCORE_DOCS
+                    ), Float.NaN);
             } else {
                 int topN = Math.min(from() + size(), context.searcher().getIndexReader().maxDoc());
                 TopDocsCollector<?> topDocsCollector;

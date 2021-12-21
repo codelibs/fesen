@@ -45,13 +45,13 @@ class LegacyTimeBasedUUIDGenerator implements UUIDGenerator {
 
     /** Puts the lower numberOfLongBytes from l into the array, starting index pos. */
     private static void putLong(byte[] array, long l, int pos, int numberOfLongBytes) {
-        for (int i = 0; i < numberOfLongBytes; ++i) {
-            array[pos + numberOfLongBytes - i - 1] = (byte) (l >>> (i * 8));
+        for (int i=0; i<numberOfLongBytes; ++i) {
+            array[pos+numberOfLongBytes-i-1] = (byte) (l >>> (i*8));
         }
     }
 
     @Override
-    public String getBase64UUID() {
+    public String getBase64UUID()  {
         final int sequenceId = sequenceNumber.incrementAndGet() & 0xffffff;
         long timestamp = System.currentTimeMillis();
 

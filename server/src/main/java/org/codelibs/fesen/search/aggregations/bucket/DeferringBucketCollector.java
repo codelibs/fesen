@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket;
 
-import java.io.IOException;
-import java.util.Iterator;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -32,6 +29,9 @@ import org.codelibs.fesen.search.aggregations.support.AggregationPath.PathElemen
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.sort.SortOrder;
 
+import java.io.IOException;
+import java.util.Iterator;
+
 /**
  * A {@link BucketCollector} that records collected doc IDs and buckets and
  * allows to replay a subset of the collected buckets.
@@ -39,8 +39,7 @@ import org.codelibs.fesen.search.sort.SortOrder;
 public abstract class DeferringBucketCollector extends BucketCollector {
 
     /** Sole constructor. */
-    public DeferringBucketCollector() {
-    }
+    public DeferringBucketCollector() {}
 
     /** Set the deferred collectors. */
     public abstract void setDeferredCollector(Iterable<BucketCollector> deferredCollectors);

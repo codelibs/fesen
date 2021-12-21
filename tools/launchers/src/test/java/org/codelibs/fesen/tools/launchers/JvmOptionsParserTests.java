@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.tools.launchers;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -45,11 +34,26 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.codelibs.fesen.tools.launchers.JvmOptionsParser;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class JvmOptionsParserTests extends LaunchersTestCase {
 
     public void testSubstitution() {
-        final List<String> jvmOptions = JvmOptionsParser.substitutePlaceholders(Collections.singletonList("-Djava.io.tmpdir=${ES_TMPDIR}"),
-                Collections.singletonMap("ES_TMPDIR", "/tmp/fesen"));
+        final List<String> jvmOptions = JvmOptionsParser.substitutePlaceholders(
+            Collections.singletonList("-Djava.io.tmpdir=${ES_TMPDIR}"),
+            Collections.singletonMap("ES_TMPDIR", "/tmp/fesen")
+        );
         assertThat(jvmOptions, contains("-Djava.io.tmpdir=/tmp/fesen"));
     }
 
@@ -64,8 +68,18 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
         final int javaMajorVersion = randomIntBetween(8, Integer.MAX_VALUE - 1);
         final int smallerJavaMajorVersion = randomIntBetween(7, javaMajorVersion);
         final int largerJavaMajorVersion = randomIntBetween(javaMajorVersion + 1, Integer.MAX_VALUE);
-        try (StringReader sr = new StringReader(String.format(Locale.ROOT, "-Xms1g\n%d:-Xmx1g\n%d:-XX:+UseG1GC\n%d:-Xlog:gc",
-                javaMajorVersion, smallerJavaMajorVersion, largerJavaMajorVersion)); BufferedReader br = new BufferedReader(sr)) {
+        try (
+            StringReader sr = new StringReader(
+                String.format(
+                    Locale.ROOT,
+                    "-Xms1g\n%d:-Xmx1g\n%d:-XX:+UseG1GC\n%d:-Xlog:gc",
+                    javaMajorVersion,
+                    smallerJavaMajorVersion,
+                    largerJavaMajorVersion
+                )
+            );
+            BufferedReader br = new BufferedReader(sr)
+        ) {
             assertExpectedJvmOptions(javaMajorVersion, br, Arrays.asList("-Xms1g", "-Xmx1g"));
         }
     }
@@ -74,8 +88,18 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
         final int javaMajorVersion = randomIntBetween(8, Integer.MAX_VALUE - 1);
         final int smallerJavaMajorVersion = randomIntBetween(7, javaMajorVersion);
         final int largerJavaMajorVersion = randomIntBetween(javaMajorVersion + 1, Integer.MAX_VALUE);
-        try (StringReader sr = new StringReader(String.format(Locale.ROOT, "-Xms1g\n%d-:-Xmx1g\n%d-:-XX:+UseG1GC\n%d-:-Xlog:gc",
-                javaMajorVersion, smallerJavaMajorVersion, largerJavaMajorVersion)); BufferedReader br = new BufferedReader(sr)) {
+        try (
+            StringReader sr = new StringReader(
+                String.format(
+                    Locale.ROOT,
+                    "-Xms1g\n%d-:-Xmx1g\n%d-:-XX:+UseG1GC\n%d-:-Xlog:gc",
+                    javaMajorVersion,
+                    smallerJavaMajorVersion,
+                    largerJavaMajorVersion
+                )
+            );
+            BufferedReader br = new BufferedReader(sr)
+        ) {
             assertExpectedJvmOptions(javaMajorVersion, br, Arrays.asList("-Xms1g", "-Xmx1g", "-XX:+UseG1GC"));
         }
     }
@@ -87,9 +111,21 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
         final int smallerJavaMajorVersionUpperBound = randomIntBetween(smallerJavaMajorVersionLowerBound, javaMajorVersion);
         final int largerJavaMajorVersionLowerBound = randomIntBetween(javaMajorVersion + 1, Integer.MAX_VALUE);
         final int largerJavaMajorVersionUpperBound = randomIntBetween(largerJavaMajorVersionLowerBound, Integer.MAX_VALUE);
-        try (StringReader sr = new StringReader(String.format(Locale.ROOT, "-Xms1g\n%d-%d:-Xmx1g\n%d-%d:-XX:+UseG1GC\n%d-%d:-Xlog:gc",
-                javaMajorVersion, javaMajorVersionUpperBound, smallerJavaMajorVersionLowerBound, smallerJavaMajorVersionUpperBound,
-                largerJavaMajorVersionLowerBound, largerJavaMajorVersionUpperBound)); BufferedReader br = new BufferedReader(sr)) {
+        try (
+            StringReader sr = new StringReader(
+                String.format(
+                    Locale.ROOT,
+                    "-Xms1g\n%d-%d:-Xmx1g\n%d-%d:-XX:+UseG1GC\n%d-%d:-Xlog:gc",
+                    javaMajorVersion,
+                    javaMajorVersionUpperBound,
+                    smallerJavaMajorVersionLowerBound,
+                    smallerJavaMajorVersionUpperBound,
+                    largerJavaMajorVersionLowerBound,
+                    largerJavaMajorVersionUpperBound
+                )
+            );
+            BufferedReader br = new BufferedReader(sr)
+        ) {
             assertExpectedJvmOptions(javaMajorVersion, br, Arrays.asList("-Xms1g", "-Xmx1g"));
         }
     }
@@ -101,11 +137,23 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
         final int smallerJavaMajorVersionUpperBound = randomIntBetween(smallerJavaMajorVersionLowerBound, javaMajorVersion);
         final int largerJavaMajorVersionLowerBound = randomIntBetween(javaMajorVersion + 1, Integer.MAX_VALUE);
         final int largerJavaMajorVersionUpperBound = randomIntBetween(largerJavaMajorVersionLowerBound, Integer.MAX_VALUE);
-        try (StringReader sr = new StringReader(String.format(Locale.ROOT,
-                "-Xms1g\n%d:-Xmx1g\n%d-:-XX:+UseG1GC\n%d-%d:-Xlog:gc\n%d-%d:-XX:+PrintFlagsFinal\n%d-%d:-XX+AggressiveOpts",
-                javaMajorVersion, javaMajorVersion, javaMajorVersion, javaMajorVersionUpperBound, smallerJavaMajorVersionLowerBound,
-                smallerJavaMajorVersionUpperBound, largerJavaMajorVersionLowerBound, largerJavaMajorVersionUpperBound));
-                BufferedReader br = new BufferedReader(sr)) {
+        try (
+            StringReader sr = new StringReader(
+                String.format(
+                    Locale.ROOT,
+                    "-Xms1g\n%d:-Xmx1g\n%d-:-XX:+UseG1GC\n%d-%d:-Xlog:gc\n%d-%d:-XX:+PrintFlagsFinal\n%d-%d:-XX+AggressiveOpts",
+                    javaMajorVersion,
+                    javaMajorVersion,
+                    javaMajorVersion,
+                    javaMajorVersionUpperBound,
+                    smallerJavaMajorVersionLowerBound,
+                    smallerJavaMajorVersionUpperBound,
+                    largerJavaMajorVersionLowerBound,
+                    largerJavaMajorVersionUpperBound
+                )
+            );
+            BufferedReader br = new BufferedReader(sr)
+        ) {
             assertExpectedJvmOptions(javaMajorVersion, br, Arrays.asList("-Xms1g", "-Xmx1g", "-XX:+UseG1GC", "-Xlog:gc"));
         }
     }
@@ -124,8 +172,12 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
     public void testReadRootJvmOptions() throws IOException, JvmOptionsParser.JvmOptionsFileParserException {
         final Path config = newTempDir();
         final Path rootJvmOptions = config.resolve("jvm.options");
-        Files.write(rootJvmOptions, Arrays.asList("# comment", "-Xms256m", "-Xmx256m"), StandardOpenOption.CREATE_NEW,
-                StandardOpenOption.APPEND);
+        Files.write(
+            rootJvmOptions,
+            Arrays.asList("# comment", "-Xms256m", "-Xmx256m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
         if (randomBoolean()) {
             // an empty jvm.options.d directory should be irrelevant
             Files.createDirectory(config.resolve("jvm.options.d"));
@@ -138,10 +190,18 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
     public void testReadJvmOptionsDirectory() throws IOException, JvmOptionsParser.JvmOptionsFileParserException {
         final Path config = newTempDir();
         Files.createDirectory(config.resolve("jvm.options.d"));
-        Files.write(config.resolve("jvm.options"), Arrays.asList("# comment", "-Xms256m", "-Xmx256m"), StandardOpenOption.CREATE_NEW,
-                StandardOpenOption.APPEND);
-        Files.write(config.resolve("jvm.options.d").resolve("heap.options"), Arrays.asList("# comment", "-Xms384m", "-Xmx384m"),
-                StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND);
+        Files.write(
+            config.resolve("jvm.options"),
+            Arrays.asList("# comment", "-Xms256m", "-Xmx256m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
+        Files.write(
+            config.resolve("jvm.options.d").resolve("heap.options"),
+            Arrays.asList("# comment", "-Xms384m", "-Xmx384m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
         final JvmOptionsParser parser = new JvmOptionsParser();
         final List<String> jvmOptions = parser.readJvmOptionsFiles(config);
         assertThat(jvmOptions, contains("-Xms256m", "-Xmx256m", "-Xms384m", "-Xmx384m"));
@@ -150,24 +210,40 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
     public void testReadJvmOptionsDirectoryInOrder() throws IOException, JvmOptionsParser.JvmOptionsFileParserException {
         final Path config = newTempDir();
         Files.createDirectory(config.resolve("jvm.options.d"));
-        Files.write(config.resolve("jvm.options"), Arrays.asList("# comment", "-Xms256m", "-Xmx256m"), StandardOpenOption.CREATE_NEW,
-                StandardOpenOption.APPEND);
-        Files.write(config.resolve("jvm.options.d").resolve("first.options"), Arrays.asList("# comment", "-Xms384m", "-Xmx384m"),
-                StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND);
-        Files.write(config.resolve("jvm.options.d").resolve("second.options"), Arrays.asList("# comment", "-Xms512m", "-Xmx512m"),
-                StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND);
+        Files.write(
+            config.resolve("jvm.options"),
+            Arrays.asList("# comment", "-Xms256m", "-Xmx256m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
+        Files.write(
+            config.resolve("jvm.options.d").resolve("first.options"),
+            Arrays.asList("# comment", "-Xms384m", "-Xmx384m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
+        Files.write(
+            config.resolve("jvm.options.d").resolve("second.options"),
+            Arrays.asList("# comment", "-Xms512m", "-Xmx512m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
         final JvmOptionsParser parser = new JvmOptionsParser();
         final List<String> jvmOptions = parser.readJvmOptionsFiles(config);
         assertThat(jvmOptions, contains("-Xms256m", "-Xmx256m", "-Xms384m", "-Xmx384m", "-Xms512m", "-Xmx512m"));
     }
 
-    public void testReadJvmOptionsDirectoryIgnoresFilesNotNamedOptions()
-            throws IOException, JvmOptionsParser.JvmOptionsFileParserException {
+    public void testReadJvmOptionsDirectoryIgnoresFilesNotNamedOptions() throws IOException,
+        JvmOptionsParser.JvmOptionsFileParserException {
         final Path config = newTempDir();
         Files.createFile(config.resolve("jvm.options"));
         Files.createDirectory(config.resolve("jvm.options.d"));
-        Files.write(config.resolve("jvm.options.d").resolve("heap.not-named-options"), Arrays.asList("# comment", "-Xms256m", "-Xmx256m"),
-                StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND);
+        Files.write(
+            config.resolve("jvm.options.d").resolve("heap.not-named-options"),
+            Arrays.asList("# comment", "-Xms256m", "-Xmx256m"),
+            StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.APPEND
+        );
         final JvmOptionsParser parser = new JvmOptionsParser();
         final List<String> jvmOptions = parser.readJvmOptionsFiles(config);
         assertThat(jvmOptions, empty());
@@ -190,7 +266,7 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
     }
 
     private void assertExpectedJvmOptions(final int javaMajorVersion, final BufferedReader br, final List<String> expectedJvmOptions)
-            throws IOException {
+        throws IOException {
         final Map<String, AtomicBoolean> seenJvmOptions = new HashMap<>();
         for (final String expectedJvmOption : expectedJvmOptions) {
             assertNull(seenJvmOptions.put(expectedJvmOption, new AtomicBoolean()));
@@ -241,8 +317,12 @@ public class JvmOptionsParserTests extends LaunchersTestCase {
 
         final long invalidLowerJavaMajorVersion = (long) randomIntBetween(1, 16) + Integer.MAX_VALUE;
         final long invalidUpperJavaMajorVersion = (long) randomIntBetween(1, 16) + Integer.MAX_VALUE;
-        final String numberFormatExceptionsLine = String.format(Locale.ROOT, "%d:-XX:+UseG1GC\n8-%d:-XX:+AggressiveOpts",
-                invalidLowerJavaMajorVersion, invalidUpperJavaMajorVersion);
+        final String numberFormatExceptionsLine = String.format(
+            Locale.ROOT,
+            "%d:-XX:+UseG1GC\n8-%d:-XX:+AggressiveOpts",
+            invalidLowerJavaMajorVersion,
+            invalidUpperJavaMajorVersion
+        );
         try (StringReader sr = new StringReader(numberFormatExceptionsLine); BufferedReader br = new BufferedReader(sr)) {
             final Map<Integer, String> invalidLines = new HashMap<>(2);
             invalidLines.put(1, String.format(Locale.ROOT, "%d:-XX:+UseG1GC", invalidLowerJavaMajorVersion));

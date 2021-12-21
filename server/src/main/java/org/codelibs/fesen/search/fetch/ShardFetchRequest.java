@@ -19,9 +19,7 @@
 
 package org.codelibs.fesen.search.fetch;
 
-import java.io.IOException;
-import java.util.Map;
-
+import com.carrotsearch.hppc.IntArrayList;
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.ScoreDoc;
 import org.codelibs.fesen.action.search.SearchShardTask;
@@ -37,7 +35,8 @@ import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.transport.TransportRequest;
 
-import com.carrotsearch.hppc.IntArrayList;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Shard level fetch base request. Holds all the info needed to execute a fetch.

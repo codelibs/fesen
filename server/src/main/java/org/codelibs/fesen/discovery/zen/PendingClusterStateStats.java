@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.discovery.zen;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+
+import java.io.IOException;
 
 /**
  * Class encapsulating stats about the PendingClusterStatsQueue

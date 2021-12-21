@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.cache;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.AbstractIndexComponent;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.cache.bitset.BitsetFilterCache;
 import org.codelibs.fesen.index.cache.query.QueryCache;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 public class IndexCache extends AbstractIndexComponent implements Closeable {
 

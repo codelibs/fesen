@@ -153,20 +153,22 @@ public class WorkerBulkByScrollTaskStateTests extends ESTestCase {
             }
         };
         try {
-            workerState.delayPrepareBulkRequest(threadPool, System.nanoTime(), batchSizeForMaxDelay, new AbstractRunnable() {
-                @Override
-                protected void doRun() throws Exception {
-                    boolean oldValue = done.getAndSet(true);
-                    if (oldValue) {
-                        throw new RuntimeException("Ran twice oh no!");
+            workerState.delayPrepareBulkRequest(threadPool, System.nanoTime(), batchSizeForMaxDelay,
+                new AbstractRunnable() {
+                    @Override
+                    protected void doRun() throws Exception {
+                        boolean oldValue = done.getAndSet(true);
+                        if (oldValue) {
+                            throw new RuntimeException("Ran twice oh no!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        errors.add(e);
                     }
                 }
-
-                @Override
-                public void onFailure(Exception e) {
-                    errors.add(e);
-                }
-            });
+            );
 
             // Rethrottle on a random number of threads, one of which is this thread.
             Runnable test = () -> {
@@ -228,7 +230,6 @@ public class WorkerBulkByScrollTaskStateTests extends ESTestCase {
                 @Override
                 protected void doRun() throws Exception {
                 }
-
                 @Override
                 public void onFailure(Exception e) {
                     throw new UnsupportedOperationException();

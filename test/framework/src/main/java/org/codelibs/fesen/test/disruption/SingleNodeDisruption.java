@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import static org.junit.Assert.assertFalse;
-
-import java.util.Random;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.test.InternalTestCluster;
+
+import java.util.Random;
+
+import static org.junit.Assert.assertFalse;
 
 public abstract class SingleNodeDisruption implements ServiceDisruptionScheme {
 
@@ -78,6 +78,8 @@ public abstract class SingleNodeDisruption implements ServiceDisruptionScheme {
 
     protected void ensureNodeCount(InternalTestCluster cluster) {
         assertFalse("cluster failed to form after disruption was healed", cluster.client().admin().cluster().prepareHealth()
-                .setWaitForNodes(String.valueOf(cluster.size())).setWaitForNoRelocatingShards(true).get().isTimedOut());
+                .setWaitForNodes(String.valueOf(cluster.size()))
+                .setWaitForNoRelocatingShards(true)
+                .get().isTimedOut());
     }
 }

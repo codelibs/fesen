@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.action.support.master;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class ShardsAcknowledgedResponse extends AcknowledgedResponse {
 

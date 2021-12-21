@@ -21,6 +21,7 @@ package org.codelibs.fesen.action.admin.indices.get;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.info.ClusterInfoRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -32,7 +33,9 @@ import org.codelibs.fesen.common.util.ArrayUtils;
  */
 public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
     public enum Feature {
-        ALIASES((byte) 0), MAPPINGS((byte) 1), SETTINGS((byte) 2);
+        ALIASES((byte) 0),
+        MAPPINGS((byte) 1),
+        SETTINGS((byte) 2);
 
         private static final Feature[] FEATURES = new Feature[Feature.values().length];
 
@@ -74,7 +77,9 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
         super(in);
         features = in.readArray(i -> Feature.fromId(i.readByte()), Feature[]::new);
         humanReadable = in.readBoolean();
-        includeDefaults = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            includeDefaults = in.readBoolean();
+        }
     }
 
     public GetIndexRequest features(Feature... features) {
@@ -138,7 +143,9 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
         super.writeTo(out);
         out.writeArray((o, f) -> o.writeByte(f.id), features);
         out.writeBoolean(humanReadable);
-        out.writeBoolean(includeDefaults);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            out.writeBoolean(includeDefaults);
+        }
     }
 
 }

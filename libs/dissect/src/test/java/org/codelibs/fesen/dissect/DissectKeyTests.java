@@ -19,15 +19,17 @@
 
 package org.codelibs.fesen.dissect;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import org.codelibs.fesen.dissect.DissectException;
+import org.codelibs.fesen.dissect.DissectKey;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.CoreMatchers;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.CoreMatchers;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class DissectKeyTests extends ESTestCase {
 
@@ -122,8 +124,10 @@ public class DissectKeyTests extends ESTestCase {
 
     public void testMultipleLeftModifiers() {
         String keyName = randomAlphaOfLengthBetween(1, 10);
-        List<String> validModifiers = EnumSet.allOf(DissectKey.Modifier.class).stream().filter(m -> !m.equals(DissectKey.Modifier.NONE))
-                .map(DissectKey.Modifier::toString).collect(Collectors.toList());
+        List<String> validModifiers = EnumSet.allOf(DissectKey.Modifier.class).stream()
+            .filter(m -> !m.equals(DissectKey.Modifier.NONE))
+            .map(DissectKey.Modifier::toString)
+            .collect(Collectors.toList());
         String modifier1 = randomFrom(validModifiers);
         String modifier2 = randomFrom(validModifiers);
         DissectException e = expectThrows(DissectException.class, () -> new DissectKey(modifier1 + modifier2 + keyName));
@@ -139,10 +143,9 @@ public class DissectKeyTests extends ESTestCase {
         assertThat(dissectKey.getAppendPosition(), equalTo(0));
         assertThat(dissectKey.getName(), equalTo(keyName));
     }
-
     public void testNamedSkipKey() {
         String keyName = "myname";
-        DissectKey dissectKey = new DissectKey("?" + keyName);
+        DissectKey dissectKey = new DissectKey("?" +keyName);
         assertThat(dissectKey.getModifier(), equalTo(DissectKey.Modifier.NAMED_SKIP));
         assertThat(dissectKey.skip(), is(true));
         assertThat(dissectKey.skipRightPadding(), is(false));
@@ -152,17 +155,16 @@ public class DissectKeyTests extends ESTestCase {
 
     public void testSkipKeyWithPadding() {
         String keyName = "";
-        DissectKey dissectKey = new DissectKey(keyName + "->");
+        DissectKey dissectKey = new DissectKey(keyName  + "->");
         assertThat(dissectKey.getModifier(), equalTo(DissectKey.Modifier.NONE));
         assertThat(dissectKey.skip(), is(true));
         assertThat(dissectKey.skipRightPadding(), is(true));
         assertThat(dissectKey.getAppendPosition(), equalTo(0));
         assertThat(dissectKey.getName(), equalTo(keyName));
     }
-
     public void testNamedEmptySkipKeyWithPadding() {
         String keyName = "";
-        DissectKey dissectKey = new DissectKey("?" + keyName + "->");
+        DissectKey dissectKey = new DissectKey("?" +keyName + "->");
         assertThat(dissectKey.getModifier(), equalTo(DissectKey.Modifier.NAMED_SKIP));
         assertThat(dissectKey.skip(), is(true));
         assertThat(dissectKey.skipRightPadding(), is(true));

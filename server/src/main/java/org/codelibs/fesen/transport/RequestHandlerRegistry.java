@@ -40,7 +40,8 @@ public class RequestHandlerRegistry<Request extends TransportRequest> {
     private final Writeable.Reader<Request> requestReader;
 
     public RequestHandlerRegistry(String action, Writeable.Reader<Request> requestReader, TaskManager taskManager,
-            TransportRequestHandler<Request> handler, String executor, boolean forceExecution, boolean canTripCircuitBreaker) {
+                                  TransportRequestHandler<Request> handler, String executor, boolean forceExecution,
+                                  boolean canTripCircuitBreaker) {
         this.action = action;
         this.requestReader = requestReader;
         this.handler = handler;
@@ -97,8 +98,8 @@ public class RequestHandlerRegistry<Request extends TransportRequest> {
     }
 
     public static <R extends TransportRequest> RequestHandlerRegistry<R> replaceHandler(RequestHandlerRegistry<R> registry,
-            TransportRequestHandler<R> handler) {
-        return new RequestHandlerRegistry<>(registry.action, registry.requestReader, registry.taskManager, handler, registry.executor,
-                registry.forceExecution, registry.canTripCircuitBreaker);
+                                                                                        TransportRequestHandler<R> handler) {
+        return new RequestHandlerRegistry<>(registry.action, registry.requestReader, registry.taskManager, handler,
+            registry.executor, registry.forceExecution, registry.canTripCircuitBreaker);
     }
 }

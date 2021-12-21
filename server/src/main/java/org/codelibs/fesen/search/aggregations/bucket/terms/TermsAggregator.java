@@ -17,14 +17,8 @@
  * under the License.
  */
 
-package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+package org.codelibs.fesen.search.aggregations.bucket.terms;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -42,6 +36,13 @@ import org.codelibs.fesen.search.aggregations.bucket.DeferableBucketAggregator;
 import org.codelibs.fesen.search.aggregations.bucket.nested.NestedAggregator;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public abstract class TermsAggregator extends DeferableBucketAggregator {
 
@@ -161,8 +162,10 @@ public abstract class TermsAggregator extends DeferableBucketAggregator {
                 return false;
             }
             BucketCountThresholds other = (BucketCountThresholds) obj;
-            return Objects.equals(requiredSize, other.requiredSize) && Objects.equals(shardSize, other.shardSize)
-                    && Objects.equals(minDocCount, other.minDocCount) && Objects.equals(shardMinDocCount, other.shardMinDocCount);
+            return Objects.equals(requiredSize, other.requiredSize)
+                    && Objects.equals(shardSize, other.shardSize)
+                    && Objects.equals(minDocCount, other.minDocCount)
+                    && Objects.equals(shardMinDocCount, other.shardMinDocCount);
         }
     }
 
@@ -192,7 +195,7 @@ public abstract class TermsAggregator extends DeferableBucketAggregator {
             this.collectMode = collectMode;
         }
         // Don't defer any child agg if we are dependent on it for pruning results
-        if (order instanceof Aggregation) {
+        if (order instanceof Aggregation){
             AggregationPath path = ((Aggregation) order).path();
             aggsUsedForSorting.add(path.resolveTopmostAggregator(this));
         } else if (order instanceof CompoundOrder) {
@@ -227,6 +230,7 @@ public abstract class TermsAggregator extends DeferableBucketAggregator {
 
     @Override
     protected boolean shouldDefer(Aggregator aggregator) {
-        return collectMode == SubAggCollectionMode.BREADTH_FIRST && !aggsUsedForSorting.contains(aggregator);
+        return collectMode == SubAggCollectionMode.BREADTH_FIRST
+                && !aggsUsedForSorting.contains(aggregator);
     }
 }

@@ -82,8 +82,7 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
     private TestTransportInstanceSingleOperationAction action;
 
     public static class Request extends InstanceShardOperationRequest<Request> {
-        public Request() {
-        }
+        public Request() {}
 
         public Request(StreamInput in) throws IOException {
             super(null, in);
@@ -91,25 +90,24 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
     }
 
     public static class Response extends ActionResponse {
-        public Response() {
-        }
+        public Response() {}
 
         public Response(StreamInput in) throws IOException {
             super(in);
         }
 
         @Override
-        public void writeTo(StreamOutput out) throws IOException {
-        }
+        public void writeTo(StreamOutput out) throws IOException {}
     }
 
     class TestTransportInstanceSingleOperationAction extends TransportInstanceSingleOperationAction<Request, Response> {
         private final Map<ShardId, Object> shards = new HashMap<>();
 
-        TestTransportInstanceSingleOperationAction(String actionName, TransportService transportService, ActionFilters actionFilters,
-                IndexNameExpressionResolver indexNameExpressionResolver, Writeable.Reader<Request> request) {
-            super(actionName, THREAD_POOL, TransportInstanceSingleOperationActionTests.this.clusterService, transportService, actionFilters,
-                    indexNameExpressionResolver, request);
+        TestTransportInstanceSingleOperationAction(String actionName, TransportService transportService,
+                                                   ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+                                                   Writeable.Reader<Request> request) {
+            super(actionName, THREAD_POOL, TransportInstanceSingleOperationActionTests.this.clusterService, transportService,
+                actionFilters, indexNameExpressionResolver, request);
         }
 
         public Map<ShardId, Object> getResults() {
@@ -164,11 +162,16 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
         transport = new CapturingTransport();
         clusterService = createClusterService(THREAD_POOL);
         transportService = transport.createTransportService(clusterService.getSettings(), THREAD_POOL,
-                TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
+            TransportService.NOOP_TRANSPORT_INTERCEPTOR, x -> clusterService.localNode(), null, Collections.emptySet());
         transportService.start();
         transportService.acceptIncomingRequests();
-        action = new TestTransportInstanceSingleOperationAction("indices:admin/test", transportService, new ActionFilters(new HashSet<>()),
-                new MyResolver(), Request::new);
+        action = new TestTransportInstanceSingleOperationAction(
+                "indices:admin/test",
+                transportService,
+                new ActionFilters(new HashSet<>()),
+                new MyResolver(),
+                Request::new
+        );
     }
 
     @Override
@@ -226,8 +229,8 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
         long requestId = transport.capturedRequests()[0].requestId;
         transport.clear();
         // this should not trigger retry or anything and the listener should report exception immediately
-        transport.handleRemoteError(requestId,
-                new TransportException("a generic transport exception", new Exception("generic test exception")));
+        transport.handleRemoteError(requestId, new TransportException("a generic transport exception",
+            new Exception("generic test exception")));
 
         try {
             // result should return immediately
@@ -309,8 +312,13 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
     }
 
     public void testUnresolvableRequestDoesNotHang() throws InterruptedException, ExecutionException, TimeoutException {
-        action = new TestTransportInstanceSingleOperationAction("indices:admin/test_unresolvable", transportService,
-                new ActionFilters(new HashSet<>()), new MyResolver(), Request::new) {
+        action = new TestTransportInstanceSingleOperationAction(
+                "indices:admin/test_unresolvable",
+                transportService,
+                new ActionFilters(new HashSet<>()),
+                new MyResolver(),
+                Request::new
+        ) {
             @Override
             protected void resolveRequest(ClusterState state, Request request) {
                 throw new IllegalStateException("request cannot be resolved");

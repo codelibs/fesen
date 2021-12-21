@@ -39,20 +39,21 @@ public class IndexAbstractionResolver {
     }
 
     public List<String> resolveIndexAbstractions(String[] indices, IndicesOptions indicesOptions, Metadata metadata,
-            boolean includeDataStreams) {
+                                                 boolean includeDataStreams) {
         return resolveIndexAbstractions(Arrays.asList(indices), indicesOptions, metadata, includeDataStreams);
     }
 
     public List<String> resolveIndexAbstractions(Iterable<String> indices, IndicesOptions indicesOptions, Metadata metadata,
-            boolean includeDataStreams) {
+                                                 boolean includeDataStreams) {
         final boolean replaceWildcards = indicesOptions.expandWildcardsOpen() || indicesOptions.expandWildcardsClosed();
         Set<String> availableIndexAbstractions = metadata.getIndicesLookup().keySet();
         return resolveIndexAbstractions(indices, indicesOptions, metadata, availableIndexAbstractions, replaceWildcards,
-                includeDataStreams);
+            includeDataStreams);
     }
 
     public List<String> resolveIndexAbstractions(Iterable<String> indices, IndicesOptions indicesOptions, Metadata metadata,
-            Collection<String> availableIndexAbstractions, boolean replaceWildcards, boolean includeDataStreams) {
+                                                 Collection<String> availableIndexAbstractions, boolean replaceWildcards,
+                                                 boolean includeDataStreams) {
         List<String> finalIndices = new ArrayList<>();
         boolean wildcardSeen = false;
         for (String index : indices) {
@@ -72,8 +73,8 @@ public class IndexAbstractionResolver {
                 if (replaceWildcards && Regex.isSimpleMatchPattern(dateMathName)) {
                     // continue
                     indexAbstraction = dateMathName;
-                } else if (availableIndexAbstractions.contains(dateMathName)
-                        && isIndexVisible(indexAbstraction, dateMathName, indicesOptions, metadata, includeDataStreams, true)) {
+                } else if (availableIndexAbstractions.contains(dateMathName) &&
+                    isIndexVisible(indexAbstraction, dateMathName, indicesOptions, metadata, includeDataStreams, true)) {
                     if (minus) {
                         finalIndices.remove(dateMathName);
                     } else {
@@ -90,8 +91,8 @@ public class IndexAbstractionResolver {
                 wildcardSeen = true;
                 Set<String> resolvedIndices = new HashSet<>();
                 for (String authorizedIndex : availableIndexAbstractions) {
-                    if (Regex.simpleMatch(indexAbstraction, authorizedIndex)
-                            && isIndexVisible(indexAbstraction, authorizedIndex, indicesOptions, metadata, includeDataStreams)) {
+                    if (Regex.simpleMatch(indexAbstraction, authorizedIndex) &&
+                        isIndexVisible(indexAbstraction, authorizedIndex, indicesOptions, metadata, includeDataStreams)) {
                         resolvedIndices.add(authorizedIndex);
                     }
                 }
@@ -119,12 +120,12 @@ public class IndexAbstractionResolver {
     }
 
     public static boolean isIndexVisible(String expression, String index, IndicesOptions indicesOptions, Metadata metadata,
-            boolean includeDataStreams) {
+                                         boolean includeDataStreams) {
         return isIndexVisible(expression, index, indicesOptions, metadata, includeDataStreams, false);
     }
 
     public static boolean isIndexVisible(String expression, String index, IndicesOptions indicesOptions, Metadata metadata,
-            boolean includeDataStreams, boolean dateMathExpression) {
+                                          boolean includeDataStreams, boolean dateMathExpression) {
         IndexAbstraction indexAbstraction = metadata.getIndicesLookup().get(index);
         if (indexAbstraction == null) {
             throw new IllegalStateException("could not resolve index abstraction [" + index + "]");

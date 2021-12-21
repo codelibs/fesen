@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.cluster.health;
 
+
 import java.io.IOException;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -26,7 +27,9 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 
 public enum ClusterHealthStatus implements Writeable {
-    GREEN((byte) 0), YELLOW((byte) 1), RED((byte) 2);
+    GREEN((byte) 0),
+    YELLOW((byte) 1),
+    RED((byte) 2);
 
     private byte value;
 
@@ -54,14 +57,14 @@ public enum ClusterHealthStatus implements Writeable {
 
     public static ClusterHealthStatus fromValue(byte value) throws IOException {
         switch (value) {
-        case 0:
-            return GREEN;
-        case 1:
-            return YELLOW;
-        case 2:
-            return RED;
-        default:
-            throw new IllegalArgumentException("No cluster health status for value [" + value + "]");
+            case 0:
+                return GREEN;
+            case 1:
+                return YELLOW;
+            case 2:
+                return RED;
+            default:
+                throw new IllegalArgumentException("No cluster health status for value [" + value + "]");
         }
     }
 

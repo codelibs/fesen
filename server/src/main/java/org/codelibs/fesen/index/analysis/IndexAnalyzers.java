@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.index.analysis;
 
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_ANALYZER_NAME;
-import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_SEARCH_ANALYZER_NAME;
-import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_SEARCH_QUOTED_ANALYZER_NAME;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
@@ -31,6 +26,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_ANALYZER_NAME;
+import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_SEARCH_ANALYZER_NAME;
+import static org.codelibs.fesen.index.analysis.AnalysisRegistry.DEFAULT_SEARCH_QUOTED_ANALYZER_NAME;
 
 /**
  * IndexAnalyzers contains a name to analyzer mapping for a specific index.
@@ -108,6 +108,8 @@ public final class IndexAnalyzers implements Closeable {
     @Override
     public void close() throws IOException {
         IOUtils.close(Stream.of(analyzers.values().stream(), normalizers.values().stream(), whitespaceNormalizers.values().stream())
-                .flatMap(s -> s).filter(a -> a.scope() == AnalyzerScope.INDEX).collect(Collectors.toList()));
+            .flatMap(s -> s)
+            .filter(a -> a.scope() == AnalyzerScope.INDEX)
+            .collect(Collectors.toList()));
     }
 }

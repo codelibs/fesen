@@ -72,7 +72,8 @@ public enum GeoDistance implements Writeable {
     /** compute the distance between two points using the selected algorithm (PLANE, ARC) */
     public double calculate(double srcLat, double srcLon, double dstLat, double dstLon, DistanceUnit unit) {
         if (this == PLANE) {
-            return DistanceUnit.convert(GeoUtils.planeDistance(srcLat, srcLon, dstLat, dstLon), DistanceUnit.METERS, unit);
+            return DistanceUnit.convert(GeoUtils.planeDistance(srcLat, srcLon, dstLat, dstLon),
+                DistanceUnit.METERS, unit);
         }
         return DistanceUnit.convert(GeoUtils.arcDistance(srcLat, srcLon, dstLat, dstLon), DistanceUnit.METERS, unit);
     }

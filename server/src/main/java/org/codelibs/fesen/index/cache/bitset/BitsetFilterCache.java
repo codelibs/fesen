@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index.cache.bitset;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexReaderContext;
@@ -64,6 +55,15 @@ import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.shard.ShardUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+
 /**
  * This is a cache for {@link BitDocIdSet} based filters and is unbounded by size or time.
  * <p>
@@ -75,7 +75,7 @@ public final class BitsetFilterCache extends AbstractIndexComponent
         implements IndexReader.ClosedListener, RemovalListener<IndexReader.CacheKey, Cache<Query, BitsetFilterCache.Value>>, Closeable {
 
     public static final Setting<Boolean> INDEX_LOAD_RANDOM_ACCESS_FILTERS_EAGERLY_SETTING =
-            Setting.boolSetting("index.load_fixed_bitset_filters_eagerly", true, Property.IndexScope);
+        Setting.boolSetting("index.load_fixed_bitset_filters_eagerly", true, Property.IndexScope);
 
     private final boolean loadRandomAccessFiltersEagerly;
     private final Cache<IndexReader.CacheKey, Cache<Query, Value>> loadedFilters;
@@ -87,7 +87,7 @@ public final class BitsetFilterCache extends AbstractIndexComponent
             throw new IllegalArgumentException("listener must not be null");
         }
         this.loadRandomAccessFiltersEagerly = this.indexSettings.getValue(INDEX_LOAD_RANDOM_ACCESS_FILTERS_EAGERLY_SETTING);
-        this.loadedFilters = CacheBuilder.<IndexReader.CacheKey, Cache<Query, Value>> builder().removalListener(this).build();
+        this.loadedFilters = CacheBuilder.<IndexReader.CacheKey, Cache<Query, Value>>builder().removalListener(this).build();
         this.listener = listener;
     }
 
@@ -107,6 +107,7 @@ public final class BitsetFilterCache extends AbstractIndexComponent
     public IndexWarmer.Listener createListener(ThreadPool threadPool) {
         return new BitSetProducerWarmer(threadPool);
     }
+
 
     public BitSetProducer getBitSetProducer(Query query) {
         return new QueryWrapperBitSetProducer(query);
@@ -136,12 +137,12 @@ public final class BitsetFilterCache extends AbstractIndexComponent
         final ShardId shardId = ShardUtils.extractShardId(context.reader());
         if (indexSettings.getIndex().equals(shardId.getIndex()) == false) {
             // insanity
-            throw new IllegalStateException(
-                    "Trying to load bit set for index " + shardId.getIndex() + " with cache of index " + indexSettings.getIndex());
+            throw new IllegalStateException("Trying to load bit set for index " + shardId.getIndex()
+                    + " with cache of index " + indexSettings.getIndex());
         }
         Cache<Query, Value> filterToFbs = loadedFilters.computeIfAbsent(coreCacheReader, key -> {
             cacheHelper.addClosedListener(BitsetFilterCache.this);
-            return CacheBuilder.<Query, Value> builder().build();
+            return CacheBuilder.<Query, Value>builder().build();
         });
 
         return filterToFbs.computeIfAbsent(query, key -> {
@@ -204,8 +205,7 @@ public final class BitsetFilterCache extends AbstractIndexComponent
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof QueryWrapperBitSetProducer))
-                return false;
+            if (!(o instanceof QueryWrapperBitSetProducer)) return false;
             return this.query.equals(((QueryWrapperBitSetProducer) o).query);
         }
 
@@ -264,12 +264,12 @@ public final class BitsetFilterCache extends AbstractIndexComponent
                             final long start = System.nanoTime();
                             getAndLoadIfNotPresent(filterToWarm, ctx);
                             if (indexShard.warmerService().logger().isTraceEnabled()) {
-                                indexShard.warmerService().logger().trace("warmed bitset for [{}], took [{}]", filterToWarm,
-                                        TimeValue.timeValueNanos(System.nanoTime() - start));
+                                indexShard.warmerService().logger().trace("warmed bitset for [{}], took [{}]",
+                                    filterToWarm, TimeValue.timeValueNanos(System.nanoTime() - start));
                             }
                         } catch (Exception e) {
-                            indexShard.warmerService().logger()
-                                    .warn(() -> new ParameterizedMessage("failed to load " + "bitset for [{}]", filterToWarm), e);
+                            indexShard.warmerService().logger().warn(() -> new ParameterizedMessage("failed to load " +
+                                "bitset for [{}]", filterToWarm), e);
                         } finally {
                             latch.countDown();
                         }
@@ -295,7 +295,6 @@ public final class BitsetFilterCache extends AbstractIndexComponent
          * @param accountable the bitsets ram representation
          */
         void onCache(ShardId shardId, Accountable accountable);
-
         /**
          * Called for each cached bitset on the removal event.
          * @param shardId the shard id the bitset was cached for. This can be <code>null</code>

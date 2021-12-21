@@ -48,7 +48,6 @@ public class ClusterName implements Writeable {
     public ClusterName(StreamInput input) throws IOException {
         this(input.readString());
     }
-
     public ClusterName(String value) {
         this.value = value.intern();
     }
@@ -64,15 +63,12 @@ public class ClusterName implements Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         ClusterName that = (ClusterName) o;
 
-        if (value != null ? !value.equals(that.value) : that.value != null)
-            return false;
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
 
         return true;
     }

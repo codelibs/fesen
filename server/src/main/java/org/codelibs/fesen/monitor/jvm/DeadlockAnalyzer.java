@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.monitor.jvm;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -31,6 +28,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 public class DeadlockAnalyzer {
 
@@ -59,6 +59,7 @@ public class DeadlockAnalyzer {
         return createDeadlockDescriptions(cycles);
     }
 
+
     private Deadlock[] createDeadlockDescriptions(Set<LinkedHashSet<ThreadInfo>> cycles) {
         Deadlock result[] = new Deadlock[cycles.size()];
         int count = 0;
@@ -69,6 +70,7 @@ public class DeadlockAnalyzer {
         }
         return result;
     }
+
 
     private Set<LinkedHashSet<ThreadInfo>> calculateCycles(Map<Long, ThreadInfo> threadInfoMap) {
         Set<LinkedHashSet<ThreadInfo>> cycles = new HashSet<>();
@@ -84,6 +86,7 @@ public class DeadlockAnalyzer {
         }
         return cycles;
     }
+
 
     private Set<LinkedHashSet<ThreadInfo>> calculateCycleDeadlockChains(Map<Long, ThreadInfo> threadInfoMap,
             Set<LinkedHashSet<ThreadInfo>> cycles) {
@@ -110,6 +113,7 @@ public class DeadlockAnalyzer {
 
         return deadlockChain;
     }
+
 
     private Map<Long, ThreadInfo> createThreadInfoMap(long threadIds[]) {
         ThreadInfo threadInfos[] = threadBean.getThreadInfo(threadIds);
@@ -149,15 +153,12 @@ public class DeadlockAnalyzer {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             Deadlock deadlock = (Deadlock) o;
 
-            if (memberIds != null ? !memberIds.equals(deadlock.memberIds) : deadlock.memberIds != null)
-                return false;
+            if (memberIds != null ? !memberIds.equals(deadlock.memberIds) : deadlock.memberIds != null) return false;
 
             return true;
         }

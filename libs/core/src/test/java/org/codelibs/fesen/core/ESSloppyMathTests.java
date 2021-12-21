@@ -21,8 +21,6 @@ package org.codelibs.fesen.core;
 
 import static org.codelibs.fesen.core.ESSloppyMath.atan;
 import static org.codelibs.fesen.core.ESSloppyMath.sinh;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.codelibs.fesen.test.ESTestCase;
 
@@ -35,8 +33,8 @@ public class ESSloppyMathTests extends ESTestCase {
 
     public void testAtan() {
         assertTrue(Double.isNaN(atan(Double.NaN)));
-        assertEquals(-Math.PI / 2, atan(Double.NEGATIVE_INFINITY), ATAN_DELTA);
-        assertEquals(Math.PI / 2, atan(Double.POSITIVE_INFINITY), ATAN_DELTA);
+        assertEquals(-Math.PI/2, atan(Double.NEGATIVE_INFINITY), ATAN_DELTA);
+        assertEquals(Math.PI/2, atan(Double.POSITIVE_INFINITY), ATAN_DELTA);
         for (int i = 0; i < 10000; i++) {
             assertEquals(StrictMath.atan(i), atan(i), ATAN_DELTA);
             assertEquals(StrictMath.atan(-i), atan(-i), ATAN_DELTA);

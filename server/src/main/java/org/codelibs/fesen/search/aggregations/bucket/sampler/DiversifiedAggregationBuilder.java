@@ -19,18 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
@@ -38,10 +34,14 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilder<DiversifiedAggregationBuilder> {
     public static final String NAME = "diversified_sampler";
     public static final ValuesSourceRegistry.RegistryKey<DiversifiedAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, DiversifiedAggregatorSupplier.class);
+        new ValuesSourceRegistry.RegistryKey<>(NAME, DiversifiedAggregatorSupplier.class);
 
     public static final int MAX_DOCS_PER_VALUE_DEFAULT = 1;
 
@@ -159,8 +159,10 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, Builder subFactoriesBuilder) throws IOException {
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                       ValuesSourceConfig config,
+                                                       AggregatorFactory parent,
+                                                       Builder subFactoriesBuilder) throws IOException {
         return new DiversifiedAggregatorFactory(name, config, shardSize, maxDocsPerValue, executionHint, queryShardContext, parent,
                 subFactoriesBuilder, metadata);
     }
@@ -182,15 +184,13 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         DiversifiedAggregationBuilder other = (DiversifiedAggregationBuilder) obj;
-        return Objects.equals(shardSize, other.shardSize) && Objects.equals(maxDocsPerValue, other.maxDocsPerValue)
-                && Objects.equals(executionHint, other.executionHint);
+        return Objects.equals(shardSize, other.shardSize)
+            && Objects.equals(maxDocsPerValue, other.maxDocsPerValue)
+            && Objects.equals(executionHint, other.executionHint);
     }
 
     @Override

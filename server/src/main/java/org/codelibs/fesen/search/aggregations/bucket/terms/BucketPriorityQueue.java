@@ -18,9 +18,9 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.util.Comparator;
-
 import org.apache.lucene.util.PriorityQueue;
+
+import java.util.Comparator;
 
 public class BucketPriorityQueue<B extends Terms.Bucket> extends PriorityQueue<B> {
 

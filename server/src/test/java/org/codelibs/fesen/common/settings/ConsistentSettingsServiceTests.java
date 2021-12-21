@@ -82,8 +82,8 @@ public class ConsistentSettingsServiceTests extends ESTestCase {
     }
 
     public void testSingleAffixSetting() throws Exception {
-        Setting.AffixSetting<?> affixStringSetting =
-                Setting.affixKeySetting("test.affix.", "bar", (key) -> SecureSetting.secureString(key, null, Setting.Property.Consistent));
+        Setting.AffixSetting<?> affixStringSetting = Setting.affixKeySetting("test.affix.", "bar",
+                (key) -> SecureSetting.secureString(key, null, Setting.Property.Consistent));
         // add two affix settings to the keystore
         MockSecureSettings secureSettings = new MockSecureSettings();
         secureSettings.setString("test.noise.setting", "noise");
@@ -94,17 +94,17 @@ public class ConsistentSettingsServiceTests extends ESTestCase {
         Settings settings = builder.build();
         // hashes not yet published
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
-                is(false));
+            is(false));
         // publish
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).newHashPublisher().onMaster();
-        ConsistentSettingsService consistentService =
-                new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting));
+        ConsistentSettingsService consistentService = new ConsistentSettingsService(settings, clusterService,
+            Arrays.asList(affixStringSetting));
         assertThat(consistentService.areAllConsistent(), is(true));
         // change value
         secureSettings.setString("test.affix.second.bar", "_TYPO_second_secure");
         assertThat(consistentService.areAllConsistent(), is(false));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
-                is(false));
+            is(false));
         // publish change
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).newHashPublisher().onMaster();
         assertThat(consistentService.areAllConsistent(), is(true));
@@ -115,10 +115,11 @@ public class ConsistentSettingsServiceTests extends ESTestCase {
         builder.setSecureSettings(secureSettings);
         settings = builder.build();
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
-                is(false));
+            is(false));
         // publish
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).newHashPublisher().onMaster();
-        assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(), is(true));
+        assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
+            is(true));
         // remove value
         secureSettings = new MockSecureSettings();
         secureSettings.setString("test.another.noise.setting", "noise");
@@ -129,13 +130,13 @@ public class ConsistentSettingsServiceTests extends ESTestCase {
         builder.setSecureSettings(secureSettings);
         settings = builder.build();
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
-                is(false));
+            is(false));
     }
 
     public void testStringAndAffixSettings() throws Exception {
         Setting<?> stringSetting = SecureSetting.secureString("mock.simple.foo", null, Setting.Property.Consistent);
-        Setting.AffixSetting<?> affixStringSetting =
-                Setting.affixKeySetting("mock.affix.", "bar", (key) -> SecureSetting.secureString(key, null, Setting.Property.Consistent));
+        Setting.AffixSetting<?> affixStringSetting = Setting.affixKeySetting("mock.affix.", "bar",
+                (key) -> SecureSetting.secureString(key, null, Setting.Property.Consistent));
         MockSecureSettings secureSettings = new MockSecureSettings();
         secureSettings.setString(randomAlphaOfLength(8).toLowerCase(Locale.ROOT), "noise");
         secureSettings.setString(stringSetting.getKey(), "somethingsecure");
@@ -145,26 +146,26 @@ public class ConsistentSettingsServiceTests extends ESTestCase {
         Settings settings = builder.build();
         // hashes not yet published
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting, affixStringSetting))
-                .areAllConsistent(), is(false));
+            .areAllConsistent(), is(false));
         // publish only the simple string setting
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting)).newHashPublisher().onMaster();
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting)).areAllConsistent(), is(true));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(),
-                is(false));
+            is(false));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting, affixStringSetting))
-                .areAllConsistent(), is(false));
+            .areAllConsistent(), is(false));
         // publish only the affix string setting
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).newHashPublisher().onMaster();
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting)).areAllConsistent(), is(false));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(), is(true));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting, affixStringSetting))
-                .areAllConsistent(), is(false));
+            .areAllConsistent(), is(false));
         // publish both settings
         new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting, affixStringSetting)).newHashPublisher()
-                .onMaster();
+          .onMaster();
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting)).areAllConsistent(), is(true));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(affixStringSetting)).areAllConsistent(), is(true));
         assertThat(new ConsistentSettingsService(settings, clusterService, Arrays.asList(stringSetting, affixStringSetting))
-                .areAllConsistent(), is(true));
+            .areAllConsistent(), is(true));
     }
 }

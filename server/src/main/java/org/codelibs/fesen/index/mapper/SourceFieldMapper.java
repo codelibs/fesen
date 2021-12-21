@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.StoredField;
@@ -46,6 +39,13 @@ import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public class SourceFieldMapper extends MetadataFieldMapper {
 
@@ -76,10 +76,10 @@ public class SourceFieldMapper extends MetadataFieldMapper {
     public static class Builder extends MetadataFieldMapper.Builder {
 
         private final Parameter<Boolean> enabled = Parameter.boolParam("enabled", false, m -> toType(m).enabled, Defaults.ENABLED);
-        private final Parameter<List<String>> includes =
-                Parameter.stringArrayParam("includes", false, m -> Arrays.asList(toType(m).includes), Collections.emptyList());
-        private final Parameter<List<String>> excludes =
-                Parameter.stringArrayParam("excludes", false, m -> Arrays.asList(toType(m).excludes), Collections.emptyList());
+        private final Parameter<List<String>> includes
+            = Parameter.stringArrayParam("includes", false, m -> Arrays.asList(toType(m).includes), Collections.emptyList());
+        private final Parameter<List<String>> excludes
+            = Parameter.stringArrayParam("excludes", false, m -> Arrays.asList(toType(m).excludes), Collections.emptyList());
 
         public Builder() {
             super(Defaults.NAME);
@@ -92,8 +92,9 @@ public class SourceFieldMapper extends MetadataFieldMapper {
 
         @Override
         public SourceFieldMapper build(BuilderContext context) {
-            return new SourceFieldMapper(enabled.getValue(), includes.getValue().toArray(new String[0]),
-                    excludes.getValue().toArray(new String[0]));
+            return new SourceFieldMapper(enabled.getValue(),
+                includes.getValue().toArray(new String[0]),
+                excludes.getValue().toArray(new String[0]));
         }
     }
 
@@ -180,7 +181,8 @@ public class SourceFieldMapper extends MetadataFieldMapper {
             // Percolate and tv APIs may not set the source and that is ok, because these APIs will not index any data
             if (filter != null) {
                 // we don't update the context source if we filter, we want to keep it as is...
-                Tuple<XContentType, Map<String, Object>> mapTuple = XContentHelper.convertToMap(originalSource, true, contentType);
+                Tuple<XContentType, Map<String, Object>> mapTuple =
+                    XContentHelper.convertToMap(originalSource, true, contentType);
                 Map<String, Object> filteredSource = filter.apply(mapTuple.v2());
                 BytesStreamOutput bStream = new BytesStreamOutput();
                 XContentType actualContentType = mapTuple.v1();

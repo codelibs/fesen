@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
@@ -37,6 +31,12 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * Defines how to perform suggesting. This builders allows a number of global options to be specified and
@@ -193,7 +193,8 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
             return false;
         }
         SuggestBuilder o = (SuggestBuilder) other;
-        return Objects.equals(globalText, o.globalText) && Objects.equals(suggestions, o.suggestions);
+        return Objects.equals(globalText, o.globalText) &&
+               Objects.equals(suggestions, o.suggestions);
     }
 
     @Override

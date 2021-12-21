@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.update;
 
-import java.util.Map;
-
 import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.action.support.ActiveShardCount;
 import org.codelibs.fesen.action.support.WriteRequestBuilder;
@@ -32,6 +30,8 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.script.Script;
+
+import java.util.Map;
 
 public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<UpdateRequest, UpdateResponse, UpdateRequestBuilder>
         implements WriteRequestBuilder<UpdateRequestBuilder> {
@@ -357,6 +357,7 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
         request.detectNoop(detectNoop);
         return this;
     }
+
 
     /**
      * Sets whether the script should be run in the case of an insert

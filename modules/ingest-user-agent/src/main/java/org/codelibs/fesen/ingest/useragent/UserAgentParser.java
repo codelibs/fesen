@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.ingest.useragent;
 
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentType;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,13 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
 
 final class UserAgentParser {
 
@@ -57,7 +57,7 @@ final class UserAgentParser {
     private void init(InputStream regexStream) throws IOException {
         // EMPTY is safe here because we don't use namedObject
         XContentParser yamlParser = XContentFactory.xContent(XContentType.YAML).createParser(NamedXContentRegistry.EMPTY,
-                LoggingDeprecationHandler.INSTANCE, regexStream);
+            LoggingDeprecationHandler.INSTANCE, regexStream);
 
         XContentParser.Token token = yamlParser.nextToken();
 
@@ -73,7 +73,8 @@ final class UserAgentParser {
                                 map.get("family_replacement"), map.get("v1_replacement"), map.get("v2_replacement"),
                                 map.get("v3_replacement"), map.get("v4_replacement")));
                     }
-                } else if (token == XContentParser.Token.FIELD_NAME && yamlParser.currentName().equals("os_parsers")) {
+                }
+                else if (token == XContentParser.Token.FIELD_NAME && yamlParser.currentName().equals("os_parsers")) {
                     List<Map<String, String>> parserConfigurations = readParserConfigurations(yamlParser);
 
                     for (Map<String, String> map : parserConfigurations) {
@@ -81,7 +82,8 @@ final class UserAgentParser {
                                 map.get("os_replacement"), map.get("os_v1_replacement"), map.get("os_v2_replacement"),
                                 map.get("os_v3_replacement"), map.get("os_v4_replacement")));
                     }
-                } else if (token == XContentParser.Token.FIELD_NAME && yamlParser.currentName().equals("device_parsers")) {
+                }
+                else if (token == XContentParser.Token.FIELD_NAME && yamlParser.currentName().equals("device_parsers")) {
                     List<Map<String, String>> parserConfigurations = readParserConfigurations(yamlParser);
 
                     for (Map<String, String> map : parserConfigurations) {
@@ -107,7 +109,7 @@ final class UserAgentParser {
     }
 
     private List<Map<String, String>> readParserConfigurations(XContentParser yamlParser) throws IOException {
-        List<Map<String, String>> patternList = new ArrayList<>();
+        List <Map<String, String>> patternList = new ArrayList<>();
 
         XContentParser.Token token = yamlParser.nextToken();
         if (token != XContentParser.Token.START_ARRAY) {
@@ -223,61 +225,61 @@ final class UserAgentParser {
         private final Pattern pattern;
         private final String nameReplacement, v1Replacement, v2Replacement, v3Replacement, v4Replacement;
 
-        UserAgentSubpattern(Pattern pattern, String nameReplacement, String v1Replacement, String v2Replacement, String v3Replacement,
-                String v4Replacement) {
-            this.pattern = pattern;
-            this.nameReplacement = nameReplacement;
-            this.v1Replacement = v1Replacement;
-            this.v2Replacement = v2Replacement;
-            this.v3Replacement = v3Replacement;
-            this.v4Replacement = v4Replacement;
+        UserAgentSubpattern(Pattern pattern, String nameReplacement,
+                String v1Replacement, String v2Replacement, String v3Replacement, String v4Replacement) {
+          this.pattern = pattern;
+          this.nameReplacement = nameReplacement;
+          this.v1Replacement = v1Replacement;
+          this.v2Replacement = v2Replacement;
+          this.v3Replacement = v3Replacement;
+          this.v4Replacement = v4Replacement;
         }
 
         public VersionedName match(String agentString) {
-            String name = null, major = null, minor = null, patch = null, build = null;
-            Matcher matcher = pattern.matcher(agentString);
+          String name = null, major = null, minor = null, patch = null, build = null;
+          Matcher matcher = pattern.matcher(agentString);
 
-            if (!matcher.find()) {
-                return null;
+          if (!matcher.find()) {
+            return null;
+          }
+
+          int groupCount = matcher.groupCount();
+
+          if (nameReplacement != null) {
+            if (nameReplacement.contains("$1") && groupCount >= 1 && matcher.group(1) != null) {
+              name = nameReplacement.replaceFirst("\\$1", Matcher.quoteReplacement(matcher.group(1)));
+            } else {
+              name = nameReplacement;
             }
+          } else if (groupCount >= 1) {
+            name = matcher.group(1);
+          }
 
-            int groupCount = matcher.groupCount();
+          if (v1Replacement != null) {
+            major = v1Replacement;
+          } else if (groupCount >= 2) {
+            major = matcher.group(2);
+          }
 
-            if (nameReplacement != null) {
-                if (nameReplacement.contains("$1") && groupCount >= 1 && matcher.group(1) != null) {
-                    name = nameReplacement.replaceFirst("\\$1", Matcher.quoteReplacement(matcher.group(1)));
-                } else {
-                    name = nameReplacement;
-                }
-            } else if (groupCount >= 1) {
-                name = matcher.group(1);
-            }
+          if (v2Replacement != null) {
+            minor = v2Replacement;
+          } else if (groupCount >= 3) {
+            minor = matcher.group(3);
+          }
 
-            if (v1Replacement != null) {
-                major = v1Replacement;
-            } else if (groupCount >= 2) {
-                major = matcher.group(2);
-            }
+          if (v3Replacement != null) {
+              patch = v3Replacement;
+          } else if (groupCount >= 4) {
+              patch = matcher.group(4);
+          }
 
-            if (v2Replacement != null) {
-                minor = v2Replacement;
-            } else if (groupCount >= 3) {
-                minor = matcher.group(3);
-            }
+          if (v4Replacement != null) {
+              build = v4Replacement;
+          } else if (groupCount >= 5) {
+              build = matcher.group(5);
+          }
 
-            if (v3Replacement != null) {
-                patch = v3Replacement;
-            } else if (groupCount >= 4) {
-                patch = matcher.group(4);
-            }
-
-            if (v4Replacement != null) {
-                build = v4Replacement;
-            } else if (groupCount >= 5) {
-                build = matcher.group(5);
-            }
-
-            return name == null ? null : new VersionedName(name, major, minor, patch, build);
+          return name == null ? null : new VersionedName(name, major, minor, patch, build);
         }
-    }
+      }
 }

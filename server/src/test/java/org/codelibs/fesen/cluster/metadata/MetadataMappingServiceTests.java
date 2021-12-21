@@ -59,7 +59,7 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         final ClusterService clusterService = getInstanceFromNode(ClusterService.class);
         // TODO - it will be nice to get a random mapping generator
         final PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest().type("type");
-        request.indices(new Index[] { indexService.index() });
+        request.indices(new Index[] {indexService.index()});
         request.source("{ \"properties\": { \"field\": { \"type\": \"text\" }}}");
         final ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
                 mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
@@ -67,7 +67,8 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         assertThat(result.executionResults.size(), equalTo(1));
         assertTrue(result.executionResults.values().iterator().next().isSuccess());
         // the task really was a mapping update
-        assertThat(indexService.mapperService().documentMapper("type").mappingSource(),
+        assertThat(
+                indexService.mapperService().documentMapper("type").mappingSource(),
                 not(equalTo(result.resultingState.metadata().index("test").getMappings().get("type").source())));
         // since we never committed the cluster state update, the in-memory state is unchanged
         assertThat(indexService.mapperService().documentMapper("type").mappingSource(), equalTo(currentMapping));
@@ -80,12 +81,13 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         final ClusterService clusterService = getInstanceFromNode(ClusterService.class);
         final PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest().type("type");
         request.source("{ \"properties\" { \"field\": { \"type\": \"text\" }}}");
-        ClusterState result =
-                mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request)).resultingState;
+        ClusterState result = mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request))
+            .resultingState;
 
         assertFalse(result != clusterService.state());
 
-        ClusterState result2 = mappingService.putMappingExecutor.execute(result, Collections.singletonList(request)).resultingState;
+        ClusterState result2 = mappingService.putMappingExecutor.execute(result, Collections.singletonList(request))
+            .resultingState;
 
         assertSame(result, result2);
     }
@@ -96,7 +98,7 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         final MetadataMappingService mappingService = getInstanceFromNode(MetadataMappingService.class);
         final ClusterService clusterService = getInstanceFromNode(ClusterService.class);
         final PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest().type("type");
-        request.indices(new Index[] { indexService.index() });
+        request.indices(new Index[] {indexService.index()});
         request.source("{ \"properties\": { \"field\": { \"type\": \"text\" }}}");
         final ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
                 mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
@@ -111,7 +113,7 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         final MetadataMappingService mappingService = getInstanceFromNode(MetadataMappingService.class);
         final ClusterService clusterService = getInstanceFromNode(ClusterService.class);
         final PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest().type("type");
-        request.indices(new Index[] { indexService.index() });
+        request.indices(new Index[] {indexService.index()});
         request.source("{ \"properties\": {}}");
         final ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
                 mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
@@ -121,12 +123,13 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
     }
 
     public void testMappingUpdateAccepts_docAsType() throws Exception {
-        final IndexService indexService = createIndex("test", client().admin().indices().prepareCreate("test").addMapping("my_type"));
+        final IndexService indexService = createIndex("test",
+                client().admin().indices().prepareCreate("test").addMapping("my_type"));
         final MetadataMappingService mappingService = getInstanceFromNode(MetadataMappingService.class);
         final ClusterService clusterService = getInstanceFromNode(ClusterService.class);
-        final PutMappingClusterStateUpdateRequest request =
-                new PutMappingClusterStateUpdateRequest().type(MapperService.SINGLE_MAPPING_NAME);
-        request.indices(new Index[] { indexService.index() });
+        final PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest()
+                .type(MapperService.SINGLE_MAPPING_NAME);
+        request.indices(new Index[] {indexService.index()});
         request.source("{ \"properties\": { \"foo\": { \"type\": \"keyword\" } }}");
         final ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
                 mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
@@ -134,29 +137,35 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
         assertTrue(result.executionResults.values().iterator().next().isSuccess());
         MappingMetadata mappingMetadata = result.resultingState.metadata().index("test").mapping();
         assertEquals("my_type", mappingMetadata.type());
-        assertEquals(Collections.singletonMap("properties", Collections.singletonMap("foo", Collections.singletonMap("type", "keyword"))),
-                mappingMetadata.sourceAsMap());
+        assertEquals(Collections.singletonMap("properties",
+                Collections.singletonMap("foo",
+                        Collections.singletonMap("type", "keyword"))), mappingMetadata.sourceAsMap());
     }
 
     public void testForbidMultipleTypes() throws Exception {
-        CreateIndexRequestBuilder createIndexRequest =
-                client().admin().indices().prepareCreate("test").addMapping(MapperService.SINGLE_MAPPING_NAME);
+        CreateIndexRequestBuilder createIndexRequest = client().admin().indices()
+            .prepareCreate("test")
+            .addMapping(MapperService.SINGLE_MAPPING_NAME);
         IndexService indexService = createIndex("test", createIndexRequest);
 
         MetadataMappingService mappingService = getInstanceFromNode(MetadataMappingService.class);
         ClusterService clusterService = getInstanceFromNode(ClusterService.class);
 
-        PutMappingClusterStateUpdateRequest request =
-                new PutMappingClusterStateUpdateRequest().type("other_type").indices(new Index[] { indexService.index() }).source(
-                        Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("other_type").endObject().endObject()));
+        PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest()
+            .type("other_type")
+            .indices(new Index[] {indexService.index()})
+            .source(Strings.toString(XContentFactory.jsonBuilder()
+                .startObject()
+                    .startObject("other_type").endObject()
+                .endObject()));
         ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
-                mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
+            mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
         assertThat(result.executionResults.size(), equalTo(1));
 
         ClusterStateTaskExecutor.TaskResult taskResult = result.executionResults.values().iterator().next();
         assertFalse(taskResult.isSuccess());
-        assertThat(taskResult.getFailure().getMessage(),
-                containsString("Rejecting mapping update to [test] as the final mapping would have more than 1 type: "));
+        assertThat(taskResult.getFailure().getMessage(), containsString(
+            "Rejecting mapping update to [test] as the final mapping would have more than 1 type: "));
     }
 
     /**
@@ -164,28 +173,45 @@ public class MetadataMappingServiceTests extends ESSingleNodeTestCase {
      * on the mapping that's added, see https://github.com/elastic/elasticsearch/issues/29313
      */
     public void testForbidMultipleTypesWithConflictingMappings() throws Exception {
-        XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject(MapperService.SINGLE_MAPPING_NAME)
-                .startObject("properties").startObject("field1").field("type", "text").endObject().endObject().endObject().endObject();
+        XContentBuilder mapping = XContentFactory.jsonBuilder().startObject()
+            .startObject(MapperService.SINGLE_MAPPING_NAME)
+                .startObject("properties")
+                    .startObject("field1")
+                        .field("type", "text")
+                    .endObject()
+                .endObject()
+            .endObject()
+        .endObject();
 
-        CreateIndexRequestBuilder createIndexRequest =
-                client().admin().indices().prepareCreate("test").addMapping(MapperService.SINGLE_MAPPING_NAME, mapping);
+        CreateIndexRequestBuilder createIndexRequest = client().admin().indices()
+            .prepareCreate("test")
+            .addMapping(MapperService.SINGLE_MAPPING_NAME, mapping);
         IndexService indexService = createIndex("test", createIndexRequest);
 
         MetadataMappingService mappingService = getInstanceFromNode(MetadataMappingService.class);
         ClusterService clusterService = getInstanceFromNode(ClusterService.class);
 
-        String conflictingMapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("other_type")
-                .startObject("properties").startObject("field1").field("type", "keyword").endObject().endObject().endObject().endObject());
+        String conflictingMapping = Strings.toString(XContentFactory.jsonBuilder().startObject()
+            .startObject("other_type")
+                .startObject("properties")
+                    .startObject("field1")
+                        .field("type", "keyword")
+                    .endObject()
+                .endObject()
+            .endObject()
+        .endObject());
 
-        PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest().type("other_type")
-                .indices(new Index[] { indexService.index() }).source(conflictingMapping);
+        PutMappingClusterStateUpdateRequest request = new PutMappingClusterStateUpdateRequest()
+            .type("other_type")
+            .indices(new Index[] {indexService.index()})
+            .source(conflictingMapping);
         ClusterStateTaskExecutor.ClusterTasksResult<PutMappingClusterStateUpdateRequest> result =
-                mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
+            mappingService.putMappingExecutor.execute(clusterService.state(), Collections.singletonList(request));
         assertThat(result.executionResults.size(), equalTo(1));
 
         ClusterStateTaskExecutor.TaskResult taskResult = result.executionResults.values().iterator().next();
         assertFalse(taskResult.isSuccess());
-        assertThat(taskResult.getFailure().getMessage(),
-                containsString("Rejecting mapping update to [test] as the final mapping would have more than 1 type: "));
+        assertThat(taskResult.getFailure().getMessage(), containsString(
+            "Rejecting mapping update to [test] as the final mapping would have more than 1 type: "));
     }
 }

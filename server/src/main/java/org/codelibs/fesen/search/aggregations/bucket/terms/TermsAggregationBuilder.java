@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,11 +28,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryRewriteContext;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.Aggregator.SubAggCollectionMode;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalOrder;
+import org.codelibs.fesen.search.aggregations.Aggregator.SubAggCollectionMode;
 import org.codelibs.fesen.search.aggregations.InternalOrder.CompoundOrder;
 import org.codelibs.fesen.search.aggregations.bucket.terms.TermsAggregator.BucketCountThresholds;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
@@ -47,10 +42,17 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<TermsAggregationBuilder> {
     public static final String NAME = "terms";
-    public static final ValuesSourceRegistry.RegistryKey<TermsAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, TermsAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<TermsAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        TermsAggregatorSupplier.class
+    );
 
     public static final ParseField EXECUTION_HINT_FIELD_NAME = new ParseField("execution_hint");
     public static final ParseField SHARD_SIZE_FIELD_NAME = new ParseField("shard_size");
@@ -58,16 +60,18 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     public static final ParseField SHARD_MIN_DOC_COUNT_FIELD_NAME = new ParseField("shard_min_doc_count");
     public static final ParseField REQUIRED_SIZE_FIELD_NAME = new ParseField("size");
 
-    static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS =
-            new TermsAggregator.BucketCountThresholds(1, 0, 10, -1);
+    static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS = new TermsAggregator.BucketCountThresholds(1, 0, 10,
+            -1);
     public static final ParseField SHOW_TERM_DOC_COUNT_ERROR = new ParseField("show_term_doc_count_error");
     public static final ParseField ORDER_FIELD = new ParseField("order");
 
-    public static final ObjectParser<TermsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, TermsAggregationBuilder::new);
+    public static final ObjectParser<TermsAggregationBuilder, String> PARSER =
+            ObjectParser.fromBuilder(NAME, TermsAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
 
-        PARSER.declareBoolean(TermsAggregationBuilder::showTermDocCountError, TermsAggregationBuilder.SHOW_TERM_DOC_COUNT_ERROR);
+        PARSER.declareBoolean(TermsAggregationBuilder::showTermDocCountError,
+                TermsAggregationBuilder.SHOW_TERM_DOC_COUNT_ERROR);
 
         PARSER.declareInt(TermsAggregationBuilder::shardSize, SHARD_SIZE_FIELD_NAME);
 
@@ -80,17 +84,17 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
         PARSER.declareString(TermsAggregationBuilder::executionHint, EXECUTION_HINT_FIELD_NAME);
 
         PARSER.declareField(TermsAggregationBuilder::collectMode,
-                (p, c) -> SubAggCollectionMode.parse(p.text(), LoggingDeprecationHandler.INSTANCE), SubAggCollectionMode.KEY,
-                ObjectParser.ValueType.STRING);
+                (p, c) -> SubAggCollectionMode.parse(p.text(), LoggingDeprecationHandler.INSTANCE),
+                SubAggCollectionMode.KEY, ObjectParser.ValueType.STRING);
 
         PARSER.declareObjectArray(TermsAggregationBuilder::order, (p, c) -> InternalOrder.Parser.parseOrderParam(p),
                 TermsAggregationBuilder.ORDER_FIELD);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())), IncludeExclude::parseInclude,
-                IncludeExclude.INCLUDE_FIELD, ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(v, b.includeExclude())),
+                IncludeExclude::parseInclude, IncludeExclude.INCLUDE_FIELD, ObjectParser.ValueType.OBJECT_ARRAY_OR_STRING);
 
-        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)), IncludeExclude::parseExclude,
-                IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
+        PARSER.declareField((b, v) -> b.includeExclude(IncludeExclude.merge(b.includeExclude(), v)),
+                IncludeExclude::parseExclude, IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
     }
 
     public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
@@ -101,16 +105,17 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     private IncludeExclude includeExclude = null;
     private String executionHint = null;
     private SubAggCollectionMode collectMode = null;
-    private TermsAggregator.BucketCountThresholds bucketCountThresholds =
-            new TermsAggregator.BucketCountThresholds(DEFAULT_BUCKET_COUNT_THRESHOLDS);
+    private TermsAggregator.BucketCountThresholds bucketCountThresholds = new TermsAggregator.BucketCountThresholds(
+            DEFAULT_BUCKET_COUNT_THRESHOLDS);
     private boolean showTermDocCountError = false;
 
     public TermsAggregationBuilder(String name) {
         super(name);
     }
 
-    protected TermsAggregationBuilder(TermsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected TermsAggregationBuilder(TermsAggregationBuilder clone,
+                                      AggregatorFactories.Builder factoriesBuilder,
+                                      Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.order = clone.order;
         this.executionHint = clone.executionHint;
@@ -185,7 +190,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
      */
     public TermsAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
-            throw new IllegalArgumentException("[shardSize] must be greater than 0. Found [" + shardSize + "] in [" + name + "]");
+            throw new IllegalArgumentException(
+                    "[shardSize] must be greater than 0. Found [" + shardSize + "] in [" + name + "]");
         }
         bucketCountThresholds.setShardSize(shardSize);
         return this;
@@ -244,7 +250,7 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
         if (order == null) {
             throw new IllegalArgumentException("[order] must not be null: [" + name + "]");
         }
-        if (order instanceof CompoundOrder || InternalOrder.isKeyOrder(order)) {
+        if(order instanceof CompoundOrder || InternalOrder.isKeyOrder(order)) {
             this.order = order; // if order already contains a tie-breaker we are good to go
         } else { // otherwise add a tie-breaker by using a compound order
             this.order = BucketOrder.compound(order);
@@ -341,10 +347,12 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
-        return new TermsAggregatorFactory(name, config, order, includeExclude, executionHint, collectMode, bucketCountThresholds,
-                showTermDocCountError, queryShardContext, parent, subFactoriesBuilder, metadata);
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                       ValuesSourceConfig config,
+                                                       AggregatorFactory parent,
+                                                       AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        return new TermsAggregatorFactory(name, config, order, includeExclude, executionHint, collectMode,
+                bucketCountThresholds, showTermDocCountError, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override
@@ -367,22 +375,22 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), bucketCountThresholds, collectMode, executionHint, includeExclude, order,
-                showTermDocCountError);
+        return Objects.hash(super.hashCode(), bucketCountThresholds, collectMode,
+            executionHint, includeExclude, order, showTermDocCountError);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         TermsAggregationBuilder other = (TermsAggregationBuilder) obj;
-        return Objects.equals(bucketCountThresholds, other.bucketCountThresholds) && Objects.equals(collectMode, other.collectMode)
-                && Objects.equals(executionHint, other.executionHint) && Objects.equals(includeExclude, other.includeExclude)
-                && Objects.equals(order, other.order) && Objects.equals(showTermDocCountError, other.showTermDocCountError);
+        return Objects.equals(bucketCountThresholds, other.bucketCountThresholds)
+            && Objects.equals(collectMode, other.collectMode)
+            && Objects.equals(executionHint, other.executionHint)
+            && Objects.equals(includeExclude, other.includeExclude)
+            && Objects.equals(order, other.order)
+            && Objects.equals(showTermDocCountError, other.showTermDocCountError);
     }
 
     @Override

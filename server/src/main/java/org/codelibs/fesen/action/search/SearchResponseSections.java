@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.profile.ProfileShardResult;
 import org.codelibs.fesen.search.profile.SearchProfileShardResults;
 import org.codelibs.fesen.search.suggest.Suggest;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Base class that holds the various sections which a search response is
@@ -51,7 +51,7 @@ public class SearchResponseSections implements ToXContentFragment {
     protected final int numReducePhases;
 
     public SearchResponseSections(SearchHits hits, Aggregations aggregations, Suggest suggest, boolean timedOut, Boolean terminatedEarly,
-            SearchProfileShardResults profileResults, int numReducePhases) {
+                                  SearchProfileShardResults profileResults,  int numReducePhases) {
         this.hits = hits;
         this.aggregations = aggregations;
         this.suggest = suggest;

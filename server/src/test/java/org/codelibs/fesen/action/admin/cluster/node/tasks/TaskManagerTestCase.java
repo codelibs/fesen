@@ -102,6 +102,7 @@ public abstract class TaskManagerTestCase extends ESTestCase {
         threadPool = null;
     }
 
+
     static class NodeResponse extends BaseNodeResponse {
 
         protected NodeResponse(StreamInput in) throws IOException {
@@ -140,10 +141,12 @@ public abstract class TaskManagerTestCase extends ESTestCase {
     abstract class AbstractTestNodesAction<NodesRequest extends BaseNodesRequest<NodesRequest>, NodeRequest extends BaseNodeRequest>
             extends TransportNodesAction<NodesRequest, NodesResponse, NodeRequest, NodeResponse> {
 
-        AbstractTestNodesAction(String actionName, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-                Writeable.Reader<NodesRequest> request, Writeable.Reader<NodeRequest> nodeRequest) {
-            super(actionName, threadPool, clusterService, transportService, new ActionFilters(new HashSet<>()), request, nodeRequest,
-                    ThreadPool.Names.GENERIC, NodeResponse.class);
+        AbstractTestNodesAction(String actionName, ThreadPool threadPool,
+                                ClusterService clusterService, TransportService transportService, Writeable.Reader<NodesRequest> request,
+                                Writeable.Reader<NodeRequest> nodeRequest) {
+            super(actionName, threadPool, clusterService, transportService,
+                    new ActionFilters(new HashSet<>()),
+                request, nodeRequest, ThreadPool.Names.GENERIC, NodeResponse.class);
         }
 
         @Override
@@ -163,16 +166,17 @@ public abstract class TaskManagerTestCase extends ESTestCase {
 
     public static class TestNode implements Releasable {
         public TestNode(String name, ThreadPool threadPool, Settings settings) {
-            final Function<BoundTransportAddress, DiscoveryNode> boundTransportAddressDiscoveryNodeFunction = address -> {
-                discoveryNode.set(new DiscoveryNode(name, address.publishAddress(), emptyMap(), emptySet(), Version.CURRENT));
-                return discoveryNode.get();
-            };
+            final Function<BoundTransportAddress, DiscoveryNode> boundTransportAddressDiscoveryNodeFunction =
+                address -> {
+                 discoveryNode.set(new DiscoveryNode(name, address.publishAddress(), emptyMap(), emptySet(), Version.CURRENT));
+                 return discoveryNode.get();
+                };
             transportService = new TransportService(settings,
-                    new MockNioTransport(settings, Version.CURRENT, threadPool, new NetworkService(Collections.emptyList()),
-                            PageCacheRecycler.NON_RECYCLING_INSTANCE, new NamedWriteableRegistry(ClusterModule.getNamedWriteables()),
-                            new NoneCircuitBreakerService()),
-                    threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR, boundTransportAddressDiscoveryNodeFunction, null,
-                    Collections.emptySet()) {
+                new MockNioTransport(settings, Version.CURRENT, threadPool, new NetworkService(Collections.emptyList()),
+                    PageCacheRecycler.NON_RECYCLING_INSTANCE, new NamedWriteableRegistry(ClusterModule.getNamedWriteables()),
+                    new NoneCircuitBreakerService()),
+                threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR, boundTransportAddressDiscoveryNodeFunction, null,
+                Collections.emptySet()) {
                 @Override
                 protected TaskManager createTaskManager(Settings settings, ThreadPool threadPool, Set<String> taskHeaders) {
                     if (MockTaskManager.USE_MOCK_TASK_MANAGER_SETTING.get(settings)) {
@@ -208,9 +212,7 @@ public abstract class TaskManagerTestCase extends ESTestCase {
             return discoveryNode().getId();
         }
 
-        public DiscoveryNode discoveryNode() {
-            return discoveryNode.get();
-        }
+        public DiscoveryNode discoveryNode() { return  discoveryNode.get(); }
     }
 
     public static void connectNodes(TestNode... nodes) {

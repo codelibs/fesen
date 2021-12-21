@@ -19,19 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.cursors.ObjectIntCursor;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.admin.cluster.node.info.NodeInfo;
@@ -55,8 +44,19 @@ import org.codelibs.fesen.monitor.os.OsInfo;
 import org.codelibs.fesen.plugins.PluginInfo;
 import org.codelibs.fesen.transport.TransportInfo;
 
-import com.carrotsearch.hppc.ObjectIntHashMap;
-import com.carrotsearch.hppc.cursors.ObjectIntCursor;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClusterStatsNodes implements ToXContentFragment {
 
@@ -87,7 +87,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.plugins.addAll(nodeResponse.nodeInfo().getInfo(PluginsAndModules.class).getPluginInfos());
 
             // now do the stats that should be deduped by hardware (implemented by ip deduping)
-            TransportAddress publishAddress = nodeResponse.nodeInfo().getInfo(TransportInfo.class).address().publishAddress();
+            TransportAddress publishAddress =
+                    nodeResponse.nodeInfo().getInfo(TransportInfo.class).address().publishAddress();
             final InetAddress inetAddress = publishAddress.address().getAddress();
             if (!seenAddresses.add(inetAddress)) {
                 continue;
@@ -233,7 +234,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
         }
 
         @Override
-        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder toXContent(XContentBuilder builder, Params params)
+                throws IOException {
             builder.field(Fields.TOTAL, total);
             for (Map.Entry<String, Integer> entry : new TreeMap<>(roles).entrySet()) {
                 builder.field(entry.getKey(), entry.getValue());
@@ -311,7 +313,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
         }
 
         @Override
-        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder toXContent(XContentBuilder builder, Params params)
+                throws IOException {
             builder.field(Fields.AVAILABLE_PROCESSORS, availableProcessors);
             builder.field(Fields.ALLOCATED_PROCESSORS, allocatedProcessors);
             builder.startArray(Fields.NAMES);
@@ -423,7 +426,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
         }
 
         @Override
-        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder toXContent(XContentBuilder builder, Params params)
+                throws IOException {
             builder.startObject(Fields.CPU).field(Fields.PERCENT, cpuPercent).endObject();
             if (count > 0) {
                 builder.startObject(Fields.OPEN_FILE_DESCRIPTORS);
@@ -529,7 +533,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
         }
 
         @Override
-        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder toXContent(XContentBuilder builder, Params params)
+                throws IOException {
             builder.humanReadableField(Fields.MAX_UPTIME_IN_MILLIS, Fields.MAX_UPTIME, new TimeValue(maxUptime));
             builder.startArray(Fields.VERSIONS);
             for (ObjectIntCursor<JvmVersion> v : versions) {
@@ -602,13 +607,18 @@ public class ClusterStatsNodes implements ToXContentFragment {
             for (final NodeInfo nodeInfo : nodeInfos) {
                 final Settings settings = nodeInfo.getSettings();
                 final String transportType =
-                        settings.get(NetworkModule.TRANSPORT_TYPE_KEY, NetworkModule.TRANSPORT_DEFAULT_TYPE_SETTING.get(settings));
-                final String httpType = settings.get(NetworkModule.HTTP_TYPE_KEY, NetworkModule.HTTP_DEFAULT_TYPE_SETTING.get(settings));
+                    settings.get(NetworkModule.TRANSPORT_TYPE_KEY,
+                            NetworkModule.TRANSPORT_DEFAULT_TYPE_SETTING.get(settings));
+                final String httpType =
+                    settings.get(NetworkModule.HTTP_TYPE_KEY,
+                            NetworkModule.HTTP_DEFAULT_TYPE_SETTING.get(settings));
                 if (Strings.hasText(transportType)) {
-                    transportTypes.computeIfAbsent(transportType, k -> new AtomicInteger()).incrementAndGet();
+                    transportTypes.computeIfAbsent(transportType,
+                            k -> new AtomicInteger()).incrementAndGet();
                 }
                 if (Strings.hasText(httpType)) {
-                    httpTypes.computeIfAbsent(httpType, k -> new AtomicInteger()).incrementAndGet();
+                    httpTypes.computeIfAbsent(httpType,
+                            k -> new AtomicInteger()).incrementAndGet();
                 }
             }
             this.transportTypes = Collections.unmodifiableMap(transportTypes);
@@ -701,15 +711,20 @@ public class ClusterStatsNodes implements ToXContentFragment {
             SortedMap<String, long[]> stats = new TreeMap<>();
             for (NodeStats nodeStat : nodeStats) {
                 if (nodeStat.getIngestStats() != null) {
-                    for (Map.Entry<String, List<org.codelibs.fesen.ingest.IngestStats.ProcessorStat>> processorStats : nodeStat
-                            .getIngestStats().getProcessorStats().entrySet()) {
+                    for (Map.Entry<String,
+                            List<org.codelibs.fesen.ingest.IngestStats.ProcessorStat>> processorStats : nodeStat.getIngestStats()
+                            .getProcessorStats().entrySet()) {
                         pipelineIds.add(processorStats.getKey());
                         for (org.codelibs.fesen.ingest.IngestStats.ProcessorStat stat : processorStats.getValue()) {
                             stats.compute(stat.getType(), (k, v) -> {
                                 org.codelibs.fesen.ingest.IngestStats.Stats nodeIngestStats = stat.getStats();
                                 if (v == null) {
-                                    return new long[] { nodeIngestStats.getIngestCount(), nodeIngestStats.getIngestFailedCount(),
-                                            nodeIngestStats.getIngestCurrent(), nodeIngestStats.getIngestTimeInMillis() };
+                                    return new long[] {
+                                        nodeIngestStats.getIngestCount(),
+                                        nodeIngestStats.getIngestFailedCount(),
+                                        nodeIngestStats.getIngestCurrent(),
+                                        nodeIngestStats.getIngestTimeInMillis()
+                                    };
                                 } else {
                                     v[0] += nodeIngestStats.getIngestCount();
                                     v[1] += nodeIngestStats.getIngestFailedCount();
@@ -738,7 +753,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
                     builder.field("count", statValues[0]);
                     builder.field("failed", statValues[1]);
                     builder.field("current", statValues[2]);
-                    builder.humanReadableField("time_in_millis", "time", new TimeValue(statValues[3], TimeUnit.MILLISECONDS));
+                    builder.humanReadableField("time_in_millis", "time",
+                        new TimeValue(statValues[3], TimeUnit.MILLISECONDS));
                     builder.endObject();
                 }
                 builder.endObject();

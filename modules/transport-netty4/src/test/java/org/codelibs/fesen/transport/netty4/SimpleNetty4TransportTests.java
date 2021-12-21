@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.transport.netty4;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.channels.SocketChannel;
-import java.util.Collections;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
@@ -56,6 +43,21 @@ import org.codelibs.fesen.transport.TcpChannel;
 import org.codelibs.fesen.transport.TcpTransport;
 import org.codelibs.fesen.transport.TestProfiles;
 import org.codelibs.fesen.transport.Transport;
+import org.codelibs.fesen.transport.netty4.Netty4TcpChannel;
+import org.codelibs.fesen.transport.netty4.Netty4Transport;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.channels.SocketChannel;
+import java.util.Collections;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class SimpleNetty4TransportTests extends AbstractSimpleTransportTestCase {
 
@@ -63,12 +65,12 @@ public class SimpleNetty4TransportTests extends AbstractSimpleTransportTestCase 
     protected Transport build(Settings settings, final Version version, ClusterSettings clusterSettings, boolean doHandshake) {
         NamedWriteableRegistry namedWriteableRegistry = new NamedWriteableRegistry(Collections.emptyList());
         return new Netty4Transport(settings, version, threadPool, new NetworkService(Collections.emptyList()),
-                PageCacheRecycler.NON_RECYCLING_INSTANCE, namedWriteableRegistry, new NoneCircuitBreakerService(),
-                new SharedGroupFactory(settings)) {
+            PageCacheRecycler.NON_RECYCLING_INSTANCE, namedWriteableRegistry, new NoneCircuitBreakerService(),
+            new SharedGroupFactory(settings)) {
 
             @Override
             public void executeHandshake(DiscoveryNode node, TcpChannel channel, ConnectionProfile profile,
-                    ActionListener<Version> listener) {
+                                         ActionListener<Version> listener) {
                 if (doHandshake) {
                     super.executeHandshake(node, channel, profile, listener);
                 } else {
@@ -80,8 +82,8 @@ public class SimpleNetty4TransportTests extends AbstractSimpleTransportTestCase 
 
     public void testConnectException() throws UnknownHostException {
         try {
-            serviceA.connectToNode(new DiscoveryNode("C", new TransportAddress(InetAddress.getByName("localhost"), 9876), emptyMap(),
-                    emptySet(), Version.CURRENT));
+            serviceA.connectToNode(new DiscoveryNode("C", new TransportAddress(InetAddress.getByName("localhost"), 9876),
+                    emptyMap(), emptySet(),Version.CURRENT));
             fail("Expected ConnectTransportException");
         } catch (ConnectTransportException e) {
             assertThat(e.getMessage(), containsString("connect_exception"));
@@ -91,9 +93,10 @@ public class SimpleNetty4TransportTests extends AbstractSimpleTransportTestCase 
 
     public void testDefaultKeepAliveSettings() throws IOException {
         assumeTrue("setting default keepalive options not supported on this platform",
-                (IOUtils.LINUX || IOUtils.MAC_OS_X) && JavaVersion.current().compareTo(JavaVersion.parse("11")) >= 0);
+            (IOUtils.LINUX || IOUtils.MAC_OS_X) &&
+                JavaVersion.current().compareTo(JavaVersion.parse("11")) >= 0);
         try (MockTransportService serviceC = buildService("TS_C", Version.CURRENT, Settings.EMPTY);
-                MockTransportService serviceD = buildService("TS_D", Version.CURRENT, Settings.EMPTY)) {
+            MockTransportService serviceD = buildService("TS_D", Version.CURRENT, Settings.EMPTY)) {
             serviceC.start();
             serviceC.acceptIncomingRequests();
             serviceD.start();

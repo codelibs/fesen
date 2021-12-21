@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.support.single.instance;
 
-import static org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver.EXCLUDED_DATA_STREAMS_KEY;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.UnavailableShardsException;
@@ -56,8 +52,14 @@ import org.codelibs.fesen.transport.TransportRequestOptions;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
-public abstract class TransportInstanceSingleOperationAction<Request extends InstanceShardOperationRequest<Request>, Response extends ActionResponse>
-        extends HandledTransportAction<Request, Response> {
+import static org.codelibs.fesen.cluster.metadata.IndexNameExpressionResolver.EXCLUDED_DATA_STREAMS_KEY;
+
+import java.io.IOException;
+
+public abstract class TransportInstanceSingleOperationAction<
+            Request extends InstanceShardOperationRequest<Request>,
+            Response extends ActionResponse
+       > extends HandledTransportAction<Request, Response> {
 
     protected final ThreadPool threadPool;
     protected final ClusterService clusterService;
@@ -66,9 +68,10 @@ public abstract class TransportInstanceSingleOperationAction<Request extends Ins
 
     final String shardActionName;
 
-    protected TransportInstanceSingleOperationAction(String actionName, ThreadPool threadPool, ClusterService clusterService,
-            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-            Writeable.Reader<Request> request) {
+    protected TransportInstanceSingleOperationAction(String actionName, ThreadPool threadPool,
+                                                     ClusterService clusterService, TransportService transportService,
+                                                     ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+                                                     Writeable.Reader<Request> request) {
         super(actionName, transportService, actionFilters, request);
         this.threadPool = threadPool;
         this.clusterService = clusterService;
@@ -209,7 +212,8 @@ public abstract class TransportInstanceSingleOperationAction<Request extends Ins
                 public void handleException(TransportException exp) {
                     final Throwable cause = exp.unwrapCause();
                     // if we got disconnected from the node, or the node / shard is not in the right state (being closed)
-                    if (cause instanceof ConnectTransportException || cause instanceof NodeClosedException || retryOnFailure(exp)) {
+                    if (cause instanceof ConnectTransportException || cause instanceof NodeClosedException ||
+                            retryOnFailure(exp)) {
                         retry((Exception) cause);
                     } else {
                         listener.onFailure(exp);
@@ -225,11 +229,11 @@ public abstract class TransportInstanceSingleOperationAction<Request extends Ins
                 if (listenFailure == null) {
                     if (shardIt == null) {
                         listenFailure = new UnavailableShardsException(request.concreteIndex(), -1, "Timeout waiting for [{}], request: {}",
-                                request.timeout(), actionName);
+                            request.timeout(), actionName);
                     } else {
                         listenFailure = new UnavailableShardsException(shardIt.shardId(),
-                                "[{}] shardIt, [{}] active : Timeout waiting for [{}], request: {}", shardIt.size(), shardIt.sizeActive(),
-                                request.timeout(), actionName);
+                            "[{}] shardIt, [{}] active : Timeout waiting for [{}], request: {}", shardIt.size(), shardIt.sizeActive(),
+                            request.timeout(), actionName);
                     }
                 }
                 listener.onFailure(listenFailure);

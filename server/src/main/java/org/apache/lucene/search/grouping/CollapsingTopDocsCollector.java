@@ -18,12 +18,6 @@
  */
 package org.apache.lucene.search.grouping;
 
-import static org.apache.lucene.search.SortField.Type.SCORE;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.ScoreDoc;
@@ -32,6 +26,12 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TotalHits;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+
+import static org.apache.lucene.search.SortField.Type.SCORE;
 
 /**
  * A collector that groups documents based on field values and returns {@link CollapseTopFieldDocs}
@@ -128,9 +128,12 @@ public final class CollapsingTopDocsCollector<T> extends FirstPassGroupingCollec
      *                          use Sort.RELEVANCE.
      * @param topN              How many top groups to keep.
      */
-    public static CollapsingTopDocsCollector<?> createNumeric(String collapseField, MappedFieldType collapseFieldType, Sort sort,
-            int topN) {
-        return new CollapsingTopDocsCollector<>(new CollapsingDocValuesSource.Numeric(collapseFieldType), collapseField, sort, topN);
+    public static CollapsingTopDocsCollector<?> createNumeric(String collapseField,
+                                                              MappedFieldType collapseFieldType,
+                                                              Sort sort,
+                                                              int topN)  {
+        return new CollapsingTopDocsCollector<>(new CollapsingDocValuesSource.Numeric(collapseFieldType),
+                collapseField, sort, topN);
     }
 
     /**
@@ -146,8 +149,11 @@ public final class CollapsingTopDocsCollector<T> extends FirstPassGroupingCollec
      *                          This must be non-null, ie, if you want to groupSort by relevance use Sort.RELEVANCE.
      * @param topN              How many top groups to keep.
      */
-    public static CollapsingTopDocsCollector<?> createKeyword(String collapseField, MappedFieldType collapseFieldType, Sort sort,
-            int topN) {
-        return new CollapsingTopDocsCollector<>(new CollapsingDocValuesSource.Keyword(collapseFieldType), collapseField, sort, topN);
+    public static CollapsingTopDocsCollector<?> createKeyword(String collapseField,
+                                                              MappedFieldType collapseFieldType,
+                                                              Sort sort,
+                                                              int topN)  {
+        return new CollapsingTopDocsCollector<>(new CollapsingDocValuesSource.Keyword(collapseFieldType),
+                collapseField, sort, topN);
     }
 }

@@ -85,10 +85,13 @@ public class FieldTypeLookupTests extends ESTestCase {
     }
 
     public void testSourcePathWithMultiFields() {
-        Mapper.BuilderContext context = new Mapper.BuilderContext(MockFieldMapper.DEFAULT_SETTINGS, new ContentPath());
+        Mapper.BuilderContext context = new Mapper.BuilderContext(
+            MockFieldMapper.DEFAULT_SETTINGS, new ContentPath());
 
-        MockFieldMapper field = new MockFieldMapper.Builder("field").addMultiField(new MockFieldMapper.Builder("field.subfield1"))
-                .addMultiField(new MockFieldMapper.Builder("field.subfield2")).build(context);
+        MockFieldMapper field = new MockFieldMapper.Builder("field")
+            .addMultiField(new MockFieldMapper.Builder("field.subfield1"))
+            .addMultiField(new MockFieldMapper.Builder("field.subfield2"))
+            .build(context);
 
         FieldTypeLookup lookup = new FieldTypeLookup(singletonList(field), emptyList());
 
@@ -98,12 +101,16 @@ public class FieldTypeLookupTests extends ESTestCase {
     }
 
     public void testSourcePathsWithCopyTo() {
-        Mapper.BuilderContext context = new Mapper.BuilderContext(MockFieldMapper.DEFAULT_SETTINGS, new ContentPath());
+        Mapper.BuilderContext context = new Mapper.BuilderContext(
+            MockFieldMapper.DEFAULT_SETTINGS, new ContentPath());
 
-        MockFieldMapper field =
-                new MockFieldMapper.Builder("field").addMultiField(new MockFieldMapper.Builder("field.subfield1")).build(context);
+        MockFieldMapper field = new MockFieldMapper.Builder("field")
+            .addMultiField(new MockFieldMapper.Builder("field.subfield1"))
+            .build(context);
 
-        MockFieldMapper otherField = new MockFieldMapper.Builder("other_field").copyTo("field").build(context);
+        MockFieldMapper otherField = new MockFieldMapper.Builder("other_field")
+            .copyTo("field")
+            .build(context);
 
         FieldTypeLookup lookup = new FieldTypeLookup(Arrays.asList(field, otherField), emptyList());
 

@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.http.HttpResponse;
-import org.codelibs.fesen.rest.RestStatus;
-import org.codelibs.fesen.transport.netty4.Netty4Utils;
-
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.http.HttpResponse;
+import org.codelibs.fesen.rest.RestStatus;
+import org.codelibs.fesen.transport.netty4.Netty4Utils;
 
 public class Netty4HttpResponse extends DefaultFullHttpResponse implements HttpResponse {
 
@@ -52,3 +52,4 @@ public class Netty4HttpResponse extends DefaultFullHttpResponse implements HttpR
         return requestHeaders;
     }
 }
+

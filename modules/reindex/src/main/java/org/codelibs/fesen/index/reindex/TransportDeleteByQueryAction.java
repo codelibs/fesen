@@ -27,10 +27,15 @@ import org.codelibs.fesen.client.ParentTaskAssigningClient;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
+import org.codelibs.fesen.index.reindex.DeleteByQueryRequest;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
+
 
 public class TransportDeleteByQueryAction extends HandledTransportAction<DeleteByQueryRequest, BulkByScrollResponse> {
 
@@ -41,9 +46,9 @@ public class TransportDeleteByQueryAction extends HandledTransportAction<DeleteB
 
     @Inject
     public TransportDeleteByQueryAction(ThreadPool threadPool, ActionFilters actionFilters, Client client,
-            TransportService transportService, ScriptService scriptService, ClusterService clusterService) {
+                                        TransportService transportService, ScriptService scriptService, ClusterService clusterService) {
         super(DeleteByQueryAction.NAME, transportService, actionFilters,
-                (Writeable.Reader<DeleteByQueryRequest>) DeleteByQueryRequest::new);
+            (Writeable.Reader<DeleteByQueryRequest>) DeleteByQueryRequest::new);
         this.threadPool = threadPool;
         this.client = client;
         this.scriptService = scriptService;
@@ -54,11 +59,13 @@ public class TransportDeleteByQueryAction extends HandledTransportAction<DeleteB
     public void doExecute(Task task, DeleteByQueryRequest request, ActionListener<BulkByScrollResponse> listener) {
         BulkByScrollTask bulkByScrollTask = (BulkByScrollTask) task;
         BulkByScrollParallelizationHelper.startSlicedAction(request, bulkByScrollTask, DeleteByQueryAction.INSTANCE, listener, client,
-                clusterService.localNode(), () -> {
-                    ParentTaskAssigningClient assigningClient =
-                            new ParentTaskAssigningClient(client, clusterService.localNode(), bulkByScrollTask);
-                    new AsyncDeleteByQueryAction(bulkByScrollTask, logger, assigningClient, threadPool, request, scriptService, listener)
-                            .start();
-                });
+            clusterService.localNode(),
+            () -> {
+                ParentTaskAssigningClient assigningClient = new ParentTaskAssigningClient(client, clusterService.localNode(),
+                    bulkByScrollTask);
+                new AsyncDeleteByQueryAction(bulkByScrollTask, logger, assigningClient, threadPool, request, scriptService,
+                    listener).start();
+            }
+        );
     }
 }

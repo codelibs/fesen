@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import static org.apache.lucene.geo.GeoUtils.orient;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.parsers.ShapeParser;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -47,6 +34,19 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.spatial4j.exception.InvalidShapeException;
 import org.locationtech.spatial4j.shape.jts.JtsGeometry;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.apache.lucene.geo.GeoUtils.orient;
 
 /**
  * The {@link PolygonBuilder} implements the groundwork to create polygons. This contains
@@ -169,11 +169,12 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
          */
         List<Coordinate> points = lineString.coordinates;
         if (points.size() < 4) {
-            throw new IllegalArgumentException("invalid number of points in LinearRing (found [" + points.size() + "] - must be >= 4)");
+            throw new IllegalArgumentException(
+                    "invalid number of points in LinearRing (found [" + points.size() + "] - must be >= 4)");
         }
 
         if (!points.get(0).equals(points.get(points.size() - 1))) {
-            throw new IllegalArgumentException("invalid LinearRing found (coordinates are not closed)");
+                throw new IllegalArgumentException("invalid LinearRing found (coordinates are not closed)");
         }
     }
 
@@ -200,9 +201,9 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
      * @return coordinates of the polygon
      */
     public Coordinate[][][] coordinates() {
-        int numEdges = shell.coordinates.size() - 1; // Last point is repeated
+        int numEdges = shell.coordinates.size()-1; // Last point is repeated
         for (int i = 0; i < holes.size(); i++) {
-            numEdges += holes.get(i).coordinates.size() - 1;
+            numEdges += holes.get(i).coordinates.size()-1;
             validateHole(shell, this.holes.get(i));
         }
 
@@ -211,7 +212,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         final AtomicBoolean translated = new AtomicBoolean(false);
         int offset = createEdges(0, orientation, shell, null, edges, 0, translated);
         for (int i = 0; i < holes.size(); i++) {
-            int length = createEdges(i + 1, orientation, shell, this.holes.get(i), edges, offset, translated);
+            int length = createEdges(i+1, orientation, shell, this.holes.get(i), edges, offset, translated);
             holeComponents[i] = edges[offset];
             offset += length;
         }
@@ -236,7 +237,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
 
     protected XContentBuilder coordinatesArray(XContentBuilder builder, Params params) throws IOException {
         shell.coordinatesToXcontent(builder, true);
-        for (LineStringBuilder hole : holes) {
+        for(LineStringBuilder hole : holes) {
             hole.coordinatesToXcontent(builder, true);
         }
         return builder;
@@ -255,9 +256,11 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
     }
 
     public Geometry buildS4JGeometry(GeometryFactory factory, boolean fixDateline) {
-        if (fixDateline) {
+        if(fixDateline) {
             Coordinate[][][] polygons = coordinates();
-            return polygons.length == 1 ? polygonS4J(factory, polygons[0]) : multipolygonS4J(factory, polygons);
+            return polygons.length == 1
+                    ? polygonS4J(factory, polygons[0])
+                    : multipolygonS4J(factory, polygons);
         } else {
             return toPolygonS4J(factory);
         }
@@ -287,7 +290,8 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
 
     protected static org.codelibs.fesen.geometry.LinearRing linearRing(List<Coordinate> coordinates) {
         return new org.codelibs.fesen.geometry.LinearRing(coordinates.stream().mapToDouble(i -> i.x).toArray(),
-                coordinates.stream().mapToDouble(i -> i.y).toArray());
+            coordinates.stream().mapToDouble(i -> i.y).toArray()
+        );
     }
 
     protected static LinearRing linearRingS4J(GeometryFactory factory, List<Coordinate> coordinates) {
@@ -302,7 +306,8 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
     @Override
     public int numDimensions() {
         if (shell == null) {
-            throw new IllegalStateException("unable to get number of dimensions, " + "Polygon has not yet been initialized");
+            throw new IllegalStateException("unable to get number of dimensions, " +
+                "Polygon has not yet been initialized");
         }
         return shell.numDimensions();
     }
@@ -311,10 +316,10 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         LinearRing shell = factory.createLinearRing(polygon[0]);
         LinearRing[] holes;
 
-        if (polygon.length > 1) {
-            holes = new LinearRing[polygon.length - 1];
+        if(polygon.length > 1) {
+            holes = new LinearRing[polygon.length-1];
             for (int i = 0; i < holes.length; i++) {
-                holes[i] = factory.createLinearRing(polygon[i + 1]);
+                holes[i] = factory.createLinearRing(polygon[i+1]);
             }
         } else {
             holes = null;
@@ -352,8 +357,8 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
     private static int component(final Edge edge, final int id, final ArrayList<Edge> edges, double[] partitionPoint) {
         // find a coordinate that is not part of the dateline
         Edge any = edge;
-        while (any.coordinate.x == +DATELINE || any.coordinate.x == -DATELINE) {
-            if ((any = any.next) == edge) {
+        while(any.coordinate.x == +DATELINE || any.coordinate.x == -DATELINE) {
+            if((any = any.next) == edge) {
                 break;
             }
         }
@@ -414,9 +419,9 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
                 prev = current;
             }
             length++;
-        } while (connectedComponents == 0 && (current = current.next) != edge);
+        } while(connectedComponents == 0 && (current = current.next) != edge);
 
-        return (splitIndex != 1) ? length - splitIndex : length;
+        return (splitIndex != 1) ? length-splitIndex: length;
     }
 
     /**
@@ -432,10 +437,11 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         // First and last coordinates must be equal
         if (coordinates[0].equals(coordinates[coordinates.length - 1]) == false) {
             if (Double.isNaN(partitionPoint[2])) {
-                throw new InvalidShapeException("Self-intersection at or near point [" + partitionPoint[0] + "," + partitionPoint[1] + "]");
+                throw new InvalidShapeException("Self-intersection at or near point ["
+                    + partitionPoint[0] + "," + partitionPoint[1] + "]");
             } else {
-                throw new InvalidShapeException("Self-intersection at or near point [" + partitionPoint[0] + "," + partitionPoint[1] + ","
-                        + partitionPoint[2] + "]");
+                throw new InvalidShapeException("Self-intersection at or near point ["
+                    + partitionPoint[0] + "," + partitionPoint[1] + "," + partitionPoint[2] + "]");
             }
         }
         return coordinates;
@@ -448,7 +454,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             result[i] = component.toArray(new Coordinate[component.size()][]);
         }
 
-        if (debugEnabled()) {
+        if(debugEnabled()) {
             for (int i = 0; i < result.length; i++) {
                 LOGGER.debug("Component [{}]:", i);
                 for (int j = 0; j < result[i].length; j++) {
@@ -467,9 +473,9 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         final Coordinate[][] points = new Coordinate[numHoles][];
 
         for (int i = 0; i < numHoles; i++) {
-            double[] partitionPoint = new double[3];
-            int length = component(holes[i], -(i + 1), null, partitionPoint); // mark as visited by inverting the sign
-            points[i] = coordinates(holes[i], new Coordinate[length + 1], partitionPoint);
+            double[]  partitionPoint = new double[3];
+            int length = component(holes[i], -(i+1), null, partitionPoint); // mark as visited by inverting the sign
+            points[i] = coordinates(holes[i], new Coordinate[length+1], partitionPoint);
         }
 
         return points;
@@ -480,10 +486,10 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
 
         for (int i = 0; i < edges.length; i++) {
             if (edges[i].component >= 0) {
-                double[] partitionPoint = new double[3];
-                int length = component(edges[i], -(components.size() + numHoles + 1), mainEdges, partitionPoint);
+                double[]  partitionPoint = new double[3];
+                int length = component(edges[i], -(components.size()+numHoles+1), mainEdges, partitionPoint);
                 List<Coordinate[]> component = new ArrayList<>();
-                component.add(coordinates(edges[i], new Coordinate[length + 1], partitionPoint));
+                component.add(coordinates(edges[i], new Coordinate[length+1], partitionPoint));
                 components.add(component);
             }
         }
@@ -534,7 +540,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             final int pos;
             boolean sharedVertex = false;
             if (((pos = Arrays.binarySearch(edges, 0, intersections, current, INTERSECTION_ORDER)) >= 0)
-                    && !(sharedVertex = (edges[pos].intersect.compareTo(current.coordinate) == 0))) {
+                && !(sharedVertex = (edges[pos].intersect.compareTo(current.coordinate) == 0))) {
                 // The binary search returned an exact match, but we checked again using compareTo()
                 // and it didn't match after all.
 
@@ -559,7 +565,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
 
             final int component = -edges[index].component - numHoles - 1;
 
-            if (debugEnabled()) {
+            if(debugEnabled()) {
                 LOGGER.debug("\tposition ({}) of edge {}: {}", index, current, edges[index]);
                 LOGGER.debug("\tComponent: {}", component);
                 LOGGER.debug("\tHole intersections ({}): {}", current.coordinate.x, Arrays.toString(edges));
@@ -586,7 +592,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             if (e2.component > 0) {
                 //TODO: Check if we could save the set null step
                 numHoles--;
-                holes[e2.component - 1] = holes[numHoles];
+                holes[e2.component-1] = holes[numHoles];
                 holes[numHoles] = null;
             }
             // only connect edges if intersections are pairwise
@@ -604,7 +610,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             //    in support of OGC standards
             if (e1.intersect != Edge.MAX_COORDINATE && e2.intersect != Edge.MAX_COORDINATE
                     && !(e1.next.next.coordinate.equals3D(e2.coordinate) && Math.abs(e1.next.coordinate.x) == DATELINE
-                            && Math.abs(e2.coordinate.x) == DATELINE)) {
+                    && Math.abs(e2.coordinate.x) == DATELINE) ) {
                 connect(e1, e2);
             }
         }
@@ -617,12 +623,12 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         // Connecting two Edges by inserting the point at
         // dateline intersection and connect these by adding
         // two edges between this points. One per direction
-        if (in.intersect != in.next.coordinate) {
+        if(in.intersect != in.next.coordinate) {
             // NOTE: the order of the object creation is crucial here! Don't change it!
             // first edge has no point on dateline
             Edge e1 = new Edge(in.intersect, in.next);
 
-            if (out.intersect != out.next.coordinate) {
+            if(out.intersect != out.next.coordinate) {
                 // second edge has no point on dateline
                 Edge e2 = new Edge(out.intersect, out.next);
                 in.next = new Edge(in.intersect, e2, in.intersect);
@@ -635,7 +641,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             // first edge intersects with dateline
             Edge e2 = new Edge(out.intersect, in.next, out.intersect);
 
-            if (out.intersect != out.next.coordinate) {
+            if(out.intersect != out.next.coordinate) {
                 // second edge has no point on dateline
                 Edge e1 = new Edge(out.intersect, out.next);
                 in.next = new Edge(in.intersect, e1, in.intersect);
@@ -648,15 +654,15 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         }
     }
 
-    private static int createEdges(int component, Orientation orientation, LineStringBuilder shell, LineStringBuilder hole, Edge[] edges,
-            int offset, final AtomicBoolean translated) {
+    private static int createEdges(int component, Orientation orientation, LineStringBuilder shell,
+                                   LineStringBuilder hole, Edge[] edges, int offset, final AtomicBoolean translated) {
         // inner rings (holes) have an opposite direction than the outer rings
         // XOR will invert the orientation for outer ring cases (Truth Table:, T/T = F, T/F = T, F/T = T, F/F = F)
         boolean direction = (component == 0 ^ orientation == Orientation.RIGHT);
         // set the points array accordingly (shell or hole)
         Coordinate[] points = (hole != null) ? hole.coordinates(false) : shell.coordinates(false);
-        ring(component, direction, orientation == Orientation.LEFT, points, 0, edges, offset, points.length - 1, translated);
-        return points.length - 1;
+        ring(component, direction, orientation == Orientation.LEFT, points, 0, edges, offset, points.length-1, translated);
+        return points.length-1;
     }
 
     /**
@@ -670,8 +676,8 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
      *            number of points
      * @return Array of edges
      */
-    private static Edge[] ring(int component, boolean direction, boolean handedness, Coordinate[] points, int offset, Edge[] edges,
-            int toffset, int length, final AtomicBoolean translated) {
+    private static Edge[] ring(int component, boolean direction, boolean handedness,
+                                 Coordinate[] points, int offset, Edge[] edges, int toffset, int length, final AtomicBoolean translated) {
 
         boolean orientation = getOrientation(points, offset, length);
 
@@ -688,7 +694,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         //       (translation would result in a collapsed poly)
         //   2.  the shell of the candidate hole has been translated (to preserve the coordinate system)
         boolean incorrectOrientation = component == 0 && handedness != orientation;
-        if ((incorrectOrientation && (rng > DATELINE && rng != 2 * DATELINE)) || (translated.get() && component != 0)) {
+        if ( (incorrectOrientation && (rng > DATELINE && rng != 2*DATELINE)) || (translated.get() && component != 0)) {
             translate(points);
             // flip the translation bit if the shell is being translated
             if (component == 0) {
@@ -713,13 +719,15 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
         final int prev = (top + length - 1) % length;
         final int next = (top + 1) % length;
 
-        final int determinantSign = orient(points[offset + prev].x, points[offset + prev].y, points[offset + top].x, points[offset + top].y,
-                points[offset + next].x, points[offset + next].y);
+        final int determinantSign = orient(
+            points[offset + prev].x, points[offset + prev].y,
+            points[offset + top].x, points[offset + top].y,
+            points[offset + next].x, points[offset + next].y);
 
         if (determinantSign == 0) {
             // Points are collinear, but `top` is not in the middle if so, so the edges either side of `top` are intersecting.
-            throw new InvalidShapeException("Cannot determine orientation: edges adjacent to (" + points[offset + top].x + ","
-                    + points[offset + top].y + ") coincide");
+            throw new InvalidShapeException("Cannot determine orientation: edges adjacent to ("
+                + points[offset + top].x + "," + points[offset +top].y + ") coincide");
         }
 
         return determinantSign < 0;
@@ -763,7 +771,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
                 maxY = points[offset + i].y;
             }
         }
-        return new double[] { minX, maxX, minY, maxY };
+        return new double[] {minX, maxX, minY, maxY};
     }
 
     /**
@@ -787,14 +795,14 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
      */
     private static Edge[] concat(int component, boolean direction, Coordinate[] points, final int pointOffset, Edge[] edges,
             final int edgeOffset, int length) {
-        assert edges.length >= length + edgeOffset;
-        assert points.length >= length + pointOffset;
+        assert edges.length >= length+edgeOffset;
+        assert points.length >= length+pointOffset;
         edges[edgeOffset] = new Edge(points[pointOffset], null);
         for (int i = 1; i < length; i++) {
             if (direction) {
                 edges[edgeOffset + i] = new Edge(points[pointOffset + i], edges[edgeOffset + i - 1]);
                 edges[edgeOffset + i].component = component;
-            } else if (!edges[edgeOffset + i - 1].coordinate.equals(points[pointOffset + i])) {
+            } else if(!edges[edgeOffset + i - 1].coordinate.equals(points[pointOffset + i])) {
                 edges[edgeOffset + i - 1].next = edges[edgeOffset + i] = new Edge(points[pointOffset + i], null);
                 edges[edgeOffset + i - 1].component = component;
             } else {
@@ -819,7 +827,7 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
     private static void translate(Coordinate[] points) {
         for (Coordinate c : points) {
             if (c.x < 0) {
-                c.x += 2 * DATELINE;
+                c.x += 2*DATELINE;
             }
         }
     }
@@ -851,6 +859,8 @@ public class PolygonBuilder extends ShapeBuilder<JtsGeometry, org.codelibs.fesen
             return false;
         }
         PolygonBuilder other = (PolygonBuilder) obj;
-        return Objects.equals(shell, other.shell) && Objects.equals(holes, other.holes) && Objects.equals(orientation, other.orientation);
+        return Objects.equals(shell, other.shell) &&
+                Objects.equals(holes, other.holes) &&
+                Objects.equals(orientation,  other.orientation);
     }
 }

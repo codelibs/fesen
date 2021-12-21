@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.test.junit.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.TYPE;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PACKAGE;
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Annotation used to set a custom log level when investigating test failures. Do not use this annotation to explicitly
@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * org.codelibs.fesen.cluster.metadata:TRACE). Use the _root keyword to set the root logger level.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ PACKAGE, TYPE, METHOD })
+@Target({PACKAGE, TYPE, METHOD})
 public @interface TestIssueLogging {
 
     /**

@@ -82,7 +82,9 @@ public class InternalDateHistogramTests extends InternalMultiBucketAggregationTe
     }
 
     @Override
-    protected InternalDateHistogram createTestInstance(String name, Map<String, Object> metadata, InternalAggregations aggregations) {
+    protected InternalDateHistogram createTestInstance(String name,
+                                                       Map<String, Object> metadata,
+                                                       InternalAggregations aggregations) {
         int nbBuckets = randomNumberOfBuckets();
         List<InternalDateHistogram.Bucket> buckets = new ArrayList<>(nbBuckets);
         //avoid having different random instance start from exactly the same base
@@ -111,8 +113,10 @@ public class InternalDateHistogramTests extends InternalMultiBucketAggregationTe
             long minBound = -1;
             long maxBound = -1;
             if (emptyBucketInfo.bounds != null) {
-                Rounding.Prepared prepared =
-                        emptyBucketInfo.rounding.prepare(emptyBucketInfo.bounds.getMin(), emptyBucketInfo.bounds.getMax());
+                Rounding.Prepared prepared = emptyBucketInfo.rounding.prepare(
+                    emptyBucketInfo.bounds.getMin(),
+                    emptyBucketInfo.bounds.getMax()
+                );
                 minBound = prepared.round(emptyBucketInfo.bounds.getMin());
                 maxBound = prepared.round(emptyBucketInfo.bounds.getMax());
                 if (expectedCounts.isEmpty() && minBound <= maxBound) {

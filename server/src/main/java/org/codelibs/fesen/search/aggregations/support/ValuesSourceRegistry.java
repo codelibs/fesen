@@ -54,10 +54,8 @@ public class ValuesSourceRegistry {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             RegistryKey that = (RegistryKey) o;
             return name.equals(that.name) && supplierType.equals(that.supplierType);
         }
@@ -78,6 +76,7 @@ public class ValuesSourceRegistry {
             this.usageServiceBuilder = new AggregationUsageService.Builder();
         }
 
+
         /**
          * Register a ValuesSource to Aggregator mapping. This method registers mappings that only apply to a
          * single {@link ValuesSourceType}
@@ -89,8 +88,11 @@ public class ValuesSourceRegistry {
          * @param registerUsage Flag to indicate if this aggregation values source combo should be added to the usage registry.
          *                      Aggregations that set this to false should register with the usage registry through some other path.
          */
-        public <T> void register(RegistryKey<T> registryKey, ValuesSourceType valuesSourceType, T aggregatorSupplier,
-                boolean registerUsage) {
+        public <T> void register(
+            RegistryKey<T> registryKey,
+            ValuesSourceType valuesSourceType,
+            T aggregatorSupplier,
+            boolean registerUsage) {
             if (aggregatorRegistry.containsKey(registryKey) == false) {
                 aggregatorRegistry.put(registryKey, new ArrayList<>());
             }
@@ -111,8 +113,11 @@ public class ValuesSourceRegistry {
          * @param registerUsage Flag to indicate if this aggregation values source combo should be added to the usage registry.
          *                      Aggregations that set this to false should register with the usage registry through some other path.
          */
-        public <T> void register(RegistryKey<T> registryKey, List<ValuesSourceType> valuesSourceTypes, T aggregatorSupplier,
-                boolean registerUsage) {
+        public <T> void register(
+            RegistryKey<T> registryKey,
+            List<ValuesSourceType> valuesSourceTypes,
+            T aggregatorSupplier,
+            boolean registerUsage) {
             for (ValuesSourceType valuesSourceType : valuesSourceTypes) {
                 register(registryKey, valuesSourceType, aggregatorSupplier, registerUsage);
             }
@@ -132,13 +137,15 @@ public class ValuesSourceRegistry {
     }
 
     private static Map<RegistryKey<?>, Map<ValuesSourceType, ?>> copyMap(
-            Map<RegistryKey<?>, List<Map.Entry<ValuesSourceType, ?>>> mutableMap) {
+        Map<RegistryKey<?>, List<Map.Entry<ValuesSourceType, ?>>> mutableMap
+    ) {
         /*
          Make an immutatble copy of our input map. Since this is write once, read many, we'll spend a bit of extra time to shape this
          into a Map.of(), which is more read optimized than just using a hash map.
          */
         Map<RegistryKey<?>, Map<ValuesSourceType, ?>> tmp = new HashMap<>();
-        mutableMap.forEach((key, value) -> tmp.put(key, value.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))));
+        mutableMap.forEach((key, value) -> tmp.put(key, value.stream().collect(
+            Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))));
         return Collections.unmodifiableMap(tmp);
     }
 
@@ -146,8 +153,10 @@ public class ValuesSourceRegistry {
     private final AggregationUsageService usageService;
     private final Map<RegistryKey<?>, Map<ValuesSourceType, ?>> aggregatorRegistry;
 
-    public ValuesSourceRegistry(Map<RegistryKey<?>, List<Map.Entry<ValuesSourceType, ?>>> aggregatorRegistry,
-            AggregationUsageService usageService) {
+    public ValuesSourceRegistry(
+        Map<RegistryKey<?>, List<Map.Entry<ValuesSourceType, ?>>> aggregatorRegistry,
+        AggregationUsageService usageService
+    ) {
         this.usageService = usageService;
         this.aggregatorRegistry = copyMap(aggregatorRegistry);
     }
@@ -162,7 +171,8 @@ public class ValuesSourceRegistry {
             T supplier = (T) aggregatorRegistry.get(registryKey).get(valuesSourceConfig.valueSourceType());
             if (supplier == null) {
                 throw new IllegalArgumentException(
-                        valuesSourceConfig.getDescription() + " is not supported for aggregation [" + registryKey.getName() + "]");
+                    valuesSourceConfig.getDescription() + " is not supported for aggregation [" + registryKey.getName() + "]"
+                );
             }
             return supplier;
         }

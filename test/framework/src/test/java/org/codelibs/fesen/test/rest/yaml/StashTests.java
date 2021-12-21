@@ -19,16 +19,17 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.sameInstance;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.rest.yaml.Stash;
+
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
 
 public class StashTests extends ESTestCase {
     public void testReplaceStashedValuesStashKeyInMapValue() throws IOException {
@@ -91,8 +92,8 @@ public class StashTests extends ESTestCase {
         map.put("key", map2);
 
         Exception e = expectThrows(IllegalArgumentException.class, () -> stash.replaceStashedValues(map));
-        assertEquals(e.getMessage(), "Unstashing has caused a key conflict! The map is [{foobar=whatever}] and the key is [" + key
-                + "] which unstashes to [foobar]");
+        assertEquals(e.getMessage(), "Unstashing has caused a key conflict! The map is [{foobar=whatever}] and the key is ["
+                            + key + "] which unstashes to [foobar]");
     }
 
     public void testReplaceStashedValuesStashKeyInList() throws IOException {

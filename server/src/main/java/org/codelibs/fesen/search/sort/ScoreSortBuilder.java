@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.sort;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Scorable;
 import org.apache.lucene.search.SortField;
@@ -34,16 +31,19 @@ import org.codelibs.fesen.index.query.QueryRewriteContext;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
 
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A sort builder allowing to sort by score.
  */
 public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
 
     public static final String NAME = "_score";
-    private static final SortFieldAndFormat SORT_SCORE =
-            new SortFieldAndFormat(new SortField(null, SortField.Type.SCORE), DocValueFormat.RAW);
-    private static final SortFieldAndFormat SORT_SCORE_REVERSE =
-            new SortFieldAndFormat(new SortField(null, SortField.Type.SCORE, true), DocValueFormat.RAW);
+    private static final SortFieldAndFormat SORT_SCORE = new SortFieldAndFormat(
+            new SortField(null, SortField.Type.SCORE), DocValueFormat.RAW);
+    private static final SortFieldAndFormat SORT_SCORE_REVERSE = new SortFieldAndFormat(
+            new SortField(null, SortField.Type.SCORE, true), DocValueFormat.RAW);
 
     /**
      * Build a ScoreSortBuilder default to descending sort order.
@@ -107,9 +107,7 @@ public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
     public BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra) throws IOException {
         return new BucketedSort.ForFloats(context.bigArrays(), order, DocValueFormat.RAW, bucketSize, extra) {
             @Override
-            public boolean needsScores() {
-                return true;
-            }
+            public boolean needsScores() { return true; }
 
             @Override
             public Leaf forLeaf(LeafReaderContext ctx) throws IOException {

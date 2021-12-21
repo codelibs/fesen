@@ -19,20 +19,20 @@
 
 package org.codelibs.fesen.action.admin.indices.shrink;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
 
 /**
  * A response for a resize index action, either shrink or split index.
  */
 public final class ResizeResponse extends CreateIndexResponse {
 
-    private static final ConstructingObjectParser<ResizeResponse, Void> PARSER = new ConstructingObjectParser<>("resize_index", true,
-            args -> new ResizeResponse((boolean) args[0], (boolean) args[1], (String) args[2]));
+    private static final ConstructingObjectParser<ResizeResponse, Void> PARSER = new ConstructingObjectParser<>("resize_index",
+            true, args -> new ResizeResponse((boolean) args[0], (boolean) args[1], (String) args[2]));
 
     static {
         declareFields(PARSER);

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.collect;
 
-import java.util.Iterator;
-
 import com.carrotsearch.hppc.ObjectIntHashMap;
 import com.carrotsearch.hppc.ObjectLookupContainer;
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
+
+import java.util.Iterator;
 
 public final class HppcMaps {
 

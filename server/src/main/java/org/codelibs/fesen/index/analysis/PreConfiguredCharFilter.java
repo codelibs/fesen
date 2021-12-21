@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.io.Reader;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import org.apache.lucene.analysis.CharFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory.CachingStrategy;
+
+import java.io.Reader;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Provides pre-configured, shared {@link CharFilter}s.

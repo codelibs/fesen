@@ -18,7 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
-import static java.util.Collections.emptyMap;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,10 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import static java.util.Collections.emptyMap;
 
 /**
  * Computes distribution statistics over multiple fields
@@ -42,7 +42,7 @@ public class InternalMatrixStats extends InternalAggregation implements MatrixSt
 
     /** per shard ctor */
     InternalMatrixStats(String name, long count, RunningStats multiFieldStatsResults, MatrixStatsResults results,
-            Map<String, Object> metadata) {
+                                  Map<String, Object> metadata) {
         super(name, metadata);
         assert count >= 0;
         this.stats = multiFieldStatsResults;
@@ -209,22 +209,22 @@ public class InternalMatrixStats extends InternalAggregation implements MatrixSt
                 return emptyMap();
             }
             switch (element) {
-            case "counts":
-                return results.getFieldCounts();
-            case "means":
-                return results.getMeans();
-            case "variances":
-                return results.getVariances();
-            case "skewness":
-                return results.getSkewness();
-            case "kurtosis":
-                return results.getKurtosis();
-            case "covariance":
-                return results.getCovariances();
-            case "correlation":
-                return results.getCorrelations();
-            default:
-                throw new IllegalArgumentException("Found unknown path element [" + element + "] in [" + getName() + "]");
+                case "counts":
+                    return results.getFieldCounts();
+                case "means":
+                    return results.getMeans();
+                case "variances":
+                    return results.getVariances();
+                case "skewness":
+                    return results.getSkewness();
+                case "kurtosis":
+                    return results.getKurtosis();
+                case "covariance":
+                    return results.getCovariances();
+                case "correlation":
+                    return results.getCorrelations();
+                default:
+                    throw new IllegalArgumentException("Found unknown path element [" + element + "] in [" + getName() + "]");
             }
         } else {
             throw new IllegalArgumentException("path not supported for [" + getName() + "]: " + path);
@@ -235,7 +235,7 @@ public class InternalMatrixStats extends InternalAggregation implements MatrixSt
     public InternalAggregation reduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
         // merge stats across all shards
         List<InternalAggregation> aggs = new ArrayList<>(aggregations);
-        aggs.removeIf(p -> ((InternalMatrixStats) p).stats == null);
+        aggs.removeIf(p -> ((InternalMatrixStats)p).stats == null);
 
         // return empty result iff all stats are null
         if (aggs.isEmpty()) {
@@ -266,14 +266,12 @@ public class InternalMatrixStats extends InternalAggregation implements MatrixSt
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalMatrixStats other = (InternalMatrixStats) obj;
-        return Objects.equals(this.stats, other.stats) && Objects.equals(this.results, other.results);
+        return Objects.equals(this.stats, other.stats) &&
+            Objects.equals(this.results, other.results);
     }
 }

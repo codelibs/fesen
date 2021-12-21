@@ -83,7 +83,7 @@ public class ByteUtilsTests extends ESTestCase {
                 data[i] = Long.MIN_VALUE;
                 break;
             case 3:
-                data[i] = randomInt(1 << randomIntBetween(2, 30));
+                data[i] = randomInt(1 << randomIntBetween(2,30));
                 break;
             case 4:
                 data[i] = randomLong();

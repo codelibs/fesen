@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.seqno;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -58,6 +54,10 @@ import org.codelibs.fesen.transport.TransportException;
 import org.codelibs.fesen.transport.TransportResponseHandler;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Write action responsible for syncing retention leases to replicas. This action is deliberately a write action so that if a replica misses
  * a retention lease sync then that shard will be marked as stale.
@@ -73,12 +73,28 @@ public class RetentionLeaseSyncAction extends
     }
 
     @Inject
-    public RetentionLeaseSyncAction(final Settings settings, final TransportService transportService, final ClusterService clusterService,
-            final IndicesService indicesService, final ThreadPool threadPool, final ShardStateAction shardStateAction,
-            final ActionFilters actionFilters, final IndexingPressure indexingPressure, final SystemIndices systemIndices) {
-        super(settings, ACTION_NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
-                RetentionLeaseSyncAction.Request::new, RetentionLeaseSyncAction.Request::new, ignore -> ThreadPool.Names.MANAGEMENT, false,
-                indexingPressure, systemIndices);
+    public RetentionLeaseSyncAction(
+        final Settings settings,
+        final TransportService transportService,
+        final ClusterService clusterService,
+        final IndicesService indicesService,
+        final ThreadPool threadPool,
+        final ShardStateAction shardStateAction,
+        final ActionFilters actionFilters,
+        final IndexingPressure indexingPressure,
+        final SystemIndices systemIndices) {
+        super(
+                settings,
+                ACTION_NAME,
+                transportService,
+                clusterService,
+                indicesService,
+                threadPool,
+                shardStateAction,
+                actionFilters,
+                RetentionLeaseSyncAction.Request::new,
+                RetentionLeaseSyncAction.Request::new,
+                ignore -> ThreadPool.Names.MANAGEMENT, false, indexingPressure, systemIndices);
     }
 
     @Override
@@ -87,7 +103,7 @@ public class RetentionLeaseSyncAction extends
     }
 
     final void sync(ShardId shardId, String primaryAllocationId, long primaryTerm, RetentionLeases retentionLeases,
-            ActionListener<ReplicationResponse> listener) {
+                    ActionListener<ReplicationResponse> listener) {
         final ThreadContext threadContext = threadPool.getThreadContext();
         try (ThreadContext.StoredContext ignore = threadContext.stashContext()) {
             // we have to execute under the system context so that if security is enabled the sync is authorized
@@ -95,36 +111,40 @@ public class RetentionLeaseSyncAction extends
             final Request request = new Request(shardId, retentionLeases);
             final ReplicationTask task = (ReplicationTask) taskManager.register("transport", "retention_lease_sync", request);
             transportService.sendChildRequest(clusterService.localNode(), transportPrimaryAction,
-                    new ConcreteShardRequest<>(request, primaryAllocationId, primaryTerm), task, transportOptions,
-                    new TransportResponseHandler<ReplicationResponse>() {
-                        @Override
-                        public ReplicationResponse read(StreamInput in) throws IOException {
-                            return newResponseInstance(in);
-                        }
+                new ConcreteShardRequest<>(request, primaryAllocationId, primaryTerm),
+                task,
+                transportOptions,
+                new TransportResponseHandler<ReplicationResponse>() {
+                    @Override
+                    public ReplicationResponse read(StreamInput in) throws IOException {
+                        return newResponseInstance(in);
+                    }
 
-                        @Override
-                        public String executor() {
-                            return ThreadPool.Names.SAME;
-                        }
+                    @Override
+                    public String executor() {
+                        return ThreadPool.Names.SAME;
+                    }
 
-                        @Override
-                        public void handleResponse(ReplicationResponse response) {
-                            task.setPhase("finished");
-                            taskManager.unregister(task);
-                            listener.onResponse(response);
-                        }
+                    @Override
+                    public void handleResponse(ReplicationResponse response) {
+                        task.setPhase("finished");
+                        taskManager.unregister(task);
+                        listener.onResponse(response);
+                    }
 
-                        @Override
-                        public void handleException(TransportException e) {
-                            if (ExceptionsHelper.unwrap(e, IndexNotFoundException.class, AlreadyClosedException.class,
-                                    IndexShardClosedException.class) == null) {
-                                getLogger().warn(new ParameterizedMessage("{} retention lease sync failed", shardId), e);
-                            }
-                            task.setPhase("finished");
-                            taskManager.unregister(task);
-                            listener.onFailure(e);
+                    @Override
+                    public void handleException(TransportException e) {
+                        if (ExceptionsHelper.unwrap(e,
+                                                    IndexNotFoundException.class,
+                                                    AlreadyClosedException.class,
+                                                    IndexShardClosedException.class) == null) {
+                            getLogger().warn(new ParameterizedMessage("{} retention lease sync failed", shardId), e);
                         }
-                    });
+                        task.setPhase("finished");
+                        taskManager.unregister(task);
+                        listener.onFailure(e);
+                    }
+                });
         }
     }
 
@@ -141,7 +161,8 @@ public class RetentionLeaseSyncAction extends
     }
 
     @Override
-    protected void dispatchedShardOperationOnReplica(Request request, IndexShard replica, ActionListener<ReplicaResult> listener) {
+    protected void dispatchedShardOperationOnReplica(Request request, IndexShard replica,
+            ActionListener<ReplicaResult> listener) {
         ActionListener.completeWith(listener, () -> {
             Objects.requireNonNull(request);
             Objects.requireNonNull(replica);
@@ -188,16 +209,20 @@ public class RetentionLeaseSyncAction extends
 
         @Override
         public String toString() {
-            return "RetentionLeaseSyncAction.Request{" + "retentionLeases=" + retentionLeases + ", shardId=" + shardId + ", timeout="
-                    + timeout + ", index='" + index + '\'' + ", waitForActiveShards=" + waitForActiveShards + '}';
+            return "RetentionLeaseSyncAction.Request{" +
+                    "retentionLeases=" + retentionLeases +
+                    ", shardId=" + shardId +
+                    ", timeout=" + timeout +
+                    ", index='" + index + '\'' +
+                    ", waitForActiveShards=" + waitForActiveShards +
+                    '}';
         }
 
     }
 
     public static final class Response extends ReplicationResponse implements WriteResponse {
 
-        public Response() {
-        }
+        public Response() {}
 
         Response(StreamInput in) throws IOException {
             super(in);

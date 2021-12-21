@@ -19,18 +19,21 @@
 
 package org.codelibs.fesen.join.aggregations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry.Entry;
 import org.codelibs.fesen.join.ParentJoinPlugin;
+import org.codelibs.fesen.join.aggregations.InternalParent;
+import org.codelibs.fesen.join.aggregations.ParentAggregationBuilder;
+import org.codelibs.fesen.join.aggregations.ParsedParent;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalSingleBucketAggregationTestCase;
 import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class InternalParentTests extends InternalSingleBucketAggregationTestCase<InternalParent> {
 
@@ -44,7 +47,7 @@ public class InternalParentTests extends InternalSingleBucketAggregationTestCase
         List<Entry> extendedNamedXContents = new ArrayList<>(super.getNamedXContents());
         extendedNamedXContents.add(new Entry(Aggregation.class, new ParseField(ParentAggregationBuilder.NAME),
                 (p, c) -> ParsedParent.fromXContent(p, (String) c)));
-        return extendedNamedXContents;
+        return extendedNamedXContents ;
     }
 
     @Override

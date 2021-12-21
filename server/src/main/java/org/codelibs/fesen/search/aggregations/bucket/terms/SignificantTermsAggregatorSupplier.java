@@ -30,8 +30,17 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 interface SignificantTermsAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, ValuesSource valuesSource, DocValueFormat format,
-            TermsAggregator.BucketCountThresholds bucketCountThresholds, IncludeExclude includeExclude, String executionHint,
-            SearchContext context, Aggregator parent, SignificanceHeuristic significanceHeuristic, SignificanceLookup lookup,
-            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name,
+                     AggregatorFactories factories,
+                     ValuesSource valuesSource,
+                     DocValueFormat format,
+                     TermsAggregator.BucketCountThresholds bucketCountThresholds,
+                     IncludeExclude includeExclude,
+                     String executionHint,
+                     SearchContext context,
+                     Aggregator parent,
+                     SignificanceHeuristic significanceHeuristic,
+                     SignificanceLookup lookup,
+                     CardinalityUpperBound cardinality,
+                     Map<String, Object> metadata) throws IOException;
 }

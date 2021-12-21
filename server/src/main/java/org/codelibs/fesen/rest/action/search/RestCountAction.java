@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.rest.action.search;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.action.RestActions.buildBroadcastShardsHeader;
-import static org.codelibs.fesen.search.internal.SearchContext.DEFAULT_TERMINATE_AFTER;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -45,16 +35,31 @@ import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.action.RestActions.buildBroadcastShardsHeader;
+import static org.codelibs.fesen.search.internal.SearchContext.DEFAULT_TERMINATE_AFTER;
+
 public class RestCountAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestCountAction.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" + " Specifying types in count requests is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
+        " Specifying types in count requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_count"), new Route(POST, "/_count"), new Route(GET, "/{index}/_count"),
-                new Route(POST, "/{index}/_count"),
-                // Deprecated typed endpoints.
-                new Route(GET, "/{index}/{type}/_count"), new Route(POST, "/{index}/{type}/_count")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_count"),
+            new Route(POST, "/_count"),
+            new Route(GET, "/{index}/_count"),
+            new Route(POST, "/{index}/_count"),
+            // Deprecated typed endpoints.
+            new Route(GET, "/{index}/{type}/_count"),
+            new Route(POST, "/{index}/{type}/_count")));
     }
 
     @Override
@@ -105,8 +110,8 @@ public class RestCountAction extends BaseRestHandler {
                     builder.field("terminated_early", response.isTerminatedEarly());
                 }
                 builder.field("count", response.getHits().getTotalHits().value);
-                buildBroadcastShardsHeader(builder, request, response.getTotalShards(), response.getSuccessfulShards(), 0,
-                        response.getFailedShards(), response.getShardFailures());
+                buildBroadcastShardsHeader(builder, request, response.getTotalShards(), response.getSuccessfulShards(),
+                    0, response.getFailedShards(), response.getShardFailures());
 
                 builder.endObject();
                 return new BytesRestResponse(response.status(), builder);

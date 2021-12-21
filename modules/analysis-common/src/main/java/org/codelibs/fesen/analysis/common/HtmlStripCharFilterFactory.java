@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
-
-import java.io.Reader;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.lucene.analysis.charfilter.HTMLStripCharFilter;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractCharFilterFactory;
+
+import java.io.Reader;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
 
 public class HtmlStripCharFilterFactory extends AbstractCharFilterFactory {
     private final Set<String> escapedTags;

@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.action.admin.cluster.reroute;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
+import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingExplanations;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -29,6 +29,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 /**
  * Response returned after a cluster reroute request
@@ -39,9 +41,15 @@ public class ClusterRerouteResponse extends AcknowledgedResponse implements ToXC
     private final RoutingExplanations explanations;
 
     ClusterRerouteResponse(StreamInput in) throws IOException {
-        super(in, true);
-        state = ClusterState.readFrom(in, null);
-        explanations = RoutingExplanations.readFrom(in);
+        super(in, in.getVersion().onOrAfter(Version.V_6_4_0));
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            state = ClusterState.readFrom(in, null);
+            explanations = RoutingExplanations.readFrom(in);
+        } else {
+            state = ClusterState.readFrom(in, null);
+            acknowledged = in.readBoolean();
+            explanations = RoutingExplanations.readFrom(in);
+        }
     }
 
     ClusterRerouteResponse(boolean acknowledged, ClusterState state, RoutingExplanations explanations) {
@@ -63,9 +71,19 @@ public class ClusterRerouteResponse extends AcknowledgedResponse implements ToXC
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        super.writeTo(out);
-        state.writeTo(out);
-        RoutingExplanations.writeTo(explanations, out);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            super.writeTo(out);
+            state.writeTo(out);
+            RoutingExplanations.writeTo(explanations, out);
+        } else {
+            if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+                state.writeTo(out);
+            } else {
+                ClusterModule.filterCustomsForPre63Clients(state).writeTo(out);
+            }
+            out.writeBoolean(acknowledged);
+            RoutingExplanations.writeTo(explanations, out);
+        }
     }
 
     @Override

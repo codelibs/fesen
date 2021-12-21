@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.transport.nio;
 
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.LongSupplier;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.codelibs.fesen.common.logging.Loggers;
@@ -38,6 +29,17 @@ import org.codelibs.fesen.nio.SocketChannelContext;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.MockLogAppender;
 import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.nio.MockNioTransport;
+import org.codelibs.fesen.transport.nio.TestEventHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.LongSupplier;
+
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 public class TestEventHandlerTests extends ESTestCase {
 
@@ -71,7 +73,7 @@ public class TestEventHandlerTests extends ESTestCase {
         final ThreadPool threadPool = mock(ThreadPool.class);
         doAnswer(i -> timeSupplier.getAsLong()).when(threadPool).relativeTimeInNanos();
         TestEventHandler eventHandler =
-                new TestEventHandler(e -> {}, () -> null, new MockNioTransport.TransportThreadWatchdog(threadPool, Settings.EMPTY));
+            new TestEventHandler(e -> {}, () -> null, new MockNioTransport.TransportThreadWatchdog(threadPool, Settings.EMPTY));
 
         ServerChannelContext serverChannelContext = mock(ServerChannelContext.class);
         SocketChannelContext socketChannelContext = mock(SocketChannelContext.class);
@@ -96,8 +98,8 @@ public class TestEventHandlerTests extends ESTestCase {
 
         for (Map.Entry<String, CheckedRunnable<Exception>> entry : tests.entrySet()) {
             String message = "*Slow execution on network thread*";
-            MockLogAppender.LoggingExpectation slowExpectation = new MockLogAppender.SeenEventExpectation(entry.getKey(),
-                    MockNioTransport.class.getCanonicalName(), Level.WARN, message);
+            MockLogAppender.LoggingExpectation slowExpectation =
+                new MockLogAppender.SeenEventExpectation(entry.getKey(), MockNioTransport.class.getCanonicalName(), Level.WARN, message);
             appender.addExpectation(slowExpectation);
             entry.getValue().run();
             appender.assertAllExpectationsMatched();

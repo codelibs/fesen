@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.action.termvectors;
 
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
@@ -53,6 +41,18 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.rest.action.document.RestTermVectorsAction;
+
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Request returning the term vector (doc frequency, positions, offsets) for a
@@ -77,6 +77,7 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     private static final ParseField DFS = new ParseField("dfs");
     private static final ParseField FILTER = new ParseField("filter");
     private static final ParseField DOC = new ParseField("doc");
+
 
     private String type;
 
@@ -119,8 +120,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         }
 
         public FilterSettings(@Nullable Integer maxNumTerms, @Nullable Integer minTermFreq, @Nullable Integer maxTermFreq,
-                @Nullable Integer minDocFreq, @Nullable Integer maxDocFreq, @Nullable Integer minWordLength,
-                @Nullable Integer maxWordLength) {
+                              @Nullable Integer minDocFreq, @Nullable Integer maxDocFreq, @Nullable Integer minWordLength,
+                              @Nullable Integer maxWordLength) {
             this.maxNumTerms = maxNumTerms;
             this.minTermFreq = minTermFreq;
             this.maxTermFreq = maxTermFreq;
@@ -151,7 +152,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         }
     }
 
-    private EnumSet<Flag> flagsEnum = EnumSet.of(Flag.Positions, Flag.Offsets, Flag.Payloads, Flag.FieldStatistics);
+    private EnumSet<Flag> flagsEnum = EnumSet.of(Flag.Positions, Flag.Offsets, Flag.Payloads,
+            Flag.FieldStatistics);
 
     public TermVectorsRequest() {
     }
@@ -611,17 +613,18 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
                     termVectorsRequest.index = parser.text();
                 } else if (TYPE.match(currentFieldName, parser.getDeprecationHandler())) {
                     termVectorsRequest.type = parser.text();
-                    deprecationLogger.deprecate("termvectors_with_types", RestTermVectorsAction.TYPES_DEPRECATION_MESSAGE);
+                    deprecationLogger.deprecate("termvectors_with_types",
+                        RestTermVectorsAction.TYPES_DEPRECATION_MESSAGE);
                 } else if (ID.match(currentFieldName, parser.getDeprecationHandler())) {
                     if (termVectorsRequest.doc != null) {
-                        throw new FesenParseException(
-                                "failed to parse term vectors request. " + "either [id] or [doc] can be specified, but not both!");
+                        throw new FesenParseException("failed to parse term vectors request. " +
+                            "either [id] or [doc] can be specified, but not both!");
                     }
                     termVectorsRequest.id = parser.text();
                 } else if (DOC.match(currentFieldName, parser.getDeprecationHandler())) {
                     if (termVectorsRequest.id != null) {
-                        throw new FesenParseException(
-                                "failed to parse term vectors request. " + "either [id] or [doc] can be specified, but not both!");
+                        throw new FesenParseException("failed to parse term vectors request. " +
+                            "either [id] or [doc] can be specified, but not both!");
                     }
                     termVectorsRequest.doc(jsonBuilder().copyCurrentStructure(parser));
                 } else if (ROUTING.match(currentFieldName, parser.getDeprecationHandler())) {
@@ -647,8 +650,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
             if (e.getValue() instanceof String) {
                 mapStrStr.put(e.getKey(), (String) e.getValue());
             } else {
-                throw new FesenParseException("expecting the analyzer at [{}] to be a String, but found [{}] instead", e.getKey(),
-                        e.getValue().getClass());
+                throw new FesenParseException("expecting the analyzer at [{}] to be a String, but found [{}] instead",
+                    e.getKey(), e.getValue().getClass());
             }
         }
         return mapStrStr;
@@ -677,8 +680,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
                 } else if (currentFieldName.equals("max_word_length")) {
                     settings.maxWordLength = parser.intValue();
                 } else {
-                    throw new FesenParseException("failed to parse term vectors request. "
-                            + "the field [{}] is not valid for filter parameter for term vector request", currentFieldName);
+                    throw new FesenParseException("failed to parse term vectors request. " +
+                        "the field [{}] is not valid for filter parameter for term vector request", currentFieldName);
                 }
             }
         }

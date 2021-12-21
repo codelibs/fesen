@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.profile.query;
 
-import java.io.IOException;
-import java.util.Set;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BulkScorer;
@@ -31,6 +28,9 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.Weight;
 import org.codelibs.fesen.search.profile.Timer;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Weight wrapper that will compute how much time it takes to build the

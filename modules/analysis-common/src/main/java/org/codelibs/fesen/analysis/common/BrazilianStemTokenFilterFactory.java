@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.br.BrazilianStemFilter;
 import org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
@@ -28,6 +27,7 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
+import org.apache.lucene.analysis.CharArraySet;
 
 public class BrazilianStemTokenFilterFactory extends AbstractTokenFilterFactory {
 

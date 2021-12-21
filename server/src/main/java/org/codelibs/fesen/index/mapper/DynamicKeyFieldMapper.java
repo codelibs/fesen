@@ -41,7 +41,10 @@ import org.apache.lucene.document.FieldType;
  */
 public abstract class DynamicKeyFieldMapper extends FieldMapper {
 
-    public DynamicKeyFieldMapper(String simpleName, FieldType fieldType, MappedFieldType defaultFieldType, CopyTo copyTo) {
+    public DynamicKeyFieldMapper(String simpleName,
+                                 FieldType fieldType,
+                                 MappedFieldType defaultFieldType,
+                                 CopyTo copyTo) {
         super(simpleName, fieldType, defaultFieldType, MultiFields.empty(), copyTo);
     }
 

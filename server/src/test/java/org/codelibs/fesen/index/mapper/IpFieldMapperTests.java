@@ -60,7 +60,8 @@ public class IpFieldMapperTests extends MapperTestCase {
         checker.registerConflictCheck("index", b -> b.field("index", false));
         checker.registerConflictCheck("store", b -> b.field("store", true));
         checker.registerConflictCheck("null_value", b -> b.field("null_value", "::1"));
-        checker.registerUpdateCheck(b -> b.field("ignore_malformed", false), m -> assertFalse(((IpFieldMapper) m).ignoreMalformed()));
+        checker.registerUpdateCheck(b -> b.field("ignore_malformed", false),
+            m -> assertFalse(((IpFieldMapper) m).ignoreMalformed()));
     }
 
     public void testExistsQueryDocValuesDisabled() throws IOException {
@@ -146,7 +147,8 @@ public class IpFieldMapperTests extends MapperTestCase {
         assertEquals(DocValuesType.SORTED_SET, dvField.fieldType().docValuesType());
         IndexableField storedField = fields[2];
         assertTrue(storedField.fieldType().stored());
-        assertEquals(new BytesRef(InetAddressPoint.encode(InetAddress.getByName("::1"))), storedField.binaryValue());
+        assertEquals(new BytesRef(InetAddressPoint.encode(InetAddress.getByName("::1"))),
+                storedField.binaryValue());
     }
 
     public void testIgnoreMalformed() throws Exception {

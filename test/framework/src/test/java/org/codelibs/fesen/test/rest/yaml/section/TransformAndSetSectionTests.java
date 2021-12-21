@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
+import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
+import org.codelibs.fesen.test.rest.yaml.Stash;
+import org.codelibs.fesen.test.rest.yaml.section.TransformAndSetSection;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -27,18 +36,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
-import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
-import org.codelibs.fesen.test.rest.yaml.Stash;
-
 public class TransformAndSetSectionTests extends AbstractClientYamlTestFragmentParserTestCase {
 
     public void testParseSingleValue() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ key: value }");
+        parser = createParser(YamlXContent.yamlXContent,
+                        "{ key: value }"
+        );
 
         TransformAndSetSection transformAndSet = TransformAndSetSection.parse(parser);
         assertThat(transformAndSet, notNullValue());
@@ -48,7 +51,9 @@ public class TransformAndSetSectionTests extends AbstractClientYamlTestFragmentP
     }
 
     public void testParseMultipleValues() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ key1: value1, key2: value2 }");
+        parser = createParser(YamlXContent.yamlXContent,
+                        "{ key1: value1, key2: value2 }"
+        );
 
         TransformAndSetSection transformAndSet = TransformAndSetSection.parse(parser);
         assertThat(transformAndSet, notNullValue());
@@ -82,7 +87,9 @@ public class TransformAndSetSectionTests extends AbstractClientYamlTestFragmentP
     }
 
     public void testParseSetSectionNoValues() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ }");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ }"
+        );
 
         Exception e = expectThrows(ParsingException.class, () -> TransformAndSetSection.parse(parser));
         assertThat(e.getMessage(), is("transform_and_set section must set at least a value"));

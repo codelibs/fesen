@@ -18,23 +18,9 @@
  */
 package org.codelibs.fesen.action.admin.indices.template.put;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
-import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
-import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
@@ -60,6 +46,21 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.common.settings.Settings.writeSettingsToStream;
+import static org.codelibs.fesen.common.settings.Settings.Builder.EMPTY_SETTINGS;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A request to create an index template.
@@ -91,7 +92,11 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         cause = in.readString();
         name = in.readString();
 
-        indexPatterns = in.readStringList();
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            indexPatterns = in.readStringList();
+        } else {
+            indexPatterns = Collections.singletonList(in.readString());
+        }
         order = in.readInt();
         create = in.readBoolean();
         settings = readSettingsFromStream(in);
@@ -100,6 +105,14 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
             final String type = in.readString();
             String mappingSource = in.readString();
             mappings.put(type, mappingSource);
+        }
+        if (in.getVersion().before(Version.V_6_5_0)) {
+            // Used to be used for custom index metadata
+            int customSize = in.readVInt();
+            assert customSize == 0 : "expected not to have any custom metadata";
+            if (customSize > 0) {
+                throw new IllegalStateException("unexpected custom metadata when none is supported");
+            }
         }
         int aliasesSize = in.readVInt();
         for (int i = 0; i < aliasesSize; i++) {
@@ -276,7 +289,7 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
     public PutIndexTemplateRequest mapping(String type, Map<String, Object> source) {
         // wrap it in a type map if its not
         if (source.size() != 1 || !source.containsKey(type)) {
-            source = MapBuilder.<String, Object> newMapBuilder().put(type, source).map();
+            source = MapBuilder.<String, Object>newMapBuilder().put(type, source).map();
         }
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -322,13 +335,13 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
             String name = entry.getKey();
             if (name.equals("template")) {
                 // This is needed to allow for bwc (beats, logstash) with pre-5.0 templates (#21009)
-                if (entry.getValue() instanceof String) {
+                if(entry.getValue() instanceof String) {
                     deprecationLogger.deprecate("put_index_template_field",
-                            "Deprecated field [template] used, replaced by [index_patterns]");
+                        "Deprecated field [template] used, replaced by [index_patterns]");
                     patterns(Collections.singletonList((String) entry.getValue()));
                 }
             } else if (name.equals("index_patterns")) {
-                if (entry.getValue() instanceof String) {
+                if(entry.getValue() instanceof String) {
                     patterns(Collections.singletonList((String) entry.getValue()));
                 } else if (entry.getValue() instanceof List) {
                     List<String> elements = ((List<?>) entry.getValue()).stream().map(Object::toString).collect(Collectors.toList());
@@ -342,7 +355,7 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
                 if ((entry.getValue() instanceof Integer) == false) {
                     throw new IllegalArgumentException("Malformed [version] value, should be an integer");
                 }
-                version((Integer) entry.getValue());
+                version((Integer)entry.getValue());
             } else if (name.equals("settings")) {
                 if ((entry.getValue() instanceof Map) == false) {
                     throw new IllegalArgumentException("Malformed [settings] section, should include an inner object");
@@ -352,8 +365,9 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
                 Map<String, Object> mappings = (Map<String, Object>) entry.getValue();
                 for (Map.Entry<String, Object> entry1 : mappings.entrySet()) {
                     if (!(entry1.getValue() instanceof Map)) {
-                        throw new IllegalArgumentException("Malformed [mappings] section for type [" + entry1.getKey()
-                                + "], should include an inner object describing the mapping");
+                        throw new IllegalArgumentException(
+                            "Malformed [mappings] section for type [" + entry1.getKey() +
+                                "], should include an inner object describing the mapping");
                     }
                     mapping(entry1.getKey(), (Map<String, Object>) entry1.getValue());
                 }
@@ -430,14 +444,15 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
      */
     public PutIndexTemplateRequest aliases(BytesReference source) {
         // EMPTY is safe here because we never call namedObject
-        try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
+        try (XContentParser parser = XContentHelper
+                .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
             //move to the first alias
             parser.nextToken();
             while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                 alias(Alias.fromXContent(parser));
             }
             return this;
-        } catch (IOException e) {
+        } catch(IOException e) {
             throw new FesenParseException("Failed to parse aliases", e);
         }
     }
@@ -468,7 +483,11 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         super.writeTo(out);
         out.writeString(cause);
         out.writeString(name);
-        out.writeStringCollection(indexPatterns);
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            out.writeStringCollection(indexPatterns);
+        } else {
+            out.writeString(indexPatterns.size() > 0 ? indexPatterns.get(0) : "");
+        }
         out.writeInt(order);
         out.writeBoolean(create);
         writeSettingsToStream(settings, out);
@@ -476,6 +495,9 @@ public class PutIndexTemplateRequest extends MasterNodeRequest<PutIndexTemplateR
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             out.writeString(entry.getKey());
             out.writeString(entry.getValue());
+        }
+        if (out.getVersion().before(Version.V_6_5_0)) {
+            out.writeVInt(0);
         }
         out.writeVInt(aliases.size());
         for (Alias alias : aliases) {

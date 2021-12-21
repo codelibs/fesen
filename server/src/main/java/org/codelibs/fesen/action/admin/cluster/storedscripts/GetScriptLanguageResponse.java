@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.script.ScriptLanguagesInfo;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class GetScriptLanguageResponse extends ActionResponse implements StatusToXContentObject, Writeable {
     public final ScriptLanguagesInfo info;
@@ -69,9 +69,7 @@ public class GetScriptLanguageResponse extends ActionResponse implements StatusT
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(info);
-    }
+    public int hashCode() { return Objects.hash(info); }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

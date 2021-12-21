@@ -19,14 +19,7 @@
 
 package org.codelibs.fesen.action.admin.indices.mapping.put;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import com.carrotsearch.hppc.ObjectHashSet;
 
 import org.codelibs.fesen.FesenGenerationException;
 import org.codelibs.fesen.Version;
@@ -48,7 +41,14 @@ import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.index.Index;
 
-import com.carrotsearch.hppc.ObjectHashSet;
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Puts mapping definition registered under a specific type into one or more indices. Best created with
@@ -63,8 +63,10 @@ import com.carrotsearch.hppc.ObjectHashSet;
  */
 public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> implements IndicesRequest.Replaceable, ToXContentObject {
 
-    private static ObjectHashSet<String> RESERVED_FIELDS = ObjectHashSet.from("_uid", "_id", "_type", "_source", "_all", "_analyzer",
-            "_parent", "_routing", "_index", "_size", "_timestamp", "_ttl", "_field_names");
+    private static ObjectHashSet<String> RESERVED_FIELDS = ObjectHashSet.from(
+            "_uid", "_id", "_type", "_source",  "_all", "_analyzer", "_parent", "_routing", "_index",
+            "_size", "_timestamp", "_ttl", "_field_names"
+    );
 
     private String[] indices;
 
@@ -89,7 +91,11 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
             in.readBoolean(); // updateAllTypes
         }
         concreteIndex = in.readOptionalWriteable(Index::new);
-        origin = in.readOptionalString();
+        if (in.getVersion().onOrAfter(Version.V_6_7_0)) {
+            origin = in.readOptionalString();
+        } else {
+            origin = null;
+        }
         if (in.getVersion().onOrAfter(Version.V_7_9_0)) {
             writeIndexOnly = in.readBoolean();
         }
@@ -111,7 +117,7 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
         ActionRequestValidationException validationException = null;
         if (type == null) {
             validationException = addValidationError("mapping type is missing", validationException);
-        } else if (type.isEmpty()) {
+        }else if (type.isEmpty()) {
             validationException = addValidationError("mapping type is empty", validationException);
         }
         if (source == null) {
@@ -121,7 +127,7 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
         }
         if (concreteIndex != null && CollectionUtils.isEmpty(indices) == false) {
             validationException = addValidationError("either concrete index or unresolved indices can be set, concrete index: ["
-                    + concreteIndex + "] and indices: " + Arrays.asList(indices), validationException);
+                + concreteIndex + "] and indices: " + Arrays.asList(indices) , validationException);
         }
         return validationException;
     }
@@ -343,7 +349,9 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
             out.writeBoolean(true); // updateAllTypes
         }
         out.writeOptionalWriteable(concreteIndex);
-        out.writeOptionalString(origin);
+        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
+            out.writeOptionalString(origin);
+        }
         if (out.getVersion().onOrAfter(Version.V_7_9_0)) {
             out.writeBoolean(writeIndexOnly);
         }

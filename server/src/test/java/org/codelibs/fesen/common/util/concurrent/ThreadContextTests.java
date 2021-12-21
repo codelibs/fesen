@@ -74,8 +74,8 @@ public class ThreadContextTests extends ESTestCase {
         }
 
         // foo is the only existing transient header that is cleared
-        try (ThreadContext.StoredContext stashed = threadContext.newStoredContext(false,
-                randomFrom(Arrays.asList("foo", "foo"), Arrays.asList("foo"), Arrays.asList("foo", "acme")))) {
+        try (ThreadContext.StoredContext stashed = threadContext.newStoredContext(false, randomFrom(Arrays.asList("foo", "foo"),
+                Arrays.asList("foo"), Arrays.asList("foo", "acme")))) {
             // only the requested transient header is cleared
             assertNull(threadContext.getTransient("foo"));
             // missing header is still missing
@@ -111,16 +111,16 @@ public class ThreadContextTests extends ESTestCase {
         assertEquals("qux", threadContext.getResponseHeaders().get("bar").get(0));
 
         // test stashed missing header stays missing
-        try (ThreadContext.StoredContext stashed =
-                threadContext.newStoredContext(randomBoolean(), randomFrom(Arrays.asList("acme", "acme"), Arrays.asList("acme")))) {
+        try (ThreadContext.StoredContext stashed = threadContext.newStoredContext(randomBoolean(), randomFrom(Arrays.asList("acme", "acme"),
+                Arrays.asList("acme")))) {
             assertNull(threadContext.getTransient("acme"));
             threadContext.putTransient("acme", "foo");
         }
         assertNull(threadContext.getTransient("acme"));
 
         // test preserved response headers
-        try (ThreadContext.StoredContext stashed = threadContext.newStoredContext(true,
-                randomFrom(Arrays.asList("foo", "foo"), Arrays.asList("foo"), Arrays.asList("foo", "acme")))) {
+        try (ThreadContext.StoredContext stashed = threadContext.newStoredContext(true, randomFrom(Arrays.asList("foo", "foo"),
+                Arrays.asList("foo"), Arrays.asList("foo", "acme")))) {
             threadContext.addResponseHeader("baz", "bar");
             threadContext.addResponseHeader("foo", "baz");
         }
@@ -315,8 +315,8 @@ public class ThreadContextTests extends ESTestCase {
     public void testCopyHeaders() {
         Settings build = Settings.builder().put("request.headers.default", "1").build();
         ThreadContext threadContext = new ThreadContext(build);
-        threadContext.copyHeaders(Collections.<String, String> emptyMap().entrySet());
-        threadContext.copyHeaders(Collections.<String, String> singletonMap("foo", "bar").entrySet());
+        threadContext.copyHeaders(Collections.<String, String>emptyMap().entrySet());
+        threadContext.copyHeaders(Collections.<String, String>singletonMap("foo", "bar").entrySet());
         assertEquals("bar", threadContext.getHeader("foo"));
     }
 
@@ -681,11 +681,11 @@ public class ThreadContextTests extends ESTestCase {
     public void testPutHeaders() {
         Settings build = Settings.builder().put("request.headers.default", "1").build();
         ThreadContext threadContext = new ThreadContext(build);
-        threadContext.putHeader(Collections.<String, String> emptyMap());
-        threadContext.putHeader(Collections.<String, String> singletonMap("foo", "bar"));
+        threadContext.putHeader(Collections.<String, String>emptyMap());
+        threadContext.putHeader(Collections.<String, String>singletonMap("foo", "bar"));
         assertEquals("bar", threadContext.getHeader("foo"));
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> threadContext.putHeader(Collections.<String, String> singletonMap("foo", "boom")));
+        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () ->
+            threadContext.putHeader(Collections.<String, String>singletonMap("foo", "boom")));
         assertEquals("value for key [foo] already present", e.getMessage());
     }
 

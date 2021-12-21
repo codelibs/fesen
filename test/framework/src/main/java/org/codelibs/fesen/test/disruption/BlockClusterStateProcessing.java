@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.core.util.Throwables;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
+
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BlockClusterStateProcessing extends SingleNodeDisruption {
 
@@ -36,6 +36,7 @@ public class BlockClusterStateProcessing extends SingleNodeDisruption {
         super(random);
         this.disruptedNode = disruptedNode;
     }
+
 
     @Override
     public void startDisrupting() {
@@ -51,20 +52,23 @@ public class BlockClusterStateProcessing extends SingleNodeDisruption {
         boolean success = disruptionLatch.compareAndSet(null, new CountDownLatch(1));
         assert success : "startDisrupting called without waiting on stopDisrupting to complete";
         final CountDownLatch started = new CountDownLatch(1);
-        clusterService.getClusterApplierService().runOnApplierThread("service_disruption_block", currentState -> {
-            started.countDown();
-            CountDownLatch latch = disruptionLatch.get();
-            if (latch != null) {
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    Throwables.rethrow(e);
+        clusterService.getClusterApplierService().runOnApplierThread("service_disruption_block",
+            currentState -> {
+                started.countDown();
+                CountDownLatch latch = disruptionLatch.get();
+                if (latch != null) {
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Throwables.rethrow(e);
+                    }
                 }
-            }
-        }, (source, e) -> logger.error("unexpected error during disruption", e), Priority.IMMEDIATE);
+            }, (source, e) -> logger.error("unexpected error during disruption", e),
+            Priority.IMMEDIATE);
         try {
             started.await();
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
     }
 
     @Override

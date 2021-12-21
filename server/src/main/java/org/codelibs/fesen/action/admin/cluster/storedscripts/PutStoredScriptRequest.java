@@ -19,11 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.storedscripts;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.AcknowledgedRequest;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -35,6 +31,11 @@ import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.script.StoredScriptSource;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Objects;
+
 public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptRequest> implements ToXContentFragment {
 
     private String id;
@@ -45,11 +46,18 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
 
     public PutStoredScriptRequest(StreamInput in) throws IOException {
         super(in);
+        if (in.getVersion().before(Version.V_6_0_0_alpha2)) {
+            in.readString(); // read lang from previous versions
+        }
         id = in.readOptionalString();
         content = in.readBytesReference();
         xContentType = in.readEnum(XContentType.class);
-        context = in.readOptionalString();
-        source = new StoredScriptSource(in);
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha2)) {
+            context = in.readOptionalString();
+            source = new StoredScriptSource(in);
+        } else {
+            source = StoredScriptSource.parse(content, xContentType == null ? XContentType.JSON : xContentType);
+        }
     }
 
     public PutStoredScriptRequest() {
@@ -126,11 +134,16 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
 
+        if (out.getVersion().before(Version.V_6_0_0_alpha2)) {
+            out.writeString(source == null ? "" : source.getLang());
+        }
         out.writeOptionalString(id);
         out.writeBytesReference(content);
         out.writeEnum(xContentType);
-        out.writeOptionalString(context);
-        source.writeTo(out);
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha2)) {
+            out.writeOptionalString(context);
+            source.writeTo(out);
+        }
     }
 
     @Override
@@ -143,8 +156,9 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
             // ignore
         }
 
-        return "put stored script {id [" + id + "]" + (context != null ? ", context [" + context + "]" : "") + ", content [" + source
-                + "]}";
+        return "put stored script {id [" + id + "]" +
+            (context != null ? ", context [" + context + "]" : "") +
+            ", content [" + source + "]}";
     }
 
     @Override

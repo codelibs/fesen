@@ -63,11 +63,10 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
     public void testRebalanceNonStartedShardNotAllowed() {
         BalancedShardsAllocator allocator = new BalancedShardsAllocator(Settings.EMPTY);
         ClusterState clusterState = ClusterStateCreationUtils.state("idx", randomBoolean(),
-                randomFrom(ShardRoutingState.INITIALIZING, ShardRoutingState.UNASSIGNED, ShardRoutingState.RELOCATING));
+            randomFrom(ShardRoutingState.INITIALIZING, ShardRoutingState.UNASSIGNED, ShardRoutingState.RELOCATING));
         ShardRouting shard = clusterState.routingTable().index("idx").shard(0).primaryShard();
-        MoveDecision rebalanceDecision =
-                allocator.decideShardAllocation(shard, newRoutingAllocation(new AllocationDeciders(Collections.emptyList()), clusterState))
-                        .getMoveDecision();
+        MoveDecision rebalanceDecision = allocator.decideShardAllocation(shard, newRoutingAllocation(
+            new AllocationDeciders(Collections.emptyList()), clusterState)).getMoveDecision();
         assertSame(MoveDecision.NOT_TAKEN, rebalanceDecision);
     }
 
@@ -75,13 +74,14 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
         BalancedShardsAllocator allocator = new BalancedShardsAllocator(Settings.EMPTY);
         ClusterState clusterState = ClusterStateCreationUtils.state("idx", randomBoolean(), ShardRoutingState.STARTED);
         ShardRouting shard = clusterState.routingTable().index("idx").shard(0).primaryShard();
-        RoutingAllocation routingAllocation = newRoutingAllocation(new AllocationDeciders(Collections.emptyList()), clusterState);
+        RoutingAllocation routingAllocation = newRoutingAllocation(
+            new AllocationDeciders(Collections.emptyList()), clusterState);
         routingAllocation.setHasPendingAsyncFetch();
         MoveDecision rebalanceDecision = allocator.decideShardAllocation(shard, routingAllocation).getMoveDecision();
         assertNotNull(rebalanceDecision.getClusterRebalanceDecision());
         assertEquals(AllocationDecision.AWAITING_INFO, rebalanceDecision.getAllocationDecision());
         assertThat(rebalanceDecision.getExplanation(),
-                startsWith("cannot rebalance as information about existing copies of this shard in the cluster is still being gathered"));
+            startsWith("cannot rebalance as information about existing copies of this shard in the cluster is still being gathered"));
         assertEquals(clusterState.nodes().getSize() - 1, rebalanceDecision.getNodeDecisions().size());
         assertNull(rebalanceDecision.getTargetNode());
 
@@ -99,13 +99,13 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
         BalancedShardsAllocator allocator = new BalancedShardsAllocator(Settings.EMPTY);
         ClusterState clusterState = ClusterStateCreationUtils.state("idx", randomBoolean(), ShardRoutingState.STARTED);
         ShardRouting shard = clusterState.routingTable().index("idx").shard(0).primaryShard();
-        RoutingAllocation routingAllocation =
-                newRoutingAllocation(new AllocationDeciders(Collections.singleton(noRebalanceDecider)), clusterState);
+        RoutingAllocation routingAllocation =  newRoutingAllocation(
+            new AllocationDeciders(Collections.singleton(noRebalanceDecider)), clusterState);
         MoveDecision rebalanceDecision = allocator.decideShardAllocation(shard, routingAllocation).getMoveDecision();
         assertEquals(canRebalanceDecision.type(), rebalanceDecision.getClusterRebalanceDecision().type());
         assertEquals(AllocationDecision.fromDecisionType(canRebalanceDecision.type()), rebalanceDecision.getAllocationDecision());
-        assertThat(rebalanceDecision.getExplanation(),
-                containsString(canRebalanceDecision.type() == Type.THROTTLE ? "rebalancing is throttled" : "rebalancing is not allowed"));
+        assertThat(rebalanceDecision.getExplanation(), containsString(canRebalanceDecision.type() == Type.THROTTLE ?
+            "rebalancing is throttled" : "rebalancing is not allowed"));
         assertNotNull(rebalanceDecision.getNodeDecisions());
         assertNull(rebalanceDecision.getTargetNode());
         assertEquals(1, rebalanceDecision.getClusterRebalanceDecision().getDecisions().size());
@@ -143,8 +143,8 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
         MoveDecision rebalanceDecision = rebalance.v2();
         assertEquals(Type.YES, rebalanceDecision.getClusterRebalanceDecision().type());
         assertEquals(AllocationDecision.NO, rebalanceDecision.getAllocationDecision());
-        assertThat(rebalanceDecision.getExplanation(),
-                startsWith("cannot rebalance as no target node exists that can both allocate this shard and improve the cluster balance"));
+        assertThat(rebalanceDecision.getExplanation(), startsWith(
+            "cannot rebalance as no target node exists that can both allocate this shard and improve the cluster balance"));
         assertEquals(clusterState.nodes().getSize() - 1, rebalanceDecision.getNodeDecisions().size());
         assertNull(rebalanceDecision.getTargetNode());
         int prevRanking = 0;
@@ -220,7 +220,8 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
             }
         };
         List<AllocationDecider> allocationDeciders = Arrays.asList(rebalanceDecider, allocationDecider);
-        RoutingAllocation routingAllocation = newRoutingAllocation(new AllocationDeciders(allocationDeciders), clusterState);
+        RoutingAllocation routingAllocation = newRoutingAllocation(
+            new AllocationDeciders(allocationDeciders), clusterState);
         // allocate and get the node that is now relocating
         BalancedShardsAllocator allocator = new BalancedShardsAllocator(Settings.EMPTY);
         allocator.allocate(routingAllocation);
@@ -306,7 +307,7 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
     }
 
     private MoveDecision executeRebalanceFor(final ShardRouting shardRouting, final ClusterState clusterState,
-            final Set<String> noDecisionNodes, final float threshold) {
+                                             final Set<String> noDecisionNodes, final float threshold) {
         Settings settings = Settings.EMPTY;
         if (Float.compare(-1.0f, threshold) != 0) {
             settings = Settings.builder().put(BalancedShardsAllocator.THRESHOLD_SETTING.getKey(), threshold).build();
@@ -327,8 +328,8 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
             }
         };
         BalancedShardsAllocator allocator = new BalancedShardsAllocator(settings);
-        RoutingAllocation routingAllocation =
-                newRoutingAllocation(new AllocationDeciders(Arrays.asList(allocationDecider, rebalanceDecider)), clusterState);
+        RoutingAllocation routingAllocation = newRoutingAllocation(
+            new AllocationDeciders(Arrays.asList(allocationDecider, rebalanceDecider)), clusterState);
         return allocator.decideShardAllocation(shardRouting, routingAllocation).getMoveDecision();
     }
 
@@ -341,8 +342,9 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
         return ClusterState.builder(clusterState).nodes(nodesBuilder).build();
     }
 
-    private Tuple<ClusterState, MoveDecision> setupStateAndRebalance(AllocationDecider allocationDecider, Settings balancerSettings,
-            boolean rebalanceExpected) {
+    private Tuple<ClusterState, MoveDecision> setupStateAndRebalance(AllocationDecider allocationDecider,
+                                                                     Settings balancerSettings,
+                                                                     boolean rebalanceExpected) {
         AllocationDecider rebalanceDecider = new AllocationDecider() {
             @Override
             public Decision canRebalance(ShardRouting shardRouting, RoutingAllocation allocation) {
@@ -358,7 +360,8 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
         nodesBuilder.add(newNode(randomAlphaOfLength(7)));
         clusterState = ClusterState.builder(clusterState).nodes(nodesBuilder).build();
         ShardRouting shard = clusterState.routingTable().index("idx").shard(0).primaryShard();
-        RoutingAllocation routingAllocation = newRoutingAllocation(new AllocationDeciders(allocationDeciders), clusterState);
+        RoutingAllocation routingAllocation = newRoutingAllocation(
+            new AllocationDeciders(allocationDeciders), clusterState);
         MoveDecision rebalanceDecision = allocator.decideShardAllocation(shard, routingAllocation).getMoveDecision();
 
         if (rebalanceExpected == false) {
@@ -369,14 +372,14 @@ public class BalancedSingleShardTests extends ESAllocationTestCase {
     }
 
     private RoutingAllocation newRoutingAllocation(AllocationDeciders deciders, ClusterState state) {
-        RoutingAllocation allocation = new RoutingAllocation(deciders, new RoutingNodes(state, false), state, ClusterInfo.EMPTY,
-                SnapshotShardSizeInfo.EMPTY, System.nanoTime());
+        RoutingAllocation allocation = new RoutingAllocation(
+            deciders, new RoutingNodes(state, false), state, ClusterInfo.EMPTY, SnapshotShardSizeInfo.EMPTY, System.nanoTime());
         allocation.debugDecision(true);
         return allocation;
     }
 
     private void assertAssignedNodeRemainsSame(BalancedShardsAllocator allocator, RoutingAllocation routingAllocation,
-            ShardRouting originalRouting) {
+                                               ShardRouting originalRouting) {
         allocator.allocate(routingAllocation);
         RoutingNodes routingNodes = routingAllocation.routingNodes();
         // make sure the previous node id is the same as the current one after rerouting

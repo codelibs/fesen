@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import java.io.IOException;
-
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.common.lease.Releasable;
 import org.codelibs.fesen.index.mapper.DocValueFetcher;
 import org.codelibs.fesen.search.DocValueFormat;
+
+import java.io.IOException;
 
 /**
  * The thread safe {@link org.apache.lucene.index.LeafReader} level cache of the data.

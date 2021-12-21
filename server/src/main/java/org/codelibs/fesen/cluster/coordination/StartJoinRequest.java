@@ -63,20 +63,19 @@ public class StartJoinRequest extends TransportRequest {
 
     @Override
     public String toString() {
-        return "StartJoinRequest{" + "term=" + term + ",node=" + sourceNode + "}";
+        return "StartJoinRequest{" +
+            "term=" + term +
+            ",node=" + sourceNode + "}";
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof StartJoinRequest))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof StartJoinRequest)) return false;
 
         StartJoinRequest that = (StartJoinRequest) o;
 
-        if (term != that.term)
-            return false;
+        if (term != that.term) return false;
         return sourceNode.equals(that.sourceNode);
     }
 

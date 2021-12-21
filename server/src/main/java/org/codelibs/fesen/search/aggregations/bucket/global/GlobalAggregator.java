@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.global;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
@@ -31,15 +28,19 @@ import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.aggregations.bucket.SingleBucketAggregator;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class GlobalAggregator extends BucketsAggregator implements SingleBucketAggregator {
 
-    public GlobalAggregator(String name, AggregatorFactories subFactories, SearchContext aggregationContext, Map<String, Object> metadata)
-            throws IOException {
+    public GlobalAggregator(String name, AggregatorFactories subFactories, SearchContext aggregationContext,
+            Map<String, Object> metadata) throws IOException {
         super(name, subFactories, aggregationContext, null, CardinalityUpperBound.ONE, metadata);
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
+            final LeafBucketCollector sub) throws IOException {
         return new LeafBucketCollectorBase(sub, null) {
             @Override
             public void collect(int doc, long bucket) throws IOException {
@@ -51,9 +52,10 @@ public class GlobalAggregator extends BucketsAggregator implements SingleBucketA
 
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        assert owningBucketOrds.length == 1 && owningBucketOrds[0] == 0 : "global aggregator can only be a top level aggregator";
-        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) -> new InternalGlobal(name,
-                bucketDocCount(owningBucketOrd), subAggregationResults, metadata()));
+        assert owningBucketOrds.length == 1 && owningBucketOrds[0] == 0: "global aggregator can only be a top level aggregator";
+        return buildAggregationsForSingleBucket(owningBucketOrds, (owningBucketOrd, subAggregationResults) ->
+            new InternalGlobal(name, bucketDocCount(owningBucketOrd), subAggregationResults, metadata())
+        );
     }
 
     @Override

@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.MultiTermQuery;
@@ -39,6 +36,9 @@ import org.codelibs.fesen.index.mapper.ConstantFieldType;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.support.QueryParsers;
 
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A Query that matches documents containing terms with a specified prefix.
  */
@@ -51,10 +51,11 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
     private final String fieldName;
 
     private final String value;
-
+    
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
     private static final ParseField CASE_INSENSITIVE_FIELD = new ParseField("case_insensitive");
     private boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;
+    
 
     private String rewrite;
 
@@ -85,7 +86,7 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
         rewrite = in.readOptionalString();
         if (in.getVersion().onOrAfter(Version.V_7_10_0)) {
             caseInsensitive = in.readBoolean();
-        }
+        }        
     }
 
     @Override
@@ -95,7 +96,7 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
         out.writeOptionalString(rewrite);
         if (out.getVersion().onOrAfter(Version.V_7_10_0)) {
             out.writeBoolean(caseInsensitive);
-        }
+        }    
     }
 
     @Override
@@ -148,7 +149,7 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
 
         String queryName = null;
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
-        boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;
+        boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;        
         String currentFieldName = null;
         XContentParser.Token token;
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -184,7 +185,11 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
             }
         }
 
-        return new PrefixQueryBuilder(fieldName, value).rewrite(rewrite).boost(boost).queryName(queryName).caseInsensitive(caseInsensitive);
+        return new PrefixQueryBuilder(fieldName, value)
+                .rewrite(rewrite)
+                .boost(boost)
+                .queryName(queryName)
+                .caseInsensitive(caseInsensitive);
     }
 
     @Override
@@ -209,13 +214,13 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
                 } else if (query instanceof MatchNoDocsQuery) {
                     return new MatchNoneQueryBuilder();
                 } else {
-                    assert false : "Constant fields must produce match-all or match-none queries, got " + query;
+                    assert false : "Constant fields must produce match-all or match-none queries, got " + query ;
                 }
             }
         }
 
         return super.doRewrite(queryRewriteContext);
-    }
+    }    
 
     @Override
     protected Query doToQuery(QueryShardContext context) throws IOException {
@@ -235,7 +240,9 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
 
     @Override
     protected boolean doEquals(PrefixQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value) && Objects.equals(rewrite, other.rewrite)
-                && Objects.equals(caseInsensitive, other.caseInsensitive);
+        return Objects.equals(fieldName, other.fieldName) &&
+                Objects.equals(value, other.value) &&
+                Objects.equals(rewrite, other.rewrite) &&
+                Objects.equals(caseInsensitive, other.caseInsensitive);
     }
 }

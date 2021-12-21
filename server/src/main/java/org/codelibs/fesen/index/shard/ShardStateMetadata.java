@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.shard;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Objects;
-
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.cluster.routing.AllocationId;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.gateway.CorruptStateException;
 import org.codelibs.fesen.gateway.MetadataStateFormat;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Objects;
 
 public final class ShardStateMetadata {
 
@@ -66,7 +66,7 @@ public final class ShardStateMetadata {
             return false;
         }
         if (indexUUID.equals(that.indexUUID) == false) {
-            return false;
+          return false;
         }
         if (Objects.equals(allocationId, that.allocationId) == false) {
             return false;
@@ -89,59 +89,59 @@ public final class ShardStateMetadata {
     }
 
     public static final MetadataStateFormat<ShardStateMetadata> FORMAT =
-            new MetadataStateFormat<ShardStateMetadata>(SHARD_STATE_FILE_PREFIX) {
+        new MetadataStateFormat<ShardStateMetadata>(SHARD_STATE_FILE_PREFIX) {
 
-                @Override
-                protected XContentBuilder newXContentBuilder(XContentType type, OutputStream stream) throws IOException {
-                    XContentBuilder xContentBuilder = super.newXContentBuilder(type, stream);
-                    xContentBuilder.prettyPrint();
-                    return xContentBuilder;
-                }
+        @Override
+        protected XContentBuilder newXContentBuilder(XContentType type, OutputStream stream) throws IOException {
+            XContentBuilder xContentBuilder = super.newXContentBuilder(type, stream);
+            xContentBuilder.prettyPrint();
+            return xContentBuilder;
+        }
 
-                @Override
-                public void toXContent(XContentBuilder builder, ShardStateMetadata shardStateMetadata) throws IOException {
-                    builder.field(PRIMARY_KEY, shardStateMetadata.primary);
-                    builder.field(INDEX_UUID_KEY, shardStateMetadata.indexUUID);
-                    if (shardStateMetadata.allocationId != null) {
-                        builder.field(ALLOCATION_ID_KEY, shardStateMetadata.allocationId);
-                    }
-                }
+        @Override
+        public void toXContent(XContentBuilder builder, ShardStateMetadata shardStateMetadata) throws IOException {
+            builder.field(PRIMARY_KEY, shardStateMetadata.primary);
+            builder.field(INDEX_UUID_KEY, shardStateMetadata.indexUUID);
+            if (shardStateMetadata.allocationId != null) {
+                builder.field(ALLOCATION_ID_KEY, shardStateMetadata.allocationId);
+            }
+        }
 
-                @Override
-                public ShardStateMetadata fromXContent(XContentParser parser) throws IOException {
-                    XContentParser.Token token = parser.nextToken();
-                    if (token == null) {
-                        return null;
+        @Override
+        public ShardStateMetadata fromXContent(XContentParser parser) throws IOException {
+            XContentParser.Token token = parser.nextToken();
+            if (token == null) {
+                return null;
+            }
+            Boolean primary = null;
+            String currentFieldName = null;
+            String indexUUID = IndexMetadata.INDEX_UUID_NA_VALUE;
+            AllocationId allocationId = null;
+            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+                if (token == XContentParser.Token.FIELD_NAME) {
+                    currentFieldName = parser.currentName();
+                } else if (token.isValue()) {
+                    if (PRIMARY_KEY.equals(currentFieldName)) {
+                        primary = parser.booleanValue();
+                    } else if (INDEX_UUID_KEY.equals(currentFieldName)) {
+                        indexUUID = parser.text();
+                    } else {
+                        throw new CorruptStateException("unexpected field in shard state [" + currentFieldName + "]");
                     }
-                    Boolean primary = null;
-                    String currentFieldName = null;
-                    String indexUUID = IndexMetadata.INDEX_UUID_NA_VALUE;
-                    AllocationId allocationId = null;
-                    while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                        if (token == XContentParser.Token.FIELD_NAME) {
-                            currentFieldName = parser.currentName();
-                        } else if (token.isValue()) {
-                            if (PRIMARY_KEY.equals(currentFieldName)) {
-                                primary = parser.booleanValue();
-                            } else if (INDEX_UUID_KEY.equals(currentFieldName)) {
-                                indexUUID = parser.text();
-                            } else {
-                                throw new CorruptStateException("unexpected field in shard state [" + currentFieldName + "]");
-                            }
-                        } else if (token == XContentParser.Token.START_OBJECT) {
-                            if (ALLOCATION_ID_KEY.equals(currentFieldName)) {
-                                allocationId = AllocationId.fromXContent(parser);
-                            } else {
-                                throw new CorruptStateException("unexpected object in shard state [" + currentFieldName + "]");
-                            }
-                        } else {
-                            throw new CorruptStateException("unexpected token in shard state [" + token.name() + "]");
-                        }
+                } else if (token == XContentParser.Token.START_OBJECT) {
+                    if (ALLOCATION_ID_KEY.equals(currentFieldName)) {
+                        allocationId = AllocationId.fromXContent(parser);
+                    } else {
+                        throw new CorruptStateException("unexpected object in shard state [" + currentFieldName + "]");
                     }
-                    if (primary == null) {
-                        throw new CorruptStateException("missing value for [primary] in shard state");
-                    }
-                    return new ShardStateMetadata(primary, indexUUID, allocationId);
+                } else {
+                    throw new CorruptStateException("unexpected token in shard state [" + token.name() + "]");
                 }
-            };
+            }
+            if (primary == null) {
+                throw new CorruptStateException("missing value for [primary] in shard state");
+            }
+            return new ShardStateMetadata(primary, indexUUID, allocationId);
+        }
+    };
 }

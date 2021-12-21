@@ -294,6 +294,7 @@ public class LuceneTests extends ESTestCase {
         }
         assertTrue(files.toString(), files.contains("_0.si"));
 
+
         if (simpleTextCFS) {
             assertFalse(files.toString(), files.contains("_1.cfs"));
             assertFalse(files.toString(), files.contains("_1.cfe"));
@@ -403,6 +404,7 @@ public class LuceneTests extends ESTestCase {
         doc.add(new StringField("foo", "bar", Store.NO));
         w.addDocument(doc);
 
+
         try (DirectoryReader reader = DirectoryReader.open(w)) {
             IndexSearcher searcher = newSearcher(reader);
             Weight termWeight = new TermQuery(new Term("foo", "bar")).createWeight(searcher, ScoreMode.COMPLETE_NO_SCORES, 1f);
@@ -502,7 +504,8 @@ public class LuceneTests extends ESTestCase {
                 try (IndexReader reader = DirectoryReader.open(w)) {
                     IndexSearcher searcher = newSearcher(reader);
                     searcher.setQueryCache(null);
-                    Query query = new IndexOrDocValuesQuery(new UnsupportedQuery(), NumericDocValuesField.newSlowRangeQuery("foo", 3L, 5L));
+                    Query query = new IndexOrDocValuesQuery(
+                            new UnsupportedQuery(), NumericDocValuesField.newSlowRangeQuery("foo", 3L, 5L));
                     Weight weight = searcher.createWeight(query, ScoreMode.COMPLETE_NO_SCORES, 1f);
 
                     // Random access by default
@@ -535,7 +538,7 @@ public class LuceneTests extends ESTestCase {
     public void testWrapAllDocsLive() throws Exception {
         Directory dir = newDirectory();
         IndexWriterConfig config = newIndexWriterConfig().setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
-                .setMergePolicy(new SoftDeletesRetentionMergePolicy(Lucene.SOFT_DELETES_FIELD, MatchAllDocsQuery::new, newMergePolicy()));
+            .setMergePolicy(new SoftDeletesRetentionMergePolicy(Lucene.SOFT_DELETES_FIELD, MatchAllDocsQuery::new, newMergePolicy()));
         IndexWriter writer = new IndexWriter(dir, config);
         int numDocs = between(1, 10);
         Set<String> liveDocs = new HashSet<>();
@@ -575,7 +578,7 @@ public class LuceneTests extends ESTestCase {
     public void testWrapLiveDocsNotExposeAbortedDocuments() throws Exception {
         Directory dir = newDirectory();
         IndexWriterConfig config = newIndexWriterConfig().setSoftDeletesField(Lucene.SOFT_DELETES_FIELD)
-                .setMergePolicy(new SoftDeletesRetentionMergePolicy(Lucene.SOFT_DELETES_FIELD, MatchAllDocsQuery::new, newMergePolicy()));
+            .setMergePolicy(new SoftDeletesRetentionMergePolicy(Lucene.SOFT_DELETES_FIELD, MatchAllDocsQuery::new, newMergePolicy()));
         IndexWriter writer = new IndexWriter(dir, config);
         int numDocs = between(1, 10);
         List<String> liveDocs = new ArrayList<>();
@@ -599,7 +602,7 @@ public class LuceneTests extends ESTestCase {
                 reader.close(); // mark the indexing hit non-aborting error
                 writer.addDocument(doc);
                 fail("index should have failed");
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) { }
         }
         try (DirectoryReader unwrapped = DirectoryReader.open(writer)) {
             DirectoryReader reader = Lucene.wrapAllDocsLive(unwrapped);
@@ -619,64 +622,64 @@ public class LuceneTests extends ESTestCase {
     public void testSortFieldSerialization() throws IOException {
         Tuple<SortField, SortField> sortFieldTuple = randomSortField();
         SortField deserialized = copyInstance(sortFieldTuple.v1(), EMPTY_REGISTRY, Lucene::writeSortField, Lucene::readSortField,
-                VersionUtils.randomVersion(random()));
+            VersionUtils.randomVersion(random()));
         assertEquals(sortFieldTuple.v2(), deserialized);
     }
 
     public void testSortValueSerialization() throws IOException {
         Object sortValue = randomSortValue();
         Object deserialized = copyInstance(sortValue, EMPTY_REGISTRY, Lucene::writeSortValue, Lucene::readSortValue,
-                VersionUtils.randomVersion(random()));
+            VersionUtils.randomVersion(random()));
         assertEquals(sortValue, deserialized);
     }
 
     public static Object randomSortValue() {
-        switch (randomIntBetween(0, 9)) {
-        case 0:
-            return null;
-        case 1:
-            return randomAlphaOfLengthBetween(3, 10);
-        case 2:
-            return randomInt();
-        case 3:
-            return randomLong();
-        case 4:
-            return randomFloat();
-        case 5:
-            return randomDouble();
-        case 6:
-            return randomByte();
-        case 7:
-            return randomShort();
-        case 8:
-            return randomBoolean();
-        case 9:
-            return new BytesRef(randomAlphaOfLengthBetween(3, 10));
-        default:
-            throw new UnsupportedOperationException();
+        switch(randomIntBetween(0, 9)) {
+            case 0:
+                return null;
+            case 1:
+                return randomAlphaOfLengthBetween(3, 10);
+            case 2:
+                return randomInt();
+            case 3:
+                return randomLong();
+            case 4:
+                return randomFloat();
+            case 5:
+                return randomDouble();
+            case 6:
+                return randomByte();
+            case 7:
+                return randomShort();
+            case 8:
+                return randomBoolean();
+            case 9:
+                return new BytesRef(randomAlphaOfLengthBetween(3, 10));
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
     public static Tuple<SortField, SortField> randomSortField() {
-        switch (randomIntBetween(0, 2)) {
-        case 0:
-            return randomSortFieldCustomComparatorSource();
-        case 1:
-            return randomCustomSortField();
-        case 2:
-            String field = randomAlphaOfLengthBetween(3, 10);
-            SortField.Type type = randomFrom(SortField.Type.values());
-            if ((type == SortField.Type.SCORE || type == SortField.Type.DOC) && randomBoolean()) {
-                field = null;
-            }
-            SortField sortField = new SortField(field, type, randomBoolean());
-            Object missingValue = randomMissingValue(sortField.getType());
-            if (missingValue != null) {
-                sortField.setMissingValue(missingValue);
-            }
-            return Tuple.tuple(sortField, sortField);
-        default:
-            throw new UnsupportedOperationException();
+        switch(randomIntBetween(0, 2)) {
+            case 0:
+                return randomSortFieldCustomComparatorSource();
+            case 1:
+                return randomCustomSortField();
+            case 2:
+                String field = randomAlphaOfLengthBetween(3, 10);
+                SortField.Type type = randomFrom(SortField.Type.values());
+                if ((type == SortField.Type.SCORE || type == SortField.Type.DOC) && randomBoolean()) {
+                    field = null;
+                }
+                SortField sortField = new SortField(field, type, randomBoolean());
+                Object missingValue = randomMissingValue(sortField.getType());
+                if (missingValue != null) {
+                    sortField.setMissingValue(missingValue);
+                }
+                return Tuple.tuple(sortField, sortField);
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -685,26 +688,26 @@ public class LuceneTests extends ESTestCase {
         IndexFieldData.XFieldComparatorSource comparatorSource;
         boolean reverse = randomBoolean();
         Object missingValue = null;
-        switch (randomIntBetween(0, 3)) {
-        case 0:
-            comparatorSource =
-                    new LongValuesComparatorSource(null, randomBoolean() ? randomLong() : null, randomFrom(MultiValueMode.values()), null);
-            break;
-        case 1:
-            comparatorSource = new DoubleValuesComparatorSource(null, randomBoolean() ? randomDouble() : null,
+        switch(randomIntBetween(0, 3)) {
+            case 0:
+                comparatorSource = new LongValuesComparatorSource(null, randomBoolean() ? randomLong() : null,
                     randomFrom(MultiValueMode.values()), null);
-            break;
-        case 2:
-            comparatorSource = new FloatValuesComparatorSource(null, randomBoolean() ? randomFloat() : null,
+                break;
+            case 1:
+                comparatorSource = new DoubleValuesComparatorSource(null, randomBoolean() ? randomDouble() : null,
                     randomFrom(MultiValueMode.values()), null);
-            break;
-        case 3:
-            comparatorSource = new BytesRefFieldComparatorSource(null, randomBoolean() ? "_first" : "_last",
+                break;
+            case 2:
+                comparatorSource = new FloatValuesComparatorSource(null, randomBoolean() ? randomFloat() : null,
                     randomFrom(MultiValueMode.values()), null);
-            missingValue = comparatorSource.missingValue(reverse);
-            break;
-        default:
-            throw new UnsupportedOperationException();
+                break;
+            case 3:
+                comparatorSource = new BytesRefFieldComparatorSource(null,
+                    randomBoolean() ? "_first" : "_last", randomFrom(MultiValueMode.values()), null);
+                missingValue = comparatorSource.missingValue(reverse);
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         SortField sortField = new SortField(field, comparatorSource, reverse);
         SortField expected = new SortField(field, comparatorSource.reducedType(), reverse);
@@ -714,51 +717,51 @@ public class LuceneTests extends ESTestCase {
 
     private static Tuple<SortField, SortField> randomCustomSortField() {
         String field = randomAlphaOfLengthBetween(3, 10);
-        switch (randomIntBetween(0, 2)) {
-        case 0: {
-            SortField sortField = LatLonDocValuesField.newDistanceSort(field, 0, 0);
-            SortField expected = new SortField(field, SortField.Type.DOUBLE);
-            expected.setMissingValue(Double.POSITIVE_INFINITY);
-            return Tuple.tuple(sortField, expected);
-        }
-        case 1: {
-            SortedSetSortField sortField = new SortedSetSortField(field, randomBoolean(), randomFrom(SortedSetSelector.Type.values()));
-            SortField expected = new SortField(sortField.getField(), SortField.Type.STRING, sortField.getReverse());
-            Object missingValue = randomMissingValue(SortField.Type.STRING);
-            sortField.setMissingValue(missingValue);
-            expected.setMissingValue(missingValue);
-            return Tuple.tuple(sortField, expected);
-        }
-        case 2: {
-            SortField.Type type = randomFrom(SortField.Type.DOUBLE, SortField.Type.INT, SortField.Type.FLOAT, SortField.Type.LONG);
-            SortedNumericSortField sortField = new SortedNumericSortField(field, type, randomBoolean());
-            SortField expected = new SortField(sortField.getField(), sortField.getNumericType(), sortField.getReverse());
-            Object missingValue = randomMissingValue(type);
-            if (missingValue != null) {
+        switch(randomIntBetween(0, 2)) {
+            case 0: {
+                SortField sortField = LatLonDocValuesField.newDistanceSort(field, 0, 0);
+                SortField expected = new SortField(field, SortField.Type.DOUBLE);
+                expected.setMissingValue(Double.POSITIVE_INFINITY);
+                return Tuple.tuple(sortField, expected);
+            }
+            case 1: {
+                SortedSetSortField sortField = new SortedSetSortField(field, randomBoolean(), randomFrom(SortedSetSelector.Type.values()));
+                SortField expected = new SortField(sortField.getField(), SortField.Type.STRING, sortField.getReverse());
+                Object missingValue = randomMissingValue(SortField.Type.STRING);
                 sortField.setMissingValue(missingValue);
                 expected.setMissingValue(missingValue);
+                return Tuple.tuple(sortField, expected);
             }
-            return Tuple.tuple(sortField, expected);
-        }
-        default:
-            throw new UnsupportedOperationException();
+            case 2: {
+                SortField.Type type = randomFrom(SortField.Type.DOUBLE, SortField.Type.INT, SortField.Type.FLOAT, SortField.Type.LONG);
+                SortedNumericSortField sortField = new SortedNumericSortField(field, type, randomBoolean());
+                SortField expected = new SortField(sortField.getField(), sortField.getNumericType(), sortField.getReverse());
+                Object missingValue = randomMissingValue(type);
+                if (missingValue != null) {
+                    sortField.setMissingValue(missingValue);
+                    expected.setMissingValue(missingValue);
+                }
+                return Tuple.tuple(sortField, expected);
+            }
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
     private static Object randomMissingValue(SortField.Type type) {
-        switch (type) {
-        case INT:
-            return randomInt();
-        case FLOAT:
-            return randomFloat();
-        case DOUBLE:
-            return randomDouble();
-        case LONG:
-            return randomLong();
-        case STRING:
-            return randomBoolean() ? SortField.STRING_FIRST : SortField.STRING_LAST;
-        default:
-            return null;
+        switch(type) {
+            case INT:
+                return randomInt();
+            case FLOAT:
+                return randomFloat();
+            case DOUBLE:
+                return randomDouble();
+            case LONG:
+                return randomLong();
+            case STRING:
+                return randomBoolean() ? SortField.STRING_FIRST : SortField.STRING_LAST;
+            default:
+                return null;
         }
     }
 }

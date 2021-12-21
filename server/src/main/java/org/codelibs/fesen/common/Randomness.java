@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.common;
 
+import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.SuppressForbidden;
+
 import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.SuppressForbidden;
 
 /**
  * Provides factory methods for producing reproducible sources of
@@ -64,8 +64,7 @@ public final class Randomness {
         getRandomMethod = maybeGetRandomMethod;
     }
 
-    private Randomness() {
-    }
+    private Randomness() {}
 
     /**
      * Provides a reproducible source of randomness seeded by a long

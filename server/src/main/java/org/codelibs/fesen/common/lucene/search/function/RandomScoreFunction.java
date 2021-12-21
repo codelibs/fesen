@@ -18,8 +18,7 @@
  */
 package org.codelibs.fesen.common.lucene.search.function;
 
-import java.io.IOException;
-import java.util.Objects;
+import com.carrotsearch.hppc.BitMixer;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
@@ -28,7 +27,8 @@ import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.LeafFieldData;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 
-import com.carrotsearch.hppc.BitMixer;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Pseudo randomly generate a score for each {@link LeafScoreFunction#score}.
@@ -59,8 +59,7 @@ public class RandomScoreFunction extends ScoreFunction {
         if (fieldData != null) {
             LeafFieldData leafData = fieldData.load(ctx);
             values = leafData.getBytesValues();
-            if (values == null)
-                throw new NullPointerException("failed to get fielddata");
+            if (values == null) throw new NullPointerException("failed to get fielddata");
         } else {
             values = null;
         }
@@ -78,13 +77,14 @@ public class RandomScoreFunction extends ScoreFunction {
                     // field has no value
                     hash = saltedSeed;
                 }
-                return (hash & 0x00FFFFFF) / (float) (1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
+                return (hash & 0x00FFFFFF) / (float)(1 << 24); // only use the lower 24 bits to construct a float from 0.0-1.0
             }
 
             @Override
             public Explanation explainScore(int docId, Explanation subQueryScore) throws IOException {
                 String field = fieldData == null ? null : fieldData.getFieldName();
-                return Explanation.match((float) score(docId, subQueryScore.getValue().floatValue()),
+                return Explanation.match(
+                        (float) score(docId, subQueryScore.getValue().floatValue()),
                         "random score function (seed: " + originalSeed + ", field: " + field + ")");
             }
         };
@@ -98,7 +98,8 @@ public class RandomScoreFunction extends ScoreFunction {
     @Override
     protected boolean doEquals(ScoreFunction other) {
         RandomScoreFunction randomScoreFunction = (RandomScoreFunction) other;
-        return this.originalSeed == randomScoreFunction.originalSeed && this.saltedSeed == randomScoreFunction.saltedSeed;
+        return this.originalSeed == randomScoreFunction.originalSeed
+                && this.saltedSeed == randomScoreFunction.saltedSeed;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class GeneralScriptException extends FesenException {
         super(msg, cause);
     }
 
-    public GeneralScriptException(StreamInput in) throws IOException {
+    public GeneralScriptException(StreamInput in) throws IOException{
         super(in);
     }
 }

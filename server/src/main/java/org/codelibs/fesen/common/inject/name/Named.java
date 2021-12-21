@@ -16,13 +16,13 @@
 
 package org.codelibs.fesen.common.inject.name;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.codelibs.fesen.common.inject.BindingAnnotation;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotates named things.
@@ -30,7 +30,7 @@ import org.codelibs.fesen.common.inject.BindingAnnotation;
  * @author crazybob@google.com (Bob Lee)
  */
 @Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @BindingAnnotation
 public @interface Named {
     String value();

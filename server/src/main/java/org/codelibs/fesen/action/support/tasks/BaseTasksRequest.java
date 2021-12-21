@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.support.tasks;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.common.Strings;
@@ -33,6 +29,10 @@ import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
 
 /**
  * A base class for task requests
@@ -81,7 +81,8 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;
         if (taskId.isSet() && nodes.length > 0) {
-            validationException = addValidationError("task id cannot be used together with node ids", validationException);
+            validationException = addValidationError("task id cannot be used together with node ids",
+                validationException);
         }
         return validationException;
     }
@@ -127,6 +128,7 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
         return (Request) this;
     }
 
+
     /**
      * Returns the parent task id that tasks should be filtered by
      */
@@ -139,6 +141,7 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
         this.parentTaskId = parentTaskId;
         return (Request) this;
     }
+
 
     public TimeValue getTimeout() {
         return this.timeout;
@@ -161,7 +164,7 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
             return false;
         }
         if (getTaskId().isSet()) {
-            if (getTaskId().getId() != task.getId()) {
+            if(getTaskId().getId() != task.getId()) {
                 return false;
             }
         }

@@ -19,11 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -33,6 +30,11 @@ import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 import org.codelibs.fesen.test.VersionUtils;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+
+
 public class HtmlStripCharFilterFactoryTests extends ESTestCase {
 
     /**
@@ -40,7 +42,7 @@ public class HtmlStripCharFilterFactoryTests extends ESTestCase {
      */
     public void testDeprecationWarning() throws IOException {
         Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
-                .put(IndexMetadata.SETTING_VERSION_CREATED, VersionUtils.randomVersionBetween(random(), Version.V_7_0_0, Version.CURRENT))
+                .put(IndexMetadata.SETTING_VERSION_CREATED, VersionUtils.randomVersionBetween(random(), Version.V_6_3_0, Version.CURRENT))
                 .build();
 
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
@@ -50,6 +52,23 @@ public class HtmlStripCharFilterFactoryTests extends ESTestCase {
             assertNotNull(charFilterFactory.create(new StringReader("input")));
             assertWarnings("The [htmpStrip] char filter name is deprecated and will be removed in a future version. "
                     + "Please change the filter name to [html_strip] instead.");
+        }
+    }
+
+    /**
+     * Check that the deprecated name "htmlStrip" does NOT issues a deprecation warning for indices created before 6.3.0
+     */
+    public void testNoDeprecationWarningPre6_3() throws IOException {
+        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .put(IndexMetadata.SETTING_VERSION_CREATED,
+                        VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.V_6_2_4))
+                .build();
+
+        IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
+        try (CommonAnalysisPlugin commonAnalysisPlugin = new CommonAnalysisPlugin()) {
+            Map<String, CharFilterFactory> charFilters = createTestAnalysis(idxSettings, settings, commonAnalysisPlugin).charFilter;
+            CharFilterFactory charFilterFactory = charFilters.get("htmlStrip");
+            assertNotNull(charFilterFactory.create(new StringReader("")));
         }
     }
 }

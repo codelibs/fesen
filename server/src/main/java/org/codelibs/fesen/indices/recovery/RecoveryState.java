@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.indices.recovery;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.RecoverySource;
@@ -46,6 +37,15 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.shard.IndexShard;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.store.StoreStats;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Keeps track of state related to shard recovery.
@@ -118,16 +118,20 @@ public class RecoveryState implements ToXContentFragment, Writeable {
     private DiscoveryNode targetNode;
     private boolean primary;
 
-    public RecoveryState(ShardRouting shardRouting, DiscoveryNode targetNode, @Nullable DiscoveryNode sourceNode) {
+    public RecoveryState(ShardRouting shardRouting,
+                         DiscoveryNode targetNode,
+                         @Nullable DiscoveryNode sourceNode) {
         this(shardRouting, targetNode, sourceNode, new Index());
     }
 
-    public RecoveryState(ShardRouting shardRouting, DiscoveryNode targetNode, @Nullable DiscoveryNode sourceNode, Index index) {
+    public RecoveryState(ShardRouting shardRouting,
+                         DiscoveryNode targetNode,
+                         @Nullable DiscoveryNode sourceNode,
+                         Index index) {
         assert shardRouting.initializing() : "only allow initializing shard routing to be recovered: " + shardRouting;
         RecoverySource recoverySource = shardRouting.recoverySource();
-        assert (recoverySource
-                .getType() == RecoverySource.Type.PEER) == (sourceNode != null) : "peer recovery requires source node, recovery type: "
-                        + recoverySource.getType() + " source node: " + sourceNode;
+        assert (recoverySource.getType() == RecoverySource.Type.PEER) == (sourceNode != null) :
+            "peer recovery requires source node, recovery type: " + recoverySource.getType() + " source node: " + sourceNode;
         this.shardId = shardRouting.shardId();
         this.primary = shardRouting.primary();
         this.recoverySource = recoverySource;
@@ -176,11 +180,12 @@ public class RecoveryState implements ToXContentFragment, Writeable {
         return this.stage;
     }
 
+
     protected void validateAndSetStage(Stage expected, Stage next) {
         if (stage != expected) {
             assert false : "can't move recovery to stage [" + next + "]. current stage: [" + stage + "] (expected [" + expected + "])";
-            throw new IllegalStateException(
-                    "can't move recovery to stage [" + next + "]. current stage: [" + stage + "] (expected [" + expected + "])");
+            throw new IllegalStateException("can't move recovery to stage [" + next + "]. current stage: ["
+                    + stage + "] (expected [" + expected + "])");
         }
         stage = next;
     }
@@ -195,38 +200,38 @@ public class RecoveryState implements ToXContentFragment, Writeable {
     // synchronized is strictly speaking not needed (this is called by a single thread), but just to be safe
     public synchronized RecoveryState setStage(Stage stage) {
         switch (stage) {
-        case INIT:
-            // reinitializing stop remove all state except for start time
-            this.stage = Stage.INIT;
-            getIndex().reset();
-            getVerifyIndex().reset();
-            getTranslog().reset();
-            break;
-        case INDEX:
-            validateAndSetStage(Stage.INIT, stage);
-            getIndex().start();
-            break;
-        case VERIFY_INDEX:
-            validateAndSetStage(Stage.INDEX, stage);
-            getIndex().stop();
-            getVerifyIndex().start();
-            break;
-        case TRANSLOG:
-            validateAndSetStage(Stage.VERIFY_INDEX, stage);
-            getVerifyIndex().stop();
-            getTranslog().start();
-            break;
-        case FINALIZE:
-            assert getIndex().bytesStillToRecover() >= 0 : "moving to stage FINALIZE without completing file details";
-            validateAndSetStage(Stage.TRANSLOG, stage);
-            getTranslog().stop();
-            break;
-        case DONE:
-            validateAndSetStage(Stage.FINALIZE, stage);
-            getTimer().stop();
-            break;
-        default:
-            throw new IllegalArgumentException("unknown RecoveryState.Stage [" + stage + "]");
+            case INIT:
+                // reinitializing stop remove all state except for start time
+                this.stage = Stage.INIT;
+                getIndex().reset();
+                getVerifyIndex().reset();
+                getTranslog().reset();
+                break;
+            case INDEX:
+                validateAndSetStage(Stage.INIT, stage);
+                getIndex().start();
+                break;
+            case VERIFY_INDEX:
+                validateAndSetStage(Stage.INDEX, stage);
+                getIndex().stop();
+                getVerifyIndex().start();
+                break;
+            case TRANSLOG:
+                validateAndSetStage(Stage.VERIFY_INDEX, stage);
+                getVerifyIndex().stop();
+                getTranslog().start();
+                break;
+            case FINALIZE:
+                assert getIndex().bytesStillToRecover() >= 0 : "moving to stage FINALIZE without completing file details";
+                validateAndSetStage(Stage.TRANSLOG, stage);
+                getTranslog().stop();
+                break;
+            case DONE:
+                validateAndSetStage(Stage.FINALIZE, stage);
+                getTimer().stop();
+                break;
+            default:
+                throw new IllegalArgumentException("unknown RecoveryState.Stage [" + stage + "]");
         }
         return this;
     }
@@ -514,23 +519,24 @@ public class RecoveryState implements ToXContentFragment, Writeable {
 
         public synchronized void incrementRecoveredOperations() {
             recovered++;
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" + total + "], recovered ["
-                    + recovered + "]";
+            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" + total +
+                "], recovered [" + recovered + "]";
         }
 
         public synchronized void incrementRecoveredOperations(int ops) {
             recovered += ops;
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" + total + "], recovered ["
-                    + recovered + "]";
+            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" + total +
+                "], recovered [" + recovered + "]";
         }
 
         public synchronized void decrementRecoveredOperations(int ops) {
             recovered -= ops;
-            assert recovered >= 0 : "recovered operations must be non-negative. Because [" + recovered + "] after decrementing [" + ops
-                    + "]";
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" + total + "], recovered ["
-                    + recovered + "]";
+            assert recovered >= 0 : "recovered operations must be non-negative. Because [" + recovered +
+                "] after decrementing [" + ops + "]";
+            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total [" +
+                total + "], recovered [" + recovered + "]";
         }
+
 
         /**
          * returns the total number of translog operations recovered so far
@@ -551,8 +557,8 @@ public class RecoveryState implements ToXContentFragment, Writeable {
 
         public synchronized void totalOperations(int total) {
             this.total = totalLocal == UNKNOWN ? total : totalLocal + total;
-            assert total == UNKNOWN || this.total >= recovered : "total, if known, should be > recovered. total [" + total
-                    + "], recovered [" + recovered + "]";
+            assert total == UNKNOWN || this.total >= recovered : "total, if known, should be > recovered. total [" + total +
+                "], recovered [" + recovered + "]";
         }
 
         /**
@@ -920,7 +926,7 @@ public class RecoveryState implements ToXContentFragment, Writeable {
                     }
                 }
             }
-            if (total == 0 && fileDetails.size() == 0) { // indicates we are still in init phase
+            if (total == 0 && fileDetails.size() == 0) {      // indicates we are still in init phase
                 return 0.0f;
             }
             if (total == recovered) {

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import java.nio.file.Path;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.nio.file.Path;
 
 /**
  * The Natives class is a wrapper class that checks if the classes necessary for calling native methods are available on
@@ -30,8 +30,7 @@ import org.apache.logging.log4j.Logger;
  */
 final class Natives {
     /** no instantiation */
-    private Natives() {
-    }
+    private Natives() {}
 
     private static final Logger logger = LogManager.getLogger(Natives.class);
 

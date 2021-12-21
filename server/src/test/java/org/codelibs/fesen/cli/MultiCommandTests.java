@@ -67,7 +67,8 @@ public class MultiCommandTests extends CommandTestCase {
         }
 
         DummySubCommand(final boolean throwsExceptionOnClose) {
-            super("A dummy subcommand", () -> {});
+            super("A dummy subcommand", () -> {
+            });
             this.throwsExceptionOnClose = throwsExceptionOnClose;
         }
 
@@ -225,7 +226,6 @@ public class MultiCommandTests extends CommandTestCase {
         ErrorThrowingSubCommand() {
             super("error throwing", () -> {});
         }
-
         @Override
         protected void execute(Terminal terminal, OptionSet options) throws Exception {
             throw new UserException(1, "Dummy error");
@@ -241,7 +241,7 @@ public class MultiCommandTests extends CommandTestCase {
         MockTerminal terminal = new MockTerminal();
         MultiCommand mc = new ErrorHandlingMultiCommand();
         mc.subcommands.put("throw", new ErrorThrowingSubCommand());
-        mc.main(new String[] { "throw", "--silent" }, terminal);
+        mc.main(new String[]{"throw", "--silent"}, terminal);
         assertThat(terminal.getOutput(), is(emptyString()));
         assertThat(terminal.getErrorOutput(), equalTo("ERROR: Dummy error\n"));
     }
@@ -255,7 +255,7 @@ public class MultiCommandTests extends CommandTestCase {
                 throw new UserException(1, null);
             }
         });
-        mc.main(new String[] { "throw", "--silent" }, terminal);
+        mc.main(new String[]{"throw", "--silent"}, terminal);
         assertThat(terminal.getOutput(), is(emptyString()));
         assertThat(terminal.getErrorOutput(), is(emptyString()));
     }

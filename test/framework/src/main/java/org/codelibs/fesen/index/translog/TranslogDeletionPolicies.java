@@ -21,13 +21,16 @@ package org.codelibs.fesen.index.translog;
 
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.index.IndexSettings;
+import org.codelibs.fesen.index.translog.TranslogDeletionPolicy;
 
 public class TranslogDeletionPolicies {
 
     public static TranslogDeletionPolicy createTranslogDeletionPolicy() {
-        return new TranslogDeletionPolicy(IndexSettings.INDEX_TRANSLOG_RETENTION_SIZE_SETTING.getDefault(Settings.EMPTY).getBytes(),
+        return new TranslogDeletionPolicy(
+                IndexSettings.INDEX_TRANSLOG_RETENTION_SIZE_SETTING.getDefault(Settings.EMPTY).getBytes(),
                 IndexSettings.INDEX_TRANSLOG_RETENTION_AGE_SETTING.getDefault(Settings.EMPTY).getMillis(),
-                IndexSettings.INDEX_TRANSLOG_RETENTION_TOTAL_FILES_SETTING.getDefault(Settings.EMPTY));
+                IndexSettings.INDEX_TRANSLOG_RETENTION_TOTAL_FILES_SETTING.getDefault(Settings.EMPTY)
+        );
     }
 
     public static TranslogDeletionPolicy createTranslogDeletionPolicy(IndexSettings indexSettings) {

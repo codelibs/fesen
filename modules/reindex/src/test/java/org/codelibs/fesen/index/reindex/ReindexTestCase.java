@@ -19,17 +19,28 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.singleton;
-import static org.codelibs.fesen.test.ESIntegTestCase.Scope.SUITE;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollParallelizationHelper;
+import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
+import org.codelibs.fesen.index.reindex.DeleteByQueryRequestBuilder;
+import org.codelibs.fesen.index.reindex.ReindexAction;
+import org.codelibs.fesen.index.reindex.ReindexPlugin;
+import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
+import org.codelibs.fesen.index.reindex.RethrottleAction;
+import org.codelibs.fesen.index.reindex.RethrottleRequestBuilder;
+import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
+import org.codelibs.fesen.index.reindex.UpdateByQueryRequestBuilder;
+import org.codelibs.fesen.plugins.Plugin;
+import org.codelibs.fesen.test.ESIntegTestCase;
+import org.codelibs.fesen.test.ESIntegTestCase.ClusterScope;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.plugins.Plugin;
-import org.codelibs.fesen.test.ESIntegTestCase;
-import org.codelibs.fesen.test.ESIntegTestCase.ClusterScope;
+import static java.util.Collections.singleton;
+import static org.codelibs.fesen.test.ESIntegTestCase.Scope.SUITE;
 
 /**
  * Base test case for integration tests against the reindex plugin.
@@ -83,8 +94,9 @@ public abstract class ReindexTestCase extends ESIntegTestCase {
      */
     protected int expectedSlices(int requestSlices, Collection<String> indices) {
         if (requestSlices == AbstractBulkByScrollRequest.AUTO_SLICES) {
-            int leastNumShards = Collections
-                    .min(indices.stream().map(sourceIndex -> getNumShards(sourceIndex).numPrimaries).collect(Collectors.toList()));
+            int leastNumShards = Collections.min(indices.stream()
+                .map(sourceIndex -> getNumShards(sourceIndex).numPrimaries)
+                .collect(Collectors.toList()));
             return Math.min(leastNumShards, BulkByScrollParallelizationHelper.AUTO_SLICE_CEILING);
         } else {
             return requestSlices;

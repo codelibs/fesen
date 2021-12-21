@@ -19,10 +19,7 @@
 
 package org.codelibs.fesen.search.dfs;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.carrotsearch.hppc.ObjectObjectHashMap;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.CollectionStatistics;
 import org.apache.lucene.search.IndexSearcher;
@@ -34,7 +31,9 @@ import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.tasks.TaskCancelledException;
 
-import com.carrotsearch.hppc.ObjectObjectHashMap;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Dfs phase of a search request, used to make scoring 100% accurate by collecting additional info from each shard before the query phase.
@@ -85,7 +84,8 @@ public class DfsPhase {
                 termStatistics[i] = stats.get(terms[i]);
             }
 
-            context.dfsResult().termsStatistics(terms, termStatistics).fieldStatistics(fieldStatistics)
+            context.dfsResult().termsStatistics(terms, termStatistics)
+                    .fieldStatistics(fieldStatistics)
                     .maxDoc(context.searcher().getIndexReader().maxDoc());
         } catch (Exception e) {
             throw new DfsPhaseExecutionException(context.shardTarget(), "Exception during dfs phase", e);

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.common.geo;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -37,6 +30,13 @@ import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.utils.GeometryValidator;
 import org.codelibs.fesen.geometry.utils.StandardValidator;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An utility class with a geometry parser methods supporting different shape representation formats
@@ -102,7 +102,7 @@ public final class GeometryParser {
      * <p>
      * Json structure: valid geojson definition
      */
-    public Geometry parseGeometry(Object value) throws FesenParseException {
+    public  Geometry parseGeometry(Object value) throws FesenParseException {
         if (value instanceof List) {
             List<?> values = (List<?>) value;
             if (values.size() == 2 && values.get(0) instanceof Number) {
@@ -117,7 +117,7 @@ public final class GeometryParser {
             }
         }
         try (XContentParser parser = new MapXContentParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE,
-                Collections.singletonMap("null_value", value), null)) {
+            Collections.singletonMap("null_value", value), null)) {
             parser.nextToken(); // start object
             parser.nextToken(); // field name
             parser.nextToken(); // field value

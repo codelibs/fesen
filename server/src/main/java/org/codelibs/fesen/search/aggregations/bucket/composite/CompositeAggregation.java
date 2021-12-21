@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 
 public interface CompositeAggregation extends MultiBucketsAggregation {
     interface Bucket extends MultiBucketsAggregation.Bucket {
@@ -40,7 +40,8 @@ public interface CompositeAggregation extends MultiBucketsAggregation {
      */
     Map<String, Object> afterKey();
 
-    static XContentBuilder bucketToXContent(CompositeAggregation.Bucket bucket, XContentBuilder builder, Params params) throws IOException {
+    static XContentBuilder bucketToXContent(CompositeAggregation.Bucket bucket,
+                                            XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         buildCompositeMap(CommonFields.KEY.getPreferredName(), bucket.getKey(), builder);
         builder.field(CommonFields.DOC_COUNT.getPreferredName(), bucket.getDocCount());

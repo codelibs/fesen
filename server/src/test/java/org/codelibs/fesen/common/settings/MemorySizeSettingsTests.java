@@ -87,7 +87,8 @@ public class MemorySizeSettingsTests extends ESTestCase {
         assertThat(setting, notNullValue());
         assertThat(setting.getKey(), equalTo(settingKey));
         assertThat(setting.getProperties(), hasItem(Property.NodeScope));
-        assertThat(setting.getDefault(Settings.EMPTY), equalTo(defaultValue));
+        assertThat(setting.getDefault(Settings.EMPTY),
+                equalTo(defaultValue));
         Settings settingWithPercentage = Settings.builder().put(settingKey, "25%").build();
         assertThat(setting.get(settingWithPercentage),
                 equalTo(new ByteSizeValue((long) (JvmInfo.jvmInfo().getMem().getHeapMax().getBytes() * 0.25))));

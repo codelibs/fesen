@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -33,24 +27,31 @@ import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
 
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ParsedVariableWidthHistogram extends ParsedMultiBucketAggregation<ParsedVariableWidthHistogram.ParsedBucket>
-        implements Histogram {
+    implements Histogram{
 
     @Override
-    public String getType() {
-        return VariableWidthHistogramAggregationBuilder.NAME;
-    }
+    public String getType() { return VariableWidthHistogramAggregationBuilder.NAME; }
 
     @Override
-    public List<? extends Histogram.Bucket> getBuckets() {
-        return buckets;
-    }
+    public List<? extends Histogram.Bucket> getBuckets() { return buckets; }
 
     private static ObjectParser<ParsedVariableWidthHistogram, Void> PARSER =
-            new ObjectParser<>(ParsedVariableWidthHistogram.class.getSimpleName(), true, ParsedVariableWidthHistogram::new);
+        new ObjectParser<>(
+            ParsedVariableWidthHistogram.class.getSimpleName(),
+            true,
+            ParsedVariableWidthHistogram::new
+        ) ;
     static {
-        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
-                parser -> ParsedBucket.fromXContent(parser, true));
+        declareMultiBucketAggregationFields(PARSER,
+            parser -> ParsedBucket.fromXContent(parser, false),
+            parser -> ParsedBucket.fromXContent(parser, true));
     }
 
     public static ParsedVariableWidthHistogram fromXContent(XContentParser parser, String name) throws IOException {
@@ -59,7 +60,8 @@ public class ParsedVariableWidthHistogram extends ParsedMultiBucketAggregation<P
         return aggregation;
     }
 
-    public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Histogram.Bucket {
+
+    public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Histogram.Bucket{
         private Double key;
 
         private Double min;
@@ -89,7 +91,7 @@ public class ParsedVariableWidthHistogram extends ParsedMultiBucketAggregation<P
             this.min = min;
         }
 
-        public void setMinAsString(String minAsString) {
+        public void setMinAsString(String minAsString){
             this.minAsString = minAsString;
         }
 
@@ -107,11 +109,11 @@ public class ParsedVariableWidthHistogram extends ParsedMultiBucketAggregation<P
             return null;
         }
 
-        public void setMax(Double max) {
+        public void setMax(Double max){
             this.max = max;
         }
 
-        public void setMaxAsString(String maxAsString) {
+        public void setMaxAsString(String maxAsString){
             this.maxAsString = maxAsString;
         }
 
@@ -164,7 +166,7 @@ public class ParsedVariableWidthHistogram extends ParsedMultiBucketAggregation<P
                         bucket.key = parser.doubleValue();
                     } else {
                         XContentParserUtils.parseTypedKeysObject(parser, Aggregation.TYPED_KEYS_DELIMITER, Aggregation.class,
-                                aggregations::add);
+                            aggregations::add);
                     }
                 }
             }

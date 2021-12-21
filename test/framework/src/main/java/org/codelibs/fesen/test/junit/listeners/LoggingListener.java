@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.test.junit.listeners;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.logging.Loggers;
@@ -35,6 +27,14 @@ import org.codelibs.fesen.test.junit.annotations.TestLogging;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A {@link RunListener} that allows changing the log level for a specific test method. When a test method is annotated with the
@@ -54,10 +54,12 @@ public class LoggingListener extends RunListener {
     @Override
     public void testRunStarted(final Description description) throws Exception {
         Package testClassPackage = description.getTestClass().getPackage();
-        previousPackageLoggingMap = processTestLogging(testClassPackage != null ? testClassPackage.getAnnotation(TestLogging.class) : null,
-                testClassPackage != null ? testClassPackage.getAnnotation(TestIssueLogging.class) : null);
-        previousClassLoggingMap =
-                processTestLogging(description.getAnnotation(TestLogging.class), description.getAnnotation(TestIssueLogging.class));
+        previousPackageLoggingMap = processTestLogging(
+            testClassPackage != null ? testClassPackage.getAnnotation(TestLogging.class) : null,
+            testClassPackage != null ? testClassPackage.getAnnotation(TestIssueLogging.class) : null);
+        previousClassLoggingMap = processTestLogging(
+            description.getAnnotation(TestLogging.class),
+            description.getAnnotation(TestIssueLogging.class));
     }
 
     @Override
@@ -112,8 +114,8 @@ public class LoggingListener extends RunListener {
          * parent setting.
          */
         final Map<String, String> loggingLevels =
-                new TreeMap<>(Stream.concat(testLoggingMap.entrySet().stream(), testIssueLoggingMap.entrySet().stream())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            new TreeMap<>(Stream.concat(testLoggingMap.entrySet().stream(), testIssueLoggingMap.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         /*
          * Obtain the existing logging levels so that we can restore them at the end of the test. We have to do this separately from

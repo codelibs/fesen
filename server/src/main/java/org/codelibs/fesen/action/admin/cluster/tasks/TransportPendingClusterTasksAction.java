@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.tasks;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -37,6 +34,9 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.List;
+
 public class TransportPendingClusterTasksAction
         extends TransportMasterNodeReadAction<PendingClusterTasksRequest, PendingClusterTasksResponse> {
 
@@ -45,10 +45,11 @@ public class TransportPendingClusterTasksAction
     private final ClusterService clusterService;
 
     @Inject
-    public TransportPendingClusterTasksAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(PendingClusterTasksAction.NAME, transportService, clusterService, threadPool, actionFilters, PendingClusterTasksRequest::new,
-                indexNameExpressionResolver);
+    public TransportPendingClusterTasksAction(TransportService transportService, ClusterService clusterService,
+                                              ThreadPool threadPool, ActionFilters actionFilters,
+                                              IndexNameExpressionResolver indexNameExpressionResolver) {
+        super(PendingClusterTasksAction.NAME, transportService, clusterService, threadPool, actionFilters,
+            PendingClusterTasksRequest::new, indexNameExpressionResolver);
         this.clusterService = clusterService;
     }
 
@@ -70,7 +71,7 @@ public class TransportPendingClusterTasksAction
 
     @Override
     protected void masterOperation(PendingClusterTasksRequest request, ClusterState state,
-            ActionListener<PendingClusterTasksResponse> listener) {
+                                   ActionListener<PendingClusterTasksResponse> listener) {
         logger.trace("fetching pending tasks from cluster service");
         final List<PendingClusterTask> pendingTasks = clusterService.getMasterService().pendingTasks();
         logger.trace("done fetching pending tasks from cluster service");

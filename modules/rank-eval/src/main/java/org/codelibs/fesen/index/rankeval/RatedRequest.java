@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -42,6 +31,17 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.rankeval.RatedDocument.DocumentKey;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Definition of a particular query in the ranking evaluation request.<br>
@@ -96,7 +96,8 @@ public class RatedRequest implements Writeable, ToXContentObject {
      * @param params template parameters
      * @param templateId a templare id
      */
-    public RatedRequest(String id, List<RatedDocument> ratedDocs, Map<String, Object> params, String templateId) {
+    public RatedRequest(String id, List<RatedDocument> ratedDocs, Map<String, Object> params,
+            String templateId) {
         this(id, ratedDocs, null, params, templateId);
     }
 
@@ -112,8 +113,8 @@ public class RatedRequest implements Writeable, ToXContentObject {
         this(id, ratedDocs, evaluatedQuery, new HashMap<>(), null);
     }
 
-    private RatedRequest(String id, List<RatedDocument> ratedDocs, SearchSourceBuilder evaluatedQuery, Map<String, Object> params,
-            String templateId) {
+    private RatedRequest(String id, List<RatedDocument> ratedDocs, SearchSourceBuilder evaluatedQuery,
+            Map<String, Object> params, String templateId) {
         if (params != null && (params.size() > 0 && evaluatedQuery != null)) {
             throw new IllegalArgumentException(
                     "Ambiguous rated request: Set both, verbatim test request and test request " + "template parameters.");
@@ -249,17 +250,17 @@ public class RatedRequest implements Writeable, ToXContentObject {
     private static final ParseField TEMPLATE_ID_FIELD = new ParseField("template_id");
 
     @SuppressWarnings("unchecked")
-    private static final ConstructingObjectParser<RatedRequest, Void> PARSER =
-            new ConstructingObjectParser<>("request", a -> new RatedRequest((String) a[0], (List<RatedDocument>) a[1],
-                    (SearchSourceBuilder) a[2], (Map<String, Object>) a[3], (String) a[4]));
+    private static final ConstructingObjectParser<RatedRequest, Void> PARSER = new ConstructingObjectParser<>("request",
+            a -> new RatedRequest((String) a[0], (List<RatedDocument>) a[1], (SearchSourceBuilder) a[2], (Map<String, Object>) a[3],
+                    (String) a[4]));
 
     static {
         PARSER.declareString(ConstructingObjectParser.constructorArg(), ID_FIELD);
         PARSER.declareObjectArray(ConstructingObjectParser.constructorArg(), (p, c) -> {
             return RatedDocument.fromXContent(p);
         }, RATINGS_FIELD);
-        PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> SearchSourceBuilder.fromXContent(p, false),
-                REQUEST_FIELD);
+        PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) ->
+                SearchSourceBuilder.fromXContent(p, false), REQUEST_FIELD);
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> p.map(), PARAMS_FIELD);
         PARSER.declareStringArray(RatedRequest::addSummaryFields, FIELDS_FIELD);
         PARSER.declareString(ConstructingObjectParser.optionalConstructorArg(), TEMPLATE_ID_FIELD);
@@ -322,12 +323,15 @@ public class RatedRequest implements Writeable, ToXContentObject {
         RatedRequest other = (RatedRequest) obj;
 
         return Objects.equals(id, other.id) && Objects.equals(evaluationRequest, other.evaluationRequest)
-                && Objects.equals(summaryFields, other.summaryFields) && Objects.equals(ratedDocs, other.ratedDocs)
-                && Objects.equals(params, other.params) && Objects.equals(templateId, other.templateId);
+                && Objects.equals(summaryFields, other.summaryFields)
+                && Objects.equals(ratedDocs, other.ratedDocs)
+                && Objects.equals(params, other.params)
+                && Objects.equals(templateId, other.templateId);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id, evaluationRequest, summaryFields, ratedDocs, params, templateId);
+        return Objects.hash(id, evaluationRequest, summaryFields, ratedDocs, params,
+                templateId);
     }
 }

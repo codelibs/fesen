@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.ingest;
 
+import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import com.carrotsearch.randomizedtesting.generators.RandomStrings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +31,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import org.codelibs.fesen.index.VersionType;
-
-import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
-import com.carrotsearch.randomizedtesting.generators.RandomStrings;
+import org.codelibs.fesen.ingest.IngestDocument;
 
 public final class RandomDocumentPicks {
 
@@ -45,7 +46,7 @@ public final class RandomDocumentPicks {
     public static String randomFieldName(Random random) {
         int numLevels = RandomNumbers.randomIntBetween(random, 1, 5);
         StringBuilder fieldName = new StringBuilder();
-        for (int i = 0; i < numLevels - 1; i++) {
+        for (int i = 0; i < numLevels-1; i++) {
             if (i > 0) {
                 fieldName.append('.');
             }
@@ -141,8 +142,8 @@ public final class RandomDocumentPicks {
         String id = randomString(random);
         String routing = null;
         Long version = randomNonNegtiveLong(random);
-        VersionType versionType =
-                RandomPicks.randomFrom(random, new VersionType[] { VersionType.INTERNAL, VersionType.EXTERNAL, VersionType.EXTERNAL_GTE });
+        VersionType versionType = RandomPicks.randomFrom(random,
+            new VersionType[]{VersionType.INTERNAL, VersionType.EXTERNAL, VersionType.EXTERNAL_GTE});
         if (random.nextBoolean()) {
             routing = randomString(random);
         }
@@ -163,53 +164,53 @@ public final class RandomDocumentPicks {
     }
 
     private static Object randomFieldValue(Random random, int currentDepth) {
-        switch (RandomNumbers.randomIntBetween(random, 0, 9)) {
-        case 0:
-            return randomString(random);
-        case 1:
-            return random.nextInt();
-        case 2:
-            return random.nextBoolean();
-        case 3:
-            return random.nextDouble();
-        case 4:
-            List<String> stringList = new ArrayList<>();
-            int numStringItems = RandomNumbers.randomIntBetween(random, 1, 10);
-            for (int j = 0; j < numStringItems; j++) {
-                stringList.add(randomString(random));
-            }
-            return stringList;
-        case 5:
-            List<Integer> intList = new ArrayList<>();
-            int numIntItems = RandomNumbers.randomIntBetween(random, 1, 10);
-            for (int j = 0; j < numIntItems; j++) {
-                intList.add(random.nextInt());
-            }
-            return intList;
-        case 6:
-            List<Boolean> booleanList = new ArrayList<>();
-            int numBooleanItems = RandomNumbers.randomIntBetween(random, 1, 10);
-            for (int j = 0; j < numBooleanItems; j++) {
-                booleanList.add(random.nextBoolean());
-            }
-            return booleanList;
-        case 7:
-            List<Double> doubleList = new ArrayList<>();
-            int numDoubleItems = RandomNumbers.randomIntBetween(random, 1, 10);
-            for (int j = 0; j < numDoubleItems; j++) {
-                doubleList.add(random.nextDouble());
-            }
-            return doubleList;
-        case 8:
-            Map<String, Object> newNode = new HashMap<>();
-            addRandomFields(random, newNode, ++currentDepth);
-            return newNode;
-        case 9:
-            byte[] byteArray = new byte[RandomNumbers.randomIntBetween(random, 1, 1024)];
-            random.nextBytes(byteArray);
-            return byteArray;
-        default:
-            throw new UnsupportedOperationException();
+        switch(RandomNumbers.randomIntBetween(random, 0, 9)) {
+            case 0:
+                return randomString(random);
+            case 1:
+                return random.nextInt();
+            case 2:
+                return random.nextBoolean();
+            case 3:
+                return random.nextDouble();
+            case 4:
+                List<String> stringList = new ArrayList<>();
+                int numStringItems = RandomNumbers.randomIntBetween(random, 1, 10);
+                for (int j = 0; j < numStringItems; j++) {
+                    stringList.add(randomString(random));
+                }
+                return stringList;
+            case 5:
+                List<Integer> intList = new ArrayList<>();
+                int numIntItems = RandomNumbers.randomIntBetween(random, 1, 10);
+                for (int j = 0; j < numIntItems; j++) {
+                    intList.add(random.nextInt());
+                }
+                return intList;
+            case 6:
+                List<Boolean> booleanList = new ArrayList<>();
+                int numBooleanItems = RandomNumbers.randomIntBetween(random, 1, 10);
+                for (int j = 0; j < numBooleanItems; j++) {
+                    booleanList.add(random.nextBoolean());
+                }
+                return booleanList;
+            case 7:
+                List<Double> doubleList = new ArrayList<>();
+                int numDoubleItems = RandomNumbers.randomIntBetween(random, 1, 10);
+                for (int j = 0; j < numDoubleItems; j++) {
+                    doubleList.add(random.nextDouble());
+                }
+                return doubleList;
+            case 8:
+                Map<String, Object> newNode = new HashMap<>();
+                addRandomFields(random, newNode, ++currentDepth);
+                return newNode;
+            case 9:
+                byte[] byteArray = new byte[RandomNumbers.randomIntBetween(random, 1, 1024)];
+                random.nextBytes(byteArray);
+                return byteArray;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 

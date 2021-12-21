@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.apache.lucene.analysis.Tokenizer;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory;
 import org.codelibs.fesen.indices.analysis.PreBuiltCacheFactory.CachingStrategy;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Provides pre-configured, shared {@link Tokenizer}s.
@@ -62,7 +62,7 @@ public final class PreConfiguredTokenizer extends PreConfiguredAnalysisComponent
     }
 
     private final Function<Version, Tokenizer> create;
-
+    
     private PreConfiguredTokenizer(String name, PreBuiltCacheFactory.CachingStrategy cache, Function<Version, Tokenizer> create) {
         super(name, cache);
         this.create = create;

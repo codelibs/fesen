@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -32,6 +29,9 @@ import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+
+import java.io.IOException;
+import java.util.Map;
 
 public final class FetchSourcePhase implements FetchSubPhase {
 
@@ -65,8 +65,8 @@ public final class FetchSourcePhase implements FetchSubPhase {
         // If source is disabled in the mapping, then attempt to return early.
         if (source.source() == null && source.internalSourceRef() == null) {
             if (containsFilters(fetchSourceContext)) {
-                throw new IllegalArgumentException(
-                        "unable to fetch fields from _source field: _source is disabled in the mappings " + "for index [" + index + "]");
+                throw new IllegalArgumentException("unable to fetch fields from _source field: _source is disabled in the mappings " +
+                    "for index [" + index + "]");
             }
             return;
         }

@@ -19,8 +19,31 @@
 
 package org.codelibs.fesen.common.settings;
 
-import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
-import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
+import org.apache.logging.log4j.Level;
+import org.apache.lucene.util.SetOnce;
+import org.codelibs.fesen.FesenGenerationException;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.common.logging.LogConfigurator;
+import org.codelibs.fesen.common.unit.ByteSizeUnit;
+import org.codelibs.fesen.common.unit.ByteSizeValue;
+import org.codelibs.fesen.common.unit.MemorySizeValue;
+import org.codelibs.fesen.common.xcontent.DeprecationHandler;
+import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.ToXContentFragment;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentFactory;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.XContentParserUtils;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,31 +73,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.Level;
-import org.apache.lucene.util.SetOnce;
-import org.codelibs.fesen.FesenGenerationException;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.common.logging.LogConfigurator;
-import org.codelibs.fesen.common.unit.ByteSizeUnit;
-import org.codelibs.fesen.common.unit.ByteSizeValue;
-import org.codelibs.fesen.common.unit.MemorySizeValue;
-import org.codelibs.fesen.common.xcontent.DeprecationHandler;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.ToXContentFragment;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParserUtils;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.core.internal.io.IOUtils;
+import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 /**
  * An immutable settings implementation.
@@ -119,8 +119,7 @@ public final class Settings implements ToXContentFragment {
         }
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> valMap = (Map<String, Object>) entry.getValue();
+                @SuppressWarnings("unchecked") Map<String, Object> valMap = (Map<String, Object>) entry.getValue();
                 entry.setValue(convertMapsToArrays(valMap));
             }
         }
@@ -131,8 +130,7 @@ public final class Settings implements ToXContentFragment {
     private void processSetting(Map<String, Object> map, String prefix, String setting, Object value) {
         int prefixLength = setting.indexOf('.');
         if (prefixLength == -1) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> innerMap = (Map<String, Object>) map.get(prefix + setting);
+            @SuppressWarnings("unchecked") Map<String, Object> innerMap = (Map<String, Object>) map.get(prefix + setting);
             if (innerMap != null) {
                 // It supposed to be a value, but we already have a map stored, need to convert this map to "." notation
                 for (Map.Entry<String, Object> entry : innerMap.entrySet()) {
@@ -183,8 +181,7 @@ public final class Settings implements ToXContentFragment {
                 }
             }
             if (entry.getValue() instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> valMap = (Map<String, Object>) entry.getValue();
+                @SuppressWarnings("unchecked") Map<String, Object> valMap = (Map<String, Object>) entry.getValue();
                 entry.setValue(convertMapsToArrays(valMap));
             }
         }
@@ -208,16 +205,16 @@ public final class Settings implements ToXContentFragment {
      * A settings that are filtered (and key is removed) with the specified prefix.
      */
     public Settings getByPrefix(String prefix) {
-        return new Settings(new FilteredMap(this.settings, (k) -> k.startsWith(prefix), prefix),
-                secureSettings == null ? null : new PrefixedSecureSettings(secureSettings, prefix, s -> s.startsWith(prefix)));
+        return new Settings(new FilteredMap(this.settings, (k) -> k.startsWith(prefix), prefix), secureSettings == null ? null :
+            new PrefixedSecureSettings(secureSettings, prefix, s -> s.startsWith(prefix)));
     }
 
     /**
      * Returns a new settings object that contains all setting of the current one filtered by the given settings key predicate.
      */
     public Settings filter(Predicate<String> predicate) {
-        return new Settings(new FilteredMap(this.settings, predicate, null),
-                secureSettings == null ? null : new PrefixedSecureSettings(secureSettings, "", predicate));
+        return new Settings(new FilteredMap(this.settings, predicate, null), secureSettings == null ? null :
+            new PrefixedSecureSettings(secureSettings, "", predicate));
     }
 
     /**
@@ -420,6 +417,8 @@ public final class Settings implements ToXContentFragment {
         return Collections.unmodifiableList(result);
     }
 
+
+
     /**
      * Returns group settings for the given setting prefix.
      */
@@ -450,14 +449,13 @@ public final class Settings implements ToXContentFragment {
                     continue;
                 }
                 throw new SettingsException("Failed to get setting group for [" + settingPrefix + "] setting prefix and setting ["
-                        + settingPrefix + groupName + "] because of a missing '.'");
+                    + settingPrefix + groupName + "] because of a missing '.'");
             }
             groups.put(groupName, groupSettings);
         }
 
         return Collections.unmodifiableMap(groups);
     }
-
     /**
      * Returns group settings for the given setting prefix.
      */
@@ -517,10 +515,8 @@ public final class Settings implements ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Settings that = (Settings) o;
         return Objects.equals(settings, that.settings);
@@ -534,15 +530,23 @@ public final class Settings implements ToXContentFragment {
     public static Settings readSettingsFromStream(StreamInput in) throws IOException {
         Builder builder = new Builder();
         int numberOfSettings = in.readVInt();
-        for (int i = 0; i < numberOfSettings; i++) {
-            String key = in.readString();
-            Object value = in.readGenericValue();
-            if (value == null) {
-                builder.putNull(key);
-            } else if (value instanceof List) {
-                builder.putList(key, (List<String>) value);
-            } else {
-                builder.put(key, value.toString());
+        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+            for (int i = 0; i < numberOfSettings; i++) {
+                String key = in.readString();
+                Object value = in.readGenericValue();
+                if (value == null) {
+                    builder.putNull(key);
+                } else if (value instanceof List) {
+                    builder.putList(key, (List<String>) value);
+                } else {
+                    builder.put(key, value.toString());
+                }
+            }
+        } else {
+            for (int i = 0; i < numberOfSettings; i++) {
+                String key = in.readString();
+                String value = in.readOptionalString();
+                builder.put(key, value);
             }
         }
         return builder.build();
@@ -551,10 +555,27 @@ public final class Settings implements ToXContentFragment {
     public static void writeSettingsToStream(Settings settings, StreamOutput out) throws IOException {
         // pull settings to exclude secure settings in size()
         Set<Map.Entry<String, Object>> entries = settings.settings.entrySet();
-        out.writeVInt(entries.size());
-        for (Map.Entry<String, Object> entry : entries) {
-            out.writeString(entry.getKey());
-            out.writeGenericValue(entry.getValue());
+        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+            out.writeVInt(entries.size());
+            for (Map.Entry<String, Object> entry : entries) {
+                out.writeString(entry.getKey());
+                out.writeGenericValue(entry.getValue());
+            }
+        } else {
+            int size = entries.stream().mapToInt(e -> e.getValue() instanceof List ? ((List)e.getValue()).size() : 1).sum();
+            out.writeVInt(size);
+            for (Map.Entry<String, Object> entry : entries) {
+                if (entry.getValue() instanceof List) {
+                    int idx = 0;
+                    for (String value : (List<String>)entry.getValue()) {
+                        out.writeString(entry.getKey() + "." + idx++);
+                        out.writeOptionalString(value);
+                    }
+                } else {
+                    out.writeString(entry.getKey());
+                    out.writeOptionalString(toString(entry.getValue()));
+                }
+            }
         }
     }
 
@@ -601,26 +622,25 @@ public final class Settings implements ToXContentFragment {
             // ensure we reached the end of the stream
             XContentParser.Token lastToken = null;
             try {
-                while (!parser.isClosed() && (lastToken = parser.nextToken()) == null)
-                    ;
+                while (!parser.isClosed() && (lastToken = parser.nextToken()) == null) ;
             } catch (Exception e) {
                 throw new FesenParseException(
-                        "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
-                                + "column number: [{}]",
-                        e, parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
+                    "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
+                        + "column number: [{}]",
+                    e, parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
             }
             if (lastToken != null) {
                 throw new FesenParseException(
-                        "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
-                                + "column number: [{}]",
-                        parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
+                    "malformed, expected end of settings but encountered additional content starting at line number: [{}], "
+                        + "column number: [{}]",
+                    parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
             }
         }
         return innerBuilder.build();
     }
 
-    private static void fromXContent(XContentParser parser, StringBuilder keyBuilder, Settings.Builder builder, boolean allowNullValues)
-            throws IOException {
+    private static void fromXContent(XContentParser parser, StringBuilder keyBuilder, Settings.Builder builder,
+                                     boolean allowNullValues) throws IOException {
         final int length = keyBuilder.length();
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             if (parser.currentToken() == XContentParser.Token.FIELD_NAME) {
@@ -650,7 +670,7 @@ public final class Settings implements ToXContentFragment {
                 validateValue(key, null, parser, allowNullValues);
                 builder.putNull(key);
             } else if (parser.currentToken() == XContentParser.Token.VALUE_STRING
-                    || parser.currentToken() == XContentParser.Token.VALUE_NUMBER) {
+                || parser.currentToken() == XContentParser.Token.VALUE_NUMBER) {
                 String key = keyBuilder.toString();
                 String value = parser.text();
                 validateValue(key, value, parser, allowNullValues);
@@ -667,13 +687,19 @@ public final class Settings implements ToXContentFragment {
 
     private static void validateValue(String key, Object currentValue, XContentParser parser, boolean allowNullValues) {
         if (currentValue == null && allowNullValues == false) {
-            throw new FesenParseException("null-valued setting found for key [{}] found at line number [{}], column number [{}]", key,
-                    parser.getTokenLocation().lineNumber, parser.getTokenLocation().columnNumber);
+            throw new FesenParseException(
+                "null-valued setting found for key [{}] found at line number [{}], column number [{}]",
+                key,
+                parser.getTokenLocation().lineNumber,
+                parser.getTokenLocation().columnNumber
+            );
         }
     }
 
+
+
     public static final Set<String> FORMAT_PARAMS =
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList("settings_filter", "flat_settings")));
+        Collections.unmodifiableSet(new HashSet<>(Arrays.asList("settings_filter", "flat_settings")));
 
     /**
      * Returns {@code true} if this settings object contains no settings
@@ -753,8 +779,8 @@ public final class Settings implements ToXContentFragment {
                 throw new IllegalStateException("Secure settings must already be loaded");
             }
             if (this.secureSettings.get() != null) {
-                throw new IllegalArgumentException("Secure settings already set. Existing settings: "
-                        + this.secureSettings.get().getSettingNames() + ", new settings: " + secureSettings.getSettingNames());
+                throw new IllegalArgumentException("Secure settings already set. Existing settings: " +
+                    this.secureSettings.get().getSettingNames() + ", new settings: " + secureSettings.getSettingNames());
             }
             this.secureSettings.set(secureSettings);
             return this;
@@ -848,7 +874,7 @@ public final class Settings implements ToXContentFragment {
             }
             final Object value = source.settings.get(sourceKey);
             if (value instanceof List) {
-                return putList(key, (List) value);
+                return putList(key, (List)value);
             } else if (value == null) {
                 return putNull(key);
             } else {
@@ -952,6 +978,7 @@ public final class Settings implements ToXContentFragment {
             return this;
         }
 
+
         /**
          * Sets the setting with the provided setting key and an array of values.
          *
@@ -1006,7 +1033,7 @@ public final class Settings implements ToXContentFragment {
                     String prefix = key.substring(0, key.lastIndexOf('.'));
                     if (map.containsKey(prefix)) {
                         throw new IllegalStateException("settings builder can't contain values for [" + prefix + "=" + map.get(prefix)
-                                + "] and [" + key + "=" + map.get(key) + "]");
+                            + "] and [" + key + "=" + map.get(key) + "]");
                     }
                     List<String> values = new ArrayList<>();
                     while (true) {
@@ -1041,8 +1068,8 @@ public final class Settings implements ToXContentFragment {
          * Loads settings from the actual string content that represents them using {@link #fromXContent(XContentParser)}
          */
         public Builder loadFromSource(String source, XContentType xContentType) {
-            try (XContentParser parser = XContentFactory.xContent(xContentType).createParser(NamedXContentRegistry.EMPTY,
-                    LoggingDeprecationHandler.INSTANCE, source)) {
+            try (XContentParser parser =  XContentFactory.xContent(xContentType)
+                    .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
                 this.put(fromXContent(parser, true, true));
             } catch (Exception e) {
                 throw new SettingsException("Failed to load settings from [" + source + "]", e);
@@ -1072,8 +1099,8 @@ public final class Settings implements ToXContentFragment {
                 throw new IllegalArgumentException("unable to detect content type from resource name [" + resourceName + "]");
             }
             // fromXContent doesn't use named xcontent or deprecation.
-            try (XContentParser parser = XContentFactory.xContent(xContentType).createParser(NamedXContentRegistry.EMPTY,
-                    DeprecationHandler.THROW_UNSUPPORTED_OPERATION, is)) {
+            try (XContentParser parser =  XContentFactory.xContent(xContentType)
+                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, is)) {
                 if (parser.currentToken() == null) {
                     if (parser.nextToken() == null) {
                         return this; // empty file
@@ -1168,7 +1195,7 @@ public final class Settings implements ToXContentFragment {
         public Builder normalizePrefix(String prefix) {
             Map<String, Object> replacements = new HashMap<>();
             Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
-            while (iterator.hasNext()) {
+            while(iterator.hasNext()) {
                 Map.Entry<String, Object> entry = iterator.next();
                 String key = entry.getKey();
                 if (key.startsWith(prefix) == false && key.endsWith("*") == false) {
@@ -1198,7 +1225,6 @@ public final class Settings implements ToXContentFragment {
         // we cache that size since we have to iterate the entire set
         // this is safe to do since this map is only used with unmodifiable maps
         private int size = -1;
-
         @Override
         public Set<Entry<String, Object>> entrySet() {
             Set<Entry<String, Object>> delegateSet = delegate.entrySet();
@@ -1211,7 +1237,6 @@ public final class Settings implements ToXContentFragment {
                     return new Iterator<Entry<String, Object>>() {
                         private int numIterated;
                         private Entry<String, Object> currentElement;
-
                         @Override
                         public boolean hasNext() {
                             if (currentElement != null) {
@@ -1281,7 +1306,7 @@ public final class Settings implements ToXContentFragment {
         @Override
         public Object get(Object key) {
             if (key instanceof String) {
-                final String theKey = prefix == null ? (String) key : prefix + key;
+                final String theKey = prefix == null ? (String)key : prefix + key;
                 if (filter.test(theKey)) {
                     return delegate.get(theKey);
                 }
@@ -1332,8 +1357,8 @@ public final class Settings implements ToXContentFragment {
         public Set<String> getSettingNames() {
             synchronized (settingNames) {
                 if (settingNames.get() == null) {
-                    Set<String> names =
-                            delegate.getSettingNames().stream().filter(keyPredicate).map(removePrefix).collect(Collectors.toSet());
+                    Set<String> names = delegate.getSettingNames().stream()
+                        .filter(keyPredicate).map(removePrefix).collect(Collectors.toSet());
                     settingNames.set(Collections.unmodifiableSet(names));
                 }
             }

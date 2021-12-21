@@ -19,11 +19,9 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -37,14 +35,17 @@ import org.codelibs.fesen.index.query.support.QueryParsers;
 import org.codelibs.fesen.index.search.MatchQuery;
 import org.codelibs.fesen.index.search.MatchQuery.ZeroTermsQuery;
 
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * Match query is a query that analyzes the text and constructs a query as the
  * result of the analysis.
  */
 public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
 
-    private static final String CUTOFF_FREQUENCY_DEPRECATION_MSG = "you can omit this option, "
-            + "the [match] query can skip block of documents efficiently if the total number of hits is not tracked";
+    private static final String CUTOFF_FREQUENCY_DEPRECATION_MSG = "you can omit this option, " +
+        "the [match] query can skip block of documents efficiently if the total number of hits is not tracked";
 
     public static final ParseField ZERO_TERMS_QUERY_FIELD = new ParseField("zero_terms_query");
     /**
@@ -53,7 +54,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
      */
     @Deprecated
     public static final ParseField CUTOFF_FREQUENCY_FIELD =
-            new ParseField("cutoff_frequency").withAllDeprecated(CUTOFF_FREQUENCY_DEPRECATION_MSG);
+        new ParseField("cutoff_frequency").withAllDeprecated(CUTOFF_FREQUENCY_DEPRECATION_MSG);
     public static final ParseField LENIENT_FIELD = new ParseField("lenient");
     public static final ParseField FUZZY_TRANSPOSITIONS_FIELD = new ParseField("fuzzy_transpositions");
     public static final ParseField FUZZY_REWRITE_FIELD = new ParseField("fuzzy_rewrite");
@@ -83,7 +84,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
 
     private int prefixLength = FuzzyQuery.defaultPrefixLength;
 
-    private int maxExpansions = FuzzyQuery.defaultMaxExpansions;
+    private int  maxExpansions = FuzzyQuery.defaultMaxExpansions;
 
     private boolean fuzzyTranspositions = FuzzyQuery.defaultTranspositions;
 
@@ -120,7 +121,13 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
         super(in);
         fieldName = in.readString();
         value = in.readGenericValue();
+        if (in.getVersion().before(Version.V_6_0_0_rc1)) {
+            MatchQuery.Type.readFromStream(in);  // deprecated type
+        }
         operator = Operator.readFromStream(in);
+        if (in.getVersion().before(Version.V_6_0_0_rc1)) {
+            in.readVInt(); // deprecated slop
+        }
         prefixLength = in.readVInt();
         maxExpansions = in.readVInt();
         fuzzyTranspositions = in.readBoolean();
@@ -132,14 +139,22 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
         fuzzyRewrite = in.readOptionalString();
         fuzziness = in.readOptionalWriteable(Fuzziness::new);
         cutoffFrequency = in.readOptionalFloat();
-        autoGenerateSynonymsPhraseQuery = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+            autoGenerateSynonymsPhraseQuery = in.readBoolean();
+        }
     }
 
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(fieldName);
         out.writeGenericValue(value);
+        if (out.getVersion().before(Version.V_6_0_0_rc1)) {
+            MatchQuery.Type.BOOLEAN.writeTo(out); // deprecated type
+        }
         operator.writeTo(out);
+        if (out.getVersion().before(Version.V_6_0_0_rc1)) {
+            out.writeVInt(MatchQuery.DEFAULT_PHRASE_SLOP); // deprecated slop
+        }
         out.writeVInt(prefixLength);
         out.writeVInt(maxExpansions);
         out.writeBoolean(fuzzyTranspositions);
@@ -151,7 +166,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
         out.writeOptionalString(fuzzyRewrite);
         out.writeOptionalWriteable(fuzziness);
         out.writeOptionalFloat(cutoffFrequency);
-        out.writeBoolean(autoGenerateSynonymsPhraseQuery);
+        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+            out.writeBoolean(autoGenerateSynonymsPhraseQuery);
+        }
     }
 
     /** Returns the field name used in this query. */
@@ -209,7 +226,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
      * @throws IllegalArgumentException in case the prefix is negative
      */
     public MatchQueryBuilder prefixLength(int prefixLength) {
-        if (prefixLength < 0) {
+        if (prefixLength < 0 ) {
             throw new IllegalArgumentException("[" + NAME + "] requires prefix length to be non-negative.");
         }
         this.prefixLength = prefixLength;
@@ -227,7 +244,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
      * When using fuzzy or prefix type query, the number of term expansions to use.
      */
     public MatchQueryBuilder maxExpansions(int maxExpansions) {
-        if (maxExpansions <= 0) {
+        if (maxExpansions <= 0 ) {
             throw new IllegalArgumentException("[" + NAME + "] requires maxExpansions to be positive.");
         }
         this.maxExpansions = maxExpansions;
@@ -336,6 +353,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
         return this.zeroTermsQuery;
     }
 
+
     public MatchQueryBuilder autoGenerateSynonymsPhraseQuery(boolean enable) {
         this.autoGenerateSynonymsPhraseQuery = enable;
         return this;
@@ -411,19 +429,27 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> {
 
     @Override
     protected boolean doEquals(MatchQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value) && Objects.equals(operator, other.operator)
-                && Objects.equals(analyzer, other.analyzer) && Objects.equals(fuzziness, other.fuzziness)
-                && Objects.equals(prefixLength, other.prefixLength) && Objects.equals(maxExpansions, other.maxExpansions)
-                && Objects.equals(minimumShouldMatch, other.minimumShouldMatch) && Objects.equals(fuzzyRewrite, other.fuzzyRewrite)
-                && Objects.equals(lenient, other.lenient) && Objects.equals(fuzzyTranspositions, other.fuzzyTranspositions)
-                && Objects.equals(zeroTermsQuery, other.zeroTermsQuery) && Objects.equals(cutoffFrequency, other.cutoffFrequency)
-                && Objects.equals(autoGenerateSynonymsPhraseQuery, other.autoGenerateSynonymsPhraseQuery);
+        return Objects.equals(fieldName, other.fieldName) &&
+               Objects.equals(value, other.value) &&
+               Objects.equals(operator, other.operator) &&
+               Objects.equals(analyzer, other.analyzer) &&
+               Objects.equals(fuzziness, other.fuzziness) &&
+               Objects.equals(prefixLength, other.prefixLength) &&
+               Objects.equals(maxExpansions, other.maxExpansions) &&
+               Objects.equals(minimumShouldMatch, other.minimumShouldMatch) &&
+               Objects.equals(fuzzyRewrite, other.fuzzyRewrite) &&
+               Objects.equals(lenient, other.lenient) &&
+               Objects.equals(fuzzyTranspositions, other.fuzzyTranspositions) &&
+               Objects.equals(zeroTermsQuery, other.zeroTermsQuery) &&
+               Objects.equals(cutoffFrequency, other.cutoffFrequency) &&
+               Objects.equals(autoGenerateSynonymsPhraseQuery, other.autoGenerateSynonymsPhraseQuery);
     }
 
     @Override
     protected int doHashCode() {
-        return Objects.hash(fieldName, value, operator, analyzer, fuzziness, prefixLength, maxExpansions, minimumShouldMatch, fuzzyRewrite,
-                lenient, fuzzyTranspositions, zeroTermsQuery, cutoffFrequency, autoGenerateSynonymsPhraseQuery);
+        return Objects.hash(fieldName, value, operator, analyzer,
+                fuzziness, prefixLength, maxExpansions, minimumShouldMatch,
+                fuzzyRewrite, lenient, fuzzyTranspositions, zeroTermsQuery, cutoffFrequency, autoGenerateSynonymsPhraseQuery);
     }
 
     @Override

@@ -28,7 +28,8 @@ import org.codelibs.fesen.client.FesenClient;
  * Java API support for changing the throttle on reindex tasks while they are running.
  */
 public class RethrottleRequestBuilder extends TasksRequestBuilder<RethrottleRequest, ListTasksResponse, RethrottleRequestBuilder> {
-    public RethrottleRequestBuilder(FesenClient client, ActionType<ListTasksResponse> action) {
+    public RethrottleRequestBuilder(FesenClient client,
+            ActionType<ListTasksResponse> action) {
         super(client, action, new RethrottleRequest());
     }
 

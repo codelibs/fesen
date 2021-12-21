@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.indices.flush.SyncedFlushRequest;
 import org.codelibs.fesen.action.admin.indices.flush.SyncedFlushResponse;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -39,12 +31,23 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 public class RestSyncedFlushAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_flush/synced"), new Route(POST, "/_flush/synced"),
-                new Route(GET, "/{index}/_flush/synced"), new Route(POST, "/{index}/_flush/synced")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_flush/synced"),
+            new Route(POST, "/_flush/synced"),
+            new Route(GET, "/{index}/_flush/synced"),
+            new Route(POST, "/{index}/_flush/synced")));
     }
 
     @Override

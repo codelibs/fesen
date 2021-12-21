@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 import org.codelibs.fesen.core.Tuple;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Identifies an object that supplies a filter for the content of a {@link RestRequest}. This interface should be implemented by a
@@ -58,8 +58,8 @@ public interface RestRequestFilter {
                     if (filteredBytes == null) {
                         BytesReference content = restRequest.content();
                         Tuple<XContentType, Map<String, Object>> result = XContentHelper.convertToMap(content, true);
-                        Map<String, Object> transformedSource =
-                                XContentMapValues.filter(result.v2(), null, fields.toArray(Strings.EMPTY_ARRAY));
+                        Map<String, Object> transformedSource = XContentMapValues.filter(result.v2(), null,
+                                fields.toArray(Strings.EMPTY_ARRAY));
                         try {
                             XContentBuilder xContentBuilder = XContentBuilder.builder(result.v1().xContent()).map(transformedSource);
                             filteredBytes = BytesReference.bytes(xContentBuilder);

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import static java.util.Collections.unmodifiableMap;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.compress.CompressedXContent;
 import org.codelibs.fesen.common.time.DateFormatter;
@@ -41,6 +34,13 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.similarity.SimilarityService;
 import org.codelibs.fesen.indices.mapper.MapperRegistry;
 import org.codelibs.fesen.script.ScriptService;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static java.util.Collections.unmodifiableMap;
 
 public class DocumentMapperParser {
 
@@ -58,8 +58,8 @@ public class DocumentMapperParser {
     private final ScriptService scriptService;
 
     public DocumentMapperParser(IndexSettings indexSettings, MapperService mapperService, NamedXContentRegistry xContentRegistry,
-            SimilarityService similarityService, MapperRegistry mapperRegistry, Supplier<QueryShardContext> queryShardContextSupplier,
-            ScriptService scriptService) {
+            SimilarityService similarityService, MapperRegistry mapperRegistry,
+            Supplier<QueryShardContext> queryShardContextSupplier, ScriptService scriptService) {
         this.mapperService = mapperService;
         this.xContentRegistry = xContentRegistry;
         this.similarityService = similarityService;
@@ -71,13 +71,13 @@ public class DocumentMapperParser {
     }
 
     public Mapper.TypeParser.ParserContext parserContext() {
-        return new Mapper.TypeParser.ParserContext(similarityService::getSimilarity, mapperService, typeParsers::get, indexVersionCreated,
-                queryShardContextSupplier, null, scriptService);
+        return new Mapper.TypeParser.ParserContext(similarityService::getSimilarity, mapperService,
+                typeParsers::get, indexVersionCreated, queryShardContextSupplier, null, scriptService);
     }
 
     public Mapper.TypeParser.ParserContext parserContext(DateFormatter dateFormatter) {
-        return new Mapper.TypeParser.ParserContext(similarityService::getSimilarity, mapperService, typeParsers::get, indexVersionCreated,
-                queryShardContextSupplier, dateFormatter, scriptService);
+        return new Mapper.TypeParser.ParserContext(similarityService::getSimilarity, mapperService,
+            typeParsers::get, indexVersionCreated, queryShardContextSupplier, dateFormatter, scriptService);
     }
 
     public DocumentMapper parse(@Nullable String type, CompressedXContent source) throws MapperParsingException {
@@ -98,7 +98,7 @@ public class DocumentMapperParser {
         return parse(type, mapping, defaultSource);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private DocumentMapper parse(String type, Map<String, Object> mapping, String defaultSource) throws MapperParsingException {
         if (type == null) {
             throw new MapperParsingException("Failed to derive type");
@@ -111,13 +111,14 @@ public class DocumentMapperParser {
             }
         }
 
+
         Mapper.TypeParser.ParserContext parserContext = parserContext();
         // parse RootObjectMapper
         DocumentMapper.Builder docBuilder = new DocumentMapper.Builder(
                 (RootObjectMapper.Builder) rootObjectTypeParser.parse(type, mapping, parserContext), mapperService);
         Iterator<Map.Entry<String, Object>> iterator = mapping.entrySet().iterator();
         // parse DocumentMapper
-        while (iterator.hasNext()) {
+        while(iterator.hasNext()) {
             Map.Entry<String, Object> entry = iterator.next();
             String fieldName = entry.getKey();
             Object fieldNode = entry.getValue();
@@ -168,8 +169,8 @@ public class DocumentMapperParser {
 
     private Tuple<String, Map<String, Object>> extractMapping(String type, String source) throws MapperParsingException {
         Map<String, Object> root;
-        try (XContentParser parser =
-                XContentType.JSON.xContent().createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, source)) {
+        try (XContentParser parser = XContentType.JSON.xContent()
+                .createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, source)) {
             root = parser.mapOrdered();
         } catch (Exception e) {
             throw new MapperParsingException("failed to parse mapping definition", e);
@@ -190,7 +191,7 @@ public class DocumentMapperParser {
      *
      * @return A tuple of the form (type, normalized mappings).
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private Tuple<String, Map<String, Object>> extractMapping(String type, Map<String, Object> root) throws MapperParsingException {
         if (root.size() == 0) {
             if (type != null) {

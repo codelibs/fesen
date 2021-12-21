@@ -17,9 +17,9 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
 
-import java.io.IOException;
 
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -28,6 +28,8 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.query.QueryShardException;
+
+import java.io.IOException;
 
 public class PercentageScore extends SignificanceHeuristic {
     public static final String NAME = "percentage";
@@ -55,12 +57,12 @@ public class PercentageScore extends SignificanceHeuristic {
         return builder;
     }
 
-    public static SignificanceHeuristic parse(XContentParser parser) throws IOException, QueryShardException {
+    public static SignificanceHeuristic parse(XContentParser parser)
+            throws IOException, QueryShardException {
         // move to the closing bracket
         if (!parser.nextToken().equals(XContentParser.Token.END_OBJECT)) {
-            throw new FesenParseException(
-                    "failed to parse [percentage] significance heuristic. expected an empty object, " + "but got [{}] instead",
-                    parser.currentToken());
+            throw new FesenParseException("failed to parse [percentage] significance heuristic. expected an empty object, " +
+                    "but got [{}] instead", parser.currentToken());
         }
         return new PercentageScore();
     }
@@ -101,3 +103,4 @@ public class PercentageScore extends SignificanceHeuristic {
         }
     }
 }
+

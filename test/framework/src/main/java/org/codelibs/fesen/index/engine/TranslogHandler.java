@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.engine;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
@@ -36,6 +28,7 @@ import org.codelibs.fesen.index.analysis.AnalysisRegistry;
 import org.codelibs.fesen.index.analysis.AnalyzerScope;
 import org.codelibs.fesen.index.analysis.IndexAnalyzers;
 import org.codelibs.fesen.index.analysis.NamedAnalyzer;
+import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.mapper.DocumentMapper;
 import org.codelibs.fesen.index.mapper.DocumentMapperForType;
 import org.codelibs.fesen.index.mapper.MapperService;
@@ -48,6 +41,14 @@ import org.codelibs.fesen.index.similarity.SimilarityService;
 import org.codelibs.fesen.index.translog.Translog;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.indices.mapper.MapperRegistry;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 public class TranslogHandler implements Engine.TranslogRecoveryRunner {
 
@@ -67,8 +68,8 @@ public class TranslogHandler implements Engine.TranslogRecoveryRunner {
         IndexAnalyzers indexAnalyzers = new IndexAnalyzers(analyzers, emptyMap(), emptyMap());
         SimilarityService similarityService = new SimilarityService(indexSettings, null, emptyMap());
         MapperRegistry mapperRegistry = new IndicesModule(emptyList()).getMapperRegistry();
-        mapperService = new MapperService(indexSettings, indexAnalyzers, xContentRegistry, similarityService, mapperRegistry, () -> null,
-                () -> false, null);
+        mapperService = new MapperService(indexSettings, indexAnalyzers, xContentRegistry, similarityService, mapperRegistry,
+                () -> null, () -> false, null);
     }
 
     private DocumentMapperForType docMapper(String type) {
@@ -79,23 +80,23 @@ public class TranslogHandler implements Engine.TranslogRecoveryRunner {
 
     private void applyOperation(Engine engine, Engine.Operation operation) throws IOException {
         switch (operation.operationType()) {
-        case INDEX:
-            Engine.Index engineIndex = (Engine.Index) operation;
-            Mapping update = engineIndex.parsedDoc().dynamicMappingsUpdate();
-            if (engineIndex.parsedDoc().dynamicMappingsUpdate() != null) {
-                recoveredTypes.compute(engineIndex.type(),
-                        (k, mapping) -> mapping == null ? update : mapping.merge(update, MapperService.MergeReason.MAPPING_RECOVERY));
-            }
-            engine.index(engineIndex);
-            break;
-        case DELETE:
-            engine.delete((Engine.Delete) operation);
-            break;
-        case NO_OP:
-            engine.noOp((Engine.NoOp) operation);
-            break;
-        default:
-            throw new IllegalStateException("No operation defined for [" + operation + "]");
+            case INDEX:
+                Engine.Index engineIndex = (Engine.Index) operation;
+                Mapping update = engineIndex.parsedDoc().dynamicMappingsUpdate();
+                if (engineIndex.parsedDoc().dynamicMappingsUpdate() != null) {
+                    recoveredTypes.compute(engineIndex.type(), (k, mapping) ->
+                        mapping == null ? update : mapping.merge(update, MapperService.MergeReason.MAPPING_RECOVERY));
+                }
+                engine.index(engineIndex);
+                break;
+            case DELETE:
+                engine.delete((Engine.Delete) operation);
+                break;
+            case NO_OP:
+                engine.noOp((Engine.NoOp) operation);
+                break;
+            default:
+                throw new IllegalStateException("No operation defined for [" + operation + "]");
         }
     }
 
@@ -123,27 +124,27 @@ public class TranslogHandler implements Engine.TranslogRecoveryRunner {
         // If a translog op is replayed on the primary (eg. ccr), we need to use external instead of null for its version type.
         final VersionType versionType = (origin == Engine.Operation.Origin.PRIMARY) ? VersionType.EXTERNAL : null;
         switch (operation.opType()) {
-        case INDEX:
-            final Translog.Index index = (Translog.Index) operation;
-            final String indexName = mapperService.index().getName();
-            final Engine.Index engineIndex = IndexShard.prepareIndex(docMapper(index.type()),
+            case INDEX:
+                final Translog.Index index = (Translog.Index) operation;
+                final String indexName = mapperService.index().getName();
+                final Engine.Index engineIndex = IndexShard.prepareIndex(docMapper(index.type()),
                     new SourceToParse(indexName, index.type(), index.id(), index.source(), XContentHelper.xContentType(index.source()),
-                            index.routing()),
-                    index.seqNo(), index.primaryTerm(), index.version(), versionType, origin, index.getAutoGeneratedIdTimestamp(), true,
+                        index.routing()), index.seqNo(), index.primaryTerm(), index.version(), versionType, origin,
+                    index.getAutoGeneratedIdTimestamp(), true, SequenceNumbers.UNASSIGNED_SEQ_NO, SequenceNumbers.UNASSIGNED_PRIMARY_TERM);
+                return engineIndex;
+            case DELETE:
+                final Translog.Delete delete = (Translog.Delete) operation;
+                final Engine.Delete engineDelete = new Engine.Delete(delete.type(), delete.id(), delete.uid(), delete.seqNo(),
+                    delete.primaryTerm(), delete.version(), versionType, origin, System.nanoTime(),
                     SequenceNumbers.UNASSIGNED_SEQ_NO, SequenceNumbers.UNASSIGNED_PRIMARY_TERM);
-            return engineIndex;
-        case DELETE:
-            final Translog.Delete delete = (Translog.Delete) operation;
-            final Engine.Delete engineDelete = new Engine.Delete(delete.type(), delete.id(), delete.uid(), delete.seqNo(),
-                    delete.primaryTerm(), delete.version(), versionType, origin, System.nanoTime(), SequenceNumbers.UNASSIGNED_SEQ_NO,
-                    SequenceNumbers.UNASSIGNED_PRIMARY_TERM);
-            return engineDelete;
-        case NO_OP:
-            final Translog.NoOp noOp = (Translog.NoOp) operation;
-            final Engine.NoOp engineNoOp = new Engine.NoOp(noOp.seqNo(), noOp.primaryTerm(), origin, System.nanoTime(), noOp.reason());
-            return engineNoOp;
-        default:
-            throw new IllegalStateException("No operation defined for [" + operation + "]");
+                return engineDelete;
+            case NO_OP:
+                final Translog.NoOp noOp = (Translog.NoOp) operation;
+                final Engine.NoOp engineNoOp =
+                        new Engine.NoOp(noOp.seqNo(), noOp.primaryTerm(), origin, System.nanoTime(), noOp.reason());
+                return engineNoOp;
+            default:
+                throw new IllegalStateException("No operation defined for [" + operation + "]");
         }
     }
 

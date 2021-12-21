@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.time.DateTimeException;
-import java.time.ZoneId;
-import java.util.Objects;
-
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
@@ -39,6 +34,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.FieldNamesFieldMapper;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+
+import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.util.Objects;
 
 /**
  * A Query that matches documents within an range of terms.
@@ -98,13 +98,16 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
         if (relationString != null) {
             relation = ShapeRelation.getRelationByName(relationString);
             if (relation != null && !isRelationAllowed(relation)) {
-                throw new IllegalArgumentException("[range] query does not support relation [" + relationString + "]");
+                throw new IllegalArgumentException(
+                    "[range] query does not support relation [" + relationString + "]");
             }
         }
     }
 
     private boolean isRelationAllowed(ShapeRelation relation) {
-        return relation == ShapeRelation.INTERSECTS || relation == ShapeRelation.CONTAINS || relation == ShapeRelation.WITHIN;
+        return relation == ShapeRelation.INTERSECTS
+            || relation == ShapeRelation.CONTAINS
+            || relation == ShapeRelation.WITHIN;
     }
 
     @Override
@@ -395,7 +398,7 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
                     }
                 }
             } else if (token.isValue()) {
-                throw new ParsingException(parser.getTokenLocation(), "[range] query does not support [" + currentFieldName + "]");
+                    throw new ParsingException(parser.getTokenLocation(), "[range] query does not support [" + currentFieldName + "]");
             }
         }
 
@@ -437,8 +440,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
             }
 
             DateMathParser dateMathParser = getForceDateParser();
-            return fieldType.isFieldWithinQuery(shardContext.getIndexReader(), from, to, includeLower, includeUpper, timeZone,
-                    dateMathParser, queryRewriteContext);
+            return fieldType.isFieldWithinQuery(shardContext.getIndexReader(), from, to, includeLower,
+                    includeUpper, timeZone, dateMathParser, queryRewriteContext);
         }
 
         // Not on the shard, we have no way to know what the relation is.
@@ -477,7 +480,7 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
              * if the {@link FieldNamesFieldMapper} is enabled.
              */
             final FieldNamesFieldMapper.FieldNamesFieldType fieldNamesFieldType =
-                    (FieldNamesFieldMapper.FieldNamesFieldType) context.getMapperService().fieldType(FieldNamesFieldMapper.NAME);
+                (FieldNamesFieldMapper.FieldNamesFieldType) context.getMapperService().fieldType(FieldNamesFieldMapper.NAME);
             if (fieldNamesFieldType == null) {
                 return new MatchNoDocsQuery("No mappings yet");
             }
@@ -491,7 +494,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
             throw new IllegalStateException("Rewrite first");
         }
         DateMathParser forcedDateParser = getForceDateParser();
-        return mapper.rangeQuery(from, to, includeLower, includeUpper, relation, timeZone, forcedDateParser, context);
+        return mapper.rangeQuery(
+                from, to, includeLower, includeUpper,
+                relation, timeZone, forcedDateParser, context);
     }
 
     @Override
@@ -501,8 +506,12 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder> i
 
     @Override
     protected boolean doEquals(RangeQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(from, other.from) && Objects.equals(to, other.to)
-                && Objects.equals(timeZone, other.timeZone) && Objects.equals(includeLower, other.includeLower)
-                && Objects.equals(includeUpper, other.includeUpper) && Objects.equals(format, other.format);
+        return Objects.equals(fieldName, other.fieldName) &&
+               Objects.equals(from, other.from) &&
+               Objects.equals(to, other.to) &&
+               Objects.equals(timeZone, other.timeZone) &&
+               Objects.equals(includeLower, other.includeLower) &&
+               Objects.equals(includeUpper, other.includeUpper) &&
+               Objects.equals(format, other.format);
     }
 }

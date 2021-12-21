@@ -34,7 +34,7 @@ public class StatsBucketPipelineAggregator extends BucketMetricsPipelineAggregat
     private double max = Double.NEGATIVE_INFINITY;
 
     StatsBucketPipelineAggregator(String name, String[] bucketsPaths, GapPolicy gapPolicy, DocValueFormat formatter,
-            Map<String, Object> metadata) {
+                                            Map<String, Object> metadata) {
         super(name, bucketsPaths, gapPolicy, formatter, metadata);
     }
 

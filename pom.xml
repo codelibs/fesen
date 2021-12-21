@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.fesen</groupId>
 	<artifactId>fesen-parent</artifactId>
-	<version>8.0.0-SNAPSHOT</version>
+	<version>0.17.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Fess Search Engine Project</name>
 	<description>This project provides Search Engine Software.</description>
@@ -76,7 +76,7 @@
 	</modules>
 	<properties>
 		<elasticsearch.version>7.10.3</elasticsearch.version>
-		<lucene.version>8.9.0</lucene.version>
+		<lucene.version>8.10.1</lucene.version>
 		<checkstyle.version>8.20</checkstyle.version>
 		<spatial4j.version>0.7</spatial4j.version>
 		<jts.version>1.15.0</jts.version>
@@ -84,7 +84,7 @@
 		<snakeyaml.version>1.28</snakeyaml.version>
 		<icu4j.version>69.1</icu4j.version>
 		<supercsv.version>2.4.0</supercsv.version>
-		<log4j.version>2.16.0</log4j.version>
+		<log4j.version>2.17.0</log4j.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<jna.version>5.5.0</jna.version>
 		<netty.version>4.1.65.Final</netty.version>
@@ -126,7 +126,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.1</version>
 					<configuration>
-						<release>17</release>
+						<release>11</release>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
@@ -150,16 +150,7 @@
 						<useSystemClassLoader>false</useSystemClassLoader>
 						<argLine>-Duser.language=en -Duser.region=US
 							-Djava.locale.providers=SPI,COMPAT
-							-Des.set.netty.runtime.available.processors=false
-							--add-opens java.base/java.lang=ALL-UNNAMED
-							--add-opens java.base/java.security.cert=ALL-UNNAMED
-							--add-opens java.base/java.nio.channels=ALL-UNNAMED
-							--add-opens java.base/java.net=ALL-UNNAMED
-							--add-opens java.base/javax.net.ssl=ALL-UNNAMED
-							--add-opens java.base/java.nio.file=ALL-UNNAMED
-							--add-opens java.base/java.time=ALL-UNNAMED
-							--add-opens java.management/java.lang.management=ALL-UNNAMED
-						</argLine>
+							-Des.set.netty.runtime.available.processors=false</argLine>
 					</configuration>
 				</plugin>
 				<plugin>

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.text.ParseException;
-import java.util.Collections;
-
 import org.codelibs.fesen.common.geo.GeometryFormat;
 import org.codelibs.fesen.common.geo.GeometryParser;
 import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
@@ -32,6 +27,11 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.MapXContentParser;
 import org.codelibs.fesen.geometry.Geometry;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.text.ParseException;
+import java.util.Collections;
 
 public class GeoShapeParser extends AbstractGeometryFieldMapper.Parser<Geometry> {
     private final GeometryParser geometryParser;
@@ -53,7 +53,7 @@ public class GeoShapeParser extends AbstractGeometryFieldMapper.Parser<Geometry>
     @Override
     public Object parseAndFormatObject(Object value, String format) {
         try (XContentParser parser = new MapXContentParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE,
-                Collections.singletonMap("dummy_field", value), XContentType.JSON)) {
+            Collections.singletonMap("dummy_field", value), XContentType.JSON)) {
             parser.nextToken(); // start object
             parser.nextToken(); // field name
             parser.nextToken(); // field value

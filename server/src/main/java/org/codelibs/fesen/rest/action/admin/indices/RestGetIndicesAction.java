@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,6 +37,11 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.HEAD;
+
 /**
  * The REST handler for get index and head index APIs.
  */
@@ -56,7 +57,9 @@ public class RestGetIndicesAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/{index}"), new Route(HEAD, "/{index}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/{index}"),
+            new Route(HEAD, "/{index}")));
     }
 
     @Override

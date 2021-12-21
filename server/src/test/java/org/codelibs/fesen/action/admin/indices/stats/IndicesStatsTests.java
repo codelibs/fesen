@@ -60,12 +60,27 @@ public class IndicesStatsTests extends ESSingleNodeTestCase {
 
     public void testSegmentStats() throws Exception {
         IndexModule.Type storeType = IndexModule.defaultStoreType(true);
-        XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject("doc").startObject("properties")
-                .startObject("foo").field("type", "keyword").field("doc_values", true).field("store", true).endObject().startObject("bar")
-                .field("type", "text").field("term_vector", "with_positions_offsets_payloads").endObject().startObject("baz")
-                .field("type", "long").endObject().endObject().endObject().endObject();
+        XContentBuilder mapping = XContentFactory.jsonBuilder()
+            .startObject()
+                .startObject("doc")
+                    .startObject("properties")
+                        .startObject("foo")
+                            .field("type", "keyword")
+                            .field("doc_values", true)
+                            .field("store", true)
+                        .endObject()
+                        .startObject("bar")
+                            .field("type", "text")
+                            .field("term_vector", "with_positions_offsets_payloads")
+                        .endObject()
+                        .startObject("baz")
+                            .field("type", "long")
+                        .endObject()
+                    .endObject()
+                .endObject()
+            .endObject();
         assertAcked(client().admin().indices().prepareCreate("test").addMapping("doc", mapping)
-                .setSettings(Settings.builder().put("index.store.type", storeType.getSettingsKey())));
+            .setSettings(Settings.builder().put("index.store.type", storeType.getSettingsKey())));
         ensureGreen("test");
         client().prepareIndex("test", "doc", "1").setSource("foo", "bar", "bar", "baz", "baz", 42).get();
         client().admin().indices().prepareRefresh("test").get();
@@ -97,7 +112,7 @@ public class IndicesStatsTests extends ESSingleNodeTestCase {
         if ((storeType == IndexModule.Type.MMAPFS) || (storeType == IndexModule.Type.HYBRIDFS)) {
             assertEquals(0, stats2.getPointsMemoryInBytes()); // bkd tree is stored off-heap
         } else {
-            assertThat(stats2.getPointsMemoryInBytes(), greaterThan(stats.getPointsMemoryInBytes())); // bkd tree is stored on heap
+            assertThat(stats2.getPointsMemoryInBytes(), greaterThan(stats.getPointsMemoryInBytes()));  // bkd tree is stored on heap
         }
     }
 
@@ -160,8 +175,8 @@ public class IndicesStatsTests extends ESSingleNodeTestCase {
     /**
      * Gives access to package private IndicesStatsResponse constructor for test purpose.
      **/
-    public static IndicesStatsResponse newIndicesStatsResponse(ShardStats[] shards, int totalShards, int successfulShards, int failedShards,
-            List<DefaultShardOperationFailedException> shardFailures) {
+    public static IndicesStatsResponse newIndicesStatsResponse(ShardStats[] shards, int totalShards, int successfulShards,
+                                                               int failedShards, List<DefaultShardOperationFailedException> shardFailures) {
         return new IndicesStatsResponse(shards, totalShards, successfulShards, failedShards, shardFailures);
     }
 }

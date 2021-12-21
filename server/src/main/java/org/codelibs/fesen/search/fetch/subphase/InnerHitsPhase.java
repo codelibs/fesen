@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.ScoreDoc;
@@ -36,6 +32,10 @@ import org.codelibs.fesen.search.fetch.FetchSearchResult;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class InnerHitsPhase implements FetchSubPhase {
 
@@ -66,8 +66,9 @@ public final class InnerHitsPhase implements FetchSubPhase {
         };
     }
 
-    private void hitExecute(Map<String, InnerHitsContext.InnerHitSubContext> innerHits, SearchHit hit, SourceLookup rootLookup)
-            throws IOException {
+    private void hitExecute(Map<String, InnerHitsContext.InnerHitSubContext> innerHits,
+                            SearchHit hit,
+                            SourceLookup rootLookup) throws IOException {
         for (Map.Entry<String, InnerHitsContext.InnerHitSubContext> entry : innerHits.entrySet()) {
             InnerHitsContext.InnerHitSubContext innerHitsContext = entry.getValue();
             TopDocsAndMaxScore topDoc = innerHitsContext.topDocs(hit);

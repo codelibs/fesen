@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.internal;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.Query;
@@ -54,6 +51,9 @@ import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
+
+import java.util.List;
+import java.util.Map;
 
 public abstract class FilteredSearchContext extends SearchContext {
 
@@ -368,6 +368,7 @@ public abstract class FilteredSearchContext extends SearchContext {
         return in.size(size);
     }
 
+
     @Override
     public boolean explain() {
         return in.explain();
@@ -479,9 +480,7 @@ public abstract class FilteredSearchContext extends SearchContext {
     }
 
     @Override
-    public Map<Class<?>, Collector> queryCollectors() {
-        return in.queryCollectors();
-    }
+    public Map<Class<?>, Collector> queryCollectors() { return in.queryCollectors();}
 
     @Override
     public QueryShardContext getQueryShardContext() {

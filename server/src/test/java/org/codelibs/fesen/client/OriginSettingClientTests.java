@@ -41,8 +41,8 @@ public class OriginSettingClientTests extends ESTestCase {
          */
         NoOpClient mock = new NoOpClient(getTestName()) {
             @Override
-            protected <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action,
-                    Request request, ActionListener<Response> listener) {
+            protected <Request extends ActionRequest, Response extends ActionResponse>
+                    void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
                 assertEquals(origin, threadPool().getThreadContext().getTransient(ThreadContext.ACTION_ORIGIN_TRANSIENT_NAME));
                 super.doExecute(action, request, listener);
             }
@@ -62,10 +62,12 @@ public class OriginSettingClientTests extends ESTestCase {
     }
 
     private <T> ActionListener<T> listenerThatAssertsOriginNotSet(ThreadContext threadContext) {
-        return ActionListener.wrap(r -> {
-            assertNull(threadContext.getTransient(ThreadContext.ACTION_ORIGIN_TRANSIENT_NAME));
-        }, e -> {
-            fail("didn't expect to fail but: " + e);
-        });
+        return ActionListener.wrap(
+                r -> {
+                    assertNull(threadContext.getTransient(ThreadContext.ACTION_ORIGIN_TRANSIENT_NAME));
+                },
+                e -> {
+                    fail("didn't expect to fail but: " + e);
+                });
     }
 }

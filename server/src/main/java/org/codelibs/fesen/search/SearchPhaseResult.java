@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.search;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.Nullable;
@@ -29,6 +27,8 @@ import org.codelibs.fesen.search.internal.ShardSearchContextId;
 import org.codelibs.fesen.search.internal.ShardSearchRequest;
 import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.transport.TransportResponse;
+
+import java.io.IOException;
 
 /**
  * This class is a base class for all search related results. It contains the shard target it
@@ -95,9 +95,7 @@ public abstract class SearchPhaseResult extends TransportResponse {
     /**
      * Returns the fetch result iff it's included in this response otherwise <code>null</code>
      */
-    public FetchSearchResult fetchResult() {
-        return null;
-    }
+    public FetchSearchResult fetchResult() { return null; }
 
     @Nullable
     public ShardSearchRequest getShardSearchRequest() {

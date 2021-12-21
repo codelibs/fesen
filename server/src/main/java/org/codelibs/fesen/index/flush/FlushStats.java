@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.index.flush;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
 
 public class FlushStats implements Writeable, ToXContentFragment {
 
@@ -41,7 +42,9 @@ public class FlushStats implements Writeable, ToXContentFragment {
     public FlushStats(StreamInput in) throws IOException {
         total = in.readVLong();
         totalTimeInMillis = in.readVLong();
-        periodic = in.readVLong();
+        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+            periodic = in.readVLong();
+        }
     }
 
     public FlushStats(long total, long periodic, long totalTimeInMillis) {
@@ -119,6 +122,8 @@ public class FlushStats implements Writeable, ToXContentFragment {
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVLong(total);
         out.writeVLong(totalTimeInMillis);
-        out.writeVLong(periodic);
+        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+            out.writeVLong(periodic);
+        }
     }
 }

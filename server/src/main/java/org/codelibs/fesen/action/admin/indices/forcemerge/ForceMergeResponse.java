@@ -19,27 +19,27 @@
 
 package org.codelibs.fesen.action.admin.indices.forcemerge;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A response for force merge action.
  */
 public class ForceMergeResponse extends BroadcastResponse {
 
-    private static final ConstructingObjectParser<ForceMergeResponse, Void> PARSER =
-            new ConstructingObjectParser<>("force_merge", true, arg -> {
-                BroadcastResponse response = (BroadcastResponse) arg[0];
-                return new ForceMergeResponse(response.getTotalShards(), response.getSuccessfulShards(), response.getFailedShards(),
-                        Arrays.asList(response.getShardFailures()));
-            });
+    private static final ConstructingObjectParser<ForceMergeResponse, Void> PARSER = new ConstructingObjectParser<>("force_merge",
+        true, arg -> {
+        BroadcastResponse response = (BroadcastResponse) arg[0];
+        return new ForceMergeResponse(response.getTotalShards(), response.getSuccessfulShards(), response.getFailedShards(),
+            Arrays.asList(response.getShardFailures()));
+    });
 
     static {
         declareBroadcastFields(PARSER);

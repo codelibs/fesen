@@ -16,8 +16,6 @@
 
 package org.codelibs.fesen.common.inject.internal;
 
-import static java.util.Collections.unmodifiableSet;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -36,6 +34,8 @@ import org.codelibs.fesen.common.inject.TypeLiteral;
 import org.codelibs.fesen.common.inject.spi.Dependency;
 import org.codelibs.fesen.common.inject.spi.Message;
 import org.codelibs.fesen.common.inject.util.Modules;
+
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Creates bindings to methods annotated with {@literal @}{@link Provides}. Use the scope and
@@ -108,16 +108,18 @@ public final class ProviderMethodsModule implements Module {
         }
 
         @SuppressWarnings("unchecked") // Define T as the method's return type.
-        TypeLiteral<T> returnType = (TypeLiteral<T>) typeLiteral.getReturnType(method);
+                TypeLiteral<T> returnType = (TypeLiteral<T>) typeLiteral.getReturnType(method);
 
         Key<T> key = getKey(errors, returnType, method, method.getAnnotations());
-        Class<? extends Annotation> scopeAnnotation = Annotations.findScopeAnnotation(errors, method.getAnnotations());
+        Class<? extends Annotation> scopeAnnotation
+                = Annotations.findScopeAnnotation(errors, method.getAnnotations());
 
         for (Message message : errors.getMessages()) {
             binder.addError(message);
         }
 
-        return new ProviderMethod<>(key, method, delegate, unmodifiableSet(dependencies), parameterProviders, scopeAnnotation);
+        return new ProviderMethod<>(key, method, delegate, unmodifiableSet(dependencies),
+                parameterProviders, scopeAnnotation);
     }
 
     <T> Key<T> getKey(Errors errors, TypeLiteral<T> type, Member member, Annotation[] annotations) {
@@ -127,7 +129,8 @@ public final class ProviderMethodsModule implements Module {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof ProviderMethodsModule && ((ProviderMethodsModule) o).delegate == delegate;
+        return o instanceof ProviderMethodsModule
+                && ((ProviderMethodsModule) o).delegate == delegate;
     }
 
     @Override

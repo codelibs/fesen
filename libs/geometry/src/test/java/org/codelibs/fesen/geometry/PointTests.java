@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.geometry;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import org.codelibs.fesen.geo.GeometryTestUtils;
+import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.utils.GeographyValidator;
 import org.codelibs.fesen.geometry.utils.GeometryValidator;
 import org.codelibs.fesen.geometry.utils.StandardValidator;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
+import org.codelibs.fesen.geo.GeometryTestUtils;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 public class PointTests extends BaseGeometryTestCase<Point> {
     @Override
@@ -62,7 +63,7 @@ public class PointTests extends BaseGeometryTestCase<Point> {
 
     public void testWKTValidation() {
         IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                () -> new WellKnownText(randomBoolean(), new GeographyValidator(false)).fromWKT("point (20.0 10.0 100.0)"));
+            () -> new WellKnownText(randomBoolean(), new GeographyValidator(false)).fromWKT("point (20.0 10.0 100.0)"));
         assertEquals("found Z value [100.0] but [ignore_z_value] parameter is [false]", ex.getMessage());
     }
 }

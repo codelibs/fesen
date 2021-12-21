@@ -47,6 +47,7 @@ public class SizeBlockingQueueTests extends ESTestCase {
             sizeBlockingQueue.offer(i);
         }
 
+
         final int iterations = 1 << 16;
         final CyclicBarrier barrier = new CyclicBarrier(2);
 

@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.health;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -34,6 +30,10 @@ import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ClusterHealthRequest extends MasterNodeReadRequest<ClusterHealthRequest> implements IndicesRequest.Replaceable {
 
@@ -72,7 +72,9 @@ public class ClusterHealthRequest extends MasterNodeReadRequest<ClusterHealthReq
         if (in.readBoolean()) {
             waitForEvents = Priority.readFrom(in);
         }
-        waitForNoInitializingShards = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_2_0)) {
+            waitForNoInitializingShards = in.readBoolean();
+        }
         if (in.getVersion().onOrAfter(Version.V_7_2_0)) {
             indicesOptions = IndicesOptions.readIndicesOptions(in);
         } else {
@@ -104,7 +106,9 @@ public class ClusterHealthRequest extends MasterNodeReadRequest<ClusterHealthReq
             out.writeBoolean(true);
             Priority.writeTo(waitForEvents, out);
         }
-        out.writeBoolean(waitForNoInitializingShards);
+        if (out.getVersion().onOrAfter(Version.V_6_2_0)) {
+            out.writeBoolean(waitForNoInitializingShards);
+        }
         if (out.getVersion().onOrAfter(Version.V_7_2_0)) {
             indicesOptions.writeIndicesOptions(out);
         }

@@ -19,27 +19,30 @@
 
 package org.codelibs.fesen.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.nio.entity.NStringEntity;
+import org.codelibs.fesen.client.Request;
+import org.codelibs.fesen.client.RequestOptions;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.nio.entity.NStringEntity;
-import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 public class RequestTests extends RestClientTestCase {
     public void testConstructor() {
-        final String method = randomFrom(new String[] { "GET", "PUT", "POST", "HEAD", "DELETE" });
+        final String method = randomFrom(new String[] {"GET", "PUT", "POST", "HEAD", "DELETE"});
         final String endpoint = randomAsciiLettersOfLengthBetween(1, 10);
 
         try {
@@ -62,7 +65,7 @@ public class RequestTests extends RestClientTestCase {
     }
 
     public void testAddParameters() {
-        final String method = randomFrom(new String[] { "GET", "PUT", "POST", "HEAD", "DELETE" });
+        final String method = randomFrom(new String[] {"GET", "PUT", "POST", "HEAD", "DELETE"});
         final String endpoint = randomAsciiLettersOfLengthBetween(1, 10);
         int parametersCount = between(1, 3);
         final Map<String, String> parameters = new HashMap<>(parametersCount);
@@ -100,7 +103,7 @@ public class RequestTests extends RestClientTestCase {
     }
 
     public void testSetEntity() {
-        final String method = randomFrom(new String[] { "GET", "PUT", "POST", "HEAD", "DELETE" });
+        final String method = randomFrom(new String[] {"GET", "PUT", "POST", "HEAD", "DELETE"});
         final String endpoint = randomAsciiLettersOfLengthBetween(1, 10);
         final HttpEntity entity =
                 randomBoolean() ? new StringEntity(randomAsciiLettersOfLengthBetween(1, 100), ContentType.TEXT_PLAIN) : null;
@@ -111,7 +114,7 @@ public class RequestTests extends RestClientTestCase {
     }
 
     public void testSetJsonEntity() throws IOException {
-        final String method = randomFrom(new String[] { "GET", "PUT", "POST", "HEAD", "DELETE" });
+        final String method = randomFrom(new String[] {"GET", "PUT", "POST", "HEAD", "DELETE"});
         final String endpoint = randomAsciiLettersOfLengthBetween(1, 10);
 
         Request request = new Request(method, endpoint);
@@ -126,7 +129,7 @@ public class RequestTests extends RestClientTestCase {
     }
 
     public void testSetOptions() {
-        final String method = randomFrom(new String[] { "GET", "PUT", "POST", "HEAD", "DELETE" });
+        final String method = randomFrom(new String[] {"GET", "PUT", "POST", "HEAD", "DELETE"});
         final String endpoint = randomAsciiLettersOfLengthBetween(1, 10);
         Request request = new Request(method, endpoint);
 
@@ -169,8 +172,9 @@ public class RequestTests extends RestClientTestCase {
     }
 
     private static Request randomRequest() {
-        Request request =
-                new Request(randomFrom(new String[] { "GET", "PUT", "DELETE", "POST", "HEAD", "OPTIONS" }), randomAsciiAlphanumOfLength(5));
+        Request request = new Request(
+            randomFrom(new String[] {"GET", "PUT", "DELETE", "POST", "HEAD", "OPTIONS"}),
+            randomAsciiAlphanumOfLength(5));
 
         int parameterCount = between(0, 5);
         for (int i = 0; i < parameterCount; i++) {
@@ -181,10 +185,11 @@ public class RequestTests extends RestClientTestCase {
             if (randomBoolean()) {
                 request.setJsonEntity(randomAsciiAlphanumOfLength(10));
             } else {
-                request.setEntity(
-                        randomFrom(new HttpEntity[] { new StringEntity(randomAsciiAlphanumOfLength(10), ContentType.APPLICATION_JSON),
-                                new NStringEntity(randomAsciiAlphanumOfLength(10), ContentType.APPLICATION_JSON),
-                                new ByteArrayEntity(randomBytesOfLength(40), ContentType.APPLICATION_JSON) }));
+                request.setEntity(randomFrom(new HttpEntity[] {
+                    new StringEntity(randomAsciiAlphanumOfLength(10), ContentType.APPLICATION_JSON),
+                    new NStringEntity(randomAsciiAlphanumOfLength(10), ContentType.APPLICATION_JSON),
+                    new ByteArrayEntity(randomBytesOfLength(40), ContentType.APPLICATION_JSON)
+                }));
             }
         }
 
@@ -206,8 +211,9 @@ public class RequestTests extends RestClientTestCase {
     private static Request mutate(Request request) {
         if (randomBoolean()) {
             // Mutate request or method but keep everything else constant
-            Request mutant = randomBoolean() ? new Request(request.getMethod() + "m", request.getEndpoint())
-                    : new Request(request.getMethod(), request.getEndpoint() + "m");
+            Request mutant = randomBoolean()
+                ? new Request(request.getMethod() + "m", request.getEndpoint())
+                : new Request(request.getMethod(), request.getEndpoint() + "m");
             copyMutables(request, mutant);
             return mutant;
         }

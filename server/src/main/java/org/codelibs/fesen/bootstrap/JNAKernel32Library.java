@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.Constants;
-
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -35,6 +26,16 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.win32.StdCallLibrary;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.Constants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 
 /**
  * Library for Windows/Kernel32
@@ -89,7 +90,7 @@ final class JNAKernel32Library {
     }
 
     List<Object> getCallbacks() {
-        return Collections.<Object> unmodifiableList(callbacks);
+        return Collections.<Object>unmodifiableList(callbacks);
     }
 
     /**
@@ -263,21 +264,21 @@ final class JNAKernel32Library {
      * https://msdn.microsoft.com/en-us/library/windows/desktop/ms684147%28v=vs.85%29.aspx
      */
     public static class JOBOBJECT_BASIC_LIMIT_INFORMATION extends Structure implements Structure.ByReference {
-        public long PerProcessUserTimeLimit;
-        public long PerJobUserTimeLimit;
-        public int LimitFlags;
-        public SizeT MinimumWorkingSetSize;
-        public SizeT MaximumWorkingSetSize;
-        public int ActiveProcessLimit;
-        public Pointer Affinity;
-        public int PriorityClass;
-        public int SchedulingClass;
+      public long PerProcessUserTimeLimit;
+      public long PerJobUserTimeLimit;
+      public int LimitFlags;
+      public SizeT MinimumWorkingSetSize;
+      public SizeT MaximumWorkingSetSize;
+      public int ActiveProcessLimit;
+      public Pointer Affinity;
+      public int PriorityClass;
+      public int SchedulingClass;
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList("PerProcessUserTimeLimit", "PerJobUserTimeLimit", "LimitFlags", "MinimumWorkingSetSize",
-                    "MaximumWorkingSetSize", "ActiveProcessLimit", "Affinity", "PriorityClass", "SchedulingClass");
-        }
+      @Override
+      protected List<String> getFieldOrder() {
+          return Arrays.asList("PerProcessUserTimeLimit", "PerJobUserTimeLimit", "LimitFlags", "MinimumWorkingSetSize",
+              "MaximumWorkingSetSize", "ActiveProcessLimit", "Affinity", "PriorityClass", "SchedulingClass");
+      }
     }
 
     /**

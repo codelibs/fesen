@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.settings;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import org.codelibs.fesen.cli.Command;
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.common.settings.AddStringKeyStoreCommand;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.env.Environment;
 
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
@@ -32,10 +32,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.codelibs.fesen.cli.Command;
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.env.Environment;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 
 public class AddStringKeyStoreCommandTests extends KeyStoreCommandTestCase {
     InputStream input;
@@ -62,8 +61,13 @@ public class AddStringKeyStoreCommandTests extends KeyStoreCommandTestCase {
         UserException e = expectThrows(UserException.class, () -> execute("foo2"));
         assertEquals(e.getMessage(), ExitCodes.DATA_ERROR, e.exitCode);
         if (inFipsJvm()) {
-            assertThat(e.getMessage(), anyOf(containsString("Provided keystore password was incorrect"),
-                    containsString("Keystore has been corrupted or tampered with")));
+            assertThat(
+                e.getMessage(),
+                anyOf(
+                    containsString("Provided keystore password was incorrect"),
+                    containsString("Keystore has been corrupted or tampered with")
+                )
+            );
         } else {
             assertThat(e.getMessage(), containsString("Provided keystore password was incorrect"));
         }

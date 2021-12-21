@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
+import com.carrotsearch.hppc.LongObjectHashMap;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
@@ -55,8 +55,8 @@ import org.codelibs.fesen.search.internal.SubSearchContext;
 import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 
-import com.carrotsearch.hppc.LongObjectHashMap;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.io.IOException;
+import java.util.Map;
 
 class TopHitsAggregator extends MetricsAggregator {
 
@@ -76,8 +76,8 @@ class TopHitsAggregator extends MetricsAggregator {
     private final SubSearchContext subSearchContext;
     private final LongObjectPagedHashMap<Collectors> topDocsCollectors;
 
-    TopHitsAggregator(FetchPhase fetchPhase, SubSearchContext subSearchContext, String name, SearchContext context, Aggregator parent,
-            Map<String, Object> metadata) throws IOException {
+    TopHitsAggregator(FetchPhase fetchPhase, SubSearchContext subSearchContext, String name, SearchContext context,
+            Aggregator parent, Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         this.fetchPhase = fetchPhase;
         topDocsCollectors = new LongObjectPagedHashMap<>(1, context.bigArrays());
@@ -134,7 +134,8 @@ class TopHitsAggregator extends MetricsAggregator {
                     } else {
                         // TODO: can we pass trackTotalHits=subSearchContext.trackTotalHits(){
                         // Note that this would require to catch CollectionTerminatedException
-                        collectors = new Collectors(TopFieldCollector.create(sort.sort, topN, Integer.MAX_VALUE),
+                        collectors = new Collectors(
+                                TopFieldCollector.create(sort.sort, topN, Integer.MAX_VALUE),
                                 subSearchContext.trackScores() ? new MaxScoreCollector() : null);
                     }
                     topDocsCollectors.put(bucket, collectors);

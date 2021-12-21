@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.ingest;
 
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.test.ESTestCase;
+
 import static org.codelibs.fesen.ingest.IngestDocumentMatcher.assertIngestDocument;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codelibs.fesen.test.ESTestCase;
 
 public class IngestDocumentMatcherTests extends ESTestCase {
 
@@ -40,32 +41,38 @@ public class IngestDocumentMatcherTests extends ESTestCase {
 
     public void testDifferentLengthListData() {
         String rootKey = "foo";
-        IngestDocument document1 = new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "baz")), new HashMap<>());
-        IngestDocument document2 = new IngestDocument(Collections.singletonMap(rootKey, Collections.emptyList()), new HashMap<>());
+        IngestDocument document1 =
+            new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "baz")), new HashMap<>());
+        IngestDocument document2 =
+            new IngestDocument(Collections.singletonMap(rootKey, Collections.emptyList()), new HashMap<>());
         assertThrowsOnComparision(document1, document2);
     }
 
     public void testDifferentNestedListFieldData() {
         String rootKey = "foo";
-        IngestDocument document1 = new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "baz")), new HashMap<>());
-        IngestDocument document2 = new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "blub")), new HashMap<>());
+        IngestDocument document1 =
+            new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "baz")), new HashMap<>());
+        IngestDocument document2 =
+            new IngestDocument(Collections.singletonMap(rootKey, Arrays.asList("bar", "blub")), new HashMap<>());
         assertThrowsOnComparision(document1, document2);
     }
 
     public void testDifferentNestedMapFieldData() {
         String rootKey = "foo";
         IngestDocument document1 =
-                new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonMap("bar", "baz")), new HashMap<>());
+            new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonMap("bar", "baz")), new HashMap<>());
         IngestDocument document2 =
-                new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonMap("bar", "blub")), new HashMap<>());
+            new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonMap("bar", "blub")), new HashMap<>());
         assertThrowsOnComparision(document1, document2);
     }
 
     public void testOnTypeConflict() {
         String rootKey = "foo";
-        IngestDocument document1 = new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonList("baz")), new HashMap<>());
-        IngestDocument document2 =
-                new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonMap("blub", "blab")), new HashMap<>());
+        IngestDocument document1 =
+            new IngestDocument(Collections.singletonMap(rootKey, Collections.singletonList("baz")), new HashMap<>());
+        IngestDocument document2 = new IngestDocument(
+            Collections.singletonMap(rootKey, Collections.singletonMap("blub", "blab")), new HashMap<>()
+        );
         assertThrowsOnComparision(document1, document2);
     }
 

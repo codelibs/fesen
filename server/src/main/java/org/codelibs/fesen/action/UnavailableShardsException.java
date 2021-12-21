@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.action;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
 
 public class UnavailableShardsException extends FesenException {
 
@@ -44,9 +44,7 @@ public class UnavailableShardsException extends FesenException {
         return buildMessage(shardId.getIndexName(), shardId.id(), message);
     }
 
-    private static String buildMessage(String index, int shardId, String message) {
-        return "[" + index + "][" + shardId + "] " + message;
-    }
+    private static String buildMessage(String index, int shardId, String message) {return "[" + index + "][" + shardId + "] " + message;}
 
     public UnavailableShardsException(StreamInput in) throws IOException {
         super(in);

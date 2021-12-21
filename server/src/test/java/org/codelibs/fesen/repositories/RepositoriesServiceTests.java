@@ -85,19 +85,20 @@ public class RepositoriesServiceTests extends ESTestCase {
     public void setUp() throws Exception {
         super.setUp();
         ThreadPool threadPool = mock(ThreadPool.class);
-        final TransportService transportService =
-                new TransportService(Settings.EMPTY, mock(Transport.class), threadPool, TransportService.NOOP_TRANSPORT_INTERCEPTOR,
-                        boundAddress -> DiscoveryNode.createLocal(Settings.EMPTY, boundAddress.publishAddress(), UUIDs.randomBase64UUID()),
-                        null, Collections.emptySet());
+        final TransportService transportService = new TransportService(Settings.EMPTY, mock(Transport.class), threadPool,
+            TransportService.NOOP_TRANSPORT_INTERCEPTOR,
+            boundAddress -> DiscoveryNode.createLocal(Settings.EMPTY, boundAddress.publishAddress(), UUIDs.randomBase64UUID()), null,
+            Collections.emptySet());
         final ClusterApplierService clusterApplierService = mock(ClusterApplierService.class);
         when(clusterApplierService.threadPool()).thenReturn(threadPool);
         final ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.getClusterApplierService()).thenReturn(clusterApplierService);
-        Map<String, Repository.Factory> typesRegistry = org.codelibs.fesen.core.Map.of(TestRepository.TYPE, TestRepository::new,
-                MeteredRepositoryTypeA.TYPE, metadata -> new MeteredRepositoryTypeA(metadata, clusterService), MeteredRepositoryTypeB.TYPE,
-                metadata -> new MeteredRepositoryTypeB(metadata, clusterService));
-        repositoriesService = new RepositoriesService(Settings.EMPTY, mock(ClusterService.class), transportService, typesRegistry,
-                typesRegistry, threadPool);
+        Map<String, Repository.Factory> typesRegistry =
+            org.codelibs.fesen.core.Map.of(TestRepository.TYPE, TestRepository::new,
+                MeteredRepositoryTypeA.TYPE, metadata -> new MeteredRepositoryTypeA(metadata, clusterService),
+                MeteredRepositoryTypeB.TYPE, metadata -> new MeteredRepositoryTypeB(metadata, clusterService));
+        repositoriesService = new RepositoriesService(Settings.EMPTY, mock(ClusterService.class),
+            transportService, typesRegistry, typesRegistry, threadPool);
         repositoriesService.start();
     }
 
@@ -173,7 +174,7 @@ public class RepositoriesServiceTests extends ESTestCase {
         ClusterState.Builder state = ClusterState.builder(new ClusterName("test"));
         Metadata.Builder mdBuilder = Metadata.builder();
         mdBuilder.putCustom(RepositoriesMetadata.TYPE,
-                new RepositoriesMetadata(Collections.singletonList(new RepositoryMetadata(repoName, repoType, Settings.EMPTY))));
+            new RepositoriesMetadata(Collections.singletonList(new RepositoryMetadata(repoName, repoType, Settings.EMPTY))));
         state.metadata(mdBuilder);
 
         return state.build();
@@ -232,14 +233,15 @@ public class RepositoriesServiceTests extends ESTestCase {
 
         @Override
         public void finalizeSnapshot(ShardGenerations shardGenerations, long repositoryStateId, Metadata clusterMetadata,
-                SnapshotInfo snapshotInfo, Version repositoryMetaVersion, Function<ClusterState, ClusterState> stateTransformer,
-                ActionListener<RepositoryData> listener) {
+                                     SnapshotInfo snapshotInfo, Version repositoryMetaVersion,
+                                     Function<ClusterState, ClusterState> stateTransformer,
+                                     ActionListener<RepositoryData> listener) {
             listener.onResponse(null);
         }
 
         @Override
         public void deleteSnapshots(Collection<SnapshotId> snapshotIds, long repositoryStateId, Version repositoryMetaVersion,
-                ActionListener<RepositoryData> listener) {
+                                    ActionListener<RepositoryData> listener) {
             listener.onResponse(null);
         }
 
@@ -275,14 +277,14 @@ public class RepositoriesServiceTests extends ESTestCase {
 
         @Override
         public void snapshotShard(Store store, MapperService mapperService, SnapshotId snapshotId, IndexId indexId,
-                IndexCommit snapshotIndexCommit, String shardStateIdentifier, IndexShardSnapshotStatus snapshotStatus,
-                Version repositoryMetaVersion, Map<String, Object> userMetadata, ActionListener<String> listener) {
+                                  IndexCommit snapshotIndexCommit, String shardStateIdentifier, IndexShardSnapshotStatus snapshotStatus,
+                                  Version repositoryMetaVersion, Map<String, Object> userMetadata, ActionListener<String> listener) {
 
         }
 
         @Override
-        public void restoreShard(Store store, SnapshotId snapshotId, IndexId indexId, ShardId snapshotShardId, RecoveryState recoveryState,
-                ActionListener<Void> listener) {
+        public void restoreShard(Store store, SnapshotId snapshotId, IndexId indexId, ShardId snapshotShardId,
+                                 RecoveryState recoveryState, ActionListener<Void> listener) {
 
         }
 
@@ -297,12 +299,12 @@ public class RepositoriesServiceTests extends ESTestCase {
 
         @Override
         public void executeConsistentStateUpdate(Function<RepositoryData, ClusterStateUpdateTask> createUpdateTask, String source,
-                Consumer<Exception> onFailure) {
+                                                 Consumer<Exception> onFailure) {
         }
 
         @Override
         public void cloneShardSnapshot(SnapshotId source, SnapshotId target, RepositoryShardId shardId, String shardGeneration,
-                ActionListener<String> listener) {
+                                       ActionListener<String> listener) {
 
         }
 
@@ -342,8 +344,12 @@ public class RepositoriesServiceTests extends ESTestCase {
         private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.core.Map.of("GET", 10L));
 
         private MeteredRepositoryTypeA(RepositoryMetadata metadata, ClusterService clusterService) {
-            super(metadata, false, mock(NamedXContentRegistry.class), clusterService, mock(RecoverySettings.class),
-                    org.codelibs.fesen.core.Map.of("bucket", "bucket-a"));
+            super(metadata,
+                false,
+                mock(NamedXContentRegistry.class),
+                clusterService,
+                mock(RecoverySettings.class),
+                org.codelibs.fesen.core.Map.of("bucket", "bucket-a"));
         }
 
         @Override
@@ -367,8 +373,12 @@ public class RepositoriesServiceTests extends ESTestCase {
         private static final RepositoryStats STATS = new RepositoryStats(org.codelibs.fesen.core.Map.of("LIST", 20L));
 
         private MeteredRepositoryTypeB(RepositoryMetadata metadata, ClusterService clusterService) {
-            super(metadata, false, mock(NamedXContentRegistry.class), clusterService, mock(RecoverySettings.class),
-                    org.codelibs.fesen.core.Map.of("bucket", "bucket-b"));
+            super(metadata,
+                false,
+                mock(NamedXContentRegistry.class),
+                clusterService,
+                mock(RecoverySettings.class),
+                org.codelibs.fesen.core.Map.of("bucket", "bucket-b"));
         }
 
         @Override

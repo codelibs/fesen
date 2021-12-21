@@ -30,8 +30,7 @@ public abstract class AbstractLifecycleComponent implements LifecycleComponent {
 
     private final List<LifecycleListener> listeners = new CopyOnWriteArrayList<>();
 
-    protected AbstractLifecycleComponent() {
-    }
+    protected AbstractLifecycleComponent() {}
 
     @Override
     public Lifecycle.State lifecycleState() {

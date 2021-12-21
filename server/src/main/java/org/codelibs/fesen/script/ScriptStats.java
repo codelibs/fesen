@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.script;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ScriptStats implements Writeable, ToXContentFragment {
     private final List<ScriptContextStats> contextStats;
@@ -47,7 +47,7 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         long compilations = 0;
         long cacheEvictions = 0;
         long compilationLimitTriggered = 0;
-        for (ScriptContextStats stats : contextStats) {
+        for (ScriptContextStats stats: contextStats) {
             compilations += stats.getCompilations();
             cacheEvictions += stats.getCacheEvictions();
             compilationLimitTriggered += stats.getCompilationLimitTriggered();

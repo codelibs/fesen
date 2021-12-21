@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.indices.recovery;
 
-import java.io.IOException;
-
 import org.apache.lucene.util.Version;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.store.StoreFileMetadata;
+
+import java.io.IOException;
 
 public final class RecoveryFileChunkRequest extends RecoveryTransportRequest {
     private final boolean lastChunk;
@@ -58,7 +58,7 @@ public final class RecoveryFileChunkRequest extends RecoveryTransportRequest {
     }
 
     public RecoveryFileChunkRequest(long recoveryId, final long requestSeqNo, ShardId shardId, StoreFileMetadata metadata, long position,
-            BytesReference content, boolean lastChunk, int totalTranslogOps, long sourceThrottleTimeInNanos) {
+                                    BytesReference content, boolean lastChunk, int totalTranslogOps, long sourceThrottleTimeInNanos) {
         super(requestSeqNo);
         this.recoveryId = recoveryId;
         this.shardId = shardId;
@@ -120,7 +120,9 @@ public final class RecoveryFileChunkRequest extends RecoveryTransportRequest {
 
     @Override
     public String toString() {
-        return shardId + ": name='" + name() + '\'' + ", position=" + position + ", length=" + length();
+        return shardId + ": name='" + name() + '\'' +
+                ", position=" + position +
+                ", length=" + length();
     }
 
     public StoreFileMetadata metadata() {

@@ -27,6 +27,10 @@ import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface ExtendedStatsAggregatorProvider {
 
-    Aggregator build(String name, ValuesSourceConfig valuesSourceConfig, SearchContext context, Aggregator parent, double sigma,
-            Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name,
+                     ValuesSourceConfig valuesSourceConfig,
+                     SearchContext context,
+                     Aggregator parent,
+                     double sigma,
+                     Map<String, Object> metadata) throws IOException;
 }

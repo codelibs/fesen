@@ -19,15 +19,12 @@
 
 package org.codelibs.fesen.core;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.nio.charset.StandardCharsets;
 
+import org.codelibs.fesen.core.CharArrays;
 import org.codelibs.fesen.test.ESTestCase;
+
+import static org.hamcrest.Matchers.is;
 
 public class CharArraysTests extends ESTestCase {
 

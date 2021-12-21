@@ -19,7 +19,10 @@
 
 package org.codelibs.fesen.common.ssl;
 
-import static org.junit.Assert.assertThat;
+import org.codelibs.fesen.common.ssl.PemTrustConfig;
+import org.codelibs.fesen.common.ssl.SslConfigException;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -36,9 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.X509ExtendedTrustManager;
-
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
 
 public class PemTrustConfigTests extends ESTestCase {
 
@@ -116,8 +116,10 @@ public class PemTrustConfigTests extends ESTestCase {
     private void assertCertificateChain(PemTrustConfig trustConfig, String... caNames) {
         final X509ExtendedTrustManager trustManager = trustConfig.createTrustManager();
         final X509Certificate[] issuers = trustManager.getAcceptedIssuers();
-        final Set<String> issuerNames =
-                Stream.of(issuers).map(X509Certificate::getSubjectDN).map(Principal::getName).collect(Collectors.toSet());
+        final Set<String> issuerNames = Stream.of(issuers)
+            .map(X509Certificate::getSubjectDN)
+            .map(Principal::getName)
+            .collect(Collectors.toSet());
 
         assertThat(issuerNames, Matchers.containsInAnyOrder(caNames));
     }
@@ -159,7 +161,7 @@ public class PemTrustConfigTests extends ESTestCase {
          * ArrayIndexOutOfBoundsException. This check ensures that when we create random stream of bytes we do not create ASN.1 SEQUENCE
          * followed by zero length which fails the test intermittently.
          */
-        while (checkRandomGeneratedBytesRepresentZeroLengthDerSequenceCausingArrayIndexOutOfBound(bytes)) {
+        while(checkRandomGeneratedBytesRepresentZeroLengthDerSequenceCausingArrayIndexOutOfBound(bytes)) {
             bytes = randomByteArrayOfLength(length);
         }
         return bytes;

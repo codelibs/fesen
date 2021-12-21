@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class ScoreFunction {
 
@@ -56,7 +56,8 @@ public abstract class ScoreFunction {
         }
 
         ScoreFunction other = (ScoreFunction) obj;
-        return Objects.equals(scoreCombiner, other.scoreCombiner) && doEquals(other);
+        return Objects.equals(scoreCombiner, other.scoreCombiner) &&
+                doEquals(other);
     }
 
     public float getWeight() {

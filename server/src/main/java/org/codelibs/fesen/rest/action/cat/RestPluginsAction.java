@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.List;
 
 import org.codelibs.fesen.action.admin.cluster.node.info.NodeInfo;
@@ -39,6 +36,9 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestActionListener;
 import org.codelibs.fesen.rest.action.RestResponseListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestPluginsAction extends AbstractCatAction {
 
@@ -68,7 +68,8 @@ public class RestPluginsAction extends AbstractCatAction {
             @Override
             public void processResponse(final ClusterStateResponse clusterStateResponse) throws Exception {
                 NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
-                nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.PLUGINS.metricName());
+                nodesInfoRequest.clear()
+                    .addMetric(NodesInfoRequest.Metric.PLUGINS.metricName());
                 client.admin().cluster().nodesInfo(nodesInfoRequest, new RestResponseListener<NodesInfoResponse>(channel) {
                     @Override
                     public RestResponse buildResponse(final NodesInfoResponse nodesInfoResponse) throws Exception {

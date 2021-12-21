@@ -36,23 +36,26 @@ import static org.mockito.Mockito.mock;
 public class RestResizeHandlerTests extends ESTestCase {
 
     public void testShrinkCopySettingsDeprecated() throws IOException {
-        final RestResizeHandler.RestShrinkIndexAction handler = new RestResizeHandler.RestShrinkIndexAction();
-        for (final String copySettings : new String[] { null, "", "true", "false" }) {
+        final RestResizeHandler.RestShrinkIndexAction handler =
+                new RestResizeHandler.RestShrinkIndexAction();
+        for (final String copySettings : new String[]{null, "", "true", "false"}) {
             runTestResizeCopySettingsDeprecated(handler, "shrink", copySettings);
         }
     }
 
     public void testSplitCopySettingsDeprecated() throws IOException {
-        final RestResizeHandler.RestSplitIndexAction handler = new RestResizeHandler.RestSplitIndexAction();
-        for (final String copySettings : new String[] { null, "", "true", "false" }) {
+        final RestResizeHandler.RestSplitIndexAction handler =
+                new RestResizeHandler.RestSplitIndexAction();
+        for (final String copySettings : new String[]{null, "", "true", "false"}) {
             runTestResizeCopySettingsDeprecated(handler, "split", copySettings);
         }
     }
 
-    private void runTestResizeCopySettingsDeprecated(final RestResizeHandler handler, final String resizeOperation,
-            final String copySettings) throws IOException {
+    private void runTestResizeCopySettingsDeprecated(
+            final RestResizeHandler handler, final String resizeOperation, final String copySettings) throws IOException {
         final FakeRestRequest.Builder builder =
-                new FakeRestRequest.Builder(NamedXContentRegistry.EMPTY).withParams(Collections.singletonMap("copy_settings", copySettings))
+                new FakeRestRequest.Builder(NamedXContentRegistry.EMPTY)
+                        .withParams(Collections.singletonMap("copy_settings", copySettings))
                         .withPath(String.format(Locale.ROOT, "source/_%s/target", resizeOperation));
         if (copySettings != null) {
             builder.withParams(Collections.singletonMap("copy_settings", copySettings));

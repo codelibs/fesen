@@ -19,13 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.get;
 
-import static org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction.TASKS_ORIGIN;
-import static org.codelibs.fesen.action.admin.cluster.node.tasks.list.TransportListTasksAction.waitForCompletionTimeout;
-
-import java.io.IOException;
-
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.ResourceNotFoundException;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionListenerResponseHandler;
@@ -52,6 +47,11 @@ import org.codelibs.fesen.tasks.TaskResultsService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportRequestOptions;
 import org.codelibs.fesen.transport.TransportService;
+
+import static org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction.TASKS_ORIGIN;
+import static org.codelibs.fesen.action.admin.cluster.node.tasks.list.TransportListTasksAction.waitForCompletionTimeout;
+
+import java.io.IOException;
 
 /**
  * ActionType to get a single task. If the task isn't running then it'll try to request the status from request index.
@@ -105,8 +105,10 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
             // Node is no longer part of the cluster! Try and look the task up from the results index.
             getFinishedTaskFromIndex(thisTask, request, ActionListener.wrap(listener::onResponse, e -> {
                 if (e instanceof ResourceNotFoundException) {
-                    e = new ResourceNotFoundException("task [" + request.getTaskId() + "] belongs to the node ["
-                            + request.getTaskId().getNodeId() + "] which isn't part of the cluster and there is no record of the task", e);
+                    e = new ResourceNotFoundException(
+                            "task [" + request.getTaskId() + "] belongs to the node [" + request.getTaskId().getNodeId()
+                                    + "] which isn't part of the cluster and there is no record of the task",
+                            e);
                 }
                 listener.onFailure(e);
             }));
@@ -114,7 +116,7 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
         }
         GetTaskRequest nodeRequest = request.nodeRequest(clusterService.localNode().getId(), thisTask.getId());
         transportService.sendRequest(node, GetTaskAction.NAME, nodeRequest, builder.build(),
-                new ActionListenerResponseHandler<>(listener, GetTaskResponse::new, ThreadPool.Names.SAME));
+            new ActionListenerResponseHandler<>(listener, GetTaskResponse::new, ThreadPool.Names.SAME));
     }
 
     /**
@@ -155,15 +157,15 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
     void waitedForCompletion(Task thisTask, GetTaskRequest request, TaskInfo snapshotOfRunningTask,
             ActionListener<GetTaskResponse> listener) {
         getFinishedTaskFromIndex(thisTask, request, ActionListener.delegateResponse(listener, (delegatedListener, e) -> {
-            /*
-             * We couldn't load the task from the task index. Instead of 404 we should use the snapshot we took after it finished. If
-             * the error isn't a 404 then we'll just throw it back to the user.
-             */
-            if (ExceptionsHelper.unwrap(e, ResourceNotFoundException.class) != null) {
-                delegatedListener.onResponse(new GetTaskResponse(new TaskResult(true, snapshotOfRunningTask)));
-            } else {
-                delegatedListener.onFailure(e);
-            }
+                /*
+                 * We couldn't load the task from the task index. Instead of 404 we should use the snapshot we took after it finished. If
+                 * the error isn't a 404 then we'll just throw it back to the user.
+                 */
+                if (ExceptionsHelper.unwrap(e, ResourceNotFoundException.class) != null) {
+                    delegatedListener.onResponse(new GetTaskResponse(new TaskResult(true, snapshotOfRunningTask)));
+                } else {
+                    delegatedListener.onFailure(e);
+                }
         }));
     }
 
@@ -173,14 +175,15 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
      * coordinating node if the node is no longer part of the cluster.
      */
     void getFinishedTaskFromIndex(Task thisTask, GetTaskRequest request, ActionListener<GetTaskResponse> listener) {
-        GetRequest get = new GetRequest(TaskResultsService.TASK_INDEX, TaskResultsService.TASK_TYPE, request.getTaskId().toString());
+        GetRequest get = new GetRequest(TaskResultsService.TASK_INDEX, TaskResultsService.TASK_TYPE,
+                request.getTaskId().toString());
         get.setParentTask(clusterService.localNode().getId(), thisTask.getId());
 
         client.get(get, ActionListener.wrap(r -> onGetFinishedTaskFromIndex(r, listener), e -> {
             if (ExceptionsHelper.unwrap(e, IndexNotFoundException.class) != null) {
                 // We haven't yet created the index for the task results so it can't be found.
-                listener.onFailure(
-                        new ResourceNotFoundException("task [{}] isn't running and hasn't stored its results", e, request.getTaskId()));
+                listener.onFailure(new ResourceNotFoundException("task [{}] isn't running and hasn't stored its results", e,
+                    request.getTaskId()));
             } else {
                 listener.onFailure(e);
             }
@@ -200,8 +203,8 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
             listener.onFailure(new FesenException("Stored task status for [{}] didn't contain any source!", response.getId()));
             return;
         }
-        try (XContentParser parser =
-                XContentHelper.createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, response.getSourceAsBytesRef())) {
+        try (XContentParser parser = XContentHelper
+                .createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, response.getSourceAsBytesRef())) {
             TaskResult result = TaskResult.PARSER.apply(parser, null);
             listener.onResponse(new GetTaskResponse(result));
         }

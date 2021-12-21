@@ -21,6 +21,7 @@ package org.codelibs.fesen.search;
 
 import static org.mockito.Mockito.mock;
 
+import org.codelibs.fesen.search.MockSearchService;
 import org.codelibs.fesen.search.internal.ReaderContext;
 import org.codelibs.fesen.test.ESTestCase;
 

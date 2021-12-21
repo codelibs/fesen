@@ -18,23 +18,11 @@
  */
 package org.codelibs.fesen.gateway;
 
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableSet;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenTimeoutException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.nodes.BaseNodeResponse;
@@ -48,7 +36,18 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.transport.ReceiveTimeoutTransportException;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Allows to asynchronously fetch shard related data from other nodes for allocation, without blocking
@@ -79,7 +78,7 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
 
     @SuppressWarnings("unchecked")
     protected AsyncShardFetch(Logger logger, String type, ShardId shardId, String customDataPath,
-            Lister<? extends BaseNodesResponse<T>, T> action) {
+                              Lister<? extends BaseNodesResponse<T>, T> action) {
         this.logger = logger;
         this.type = type;
         this.shardId = Objects.requireNonNull(shardId);
@@ -126,8 +125,8 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
             for (NodeEntry<T> nodeEntry : nodesToFetch) {
                 nodeEntry.markAsFetching(fetchingRound);
             }
-            DiscoveryNode[] discoNodesToFetch =
-                    nodesToFetch.stream().map(NodeEntry::getNodeId).map(nodes::get).toArray(DiscoveryNode[]::new);
+            DiscoveryNode[] discoNodesToFetch = nodesToFetch.stream().map(NodeEntry::getNodeId).map(nodes::get)
+                .toArray(DiscoveryNode[]::new);
             asyncFetch(discoNodesToFetch, fetchingRound);
         }
 
@@ -138,7 +137,7 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
             // nothing to fetch, yay, build the return value
             Map<DiscoveryNode, T> fetchData = new HashMap<>();
             Set<String> failedNodes = new HashSet<>();
-            for (Iterator<Map.Entry<String, NodeEntry<T>>> it = cache.entrySet().iterator(); it.hasNext();) {
+            for (Iterator<Map.Entry<String, NodeEntry<T>>> it = cache.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<String, NodeEntry<T>> entry = it.next();
                 String nodeId = entry.getKey();
                 NodeEntry<T> nodeEntry = entry.getValue();
@@ -191,10 +190,10 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
                     if (nodeEntry.getFetchingRound() != fetchingRound) {
                         assert nodeEntry.getFetchingRound() > fetchingRound : "node entries only replaced by newer rounds";
                         logger.trace("{} received response for [{}] from node {} for an older fetching round (expected: {} but was: {})",
-                                shardId, nodeEntry.getNodeId(), type, nodeEntry.getFetchingRound(), fetchingRound);
+                            shardId, nodeEntry.getNodeId(), type, nodeEntry.getFetchingRound(), fetchingRound);
                     } else if (nodeEntry.isFailed()) {
                         logger.trace("{} node {} has failed for [{}] (failure [{}])", shardId, nodeEntry.getNodeId(), type,
-                                nodeEntry.getFailure());
+                            nodeEntry.getFailure());
                     } else {
                         // if the entry is there, for the right fetching round and not marked as failed already, process it
                         logger.trace("{} marking {} as done for [{}], result is [{}]", shardId, nodeEntry.getNodeId(), type, response);
@@ -211,18 +210,18 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
                     if (nodeEntry.getFetchingRound() != fetchingRound) {
                         assert nodeEntry.getFetchingRound() > fetchingRound : "node entries only replaced by newer rounds";
                         logger.trace("{} received failure for [{}] from node {} for an older fetching round (expected: {} but was: {})",
-                                shardId, nodeEntry.getNodeId(), type, nodeEntry.getFetchingRound(), fetchingRound);
+                            shardId, nodeEntry.getNodeId(), type, nodeEntry.getFetchingRound(), fetchingRound);
                     } else if (nodeEntry.isFailed() == false) {
                         // if the entry is there, for the right fetching round and not marked as failed already, process it
                         Throwable unwrappedCause = ExceptionsHelper.unwrapCause(failure.getCause());
                         // if the request got rejected or timed out, we need to try it again next time...
-                        if (unwrappedCause instanceof EsRejectedExecutionException
-                                || unwrappedCause instanceof ReceiveTimeoutTransportException
-                                || unwrappedCause instanceof FesenTimeoutException) {
+                        if (unwrappedCause instanceof EsRejectedExecutionException ||
+                            unwrappedCause instanceof ReceiveTimeoutTransportException ||
+                            unwrappedCause instanceof FesenTimeoutException) {
                             nodeEntry.restartFetching();
                         } else {
-                            logger.warn(() -> new ParameterizedMessage("{}: failed to list shard for {} on node [{}]", shardId, type,
-                                    failure.nodeId()), failure);
+                            logger.warn(() -> new ParameterizedMessage("{}: failed to list shard for {} on node [{}]",
+                                shardId, type, failure.nodeId()), failure);
                             nodeEntry.doneFetching(failure.getCause());
                         }
                     }
@@ -301,7 +300,7 @@ public abstract class AsyncShardFetch<T extends BaseNodeResponse> implements Rel
             @Override
             public void onFailure(Exception e) {
                 List<FailedNodeException> failures = new ArrayList<>(nodes.length);
-                for (final DiscoveryNode node : nodes) {
+                for (final DiscoveryNode node: nodes) {
                     failures.add(new FailedNodeException(node.getId(), "total failure in fetching", e));
                 }
                 processAsyncFetch(null, failures, fetchingRound);

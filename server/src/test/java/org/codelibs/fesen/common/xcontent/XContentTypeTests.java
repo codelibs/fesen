@@ -88,13 +88,18 @@ public class XContentTypeTests extends ESTestCase {
     }
 
     public void testVersionedMediaType() throws Exception {
-        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+json;compatible-with=7"), equalTo(XContentType.JSON));
-        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+yaml;compatible-with=7"), equalTo(XContentType.YAML));
-        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+cbor;compatible-with=7"), equalTo(XContentType.CBOR));
-        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+smile;compatible-with=7"), equalTo(XContentType.SMILE));
+        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+json;compatible-with=7"),
+            equalTo(XContentType.JSON));
+        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+yaml;compatible-with=7"),
+            equalTo(XContentType.YAML));
+        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+cbor;compatible-with=7"),
+            equalTo(XContentType.CBOR));
+        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+smile;compatible-with=7"),
+            equalTo(XContentType.SMILE));
 
-        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+json ;compatible-with=7"), equalTo(XContentType.JSON));
+        assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+json ;compatible-with=7"),
+            equalTo(XContentType.JSON));
         assertThat(XContentType.fromMediaTypeOrFormat("application/vnd.fesen+json ;compatible-with=7;charset=utf-8"),
-                equalTo(XContentType.JSON));
+            equalTo(XContentType.JSON));
     }
 }

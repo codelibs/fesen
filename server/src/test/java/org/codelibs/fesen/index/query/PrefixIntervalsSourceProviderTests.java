@@ -32,8 +32,11 @@ public class PrefixIntervalsSourceProviderTests extends AbstractSerializingTestC
 
     @Override
     protected Prefix createTestInstance() {
-        return new Prefix(randomAlphaOfLength(10), randomBoolean() ? randomAlphaOfLength(10) : null,
-                randomBoolean() ? randomAlphaOfLength(10) : null);
+        return new Prefix(
+            randomAlphaOfLength(10),
+            randomBoolean() ? randomAlphaOfLength(10) : null,
+            randomBoolean() ? randomAlphaOfLength(10) : null
+        );
     }
 
     @Override
@@ -42,17 +45,17 @@ public class PrefixIntervalsSourceProviderTests extends AbstractSerializingTestC
         String analyzer = instance.getAnalyzer();
         String useField = instance.getUseField();
         switch (between(0, 2)) {
-        case 0:
-            prefix += "a";
-            break;
-        case 1:
-            analyzer = randomAlphaOfLength(5);
-            break;
-        case 2:
-            useField = useField == null ? randomAlphaOfLength(5) : null;
-            break;
-        default:
-            throw new AssertionError("Illegal randomisation branch");
+            case 0:
+                prefix += "a";
+                break;
+            case 1:
+                analyzer = randomAlphaOfLength(5);
+                break;
+            case 2:
+                useField = useField == null ? randomAlphaOfLength(5) : null;
+                break;
+            default:
+                throw new AssertionError("Illegal randomisation branch");
         }
         return new Prefix(prefix, analyzer, useField);
     }

@@ -45,18 +45,18 @@ public class ClusterUpdateSettingsResponseTests extends AbstractSerializingTestC
     @Override
     protected ClusterUpdateSettingsResponse mutateInstance(ClusterUpdateSettingsResponse response) {
         int i = randomIntBetween(0, 2);
-        switch (i) {
-        case 0:
-            return new ClusterUpdateSettingsResponse(response.isAcknowledged() == false, response.transientSettings,
-                    response.persistentSettings);
-        case 1:
-            return new ClusterUpdateSettingsResponse(response.isAcknowledged(), mutateSettings(response.transientSettings),
-                    response.persistentSettings);
-        case 2:
-            return new ClusterUpdateSettingsResponse(response.isAcknowledged(), response.transientSettings,
-                    mutateSettings(response.persistentSettings));
-        default:
-            throw new UnsupportedOperationException();
+        switch(i) {
+            case 0:
+                return new ClusterUpdateSettingsResponse(response.isAcknowledged() == false,
+                        response.transientSettings, response.persistentSettings);
+            case 1:
+                return new ClusterUpdateSettingsResponse(response.isAcknowledged(), mutateSettings(response.transientSettings),
+                        response.persistentSettings);
+            case 2:
+                return new ClusterUpdateSettingsResponse(response.isAcknowledged(), response.transientSettings,
+                        mutateSettings(response.persistentSettings));
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -100,5 +100,10 @@ public class ClusterUpdateSettingsResponseTests extends AbstractSerializingTestC
     @Override
     protected Writeable.Reader<ClusterUpdateSettingsResponse> instanceReader() {
         return ClusterUpdateSettingsResponse::new;
+    }
+
+    public void testOldSerialisation() throws IOException {
+        ClusterUpdateSettingsResponse original = createTestInstance();
+        assertSerialization(original, VersionUtils.randomVersionBetween(random(), Version.V_6_0_0, Version.V_6_4_0));
     }
 }

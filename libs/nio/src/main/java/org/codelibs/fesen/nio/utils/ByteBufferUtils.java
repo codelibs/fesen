@@ -23,8 +23,7 @@ import java.nio.ByteBuffer;
 
 public final class ByteBufferUtils {
 
-    private ByteBufferUtils() {
-    }
+    private ByteBufferUtils() {}
 
     /**
      * Copies bytes from the array of byte buffers into the destination buffer. The number of bytes copied is

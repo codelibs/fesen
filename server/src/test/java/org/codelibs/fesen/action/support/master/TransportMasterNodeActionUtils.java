@@ -32,8 +32,8 @@ public class TransportMasterNodeActionUtils {
      * a protected method.
      */
     public static <Request extends MasterNodeRequest<Request>, Response extends ActionResponse> void runMasterOperation(
-            TransportMasterNodeAction<Request, Response> masterNodeAction, Request request, ClusterState clusterState,
-            ActionListener<Response> actionListener) throws Exception {
+        TransportMasterNodeAction<Request, Response> masterNodeAction, Request request, ClusterState clusterState,
+        ActionListener<Response> actionListener) throws Exception {
         assert masterNodeAction.checkBlock(request, clusterState) == null;
         masterNodeAction.masterOperation(request, clusterState, actionListener);
     }

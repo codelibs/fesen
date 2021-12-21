@@ -19,6 +19,10 @@
 
 package org.codelibs.fesen.index.mapper;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.codelibs.fesen.index.IndexSettings;
+import org.codelibs.fesen.index.analysis.FieldNameAnalyzer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,10 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.codelibs.fesen.index.IndexSettings;
-import org.codelibs.fesen.index.analysis.FieldNameAnalyzer;
 
 public final class MappingLookup implements Iterable<Mapper> {
 
@@ -62,18 +62,20 @@ public final class MappingLookup implements Iterable<Mapper> {
         return new MappingLookup(newFieldMappers, newObjectMappers, newFieldAliasMappers, mapping.metadataMappers.length, defaultIndex);
     }
 
-    private static void collect(Mapper mapper, Collection<ObjectMapper> objectMappers, Collection<FieldMapper> fieldMappers,
-            Collection<FieldAliasMapper> fieldAliasMappers) {
+    private static void collect(Mapper mapper, Collection<ObjectMapper> objectMappers,
+                               Collection<FieldMapper> fieldMappers,
+                               Collection<FieldAliasMapper> fieldAliasMappers) {
         if (mapper instanceof RootObjectMapper) {
             // root mapper isn't really an object mapper
         } else if (mapper instanceof ObjectMapper) {
-            objectMappers.add((ObjectMapper) mapper);
+            objectMappers.add((ObjectMapper)mapper);
         } else if (mapper instanceof FieldMapper) {
-            fieldMappers.add((FieldMapper) mapper);
+            fieldMappers.add((FieldMapper)mapper);
         } else if (mapper instanceof FieldAliasMapper) {
             fieldAliasMappers.add((FieldAliasMapper) mapper);
         } else {
-            throw new IllegalStateException("Unrecognized mapper type [" + mapper.getClass().getSimpleName() + "].");
+            throw new IllegalStateException("Unrecognized mapper type [" +
+                mapper.getClass().getSimpleName() + "].");
         }
 
         for (Mapper child : mapper) {
@@ -81,8 +83,11 @@ public final class MappingLookup implements Iterable<Mapper> {
         }
     }
 
-    public MappingLookup(Collection<FieldMapper> mappers, Collection<ObjectMapper> objectMappers, Collection<FieldAliasMapper> aliasMappers,
-            int metadataFieldCount, Analyzer defaultIndex) {
+    public MappingLookup(Collection<FieldMapper> mappers,
+                         Collection<ObjectMapper> objectMappers,
+                         Collection<FieldAliasMapper> aliasMappers,
+                         int metadataFieldCount,
+                         Analyzer defaultIndex) {
         Map<String, Mapper> fieldMappers = new HashMap<>();
         Map<String, Analyzer> indexAnalyzers = new HashMap<>();
         Map<String, ObjectMapper> objects = new HashMap<>();
@@ -176,21 +181,22 @@ public final class MappingLookup implements Iterable<Mapper> {
             }
             final int depth = numDots + 2;
             if (depth > limit) {
-                throw new IllegalArgumentException(
-                        "Limit of mapping depth [" + limit + "] has been exceeded due to object field [" + objectPath + "]");
+                throw new IllegalArgumentException("Limit of mapping depth [" + limit +
+                    "] has been exceeded due to object field [" + objectPath + "]");
             }
         }
     }
 
     private void checkFieldNameLengthLimit(long limit) {
-        Stream.of(objectMappers.values().stream(), fieldMappers.values().stream()).reduce(Stream::concat).orElseGet(Stream::empty)
-                .forEach(mapper -> {
-                    String name = mapper.simpleName();
-                    if (name.length() > limit) {
-                        throw new IllegalArgumentException(
-                                "Field name [" + name + "] is longer than the limit of [" + limit + "] characters");
-                    }
-                });
+        Stream.of(objectMappers.values().stream(), fieldMappers.values().stream())
+            .reduce(Stream::concat)
+            .orElseGet(Stream::empty)
+            .forEach(mapper -> {
+                String name = mapper.simpleName();
+                if (name.length() > limit) {
+                    throw new IllegalArgumentException("Field name [" + name + "] is longer than the limit of [" + limit + "] characters");
+                }
+            });
     }
 
     private void checkNestedLimit(long limit) {

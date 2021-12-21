@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.indices;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.action.admin.indices.rollover.Condition;
 import org.codelibs.fesen.action.admin.indices.rollover.MaxAgeCondition;
 import org.codelibs.fesen.action.admin.indices.rollover.MaxDocsCondition;
@@ -74,6 +64,16 @@ import org.codelibs.fesen.indices.store.IndicesStore;
 import org.codelibs.fesen.indices.store.TransportNodesListShardStoreMetadata;
 import org.codelibs.fesen.plugins.MapperPlugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
  * Configures classes and services that are shared by indices on each node.
  */
@@ -82,8 +82,8 @@ public class IndicesModule extends AbstractModule {
     private final MapperRegistry mapperRegistry;
 
     public IndicesModule(List<MapperPlugin> mapperPlugins) {
-        this.mapperRegistry =
-                new MapperRegistry(getMappers(mapperPlugins), getMetadataMappers(mapperPlugins), getFieldFilter(mapperPlugins));
+        this.mapperRegistry = new MapperRegistry(getMappers(mapperPlugins), getMetadataMappers(mapperPlugins),
+                getFieldFilter(mapperPlugins));
         registerBuiltinWritables();
     }
 
@@ -99,12 +99,13 @@ public class IndicesModule extends AbstractModule {
 
     public static List<NamedXContentRegistry.Entry> getNamedXContents() {
         return Arrays.asList(
-                new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxAgeCondition.NAME),
-                        (p, c) -> MaxAgeCondition.fromXContent(p)),
-                new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxDocsCondition.NAME),
-                        (p, c) -> MaxDocsCondition.fromXContent(p)),
-                new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxSizeCondition.NAME),
-                        (p, c) -> MaxSizeCondition.fromXContent(p)));
+            new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxAgeCondition.NAME), (p, c) ->
+                MaxAgeCondition.fromXContent(p)),
+            new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxDocsCondition.NAME), (p, c) ->
+                MaxDocsCondition.fromXContent(p)),
+            new NamedXContentRegistry.Entry(Condition.class, new ParseField(MaxSizeCondition.NAME), (p, c) ->
+                MaxSizeCondition.fromXContent(p))
+        );
     }
 
     public static Map<String, Mapper.TypeParser> getMappers(List<MapperPlugin> mapperPlugins) {
@@ -214,7 +215,7 @@ public class IndicesModule extends AbstractModule {
     }
 
     private static Function<String, Predicate<String>> and(Function<String, Predicate<String>> first,
-            Function<String, Predicate<String>> second) {
+                                                           Function<String, Predicate<String>> second) {
         //the purpose of this method is to not chain no-op field predicates, so that we can easily find out when no plugins plug in
         //a field filter, hence skip the mappings filtering part as a whole, as it requires parsing mappings into a map.
         if (first == MapperPlugin.NOOP_FIELD_FILTER) {

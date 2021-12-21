@@ -38,8 +38,9 @@ import org.codelibs.fesen.transport.TransportService;
 public class GetPipelineTransportAction extends TransportMasterNodeReadAction<GetPipelineRequest, GetPipelineResponse> {
 
     @Inject
-    public GetPipelineTransportAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+    public GetPipelineTransportAction(ThreadPool threadPool, ClusterService clusterService,
+                                      TransportService transportService, ActionFilters actionFilters,
+                                      IndexNameExpressionResolver indexNameExpressionResolver) {
         super(GetPipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, GetPipelineRequest::new,
                 indexNameExpressionResolver);
     }

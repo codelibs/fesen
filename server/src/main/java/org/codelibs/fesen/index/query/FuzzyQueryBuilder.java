@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
@@ -36,6 +33,9 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.query.support.QueryParsers;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A Query that does fuzzy matching for a specific value.
@@ -216,8 +216,8 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
     }
 
     public FuzzyQueryBuilder transpositions(boolean transpositions) {
-        this.transpositions = transpositions;
-        return this;
+      this.transpositions = transpositions;
+      return this;
     }
 
     public boolean transpositions() {
@@ -305,8 +305,14 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
                 value = maybeConvertToBytesRef(parser.objectBytes());
             }
         }
-        return new FuzzyQueryBuilder(fieldName, value).fuzziness(fuzziness).prefixLength(prefixLength).maxExpansions(maxExpansions)
-                .transpositions(transpositions).rewrite(rewrite).boost(boost).queryName(queryName);
+        return new FuzzyQueryBuilder(fieldName, value)
+                .fuzziness(fuzziness)
+                .prefixLength(prefixLength)
+                .maxExpansions(maxExpansions)
+                .transpositions(transpositions)
+                .rewrite(rewrite)
+                .boost(boost)
+                .queryName(queryName);
     }
 
     @Override
@@ -335,7 +341,8 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
         String rewrite = this.rewrite;
         Query query = fieldType.fuzzyQuery(value, fuzziness, prefixLength, maxExpansions, transpositions, context);
         if (query instanceof MultiTermQuery) {
-            MultiTermQuery.RewriteMethod rewriteMethod = QueryParsers.parseRewriteMethod(rewrite, null, LoggingDeprecationHandler.INSTANCE);
+            MultiTermQuery.RewriteMethod rewriteMethod = QueryParsers.parseRewriteMethod(rewrite, null,
+                LoggingDeprecationHandler.INSTANCE);
             QueryParsers.setRewriteMethod((MultiTermQuery) query, rewriteMethod);
         }
         return query;
@@ -348,9 +355,12 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
 
     @Override
     protected boolean doEquals(FuzzyQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(value, other.value)
-                && Objects.equals(fuzziness, other.fuzziness) && Objects.equals(prefixLength, other.prefixLength)
-                && Objects.equals(maxExpansions, other.maxExpansions) && Objects.equals(transpositions, other.transpositions)
-                && Objects.equals(rewrite, other.rewrite);
+        return Objects.equals(fieldName, other.fieldName) &&
+                Objects.equals(value, other.value) &&
+                Objects.equals(fuzziness, other.fuzziness) &&
+                Objects.equals(prefixLength, other.prefixLength) &&
+                Objects.equals(maxExpansions, other.maxExpansions) &&
+                Objects.equals(transpositions, other.transpositions) &&
+                Objects.equals(rewrite, other.rewrite);
     }
 }

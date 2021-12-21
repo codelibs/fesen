@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.common;
 
-import static java.util.Collections.emptyMap;
-
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -30,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.codelibs.fesen.common.time.DateFormatter;
+
+import static java.util.Collections.emptyMap;
 
 public class Table {
 
@@ -56,6 +56,7 @@ public class Table {
         addCell("timestamp", "alias:ts,hms,hhmmss;desc:time in HH:MM:SS");
         return this;
     }
+
 
     public Table endHeaders() {
         if (currentCells == null || currentCells.isEmpty()) {

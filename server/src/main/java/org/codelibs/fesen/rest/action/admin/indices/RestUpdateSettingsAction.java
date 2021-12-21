@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.updateSettingsRequest;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -37,11 +32,18 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.updateSettingsRequest;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
 public class RestUpdateSettingsAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(PUT, "/{index}/_settings"), new Route(PUT, "/_settings")));
+        return unmodifiableList(asList(
+            new Route(PUT, "/{index}/_settings"),
+            new Route(PUT, "/_settings")));
     }
 
     @Override

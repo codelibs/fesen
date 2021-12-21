@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.template.get;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.ActionType;
@@ -34,6 +30,10 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Action to retrieve one or more component templates
@@ -55,8 +55,7 @@ public class GetComponentTemplateAction extends ActionType<GetComponentTemplateA
         @Nullable
         private String name;
 
-        public Request() {
-        }
+        public Request() { }
 
         public Request(String name) {
             this.name = name;
@@ -121,10 +120,8 @@ public class GetComponentTemplateAction extends ActionType<GetComponentTemplateA
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Response that = (Response) o;
             return Objects.equals(componentTemplates, that.componentTemplates);
         }

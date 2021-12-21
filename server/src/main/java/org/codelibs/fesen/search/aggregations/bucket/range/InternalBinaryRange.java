@@ -19,17 +19,8 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.util.BytesRef;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -39,8 +30,19 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.unmodifiableList;
+
 /** A range aggregation for data that is encoded in doc values using a binary representation. */
-public final class InternalBinaryRange extends InternalMultiBucketAggregation<InternalBinaryRange, InternalBinaryRange.Bucket>
+public final class InternalBinaryRange
+        extends InternalMultiBucketAggregation<InternalBinaryRange, InternalBinaryRange.Bucket>
         implements Range {
 
     public static class Bucket extends InternalMultiBucketAggregation.InternalBucket implements Range.Bucket {
@@ -52,8 +54,8 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
         private final long docCount;
         private final InternalAggregations aggregations;
 
-        public Bucket(DocValueFormat format, boolean keyed, String key, BytesRef from, BytesRef to, long docCount,
-                InternalAggregations aggregations) {
+        public Bucket(DocValueFormat format, boolean keyed, String key, BytesRef from, BytesRef to,
+                long docCount, InternalAggregations aggregations) {
             this.format = format;
             this.keyed = keyed;
             this.key = key != null ? key : generateKey(from, to, format);
@@ -64,13 +66,17 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
         }
 
         private static String generateKey(BytesRef from, BytesRef to, DocValueFormat format) {
-            StringBuilder builder = new StringBuilder().append(from == null ? "*" : format.format(from)).append("-")
-                    .append(to == null ? "*" : format.format(to));
+            StringBuilder builder = new StringBuilder()
+                .append(from == null ? "*" : format.format(from))
+                .append("-")
+                .append(to == null ? "*" : format.format(to));
             return builder.toString();
         }
 
         private static Bucket createFromStream(StreamInput in, DocValueFormat format, boolean keyed) throws IOException {
-            String key = in.readString();
+            String key = in.getVersion().onOrAfter(Version.V_6_4_0)
+                ? in.readString()
+                : in.readOptionalString();
 
             BytesRef from = in.readBoolean() ? in.readBytesRef() : null;
             BytesRef to = in.readBoolean() ? in.readBytesRef() : null;
@@ -82,7 +88,11 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
 
         @Override
         public void writeTo(StreamOutput out) throws IOException {
-            out.writeString(key);
+            if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+                out.writeString(key);
+            } else {
+                out.writeOptionalString(key);
+            }
             out.writeBoolean(from != null);
             if (from != null) {
                 out.writeBytesRef(from);
@@ -158,18 +168,17 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             Bucket bucket = (Bucket) o;
 
-            if (docCount != bucket.docCount)
-                return false;
+            if (docCount != bucket.docCount) return false;
             // keyed and format are ignored since they are already tested on the InternalBinaryRange object
-            return Objects.equals(key, bucket.key) && Objects.equals(from, bucket.from) && Objects.equals(to, bucket.to)
-                    && Objects.equals(aggregations, bucket.aggregations);
+            return Objects.equals(key, bucket.key) &&
+                Objects.equals(from, bucket.from) &&
+                Objects.equals(to, bucket.to) &&
+                Objects.equals(aggregations, bucket.aggregations);
         }
 
         @Override
@@ -263,7 +272,8 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
     }
 
     @Override
-    public XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
+    public XContentBuilder doXContentBody(XContentBuilder builder,
+            Params params) throws IOException {
         if (keyed) {
             builder.startObject(CommonFields.BUCKETS.getPreferredName());
         } else {
@@ -280,17 +290,17 @@ public final class InternalBinaryRange extends InternalMultiBucketAggregation<In
         return builder;
     }
 
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalBinaryRange that = (InternalBinaryRange) obj;
-        return Objects.equals(buckets, that.buckets) && Objects.equals(format, that.format) && Objects.equals(keyed, that.keyed);
+        return Objects.equals(buckets, that.buckets)
+            && Objects.equals(format, that.format)
+            && Objects.equals(keyed, that.keyed);
     }
 
     public int hashCode() {

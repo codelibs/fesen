@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsRequest;
@@ -46,18 +36,31 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestStatus.NOT_FOUND;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
 public class RestGetFieldMappingAction extends BaseRestHandler {
 
     private static final Logger logger = LogManager.getLogger(RestGetFieldMappingAction.class);
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(logger.getName());
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in get "
-            + "field mapping requests is deprecated. The parameter will be removed in the next major version.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in get " +
+        "field mapping requests is deprecated. The parameter will be removed in the next major version.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_mapping/field/{fields}"), new Route(GET, "/_mapping/{type}/field/{fields}"),
-                new Route(GET, "/{index}/_mapping/field/{fields}"), new Route(GET, "/{index}/{type}/_mapping/field/{fields}"),
-                new Route(GET, "/{index}/_mapping/{type}/field/{fields}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_mapping/field/{fields}"),
+            new Route(GET, "/_mapping/{type}/field/{fields}"),
+            new Route(GET, "/{index}/_mapping/field/{fields}"),
+            new Route(GET, "/{index}/{type}/_mapping/field/{fields}"),
+            new Route(GET, "/{index}/_mapping/{type}/field/{fields}")));
     }
 
     @Override
@@ -73,7 +76,8 @@ public class RestGetFieldMappingAction extends BaseRestHandler {
 
         boolean includeTypeName = request.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
         if (includeTypeName == false && types.length > 0) {
-            throw new IllegalArgumentException("Types cannot be specified unless include_type_name" + " is set to true.");
+            throw new IllegalArgumentException("Types cannot be specified unless include_type_name" +
+                " is set to true.");
         }
         if (request.hasParam(INCLUDE_TYPE_NAME_PARAMETER)) {
             deprecationLogger.deprecate("get_field_mapping_with_types", TYPES_DEPRECATION_MESSAGE);
@@ -84,12 +88,13 @@ public class RestGetFieldMappingAction extends BaseRestHandler {
         getMappingsRequest.indicesOptions(IndicesOptions.fromRequest(request, getMappingsRequest.indicesOptions()));
 
         if (request.hasParam("local")) {
-            deprecationLogger.deprecate("get_field_mapping_local", "Use [local] in get field mapping requests is deprecated. "
+            deprecationLogger.deprecate("get_field_mapping_local",
+                "Use [local] in get field mapping requests is deprecated. "
                     + "The parameter will be removed in the next major version");
         }
         getMappingsRequest.local(request.paramAsBoolean("local", getMappingsRequest.local()));
-        return channel -> client.admin().indices().getFieldMappings(getMappingsRequest,
-                new RestBuilderListener<GetFieldMappingsResponse>(channel) {
+        return channel ->
+                client.admin().indices().getFieldMappings(getMappingsRequest, new RestBuilderListener<GetFieldMappingsResponse>(channel) {
                     @Override
                     public RestResponse buildResponse(GetFieldMappingsResponse response, XContentBuilder builder) throws Exception {
                         Map<String, Map<String, Map<String, FieldMappingMetadata>>> mappingsByIndex = response.mappings();

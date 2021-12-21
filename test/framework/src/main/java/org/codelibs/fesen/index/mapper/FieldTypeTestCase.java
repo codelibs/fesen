@@ -18,16 +18,19 @@
  */
 package org.codelibs.fesen.index.mapper;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.ValueFetcher;
+import org.codelibs.fesen.index.query.QueryShardContext;
+import org.codelibs.fesen.search.lookup.SourceLookup;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.codelibs.fesen.index.query.QueryShardContext;
-import org.codelibs.fesen.search.lookup.SourceLookup;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /** Base test case for subclasses of MappedFieldType */
 public abstract class FieldTypeTestCase extends ESTestCase {

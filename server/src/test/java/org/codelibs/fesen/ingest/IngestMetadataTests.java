@@ -43,10 +43,12 @@ import static org.hamcrest.Matchers.not;
 public class IngestMetadataTests extends ESTestCase {
 
     public void testFromXContent() throws IOException {
-        PipelineConfiguration pipeline = new PipelineConfiguration("1",
-                new BytesArray("{\"processors\": [{\"set\" : {\"field\": \"_field\", \"value\": \"_value\"}}]}"), XContentType.JSON);
-        PipelineConfiguration pipeline2 = new PipelineConfiguration("2",
-                new BytesArray("{\"processors\": [{\"set\" : {\"field\": \"_field1\", \"value\": \"_value1\"}}]}"), XContentType.JSON);
+        PipelineConfiguration pipeline = new PipelineConfiguration(
+            "1", new BytesArray("{\"processors\": [{\"set\" : {\"field\": \"_field\", \"value\": \"_value\"}}]}"), XContentType.JSON
+        );
+        PipelineConfiguration pipeline2 = new PipelineConfiguration(
+            "2", new BytesArray("{\"processors\": [{\"set\" : {\"field\": \"_field1\", \"value\": \"_value1\"}}]}"), XContentType.JSON
+        );
         Map<String, PipelineConfiguration> map = new HashMap<>();
         map.put(pipeline.getId(), pipeline);
         map.put(pipeline2.getId(), pipeline2);
@@ -84,11 +86,11 @@ public class IngestMetadataTests extends ESTestCase {
         IngestMetadata ingestMetadata2 = new IngestMetadata(pipelines);
 
         IngestMetadata.IngestMetadataDiff diff = (IngestMetadata.IngestMetadataDiff) ingestMetadata2.diff(ingestMetadata1);
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getDeletes().size(), equalTo(1));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getDeletes().get(0), equalTo("2"));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getUpserts().size(), equalTo(2));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getUpserts().containsKey("3"), is(true));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getUpserts().containsKey("4"), is(true));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getDeletes().size(), equalTo(1));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getDeletes().get(0), equalTo("2"));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getUpserts().size(), equalTo(2));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getUpserts().containsKey("3"), is(true));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getUpserts().containsKey("4"), is(true));
 
         IngestMetadata endResult = (IngestMetadata) diff.apply(ingestMetadata2);
         assertThat(endResult, not(equalTo(ingestMetadata1)));
@@ -103,8 +105,8 @@ public class IngestMetadataTests extends ESTestCase {
         IngestMetadata ingestMetadata3 = new IngestMetadata(pipelines);
 
         diff = (IngestMetadata.IngestMetadataDiff) ingestMetadata3.diff(ingestMetadata1);
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getDeletes().size(), equalTo(0));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getUpserts().size(), equalTo(0));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getDeletes().size(), equalTo(0));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getUpserts().size(), equalTo(0));
 
         endResult = (IngestMetadata) diff.apply(ingestMetadata3);
         assertThat(endResult, equalTo(ingestMetadata1));
@@ -118,14 +120,14 @@ public class IngestMetadataTests extends ESTestCase {
         IngestMetadata ingestMetadata4 = new IngestMetadata(pipelines);
 
         diff = (IngestMetadata.IngestMetadataDiff) ingestMetadata4.diff(ingestMetadata1);
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getDiffs().size(), equalTo(1));
-        assertThat(((DiffableUtils.MapDiff) diff.pipelines).getDiffs().containsKey("2"), is(true));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getDiffs().size(), equalTo(1));
+        assertThat(((DiffableUtils.MapDiff)diff.pipelines).getDiffs().containsKey("2"), is(true));
 
         endResult = (IngestMetadata) diff.apply(ingestMetadata4);
         assertThat(endResult, not(equalTo(ingestMetadata1)));
         assertThat(endResult.getPipelines().size(), equalTo(2));
         assertThat(endResult.getPipelines().get("1"), equalTo(new PipelineConfiguration("1", pipelineConfig, XContentType.JSON)));
         assertThat(endResult.getPipelines().get("2"),
-                equalTo(new PipelineConfiguration("2", new BytesArray("{\"key\" : \"value\"}"), XContentType.JSON)));
+            equalTo(new PipelineConfiguration("2", new BytesArray("{\"key\" : \"value\"}"), XContentType.JSON)));
     }
 }

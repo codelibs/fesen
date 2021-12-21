@@ -28,7 +28,8 @@ public class EvictingQueueTests extends ESTestCase {
         try {
             new EvictingQueue<>(-1);
             fail();
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalArgumentException expected) {
+        }
     }
 
     public void testCreateWithZeroSize() throws Exception {

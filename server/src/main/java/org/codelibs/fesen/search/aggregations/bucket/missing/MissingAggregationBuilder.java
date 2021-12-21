@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.missing;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -38,10 +35,15 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<MissingAggregationBuilder> {
     public static final String NAME = "missing";
-    public static final ValuesSourceRegistry.RegistryKey<MissingAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, MissingAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<MissingAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        MissingAggregatorSupplier.class
+    );
 
     public static final ObjectParser<MissingAggregationBuilder, String> PARSER =
             ObjectParser.fromBuilder(NAME, MissingAggregationBuilder::new);
@@ -57,8 +59,9 @@ public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<Mi
         super(name);
     }
 
-    protected MissingAggregationBuilder(MissingAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected MissingAggregationBuilder(MissingAggregationBuilder clone,
+                                        AggregatorFactories.Builder factoriesBuilder,
+                                        Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -95,8 +98,10 @@ public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<Mi
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                       ValuesSourceConfig config,
+                                                       AggregatorFactory parent,
+                                                       AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new MissingAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

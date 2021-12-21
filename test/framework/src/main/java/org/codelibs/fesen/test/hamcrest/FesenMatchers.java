@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.test.hamcrest;
 
-import java.util.function.Function;
-
 import org.codelibs.fesen.search.SearchHit;
 import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.CombinableMatcher;
+
+import java.util.function.Function;
 
 public class FesenMatchers {
 

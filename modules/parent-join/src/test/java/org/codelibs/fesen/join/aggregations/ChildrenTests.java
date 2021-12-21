@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.join.aggregations;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.codelibs.fesen.join.ParentJoinPlugin;
+import org.codelibs.fesen.join.aggregations.ChildrenAggregationBuilder;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.search.aggregations.BaseAggregationTestCase;
 import org.codelibs.fesen.test.TestGeoShapeFieldMapperPlugin;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 public class ChildrenTests extends BaseAggregationTestCase<ChildrenAggregationBuilder> {
 

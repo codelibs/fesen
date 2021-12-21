@@ -50,7 +50,7 @@ public class ComposableIndexTemplateMetadataTests extends AbstractNamedWriteable
     @Override
     protected NamedWriteableRegistry getNamedWriteableRegistry() {
         return new NamedWriteableRegistry(Collections.singletonList(new NamedWriteableRegistry.Entry(ComposableIndexTemplateMetadata.class,
-                ComposableIndexTemplateMetadata.TYPE, ComposableIndexTemplateMetadata::new)));
+            ComposableIndexTemplateMetadata.TYPE, ComposableIndexTemplateMetadata::new)));
     }
 
     @Override

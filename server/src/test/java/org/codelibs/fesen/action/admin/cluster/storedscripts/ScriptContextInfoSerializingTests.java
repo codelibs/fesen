@@ -47,9 +47,8 @@ public class ScriptContextInfoSerializingTests extends AbstractSerializingTestCa
     }
 
     @Override
-    protected Writeable.Reader<ScriptContextInfo> instanceReader() {
-        return ScriptContextInfo::new;
-    }
+    protected Writeable.Reader<ScriptContextInfo> instanceReader() { return ScriptContextInfo::new; }
+
 
     @Override
     protected ScriptContextInfo mutateInstance(ScriptContextInfo instance) throws IOException {
@@ -62,15 +61,24 @@ public class ScriptContextInfoSerializingTests extends AbstractSerializingTestCa
             names.add(instance.name);
         }
         switch (randomIntBetween(0, 2)) {
-        case 0:
-            return new ScriptContextInfo(
-                    randomValueOtherThanMany(names::contains, () -> randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH)), instance.execute,
-                    instance.getters);
-        case 1:
-            return new ScriptContextInfo(instance.name, ScriptMethodInfoSerializingTests.mutate(instance.execute), instance.getters);
-        default:
-            return new ScriptContextInfo(instance.name, instance.execute,
-                    ScriptMethodInfoSerializingTests.mutateOneGetter(instance.getters));
+            case 0:
+                return new ScriptContextInfo(
+                    randomValueOtherThanMany(names::contains, () -> randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH)),
+                    instance.execute,
+                    instance.getters
+                );
+            case 1:
+                return new ScriptContextInfo(
+                    instance.name,
+                    ScriptMethodInfoSerializingTests.mutate(instance.execute),
+                    instance.getters
+                );
+            default:
+                return new ScriptContextInfo(
+                    instance.name,
+                    instance.execute,
+                    ScriptMethodInfoSerializingTests.mutateOneGetter(instance.getters)
+                );
         }
     }
 
@@ -85,9 +93,11 @@ public class ScriptContextInfoSerializingTests extends AbstractSerializingTestCa
     }
 
     static ScriptContextInfo randomInstance() {
-        return new ScriptContextInfo(randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH),
-                ScriptMethodInfoSerializingTests.randomInstance(ScriptMethodInfoSerializingTests.NameType.EXECUTE),
-                ScriptMethodInfoSerializingTests.randomGetterInstances());
+        return new ScriptContextInfo(
+            randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH),
+            ScriptMethodInfoSerializingTests.randomInstance(ScriptMethodInfoSerializingTests.NameType.EXECUTE),
+            ScriptMethodInfoSerializingTests.randomGetterInstances()
+        );
     }
 
     static Set<ScriptContextInfo> randomInstances() {
@@ -97,9 +107,11 @@ public class ScriptContextInfoSerializingTests extends AbstractSerializingTestCa
         for (int i = 0; i < size; i++) {
             String name = randomValueOtherThanMany(names::contains, () -> randomAlphaOfLengthBetween(MIN_LENGTH, MAX_LENGTH));
             names.add(name);
-            instances.add(new ScriptContextInfo(name,
-                    ScriptMethodInfoSerializingTests.randomInstance(ScriptMethodInfoSerializingTests.NameType.EXECUTE),
-                    ScriptMethodInfoSerializingTests.randomGetterInstances()));
+            instances.add(new ScriptContextInfo(
+                name,
+                ScriptMethodInfoSerializingTests.randomInstance(ScriptMethodInfoSerializingTests.NameType.EXECUTE),
+                ScriptMethodInfoSerializingTests.randomGetterInstances()
+            ));
         }
         return Collections.unmodifiableSet(instances);
     }

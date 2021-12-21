@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.cli;
 
+import org.codelibs.fesen.cli.Command;
+import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
 

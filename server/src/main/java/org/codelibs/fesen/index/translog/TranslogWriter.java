@@ -19,20 +19,8 @@
 
 package org.codelibs.fesen.index.translog;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.LongConsumer;
-import java.util.function.LongSupplier;
-
+import com.carrotsearch.hppc.LongArrayList;
+import com.carrotsearch.hppc.procedures.LongProcedure;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefIterator;
@@ -53,8 +41,19 @@ import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.ShardId;
 
-import com.carrotsearch.hppc.LongArrayList;
-import com.carrotsearch.hppc.procedures.LongProcedure;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.LongConsumer;
+import java.util.function.LongSupplier;
 
 public class TranslogWriter extends BaseTranslogReader implements Closeable {
 
@@ -93,14 +92,24 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
 
     private final Map<Long, Tuple<BytesReference, Exception>> seenSequenceNumbers;
 
-    private TranslogWriter(final ShardId shardId, final Checkpoint initialCheckpoint, final FileChannel channel,
-            final FileChannel checkpointChannel, final Path path, final Path checkpointPath, final ByteSizeValue bufferSize,
-            final LongSupplier globalCheckpointSupplier, LongSupplier minTranslogGenerationSupplier, TranslogHeader header,
-            final TragicExceptionHolder tragedy, final LongConsumer persistedSequenceNumberConsumer, final BigArrays bigArrays)
-            throws IOException {
+    private TranslogWriter(
+        final ShardId shardId,
+        final Checkpoint initialCheckpoint,
+        final FileChannel channel,
+        final FileChannel checkpointChannel,
+        final Path path,
+        final Path checkpointPath,
+        final ByteSizeValue bufferSize,
+        final LongSupplier globalCheckpointSupplier, LongSupplier minTranslogGenerationSupplier, TranslogHeader header,
+        final TragicExceptionHolder tragedy,
+        final LongConsumer persistedSequenceNumberConsumer,
+        final BigArrays bigArrays)
+            throws
+            IOException {
         super(initialCheckpoint.generation, channel, path, header);
-        assert initialCheckpoint.offset == channel.position() : "initial checkpoint offset [" + initialCheckpoint.offset
-                + "] is different than current channel position [" + channel.position() + "]";
+        assert initialCheckpoint.offset == channel.position() :
+            "initial checkpoint offset [" + initialCheckpoint.offset + "] is different than current channel position ["
+                + channel.position() + "]";
         this.forceWriteThreshold = Math.toIntExact(bufferSize.getBytes());
         this.shardId = shardId;
         this.checkpointChannel = checkpointChannel;
@@ -121,10 +130,11 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
     }
 
     public static TranslogWriter create(ShardId shardId, String translogUUID, long fileGeneration, Path file, ChannelFactory channelFactory,
-            ByteSizeValue bufferSize, final long initialMinTranslogGen, long initialGlobalCheckpoint,
-            final LongSupplier globalCheckpointSupplier, final LongSupplier minTranslogGenerationSupplier, final long primaryTerm,
-            TragicExceptionHolder tragedy, final LongConsumer persistedSequenceNumberConsumer, final BigArrays bigArrays)
-            throws IOException {
+                                        ByteSizeValue bufferSize, final long initialMinTranslogGen, long initialGlobalCheckpoint,
+                                        final LongSupplier globalCheckpointSupplier, final LongSupplier minTranslogGenerationSupplier,
+                                        final long primaryTerm, TragicExceptionHolder tragedy,
+                                        final LongConsumer persistedSequenceNumberConsumer, final BigArrays bigArrays)
+        throws IOException {
         final Path checkpointFile = file.getParent().resolve(Translog.CHECKPOINT_FILE_NAME);
 
         final FileChannel channel = channelFactory.open(file);
@@ -133,23 +143,22 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
             checkpointChannel = channelFactory.open(checkpointFile, StandardOpenOption.WRITE);
             final TranslogHeader header = new TranslogHeader(translogUUID, primaryTerm);
             header.write(channel);
-            final Checkpoint checkpoint = Checkpoint.emptyTranslogCheckpoint(header.sizeInBytes(), fileGeneration, initialGlobalCheckpoint,
-                    initialMinTranslogGen);
+            final Checkpoint checkpoint = Checkpoint.emptyTranslogCheckpoint(header.sizeInBytes(), fileGeneration,
+                initialGlobalCheckpoint, initialMinTranslogGen);
             writeCheckpoint(checkpointChannel, checkpointFile, checkpoint);
             final LongSupplier writerGlobalCheckpointSupplier;
             if (Assertions.ENABLED) {
                 writerGlobalCheckpointSupplier = () -> {
                     long gcp = globalCheckpointSupplier.getAsLong();
-                    assert gcp >= initialGlobalCheckpoint : "global checkpoint [" + gcp + "] lower than initial gcp ["
-                            + initialGlobalCheckpoint + "]";
+                    assert gcp >= initialGlobalCheckpoint :
+                        "global checkpoint [" + gcp + "] lower than initial gcp [" + initialGlobalCheckpoint + "]";
                     return gcp;
                 };
             } else {
                 writerGlobalCheckpointSupplier = globalCheckpointSupplier;
             }
             return new TranslogWriter(shardId, checkpoint, channel, checkpointChannel, file, checkpointFile, bufferSize,
-                    writerGlobalCheckpointSupplier, minTranslogGenerationSupplier, header, tragedy, persistedSequenceNumberConsumer,
-                    bigArrays);
+                writerGlobalCheckpointSupplier, minTranslogGenerationSupplier, header, tragedy, persistedSequenceNumberConsumer, bigArrays);
         } catch (Exception exception) {
             // if we fail to bake the file-generation into the checkpoint we stick with the file and once we recover and that
             // file exists we remove it. We only apply this logic to the checkpoint.generation+1 any other file with a higher generation
@@ -218,52 +227,57 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
         } else if (seenSequenceNumbers.containsKey(seqNo)) {
             final Tuple<BytesReference, Exception> previous = seenSequenceNumbers.get(seqNo);
             if (previous.v1().equals(data) == false) {
-                Translog.Operation newOp = Translog.readOperation(new BufferedChecksumStreamInput(data.streamInput(), "assertion"));
-                Translog.Operation prvOp =
-                        Translog.readOperation(new BufferedChecksumStreamInput(previous.v1().streamInput(), "assertion"));
+                Translog.Operation newOp = Translog.readOperation(
+                    new BufferedChecksumStreamInput(data.streamInput(), "assertion"));
+                Translog.Operation prvOp = Translog.readOperation(
+                    new BufferedChecksumStreamInput(previous.v1().streamInput(), "assertion"));
                 // TODO: We haven't had timestamp for Index operations in Lucene yet, we need to loosen this check without timestamp.
                 final boolean sameOp;
                 if (newOp instanceof Translog.Index && prvOp instanceof Translog.Index) {
                     final Translog.Index o1 = (Translog.Index) prvOp;
                     final Translog.Index o2 = (Translog.Index) newOp;
                     sameOp = Objects.equals(o1.id(), o2.id()) && Objects.equals(o1.type(), o2.type())
-                            && Objects.equals(o1.source(), o2.source()) && Objects.equals(o1.routing(), o2.routing())
-                            && o1.primaryTerm() == o2.primaryTerm() && o1.seqNo() == o2.seqNo() && o1.version() == o2.version();
+                        && Objects.equals(o1.source(), o2.source()) && Objects.equals(o1.routing(), o2.routing())
+                        && o1.primaryTerm() == o2.primaryTerm() && o1.seqNo() == o2.seqNo()
+                        && o1.version() == o2.version();
                 } else if (newOp instanceof Translog.Delete && prvOp instanceof Translog.Delete) {
                     final Translog.Delete o1 = (Translog.Delete) newOp;
                     final Translog.Delete o2 = (Translog.Delete) prvOp;
                     sameOp = Objects.equals(o1.id(), o2.id()) && Objects.equals(o1.type(), o2.type())
-                            && o1.primaryTerm() == o2.primaryTerm() && o1.seqNo() == o2.seqNo() && o1.version() == o2.version();
+                        && o1.primaryTerm() == o2.primaryTerm() && o1.seqNo() == o2.seqNo() && o1.version() == o2.version();
                 } else {
                     sameOp = false;
                 }
                 if (sameOp == false) {
-                    throw new AssertionError("seqNo [" + seqNo + "] was processed twice in generation [" + generation
-                            + "], with different data. " + "prvOp [" + prvOp + "], newOp [" + newOp + "]", previous.v2());
+                    throw new AssertionError(
+                        "seqNo [" + seqNo + "] was processed twice in generation [" + generation + "], with different data. " +
+                            "prvOp [" + prvOp + "], newOp [" + newOp + "]", previous.v2());
                 }
             }
         } else {
             seenSequenceNumbers.put(seqNo,
-                    new Tuple<>(new BytesArray(data.toBytesRef(), true), new RuntimeException("stack capture previous op")));
+                new Tuple<>(new BytesArray(data.toBytesRef(), true), new RuntimeException("stack capture previous op")));
         }
         return true;
     }
 
     synchronized boolean assertNoSeqAbove(long belowTerm, long aboveSeqNo) {
-        seenSequenceNumbers.entrySet().stream().filter(e -> e.getKey().longValue() > aboveSeqNo).forEach(e -> {
-            final Translog.Operation op;
-            try {
-                op = Translog.readOperation(new BufferedChecksumStreamInput(e.getValue().v1().streamInput(), "assertion"));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            long seqNo = op.seqNo();
-            long primaryTerm = op.primaryTerm();
-            if (primaryTerm < belowTerm) {
-                throw new AssertionError("current should not have any operations with seq#:primaryTerm [" + seqNo + ":" + primaryTerm
-                        + "] > " + aboveSeqNo + ":" + belowTerm);
-            }
-        });
+        seenSequenceNumbers.entrySet().stream().filter(e -> e.getKey().longValue() > aboveSeqNo)
+            .forEach(e -> {
+                final Translog.Operation op;
+                try {
+                    op = Translog.readOperation(
+                        new BufferedChecksumStreamInput(e.getValue().v1().streamInput(), "assertion"));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                long seqNo = op.seqNo();
+                long primaryTerm = op.primaryTerm();
+                if (primaryTerm < belowTerm) {
+                    throw new AssertionError("current should not have any operations with seq#:primaryTerm ["
+                        + seqNo + ":" + primaryTerm + "] > " + aboveSeqNo + ":" + belowTerm);
+                }
+            });
         return true;
     }
 
@@ -282,8 +296,9 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
      * checkpoint has not yet been fsynced
      */
     public boolean syncNeeded() {
-        return totalOffset != lastSyncedCheckpoint.offset || globalCheckpointSupplier.getAsLong() != lastSyncedCheckpoint.globalCheckpoint
-                || minTranslogGenerationSupplier.getAsLong() != lastSyncedCheckpoint.minTranslogGeneration;
+        return totalOffset != lastSyncedCheckpoint.offset ||
+            globalCheckpointSupplier.getAsLong() != lastSyncedCheckpoint.globalCheckpoint ||
+            minTranslogGenerationSupplier.getAsLong() != lastSyncedCheckpoint.minTranslogGeneration;
     }
 
     @Override
@@ -293,8 +308,9 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
 
     @Override
     synchronized Checkpoint getCheckpoint() {
-        return new Checkpoint(totalOffset, operationCounter, generation, minSeqNo, maxSeqNo, globalCheckpointSupplier.getAsLong(),
-                minTranslogGenerationSupplier.getAsLong(), SequenceNumbers.UNASSIGNED_SEQ_NO);
+        return new Checkpoint(totalOffset, operationCounter, generation, minSeqNo, maxSeqNo,
+            globalCheckpointSupplier.getAsLong(), minTranslogGenerationSupplier.getAsLong(),
+            SequenceNumbers.UNASSIGNED_SEQ_NO);
     }
 
     @Override
@@ -338,12 +354,13 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
                         return new TranslogReader(getLastSyncedCheckpoint(), channel, path, header);
                     } else {
                         throw new AlreadyClosedException("translog [" + getGeneration() + "] is already closed (path [" + path + "]",
-                                tragedy.get());
+                            tragedy.get());
                     }
                 }
             }
         }
     }
+
 
     @Override
     public TranslogSnapshot newSnapshot() {
@@ -415,8 +432,8 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
                         throw ex;
                     }
                     flushedSequenceNumbers.forEach((LongProcedure) persistedSequenceNumberConsumer::accept);
-                    assert lastSyncedCheckpoint.offset <= checkpointToSync.offset : "illegal state: " + lastSyncedCheckpoint.offset + " <= "
-                            + checkpointToSync.offset;
+                    assert lastSyncedCheckpoint.offset <= checkpointToSync.offset :
+                        "illegal state: " + lastSyncedCheckpoint.offset + " <= " + checkpointToSync.offset;
                     lastSyncedCheckpoint = checkpointToSync; // write protected by syncLock
                     return true;
                 }
@@ -431,7 +448,7 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
                 if (locked != null && offset > getWrittenOffset()) {
                     writeAndReleaseOps(pollOpsToWrite());
                 }
-            } catch (Exception e) {
+            } catch (Exception e){
                 closeWithTragicEvent(e);
                 throw e;
             }
@@ -501,8 +518,10 @@ public class TranslogWriter extends BaseTranslogReader implements Closeable {
         Channels.readFromFileChannelWithEofException(channel, position, targetBuffer);
     }
 
-    private static void writeCheckpoint(final FileChannel fileChannel, final Path checkpointFile, final Checkpoint checkpoint)
-            throws IOException {
+    private static void writeCheckpoint(
+        final FileChannel fileChannel,
+        final Path checkpointFile,
+        final Checkpoint checkpoint) throws IOException {
         Checkpoint.write(fileChannel, checkpointFile, checkpoint);
     }
 

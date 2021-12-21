@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.common.util;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.lucene.util.SetOnce;
 import org.apache.lucene.util.ThreadInterruptedException;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A utility class for multi threaded operation that needs to be cancellable via interrupts. Every cancellable operation should be
@@ -92,7 +92,6 @@ public class CancellableThreads {
             throw new RuntimeException("unexpected IO exception", e);
         }
     }
-
     /**
      * run the Interruptible, capturing the executing thread. Concurrent calls to {@link #cancel(String)} will interrupt this thread
      * causing the call to prematurely return.
@@ -145,6 +144,7 @@ public class CancellableThreads {
 
     }
 
+
     private synchronized void remove() {
         threads.remove(Thread.currentThread());
     }
@@ -164,6 +164,7 @@ public class CancellableThreads {
         }
         threads.clear();
     }
+
 
     public interface Interruptible extends IOInterruptible {
         void run() throws InterruptedException;

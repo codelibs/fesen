@@ -35,21 +35,32 @@ import org.codelibs.fesen.search.internal.SearchContext;
 
 class GeoCentroidAggregatorFactory extends ValuesSourceAggregatorFactory {
 
-    GeoCentroidAggregatorFactory(String name, ValuesSourceConfig config, QueryShardContext queryShardContext, AggregatorFactory parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
+    GeoCentroidAggregatorFactory(String name,
+                                    ValuesSourceConfig config,
+                                    QueryShardContext queryShardContext,
+                                    AggregatorFactory parent,
+                                    AggregatorFactories.Builder subFactoriesBuilder,
+                                    Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
+    protected Aggregator createUnmapped(SearchContext searchContext,
+                                            Aggregator parent,
+                                            Map<String, Object> metadata) throws IOException {
         return new GeoCentroidAggregator(name, config, searchContext, parent, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
-            Map<String, Object> metadata) throws IOException {
-        return queryShardContext.getValuesSourceRegistry().getAggregator(GeoCentroidAggregationBuilder.REGISTRY_KEY, config).build(name,
-                config, searchContext, parent, metadata);
+    protected Aggregator doCreateInternal(
+        SearchContext searchContext,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
+        return queryShardContext.getValuesSourceRegistry()
+            .getAggregator(GeoCentroidAggregationBuilder.REGISTRY_KEY, config)
+            .build(name, config, searchContext, parent, metadata);
     }
 
     static void registerAggregators(ValuesSourceRegistry.Builder builder) {

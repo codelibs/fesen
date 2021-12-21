@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
+
+import java.io.IOException;
 
 public class ParsedSampler extends ParsedSingleBucketAggregation implements Sampler {
 

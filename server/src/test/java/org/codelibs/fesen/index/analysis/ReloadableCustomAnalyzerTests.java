@@ -50,31 +50,31 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
     private static TestAnalysis testAnalysis;
     private static Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
 
-    private static TokenFilterFactory NO_OP_SEARCH_TIME_FILTER =
-            new AbstractTokenFilterFactory(IndexSettingsModule.newIndexSettings("index", settings), "my_filter", Settings.EMPTY) {
-                @Override
-                public AnalysisMode getAnalysisMode() {
-                    return AnalysisMode.SEARCH_TIME;
-                }
+    private static TokenFilterFactory NO_OP_SEARCH_TIME_FILTER = new AbstractTokenFilterFactory(
+            IndexSettingsModule.newIndexSettings("index", settings), "my_filter", Settings.EMPTY) {
+        @Override
+        public AnalysisMode getAnalysisMode() {
+            return AnalysisMode.SEARCH_TIME;
+        }
 
-                @Override
-                public TokenStream create(TokenStream tokenStream) {
-                    return tokenStream;
-                }
-            };
+        @Override
+        public TokenStream create(TokenStream tokenStream) {
+            return tokenStream;
+        }
+    };
 
-    private static TokenFilterFactory LOWERCASE_SEARCH_TIME_FILTER =
-            new AbstractTokenFilterFactory(IndexSettingsModule.newIndexSettings("index", settings), "my_other_filter", Settings.EMPTY) {
-                @Override
-                public AnalysisMode getAnalysisMode() {
-                    return AnalysisMode.SEARCH_TIME;
-                }
+    private static TokenFilterFactory LOWERCASE_SEARCH_TIME_FILTER = new AbstractTokenFilterFactory(
+            IndexSettingsModule.newIndexSettings("index", settings), "my_other_filter", Settings.EMPTY) {
+        @Override
+        public AnalysisMode getAnalysisMode() {
+            return AnalysisMode.SEARCH_TIME;
+        }
 
-                @Override
-                public TokenStream create(TokenStream tokenStream) {
-                    return new LowerCaseFilter(tokenStream);
-                }
-            };
+        @Override
+        public TokenStream create(TokenStream tokenStream) {
+            return new LowerCaseFilter(tokenStream);
+        }
+    };
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -88,7 +88,10 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
         int positionIncrementGap = randomInt();
         int offsetGap = randomInt();
 
-        Settings analyzerSettings = Settings.builder().put("tokenizer", "standard").putList("filter", "my_filter").build();
+        Settings analyzerSettings = Settings.builder()
+                .put("tokenizer", "standard")
+                .putList("filter", "my_filter")
+                .build();
 
         AnalyzerComponents components = createComponents("my_analyzer", analyzerSettings, testAnalysis.tokenizer, testAnalysis.charFilter,
                 Collections.singletonMap("my_filter", NO_OP_SEARCH_TIME_FILTER));
@@ -104,7 +107,10 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
         }
 
         // check that when using regular non-search time filters only, we get an exception
-        final Settings indexAnalyzerSettings = Settings.builder().put("tokenizer", "standard").putList("filter", "lowercase").build();
+        final Settings indexAnalyzerSettings = Settings.builder()
+                .put("tokenizer", "standard")
+                .putList("filter", "lowercase")
+                .build();
         AnalyzerComponents indexAnalyzerComponents = createComponents("my_analyzer", indexAnalyzerSettings, testAnalysis.tokenizer,
                 testAnalysis.charFilter, testAnalysis.tokenFilter);
         IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
@@ -117,7 +123,10 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
      * start multiple threads that create token streams from this analyzer until reloaded tokenfilter takes effect
      */
     public void testReloading() throws IOException, InterruptedException {
-        Settings analyzerSettings = Settings.builder().put("tokenizer", "standard").putList("filter", "my_filter").build();
+        Settings analyzerSettings = Settings.builder()
+                .put("tokenizer", "standard")
+                .putList("filter", "my_filter")
+                .build();
 
         AnalyzerComponents components = createComponents("my_analyzer", analyzerSettings, testAnalysis.tokenizer, testAnalysis.charFilter,
                 Collections.singletonMap("my_filter", NO_OP_SEARCH_TIME_FILTER));

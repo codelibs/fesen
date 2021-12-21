@@ -18,12 +18,8 @@
  */
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.document.FieldType;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.geo.builders.ShapeBuilder;
@@ -32,6 +28,11 @@ import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.support.XContentMapValues;
 import org.codelibs.fesen.index.mapper.LegacyGeoShapeFieldMapper.DeprecatedParameters;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for {@link GeoShapeFieldMapper} and {@link LegacyGeoShapeFieldMapper}
@@ -48,8 +49,8 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
         public static final Explicit<Boolean> COERCE = new Explicit<>(false, false);
     }
 
-    public abstract static class Builder<T extends Builder<T, FT>, FT extends AbstractShapeGeometryFieldType>
-            extends AbstractGeometryFieldMapper.Builder<T, FT> {
+    public abstract static class Builder<T extends Builder<T, FT>,
+            FT extends AbstractShapeGeometryFieldType> extends AbstractGeometryFieldMapper.Builder<T, FT> {
         protected Boolean coerce;
         protected Orientation orientation;
 
@@ -58,8 +59,8 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
             super(name, fieldType);
         }
 
-        public Builder(String name, FieldType fieldType, boolean coerce, boolean ignoreMalformed, Orientation orientation,
-                boolean ignoreZ) {
+        public Builder(String name, FieldType fieldType,
+                       boolean coerce, boolean ignoreMalformed, Orientation orientation, boolean ignoreZ) {
             super(name, fieldType, ignoreMalformed, ignoreZ);
             this.coerce = coerce;
             this.orientation = orientation;
@@ -109,7 +110,7 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
         protected boolean parseXContentParameters(String name, Map.Entry<String, Object> entry, Map<String, Object> params)
                 throws MapperParsingException {
             if (DeprecatedParameters.parse(name, entry.getKey(), entry.getValue(),
-                    (DeprecatedParameters) params.get(DEPRECATED_PARAMETERS_KEY))) {
+                (DeprecatedParameters)params.get(DEPRECATED_PARAMETERS_KEY))) {
                 return true;
             }
             return false;
@@ -131,22 +132,22 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
                     iterator.remove();
                 } else if (Names.COERCE.match(fieldName, LoggingDeprecationHandler.INSTANCE)) {
                     params.put(Names.COERCE.getPreferredName(),
-                            XContentMapValues.nodeBooleanValue(fieldNode, name + "." + Names.COERCE.getPreferredName()));
+                        XContentMapValues.nodeBooleanValue(fieldNode, name + "." + Names.COERCE.getPreferredName()));
                     iterator.remove();
                 }
             }
-            if (parsedDeprecatedParameters == false) {
+            if (parserContext.indexVersionCreated().onOrAfter(Version.V_6_6_0) && parsedDeprecatedParameters == false) {
                 params.remove(DEPRECATED_PARAMETERS_KEY);
             }
 
             Builder builder = super.parse(name, node, params, parserContext);
 
             if (params.containsKey(Names.COERCE.getPreferredName())) {
-                builder.coerce((Boolean) params.get(Names.COERCE.getPreferredName()));
+                builder.coerce((Boolean)params.get(Names.COERCE.getPreferredName()));
             }
 
             if (params.containsKey(Names.ORIENTATION.getPreferredName())) {
-                builder.orientation((Orientation) params.get(Names.ORIENTATION.getPreferredName()));
+                builder.orientation((Orientation)params.get(Names.ORIENTATION.getPreferredName()));
             }
 
             return builder;
@@ -157,13 +158,11 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
         protected Orientation orientation = Defaults.ORIENTATION.value();
 
         protected AbstractShapeGeometryFieldType(String name, boolean isSearchable, boolean isStored, boolean hasDocValues,
-                boolean parsesArrayValue, Map<String, String> meta) {
+                                                 boolean parsesArrayValue, Map<String, String> meta) {
             super(name, isSearchable, isStored, hasDocValues, parsesArrayValue, meta);
         }
 
-        public Orientation orientation() {
-            return this.orientation;
-        }
+        public Orientation orientation() { return this.orientation; }
 
         public void setOrientation(Orientation orientation) {
             this.orientation = orientation;
@@ -174,8 +173,9 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
     protected Explicit<Orientation> orientation;
 
     protected AbstractShapeGeometryFieldMapper(String simpleName, FieldType fieldType, MappedFieldType mappedFieldType,
-            Explicit<Boolean> ignoreMalformed, Explicit<Boolean> coerce, Explicit<Boolean> ignoreZValue, Explicit<Orientation> orientation,
-            MultiFields multiFields, CopyTo copyTo) {
+                                               Explicit<Boolean> ignoreMalformed, Explicit<Boolean> coerce,
+                                               Explicit<Boolean> ignoreZValue, Explicit<Orientation> orientation,
+                                               MultiFields multiFields, CopyTo copyTo) {
         super(simpleName, fieldType, mappedFieldType, ignoreMalformed, ignoreZValue, multiFields, copyTo);
         this.coerce = coerce;
         this.orientation = orientation;
@@ -189,7 +189,7 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
     @Override
     protected final void mergeOptions(FieldMapper other, List<String> conflicts) {
         super.mergeOptions(other, conflicts);
-        AbstractShapeGeometryFieldMapper gsfm = (AbstractShapeGeometryFieldMapper) other;
+        AbstractShapeGeometryFieldMapper gsfm = (AbstractShapeGeometryFieldMapper)other;
         if (gsfm.coerce.explicit()) {
             this.coerce = gsfm.coerce;
         }
@@ -199,12 +199,12 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
         mergeGeoOptions(gsfm, conflicts);
     }
 
-    protected abstract void mergeGeoOptions(AbstractShapeGeometryFieldMapper<?, ?> mergeWith, List<String> conflicts);
+    protected abstract void mergeGeoOptions(AbstractShapeGeometryFieldMapper<?,?> mergeWith, List<String> conflicts);
 
     @Override
     public void doXContentBody(XContentBuilder builder, boolean includeDefaults, Params params) throws IOException {
         super.doXContentBody(builder, includeDefaults, params);
-        AbstractShapeGeometryFieldType ft = (AbstractShapeGeometryFieldType) fieldType();
+        AbstractShapeGeometryFieldType ft = (AbstractShapeGeometryFieldType)fieldType();
         if (includeDefaults || coerce.explicit()) {
             builder.field(AbstractShapeGeometryFieldMapper.Names.COERCE.getPreferredName(), coerce.value());
         }
@@ -218,6 +218,6 @@ public abstract class AbstractShapeGeometryFieldMapper<Parsed, Processed> extend
     }
 
     public Orientation orientation() {
-        return ((AbstractShapeGeometryFieldType) mappedFieldType).orientation();
+        return ((AbstractShapeGeometryFieldType)mappedFieldType).orientation();
     }
 }

@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexReader;
@@ -28,12 +25,18 @@ import org.apache.lucene.search.vectorhighlight.BoundaryScanner;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.lookup.SourceLookup;
 
+import java.io.IOException;
+import java.util.List;
+
 public class SourceSimpleFragmentsBuilder extends SimpleFragmentsBuilder {
 
     private final SourceLookup sourceLookup;
 
-    public SourceSimpleFragmentsBuilder(MappedFieldType fieldType, SourceLookup sourceLookup, String[] preTags, String[] postTags,
-            BoundaryScanner boundaryScanner) {
+    public SourceSimpleFragmentsBuilder(MappedFieldType fieldType,
+                                        SourceLookup sourceLookup,
+                                        String[] preTags,
+                                        String[] postTags,
+                                        BoundaryScanner boundaryScanner) {
         super(fieldType, preTags, postTags, boundaryScanner);
         this.sourceLookup = sourceLookup;
     }

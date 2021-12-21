@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -30,6 +25,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Result of the running the significant terms aggregation on a String field.
@@ -92,12 +92,9 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null || getClass() != obj.getClass())
-                return false;
-            if (super.equals(obj) == false)
-                return false;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            if (super.equals(obj) == false) return false;
 
             return super.equals(obj) && Objects.equals(termBytes, ((SignificantStringTerms.Bucket) obj).termBytes);
         }
@@ -108,8 +105,9 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
         }
     }
 
-    public SignificantStringTerms(String name, int requiredSize, long minDocCount, Map<String, Object> metadata, DocValueFormat format,
-            long subsetSize, long supersetSize, SignificanceHeuristic significanceHeuristic, List<Bucket> buckets) {
+    public SignificantStringTerms(String name, int requiredSize, long minDocCount,
+            Map<String, Object> metadata, DocValueFormat format, long subsetSize, long supersetSize,
+            SignificanceHeuristic significanceHeuristic, List<Bucket> buckets) {
         super(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize, significanceHeuristic, buckets);
     }
 
@@ -127,8 +125,8 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
 
     @Override
     public SignificantStringTerms create(List<SignificantStringTerms.Bucket> buckets) {
-        return new SignificantStringTerms(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize,
-                significanceHeuristic, buckets);
+        return new SignificantStringTerms(name, requiredSize, minDocCount, metadata, format, subsetSize,
+                supersetSize, significanceHeuristic, buckets);
     }
 
     @Override
@@ -139,8 +137,8 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
 
     @Override
     protected SignificantStringTerms create(long subsetSize, long supersetSize, List<Bucket> buckets) {
-        return new SignificantStringTerms(getName(), requiredSize, minDocCount, getMetadata(), format, subsetSize, supersetSize,
-                significanceHeuristic, buckets);
+        return new SignificantStringTerms(getName(), requiredSize, minDocCount, getMetadata(), format, subsetSize,
+                supersetSize, significanceHeuristic, buckets);
     }
 
     @Override
@@ -149,8 +147,8 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
     }
 
     @Override
-    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
-            SignificantStringTerms.Bucket prototype) {
+    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize,
+                        InternalAggregations aggregations, SignificantStringTerms.Bucket prototype) {
         return new Bucket(prototype.termBytes, subsetDf, subsetSize, supersetDf, supersetSize, aggregations, format, prototype.score);
     }
 }

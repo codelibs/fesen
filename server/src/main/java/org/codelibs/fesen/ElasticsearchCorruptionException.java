@@ -24,10 +24,10 @@ public class ElasticsearchCorruptionException extends FesenCorruptionException {
 
     public ElasticsearchCorruptionException(String message) {
         super(message);
-    }
+     }
 
     public ElasticsearchCorruptionException(Throwable ex) {
         super(ex);
-    }
+     }
 
 }

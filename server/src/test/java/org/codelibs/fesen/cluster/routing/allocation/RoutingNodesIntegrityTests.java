@@ -44,24 +44,23 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
     private final Logger logger = LogManager.getLogger(IndexBalanceTests.class);
 
     public void testBalanceAllNodesStarted() {
-        AllocationService strategy =
-                createAllocationService(Settings.builder().put("cluster.routing.allocation.node_concurrent_recoveries", 10)
-                        .put("cluster.routing.allocation.node_initial_primaries_recoveries", 10)
-                        .put(ClusterRebalanceAllocationDecider.CLUSTER_ROUTING_ALLOCATION_ALLOW_REBALANCE_SETTING.getKey(), "always")
-                        .put("cluster.routing.allocation.cluster_concurrent_rebalance", -1).build());
+        AllocationService strategy = createAllocationService(Settings.builder()
+                .put("cluster.routing.allocation.node_concurrent_recoveries", 10)
+                .put("cluster.routing.allocation.node_initial_primaries_recoveries", 10)
+                .put(ClusterRebalanceAllocationDecider.CLUSTER_ROUTING_ALLOCATION_ALLOW_REBALANCE_SETTING.getKey(), "always")
+                .put("cluster.routing.allocation.cluster_concurrent_rebalance", -1).build());
 
         logger.info("Building initial routing table");
 
         Metadata metadata = Metadata.builder()
-                .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1))
-                .put(IndexMetadata.builder("test1").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
+            .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1))
+            .put(IndexMetadata.builder("test1").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
 
-        RoutingTable initialRoutingTable =
-                RoutingTable.builder().addAsNew(metadata.index("test")).addAsNew(metadata.index("test1")).build();
+        RoutingTable initialRoutingTable = RoutingTable.builder()
+            .addAsNew(metadata.index("test")).addAsNew(metadata.index("test1")).build();
 
-        ClusterState clusterState =
-                ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-                        .metadata(metadata).routingTable(initialRoutingTable).build();
+        ClusterState clusterState = ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING
+            .getDefault(Settings.EMPTY)).metadata(metadata).routingTable(initialRoutingTable).build();
 
         logger.info("Adding three node and performing rerouting");
         clusterState = ClusterState.builder(clusterState)
@@ -105,24 +104,23 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
     }
 
     public void testBalanceIncrementallyStartNodes() {
-        AllocationService strategy =
-                createAllocationService(Settings.builder().put("cluster.routing.allocation.node_concurrent_recoveries", 10)
-                        .put("cluster.routing.allocation.node_initial_primaries_recoveries", 10)
-                        .put(ClusterRebalanceAllocationDecider.CLUSTER_ROUTING_ALLOCATION_ALLOW_REBALANCE_SETTING.getKey(), "always")
-                        .put("cluster.routing.allocation.cluster_concurrent_rebalance", -1).build());
+        AllocationService strategy = createAllocationService(Settings.builder()
+                .put("cluster.routing.allocation.node_concurrent_recoveries", 10)
+                .put("cluster.routing.allocation.node_initial_primaries_recoveries", 10)
+                .put(ClusterRebalanceAllocationDecider.CLUSTER_ROUTING_ALLOCATION_ALLOW_REBALANCE_SETTING.getKey(), "always")
+                .put("cluster.routing.allocation.cluster_concurrent_rebalance", -1).build());
 
         logger.info("Building initial routing table");
 
         Metadata metadata = Metadata.builder()
-                .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1))
-                .put(IndexMetadata.builder("test1").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
+            .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1))
+            .put(IndexMetadata.builder("test1").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
 
-        RoutingTable initialRoutingTable =
-                RoutingTable.builder().addAsNew(metadata.index("test")).addAsNew(metadata.index("test1")).build();
+        RoutingTable initialRoutingTable = RoutingTable.builder()
+            .addAsNew(metadata.index("test")).addAsNew(metadata.index("test1")).build();
 
-        ClusterState clusterState =
-                ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-                        .metadata(metadata).routingTable(initialRoutingTable).build();
+        ClusterState clusterState = ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING
+            .getDefault(Settings.EMPTY)).metadata(metadata).routingTable(initialRoutingTable).build();
 
         logger.info("Adding one node and performing rerouting");
         clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder().add(newNode("node1"))).build();
@@ -130,7 +128,8 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
         clusterState = strategy.reroute(clusterState, "reroute");
 
         logger.info("Add another node and perform rerouting, nothing will happen since primary not started");
-        clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes()).add(newNode("node2"))).build();
+        clusterState = ClusterState.builder(clusterState)
+                .nodes(DiscoveryNodes.builder(clusterState.nodes()).add(newNode("node2"))).build();
         clusterState = strategy.reroute(clusterState, "reroute");
 
         logger.info("Start the primary shard");
@@ -145,7 +144,8 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
         clusterState = startInitializingShardsAndReroute(strategy, clusterState);
 
         logger.info("Add another node and perform rerouting, nothing will happen since primary not started");
-        clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes()).add(newNode("node3"))).build();
+        clusterState = ClusterState.builder(clusterState)
+                .nodes(DiscoveryNodes.builder(clusterState.nodes()).add(newNode("node3"))).build();
         clusterState = strategy.reroute(clusterState, "reroute");
 
         logger.info("Reroute, nothing should change");
@@ -190,17 +190,16 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
         logger.info("Building initial routing table");
 
         Metadata metadata = Metadata.builder()
-                .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
+            .put(IndexMetadata.builder("test").settings(settings(Version.CURRENT)).numberOfShards(3).numberOfReplicas(1)).build();
 
         RoutingTable initialRoutingTable = RoutingTable.builder().addAsNew(metadata.index("test")).build();
 
-        ClusterState clusterState =
-                ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY))
-                        .metadata(metadata).routingTable(initialRoutingTable).build();
+        ClusterState clusterState = ClusterState.builder(org.codelibs.fesen.cluster.ClusterName.CLUSTER_NAME_SETTING
+            .getDefault(Settings.EMPTY)).metadata(metadata).routingTable(initialRoutingTable).build();
 
         logger.info("Adding three node and performing rerouting");
-        clusterState = ClusterState.builder(clusterState)
-                .nodes(DiscoveryNodes.builder().add(newNode("node1")).add(newNode("node2")).add(newNode("node3"))).build();
+        clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder().add(newNode("node1"))
+            .add(newNode("node2")).add(newNode("node3"))).build();
 
         RoutingNodes routingNodes = clusterState.getRoutingNodes();
         assertThat(assertShardStats(routingNodes), equalTo(true));
@@ -260,10 +259,15 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
 
         logger.info("Add new index 3 shards 1 replica");
 
-        metadata = Metadata.builder(clusterState.metadata()).put(IndexMetadata.builder("test1").settings(
-                settings(Version.CURRENT).put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 3).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)))
+        metadata = Metadata.builder(clusterState.metadata())
+                .put(IndexMetadata.builder("test1").settings(settings(Version.CURRENT)
+                        .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 3)
+                        .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 1)
+                ))
                 .build();
-        RoutingTable updatedRoutingTable = RoutingTable.builder(clusterState.routingTable()).addAsNew(metadata.index("test1")).build();
+        RoutingTable updatedRoutingTable = RoutingTable.builder(clusterState.routingTable())
+            .addAsNew(metadata.index("test1"))
+            .build();
         clusterState = ClusterState.builder(clusterState).metadata(metadata).routingTable(updatedRoutingTable).build();
         routingNodes = clusterState.getRoutingNodes();
 
@@ -287,6 +291,7 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
         assertThat(routingNodes.hasInactivePrimaries(), equalTo(true));
         assertThat(routingNodes.hasUnassignedPrimaries(), equalTo(false));
 
+
         logger.info("Reroute, start the primaries");
         clusterState = startInitializingShardsAndReroute(strategy, clusterState);
         routingNodes = clusterState.getRoutingNodes();
@@ -305,6 +310,7 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
         assertThat(routingNodes.hasInactivePrimaries(), equalTo(false));
         assertThat(routingNodes.hasUnassignedPrimaries(), equalTo(false));
 
+
         assertThat(routingNodes.node("node1").numberOfShardsWithState(STARTED), equalTo(4));
         assertThat(routingNodes.node("node2").numberOfShardsWithState(STARTED), equalTo(4));
         assertThat(routingNodes.node("node3").numberOfShardsWithState(STARTED), equalTo(4));
@@ -315,8 +321,8 @@ public class RoutingNodesIntegrityTests extends ESAllocationTestCase {
 
         logger.info("kill one node");
         IndexShardRoutingTable indexShardRoutingTable = clusterState.routingTable().index("test").shard(0);
-        clusterState = ClusterState.builder(clusterState)
-                .nodes(DiscoveryNodes.builder(clusterState.nodes()).remove(indexShardRoutingTable.primaryShard().currentNodeId())).build();
+        clusterState = ClusterState.builder(clusterState).nodes(DiscoveryNodes.builder(clusterState.nodes())
+            .remove(indexShardRoutingTable.primaryShard().currentNodeId())).build();
         clusterState = strategy.disassociateDeadNodes(clusterState, true, "reroute");
         routingNodes = clusterState.getRoutingNodes();
 

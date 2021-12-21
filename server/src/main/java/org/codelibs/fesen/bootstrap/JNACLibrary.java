@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import java.util.Arrays;
-import java.util.List;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Structure;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.Constants;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Structure;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * java mapping to some libc functions
@@ -68,7 +68,6 @@ final class JNACLibrary {
     }
 
     static native int getrlimit(int resource, Rlimit rlimit);
-
     static native int setrlimit(int resource, Rlimit rlimit);
 
     static native String strerror(int errno);

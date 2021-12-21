@@ -62,8 +62,9 @@ public final class WhitelistClass {
     public final Map<Class<?>, Object> painlessAnnotations;
 
     /** Standard constructor. All values must be not {@code null}. */
-    public WhitelistClass(String origin, String javaClassName, List<WhitelistConstructor> whitelistConstructors,
-            List<WhitelistMethod> whitelistMethods, List<WhitelistField> whitelistFields, List<Object> painlessAnnotations) {
+    public WhitelistClass(String origin, String javaClassName,
+            List<WhitelistConstructor> whitelistConstructors, List<WhitelistMethod> whitelistMethods, List<WhitelistField> whitelistFields,
+            List<Object> painlessAnnotations) {
 
         this.origin = Objects.requireNonNull(origin);
         this.javaClassName = Objects.requireNonNull(javaClassName);

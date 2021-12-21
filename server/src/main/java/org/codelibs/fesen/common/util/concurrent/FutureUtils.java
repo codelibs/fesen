@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.common.util.concurrent;
 
+import org.codelibs.fesen.FesenTimeoutException;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.core.SuppressForbidden;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import org.codelibs.fesen.FesenTimeoutException;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.core.SuppressForbidden;
 
 public class FutureUtils {
 
@@ -71,7 +71,7 @@ public class FutureUtils {
      * @param <T> the type returned
      * @return the value of the future
      */
-    public static <T> T get(Future<T> future, long timeout, TimeUnit unit) {
+    public static  <T> T get(Future<T> future, long timeout, TimeUnit unit) {
         try {
             return future.get(timeout, unit);
         } catch (TimeoutException e) {

@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -34,6 +30,10 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 /**
  * REST handler to report on index recoveries.
  */
@@ -41,7 +41,9 @@ public class RestRecoveryAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_recovery"), new Route(GET, "/{index}/_recovery")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_recovery"),
+            new Route(GET, "/{index}/_recovery")));
     }
 
     @Override
@@ -64,3 +66,4 @@ public class RestRecoveryAction extends BaseRestHandler {
         return channel -> client.admin().indices().recoveries(recoveryRequest, new RestToXContentListener<>(channel));
     }
 }
+

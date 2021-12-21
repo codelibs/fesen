@@ -19,26 +19,27 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.ingest.common.RemoveProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 public class RemoveProcessorTests extends ESTestCase {
 
     public void testRemoveFields() throws Exception {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
         String field = RandomDocumentPicks.randomExistingFieldName(random(), ingestDocument);
-        Processor processor = new RemoveProcessor(randomAlphaOfLength(10), null,
-                Collections.singletonList(new TestTemplateService.MockTemplateScript.Factory(field)), false);
+        Processor processor = new RemoveProcessor(randomAlphaOfLength(10),
+                null, Collections.singletonList(new TestTemplateService.MockTemplateScript.Factory(field)), false);
         processor.execute(ingestDocument);
         assertThat(ingestDocument.hasField(field), equalTo(false));
     }
@@ -53,7 +54,7 @@ public class RemoveProcessorTests extends ESTestCase {
         try {
             processor.execute(ingestDocument);
             fail("remove field should have failed");
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("not present as part of path [" + fieldName + "]"));
         }
     }

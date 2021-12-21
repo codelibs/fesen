@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.settings;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -34,6 +28,12 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * This response is specific to the REST client. {@link org.codelibs.fesen.action.admin.cluster.state.ClusterStateResponse}
@@ -50,10 +50,14 @@ public class ClusterGetSettingsResponse extends ActionResponse implements ToXCon
     static final String DEFAULTS_FIELD = "defaults";
 
     private static final ConstructingObjectParser<ClusterGetSettingsResponse, Void> PARSER =
-            new ConstructingObjectParser<>("cluster_get_settings_response", true, a -> {
+        new ConstructingObjectParser<>(
+            "cluster_get_settings_response",
+            true,
+            a -> {
                 Settings defaultSettings = a[2] == null ? Settings.EMPTY : (Settings) a[2];
                 return new ClusterGetSettingsResponse((Settings) a[0], (Settings) a[1], defaultSettings);
-            });
+            }
+        );
     static {
         PARSER.declareObject(constructorArg(), (p, c) -> Settings.fromXContent(p), new ParseField(PERSISTENT_FIELD));
         PARSER.declareObject(constructorArg(), (p, c) -> Settings.fromXContent(p), new ParseField(TRANSIENT_FIELD));
@@ -141,13 +145,12 @@ public class ClusterGetSettingsResponse extends ActionResponse implements ToXCon
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         ClusterGetSettingsResponse that = (ClusterGetSettingsResponse) o;
-        return Objects.equals(transientSettings, that.transientSettings) && Objects.equals(persistentSettings, that.persistentSettings)
-                && Objects.equals(defaultSettings, that.defaultSettings);
+        return Objects.equals(transientSettings, that.transientSettings) &&
+            Objects.equals(persistentSettings, that.persistentSettings) &&
+            Objects.equals(defaultSettings, that.defaultSettings);
     }
 
     @Override
@@ -161,6 +164,5 @@ public class ClusterGetSettingsResponse extends ActionResponse implements ToXCon
     }
 
     @Override
-    public void writeTo(StreamOutput out) throws IOException {
-    }
+    public void writeTo(StreamOutput out) throws IOException {}
 }

@@ -34,7 +34,7 @@ import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 
 public class FingerprintTokenFilterFactory extends AbstractTokenFilterFactory {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(FingerprintTokenFilterFactory.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(FingerprintTokenFilterFactory.class);
 
     private final char separator;
     private final int maxOutputSize;
@@ -56,9 +56,10 @@ public class FingerprintTokenFilterFactory extends AbstractTokenFilterFactory {
     public TokenFilterFactory getSynonymFilter() {
         if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
             throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-        } else {
-            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters",
-                    "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
+        }
+        else {
+            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters", "Token filter [" + name()
+                + "] will not be usable to parse synonyms after v7.0");
             return this;
         }
     }

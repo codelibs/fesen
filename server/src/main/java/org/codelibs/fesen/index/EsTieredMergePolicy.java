@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.index;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.FilterMergePolicy;
 import org.apache.lucene.index.SegmentCommitInfo;
 import org.apache.lucene.index.SegmentInfos;
 import org.apache.lucene.index.TieredMergePolicy;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Wrapper around {@link TieredMergePolicy} which doesn't respect
@@ -45,8 +45,8 @@ final class EsTieredMergePolicy extends FilterMergePolicy {
     }
 
     @Override
-    public MergeSpecification findForcedMerges(SegmentInfos infos, int maxSegmentCount, Map<SegmentCommitInfo, Boolean> segmentsToMerge,
-            MergeContext mergeContext) throws IOException {
+    public MergeSpecification findForcedMerges(SegmentInfos infos, int maxSegmentCount,
+            Map<SegmentCommitInfo, Boolean> segmentsToMerge, MergeContext mergeContext) throws IOException {
         return forcedMergePolicy.findForcedMerges(infos, maxSegmentCount, segmentsToMerge, mergeContext);
     }
 

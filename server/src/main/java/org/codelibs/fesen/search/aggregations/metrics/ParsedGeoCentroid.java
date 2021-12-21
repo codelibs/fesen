@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.geo.GeoPoint;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
 import org.codelibs.fesen.search.aggregations.metrics.InternalGeoCentroid.Fields;
+
+import java.io.IOException;
 
 /**
  * Serialization and merge logic for {@link GeoCentroidAggregator}.
@@ -64,11 +64,11 @@ public class ParsedGeoCentroid extends ParsedAggregation implements GeoCentroid 
         return builder;
     }
 
-    private static final ObjectParser<ParsedGeoCentroid, Void> PARSER =
-            new ObjectParser<>(ParsedGeoCentroid.class.getSimpleName(), true, ParsedGeoCentroid::new);
+    private static final ObjectParser<ParsedGeoCentroid, Void> PARSER = new ObjectParser<>(ParsedGeoCentroid.class.getSimpleName(), true,
+            ParsedGeoCentroid::new);
 
-    private static final ObjectParser<GeoPoint, Void> GEO_POINT_PARSER =
-            new ObjectParser<>(ParsedGeoCentroid.class.getSimpleName() + "_POINT", true, GeoPoint::new);
+    private static final ObjectParser<GeoPoint, Void> GEO_POINT_PARSER = new ObjectParser<>(
+            ParsedGeoCentroid.class.getSimpleName() + "_POINT", true, GeoPoint::new);
 
     static {
         declareAggregationFields(PARSER);

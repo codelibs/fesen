@@ -38,12 +38,12 @@ public class IteratorsTests extends ESTestCase {
     }
 
     public void testNoConcatenation() {
-        Iterator<Integer> iterator = Iterators.<Integer> concat();
+        Iterator<Integer> iterator = Iterators.<Integer>concat();
         assertEmptyIterator(iterator);
     }
 
     public void testEmptyConcatenation() {
-        Iterator<Integer> iterator = Iterators.<Integer> concat(empty());
+        Iterator<Integer> iterator = Iterators.<Integer>concat(empty());
         assertEmptyIterator(iterator);
     }
 
@@ -61,6 +61,7 @@ public class IteratorsTests extends ESTestCase {
         int value = randomInt();
         assertSingleton(value, empty(), singletonIterator(value));
     }
+
 
     public void testEmptyAfterSingleton() {
         int value = randomInt();
@@ -104,7 +105,7 @@ public class IteratorsTests extends ESTestCase {
 
     public void testNull() {
         try {
-            Iterators.concat((Iterator<?>) null);
+            Iterators.concat((Iterator<?>)null);
             fail("expected " + NullPointerException.class.getSimpleName());
         } catch (NullPointerException e) {
 

@@ -40,7 +40,6 @@ public class FesenParseException extends FesenException {
     public FesenParseException(StreamInput in) throws IOException {
         super(in);
     }
-
     @Override
     public RestStatus status() {
         return RestStatus.BAD_REQUEST;

@@ -65,7 +65,8 @@ public class FieldDataCacheTests extends ESTestCase {
             }
         }
         iw.close();
-        DirectoryReader ir = FesenDirectoryReader.wrap(DirectoryReader.open(dir), new ShardId("_index", "_na_", 0));
+        DirectoryReader ir =
+            FesenDirectoryReader.wrap(DirectoryReader.open(dir), new ShardId("_index", "_na_", 0));
 
         DummyAccountingFieldDataCache fieldDataCache = new DummyAccountingFieldDataCache();
         // Testing SortedSetOrdinalsIndexFieldData:
@@ -88,13 +89,19 @@ public class FieldDataCacheTests extends ESTestCase {
 
     private SortedSetOrdinalsIndexFieldData createSortedDV(String fieldName, IndexFieldDataCache indexFieldDataCache) {
         return new SortedSetOrdinalsIndexFieldData(indexFieldDataCache, fieldName, CoreValuesSourceType.BYTES,
-                new NoneCircuitBreakerService(), AbstractLeafOrdinalsFieldData.DEFAULT_SCRIPT_FUNCTION);
+            new NoneCircuitBreakerService(), AbstractLeafOrdinalsFieldData.DEFAULT_SCRIPT_FUNCTION);
     }
 
     private PagedBytesIndexFieldData createPagedBytes(String fieldName, IndexFieldDataCache indexFieldDataCache) {
-        return new PagedBytesIndexFieldData(fieldName, CoreValuesSourceType.BYTES, indexFieldDataCache, new NoneCircuitBreakerService(),
-                TextFieldMapper.Defaults.FIELDDATA_MIN_FREQUENCY, TextFieldMapper.Defaults.FIELDDATA_MAX_FREQUENCY,
-                TextFieldMapper.Defaults.FIELDDATA_MIN_SEGMENT_SIZE);
+        return new PagedBytesIndexFieldData(
+            fieldName,
+            CoreValuesSourceType.BYTES,
+            indexFieldDataCache,
+            new NoneCircuitBreakerService(),
+            TextFieldMapper.Defaults.FIELDDATA_MIN_FREQUENCY,
+            TextFieldMapper.Defaults.FIELDDATA_MAX_FREQUENCY,
+            TextFieldMapper.Defaults.FIELDDATA_MIN_SEGMENT_SIZE
+        );
     }
 
     private class DummyAccountingFieldDataCache implements IndexFieldDataCache {
@@ -103,13 +110,13 @@ public class FieldDataCacheTests extends ESTestCase {
 
         @Override
         public <FD extends LeafFieldData, IFD extends IndexFieldData<FD>> FD load(LeafReaderContext context, IFD indexFieldData)
-                throws Exception {
+            throws Exception {
             return indexFieldData.loadDirect(context);
         }
 
         @Override
-        public <FD extends LeafFieldData, IFD extends IndexFieldData.Global<FD>> IFD load(DirectoryReader indexReader, IFD indexFieldData)
-                throws Exception {
+        public <FD extends LeafFieldData, IFD extends IndexFieldData.Global<FD>> IFD load(DirectoryReader indexReader,
+                                                                                          IFD indexFieldData) throws Exception {
             cachedGlobally++;
             return (IFD) indexFieldData.loadGlobalDirect(indexReader);
         }

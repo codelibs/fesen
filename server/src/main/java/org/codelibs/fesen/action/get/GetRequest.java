@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.get;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.RealtimeRequest;
@@ -36,6 +32,10 @@ import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.VersionType;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
 
 /**
  * A request to get a document (its source) from an index based on its id. Best created using
@@ -133,8 +133,8 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
             validationException = addValidationError("id is missing", validationException);
         }
         if (versionType.validateVersionForReads(version) == false) {
-            validationException = ValidateActions.addValidationError(
-                    "illegal version value [" + version + "] for version type [" + versionType.name() + "]", validationException);
+            validationException = ValidateActions.addValidationError("illegal version value [" + version + "] for version type ["
+                    + versionType.name() + "]", validationException);
         }
         return validationException;
     }

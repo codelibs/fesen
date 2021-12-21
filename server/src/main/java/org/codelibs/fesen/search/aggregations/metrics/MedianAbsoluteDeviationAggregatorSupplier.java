@@ -27,6 +27,11 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface MedianAbsoluteDeviationAggregatorSupplier {
-    Aggregator build(String name, ValuesSource valuesSource, DocValueFormat format, SearchContext context, Aggregator parent,
-            Map<String, Object> metadata, double compression) throws IOException;
+    Aggregator build(String name,
+                     ValuesSource valuesSource,
+                     DocValueFormat format,
+                     SearchContext context,
+                     Aggregator parent,
+                     Map<String, Object> metadata,
+                     double compression) throws IOException;
 }

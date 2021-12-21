@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.index.shard;
 
-import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.Assertions;
 import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ActionListener;
@@ -45,6 +32,19 @@ import org.codelibs.fesen.core.CheckedRunnable;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Tracks shard operation permits. Each operation on the shard obtains a permit. When we need to block operations (e.g., to transition
@@ -100,8 +100,10 @@ final class IndexShardOperationPermits implements Closeable {
      * @throws TimeoutException          if timed out waiting for in-flight operations to finish
      * @throws IndexShardClosedException if operation permit has been closed
      */
-    <E extends Exception> void blockOperations(final long timeout, final TimeUnit timeUnit, final CheckedRunnable<E> onBlocked)
-            throws InterruptedException, TimeoutException, E {
+    <E extends Exception> void blockOperations(
+            final long timeout,
+            final TimeUnit timeUnit,
+            final CheckedRunnable<E> onBlocked) throws InterruptedException, TimeoutException, E {
         delayOperations();
         try (Releasable ignored = acquireAll(timeout, timeUnit)) {
             onBlocked.run();
@@ -120,7 +122,7 @@ final class IndexShardOperationPermits implements Closeable {
      * @param timeout    the maximum time to wait for the in-flight operations block
      * @param timeUnit   the time unit of the {@code timeout} argument
      */
-    public void asyncBlockOperations(final ActionListener<Releasable> onAcquired, final long timeout, final TimeUnit timeUnit) {
+    public void asyncBlockOperations(final ActionListener<Releasable> onAcquired, final long timeout, final TimeUnit timeUnit)  {
         delayOperations();
         threadPool.executor(ThreadPool.Names.GENERIC).execute(new AbstractRunnable() {
 
@@ -225,7 +227,7 @@ final class IndexShardOperationPermits implements Closeable {
      *
      */
     public void acquire(final ActionListener<Releasable> onAcquired, final String executorOnDelay, final boolean forceExecution,
-            final Object debugInfo) {
+                        final Object debugInfo) {
         final StackTraceElement[] stackTrace;
         if (Assertions.ENABLED) {
             stackTrace = Thread.currentThread().getStackTrace();
@@ -236,7 +238,7 @@ final class IndexShardOperationPermits implements Closeable {
     }
 
     private void acquire(final ActionListener<Releasable> onAcquired, final String executorOnDelay, final boolean forceExecution,
-            final Object debugInfo, final StackTraceElement[] stackTrace) {
+                        final Object debugInfo, final StackTraceElement[] stackTrace) {
         if (closed) {
             onAcquired.onFailure(new IndexShardClosedException(shardId));
             return;
@@ -249,23 +251,23 @@ final class IndexShardOperationPermits implements Closeable {
                     final ActionListener<Releasable> wrappedListener;
                     if (executorOnDelay != null) {
                         wrappedListener = ActionListener.delegateFailure(new ContextPreservingActionListener<>(contextSupplier, onAcquired),
-                                (l, r) -> threadPool.executor(executorOnDelay).execute(new ActionRunnable<Releasable>(l) {
-                                    @Override
-                                    public boolean isForceExecution() {
-                                        return forceExecution;
-                                    }
+                            (l, r) -> threadPool.executor(executorOnDelay).execute(new ActionRunnable<Releasable>(l) {
+                                @Override
+                                public boolean isForceExecution() {
+                                    return forceExecution;
+                                }
 
-                                    @Override
-                                    protected void doRun() {
-                                        listener.onResponse(r);
-                                    }
+                                @Override
+                                protected void doRun() {
+                                    listener.onResponse(r);
+                                }
 
-                                    @Override
-                                    public void onRejection(Exception e) {
-                                        IOUtils.closeWhileHandlingException(r);
-                                        super.onRejection(e);
-                                    }
-                                }));
+                                @Override
+                                public void onRejection(Exception e) {
+                                    IOUtils.closeWhileHandlingException(r);
+                                    super.onRejection(e);
+                                }
+                            }));
                     } else {
                         wrappedListener = new ContextPreservingActionListener<>(contextSupplier, onAcquired);
                     }
@@ -320,6 +322,7 @@ final class IndexShardOperationPermits implements Closeable {
         }
     }
 
+
     synchronized boolean isBlocked() {
         return queuedBlockOperations > 0;
     }
@@ -329,8 +332,9 @@ final class IndexShardOperationPermits implements Closeable {
      *         when the permit was acquired plus a stack traces that was captured when the permit was request.
      */
     List<String> getActiveOperations() {
-        return issuedPermits.values().stream().map(t -> t.v1() + "\n" + ExceptionsHelper.formatStackTrace(t.v2()))
-                .collect(Collectors.toList());
+        return issuedPermits.values().stream().map(
+            t -> t.v1() + "\n" + ExceptionsHelper.formatStackTrace(t.v2()))
+            .collect(Collectors.toList());
     }
 
     private static class DelayedOperation {

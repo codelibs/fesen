@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.Accountables;
@@ -30,6 +25,11 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.PagedBytes;
 import org.apache.lucene.util.packed.PackedLongValues;
 import org.codelibs.fesen.index.fielddata.ordinals.Ordinals;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class PagedBytesLeafFieldData extends AbstractLeafOrdinalsFieldData {
 

@@ -19,27 +19,10 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.nio.file.Path;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509ExtendedKeyManager;
-import javax.net.ssl.X509ExtendedTrustManager;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsExchange;
+import com.sun.net.httpserver.HttpsParameters;
+import com.sun.net.httpserver.HttpsServer;
 
 import org.codelibs.fesen.client.Request;
 import org.codelibs.fesen.client.Response;
@@ -52,18 +35,36 @@ import org.codelibs.fesen.core.PathUtils;
 import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.TestEnvironment;
+import org.codelibs.fesen.index.reindex.ReindexSslConfig;
+import org.codelibs.fesen.index.reindex.Reindexer;
+import org.codelibs.fesen.index.reindex.RemoteInfo;
+import org.elasticsearch.mocksocket.MockHttpServer;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
-import org.elasticsearch.mocksocket.MockHttpServer;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509ExtendedKeyManager;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.file.Path;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
-import com.sun.net.httpserver.HttpsConfigurator;
-import com.sun.net.httpserver.HttpsExchange;
-import com.sun.net.httpserver.HttpsParameters;
-import com.sun.net.httpserver.HttpsServer;
+import static org.mockito.Mockito.mock;
 
 /**
  * Because core ES doesn't have SSL available, this test uses a mock webserver
@@ -75,7 +76,8 @@ import com.sun.net.httpserver.HttpsServer;
 public class ReindexRestClientSslTests extends ESTestCase {
 
     private static HttpsServer server;
-    private static Consumer<HttpsExchange> handler = ignore -> {};
+    private static Consumer<HttpsExchange> handler = ignore -> {
+    };
 
     @BeforeClass
     public static void setupHttpServer() throws Exception {
@@ -121,8 +123,10 @@ public class ReindexRestClientSslTests extends ESTestCase {
     public void testClientFailsWithUntrustedCertificate() throws IOException {
         assumeFalse("https://github.com/elastic/elasticsearch/issues/49094", inFipsJvm());
         final List<Thread> threads = new ArrayList<>();
-        final Settings settings =
-                Settings.builder().put("path.home", createTempDir()).put("reindex.ssl.supported_protocols", "TLSv1.2").build();
+        final Settings settings = Settings.builder()
+            .put("path.home", createTempDir())
+            .put("reindex.ssl.supported_protocols", "TLSv1.2")
+            .build();
         final Environment environment = TestEnvironment.newEnvironment(settings);
         final ReindexSslConfig ssl = new ReindexSslConfig(settings, environment, mock(ResourceWatcherService.class));
         try (RestClient client = Reindexer.buildRestClient(getRemoteInfo(), ssl, 1L, threads)) {
@@ -133,8 +137,11 @@ public class ReindexRestClientSslTests extends ESTestCase {
     public void testClientSucceedsWithCertificateAuthorities() throws IOException {
         final List<Thread> threads = new ArrayList<>();
         final Path ca = getDataPath("ca.pem");
-        final Settings settings = Settings.builder().put("path.home", createTempDir())
-                .putList("reindex.ssl.certificate_authorities", ca.toString()).put("reindex.ssl.supported_protocols", "TLSv1.2").build();
+        final Settings settings = Settings.builder()
+            .put("path.home", createTempDir())
+            .putList("reindex.ssl.certificate_authorities", ca.toString())
+            .put("reindex.ssl.supported_protocols", "TLSv1.2")
+            .build();
         final Environment environment = TestEnvironment.newEnvironment(settings);
         final ReindexSslConfig ssl = new ReindexSslConfig(settings, environment, mock(ResourceWatcherService.class));
         try (RestClient client = Reindexer.buildRestClient(getRemoteInfo(), ssl, 1L, threads)) {
@@ -146,8 +153,11 @@ public class ReindexRestClientSslTests extends ESTestCase {
     public void testClientSucceedsWithVerificationDisabled() throws IOException {
         assumeFalse("Cannot disable verification in FIPS JVM", inFipsJvm());
         final List<Thread> threads = new ArrayList<>();
-        final Settings settings = Settings.builder().put("path.home", createTempDir()).put("reindex.ssl.verification_mode", "NONE")
-                .put("reindex.ssl.supported_protocols", "TLSv1.2").build();
+        final Settings settings = Settings.builder()
+            .put("path.home", createTempDir())
+            .put("reindex.ssl.verification_mode", "NONE")
+            .put("reindex.ssl.supported_protocols", "TLSv1.2")
+            .build();
         final Environment environment = TestEnvironment.newEnvironment(settings);
         final ReindexSslConfig ssl = new ReindexSslConfig(settings, environment, mock(ResourceWatcherService.class));
         try (RestClient client = Reindexer.buildRestClient(getRemoteInfo(), ssl, 1L, threads)) {
@@ -161,10 +171,14 @@ public class ReindexRestClientSslTests extends ESTestCase {
         final Path ca = getDataPath("ca.pem");
         final Path cert = getDataPath("client/client.crt");
         final Path key = getDataPath("client/client.key");
-        final Settings settings =
-                Settings.builder().put("path.home", createTempDir()).putList("reindex.ssl.certificate_authorities", ca.toString())
-                        .put("reindex.ssl.certificate", cert).put("reindex.ssl.key", key)
-                        .put("reindex.ssl.key_passphrase", "client-password").put("reindex.ssl.supported_protocols", "TLSv1.2").build();
+        final Settings settings = Settings.builder()
+            .put("path.home", createTempDir())
+            .putList("reindex.ssl.certificate_authorities", ca.toString())
+            .put("reindex.ssl.certificate", cert)
+            .put("reindex.ssl.key", key)
+            .put("reindex.ssl.key_passphrase", "client-password")
+            .put("reindex.ssl.supported_protocols", "TLSv1.2")
+            .build();
         AtomicReference<Certificate[]> clientCertificates = new AtomicReference<>();
         handler = https -> {
             try {
@@ -191,8 +205,8 @@ public class ReindexRestClientSslTests extends ESTestCase {
 
     private RemoteInfo getRemoteInfo() {
         return new RemoteInfo("https", server.getAddress().getHostName(), server.getAddress().getPort(), "/",
-                new BytesArray("{\"match_all\":{}}"), "user", "password", Collections.emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT,
-                RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
+            new BytesArray("{\"match_all\":{}}"), "user", "password", Collections.emptyMap(), RemoteInfo.DEFAULT_SOCKET_TIMEOUT,
+            RemoteInfo.DEFAULT_CONNECT_TIMEOUT);
     }
 
     @SuppressForbidden(reason = "use http server")

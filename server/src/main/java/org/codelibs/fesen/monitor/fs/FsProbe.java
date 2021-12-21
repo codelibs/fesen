@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.monitor.fs;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -37,6 +28,15 @@ import org.codelibs.fesen.core.SuppressForbidden;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeEnvironment;
 import org.codelibs.fesen.env.NodeEnvironment.NodePath;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FsProbe {
 
@@ -97,8 +97,15 @@ public class FsProbe {
                     final long writesCompleted = Long.parseLong(fields[7]);
                     final long sectorsWritten = Long.parseLong(fields[9]);
                     final FsInfo.DeviceStats deviceStats =
-                            new FsInfo.DeviceStats(majorDeviceNumber, minorDeviceNumber, deviceName, readsCompleted, sectorsRead,
-                                    writesCompleted, sectorsWritten, deviceMap.get(Tuple.tuple(majorDeviceNumber, minorDeviceNumber)));
+                            new FsInfo.DeviceStats(
+                                    majorDeviceNumber,
+                                    minorDeviceNumber,
+                                    deviceName,
+                                    readsCompleted,
+                                    sectorsRead,
+                                    writesCompleted,
+                                    sectorsWritten,
+                                    deviceMap.get(Tuple.tuple(majorDeviceNumber, minorDeviceNumber)));
                     devicesStats.add(deviceStats);
                 }
             }
@@ -107,8 +114,8 @@ public class FsProbe {
         } catch (Exception e) {
             // do not fail Fesen if something unexpected
             // happens here
-            logger.debug(() -> new ParameterizedMessage("unexpected exception processing /proc/diskstats for devices {}", devicesNumbers),
-                    e);
+            logger.debug(() -> new ParameterizedMessage(
+                    "unexpected exception processing /proc/diskstats for devices {}", devicesNumbers), e);
             return null;
         }
     }

@@ -65,16 +65,17 @@ public class InternalGeoCentroidTests extends InternalAggregationTestCase<Intern
             totalCount += input.count();
         }
         if (totalCount > 0) {
-            assertEquals(latSum / totalCount, reduced.centroid().getLat(), 1E-5D);
-            assertEquals(lonSum / totalCount, reduced.centroid().getLon(), 1E-5D);
+            assertEquals(latSum/totalCount, reduced.centroid().getLat(), 1E-5D);
+            assertEquals(lonSum/totalCount, reduced.centroid().getLon(), 1E-5D);
         }
         assertEquals(totalCount, reduced.count());
     }
 
     public void testReduceMaxCount() {
-        InternalGeoCentroid maxValueGeoCentroid =
-                new InternalGeoCentroid("agg", new GeoPoint(10, 0), Long.MAX_VALUE, Collections.emptyMap());
-        InternalGeoCentroid reducedGeoCentroid = maxValueGeoCentroid.reduce(Collections.singletonList(maxValueGeoCentroid), null);
+        InternalGeoCentroid maxValueGeoCentroid = new InternalGeoCentroid("agg", new GeoPoint(10, 0),
+            Long.MAX_VALUE, Collections.emptyMap());
+        InternalGeoCentroid reducedGeoCentroid = maxValueGeoCentroid
+            .reduce(Collections.singletonList(maxValueGeoCentroid), null);
         assertThat(reducedGeoCentroid.count(), equalTo(Long.MAX_VALUE));
     }
 

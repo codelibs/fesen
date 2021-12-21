@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import static org.apache.lucene.index.SortedSetDocValues.NO_MORE_ORDS;
-
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedSetDocValues;
@@ -37,6 +33,10 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.StringFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
+
+import java.io.IOException;
+
+import static org.apache.lucene.index.SortedSetDocValues.NO_MORE_ORDS;
 
 /**
  * A {@link SingleDimensionValuesSource} for global ordinals.
@@ -53,8 +53,8 @@ class GlobalOrdinalValuesSource extends SingleDimensionValuesSource<BytesRef> {
     private BytesRef lastLookupValue;
 
     GlobalOrdinalValuesSource(BigArrays bigArrays, MappedFieldType type,
-            CheckedFunction<LeafReaderContext, SortedSetDocValues, IOException> docValuesFunc, DocValueFormat format, boolean missingBucket,
-            int size, int reverseMul) {
+                              CheckedFunction<LeafReaderContext, SortedSetDocValues, IOException> docValuesFunc,
+                              DocValueFormat format, boolean missingBucket, int size, int reverseMul) {
         super(bigArrays, format, type, missingBucket, size, reverseMul);
         this.docValuesFunc = docValuesFunc;
         this.values = bigArrays.newLongArray(Math.min(size, 100), false);
@@ -62,7 +62,7 @@ class GlobalOrdinalValuesSource extends SingleDimensionValuesSource<BytesRef> {
 
     @Override
     void copyCurrent(int slot) {
-        values = bigArrays.grow(values, slot + 1);
+        values = bigArrays.grow(values, slot+1);
         values.set(slot, currentValue);
     }
 
@@ -182,8 +182,9 @@ class GlobalOrdinalValuesSource extends SingleDimensionValuesSource<BytesRef> {
 
     @Override
     SortedDocsProducer createSortedDocsProducerOrNull(IndexReader reader, Query query) {
-        if (checkIfSortedDocsIsApplicable(reader, fieldType) == false || fieldType instanceof StringFieldType == false
-                || (query != null && query.getClass() != MatchAllDocsQuery.class)) {
+        if (checkIfSortedDocsIsApplicable(reader, fieldType) == false ||
+                fieldType instanceof StringFieldType == false ||
+                    (query != null && query.getClass() != MatchAllDocsQuery.class)) {
             return null;
         }
         return new TermsSortedDocsProducer(fieldType.name());

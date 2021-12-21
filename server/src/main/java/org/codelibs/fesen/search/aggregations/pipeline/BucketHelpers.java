@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -37,6 +32,11 @@ import org.codelibs.fesen.search.aggregations.InvalidAggregationPathException;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 import org.codelibs.fesen.search.aggregations.metrics.InternalNumericMetricsAggregation;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A set of static helpers to simplify working with aggregation buckets, in
@@ -70,8 +70,8 @@ public class BucketHelpers {
                     if (result == null) {
                         result = policy;
                     } else {
-                        throw new IllegalStateException("Text can be parsed to 2 different gap policies: text=[" + text + "], "
-                                + "policies=" + Arrays.asList(result, policy));
+                        throw new IllegalStateException("Text can be parsed to 2 different gap policies: text=[" + text
+                                + "], " + "policies=" + Arrays.asList(result, policy));
                     }
                 }
             }
@@ -148,14 +148,14 @@ public class BucketHelpers {
      * @return The value extracted from <code>bucket</code> found at
      *         <code>aggPath</code>
      */
-    public static Double resolveBucketValue(MultiBucketsAggregation agg, InternalMultiBucketAggregation.InternalBucket bucket,
-            String aggPath, GapPolicy gapPolicy) {
+    public static Double resolveBucketValue(MultiBucketsAggregation agg,
+            InternalMultiBucketAggregation.InternalBucket bucket, String aggPath, GapPolicy gapPolicy) {
         List<String> aggPathsList = AggregationPath.parse(aggPath).getPathElementsAsStringList();
         return resolveBucketValue(agg, bucket, aggPathsList, gapPolicy);
     }
 
-    public static Double resolveBucketValue(MultiBucketsAggregation agg, InternalMultiBucketAggregation.InternalBucket bucket,
-            List<String> aggPathAsList, GapPolicy gapPolicy) {
+    public static Double resolveBucketValue(MultiBucketsAggregation agg,
+            InternalMultiBucketAggregation.InternalBucket bucket, List<String> aggPathAsList, GapPolicy gapPolicy) {
         try {
             Object propertyValue = bucket.getProperty(agg.getName(), aggPathAsList);
 
@@ -193,8 +193,8 @@ public class BucketHelpers {
     /**
      * Inspects where we are in the agg tree and tries to format a helpful error
      */
-    private static AggregationExecutionException formatResolutionError(MultiBucketsAggregation agg, List<String> aggPathAsList,
-            Object propertyValue) {
+    private static AggregationExecutionException formatResolutionError(MultiBucketsAggregation agg,
+                                                                       List<String> aggPathAsList, Object propertyValue) {
         String currentAggName;
         Object currentAgg;
         if (aggPathAsList.isEmpty()) {
@@ -206,12 +206,12 @@ public class BucketHelpers {
         }
         if (currentAgg instanceof InternalNumericMetricsAggregation.MultiValue) {
             return new AggregationExecutionException(AbstractPipelineAggregationBuilder.BUCKETS_PATH_FIELD.getPreferredName()
-                    + " must reference either a number value or a single value numeric metric aggregation, but [" + currentAggName
-                    + "] contains multiple values. Please specify which to use.");
+                + " must reference either a number value or a single value numeric metric aggregation, but [" + currentAggName
+                + "] contains multiple values. Please specify which to use.");
         } else {
             return new AggregationExecutionException(AbstractPipelineAggregationBuilder.BUCKETS_PATH_FIELD.getPreferredName()
-                    + " must reference either a number value or a single value numeric metric aggregation, got: ["
-                    + propertyValue.getClass().getSimpleName() + "] at aggregation [" + currentAggName + "]");
+                + " must reference either a number value or a single value numeric metric aggregation, got: ["
+                + propertyValue.getClass().getSimpleName() + "] at aggregation [" + currentAggName + "]");
         }
     }
 }

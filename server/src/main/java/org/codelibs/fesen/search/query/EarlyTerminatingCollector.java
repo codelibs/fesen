@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.query;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.FilterCollector;
 import org.apache.lucene.search.FilterLeafCollector;
 import org.apache.lucene.search.LeafCollector;
+
+import java.io.IOException;
 
 /**
  * A {@link Collector} that early terminates collection after <code>maxCountHits</code> docs have been collected.

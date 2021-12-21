@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.codelibs.fesen.common.Rounding;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.aggregations.Aggregator;
@@ -31,11 +27,23 @@ import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Function;
+
 @FunctionalInterface
 public interface AutoDateHistogramAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, int numBuckets,
-            AutoDateHistogramAggregationBuilder.RoundingInfo[] roundingInfos,
-            @Nullable Function<Rounding, Rounding.Prepared> roundingPreparer, ValuesSourceConfig valuesSourceConfig,
-            SearchContext aggregationContext, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata)
-            throws IOException;
+    Aggregator build(
+        String name,
+        AggregatorFactories factories,
+        int numBuckets,
+        AutoDateHistogramAggregationBuilder.RoundingInfo[] roundingInfos,
+        @Nullable
+        Function<Rounding, Rounding.Prepared> roundingPreparer,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext aggregationContext,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException;
 }

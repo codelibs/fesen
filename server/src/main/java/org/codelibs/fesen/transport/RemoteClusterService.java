@@ -19,26 +19,6 @@
 
 package org.codelibs.fesen.transport;
 
-import static org.codelibs.fesen.common.settings.Setting.boolSetting;
-import static org.codelibs.fesen.common.settings.Setting.timeSetting;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.Version;
@@ -61,6 +41,26 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import static org.codelibs.fesen.common.settings.Setting.boolSetting;
+import static org.codelibs.fesen.common.settings.Setting.timeSetting;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 /**
  * Basic service for accessing remote clusters via gateway nodes
  */
@@ -70,19 +70,25 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
 
     static {
         // remove search.remote.* settings in 8.0.0
-        assert Version.CURRENT.major < 9;
+        assert Version.CURRENT.major < 8;
     }
 
     public static final Setting<TimeValue> SEARCH_REMOTE_INITIAL_CONNECTION_TIMEOUT_SETTING =
-            Setting.positiveTimeSetting("search.remote.initial_connect_timeout", TimeValue.timeValueSeconds(30), Setting.Property.NodeScope,
+            Setting.positiveTimeSetting(
+                    "search.remote.initial_connect_timeout",
+                    TimeValue.timeValueSeconds(30),
+                    Setting.Property.NodeScope,
                     Setting.Property.Deprecated);
 
     /**
      * The initial connect timeout for remote cluster connections
      */
     public static final Setting<TimeValue> REMOTE_INITIAL_CONNECTION_TIMEOUT_SETTING =
-            Setting.positiveTimeSetting("cluster.remote.initial_connect_timeout", SEARCH_REMOTE_INITIAL_CONNECTION_TIMEOUT_SETTING, // the default needs to be thirty seconds when fallback is removed
-                    TimeValue.timeValueSeconds(30), Setting.Property.NodeScope);
+            Setting.positiveTimeSetting(
+                    "cluster.remote.initial_connect_timeout",
+                    SEARCH_REMOTE_INITIAL_CONNECTION_TIMEOUT_SETTING, // the default needs to be thirty seconds when fallback is removed
+                    TimeValue.timeValueSeconds(30),
+                    Setting.Property.NodeScope);
 
     public static final Setting<String> SEARCH_REMOTE_NODE_ATTRIBUTE =
             Setting.simpleString("search.remote.node.attr", Setting.Property.NodeScope, Setting.Property.Deprecated);
@@ -94,7 +100,9 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
      * The value of the setting is expected to be a boolean, {@code true} for nodes that can become gateways, {@code false} otherwise.
      */
     public static final Setting<String> REMOTE_NODE_ATTRIBUTE =
-            Setting.simpleString("cluster.remote.node.attr", SEARCH_REMOTE_NODE_ATTRIBUTE, // no default is needed when fallback is removed, use simple string which gives empty
+            Setting.simpleString(
+                    "cluster.remote.node.attr",
+                    SEARCH_REMOTE_NODE_ATTRIBUTE, // no default is needed when fallback is removed, use simple string which gives empty
                     Setting.Property.NodeScope);
 
     public static final Setting<Boolean> SEARCH_ENABLE_REMOTE_CLUSTERS =
@@ -106,11 +114,16 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
      * will fail if remote cluster syntax is used as an index pattern. The default is <code>true</code>
      */
     public static final Setting<Boolean> ENABLE_REMOTE_CLUSTERS =
-            Setting.boolSetting("cluster.remote.connect", SEARCH_ENABLE_REMOTE_CLUSTERS, // the default needs to be true when fallback is removed
-                    Setting.Property.Deprecated, Setting.Property.NodeScope);
+            Setting.boolSetting(
+                    "cluster.remote.connect",
+                    SEARCH_ENABLE_REMOTE_CLUSTERS, // the default needs to be true when fallback is removed
+                    Setting.Property.Deprecated,
+                    Setting.Property.NodeScope);
 
     public static final Setting.AffixSetting<Boolean> SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE =
-            Setting.affixKeySetting("search.remote.", "skip_unavailable",
+            Setting.affixKeySetting(
+                    "search.remote.",
+                    "skip_unavailable",
                     key -> boolSetting(key, false, Setting.Property.Deprecated, Setting.Property.Dynamic, Setting.Property.NodeScope));
 
     public static final SettingUpgrader<Boolean> SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE_UPGRADER = new SettingUpgrader<Boolean>() {
@@ -127,20 +140,31 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
 
     };
 
-    public static final Setting.AffixSetting<Boolean> REMOTE_CLUSTER_SKIP_UNAVAILABLE = Setting.affixKeySetting("cluster.remote.",
-            "skip_unavailable", (ns, key) -> boolSetting(key,
-                    // the default needs to be false when fallback is removed
-                    "_na_".equals(key) ? SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE.getConcreteSettingForNamespace(key)
-                            : SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE.getConcreteSetting(key.replaceAll("^cluster", "search")),
-                    new RemoteConnectionEnabled<>(ns, key), Setting.Property.Dynamic, Setting.Property.NodeScope));
+    public static final Setting.AffixSetting<Boolean> REMOTE_CLUSTER_SKIP_UNAVAILABLE =
+            Setting.affixKeySetting(
+                    "cluster.remote.",
+                    "skip_unavailable",
+                (ns, key) -> boolSetting(
+                            key,
+                            // the default needs to be false when fallback is removed
+                            "_na_".equals(key)
+                                    ? SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE.getConcreteSettingForNamespace(key)
+                                    : SEARCH_REMOTE_CLUSTER_SKIP_UNAVAILABLE.getConcreteSetting(key.replaceAll("^cluster", "search")),
+                            new RemoteConnectionEnabled<>(ns, key),
+                            Setting.Property.Dynamic,
+                            Setting.Property.NodeScope));
 
-    public static final Setting.AffixSetting<TimeValue> REMOTE_CLUSTER_PING_SCHEDULE = Setting.affixKeySetting("cluster.remote.",
-            "transport.ping_schedule", (ns, key) -> timeSetting(key, TransportSettings.PING_SCHEDULE,
-                    new RemoteConnectionEnabled<>(ns, key), Setting.Property.Dynamic, Setting.Property.NodeScope));
+    public static final Setting.AffixSetting<TimeValue> REMOTE_CLUSTER_PING_SCHEDULE = Setting.affixKeySetting(
+            "cluster.remote.",
+            "transport.ping_schedule",
+        (ns, key) -> timeSetting(key, TransportSettings.PING_SCHEDULE, new RemoteConnectionEnabled<>(ns, key), Setting.Property.Dynamic,
+            Setting.Property.NodeScope));
 
-    public static final Setting.AffixSetting<Boolean> REMOTE_CLUSTER_COMPRESS = Setting.affixKeySetting("cluster.remote.",
-            "transport.compress", (ns, key) -> boolSetting(key, TransportSettings.TRANSPORT_COMPRESS,
-                    new RemoteConnectionEnabled<>(ns, key), Setting.Property.Dynamic, Setting.Property.NodeScope));
+    public static final Setting.AffixSetting<Boolean> REMOTE_CLUSTER_COMPRESS = Setting.affixKeySetting(
+        "cluster.remote.",
+        "transport.compress",
+        (ns, key) -> boolSetting(key, TransportSettings.TRANSPORT_COMPRESS,
+            new RemoteConnectionEnabled<>(ns, key), Setting.Property.Dynamic, Setting.Property.NodeScope));
 
     private final boolean enabled;
 
@@ -179,7 +203,8 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
                 for (Map.Entry<String, List<String>> entry : groupedIndices.entrySet()) {
                     String clusterAlias = entry.getKey();
                     List<String> originalIndices = entry.getValue();
-                    originalIndicesMap.put(clusterAlias, new OriginalIndices(originalIndices.toArray(new String[0]), indicesOptions));
+                    originalIndicesMap.put(clusterAlias,
+                        new OriginalIndices(originalIndices.toArray(new String[0]), indicesOptions));
                 }
             }
         } else {
@@ -234,7 +259,7 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
     RemoteClusterConnection getRemoteClusterConnection(String cluster) {
         if (enabled == false) {
             throw new IllegalArgumentException(
-                    "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
+                "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
         }
         RemoteClusterConnection connection = remoteClusters.get(cluster);
         if (connection == null) {
@@ -375,7 +400,7 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
     public void collectNodes(Set<String> clusters, ActionListener<BiFunction<String, String, DiscoveryNode>> listener) {
         if (enabled == false) {
             throw new IllegalArgumentException(
-                    "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
+                "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
         }
         Map<String, RemoteClusterConnection> remoteClusters = this.remoteClusters;
         for (String cluster : clusters) {
@@ -397,7 +422,8 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
                         clusterMap.put(cluster, nodeLookup);
                     }
                     if (countDown.countDown()) {
-                        listener.onResponse((clusterAlias, nodeId) -> clusterMap.getOrDefault(clusterAlias, nullFunction).apply(nodeId));
+                        listener.onResponse((clusterAlias, nodeId)
+                            -> clusterMap.getOrDefault(clusterAlias, nullFunction).apply(nodeId));
                     }
                 }
 
@@ -421,7 +447,7 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
     public Client getRemoteClusterClient(ThreadPool threadPool, String clusterAlias) {
         if (transportService.getRemoteClusterService().isEnabled() == false) {
             throw new IllegalArgumentException(
-                    "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
+                "this node does not have the " + DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE.roleName() + " role");
         }
         if (transportService.getRemoteClusterService().getRemoteClusterNames().contains(clusterAlias) == false) {
             throw new NoSuchRemoteClusterException(clusterAlias);
@@ -457,12 +483,13 @@ public final class RemoteClusterService extends RemoteClusterAware implements Cl
         @Override
         public Iterator<Setting<?>> settings() {
             return Stream.concat(Stream.of(RemoteConnectionStrategy.REMOTE_CONNECTION_MODE.getConcreteSettingForNamespace(clusterAlias)),
-                    settingsStream()).iterator();
+                settingsStream()).iterator();
         }
 
         private Stream<Setting<?>> settingsStream() {
             return Arrays.stream(RemoteConnectionStrategy.ConnectionStrategy.values())
-                    .flatMap(strategy -> strategy.getEnablementSettings().get()).map(as -> as.getConcreteSettingForNamespace(clusterAlias));
+                .flatMap(strategy -> strategy.getEnablementSettings().get())
+                .map(as -> as.getConcreteSettingForNamespace(clusterAlias));
         }
     };
 }

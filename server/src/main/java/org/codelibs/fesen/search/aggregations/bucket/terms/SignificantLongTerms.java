@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Result of the running the significant terms aggregation on a numeric field.
@@ -100,9 +100,11 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
         }
     }
 
-    public SignificantLongTerms(String name, int requiredSize, long minDocCount, Map<String, Object> metadata, DocValueFormat format,
-            long subsetSize, long supersetSize, SignificanceHeuristic significanceHeuristic, List<Bucket> buckets) {
-        super(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize, significanceHeuristic, buckets);
+    public SignificantLongTerms(String name, int requiredSize, long minDocCount,
+            Map<String, Object> metadata, DocValueFormat format, long subsetSize, long supersetSize,
+            SignificanceHeuristic significanceHeuristic, List<Bucket> buckets) {
+        super(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize, significanceHeuristic,
+                buckets);
     }
 
     /**
@@ -119,8 +121,8 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
 
     @Override
     public SignificantLongTerms create(List<SignificantLongTerms.Bucket> buckets) {
-        return new SignificantLongTerms(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize, significanceHeuristic,
-                buckets);
+        return new SignificantLongTerms(name, requiredSize, minDocCount, metadata, format, subsetSize, supersetSize,
+                significanceHeuristic, buckets);
     }
 
     @Override
@@ -131,8 +133,8 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
 
     @Override
     protected SignificantLongTerms create(long subsetSize, long supersetSize, List<Bucket> buckets) {
-        return new SignificantLongTerms(getName(), requiredSize, minDocCount, getMetadata(), format, subsetSize, supersetSize,
-                significanceHeuristic, buckets);
+        return new SignificantLongTerms(getName(), requiredSize, minDocCount, getMetadata(), format, subsetSize,
+                supersetSize, significanceHeuristic, buckets);
     }
 
     @Override
@@ -141,8 +143,8 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
     }
 
     @Override
-    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
-            SignificantLongTerms.Bucket prototype) {
+    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize,
+                        InternalAggregations aggregations, SignificantLongTerms.Bucket prototype) {
         return new Bucket(subsetDf, subsetSize, supersetDf, supersetSize, prototype.term, aggregations, format, prototype.score);
     }
 }

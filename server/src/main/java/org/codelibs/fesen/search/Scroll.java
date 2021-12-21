@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.search;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A scroll enables scrolling of search request. It holds a {@link #keepAlive()} time that

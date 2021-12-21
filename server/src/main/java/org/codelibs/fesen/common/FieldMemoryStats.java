@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.common;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Objects;
+import com.carrotsearch.hppc.ObjectLongHashMap;
+import com.carrotsearch.hppc.cursors.ObjectLongCursor;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,13 +28,14 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
-import com.carrotsearch.hppc.ObjectLongHashMap;
-import com.carrotsearch.hppc.cursors.ObjectLongCursor;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * A reusable class to encode {@code field -&gt; memory size} mappings
  */
-public final class FieldMemoryStats implements Writeable, Iterable<ObjectLongCursor<String>> {
+public final class FieldMemoryStats implements Writeable, Iterable<ObjectLongCursor<String>>{
 
     private final ObjectLongHashMap<String> stats;
 
@@ -102,10 +102,8 @@ public final class FieldMemoryStats implements Writeable, Iterable<ObjectLongCur
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FieldMemoryStats that = (FieldMemoryStats) o;
         return Objects.equals(stats, that.stats);
     }

@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.action.ingest;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -32,6 +28,10 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.ingest.IngestDocument;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+
 /**
  * Holds the end result of what a pipeline did to sample document provided via the simulate api.
  */
@@ -40,19 +40,30 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
     private final Exception failure;
 
     public static final ConstructingObjectParser<SimulateDocumentBaseResult, Void> PARSER =
-            new ConstructingObjectParser<>("simulate_document_base_result", true, a -> {
-                if (a[1] == null) {
-                    assert a[0] != null;
-                    return new SimulateDocumentBaseResult(((WriteableIngestDocument) a[0]).getIngestDocument());
-                } else {
-                    assert a[0] == null;
-                    return new SimulateDocumentBaseResult((FesenException) a[1]);
-                }
-            });
+        new ConstructingObjectParser<>(
+          "simulate_document_base_result",
+          true,
+          a -> {
+            if (a[1] == null) {
+                assert a[0] != null;
+                return new SimulateDocumentBaseResult(((WriteableIngestDocument)a[0]).getIngestDocument());
+            } else {
+                assert a[0] == null;
+                return new SimulateDocumentBaseResult((FesenException)a[1]);
+            }
+          }
+        );
     static {
-        PARSER.declareObject(optionalConstructorArg(), WriteableIngestDocument.INGEST_DOC_PARSER,
-                new ParseField(WriteableIngestDocument.DOC_FIELD));
-        PARSER.declareObject(optionalConstructorArg(), (p, c) -> FesenException.fromXContent(p), new ParseField("error"));
+        PARSER.declareObject(
+            optionalConstructorArg(),
+            WriteableIngestDocument.INGEST_DOC_PARSER,
+            new ParseField(WriteableIngestDocument.DOC_FIELD)
+        );
+        PARSER.declareObject(
+            optionalConstructorArg(),
+            (p, c) -> FesenException.fromXContent(p),
+            new ParseField("error")
+        );
     }
 
     public SimulateDocumentBaseResult(IngestDocument ingestDocument) {

@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
 import org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -40,6 +32,14 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 /**
  * Class handling cluster allocation explanation at the REST level
  */
@@ -47,7 +47,9 @@ public class RestClusterAllocationExplainAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_cluster/allocation/explain"), new Route(POST, "/_cluster/allocation/explain")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_cluster/allocation/explain"),
+            new Route(POST, "/_cluster/allocation/explain")));
     }
 
     @Override
@@ -75,13 +77,12 @@ public class RestClusterAllocationExplainAction extends BaseRestHandler {
         req.includeYesDecisions(request.paramAsBoolean("include_yes_decisions", false));
         req.includeDiskInfo(request.paramAsBoolean("include_disk_info", false));
         return channel -> client.admin().cluster().allocationExplain(req,
-                new RestBuilderListener<ClusterAllocationExplainResponse>(channel) {
-                    @Override
-                    public RestResponse buildResponse(ClusterAllocationExplainResponse response, XContentBuilder builder)
-                            throws IOException {
-                        response.getExplanation().toXContent(builder, ToXContent.EMPTY_PARAMS);
-                        return new BytesRestResponse(RestStatus.OK, builder);
-                    }
-                });
+            new RestBuilderListener<ClusterAllocationExplainResponse>(channel) {
+                @Override
+                public RestResponse buildResponse(ClusterAllocationExplainResponse response, XContentBuilder builder) throws IOException {
+                    response.getExplanation().toXContent(builder, ToXContent.EMPTY_PARAMS);
+                    return new BytesRestResponse(RestStatus.OK, builder);
+                }
+            });
     }
 }

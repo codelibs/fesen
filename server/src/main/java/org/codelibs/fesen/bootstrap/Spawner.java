@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.bootstrap;
 
+import org.apache.lucene.util.Constants;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.plugins.Platforms;
+import org.codelibs.fesen.plugins.PluginInfo;
+import org.codelibs.fesen.plugins.PluginsService;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,13 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.plugins.Platforms;
-import org.codelibs.fesen.plugins.PluginInfo;
-import org.codelibs.fesen.plugins.PluginsService;
 
 /**
  * Spawns native module controller processes if present. Will only work prior to a system call filter being installed.
@@ -79,8 +79,10 @@ final class Spawner implements Closeable {
                 continue;
             }
             if (!info.hasNativeController()) {
-                final String message =
-                        String.format(Locale.ROOT, "module [%s] does not have permission to fork native controller", modules.getFileName());
+                final String message = String.format(
+                    Locale.ROOT,
+                    "module [%s] does not have permission to fork native controller",
+                    modules.getFileName());
                 throw new IllegalArgumentException(message);
             }
             final Process process = spawnNativeController(spawnPath, environment.tmpFile(), inheritIo);

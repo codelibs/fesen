@@ -78,8 +78,8 @@ public class ClusterSearchShardsRequestTests extends ESTestCase {
     public void testIndicesMustNotBeNull() {
         ClusterSearchShardsRequest request = new ClusterSearchShardsRequest();
         assertNotNull(request.indices());
-        expectThrows(NullPointerException.class, () -> request.indices((String[]) null));
-        expectThrows(NullPointerException.class, () -> request.indices((String) null));
-        expectThrows(NullPointerException.class, () -> request.indices(new String[] { "index1", null, "index3" }));
+        expectThrows(NullPointerException.class, () -> request.indices((String[])null));
+        expectThrows(NullPointerException.class, () -> request.indices((String)null));
+        expectThrows(NullPointerException.class, () -> request.indices(new String[]{"index1", null, "index3"}));
     }
 }

@@ -266,24 +266,24 @@ public class WellKnownText {
     private Geometry parseGeometry(StreamTokenizer stream) throws IOException, ParseException {
         final String type = nextWord(stream).toLowerCase(Locale.ROOT);
         switch (type) {
-        case "point":
-            return parsePoint(stream);
-        case "multipoint":
-            return parseMultiPoint(stream);
-        case "linestring":
-            return parseLine(stream);
-        case "multilinestring":
-            return parseMultiLine(stream);
-        case "polygon":
-            return parsePolygon(stream);
-        case "multipolygon":
-            return parseMultiPolygon(stream);
-        case "bbox":
-            return parseBBox(stream);
-        case "geometrycollection":
-            return parseGeometryCollection(stream);
-        case "circle": // Not part of the standard, but we need it for internal serialization
-            return parseCircle(stream);
+            case "point":
+                return parsePoint(stream);
+            case "multipoint":
+                return parseMultiPoint(stream);
+            case "linestring":
+                return parseLine(stream);
+            case "multilinestring":
+                return parseMultiLine(stream);
+            case "polygon":
+                return parsePolygon(stream);
+            case "multipolygon":
+                return parseMultiPolygon(stream);
+            case "bbox":
+                return parseBBox(stream);
+            case "geometrycollection":
+                return parseGeometryCollection(stream);
+            case "circle": // Not part of the standard, but we need it for internal serialization
+                return parseCircle(stream);
         }
         throw new IllegalArgumentException("Unknown geometry type: " + type);
     }
@@ -317,7 +317,7 @@ public class WellKnownText {
     }
 
     private void parseCoordinates(StreamTokenizer stream, ArrayList<Double> lats, ArrayList<Double> lons, ArrayList<Double> alts)
-            throws IOException, ParseException {
+        throws IOException, ParseException {
         parseCoordinate(stream, lats, lons, alts);
         while (nextCloserOrComma(stream).equals(COMMA)) {
             parseCoordinate(stream, lats, lons, alts);
@@ -325,7 +325,7 @@ public class WellKnownText {
     }
 
     private void parseCoordinate(StreamTokenizer stream, ArrayList<Double> lats, ArrayList<Double> lons, ArrayList<Double> alts)
-            throws IOException, ParseException {
+        throws IOException, ParseException {
         lons.add(nextNumber(stream));
         lats.add(nextNumber(stream));
         if (isNumberNext(stream)) {
@@ -433,8 +433,8 @@ public class WellKnownText {
     private void closeLinearRingIfCoerced(ArrayList<Double> lats, ArrayList<Double> lons, ArrayList<Double> alts) {
         if (coerce && lats.isEmpty() == false && lons.isEmpty() == false) {
             int last = lats.size() - 1;
-            if (!lats.get(0).equals(lats.get(last)) || !lons.get(0).equals(lons.get(last))
-                    || (alts.isEmpty() == false && !alts.get(0).equals(alts.get(last)))) {
+            if (!lats.get(0).equals(lats.get(last)) || !lons.get(0).equals(lons.get(last)) ||
+                (alts.isEmpty() == false && !alts.get(0).equals(alts.get(last)))) {
                 lons.add(lons.get(0));
                 lats.add(lats.get(0));
                 if (alts.isEmpty() == false) {
@@ -473,6 +473,7 @@ public class WellKnownText {
         return new Rectangle(minLon, maxLon, maxLat, minLat);
     }
 
+
     private Circle parseCircle(StreamTokenizer stream) throws IOException, ParseException {
         if (nextEmptyOrOpen(stream).equals(EMPTY)) {
             return Circle.EMPTY;
@@ -494,15 +495,15 @@ public class WellKnownText {
      */
     private String nextWord(StreamTokenizer stream) throws ParseException, IOException {
         switch (stream.nextToken()) {
-        case StreamTokenizer.TT_WORD:
-            final String word = stream.sval;
-            return word.equalsIgnoreCase(EMPTY) ? EMPTY : word;
-        case '(':
-            return LPAREN;
-        case ')':
-            return RPAREN;
-        case ',':
-            return COMMA;
+            case StreamTokenizer.TT_WORD:
+                final String word = stream.sval;
+                return word.equalsIgnoreCase(EMPTY) ? EMPTY : word;
+            case '(':
+                return LPAREN;
+            case ')':
+                return RPAREN;
+            case ',':
+                return COMMA;
         }
         throw new ParseException("expected word but found: " + tokenString(stream), stream.lineno());
     }
@@ -524,14 +525,14 @@ public class WellKnownText {
 
     private String tokenString(StreamTokenizer stream) {
         switch (stream.ttype) {
-        case StreamTokenizer.TT_WORD:
-            return stream.sval;
-        case StreamTokenizer.TT_EOF:
-            return EOF;
-        case StreamTokenizer.TT_EOL:
-            return EOL;
-        case StreamTokenizer.TT_NUMBER:
-            return NUMBER;
+            case StreamTokenizer.TT_WORD:
+                return stream.sval;
+            case StreamTokenizer.TT_EOF:
+                return EOF;
+            case StreamTokenizer.TT_EOL:
+                return EOL;
+            case StreamTokenizer.TT_NUMBER:
+                return NUMBER;
         }
         return "'" + (char) stream.ttype + "'";
     }
@@ -547,7 +548,8 @@ public class WellKnownText {
         if (next.equals(EMPTY) || next.equals(LPAREN)) {
             return next;
         }
-        throw new ParseException("expected " + EMPTY + " or " + LPAREN + " but found: " + tokenString(stream), stream.lineno());
+        throw new ParseException("expected " + EMPTY + " or " + LPAREN
+            + " but found: " + tokenString(stream), stream.lineno());
     }
 
     private String nextCloser(StreamTokenizer stream) throws IOException, ParseException {
@@ -576,7 +578,8 @@ public class WellKnownText {
         if (token.equals(COMMA) || token.equals(RPAREN)) {
             return token;
         }
-        throw new ParseException("expected " + COMMA + " or " + RPAREN + " but found: " + tokenString(stream), stream.lineno());
+        throw new ParseException("expected " + COMMA + " or " + RPAREN
+            + " but found: " + tokenString(stream), stream.lineno());
     }
 
     private static String getWKTName(Geometry geometry) {

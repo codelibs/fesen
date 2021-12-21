@@ -45,7 +45,8 @@ public class JavaMultiFieldMergeTests extends ESSingleNodeTestCase {
         assertThat(mapperService.fieldType("name.indexed"), nullValue());
 
         BytesReference json = BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field("name", "some name").endObject());
-        Document doc = mapperService.documentMapper().parse(new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
+        Document doc = mapperService.documentMapper().parse(
+            new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
         IndexableField f = doc.getField("name");
         assertThat(f, notNullValue());
         f = doc.getField("name.indexed");
@@ -98,11 +99,13 @@ public class JavaMultiFieldMergeTests extends ESSingleNodeTestCase {
         assertThat(mapperService.fieldType("name.indexed"), nullValue());
 
         BytesReference json = BytesReference.bytes(XContentFactory.jsonBuilder().startObject().field("name", "some name").endObject());
-        Document doc = mapperService.documentMapper().parse(new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
+        Document doc = mapperService.documentMapper().parse(
+            new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
         IndexableField f = doc.getField("name");
         assertThat(f, notNullValue());
         f = doc.getField("name.indexed");
         assertThat(f, nullValue());
+
 
         mapping = copyToStringFromClasspath("/org/codelibs/fesen/index/mapper/multifield/merge/upgrade1.json");
         mapperService.merge("person", new CompressedXContent(mapping), MapperService.MergeReason.MAPPING_UPDATE);
@@ -114,7 +117,8 @@ public class JavaMultiFieldMergeTests extends ESSingleNodeTestCase {
         assertThat(mapperService.fieldType("name.not_indexed2"), nullValue());
         assertThat(mapperService.fieldType("name.not_indexed3"), nullValue());
 
-        doc = mapperService.documentMapper().parse(new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
+        doc = mapperService.documentMapper().parse(
+            new SourceToParse("test", "person", "1", json, XContentType.JSON)).rootDoc();
         f = doc.getField("name");
         assertThat(f, notNullValue());
         f = doc.getField("name.indexed");
@@ -129,6 +133,7 @@ public class JavaMultiFieldMergeTests extends ESSingleNodeTestCase {
         assertThat(mapperService.fieldType("name.not_indexed"), notNullValue());
         assertThat(mapperService.fieldType("name.not_indexed2"), notNullValue());
         assertThat(mapperService.fieldType("name.not_indexed3"), nullValue());
+
 
         mapping = copyToStringFromClasspath("/org/codelibs/fesen/index/mapper/multifield/merge/upgrade3.json");
         try {

@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.codelibs.fesen.Version;
+import org.codelibs.fesen.action.index.IndexRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.index.seqno.RetentionLeases;
+import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.translog.Translog;
 
@@ -40,9 +42,16 @@ public class RecoveryTranslogOperationsRequest extends RecoveryTransportRequest 
     private final RetentionLeases retentionLeases;
     private final long mappingVersionOnPrimary;
 
-    RecoveryTranslogOperationsRequest(final long recoveryId, final long requestSeqNo, final ShardId shardId,
-            final List<Translog.Operation> operations, final int totalTranslogOps, final long maxSeenAutoIdTimestampOnPrimary,
-            final long maxSeqNoOfUpdatesOrDeletesOnPrimary, final RetentionLeases retentionLeases, final long mappingVersionOnPrimary) {
+    RecoveryTranslogOperationsRequest(
+            final long recoveryId,
+            final long requestSeqNo,
+            final ShardId shardId,
+            final List<Translog.Operation> operations,
+            final int totalTranslogOps,
+            final long maxSeenAutoIdTimestampOnPrimary,
+            final long maxSeqNoOfUpdatesOrDeletesOnPrimary,
+            final RetentionLeases retentionLeases,
+            final long mappingVersionOnPrimary) {
         super(requestSeqNo);
         this.recoveryId = recoveryId;
         this.shardId = shardId;
@@ -97,9 +106,22 @@ public class RecoveryTranslogOperationsRequest extends RecoveryTransportRequest 
         shardId = new ShardId(in);
         operations = Translog.readOperations(in, "recovery");
         totalTranslogOps = in.readVInt();
-        maxSeenAutoIdTimestampOnPrimary = in.readZLong();
-        maxSeqNoOfUpdatesOrDeletesOnPrimary = in.readZLong();
-        retentionLeases = new RetentionLeases(in);
+        if (in.getVersion().onOrAfter(Version.V_6_5_0)) {
+            maxSeenAutoIdTimestampOnPrimary = in.readZLong();
+        } else {
+            maxSeenAutoIdTimestampOnPrimary = IndexRequest.UNSET_AUTO_GENERATED_TIMESTAMP;
+        }
+        if (in.getVersion().onOrAfter(Version.V_6_5_0)) {
+            maxSeqNoOfUpdatesOrDeletesOnPrimary = in.readZLong();
+        } else {
+            // UNASSIGNED_SEQ_NO means uninitialized and replica won't enable optimization using seq_no
+            maxSeqNoOfUpdatesOrDeletesOnPrimary = SequenceNumbers.UNASSIGNED_SEQ_NO;
+        }
+        if (in.getVersion().onOrAfter(Version.V_6_7_0)) {
+            retentionLeases = new RetentionLeases(in);
+        } else {
+            retentionLeases = RetentionLeases.EMPTY;
+        }
         if (in.getVersion().onOrAfter(Version.V_7_2_0)) {
             mappingVersionOnPrimary = in.readVLong();
         } else {
@@ -114,9 +136,15 @@ public class RecoveryTranslogOperationsRequest extends RecoveryTransportRequest 
         shardId.writeTo(out);
         Translog.writeOperations(out, operations);
         out.writeVInt(totalTranslogOps);
-        out.writeZLong(maxSeenAutoIdTimestampOnPrimary);
-        out.writeZLong(maxSeqNoOfUpdatesOrDeletesOnPrimary);
-        retentionLeases.writeTo(out);
+        if (out.getVersion().onOrAfter(Version.V_6_5_0)) {
+            out.writeZLong(maxSeenAutoIdTimestampOnPrimary);
+        }
+        if (out.getVersion().onOrAfter(Version.V_6_5_0)) {
+            out.writeZLong(maxSeqNoOfUpdatesOrDeletesOnPrimary);
+        }
+        if (out.getVersion().onOrAfter(Version.V_6_7_0)) {
+            retentionLeases.writeTo(out);
+        }
         if (out.getVersion().onOrAfter(Version.V_7_2_0)) {
             out.writeVLong(mappingVersionOnPrimary);
         }

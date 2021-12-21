@@ -19,22 +19,7 @@
 
 package org.codelibs.fesen.search;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.LongSupplier;
-
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.FieldDoc;
-import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.search.SearchShardTask;
 import org.codelibs.fesen.action.search.SearchType;
@@ -83,6 +68,21 @@ import org.codelibs.fesen.search.rescore.RescoreContext;
 import org.codelibs.fesen.search.slice.SliceBuilder;
 import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
+import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.FieldDoc;
+import org.apache.lucene.search.MatchNoDocsQuery;
+import org.apache.lucene.search.Query;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.LongSupplier;
 
 final class DefaultSearchContext extends SearchContext {
 
@@ -154,9 +154,16 @@ final class DefaultSearchContext extends SearchContext {
     private final QueryShardContext queryShardContext;
     private final FetchPhase fetchPhase;
 
-    DefaultSearchContext(ReaderContext readerContext, ShardSearchRequest request, SearchShardTarget shardTarget,
-            ClusterService clusterService, BigArrays bigArrays, LongSupplier relativeTimeSupplier, TimeValue timeout, FetchPhase fetchPhase,
-            boolean lowLevelCancellation, Version minNodeVersion) throws IOException {
+    DefaultSearchContext(ReaderContext readerContext,
+                         ShardSearchRequest request,
+                         SearchShardTarget shardTarget,
+                         ClusterService clusterService,
+                         BigArrays bigArrays,
+                         LongSupplier relativeTimeSupplier,
+                         TimeValue timeout,
+                         FetchPhase fetchPhase,
+                         boolean lowLevelCancellation,
+                         Version minNodeVersion) throws IOException {
         this.readerContext = readerContext;
         this.request = request;
         this.fetchPhase = fetchPhase;
@@ -172,12 +179,12 @@ final class DefaultSearchContext extends SearchContext {
         this.clusterService = clusterService;
         this.engineSearcher = readerContext.acquireSearcher("search");
         this.searcher = new ContextIndexSearcher(engineSearcher.getIndexReader(), engineSearcher.getSimilarity(),
-                engineSearcher.getQueryCache(), engineSearcher.getQueryCachingPolicy(), lowLevelCancellation);
+            engineSearcher.getQueryCache(), engineSearcher.getQueryCachingPolicy(), lowLevelCancellation);
         this.relativeTimeSupplier = relativeTimeSupplier;
         this.timeout = timeout;
         this.minNodeVersion = minNodeVersion;
-        queryShardContext = indexService.newQueryShardContext(request.shardId().id(), this.searcher, request::nowInMillis,
-                shardTarget.getClusterAlias());
+        queryShardContext = indexService.newQueryShardContext(request.shardId().id(), this.searcher,
+            request::nowInMillis, shardTarget.getClusterAlias());
         queryShardContext.setTypes(request.types());
         queryBoost = request.indexBoost();
         this.lowLevelCancellation = lowLevelCancellation;
@@ -193,7 +200,7 @@ final class DefaultSearchContext extends SearchContext {
      */
     @Override
     public void preProcess(boolean rewrite) {
-        if (hasOnlySuggest()) {
+        if (hasOnlySuggest() ) {
             return;
         }
         long from = from() == -1 ? 0 : from();
@@ -219,7 +226,7 @@ final class DefaultSearchContext extends SearchContext {
                 throw new IllegalArgumentException("Cannot use [sort] option in conjunction with [rescore].");
             }
             int maxWindow = indexService.getIndexSettings().getMaxRescoreWindow();
-            for (RescoreContext rescoreContext : rescore()) {
+            for (RescoreContext rescoreContext: rescore()) {
                 if (rescoreContext.getWindowSize() > maxWindow) {
                     throw new IllegalArgumentException("Rescore window [" + rescoreContext.getWindowSize() + "] is too large. "
                             + "It must be less than [" + maxWindow + "]. This prevents allocating massive heaps for storing the results "
@@ -233,9 +240,9 @@ final class DefaultSearchContext extends SearchContext {
             int sliceLimit = indexService.getIndexSettings().getMaxSlicesPerScroll();
             int numSlices = sliceBuilder.getMax();
             if (numSlices > sliceLimit) {
-                throw new IllegalArgumentException("The number of slices [" + numSlices + "] is too large. It must " + "be less than ["
-                        + sliceLimit + "]. This limit can be set by changing the [" + IndexSettings.MAX_SLICES_PER_SCROLL.getKey()
-                        + "] index level setting.");
+                throw new IllegalArgumentException("The number of slices [" + numSlices + "] is too large. It must "
+                    + "be less than [" + sliceLimit + "]. This limit can be set by changing the [" +
+                    IndexSettings.MAX_SLICES_PER_SCROLL.getKey() + "] index level setting.");
             }
         }
 
@@ -271,7 +278,8 @@ final class DefaultSearchContext extends SearchContext {
             filters.add(typeFilter);
         }
 
-        if (mapperService().hasNested() && new NestedHelper(mapperService()).mightMatchNestedDocs(query)
+        if (mapperService().hasNested()
+                && new NestedHelper(mapperService()).mightMatchNestedDocs(query)
                 && (aliasFilter == null || new NestedHelper(mapperService()).mightMatchNestedDocs(aliasFilter))) {
             filters.add(Queries.newNonNestedFilter(mapperService().getIndexSettings().getIndexVersionCreated()));
         }

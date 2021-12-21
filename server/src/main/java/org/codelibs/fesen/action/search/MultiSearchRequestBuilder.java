@@ -28,6 +28,7 @@ import org.codelibs.fesen.client.FesenClient;
  */
 public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchRequest, MultiSearchResponse> {
 
+
     public MultiSearchRequestBuilder(FesenClient client, MultiSearchAction action) {
         super(client, action, new MultiSearchRequest());
     }
@@ -41,7 +42,7 @@ public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchR
      */
     public MultiSearchRequestBuilder add(SearchRequest request) {
         if (request.indicesOptions() == IndicesOptions.strictExpandOpenAndForbidClosed()
-                && request().indicesOptions() != IndicesOptions.strictExpandOpenAndForbidClosed()) {
+            && request().indicesOptions() != IndicesOptions.strictExpandOpenAndForbidClosed()) {
             request.indicesOptions(request().indicesOptions());
         }
 
@@ -55,7 +56,7 @@ public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchR
      */
     public MultiSearchRequestBuilder add(SearchRequestBuilder request) {
         if (request.request().indicesOptions() == SearchRequest.DEFAULT_INDICES_OPTIONS
-                && request().indicesOptions() != SearchRequest.DEFAULT_INDICES_OPTIONS) {
+            && request().indicesOptions() != SearchRequest.DEFAULT_INDICES_OPTIONS) {
             request.request().indicesOptions(request().indicesOptions());
         }
 

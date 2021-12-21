@@ -32,7 +32,7 @@ public class AliasFilterParsingException extends FesenException {
         setIndex(index);
     }
 
-    public AliasFilterParsingException(StreamInput in) throws IOException {
+    public AliasFilterParsingException(StreamInput in) throws IOException{
         super(in);
     }
 }

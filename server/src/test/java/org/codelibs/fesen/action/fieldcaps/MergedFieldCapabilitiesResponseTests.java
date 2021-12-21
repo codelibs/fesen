@@ -81,19 +81,22 @@ public class MergedFieldCapabilitiesResponseTests extends AbstractSerializingTes
         int mutation = response.get().isEmpty() ? 0 : randomIntBetween(0, 2);
 
         switch (mutation) {
-        case 0:
-            String toAdd = randomAlphaOfLength(10);
-            mutatedResponses.put(toAdd, Collections.singletonMap(randomAlphaOfLength(10), FieldCapabilitiesTests.randomFieldCaps(toAdd)));
-            break;
-        case 1:
-            String toRemove = randomFrom(mutatedResponses.keySet());
-            mutatedResponses.remove(toRemove);
-            break;
-        case 2:
-            String toReplace = randomFrom(mutatedResponses.keySet());
-            mutatedResponses.put(toReplace,
-                    Collections.singletonMap(randomAlphaOfLength(10), FieldCapabilitiesTests.randomFieldCaps(toReplace)));
-            break;
+            case 0:
+                String toAdd = randomAlphaOfLength(10);
+                mutatedResponses.put(toAdd, Collections.singletonMap(
+                    randomAlphaOfLength(10),
+                    FieldCapabilitiesTests.randomFieldCaps(toAdd)));
+                break;
+            case 1:
+                String toRemove = randomFrom(mutatedResponses.keySet());
+                mutatedResponses.remove(toRemove);
+                break;
+            case 2:
+                String toReplace = randomFrom(mutatedResponses.keySet());
+                mutatedResponses.put(toReplace, Collections.singletonMap(
+                    randomAlphaOfLength(10),
+                    FieldCapabilitiesTests.randomFieldCaps(toReplace)));
+                break;
         }
         return new FieldCapabilitiesResponse(null, mutatedResponses);
     }
@@ -113,16 +116,35 @@ public class MergedFieldCapabilitiesResponseTests extends AbstractSerializingTes
         response.toXContent(builder, ToXContent.EMPTY_PARAMS);
 
         String generatedResponse = BytesReference.bytes(builder).utf8ToString();
-        assertEquals(("{" + "    \"indices\": null," + "    \"fields\": {" + "        \"rating\": { " + "            \"keyword\": {"
-                + "                \"type\": \"keyword\"," + "                \"searchable\": false,"
-                + "                \"aggregatable\": true," + "                \"indices\": [\"index3\", \"index4\"],"
-                + "                \"non_searchable_indices\": [\"index4\"] " + "            }," + "            \"long\": {"
-                + "                \"type\": \"long\"," + "                \"searchable\": true,"
-                + "                \"aggregatable\": false," + "                \"indices\": [\"index1\", \"index2\"],"
-                + "                \"non_aggregatable_indices\": [\"index1\"] " + "            }" + "        }," + "        \"title\": { "
-                + "            \"text\": {" + "                \"type\": \"text\"," + "                \"searchable\": true,"
-                + "                \"aggregatable\": false" + "            }" + "        }" + "    }" + "}").replaceAll("\\s+", ""),
-                generatedResponse);
+        assertEquals((
+            "{" +
+            "    \"indices\": null," +
+            "    \"fields\": {" +
+            "        \"rating\": { " +
+            "            \"keyword\": {" +
+            "                \"type\": \"keyword\"," +
+            "                \"searchable\": false," +
+            "                \"aggregatable\": true," +
+            "                \"indices\": [\"index3\", \"index4\"]," +
+            "                \"non_searchable_indices\": [\"index4\"] " +
+            "            }," +
+            "            \"long\": {" +
+            "                \"type\": \"long\"," +
+            "                \"searchable\": true," +
+            "                \"aggregatable\": false," +
+            "                \"indices\": [\"index1\", \"index2\"]," +
+            "                \"non_aggregatable_indices\": [\"index1\"] " +
+            "            }" +
+            "        }," +
+            "        \"title\": { " +
+            "            \"text\": {" +
+            "                \"type\": \"text\"," +
+            "                \"searchable\": true," +
+            "                \"aggregatable\": false" +
+            "            }" +
+            "        }" +
+            "    }" +
+            "}").replaceAll("\\s+", ""), generatedResponse);
     }
 
     public void testEmptyResponse() throws IOException {
@@ -135,10 +157,16 @@ public class MergedFieldCapabilitiesResponseTests extends AbstractSerializingTes
         titleCapabilities.put("text", new FieldCapabilities("title", "text", true, false, null, null, null, Collections.emptyMap()));
 
         Map<String, FieldCapabilities> ratingCapabilities = new HashMap<>();
-        ratingCapabilities.put("long", new FieldCapabilities("rating", "long", true, false, new String[] { "index1", "index2" }, null,
-                new String[] { "index1" }, Collections.emptyMap()));
-        ratingCapabilities.put("keyword", new FieldCapabilities("rating", "keyword", false, true, new String[] { "index3", "index4" },
-                new String[] { "index4" }, null, Collections.emptyMap()));
+        ratingCapabilities.put("long", new FieldCapabilities("rating", "long",
+            true, false,
+            new String[]{"index1", "index2"},
+            null,
+            new String[]{"index1"}, Collections.emptyMap()));
+        ratingCapabilities.put("keyword", new FieldCapabilities("rating", "keyword",
+            false, true,
+            new String[]{"index3", "index4"},
+            new String[]{"index4"},
+            null, Collections.emptyMap()));
 
         Map<String, Map<String, FieldCapabilities>> responses = new HashMap<>();
         responses.put("title", titleCapabilities);

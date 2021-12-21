@@ -19,14 +19,7 @@
 
 package org.codelibs.fesen.test.disruption;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.BiConsumer;
-
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -39,7 +32,13 @@ import org.codelibs.fesen.test.transport.MockTransportService;
 import org.codelibs.fesen.transport.ConnectTransportException;
 import org.codelibs.fesen.transport.TransportService;
 
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.BiConsumer;
 
 /**
  * Network disruptions are modeled using two components:
@@ -128,8 +127,8 @@ public class NetworkDisruption implements ServiceDisruptionScheme {
     @Override
     public synchronized void removeFromNode(String node1, InternalTestCluster cluster) {
         logger.info("stop disrupting node (disruption type: {}, disrupted links: {})", networkLinkDisruptionType, disruptedLinks);
-        applyToNodes(new String[] { node1 }, cluster.getNodeNames(), networkLinkDisruptionType::removeDisruption);
-        applyToNodes(cluster.getNodeNames(), new String[] { node1 }, networkLinkDisruptionType::removeDisruption);
+        applyToNodes(new String[]{ node1 }, cluster.getNodeNames(), networkLinkDisruptionType::removeDisruption);
+        applyToNodes(cluster.getNodeNames(), new String[]{ node1 }, networkLinkDisruptionType::removeDisruption);
     }
 
     @Override
@@ -367,8 +366,8 @@ public class NetworkDisruption implements ServiceDisruptionScheme {
         }
 
         public String toString() {
-            return "bridge partition (super connected node: [" + bridgeNode + "], partition 1: " + nodesSideOne + " and partition 2: "
-                    + nodesSideTwo + ")";
+            return "bridge partition (super connected node: [" + bridgeNode + "], partition 1: " + nodesSideOne +
+                " and partition 2: " + nodesSideTwo + ")";
         }
     }
 
@@ -486,8 +485,9 @@ public class NetworkDisruption implements ServiceDisruptionScheme {
          * @param delayMax maximum delay
          */
         public static NetworkDelay random(Random random, TimeValue delayMin, TimeValue delayMax) {
-            return new NetworkDelay(TimeValue.timeValueMillis(delayMin.millis() == delayMax.millis() ? delayMin.millis()
-                    : delayMin.millis() + random.nextInt((int) (delayMax.millis() - delayMin.millis()))));
+            return new NetworkDelay(TimeValue.timeValueMillis(delayMin.millis() == delayMax.millis() ?
+                    delayMin.millis() :
+                    delayMin.millis() + random.nextInt((int) (delayMax.millis() - delayMin.millis()))));
         }
 
         @Override

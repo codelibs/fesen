@@ -139,7 +139,8 @@ public class DeleteByQueryRequestTests extends AbstractBulkByScrollRequestTestCa
     @Override
     protected DeleteByQueryRequest doParseInstance(XContentParser parser) throws IOException {
         XContentParser.Token token;
-        while ((token = parser.nextToken()) != null) {}
+        while ((token = parser.nextToken()) != null) {
+        }
         return newRequest();
     }
 

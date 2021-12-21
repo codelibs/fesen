@@ -24,8 +24,8 @@ import org.apache.lucene.search.SortField;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
@@ -50,7 +50,6 @@ public class BinaryIndexFieldData implements IndexFieldData<BinaryDVLeafFieldDat
             return new BinaryIndexFieldData(name, valuesSourceType);
         }
     }
-
     protected final String fieldName;
     protected final ValuesSourceType valuesSourceType;
 
@@ -68,6 +67,7 @@ public class BinaryIndexFieldData implements IndexFieldData<BinaryDVLeafFieldDat
     public ValuesSourceType getValuesSourceType() {
         return valuesSourceType;
     }
+
 
     @Override
     public BinaryDVLeafFieldData load(LeafReaderContext context) {

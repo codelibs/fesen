@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -38,7 +28,18 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.script.ScriptType;
+import org.codelibs.fesen.script.mustache.SearchTemplateRequest;
 import org.codelibs.fesen.test.AbstractXContentTestCase;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.nullValue;
 
 public class SearchTemplateRequestXContentTests extends AbstractXContentTestCase<SearchTemplateRequest> {
 
@@ -61,10 +62,12 @@ public class SearchTemplateRequestXContentTests extends AbstractXContentTestCase
      */
     @Override
     protected void assertEqualInstances(SearchTemplateRequest expectedInstance, SearchTemplateRequest newInstance) {
-        assertTrue(expectedInstance.isExplain() == newInstance.isExplain() && expectedInstance.isProfile() == newInstance.isProfile()
-                && expectedInstance.getScriptType() == newInstance.getScriptType()
-                && Objects.equals(expectedInstance.getScript(), newInstance.getScript())
-                && Objects.equals(expectedInstance.getScriptParams(), newInstance.getScriptParams()));
+        assertTrue(
+            expectedInstance.isExplain() == newInstance.isExplain() &&
+            expectedInstance.isProfile() == newInstance.isProfile() &&
+            expectedInstance.getScriptType() == newInstance.getScriptType() &&
+            Objects.equals(expectedInstance.getScript(), newInstance.getScript()) &&
+            Objects.equals(expectedInstance.getScriptParams(), newInstance.getScriptParams()));
     }
 
     @Override
@@ -85,14 +88,23 @@ public class SearchTemplateRequestXContentTests extends AbstractXContentTestCase
         request.setScriptParams(scriptParams);
 
         XContentType contentType = randomFrom(XContentType.values());
-        XContentBuilder expectedRequest = XContentFactory.contentBuilder(contentType).startObject()
-                .field("source", "{\"query\": { \"match\" : { \"{{my_field}}\" : \"{{my_value}}\" } } }").startObject("params")
-                .field("my_field", "foo").field("my_value", "bar").endObject().field("explain", false).field("profile", true).endObject();
+        XContentBuilder expectedRequest = XContentFactory.contentBuilder(contentType)
+            .startObject()
+                .field("source", "{\"query\": { \"match\" : { \"{{my_field}}\" : \"{{my_value}}\" } } }")
+                .startObject("params")
+                    .field("my_field", "foo")
+                    .field("my_value", "bar")
+                .endObject()
+                .field("explain", false)
+                .field("profile", true)
+            .endObject();
 
         XContentBuilder actualRequest = XContentFactory.contentBuilder(contentType);
         request.toXContent(actualRequest, ToXContent.EMPTY_PARAMS);
 
-        assertToXContentEquivalent(BytesReference.bytes(expectedRequest), BytesReference.bytes(actualRequest), contentType);
+        assertToXContentEquivalent(BytesReference.bytes(expectedRequest),
+            BytesReference.bytes(actualRequest),
+            contentType);
     }
 
     public void testToXContentWithStoredTemplate() throws IOException {
@@ -108,20 +120,40 @@ public class SearchTemplateRequestXContentTests extends AbstractXContentTestCase
         request.setScriptParams(params);
 
         XContentType contentType = randomFrom(XContentType.values());
-        XContentBuilder expectedRequest = XContentFactory.contentBuilder(contentType).startObject().field("id", "match_template")
-                .startObject("params").field("my_field", "foo").field("my_value", "bar").endObject().field("explain", true)
-                .field("profile", false).endObject();
+        XContentBuilder expectedRequest = XContentFactory.contentBuilder(contentType)
+            .startObject()
+                .field("id", "match_template")
+                .startObject("params")
+                    .field("my_field", "foo")
+                    .field("my_value", "bar")
+                .endObject()
+                .field("explain", true)
+                .field("profile", false)
+            .endObject();
 
         XContentBuilder actualRequest = XContentFactory.contentBuilder(contentType);
         request.toXContent(actualRequest, ToXContent.EMPTY_PARAMS);
 
-        assertToXContentEquivalent(BytesReference.bytes(expectedRequest), BytesReference.bytes(actualRequest), contentType);
+        assertToXContentEquivalent(
+            BytesReference.bytes(expectedRequest),
+            BytesReference.bytes(actualRequest),
+            contentType);
     }
 
     public void testFromXContentWithEmbeddedTemplate() throws Exception {
-        String source = "{" + "    'source' : {\n" + "    'query': {\n" + "      'terms': {\n" + "        'status': [\n"
-                + "          '{{#status}}',\n" + "          '{{.}}',\n" + "          '{{/status}}'\n" + "        ]\n" + "      }\n"
-                + "    }\n" + "  }" + "}";
+        String source = "{" +
+                "    'source' : {\n" +
+                "    'query': {\n" +
+                "      'terms': {\n" +
+                "        'status': [\n" +
+                "          '{{#status}}',\n" +
+                "          '{{.}}',\n" +
+                "          '{{/status}}'\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }" +
+                "}";
 
         SearchTemplateRequest request = SearchTemplateRequest.fromXContent(newParser(source));
         assertThat(request.getScript(), equalTo("{\"query\":{\"terms\":{\"status\":[\"{{#status}}\",\"{{.}}\",\"{{/status}}\"]}}}"));
@@ -130,9 +162,17 @@ public class SearchTemplateRequestXContentTests extends AbstractXContentTestCase
     }
 
     public void testFromXContentWithEmbeddedTemplateAndParams() throws Exception {
-        String source = "{" + "    'source' : {" + "      'query': { 'match' : { '{{my_field}}' : '{{my_value}}' } },"
-                + "      'size' : '{{my_size}}'" + "    }," + "    'params' : {" + "        'my_field' : 'foo',"
-                + "        'my_value' : 'bar'," + "        'my_size' : 5" + "    }" + "}";
+        String source = "{" +
+            "    'source' : {" +
+            "      'query': { 'match' : { '{{my_field}}' : '{{my_value}}' } }," +
+            "      'size' : '{{my_size}}'" +
+            "    }," +
+            "    'params' : {" +
+            "        'my_field' : 'foo'," +
+            "        'my_value' : 'bar'," +
+            "        'my_size' : 5" +
+            "    }" +
+            "}";
 
         SearchTemplateRequest request = SearchTemplateRequest.fromXContent(newParser(source));
         assertThat(request.getScript(), equalTo("{\"query\":{\"match\":{\"{{my_field}}\":\"{{my_value}}\"}},\"size\":\"{{my_size}}\"}"));

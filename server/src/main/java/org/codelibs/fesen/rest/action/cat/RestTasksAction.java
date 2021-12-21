@@ -19,20 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.action.admin.cluster.RestListTasksAction.generateListTasksRequest;
-
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksRequest;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
 import org.codelibs.fesen.action.admin.cluster.node.tasks.list.TaskGroup;
@@ -48,6 +34,20 @@ import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskInfo;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.action.admin.cluster.RestListTasksAction.generateListTasksRequest;
 
 public class RestTasksAction extends AbstractCatAction {
     private final Supplier<DiscoveryNodes> nodesInCluster;
@@ -74,7 +74,8 @@ public class RestTasksAction extends AbstractCatAction {
     @Override
     public RestChannelConsumer doCatRequest(final RestRequest request, final NodeClient client) {
         final ListTasksRequest listTasksRequest = generateListTasksRequest(request);
-        return channel -> client.admin().cluster().listTasks(listTasksRequest, new RestResponseListener<ListTasksResponse>(channel) {
+        return channel ->
+                client.admin().cluster().listTasks(listTasksRequest, new RestResponseListener<ListTasksResponse>(channel) {
             @Override
             public RestResponse buildResponse(ListTasksResponse listTasksResponse) throws Exception {
                 return RestTable.buildResponse(buildTable(request, listTasksResponse), channel);

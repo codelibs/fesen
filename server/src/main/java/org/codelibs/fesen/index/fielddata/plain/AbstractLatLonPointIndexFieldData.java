@@ -27,10 +27,10 @@ import org.apache.lucene.search.SortField;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.IndexGeoPointFieldData;
 import org.codelibs.fesen.index.fielddata.LeafGeoPointFieldData;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
@@ -94,10 +94,10 @@ public abstract class AbstractLatLonPointIndexFieldData implements IndexGeoPoint
         static void checkCompatible(FieldInfo fieldInfo) {
             // dv properties could be "unset", if you e.g. used only StoredField with this same name in the segment.
             if (fieldInfo.getDocValuesType() != DocValuesType.NONE
-                    && fieldInfo.getDocValuesType() != LatLonDocValuesField.TYPE.docValuesType()) {
+                && fieldInfo.getDocValuesType() != LatLonDocValuesField.TYPE.docValuesType()) {
                 throw new IllegalArgumentException("field=\"" + fieldInfo.name + "\" was indexed with docValuesType="
-                        + fieldInfo.getDocValuesType() + " but this type has docValuesType=" + LatLonDocValuesField.TYPE.docValuesType()
-                        + ", is the field really a LatLonDocValuesField?");
+                    + fieldInfo.getDocValuesType() + " but this type has docValuesType="
+                    + LatLonDocValuesField.TYPE.docValuesType() + ", is the field really a LatLonDocValuesField?");
             }
         }
     }
@@ -108,7 +108,7 @@ public abstract class AbstractLatLonPointIndexFieldData implements IndexGeoPoint
 
         public Builder(String name, ValuesSourceType valuesSourceType) {
             this.name = name;
-            this.valuesSourceType = valuesSourceType;
+            this.valuesSourceType =  valuesSourceType;
         }
 
         @Override

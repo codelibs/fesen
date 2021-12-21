@@ -19,14 +19,6 @@
 
 package org.apache.lucene.search.uhighlight;
 
-import java.io.IOException;
-import java.text.BreakIterator;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.Term;
@@ -43,6 +35,14 @@ import org.codelibs.fesen.common.CheckedSupplier;
 import org.codelibs.fesen.common.lucene.search.MultiPhrasePrefixQuery;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.IndexSettings;
+
+import java.io.IOException;
+import java.text.BreakIterator;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Subclass of the {@link UnifiedHighlighter} that works for a single field in a single document.
@@ -88,10 +88,18 @@ public class CustomUnifiedHighlighter extends UnifiedHighlighter {
      * @param maxAnalyzedOffset if the field is more than this long we'll refuse to use the ANALYZED
      *                          offset source for it because it'd be super slow
      */
-    public CustomUnifiedHighlighter(IndexSearcher searcher, Analyzer analyzer, OffsetSource offsetSource, PassageFormatter passageFormatter,
-            @Nullable Locale breakIteratorLocale, @Nullable BreakIterator breakIterator, String index, String field, Query query,
-            int noMatchSize, int maxPassages, Predicate<String> fieldMatcher, int keywordIgnoreAbove, int maxAnalyzedOffset)
-            throws IOException {
+    public CustomUnifiedHighlighter(IndexSearcher searcher,
+                                    Analyzer analyzer,
+                                    OffsetSource offsetSource,
+                                    PassageFormatter passageFormatter,
+                                    @Nullable Locale breakIteratorLocale,
+                                    @Nullable BreakIterator breakIterator,
+                                    String index, String field, Query query,
+                                    int noMatchSize,
+                                    int maxPassages,
+                                    Predicate<String> fieldMatcher,
+                                    int keywordIgnoreAbove,
+                                    int maxAnalyzedOffset) throws IOException {
         super(searcher, analyzer);
         this.offsetSource = offsetSource;
         this.breakIterator = breakIterator;
@@ -123,10 +131,22 @@ public class CustomUnifiedHighlighter extends UnifiedHighlighter {
             return null; // skip highlighting keyword terms that were ignored during indexing
         }
         if ((offsetSource == OffsetSource.ANALYSIS) && (fieldValueLength > maxAnalyzedOffset)) {
-            throw new IllegalArgumentException("The length of [" + field + "] field of [" + docId + "] doc of [" + index + "] index "
-                    + "has exceeded [" + maxAnalyzedOffset + "] - maximum allowed to be analyzed for highlighting. "
-                    + "This maximum can be set by changing the [" + IndexSettings.MAX_ANALYZED_OFFSET_SETTING.getKey()
-                    + "] index level setting. " + "For large texts, indexing with offsets or term vectors is recommended!");
+            throw new IllegalArgumentException(
+                "The length of ["
+                    + field
+                    + "] field of ["
+                    + docId
+                    + "] doc of ["
+                    + index
+                    + "] index "
+                    + "has exceeded ["
+                    + maxAnalyzedOffset
+                    + "] - maximum allowed to be analyzed for highlighting. "
+                    + "This maximum can be set by changing the ["
+                    + IndexSettings.MAX_ANALYZED_OFFSET_SETTING.getKey()
+                    + "] index level setting. "
+                    + "For large texts, indexing with offsets or term vectors is recommended!"
+            );
         }
         Snippet[] result = (Snippet[]) fieldHighlighter.highlightFieldForDoc(reader, docId, fieldValue);
         return result == null ? EMPTY_SNIPPET : result;
@@ -153,12 +173,13 @@ public class CustomUnifiedHighlighter extends UnifiedHighlighter {
         Set<HighlightFlag> highlightFlags = getFlags(field);
         PhraseHelper phraseHelper = getPhraseHelper(field, query, highlightFlags);
         LabelledCharArrayMatcher[] automata = getAutomata(field, query, highlightFlags);
-        UHComponents components = new UHComponents(field, fieldMatcher, query, terms, phraseHelper, automata, false, highlightFlags);
+        UHComponents components = new UHComponents(field, fieldMatcher, query, terms, phraseHelper, automata, false , highlightFlags);
         OffsetSource offsetSource = getOptimizedOffsetSource(components);
-        BreakIterator breakIterator = new SplittingBreakIterator(getBreakIterator(field), UnifiedHighlighter.MULTIVAL_SEP_CHAR);
+        BreakIterator breakIterator = new SplittingBreakIterator(getBreakIterator(field),
+            UnifiedHighlighter.MULTIVAL_SEP_CHAR);
         FieldOffsetStrategy strategy = getOffsetStrategy(offsetSource, components);
-        return new CustomFieldHighlighter(field, strategy, breakIteratorLocale, breakIterator, getScorer(field), maxPassages,
-                (noMatchSize > 0 ? 1 : 0), getFormatter(field), noMatchSize);
+        return new CustomFieldHighlighter(field, strategy, breakIteratorLocale, breakIterator,
+            getScorer(field), maxPassages, (noMatchSize > 0 ? 1 : 0), getFormatter(field), noMatchSize);
     }
 
     @Override
@@ -203,7 +224,8 @@ public class CustomUnifiedHighlighter extends UnifiedHighlighter {
             }
             //if original slop is 0 then require inOrder
             boolean inorder = (mpq.getSlop() == 0);
-            return Collections.singletonList(new SpanNearQuery(positionSpanQueries, mpq.getSlop() + positionGaps, inorder));
+            return Collections.singletonList(new SpanNearQuery(positionSpanQueries,
+                mpq.getSlop() + positionGaps, inorder));
         } else {
             return null;
         }

@@ -111,7 +111,7 @@ public abstract class AnalysisPredicateScript {
         AnalysisPredicateScript newInstance();
     }
 
-    public static final String[] PARAMETERS = new String[] { "token" };
+    public static final String[] PARAMETERS = new String[]{ "token" };
     public static final ScriptContext<Factory> CONTEXT = new ScriptContext<>("analysis", Factory.class);
 
 }

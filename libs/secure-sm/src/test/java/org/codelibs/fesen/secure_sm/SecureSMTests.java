@@ -19,12 +19,16 @@
 
 package org.codelibs.fesen.secure_sm;
 
+import junit.framework.TestCase;
+
 import java.security.Permission;
 import java.security.Policy;
 import java.security.ProtectionDomain;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.TestCase;
+import org.codelibs.fesen.secure_sm.SecureSM;
+import org.codelibs.fesen.secure_sm.SuppressForbidden;
+import org.codelibs.fesen.secure_sm.ThreadPermission;
 
 /** Simple tests for SecureSM */
 public class SecureSMTests extends TestCase {
@@ -60,8 +64,8 @@ public class SecureSMTests extends TestCase {
         assertTrue(SecureSM.classCanExit("com.carrotsearch.ant.tasks.junit4.slave.JvmExit", SecureSM.TEST_RUNNER_PACKAGES));
         assertTrue(SecureSM.classCanExit("org.eclipse.jdt.internal.junit.runner.RemoteTestRunner", SecureSM.TEST_RUNNER_PACKAGES));
         assertTrue(SecureSM.classCanExit("com.intellij.rt.execution.junit.JUnitStarter", SecureSM.TEST_RUNNER_PACKAGES));
-        assertTrue(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[] { "org.codelibs.fesen.Foo" }));
-        assertFalse(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[] { "org.codelibs.fesen.Bar" }));
+        assertTrue(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[]{"org.codelibs.fesen.Foo"}));
+        assertFalse(SecureSM.classCanExit("org.codelibs.fesen.Foo", new String[]{"org.codelibs.fesen.Bar"}));
     }
 
     public void testCreateThread() throws Exception {

@@ -19,14 +19,15 @@
 
 package org.codelibs.fesen.common.xcontent.json;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Objects;
-import java.util.Set;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonStreamContext;
+import com.fasterxml.jackson.core.base.GeneratorBase;
+import com.fasterxml.jackson.core.filter.FilteringGeneratorDelegate;
+import com.fasterxml.jackson.core.io.SerializedString;
+import com.fasterxml.jackson.core.json.JsonWriteContext;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.JsonGeneratorDelegate;
 
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -38,15 +39,14 @@ import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.support.filtering.FilterPathBasedFilter;
 import org.codelibs.fesen.core.internal.io.Streams;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonStreamContext;
-import com.fasterxml.jackson.core.base.GeneratorBase;
-import com.fasterxml.jackson.core.filter.FilteringGeneratorDelegate;
-import com.fasterxml.jackson.core.io.SerializedString;
-import com.fasterxml.jackson.core.json.JsonWriteContext;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.JsonGeneratorDelegate;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Objects;
+import java.util.Set;
 
 public class JsonXContentGenerator implements XContentGenerator {
 
@@ -167,6 +167,7 @@ public class JsonXContentGenerator implements XContentGenerator {
         }
         generator.writeEndObject();
     }
+
 
     @Override
     public void writeStartArray() throws IOException {
@@ -374,7 +375,10 @@ public class JsonXContentGenerator implements XContentGenerator {
         // or the content is in a different format than the current generator,
         // we need to copy the whole structure so that it will be correctly
         // filtered or converted
-        return supportsRawWrites() && isFiltered() == false && contentType == contentType() && prettyPrint == false;
+        return supportsRawWrites()
+                && isFiltered() == false
+                && contentType == contentType()
+                && prettyPrint == false;
     }
 
     /** Whether this generator supports writing raw data directly */
@@ -385,9 +389,9 @@ public class JsonXContentGenerator implements XContentGenerator {
     protected void copyRawValue(InputStream stream, XContent xContent) throws IOException {
         // EMPTY is safe here because we never call namedObject
         try (XContentParser parser = xContent
-                // It's okay to pass the throwing deprecation handler because we
-                // should not be writing raw fields when generating JSON
-                .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream)) {
+                 // It's okay to pass the throwing deprecation handler because we
+                 // should not be writing raw fields when generating JSON
+                 .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream)) {
             copyCurrentStructure(parser);
         }
     }
@@ -419,22 +423,22 @@ public class JsonXContentGenerator implements XContentGenerator {
         }
 
         switch (token) {
-        case START_ARRAY:
-            destination.writeStartArray();
-            while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                copyCurrentStructure(destination, parser);
-            }
-            destination.writeEndArray();
-            break;
-        case START_OBJECT:
-            destination.writeStartObject();
-            while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                copyCurrentStructure(destination, parser);
-            }
-            destination.writeEndObject();
-            break;
-        default: // others are simple:
-            destination.copyCurrentEvent(parser);
+            case START_ARRAY:
+                destination.writeStartArray();
+                while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
+                    copyCurrentStructure(destination, parser);
+                }
+                destination.writeEndArray();
+                break;
+            case START_OBJECT:
+                destination.writeStartObject();
+                while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+                    copyCurrentStructure(destination, parser);
+                }
+                destination.writeEndObject();
+                break;
+            default: // others are simple:
+                destination.copyCurrentEvent(parser);
         }
     }
 
@@ -449,7 +453,7 @@ public class JsonXContentGenerator implements XContentGenerator {
             return;
         }
         JsonStreamContext context = generator.getOutputContext();
-        if ((context != null) && (context.inRoot() == false)) {
+        if ((context != null) && (context.inRoot() ==  false)) {
             throw new IOException("Unclosed object or array found");
         }
         if (writeLineFeedAtEnd) {

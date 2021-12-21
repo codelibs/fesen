@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.metrics.InternalNumericMetricsAggregation;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class InternalSimpleValue extends InternalNumericMetricsAggregation.SingleValue implements SimpleValue {
     public static final String NAME = "simple_value";
@@ -96,12 +96,9 @@ public class InternalSimpleValue extends InternalNumericMetricsAggregation.Singl
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         InternalSimpleValue other = (InternalSimpleValue) obj;
         return Objects.equals(value, other.value);
     }

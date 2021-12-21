@@ -19,10 +19,9 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.X509ExtendedKeyManager;
 import java.nio.file.Path;
 import java.util.Collection;
-
-import javax.net.ssl.X509ExtendedKeyManager;
 
 /**
  * An interface for building a key manager at runtime.
@@ -44,3 +43,4 @@ public interface SslKeyConfig {
     X509ExtendedKeyManager createKeyManager();
 
 }
+

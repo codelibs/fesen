@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.search.aggregations.matrix.stats;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ParsedMatrixStats extends ParsedAggregation implements MatrixStats {
 
@@ -190,9 +190,12 @@ public class ParsedMatrixStats extends ParsedAggregation implements MatrixStats 
         private static final ObjectParser<ParsedMatrixStatsResult, Void> RESULT_PARSER =
                 new ObjectParser<>(ParsedMatrixStatsResult.class.getSimpleName(), true, ParsedMatrixStatsResult::new);
         static {
-            RESULT_PARSER.declareString((result, name) -> result.name = name, new ParseField(InternalMatrixStats.Fields.NAME));
-            RESULT_PARSER.declareLong((result, count) -> result.count = count, new ParseField(InternalMatrixStats.Fields.COUNT));
-            RESULT_PARSER.declareDouble((result, mean) -> result.mean = mean, new ParseField(InternalMatrixStats.Fields.MEAN));
+            RESULT_PARSER.declareString((result, name) -> result.name = name,
+                    new ParseField(InternalMatrixStats.Fields.NAME));
+            RESULT_PARSER.declareLong((result, count) -> result.count = count,
+                    new ParseField(InternalMatrixStats.Fields.COUNT));
+            RESULT_PARSER.declareDouble((result, mean) -> result.mean = mean,
+                    new ParseField(InternalMatrixStats.Fields.MEAN));
             RESULT_PARSER.declareDouble((result, variance) -> result.variance = variance,
                     new ParseField(InternalMatrixStats.Fields.VARIANCE));
             RESULT_PARSER.declareDouble((result, skewness) -> result.skewness = skewness,

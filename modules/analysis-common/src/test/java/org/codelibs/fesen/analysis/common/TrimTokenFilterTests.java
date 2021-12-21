@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-
 import org.apache.lucene.util.BytesRef;
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
@@ -29,17 +28,21 @@ import org.codelibs.fesen.index.analysis.NamedAnalyzer;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 
+import java.io.IOException;
+
 public class TrimTokenFilterTests extends ESTokenStreamTestCase {
 
     public void testNormalizer() throws IOException {
-        Settings settings = Settings.builder().putList("index.analysis.normalizer.my_normalizer.filter", "trim")
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings.builder()
+            .putList("index.analysis.normalizer.my_normalizer.filter", "trim")
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
         assertNull(analysis.indexAnalyzers.get("my_normalizer"));
         NamedAnalyzer normalizer = analysis.indexAnalyzers.getNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
-        assertTokenStreamContents(normalizer.tokenStream("foo", "  bar  "), new String[] { "bar" });
+        assertTokenStreamContents(normalizer.tokenStream("foo", "  bar  "), new String[] {"bar"});
         assertEquals(new BytesRef("bar"), normalizer.normalize("foo", "  bar  "));
     }
 

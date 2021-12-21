@@ -21,3 +21,4 @@
  * Aggregations module
  */
 package org.codelibs.fesen.search.aggregations.metrics;
+

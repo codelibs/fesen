@@ -37,12 +37,25 @@ import org.codelibs.fesen.painless.spi.annotation.WhitelistAnnotationParser;
  */
 public final class Whitelist {
 
-    private static final String[] BASE_WHITELIST_FILES = new String[] { "org.codelibs.fesen.txt", "java.lang.txt", "java.math.txt",
-            "java.text.txt", "java.time.txt", "java.time.chrono.txt", "java.time.format.txt", "java.time.temporal.txt",
-            "java.time.zone.txt", "java.util.txt", "java.util.function.txt", "java.util.regex.txt", "java.util.stream.txt" };
+    private static final String[] BASE_WHITELIST_FILES = new String[] {
+        "org.codelibs.fesen.txt",
+        "java.lang.txt",
+        "java.math.txt",
+        "java.text.txt",
+        "java.time.txt",
+        "java.time.chrono.txt",
+        "java.time.format.txt",
+        "java.time.temporal.txt",
+        "java.time.zone.txt",
+        "java.util.txt",
+        "java.util.function.txt",
+        "java.util.regex.txt",
+        "java.util.stream.txt"
+    };
 
-    public static final List<Whitelist> BASE_WHITELISTS = Collections.singletonList(WhitelistLoader.loadFromResourceFiles(Whitelist.class,
-            WhitelistAnnotationParser.BASE_ANNOTATION_PARSERS, BASE_WHITELIST_FILES));
+    public static final List<Whitelist> BASE_WHITELISTS =
+            Collections.singletonList(WhitelistLoader.loadFromResourceFiles(
+                    Whitelist.class, WhitelistAnnotationParser.BASE_ANNOTATION_PARSERS, BASE_WHITELIST_FILES));
 
     /** The {@link ClassLoader} used to look up the whitelisted Java classes, constructors, methods, and fields. */
     public final ClassLoader classLoader;

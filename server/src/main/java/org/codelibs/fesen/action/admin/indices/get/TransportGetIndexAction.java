@@ -54,9 +54,10 @@ public class TransportGetIndexAction extends TransportClusterInfoAction<GetIndex
     private final SettingsFilter settingsFilter;
 
     @Inject
-    public TransportGetIndexAction(TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-            SettingsFilter settingsFilter, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-            IndicesService indicesService, IndexScopedSettings indexScopedSettings) {
+    public TransportGetIndexAction(TransportService transportService, ClusterService clusterService,
+                                   ThreadPool threadPool, SettingsFilter settingsFilter, ActionFilters actionFilters,
+                                   IndexNameExpressionResolver indexNameExpressionResolver, IndicesService indicesService,
+                                   IndexScopedSettings indexScopedSettings) {
         super(GetIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, GetIndexRequest::new,
                 indexNameExpressionResolver);
         this.indicesService = indicesService;
@@ -71,15 +72,14 @@ public class TransportGetIndexAction extends TransportClusterInfoAction<GetIndex
 
     @Override
     protected void doMasterOperation(final GetIndexRequest request, String[] concreteIndices, final ClusterState state,
-            final ActionListener<GetIndexResponse> listener) {
+                                     final ActionListener<GetIndexResponse> listener) {
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappingsResult = ImmutableOpenMap.of();
         ImmutableOpenMap<String, List<AliasMetadata>> aliasesResult = ImmutableOpenMap.of();
         ImmutableOpenMap<String, Settings> settings = ImmutableOpenMap.of();
         ImmutableOpenMap<String, Settings> defaultSettings = ImmutableOpenMap.of();
-        ImmutableOpenMap<String, String> dataStreams = ImmutableOpenMap.<String, String> builder()
-                .putAll(StreamSupport.stream(state.metadata().findDataStreams(concreteIndices).spliterator(), false)
-                        .collect(Collectors.toMap(k -> k.key, v -> v.value.getName())))
-                .build();
+        ImmutableOpenMap<String, String> dataStreams = ImmutableOpenMap.<String, String>builder()
+            .putAll(StreamSupport.stream(state.metadata().findDataStreams(concreteIndices).spliterator(), false)
+                .collect(Collectors.toMap(k -> k.key, v -> v.value.getName()))).build();
         Feature[] features = request.features();
         boolean doneAliases = false;
         boolean doneMappings = false;
@@ -87,47 +87,51 @@ public class TransportGetIndexAction extends TransportClusterInfoAction<GetIndex
         for (Feature feature : features) {
             switch (feature) {
             case MAPPINGS:
-                if (!doneMappings) {
-                    try {
-                        mappingsResult = state.metadata().findMappings(concreteIndices, request.types(), indicesService.getFieldFilter());
-                        doneMappings = true;
-                    } catch (IOException e) {
-                        listener.onFailure(e);
-                        return;
+                    if (!doneMappings) {
+                        try {
+                            mappingsResult = state.metadata().findMappings(concreteIndices, request.types(),
+                                    indicesService.getFieldFilter());
+                            doneMappings = true;
+                        } catch (IOException e) {
+                            listener.onFailure(e);
+                            return;
+                        }
                     }
-                }
-                break;
+                    break;
             case ALIASES:
-                if (!doneAliases) {
-                    aliasesResult = state.metadata().findAllAliases(concreteIndices);
-                    doneAliases = true;
-                }
-                break;
-            case SETTINGS:
-                if (!doneSettings) {
-                    ImmutableOpenMap.Builder<String, Settings> settingsMapBuilder = ImmutableOpenMap.builder();
-                    ImmutableOpenMap.Builder<String, Settings> defaultSettingsMapBuilder = ImmutableOpenMap.builder();
-                    for (String index : concreteIndices) {
-                        Settings indexSettings = state.metadata().index(index).getSettings();
-                        if (request.humanReadable()) {
-                            indexSettings = IndexMetadata.addHumanReadableSettings(indexSettings);
-                        }
-                        settingsMapBuilder.put(index, indexSettings);
-                        if (request.includeDefaults()) {
-                            Settings defaultIndexSettings = settingsFilter.filter(indexScopedSettings.diff(indexSettings, Settings.EMPTY));
-                            defaultSettingsMapBuilder.put(index, defaultIndexSettings);
-                        }
+                    if (!doneAliases) {
+                        aliasesResult = state.metadata().findAllAliases(concreteIndices);
+                        doneAliases = true;
                     }
-                    settings = settingsMapBuilder.build();
-                    defaultSettings = defaultSettingsMapBuilder.build();
-                    doneSettings = true;
-                }
-                break;
+                    break;
+            case SETTINGS:
+                    if (!doneSettings) {
+                        ImmutableOpenMap.Builder<String, Settings> settingsMapBuilder = ImmutableOpenMap.builder();
+                        ImmutableOpenMap.Builder<String, Settings> defaultSettingsMapBuilder = ImmutableOpenMap.builder();
+                        for (String index : concreteIndices) {
+                            Settings indexSettings = state.metadata().index(index).getSettings();
+                            if (request.humanReadable()) {
+                                indexSettings = IndexMetadata.addHumanReadableSettings(indexSettings);
+                            }
+                            settingsMapBuilder.put(index, indexSettings);
+                            if (request.includeDefaults()) {
+                                Settings defaultIndexSettings =
+                                    settingsFilter.filter(indexScopedSettings.diff(indexSettings, Settings.EMPTY));
+                                defaultSettingsMapBuilder.put(index, defaultIndexSettings);
+                            }
+                        }
+                        settings = settingsMapBuilder.build();
+                        defaultSettings = defaultSettingsMapBuilder.build();
+                        doneSettings = true;
+                    }
+                    break;
 
-            default:
-                throw new IllegalStateException("feature [" + feature + "] is not valid");
+                default:
+                    throw new IllegalStateException("feature [" + feature + "] is not valid");
             }
         }
-        listener.onResponse(new GetIndexResponse(concreteIndices, mappingsResult, aliasesResult, settings, defaultSettings, dataStreams));
+        listener.onResponse(
+            new GetIndexResponse(concreteIndices, mappingsResult, aliasesResult, settings, defaultSettings, dataStreams)
+        );
     }
 }

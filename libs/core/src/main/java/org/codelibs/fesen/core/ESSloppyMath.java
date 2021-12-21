@@ -24,8 +24,7 @@ package org.codelibs.fesen.core;
  */
 public class ESSloppyMath {
 
-    private ESSloppyMath() {
-    }
+    private ESSloppyMath() {}
 
     public static double sinh(double value) {
         return FastMath.sinh(value);

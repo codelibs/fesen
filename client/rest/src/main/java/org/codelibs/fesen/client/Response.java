@@ -19,18 +19,18 @@
 
 package org.codelibs.fesen.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.RequestLine;
 import org.apache.http.StatusLine;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Holds an fesen response. It wraps the {@link HttpResponse} returned and associates it with
@@ -105,8 +105,9 @@ public class Response {
      * format (with quotes and leading space). Start/end of line characters and
      * atomic groups are used to prevent backtracking.
      */
-    private static final Pattern WARNING_HEADER_DATE_PATTERN = Pattern.compile("^ " + // start of line, leading space
-    // quoted RFC 1123 date format
+    private static final Pattern WARNING_HEADER_DATE_PATTERN = Pattern.compile(
+            "^ " + // start of line, leading space
+            // quoted RFC 1123 date format
             "\"" + // opening quote
             "(?>Mon|Tue|Wed|Thu|Fri|Sat|Sun), " + // day of week, atomic group to prevent backtracking
             "\\d{2} " + // 2-digit day
@@ -120,7 +121,16 @@ public class Response {
      * Length of RFC 1123 format (with quotes and leading space), used in
      * matchWarningHeaderPatternByPrefix(String).
      */
-    private static final int WARNING_HEADER_DATE_LENGTH = 0 + 1 + 1 + 3 + 1 + 1 + 2 + 1 + 3 + 1 + 4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 3 + 1;
+    private static final int WARNING_HEADER_DATE_LENGTH = 0
+            + 1
+            + 1
+            + 3 + 1 + 1
+            + 2 + 1
+            + 3 + 1
+            + 4 + 1
+            + 2 + 1 + 2 + 1 + 2 + 1
+            + 3
+            + 1;
 
     /**
      * Tests if a string matches the RFC 7234 specification for warning headers.
@@ -190,6 +200,10 @@ public class Response {
 
     @Override
     public String toString() {
-        return "Response{" + "requestLine=" + requestLine + ", host=" + host + ", response=" + response.getStatusLine() + '}';
+        return "Response{" +
+                "requestLine=" + requestLine +
+                ", host=" + host +
+                ", response=" + response.getStatusLine() +
+                '}';
     }
 }

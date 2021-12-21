@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.gateway;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.FailedNodeException;
@@ -44,8 +41,13 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportNodesListGatewayMetaState extends
-        TransportNodesAction<TransportNodesListGatewayMetaState.Request, TransportNodesListGatewayMetaState.NodesGatewayMetaState, TransportNodesListGatewayMetaState.NodeRequest, TransportNodesListGatewayMetaState.NodeGatewayMetaState> {
+import java.io.IOException;
+import java.util.List;
+
+public class TransportNodesListGatewayMetaState extends TransportNodesAction<TransportNodesListGatewayMetaState.Request,
+                                                                             TransportNodesListGatewayMetaState.NodesGatewayMetaState,
+                                                                             TransportNodesListGatewayMetaState.NodeRequest,
+                                                                             TransportNodesListGatewayMetaState.NodeGatewayMetaState> {
 
     public static final String ACTION_NAME = "internal:gateway/local/meta_state";
     public static final ActionType<NodesGatewayMetaState> TYPE = new ActionType<>(ACTION_NAME, NodesGatewayMetaState::new);
@@ -54,9 +56,9 @@ public class TransportNodesListGatewayMetaState extends
 
     @Inject
     public TransportNodesListGatewayMetaState(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-            ActionFilters actionFilters, GatewayMetaState metaState) {
-        super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, Request::new, NodeRequest::new,
-                ThreadPool.Names.GENERIC, NodeGatewayMetaState.class);
+                                              ActionFilters actionFilters, GatewayMetaState metaState) {
+        super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters,
+            Request::new, NodeRequest::new, ThreadPool.Names.GENERIC, NodeGatewayMetaState.class);
         this.metaState = metaState;
     }
 
@@ -119,9 +121,7 @@ public class TransportNodesListGatewayMetaState extends
     }
 
     public static class NodeRequest extends BaseNodeRequest {
-        NodeRequest() {
-        }
-
+        NodeRequest() {}
         NodeRequest(StreamInput in) throws IOException {
             super(in);
         }

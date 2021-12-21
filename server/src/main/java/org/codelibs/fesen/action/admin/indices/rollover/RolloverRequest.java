@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.rollover;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequest;
@@ -40,6 +34,12 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.index.mapper.MapperService;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Request class to swap index under an alias or increment data stream generation upon satisfying conditions
@@ -58,17 +58,19 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
     private static final ParseField MAX_SIZE_CONDITION = new ParseField(MaxSizeCondition.NAME);
 
     static {
-        CONDITION_PARSER.declareString((conditions, s) -> conditions.put(MaxAgeCondition.NAME,
-                new MaxAgeCondition(TimeValue.parseTimeValue(s, MaxAgeCondition.NAME))), MAX_AGE_CONDITION);
-        CONDITION_PARSER.declareLong((conditions, value) -> conditions.put(MaxDocsCondition.NAME, new MaxDocsCondition(value)),
-                MAX_DOCS_CONDITION);
-        CONDITION_PARSER.declareString((conditions, s) -> conditions.put(MaxSizeCondition.NAME,
-                new MaxSizeCondition(ByteSizeValue.parseBytesSizeValue(s, MaxSizeCondition.NAME))), MAX_SIZE_CONDITION);
+        CONDITION_PARSER.declareString((conditions, s) ->
+                conditions.put(MaxAgeCondition.NAME, new MaxAgeCondition(TimeValue.parseTimeValue(s, MaxAgeCondition.NAME))),
+                MAX_AGE_CONDITION);
+        CONDITION_PARSER.declareLong((conditions, value) ->
+                conditions.put(MaxDocsCondition.NAME, new MaxDocsCondition(value)), MAX_DOCS_CONDITION);
+        CONDITION_PARSER.declareString((conditions, s) ->
+                conditions.put(MaxSizeCondition.NAME, new MaxSizeCondition(ByteSizeValue.parseBytesSizeValue(s, MaxSizeCondition.NAME))),
+                MAX_SIZE_CONDITION);
 
-        PARSER.declareField((parser, request, context) -> CONDITION_PARSER.parse(parser, request.conditions, null), CONDITIONS,
-                ObjectParser.ValueType.OBJECT);
-        PARSER.declareField((parser, request, context) -> request.createIndexRequest.settings(parser.map()), CreateIndexRequest.SETTINGS,
-                ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, context) -> CONDITION_PARSER.parse(parser, request.conditions, null),
+            CONDITIONS, ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, context) -> request.createIndexRequest.settings(parser.map()),
+            CreateIndexRequest.SETTINGS, ObjectParser.ValueType.OBJECT);
         PARSER.declareField((parser, request, includeTypeName) -> {
             if (includeTypeName) {
                 for (Map.Entry<String, Object> mappingsEntry : parser.map().entrySet()) {
@@ -78,14 +80,14 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
                 // a type is not included, add a dummy _doc type
                 Map<String, Object> mappings = parser.map();
                 if (MapperService.isMappingSourceTyped(MapperService.SINGLE_MAPPING_NAME, mappings)) {
-                    throw new IllegalArgumentException("The mapping definition cannot be nested under a type " + "["
-                            + MapperService.SINGLE_MAPPING_NAME + "] unless include_type_name is set to true.");
+                    throw new IllegalArgumentException("The mapping definition cannot be nested under a type " +
+                        "[" + MapperService.SINGLE_MAPPING_NAME + "] unless include_type_name is set to true.");
                 }
                 request.createIndexRequest.mapping(MapperService.SINGLE_MAPPING_NAME, mappings);
             }
         }, CreateIndexRequest.MAPPINGS, ObjectParser.ValueType.OBJECT);
-        PARSER.declareField((parser, request, context) -> request.createIndexRequest.aliases(parser.map()), CreateIndexRequest.ALIASES,
-                ObjectParser.ValueType.OBJECT);
+        PARSER.declareField((parser, request, context) -> request.createIndexRequest.aliases(parser.map()),
+            CreateIndexRequest.ALIASES, ObjectParser.ValueType.OBJECT);
     }
 
     private String rolloverTarget;
@@ -108,8 +110,7 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
         createIndexRequest = new CreateIndexRequest(in);
     }
 
-    RolloverRequest() {
-    }
+    RolloverRequest() {}
 
     public RolloverRequest(String rolloverTarget, String newIndexName) {
         this.rolloverTarget = rolloverTarget;
@@ -142,7 +143,7 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
 
     @Override
     public String[] indices() {
-        return new String[] { rolloverTarget };
+        return new String[] {rolloverTarget};
     }
 
     @Override
@@ -168,7 +169,6 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
     public void setNewIndexName(String newIndexName) {
         this.newIndexName = newIndexName;
     }
-
     /**
      * Sets if the rollover should not be executed when conditions are met
      */
@@ -215,6 +215,7 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
         }
         this.conditions.put(maxSizeCondition.name, maxSizeCondition);
     }
+
 
     public boolean isDryRun() {
         return dryRun;

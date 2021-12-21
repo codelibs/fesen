@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
@@ -37,25 +33,32 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
 public class PercentilesAggregationBuilder extends AbstractPercentilesAggregationBuilder<PercentilesAggregationBuilder> {
     public static final String NAME = Percentiles.TYPE_NAME;
     public static final ValuesSourceRegistry.RegistryKey<PercentilesAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, PercentilesAggregatorSupplier.class);
+        new ValuesSourceRegistry.RegistryKey<>(NAME, PercentilesAggregatorSupplier.class);
 
     private static final double[] DEFAULT_PERCENTS = new double[] { 1, 5, 25, 50, 75, 95, 99 };
     private static final ParseField PERCENTS_FIELD = new ParseField("percents");
 
     private static final ConstructingObjectParser<PercentilesAggregationBuilder, String> PARSER;
     static {
-        PARSER = AbstractPercentilesAggregationBuilder.createParser(PercentilesAggregationBuilder.NAME,
-                (name, values, percentileConfig) -> {
-                    if (values == null) {
-                        values = DEFAULT_PERCENTS; // this is needed because Percentiles has a default, while Ranks does not
-                    } else {
-                        values = validatePercentiles(values, name);
-                    }
-                    return new PercentilesAggregationBuilder(name, values, percentileConfig);
-                }, PercentilesConfig.TDigest::new, PERCENTS_FIELD);
+        PARSER = AbstractPercentilesAggregationBuilder.createParser(
+            PercentilesAggregationBuilder.NAME,
+            (name, values, percentileConfig) -> {
+                if (values == null) {
+                    values = DEFAULT_PERCENTS; // this is needed because Percentiles has a default, while Ranks does not
+                } else {
+                    values = validatePercentiles(values, name);
+                }
+                return new PercentilesAggregationBuilder(name, values, percentileConfig);
+            },
+            PercentilesConfig.TDigest::new,
+            PERCENTS_FIELD);
     }
 
     public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
@@ -78,8 +81,8 @@ public class PercentilesAggregationBuilder extends AbstractPercentilesAggregatio
         super(name, values, percentilesConfig, PERCENTS_FIELD);
     }
 
-    protected PercentilesAggregationBuilder(PercentilesAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected PercentilesAggregationBuilder(PercentilesAggregationBuilder clone,
+                                            AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -126,10 +129,12 @@ public class PercentilesAggregationBuilder extends AbstractPercentilesAggregatio
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
-        return new PercentilesAggregatorFactory(name, config, values, configOrDefault(), keyed, queryShardContext, parent,
-                subFactoriesBuilder, metadata);
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                                    ValuesSourceConfig config,
+                                                                    AggregatorFactory parent,
+                                                                    AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        return new PercentilesAggregatorFactory(name, config, values, configOrDefault(), keyed,
+            queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override

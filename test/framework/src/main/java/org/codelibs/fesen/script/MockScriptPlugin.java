@@ -27,6 +27,8 @@ import java.util.function.Function;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.plugins.ScriptPlugin;
+import org.codelibs.fesen.script.ScriptContext;
+import org.codelibs.fesen.script.ScriptEngine;
 
 /**
  * A script plugin that uses {@link MockScriptEngine} as the script engine for tests.
@@ -42,9 +44,7 @@ public abstract class MockScriptPlugin extends Plugin implements ScriptPlugin {
 
     protected abstract Map<String, Function<Map<String, Object>, Object>> pluginScripts();
 
-    protected Map<String, Function<Map<String, Object>, Object>> nonDeterministicPluginScripts() {
-        return Collections.emptyMap();
-    }
+    protected Map<String, Function<Map<String, Object>, Object>> nonDeterministicPluginScripts() { return Collections.emptyMap(); }
 
     protected Map<ScriptContext<?>, MockScriptEngine.ContextCompiler> pluginContextCompilers() {
         return Collections.emptyMap();

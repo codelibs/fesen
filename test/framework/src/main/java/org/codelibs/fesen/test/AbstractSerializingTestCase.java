@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.test;
 
-import static org.codelibs.fesen.test.AbstractXContentTestCase.xContentTester;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Date;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
+
+import static org.codelibs.fesen.test.AbstractXContentTestCase.xContentTester;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
+import java.util.function.Predicate;
 
 public abstract class AbstractSerializingTestCase<T extends ToXContent & Writeable> extends AbstractWireSerializingTestCase<T> {
 
@@ -41,9 +41,13 @@ public abstract class AbstractSerializingTestCase<T extends ToXContent & Writeab
      */
     public final void testFromXContent() throws IOException {
         xContentTester(this::createParser, this::createXContextTestInstance, getToXContentParams(), this::doParseInstance)
-                .numberOfTestRuns(NUMBER_OF_TEST_RUNS).supportsUnknownFields(supportsUnknownFields())
-                .shuffleFieldsExceptions(getShuffleFieldsExceptions()).randomFieldsExcludeFilter(getRandomFieldsExcludeFilter())
-                .assertEqualsConsumer(this::assertEqualInstances).assertToXContentEquivalence(assertToXContentEquivalence()).test();
+            .numberOfTestRuns(NUMBER_OF_TEST_RUNS)
+            .supportsUnknownFields(supportsUnknownFields())
+            .shuffleFieldsExceptions(getShuffleFieldsExceptions())
+            .randomFieldsExcludeFilter(getRandomFieldsExcludeFilter())
+            .assertEqualsConsumer(this::assertEqualInstances)
+            .assertToXContentEquivalence(assertToXContentEquivalence())
+            .test();
     }
 
     /**

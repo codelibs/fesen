@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.network;
 
+import org.codelibs.fesen.action.ActionFuture;
+import org.codelibs.fesen.action.ActionListener;
+import org.codelibs.fesen.action.support.PlainActionFuture;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import org.codelibs.fesen.action.ActionFuture;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.support.PlainActionFuture;
-import org.codelibs.fesen.core.internal.io.IOUtils;
 
 public interface CloseableChannel extends Closeable {
 

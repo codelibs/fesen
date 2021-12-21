@@ -33,3 +33,4 @@ public class CreateSnapshotAction extends ActionType<CreateSnapshotResponse> {
         super(NAME, CreateSnapshotResponse::new);
     }
 }
+

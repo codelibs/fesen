@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -31,6 +29,8 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.lucene.BytesRefs;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+
+import java.io.IOException;
 
 /**
  * A Span Query that matches documents containing a term.

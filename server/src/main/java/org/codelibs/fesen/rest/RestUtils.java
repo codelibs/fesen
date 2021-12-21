@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.rest;
 
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.path.PathTrie;
+import org.codelibs.fesen.core.Booleans;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.path.PathTrie;
-import org.codelibs.fesen.core.Booleans;
 
 public class RestUtils {
 
@@ -55,8 +55,8 @@ public class RestUtils {
 
         String name = null;
         int pos = fromIndex; // Beginning of the unprocessed region
-        int i; // End of the unprocessed region
-        char c = 0; // Current character
+        int i;       // End of the unprocessed region
+        char c = 0;  // Current character
         for (i = fromIndex; i < queryStringLength; i++) {
             c = s.charAt(i);
             if (c == '=' && name == null) {
@@ -78,13 +78,13 @@ public class RestUtils {
             }
         }
 
-        if (pos != i) { // Are there characters we haven't dealt with?
-            if (name == null) { // Yes and we haven't seen any `='.
+        if (pos != i) {  // Are there characters we haven't dealt with?
+            if (name == null) {     // Yes and we haven't seen any `='.
                 addParam(params, decodeQueryStringParam(s.substring(pos, i)), "");
-            } else { // Yes and this must be the last value.
+            } else {                // Yes and this must be the last value.
                 addParam(params, name, decodeQueryStringParam(s.substring(pos, i)));
             }
-        } else if (name != null) { // Have we seen a name without value?
+        } else if (name != null) {  // Have we seen a name without value?
             addParam(params, name, "");
         }
     }
@@ -156,7 +156,7 @@ public class RestUtils {
         for (int i = 0; i < size; i++) {
             final char c = s.charAt(i);
             if (c == '%') {
-                i++; // We can skip at least one char, e.g. `%%'.
+                i++;  // We can skip at least one char, e.g. `%%'.
                 decodingNeeded = true;
             } else if (plusAsSpace && c == '+') {
                 decodingNeeded = true;
@@ -167,35 +167,37 @@ public class RestUtils {
 
     @SuppressWarnings("fallthrough")
     private static int decode(String s, int size, byte[] buf, boolean plusAsSpace) {
-        int pos = 0; // position in `buf'.
+        int pos = 0;  // position in `buf'.
         for (int i = 0; i < size; i++) {
             char c = s.charAt(i);
             switch (c) {
-            case '+':
-                buf[pos++] = (byte) (plusAsSpace ? ' ' : '+'); // "+" -> " "
-                break;
-            case '%':
-                if (i == size - 1) {
-                    throw new IllegalArgumentException("unterminated escape sequence at end of string: " + s);
-                }
-                c = s.charAt(++i);
-                if (c == '%') {
-                    buf[pos++] = '%'; // "%%" -> "%"
+                case '+':
+                    buf[pos++] = (byte) (plusAsSpace ? ' ' : '+');  // "+" -> " "
                     break;
-                } else if (i == size - 1) {
-                    throw new IllegalArgumentException("partial escape sequence at end of string: " + s);
-                }
-                c = decodeHexNibble(c);
-                final char c2 = decodeHexNibble(s.charAt(++i));
-                if (c == Character.MAX_VALUE || c2 == Character.MAX_VALUE) {
-                    throw new IllegalArgumentException(
-                            "invalid escape sequence `%" + s.charAt(i - 1) + s.charAt(i) + "' at index " + (i - 2) + " of: " + s);
-                }
-                c = (char) (c * 16 + c2);
-                // Fall through.
-            default:
-                buf[pos++] = (byte) c;
-                break;
+                case '%':
+                    if (i == size - 1) {
+                        throw new IllegalArgumentException("unterminated escape sequence at end of string: " + s);
+                    }
+                    c = s.charAt(++i);
+                    if (c == '%') {
+                        buf[pos++] = '%';  // "%%" -> "%"
+                        break;
+                    } else if (i == size - 1) {
+                        throw new IllegalArgumentException("partial escape sequence at end of string: " + s);
+                    }
+                    c = decodeHexNibble(c);
+                    final char c2 = decodeHexNibble(s.charAt(++i));
+                    if (c == Character.MAX_VALUE || c2 == Character.MAX_VALUE) {
+                        throw new IllegalArgumentException(
+                            "invalid escape sequence `%" + s.charAt(i - 1)
+                                + s.charAt(i) + "' at index " + (i - 2)
+                                + " of: " + s);
+                    }
+                    c = (char) (c * 16 + c2);
+                    // Fall through.
+                default:
+                    buf[pos++] = (byte) c;
+                    break;
             }
         }
         return pos;
@@ -234,7 +236,7 @@ public class RestUtils {
         boolean isRegex = len > 2 && corsSetting.startsWith("/") && corsSetting.endsWith("/");
 
         if (isRegex) {
-            return Pattern.compile(corsSetting.substring(1, corsSetting.length() - 1));
+            return Pattern.compile(corsSetting.substring(1, corsSetting.length()-1));
         }
 
         return null;
@@ -251,6 +253,9 @@ public class RestUtils {
         if (Strings.isNullOrEmpty(corsSetting)) {
             return new String[0];
         }
-        return Arrays.asList(corsSetting.split(",")).stream().map(String::trim).toArray(size -> new String[size]);
+        return Arrays.asList(corsSetting.split(","))
+                     .stream()
+                     .map(String::trim)
+                     .toArray(size -> new String[size]);
     }
 }

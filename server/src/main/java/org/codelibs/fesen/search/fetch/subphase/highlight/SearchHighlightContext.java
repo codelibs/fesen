@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
+import org.apache.lucene.search.Query;
+import org.codelibs.fesen.search.fetch.subphase.highlight.HighlightBuilder.BoundaryScannerType;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,9 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.search.fetch.subphase.highlight.HighlightBuilder.BoundaryScannerType;
 
 public class SearchHighlightContext {
 

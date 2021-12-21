@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.util.AttributeFactory;
@@ -30,7 +27,10 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenizerFactory;
 
-public class CharGroupTokenizerFactory extends AbstractTokenizerFactory {
+import java.util.HashSet;
+import java.util.Set;
+
+public class CharGroupTokenizerFactory extends AbstractTokenizerFactory{
 
     static final String MAX_TOKEN_LENGTH = "max_token_length";
 
@@ -54,27 +54,28 @@ public class CharGroupTokenizerFactory extends AbstractTokenizerFactory {
 
             if (c.length() == 1) {
                 tokenizeOnChars.add((int) c.charAt(0));
-            } else if (c.charAt(0) == '\\') {
+            }
+            else if (c.charAt(0) == '\\') {
                 tokenizeOnChars.add((int) parseEscapedChar(c));
             } else {
                 switch (c) {
-                case "letter":
-                    tokenizeOnLetter = true;
-                    break;
-                case "digit":
-                    tokenizeOnDigit = true;
-                    break;
-                case "whitespace":
-                    tokenizeOnSpace = true;
-                    break;
-                case "punctuation":
-                    tokenizeOnPunctuation = true;
-                    break;
-                case "symbol":
-                    tokenizeOnSymbol = true;
-                    break;
-                default:
-                    throw new RuntimeException("Invalid escaped char in [" + c + "]");
+                    case "letter":
+                        tokenizeOnLetter = true;
+                        break;
+                    case "digit":
+                        tokenizeOnDigit = true;
+                        break;
+                    case "whitespace":
+                        tokenizeOnSpace = true;
+                        break;
+                    case "punctuation":
+                        tokenizeOnPunctuation = true;
+                        break;
+                    case "symbol":
+                        tokenizeOnSymbol = true;
+                        break;
+                    default:
+                        throw new RuntimeException("Invalid escaped char in [" + c + "]");
                 }
             }
         }
@@ -88,25 +89,25 @@ public class CharGroupTokenizerFactory extends AbstractTokenizerFactory {
                 throw new RuntimeException("Invalid escaped char in [" + s + "]");
             c = s.charAt(1);
             switch (c) {
-            case '\\':
-                return '\\';
-            case 'n':
-                return '\n';
-            case 't':
-                return '\t';
-            case 'r':
-                return '\r';
-            case 'b':
-                return '\b';
-            case 'f':
-                return '\f';
-            case 'u':
-                if (len > 6) {
-                    throw new RuntimeException("Invalid escaped char in [" + s + "]");
-                }
-                return (char) Integer.parseInt(s.substring(2), 16);
-            default:
-                throw new RuntimeException("Invalid escaped char " + c + " in [" + s + "]");
+                case '\\':
+                    return '\\';
+                case 'n':
+                    return '\n';
+                case 't':
+                    return '\t';
+                case 'r':
+                    return '\r';
+                case 'b':
+                    return '\b';
+                case 'f':
+                    return '\f';
+                case 'u':
+                    if (len > 6) {
+                        throw new RuntimeException("Invalid escaped char in [" + s + "]");
+                    }
+                    return (char) Integer.parseInt(s.substring(2), 16);
+                default:
+                    throw new RuntimeException("Invalid escaped char " + c + " in [" + s + "]");
             }
         } else {
             throw new RuntimeException("Invalid escaped char [" + s + "]");

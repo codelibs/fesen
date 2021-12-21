@@ -19,10 +19,16 @@
 
 package org.codelibs.fesen.client.sniff;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import com.fasterxml.jackson.core.JsonFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.Node.Roles;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer;
+import org.codelibs.fesen.client.sniff.FesenNodesSniffer.Scheme;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,16 +40,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
-import org.codelibs.fesen.client.Node;
-import org.codelibs.fesen.client.Node.Roles;
-import org.codelibs.fesen.client.RestClientTestCase;
-import org.codelibs.fesen.client.sniff.FesenNodesSniffer.Scheme;
-
-import com.fasterxml.jackson.core.JsonFactory;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test parsing the response from the {@code /_nodes/http} API from fixed
@@ -74,31 +74,51 @@ public class FesenNodesSnifferParseTests extends RestClientTestCase {
     }
 
     public void test2x() throws IOException {
-        checkFile("2.0.0_nodes_http.json", node(9200, "m1", "2.0.0", true, false, false), node(9201, "m2", "2.0.0", true, true, false),
-                node(9202, "m3", "2.0.0", true, false, false), node(9203, "d1", "2.0.0", false, true, false),
-                node(9204, "d2", "2.0.0", false, true, false), node(9205, "d3", "2.0.0", false, true, false),
-                node(9206, "c1", "2.0.0", false, false, false), node(9207, "c2", "2.0.0", false, false, false));
+        checkFile("2.0.0_nodes_http.json",
+                node(9200, "m1", "2.0.0", true, false, false),
+                node(9201, "m2", "2.0.0", true, true, false),
+                node(9202, "m3", "2.0.0", true, false, false),
+                node(9203, "d1", "2.0.0", false, true, false),
+                node(9204, "d2", "2.0.0", false, true, false),
+                node(9205, "d3", "2.0.0", false, true, false),
+                node(9206, "c1", "2.0.0", false, false, false),
+                node(9207, "c2", "2.0.0", false, false, false));
     }
 
     public void test5x() throws IOException {
-        checkFile("5.0.0_nodes_http.json", node(9200, "m1", "5.0.0", true, false, true), node(9201, "m2", "5.0.0", true, true, true),
-                node(9202, "m3", "5.0.0", true, false, true), node(9203, "d1", "5.0.0", false, true, true),
-                node(9204, "d2", "5.0.0", false, true, true), node(9205, "d3", "5.0.0", false, true, true),
-                node(9206, "c1", "5.0.0", false, false, true), node(9207, "c2", "5.0.0", false, false, true));
+        checkFile("5.0.0_nodes_http.json",
+                node(9200, "m1", "5.0.0", true, false, true),
+                node(9201, "m2", "5.0.0", true, true, true),
+                node(9202, "m3", "5.0.0", true, false, true),
+                node(9203, "d1", "5.0.0", false, true, true),
+                node(9204, "d2", "5.0.0", false, true, true),
+                node(9205, "d3", "5.0.0", false, true, true),
+                node(9206, "c1", "5.0.0", false, false, true),
+                node(9207, "c2", "5.0.0", false, false, true));
     }
 
     public void test6x() throws IOException {
-        checkFile("6.0.0_nodes_http.json", node(9200, "m1", "6.0.0", true, false, true), node(9201, "m2", "6.0.0", true, true, true),
-                node(9202, "m3", "6.0.0", true, false, true), node(9203, "d1", "6.0.0", false, true, true),
-                node(9204, "d2", "6.0.0", false, true, true), node(9205, "d3", "6.0.0", false, true, true),
-                node(9206, "c1", "6.0.0", false, false, true), node(9207, "c2", "6.0.0", false, false, true));
+        checkFile("6.0.0_nodes_http.json",
+                node(9200, "m1", "6.0.0", true, false, true),
+                node(9201, "m2", "6.0.0", true, true, true),
+                node(9202, "m3", "6.0.0", true, false, true),
+                node(9203, "d1", "6.0.0", false, true, true),
+                node(9204, "d2", "6.0.0", false, true, true),
+                node(9205, "d3", "6.0.0", false, true, true),
+                node(9206, "c1", "6.0.0", false, false, true),
+                node(9207, "c2", "6.0.0", false, false, true));
     }
 
     public void test7x() throws IOException {
-        checkFile("7.3.0_nodes_http.json", node(9200, "m1", "7.3.0", "master", "ingest"),
-                node(9201, "m2", "7.3.0", "master", "data", "ingest"), node(9202, "m3", "7.3.0", "master", "ingest"),
-                node(9203, "d1", "7.3.0", "data", "ingest", "ml"), node(9204, "d2", "7.3.0", "data", "ingest"),
-                node(9205, "d3", "7.3.0", "data", "ingest"), node(9206, "c1", "7.3.0", "ingest"), node(9207, "c2", "7.3.0", "ingest"));
+        checkFile("7.3.0_nodes_http.json",
+            node(9200, "m1", "7.3.0", "master", "ingest"),
+            node(9201, "m2", "7.3.0", "master", "data", "ingest"),
+            node(9202, "m3", "7.3.0", "master", "ingest"),
+            node(9203, "d1", "7.3.0", "data", "ingest", "ml"),
+            node(9204, "d2", "7.3.0", "data", "ingest"),
+            node(9205, "d3", "7.3.0", "data", "ingest"),
+            node(9206, "c1", "7.3.0", "ingest"),
+            node(9207, "c2", "7.3.0", "ingest"));
     }
 
     public void testParsingPublishAddressWithPreES7Format() throws IOException {

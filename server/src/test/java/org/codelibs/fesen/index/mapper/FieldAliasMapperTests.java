@@ -33,18 +33,29 @@ import java.io.IOException;
 public class FieldAliasMapperTests extends MapperServiceTestCase {
 
     public void testParsing() throws IOException {
-        String mapping = Strings.toString(XContentFactory.jsonBuilder().startObject().startObject("_doc").startObject("properties")
-                .startObject("alias-field").field("type", "alias").field("path", "concrete-field").endObject().startObject("concrete-field")
-                .field("type", "keyword").endObject().endObject().endObject().endObject());
+        String mapping = Strings.toString(XContentFactory.jsonBuilder()
+            .startObject()
+                .startObject("_doc")
+                    .startObject("properties")
+                        .startObject("alias-field")
+                            .field("type", "alias")
+                            .field("path", "concrete-field")
+                        .endObject()
+                        .startObject("concrete-field")
+                            .field("type", "keyword")
+                        .endObject()
+                    .endObject()
+                .endObject()
+            .endObject());
         DocumentMapper mapper = createDocumentMapper("_doc", mapping);
         assertEquals(mapping, mapper.mappingSource().toString());
     }
 
     public void testParsingWithMissingPath() {
         MapperParsingException exception = expectThrows(MapperParsingException.class,
-                () -> createDocumentMapper(mapping(b -> b.startObject("alias-field").field("type", "alias").endObject())));
+            () -> createDocumentMapper(mapping(b -> b.startObject("alias-field").field("type", "alias").endObject())));
         assertEquals("Failed to parse mapping [_doc]: The [path] property must be specified for field [alias-field].",
-                exception.getMessage());
+            exception.getMessage());
     }
 
     public void testParsingWithExtraArgument() {
@@ -57,10 +68,9 @@ public class FieldAliasMapperTests extends MapperServiceTestCase {
             }
             b.endObject();
         })));
-        assertEquals(
-                "Failed to parse mapping [_doc]: "
-                        + "Mapping definition for [alias-field] has unsupported parameters:  [extra-field : extra-value]",
-                exception.getMessage());
+        assertEquals("Failed to parse mapping [_doc]: " +
+                "Mapping definition for [alias-field] has unsupported parameters:  [extra-field : extra-value]",
+            exception.getMessage());
     }
 
     public void testMerge() throws IOException {
@@ -113,6 +123,6 @@ public class FieldAliasMapperTests extends MapperServiceTestCase {
             b.endObject();
         })));
         assertEquals("Cannot merge a field alias mapping [alias-field] with a mapping that is not for a field alias.",
-                exception.getMessage());
+            exception.getMessage());
     }
 }

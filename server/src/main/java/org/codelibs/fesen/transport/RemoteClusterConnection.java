@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.transport;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.function.Function;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateAction;
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateRequest;
@@ -35,6 +31,10 @@ import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.function.Function;
 
 /**
  * Represents a connection to a single remote cluster. In contrast to a local cluster a remote cluster is not joined such that the
@@ -73,8 +73,8 @@ final class RemoteClusterConnection implements Closeable {
         this.connectionStrategy = RemoteConnectionStrategy.buildStrategy(clusterAlias, transportService, remoteConnectionManager, settings);
         // we register the transport service here as a listener to make sure we notify handlers on disconnect etc.
         this.remoteConnectionManager.addListener(transportService);
-        this.skipUnavailable =
-                RemoteClusterService.REMOTE_CLUSTER_SKIP_UNAVAILABLE.getConcreteSettingForNamespace(clusterAlias).get(settings);
+        this.skipUnavailable = RemoteClusterService.REMOTE_CLUSTER_SKIP_UNAVAILABLE
+            .getConcreteSettingForNamespace(clusterAlias).get(settings);
         this.threadPool = transportService.threadPool;
         initialConnectionTimeout = RemoteClusterService.REMOTE_INITIAL_CONNECTION_TIMEOUT_SETTING.get(settings);
     }
@@ -118,7 +118,7 @@ final class RemoteClusterConnection implements Closeable {
         Runnable runnable = () -> {
             final ThreadContext threadContext = threadPool.getThreadContext();
             final ContextPreservingActionListener<Function<String, DiscoveryNode>> contextPreservingActionListener =
-                    new ContextPreservingActionListener<>(threadContext.newRestorableContext(false), listener);
+                new ContextPreservingActionListener<>(threadContext.newRestorableContext(false), listener);
             try (ThreadContext.StoredContext ignore = threadContext.stashContext()) {
                 // we stash any context here since this is an internal execution and should not leak any existing context information
                 threadContext.markAsSystemContext();
@@ -129,29 +129,29 @@ final class RemoteClusterConnection implements Closeable {
                 request.local(true); // run this on the node that gets the request it's as good as any other
                 Transport.Connection connection = remoteConnectionManager.getAnyRemoteConnection();
                 transportService.sendRequest(connection, ClusterStateAction.NAME, request, TransportRequestOptions.EMPTY,
-                        new TransportResponseHandler<ClusterStateResponse>() {
+                    new TransportResponseHandler<ClusterStateResponse>() {
 
-                            @Override
-                            public ClusterStateResponse read(StreamInput in) throws IOException {
-                                return new ClusterStateResponse(in);
-                            }
+                        @Override
+                        public ClusterStateResponse read(StreamInput in) throws IOException {
+                            return new ClusterStateResponse(in);
+                        }
 
-                            @Override
-                            public void handleResponse(ClusterStateResponse response) {
-                                DiscoveryNodes nodes = response.getState().nodes();
-                                contextPreservingActionListener.onResponse(nodes::get);
-                            }
+                        @Override
+                        public void handleResponse(ClusterStateResponse response) {
+                            DiscoveryNodes nodes = response.getState().nodes();
+                            contextPreservingActionListener.onResponse(nodes::get);
+                        }
 
-                            @Override
-                            public void handleException(TransportException exp) {
-                                contextPreservingActionListener.onFailure(exp);
-                            }
+                        @Override
+                        public void handleException(TransportException exp) {
+                            contextPreservingActionListener.onFailure(exp);
+                        }
 
-                            @Override
-                            public String executor() {
-                                return ThreadPool.Names.SAME;
-                            }
-                        });
+                        @Override
+                        public String executor() {
+                            return ThreadPool.Names.SAME;
+                        }
+                    });
             }
         };
         try {

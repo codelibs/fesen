@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
-import java.io.IOException;
-import java.util.function.Predicate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.FesenException;
@@ -30,8 +27,8 @@ import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateObserver;
-import org.codelibs.fesen.cluster.ClusterStateObserver.Listener;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
+import org.codelibs.fesen.cluster.ClusterStateObserver.Listener;
 import org.codelibs.fesen.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.cluster.coordination.CoordinationMetadata;
@@ -47,16 +44,20 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool.Names;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.function.Predicate;
+
 public class TransportClearVotingConfigExclusionsAction
-        extends TransportMasterNodeAction<ClearVotingConfigExclusionsRequest, ClearVotingConfigExclusionsResponse> {
+    extends TransportMasterNodeAction<ClearVotingConfigExclusionsRequest, ClearVotingConfigExclusionsResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportClearVotingConfigExclusionsAction.class);
 
     @Inject
     public TransportClearVotingConfigExclusionsAction(TransportService transportService, ClusterService clusterService,
-            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+                                                      ThreadPool threadPool, ActionFilters actionFilters,
+                                                      IndexNameExpressionResolver indexNameExpressionResolver) {
         super(ClearVotingConfigExclusionsAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                ClearVotingConfigExclusionsRequest::new, indexNameExpressionResolver);
+            ClearVotingConfigExclusionsRequest::new, indexNameExpressionResolver);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class TransportClearVotingConfigExclusionsAction
 
     @Override
     protected void masterOperation(ClearVotingConfigExclusionsRequest request, ClusterState initialState,
-            ActionListener<ClearVotingConfigExclusionsResponse> listener) throws Exception {
+                                   ActionListener<ClearVotingConfigExclusionsResponse> listener) throws Exception {
 
         final long startTimeMillis = threadPool.relativeTimeInMillis();
 
@@ -86,8 +87,8 @@ public class TransportClearVotingConfigExclusionsAction
         };
 
         if (request.getWaitForRemoval() && allExclusionsRemoved.test(initialState) == false) {
-            final ClusterStateObserver clusterStateObserver =
-                    new ClusterStateObserver(initialState, clusterService, request.getTimeout(), logger, threadPool.getThreadContext());
+            final ClusterStateObserver clusterStateObserver = new ClusterStateObserver(initialState, clusterService, request.getTimeout(),
+                logger, threadPool.getThreadContext());
 
             clusterStateObserver.waitForNextChange(new Listener() {
                 @Override
@@ -97,15 +98,15 @@ public class TransportClearVotingConfigExclusionsAction
 
                 @Override
                 public void onClusterServiceClose() {
-                    listener.onFailure(new FesenException(
-                            "cluster service closed while waiting for removal of nodes " + initialState.getVotingConfigExclusions()));
+                    listener.onFailure(new FesenException("cluster service closed while waiting for removal of nodes "
+                        + initialState.getVotingConfigExclusions()));
                 }
 
                 @Override
                 public void onTimeout(TimeValue timeout) {
                     listener.onFailure(new FesenTimeoutException(
-                            "timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. "
-                                    + initialState.getVotingConfigExclusions()));
+                        "timed out waiting for removal of nodes; if nodes should not be removed, set waitForRemoval to false. "
+                        + initialState.getVotingConfigExclusions()));
                 }
             }, allExclusionsRemoved);
         } else {
@@ -114,14 +115,14 @@ public class TransportClearVotingConfigExclusionsAction
     }
 
     private void submitClearVotingConfigExclusionsTask(ClearVotingConfigExclusionsRequest request, long startTimeMillis,
-            ActionListener<ClearVotingConfigExclusionsResponse> listener) {
+                                                       ActionListener<ClearVotingConfigExclusionsResponse> listener) {
         clusterService.submitStateUpdateTask("clear-voting-config-exclusions", new ClusterStateUpdateTask(Priority.URGENT) {
             @Override
             public ClusterState execute(ClusterState currentState) {
                 final CoordinationMetadata newCoordinationMetadata =
                         CoordinationMetadata.builder(currentState.coordinationMetadata()).clearVotingConfigExclusions().build();
-                final Metadata newMetadata =
-                        Metadata.builder(currentState.metadata()).coordinationMetadata(newCoordinationMetadata).build();
+                final Metadata newMetadata = Metadata.builder(currentState.metadata()).
+                        coordinationMetadata(newCoordinationMetadata).build();
                 return ClusterState.builder(currentState).metadata(newMetadata).build();
             }
 

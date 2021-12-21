@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.cluster.repositories.cleanup;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,14 +28,16 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.repositories.RepositoryCleanupResult;
 
+import java.io.IOException;
+
 public final class CleanupRepositoryResponse extends ActionResponse implements ToXContentObject {
 
     private static final ObjectParser<CleanupRepositoryResponse, Void> PARSER =
-            new ObjectParser<>(CleanupRepositoryResponse.class.getName(), true, CleanupRepositoryResponse::new);
+        new ObjectParser<>(CleanupRepositoryResponse.class.getName(), true, CleanupRepositoryResponse::new);
 
     static {
-        PARSER.declareObject((response, cleanupResult) -> response.result = cleanupResult, RepositoryCleanupResult.PARSER,
-                new ParseField("results"));
+        PARSER.declareObject((response, cleanupResult) -> response.result = cleanupResult,
+            RepositoryCleanupResult.PARSER, new ParseField("results"));
     }
 
     private RepositoryCleanupResult result;

@@ -39,3 +39,5 @@ public class UpperCaseTokenFilterFactory extends AbstractTokenFilterFactory impl
     }
 
 }
+
+

@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.core.util.Throwables;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
@@ -30,13 +26,19 @@ import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
 
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class BlockMasterServiceOnMaster extends SingleNodeDisruption {
 
     AtomicReference<CountDownLatch> disruptionLatch = new AtomicReference<>();
 
+
     public BlockMasterServiceOnMaster(Random random) {
         super(random);
     }
+
 
     @Override
     public void startDisrupting() {
@@ -80,7 +82,8 @@ public class BlockMasterServiceOnMaster extends SingleNodeDisruption {
         });
         try {
             started.await();
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
     }
 
     @Override

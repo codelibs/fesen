@@ -120,11 +120,12 @@ public final class XContentBuilder implements Closeable, Flushable {
             Map<Class<?>, HumanReadableTransformer> addlTransformers = service.getXContentHumanReadableTransformers();
             Map<Class<?>, Function<Object, Object>> addlDateTransformers = service.getDateTransformers();
 
-            addlWriters.forEach((key, value) -> Objects.requireNonNull(value, "invalid null xcontent writer for class " + key));
-            addlTransformers.forEach(
-                    (key, value) -> Objects.requireNonNull(value, "invalid null xcontent transformer for human readable class " + key));
-            dateTransformers
-                    .forEach((key, value) -> Objects.requireNonNull(value, "invalid null xcontent date transformer for class " + key));
+            addlWriters.forEach((key, value) -> Objects.requireNonNull(value,
+                "invalid null xcontent writer for class " + key));
+            addlTransformers.forEach((key, value) -> Objects.requireNonNull(value,
+                "invalid null xcontent transformer for human readable class " + key));
+            dateTransformers.forEach((key, value) -> Objects.requireNonNull(value,
+                "invalid null xcontent date transformer for class " + key));
 
             writers.putAll(addlWriters);
             humanReadableTransformer.putAll(addlTransformers);
@@ -585,6 +586,7 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+
     ////////////////////////////////////////////////////////////////////////////
     // BigDecimal
     //////////////////////////////////
@@ -702,6 +704,7 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+
     ////////////////////////////////////////////////////////////////////////////
     // Date
     //////////////////////////////////
@@ -709,7 +712,7 @@ public final class XContentBuilder implements Closeable, Flushable {
     /**
      * Write a time-based field and value, if the passed timeValue is null a
      * null value is written, otherwise a date transformers lookup is performed.
-    
+
      * @throws IllegalArgumentException if there is no transformers for the type of object
      */
     public XContentBuilder timeField(String name, Object timeValue) throws IOException {
@@ -722,7 +725,8 @@ public final class XContentBuilder implements Closeable, Flushable {
      * {@link Long} class.
      */
     public XContentBuilder timeField(String name, String readableName, long value) throws IOException {
-        assert name.equals(readableName) == false : "expected raw and readable field names to differ, but they were both: " + name;
+        assert name.equals(readableName) == false :
+            "expected raw and readable field names to differ, but they were both: " + name;
         if (humanReadable) {
             Function<Object, Object> longTransformer = DATE_TRANSFORMERS.get(Long.class);
             if (longTransformer == null) {
@@ -737,7 +741,7 @@ public final class XContentBuilder implements Closeable, Flushable {
     /**
      * Write a time-based value, if the value is null a null value is written,
      * otherwise a date transformers lookup is performed.
-    
+
      * @throws IllegalArgumentException if there is no transformers for the type of object
      */
     public XContentBuilder timeValue(Object timeValue) throws IOException {
@@ -935,8 +939,8 @@ public final class XContentBuilder implements Closeable, Flushable {
     //////////////////////////////////
 
     public XContentBuilder humanReadableField(String rawFieldName, String readableFieldName, Object value) throws IOException {
-        assert rawFieldName.equals(readableFieldName) == false : "expected raw and readable field names to differ, but they were both: "
-                + rawFieldName;
+        assert rawFieldName.equals(readableFieldName) == false :
+            "expected raw and readable field names to differ, but they were both: " + rawFieldName;
         if (humanReadable) {
             field(readableFieldName, Objects.toString(value));
         }
@@ -954,9 +958,10 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Misc.
     //////////////////////////////////
 
+
     public XContentBuilder percentageField(String rawFieldName, String readableFieldName, double percentage) throws IOException {
-        assert rawFieldName.equals(readableFieldName) == false : "expected raw and readable field names to differ, but they were both: "
-                + rawFieldName;
+        assert rawFieldName.equals(readableFieldName) == false :
+            "expected raw and readable field names to differ, but they were both: " + rawFieldName;
         if (humanReadable) {
             field(readableFieldName, String.format(Locale.ROOT, "%1.1f%%", percentage));
         }
@@ -1039,7 +1044,7 @@ public final class XContentBuilder implements Closeable, Flushable {
             return null;
         }
         if (value instanceof Map) {
-            return ((Map<?, ?>) value).values();
+            return ((Map<?,?>) value).values();
         } else if ((value instanceof Iterable) && (value instanceof Path == false)) {
             return (Iterable<?>) value;
         } else if (value instanceof Object[]) {

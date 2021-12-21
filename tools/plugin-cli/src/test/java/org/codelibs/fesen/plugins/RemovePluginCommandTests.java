@@ -19,16 +19,18 @@
 
 package org.codelibs.fesen.plugins;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.lucene.util.LuceneTestCase;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.MockTerminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.env.TestEnvironment;
+import org.codelibs.fesen.plugins.RemovePluginCommand;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.VersionUtils;
+import org.junit.Before;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,17 +40,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.apache.lucene.util.LuceneTestCase;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.MockTerminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.env.TestEnvironment;
-import org.codelibs.fesen.test.ESTestCase;
-import org.codelibs.fesen.test.VersionUtils;
-import org.junit.Before;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasToString;
 
 @LuceneTestCase.SuppressFileSystems("*")
 public class RemovePluginCommandTests extends ESTestCase {
@@ -96,9 +91,21 @@ public class RemovePluginCommandTests extends ESTestCase {
     }
 
     void createPlugin(Path path, String name, Version version) throws IOException {
-        PluginTestUtil.writePluginProperties(path.resolve(name), "description", "dummy", "name", name, "version", "1.0",
-                "elasticsearch.version", version.toString(), "java.version", System.getProperty("java.specification.version"), "classname",
-                "SomeClass");
+        PluginTestUtil.writePluginProperties(
+            path.resolve(name),
+            "description",
+            "dummy",
+            "name",
+            name,
+            "version",
+            "1.0",
+            "elasticsearch.version",
+            version.toString(),
+            "java.version",
+            System.getProperty("java.specification.version"),
+            "classname",
+            "SomeClass"
+        );
     }
 
     static MockTerminal removePlugin(String name, Path home, boolean purge) throws Exception {
@@ -136,8 +143,14 @@ public class RemovePluginCommandTests extends ESTestCase {
     }
 
     public void testRemoveOldVersion() throws Exception {
-        createPlugin("fake", VersionUtils.randomVersionBetween(random(), Version.CURRENT.minimumIndexCompatibilityVersion(),
-                VersionUtils.getPreviousVersion()));
+        createPlugin(
+            "fake",
+            VersionUtils.randomVersionBetween(
+                random(),
+                Version.CURRENT.minimumIndexCompatibilityVersion(),
+                VersionUtils.getPreviousVersion()
+            )
+        );
         removePlugin("fake", home, randomBoolean());
         assertThat(Files.exists(env.pluginsFile().resolve("fake")), equalTo(false));
         assertRemoveCleaned(env);
@@ -232,11 +245,15 @@ public class RemovePluginCommandTests extends ESTestCase {
                 return false;
             }
         }.main(new String[] { "-Epath.home=" + home, "fake" }, terminal);
-        try (BufferedReader reader = new BufferedReader(new StringReader(terminal.getOutput()));
-                BufferedReader errorReader = new BufferedReader(new StringReader(terminal.getErrorOutput()))) {
+        try (
+            BufferedReader reader = new BufferedReader(new StringReader(terminal.getOutput()));
+            BufferedReader errorReader = new BufferedReader(new StringReader(terminal.getErrorOutput()))
+        ) {
             assertEquals("-> removing [fake]...", reader.readLine());
-            assertEquals("ERROR: plugin [fake] not found; run 'fesen-plugin list' to get list of installed plugins",
-                    errorReader.readLine());
+            assertEquals(
+                "ERROR: plugin [fake] not found; run 'fesen-plugin list' to get list of installed plugins",
+                errorReader.readLine()
+            );
             assertNull(reader.readLine());
             assertNull(errorReader.readLine());
         }

@@ -19,7 +19,24 @@
 
 package org.codelibs.fesen.test.disruption;
 
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthAction;
+import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthRequest;
+import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthResponse;
+import org.codelibs.fesen.cluster.NodeConnectionsService;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.core.Tuple;
+import org.codelibs.fesen.plugins.Plugin;
+import org.codelibs.fesen.test.ESIntegTestCase;
+import org.codelibs.fesen.test.InternalTestCluster;
+import org.codelibs.fesen.test.disruption.NetworkDisruption;
+import org.codelibs.fesen.test.disruption.NetworkDisruption.TwoPartitions;
+import org.codelibs.fesen.test.transport.MockTransportService;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.transport.TransportException;
+import org.codelibs.fesen.transport.TransportResponse;
+import org.codelibs.fesen.transport.TransportResponseHandler;
+import org.codelibs.fesen.transport.TransportService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,23 +48,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthAction;
-import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthRequest;
-import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthResponse;
-import org.codelibs.fesen.cluster.NodeConnectionsService;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.core.Tuple;
-import org.codelibs.fesen.plugins.Plugin;
-import org.codelibs.fesen.test.ESIntegTestCase;
-import org.codelibs.fesen.test.InternalTestCluster;
-import org.codelibs.fesen.test.disruption.NetworkDisruption.TwoPartitions;
-import org.codelibs.fesen.test.transport.MockTransportService;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.transport.TransportException;
-import org.codelibs.fesen.transport.TransportResponse;
-import org.codelibs.fesen.transport.TransportResponseHandler;
-import org.codelibs.fesen.transport.TransportService;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 0, autoManageMasterNodes = false)
 public class NetworkDisruptionIT extends ESIntegTestCase {
@@ -56,8 +57,9 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
         return Arrays.asList(MockTransportService.TestPlugin.class);
     }
 
-    private static final Settings DISRUPTION_TUNED_SETTINGS =
-            Settings.builder().put(NodeConnectionsService.CLUSTER_NODE_RECONNECT_INTERVAL_SETTING.getKey(), "2s").build();
+    private static final Settings DISRUPTION_TUNED_SETTINGS = Settings.builder()
+            .put(NodeConnectionsService.CLUSTER_NODE_RECONNECT_INTERVAL_SETTING.getKey(), "2s")
+            .build();
 
     /**
      * Creates 3 to 5 mixed-node cluster and splits it into 2 parts.
@@ -105,8 +107,8 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
                 TransportService serviceB = internalCluster().getInstance(TransportService.class, nodeB);
                 // TODO assertBusy should not be here, see https://github.com/elastic/elasticsearch/issues/38348
                 assertBusy(() -> {
-                    assertTrue(nodeA + " is not connected to " + nodeB, serviceA.nodeConnected(serviceB.getLocalNode()));
-                    assertTrue(nodeB + " is not connected to " + nodeA, serviceB.nodeConnected(serviceA.getLocalNode()));
+                        assertTrue(nodeA + " is not connected to " + nodeB, serviceA.nodeConnected(serviceB.getLocalNode()));
+                        assertTrue(nodeB + " is not connected to " + nodeA, serviceB.nodeConnected(serviceA.getLocalNode()));
                 });
             }
         }
@@ -122,8 +124,8 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
             disruptedLinks = NetworkDisruption.Bridge.random(random(), internalCluster().getNodeNames());
         }
 
-        NetworkDisruption networkDisruption = new NetworkDisruption(disruptedLinks,
-                randomFrom(NetworkDisruption.UNRESPONSIVE, NetworkDisruption.DISCONNECT, NetworkDisruption.NetworkDelay.random(random())));
+        NetworkDisruption networkDisruption = new NetworkDisruption(disruptedLinks, randomFrom(NetworkDisruption.UNRESPONSIVE,
+            NetworkDisruption.DISCONNECT, NetworkDisruption.NetworkDelay.random(random())));
         internalCluster().setDisruptionScheme(networkDisruption);
 
         networkDisruption.startDisrupting();
@@ -131,8 +133,9 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
         int requests = randomIntBetween(1, 200);
         CountDownLatch latch = new CountDownLatch(requests);
         for (int i = 0; i < requests - 1; ++i) {
-            sendRequest(internalCluster().getInstance(TransportService.class), internalCluster().getInstance(TransportService.class),
-                    latch);
+            sendRequest(
+                internalCluster().getInstance(TransportService.class), internalCluster().getInstance(TransportService.class),
+                latch);
         }
 
         // send a request that is guaranteed disrupted.
@@ -141,7 +144,7 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
 
         // give a bit of time to send something under disruption.
         assertFalse(latch.await(500, TimeUnit.MILLISECONDS)
-                && networkDisruption.getNetworkLinkDisruptionType() != NetworkDisruption.DISCONNECT);
+            && networkDisruption.getNetworkLinkDisruptionType() != NetworkDisruption.DISCONNECT);
         networkDisruption.stopDisrupting();
 
         latch.await(30, TimeUnit.SECONDS);
@@ -149,12 +152,12 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
     }
 
     private Tuple<TransportService, TransportService> findDisruptedPair(NetworkDisruption.DisruptedLinks disruptedLinks) {
-        Optional<Tuple<TransportService, TransportService>> disruptedPair =
-                disruptedLinks.nodes().stream().flatMap(n1 -> disruptedLinks.nodes().stream().map(n2 -> Tuple.tuple(n1, n2)))
-                        .filter(pair -> disruptedLinks.disrupt(pair.v1(), pair.v2()))
-                        .map(pair -> Tuple.tuple(internalCluster().getInstance(TransportService.class, pair.v1()),
-                                internalCluster().getInstance(TransportService.class, pair.v2())))
-                        .findFirst();
+        Optional<Tuple<TransportService, TransportService>> disruptedPair = disruptedLinks.nodes().stream()
+            .flatMap(n1 -> disruptedLinks.nodes().stream().map(n2 -> Tuple.tuple(n1, n2)))
+            .filter(pair -> disruptedLinks.disrupt(pair.v1(), pair.v2()))
+            .map(pair -> Tuple.tuple(internalCluster().getInstance(TransportService.class, pair.v1()),
+                internalCluster().getInstance(TransportService.class, pair.v2())))
+            .findFirst();
         // since we have 3+ nodes, we are sure to find a disrupted pair, also for bridge disruptions.
         assertTrue(disruptedPair.isPresent());
         return disruptedPair.get();
@@ -162,30 +165,29 @@ public class NetworkDisruptionIT extends ESIntegTestCase {
 
     private void sendRequest(TransportService source, TransportService target, CountDownLatch latch) {
         source.sendRequest(target.getLocalNode(), ClusterHealthAction.NAME, new ClusterHealthRequest(),
-                new TransportResponseHandler<TransportResponse>() {
-                    private AtomicBoolean responded = new AtomicBoolean();
+            new TransportResponseHandler<TransportResponse>() {
+                private AtomicBoolean responded = new AtomicBoolean();
+                @Override
+                public void handleResponse(TransportResponse response) {
+                    assertTrue(responded.compareAndSet(false, true));
+                    latch.countDown();
+                }
 
-                    @Override
-                    public void handleResponse(TransportResponse response) {
-                        assertTrue(responded.compareAndSet(false, true));
-                        latch.countDown();
-                    }
+                @Override
+                public void handleException(TransportException exp) {
+                    assertTrue(responded.compareAndSet(false, true));
+                    latch.countDown();
+                }
 
-                    @Override
-                    public void handleException(TransportException exp) {
-                        assertTrue(responded.compareAndSet(false, true));
-                        latch.countDown();
-                    }
+                @Override
+                public String executor() {
+                    return ThreadPool.Names.SAME;
+                }
 
-                    @Override
-                    public String executor() {
-                        return ThreadPool.Names.SAME;
-                    }
-
-                    @Override
-                    public TransportResponse read(StreamInput in) throws IOException {
-                        return ClusterHealthResponse.readResponseFrom(in);
-                    }
-                });
+                @Override
+                public TransportResponse read(StreamInput in) throws IOException {
+                    return ClusterHealthResponse.readResponseFrom(in);
+                }
+            });
     }
 }

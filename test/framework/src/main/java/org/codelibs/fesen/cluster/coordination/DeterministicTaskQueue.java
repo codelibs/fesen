@@ -19,6 +19,16 @@
 
 package org.codelibs.fesen.cluster.coordination;
 
+import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.util.concurrent.EsExecutors;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.threadpool.ThreadPool;
+import org.codelibs.fesen.threadpool.ThreadPoolInfo;
+import org.codelibs.fesen.threadpool.ThreadPoolStats;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,17 +44,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.util.concurrent.EsExecutors;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.threadpool.ThreadPool;
-import org.codelibs.fesen.threadpool.ThreadPoolInfo;
-import org.codelibs.fesen.threadpool.ThreadPoolStats;
-
-import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
 
 public class DeterministicTaskQueue {
 
@@ -502,7 +501,10 @@ public class DeterministicTaskQueue {
 
         @Override
         public String toString() {
-            return "DeferredTask{" + "executionTimeMillis=" + executionTimeMillis + ", task=" + task + '}';
+            return "DeferredTask{" +
+                "executionTimeMillis=" + executionTimeMillis +
+                ", task=" + task +
+                '}';
         }
     }
 }

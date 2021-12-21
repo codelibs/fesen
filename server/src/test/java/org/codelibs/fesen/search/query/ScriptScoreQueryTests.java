@@ -89,7 +89,8 @@ public class ScriptScoreQueryTests extends ESTestCase {
             return 1.0;
         });
 
-        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory, null, "index", 0, Version.CURRENT);
+        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory,
+            null, "index", 0, Version.CURRENT);
         Weight weight = query.createWeight(searcher, ScoreMode.COMPLETE, 1.0f);
         Explanation explanation = weight.explain(leafReaderContext, 0);
         assertNotNull(explanation);
@@ -101,7 +102,8 @@ public class ScriptScoreQueryTests extends ESTestCase {
         Script script = new Script("script without setting explanation");
         ScoreScript.LeafFactory factory = newFactory(script, true, explanation -> 1.5);
 
-        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory, null, "index", 0, Version.CURRENT);
+        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory,
+            null, "index", 0, Version.CURRENT);
         Weight weight = query.createWeight(searcher, ScoreMode.COMPLETE, 1.0f);
         Explanation explanation = weight.explain(leafReaderContext, 0);
         assertNotNull(explanation);
@@ -117,7 +119,8 @@ public class ScriptScoreQueryTests extends ESTestCase {
         Script script = new Script("script without setting explanation and no score");
         ScoreScript.LeafFactory factory = newFactory(script, false, explanation -> 2.0);
 
-        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory, null, "index", 0, Version.CURRENT);
+        ScriptScoreQuery query = new ScriptScoreQuery(Queries.newMatchAllQuery(), script, factory,
+            null, "index", 0, Version.CURRENT);
         Weight weight = query.createWeight(searcher, ScoreMode.COMPLETE, 1.0f);
         Explanation explanation = weight.explain(leafReaderContext, 0);
         assertNotNull(explanation);
@@ -137,7 +140,7 @@ public class ScriptScoreQueryTests extends ESTestCase {
     }
 
     private ScoreScript.LeafFactory newFactory(Script script, boolean needsScore,
-            Function<ScoreScript.ExplanationHolder, Double> function) {
+                                               Function<ScoreScript.ExplanationHolder, Double> function) {
         SearchLookup lookup = mock(SearchLookup.class);
         LeafSearchLookup leafLookup = mock(LeafSearchLookup.class);
         when(lookup.getLeafSearchLookup(any())).thenReturn(leafLookup);

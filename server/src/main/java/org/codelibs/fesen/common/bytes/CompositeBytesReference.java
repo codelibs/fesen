@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.common.bytes;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Objects;
-
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.apache.lucene.util.BytesRefIterator;
 import org.apache.lucene.util.FutureObjects;
 import org.apache.lucene.util.RamUsageEstimator;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A composite {@link BytesReference} that allows joining multiple bytes references
@@ -45,18 +45,18 @@ public final class CompositeBytesReference extends AbstractBytesReference {
 
     public static BytesReference of(BytesReference... references) {
         switch (references.length) {
-        case 0:
-            return BytesArray.EMPTY;
-        case 1:
-            return references[0];
-        default:
-            return new CompositeBytesReference(references);
+            case 0:
+                return BytesArray.EMPTY;
+            case 1:
+                return references[0];
+            default:
+                return new CompositeBytesReference(references);
         }
     }
 
     private CompositeBytesReference(BytesReference... references) {
-        assert references.length > 1 : "Should not build composite reference from less than two references but received ["
-                + references.length + "]";
+        assert references.length > 1
+                : "Should not build composite reference from less than two references but received [" + references.length + "]";
         this.references = Objects.requireNonNull(references, "references must not be null");
         this.offsets = new int[references.length];
         long ramBytesUsed = 0;
@@ -70,12 +70,14 @@ public final class CompositeBytesReference extends AbstractBytesReference {
             offset += reference.length();
             ramBytesUsed += reference.ramBytesUsed();
         }
-        this.ramBytesUsed = ramBytesUsed + (Integer.BYTES * offsets.length + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER) // offsets
-                + (references.length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER) // references
-                + Integer.BYTES // length
-                + Long.BYTES; // ramBytesUsed
+        this.ramBytesUsed = ramBytesUsed
+            + (Integer.BYTES * offsets.length + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER) // offsets
+            + (references.length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER) // references
+            + Integer.BYTES // length
+            + Long.BYTES; // ramBytesUsed
         length = offset;
     }
+
 
     @Override
     public byte get(int index) {
@@ -139,7 +141,7 @@ public final class CompositeBytesReference extends AbstractBytesReference {
         }
         // now adjust slices in front and at the end
         inSlice[0] = inSlice[0].slice(inSliceOffset, inSlice[0].length() - inSliceOffset);
-        inSlice[inSlice.length - 1] = inSlice[inSlice.length - 1].slice(0, to - offsets[limit]);
+        inSlice[inSlice.length-1] = inSlice[inSlice.length-1].slice(0, to - offsets[limit]);
         return new CompositeBytesReference(inSlice);
     }
 
@@ -196,6 +198,6 @@ public final class CompositeBytesReference extends AbstractBytesReference {
 
     @Override
     public long ramBytesUsed() {
-        return ramBytesUsed;
+       return ramBytesUsed;
     }
 }

@@ -19,27 +19,39 @@
 
 package org.codelibs.fesen.common.settings;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import org.apache.lucene.codecs.CodecUtil;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.codelibs.fesen.common.Randomness;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.common.settings.SecureString;
+import org.codelibs.fesen.core.internal.io.IOUtils;
+import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -50,25 +62,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.codelibs.fesen.common.Randomness;
-import org.codelibs.fesen.core.internal.io.IOUtils;
-import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Before;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class KeyStoreWrapperTests extends ESTestCase {
 
@@ -116,11 +114,18 @@ public class KeyStoreWrapperTests extends ESTestCase {
         KeyStoreWrapper keystore = KeyStoreWrapper.create();
         keystore.save(env.configFile(), new char[0]);
         final KeyStoreWrapper loadedkeystore = KeyStoreWrapper.load(env.configFile());
-        final SecurityException exception =
-                expectThrows(SecurityException.class, () -> loadedkeystore.decrypt(new char[] { 'i', 'n', 'v', 'a', 'l', 'i', 'd' }));
+        final SecurityException exception = expectThrows(
+            SecurityException.class,
+            () -> loadedkeystore.decrypt(new char[] { 'i', 'n', 'v', 'a', 'l', 'i', 'd' })
+        );
         if (inFipsJvm()) {
-            assertThat(exception.getMessage(), anyOf(containsString("Provided keystore password was incorrect"),
-                    containsString("Keystore has been corrupted or tampered with")));
+            assertThat(
+                exception.getMessage(),
+                anyOf(
+                    containsString("Provided keystore password was incorrect"),
+                    containsString("Keystore has been corrupted or tampered with")
+                )
+            );
         } else {
             assertThat(exception.getMessage(), containsString("Provided keystore password was incorrect"));
         }
@@ -134,8 +139,10 @@ public class KeyStoreWrapperTests extends ESTestCase {
         keystore.close();
 
         assertThat(keystore.getSettingNames(), Matchers.hasItem(KeyStoreWrapper.SEED_SETTING.getKey()));
-        final IllegalStateException exception =
-                expectThrows(IllegalStateException.class, () -> keystore.getString(KeyStoreWrapper.SEED_SETTING.getKey()));
+        final IllegalStateException exception = expectThrows(
+            IllegalStateException.class,
+            () -> keystore.getString(KeyStoreWrapper.SEED_SETTING.getKey())
+        );
         assertThat(exception.getMessage(), containsString("closed"));
     }
 
@@ -303,8 +310,13 @@ public class KeyStoreWrapperTests extends ESTestCase {
         output.write(secret_value);
     }
 
-    private void possiblyAlterEncryptedBytes(IndexOutput indexOutput, byte[] salt, byte[] iv, byte[] encryptedBytes,
-            int truncEncryptedDataLength) throws Exception {
+    private void possiblyAlterEncryptedBytes(
+        IndexOutput indexOutput,
+        byte[] salt,
+        byte[] iv,
+        byte[] encryptedBytes,
+        int truncEncryptedDataLength
+    ) throws Exception {
         indexOutput.writeInt(4 + salt.length + 4 + iv.length + 4 + encryptedBytes.length);
         indexOutput.writeInt(salt.length);
         indexOutput.writeBytes(salt, salt.length);

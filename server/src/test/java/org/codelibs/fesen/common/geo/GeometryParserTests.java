@@ -47,8 +47,11 @@ public class GeometryParserTests extends ESTestCase {
 
     public void testGeoJsonParsing() throws Exception {
 
-        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder().startObject().field("type", "Point").startArray("coordinates")
-                .value(100.0).value(0.0).endArray().endObject();
+        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder()
+            .startObject()
+            .field("type", "Point")
+            .startArray("coordinates").value(100.0).value(0.0).endArray()
+            .endObject();
 
         try (XContentParser parser = createParser(pointGeoJson)) {
             parser.nextToken();
@@ -59,24 +62,37 @@ public class GeometryParserTests extends ESTestCase {
             assertEquals("{\"type\":\"Point\",\"coordinates\":[100.0,10.0]}", Strings.toString(newGeoJson));
         }
 
-        XContentBuilder pointGeoJsonWithZ = XContentFactory.jsonBuilder().startObject().field("type", "Point").startArray("coordinates")
-                .value(100.0).value(0.0).value(10.0).endArray().endObject();
+        XContentBuilder pointGeoJsonWithZ = XContentFactory.jsonBuilder()
+            .startObject()
+            .field("type", "Point")
+            .startArray("coordinates").value(100.0).value(0.0).value(10.0).endArray()
+            .endObject();
 
         try (XContentParser parser = createParser(pointGeoJsonWithZ)) {
             parser.nextToken();
             assertEquals(new Point(100, 0, 10.0), new GeometryParser(true, randomBoolean(), true).parse(parser));
         }
 
+
         try (XContentParser parser = createParser(pointGeoJsonWithZ)) {
             parser.nextToken();
             expectThrows(IllegalArgumentException.class, () -> new GeometryParser(true, randomBoolean(), false).parse(parser));
         }
 
-        XContentBuilder polygonGeoJson = XContentFactory.jsonBuilder().startObject().field("type", "Polygon").startArray("coordinates")
-                .startArray().startArray().value(100.0).value(1.0).endArray().startArray().value(101.0).value(1.0).endArray().startArray()
-                .value(101.0).value(0.0).endArray().startArray().value(100.0).value(0.0).endArray().endArray().endArray().endObject();
+        XContentBuilder polygonGeoJson = XContentFactory.jsonBuilder()
+                .startObject()
+                    .field("type", "Polygon")
+                    .startArray("coordinates")
+                        .startArray()
+                            .startArray().value(100.0).value(1.0).endArray()
+                            .startArray().value(101.0).value(1.0).endArray()
+                            .startArray().value(101.0).value(0.0).endArray()
+                            .startArray().value(100.0).value(0.0).endArray()
+                        .endArray()
+                    .endArray()
+                .endObject();
 
-        Polygon p = new Polygon(new LinearRing(new double[] { 100d, 101d, 101d, 100d, 100d }, new double[] { 1d, 1d, 0d, 0d, 1d }));
+        Polygon p = new Polygon(new LinearRing(new double[]{100d, 101d, 101d, 100d, 100d}, new double[]{1d, 1d, 0d, 0d, 1d}));
         try (XContentParser parser = createParser(polygonGeoJson)) {
             parser.nextToken();
             // Coerce should automatically close the polygon
@@ -91,7 +107,10 @@ public class GeometryParserTests extends ESTestCase {
     }
 
     public void testWKTParsing() throws Exception {
-        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder().startObject().field("foo", "Point (100 0)").endObject();
+        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder()
+            .startObject()
+            .field("foo", "Point (100 0)")
+            .endObject();
 
         try (XContentParser parser = createParser(pointGeoJson)) {
             parser.nextToken(); // Start object
@@ -106,19 +125,25 @@ public class GeometryParserTests extends ESTestCase {
         }
 
         // Make sure we can parse values outside the normal lat lon boundaries
-        XContentBuilder lineGeoJson = XContentFactory.jsonBuilder().startObject().field("foo", "LINESTRING (100 0, 200 10)").endObject();
+        XContentBuilder lineGeoJson = XContentFactory.jsonBuilder()
+            .startObject()
+            .field("foo", "LINESTRING (100 0, 200 10)")
+            .endObject();
 
         try (XContentParser parser = createParser(lineGeoJson)) {
             parser.nextToken(); // Start object
             parser.nextToken(); // Field Name
             parser.nextToken(); // Field Value
-            assertEquals(new Line(new double[] { 100, 200 }, new double[] { 0, 10 }),
-                    new GeometryParser(true, randomBoolean(), randomBoolean()).parse(parser));
+            assertEquals(new Line(new double[]{100, 200}, new double[]{0, 10}),
+                new GeometryParser(true, randomBoolean(), randomBoolean()).parse(parser));
         }
     }
 
     public void testNullParsing() throws Exception {
-        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder().startObject().nullField("foo").endObject();
+        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder()
+            .startObject()
+            .nullField("foo")
+            .endObject();
 
         try (XContentParser parser = createParser(pointGeoJson)) {
             parser.nextToken(); // Start object
@@ -142,14 +167,17 @@ public class GeometryParserTests extends ESTestCase {
     }
 
     public void testUnsupportedValueParsing() throws Exception {
-        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder().startObject().field("foo", 42).endObject();
+        XContentBuilder pointGeoJson = XContentFactory.jsonBuilder()
+            .startObject()
+            .field("foo", 42)
+            .endObject();
 
         try (XContentParser parser = createParser(pointGeoJson)) {
             parser.nextToken(); // Start object
             parser.nextToken(); // Field Name
             parser.nextToken(); // Field Value
-            FesenParseException ex =
-                    expectThrows(FesenParseException.class, () -> new GeometryParser(true, randomBoolean(), randomBoolean()).parse(parser));
+            FesenParseException ex = expectThrows(FesenParseException.class,
+                () -> new GeometryParser(true, randomBoolean(), randomBoolean()).parse(parser));
             assertEquals("shape must be an object consisting of type and coordinates", ex.getMessage());
         }
     }
@@ -166,22 +194,38 @@ public class GeometryParserTests extends ESTestCase {
         // line
         Line expectedLine = new Line(new double[] { 0, 1 }, new double[] { 0, 1 });
         testBasics(parser, "LINESTRING(0 0, 1 1)", expectedLine);
-        testBasics(parser, mapOf("type", "LineString", "coordinates", Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 1))),
-                expectedLine);
+        testBasics(parser,
+            mapOf("type", "LineString", "coordinates", Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 1))),
+            expectedLine
+        );
         // polygon
         Polygon expectedPolygon = new Polygon(new LinearRing(new double[] { 0, 1, 1, 0, 0 }, new double[] { 0, 0, 1, 1, 0 }));
         testBasics(parser, "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))", expectedPolygon);
-        testBasics(parser, mapOf("type", "Polygon", "coordinates", Arrays.asList(
-                Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 0), Arrays.asList(1, 1), Arrays.asList(0, 1), Arrays.asList(0, 0)))),
-                expectedPolygon);
+        testBasics(parser,
+            mapOf(
+                "type",
+                "Polygon",
+                "coordinates",
+                Arrays.asList(
+                    Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 0), Arrays.asList(1, 1), Arrays.asList(0, 1), Arrays.asList(0, 0))
+                )
+            ),
+            expectedPolygon
+        );
         // geometry collection
         testBasics(parser,
-                Arrays.asList(Arrays.asList(-122.084110, 37.386637), "37.386637, -122.084110", "POINT (-122.084110 37.386637)",
-                        mapOf("type", "Point", "coordinates", Arrays.asList(-122.084110, 37.386637)),
-                        mapOf("type", "LineString", "coordinates", Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 1))),
-                        "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))"),
-                new GeometryCollection<>(
-                        Arrays.asList(expectedPoint, expectedPoint, expectedPoint, expectedPoint, expectedLine, expectedPolygon)));
+            Arrays.asList(
+                Arrays.asList(-122.084110, 37.386637),
+                "37.386637, -122.084110",
+                "POINT (-122.084110 37.386637)",
+                mapOf("type", "Point", "coordinates", Arrays.asList(-122.084110, 37.386637)),
+                mapOf("type", "LineString", "coordinates", Arrays.asList(Arrays.asList(0, 0), Arrays.asList(1, 1))),
+                "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))"
+            ),
+            new GeometryCollection<>(
+                Arrays.asList(expectedPoint, expectedPoint, expectedPoint, expectedPoint, expectedLine, expectedPolygon)
+            )
+        );
         expectThrows(FesenParseException.class, () -> testBasics(parser, "not a geometry", null));
     }
 

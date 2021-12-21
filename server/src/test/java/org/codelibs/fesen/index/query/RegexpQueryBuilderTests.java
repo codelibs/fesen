@@ -66,8 +66,11 @@ public class RegexpQueryBuilderTests extends AbstractQueryTestCase<RegexpQueryBu
     protected Map<String, RegexpQueryBuilder> getAlternateVersions() {
         Map<String, RegexpQueryBuilder> alternateVersions = new HashMap<>();
         RegexpQueryBuilder regexpQuery = randomRegexpQuery();
-        String contentString = "{\n" + "    \"regexp\" : {\n" + "        \"" + regexpQuery.fieldName() + "\" : \"" + regexpQuery.value()
-                + "\"\n" + "    }\n" + "}";
+        String contentString = "{\n" +
+                "    \"regexp\" : {\n" +
+                "        \"" + regexpQuery.fieldName() + "\" : \"" + regexpQuery.value() + "\"\n" +
+                "    }\n" +
+                "}";
         alternateVersions.put(contentString, regexpQuery);
         return alternateVersions;
     }
@@ -84,7 +87,7 @@ public class RegexpQueryBuilderTests extends AbstractQueryTestCase<RegexpQueryBu
         assertThat(query, instanceOf(RegexpQuery.class));
         RegexpQuery regexpQuery = (RegexpQuery) query;
 
-        String expectedFieldName = expectedFieldName(queryBuilder.fieldName());
+        String expectedFieldName = expectedFieldName( queryBuilder.fieldName());
         assertThat(regexpQuery.getField(), equalTo(expectedFieldName));
     }
 
@@ -99,9 +102,18 @@ public class RegexpQueryBuilderTests extends AbstractQueryTestCase<RegexpQueryBu
     }
 
     public void testFromJson() throws IOException {
-        String json = "{\n" + "  \"regexp\" : {\n" + "    \"name.first\" : {\n" + "      \"value\" : \"s.*y\",\n"
-                + "      \"flags_value\" : 7,\n" + "      \"case_insensitive\" : true,\n" + "      \"max_determinized_states\" : 20000,\n"
-                + "      \"boost\" : 1.0\n" + "    }\n" + "  }\n" + "}";
+        String json =
+                "{\n" +
+                "  \"regexp\" : {\n" +
+                "    \"name.first\" : {\n" +
+                "      \"value\" : \"s.*y\",\n" +
+                "      \"flags_value\" : 7,\n" +
+                "      \"case_insensitive\" : true,\n" +
+                "      \"max_determinized_states\" : 20000,\n" +
+                "      \"boost\" : 1.0\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
         RegexpQueryBuilder parsed = (RegexpQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -119,12 +131,27 @@ public class RegexpQueryBuilderTests extends AbstractQueryTestCase<RegexpQueryBu
     }
 
     public void testParseFailsWithMultipleFields() throws IOException {
-        String json = "{\n" + "    \"regexp\": {\n" + "      \"user1\": {\n" + "        \"value\": \"k.*y\"\n" + "      },\n"
-                + "      \"user2\": {\n" + "        \"value\": \"k.*y\"\n" + "      }\n" + "    }\n" + "}";
+        String json =
+                "{\n" +
+                "    \"regexp\": {\n" +
+                "      \"user1\": {\n" +
+                "        \"value\": \"k.*y\"\n" +
+                "      },\n" +
+                "      \"user2\": {\n" +
+                "        \"value\": \"k.*y\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "}";
         ParsingException e = expectThrows(ParsingException.class, () -> parseQuery(json));
         assertEquals("[regexp] query doesn't support multiple fields, found [user1] and [user2]", e.getMessage());
 
-        String shortJson = "{\n" + "    \"regexp\": {\n" + "      \"user1\": \"k.*y\",\n" + "      \"user2\": \"k.*y\"\n" + "    }\n" + "}";
+        String shortJson =
+                "{\n" +
+                "    \"regexp\": {\n" +
+                "      \"user1\": \"k.*y\",\n" +
+                "      \"user2\": \"k.*y\"\n" +
+                "    }\n" +
+                "}";
         e = expectThrows(ParsingException.class, () -> parseQuery(shortJson));
         assertEquals("[regexp] query doesn't support multiple fields, found [user1] and [user2]", e.getMessage());
     }

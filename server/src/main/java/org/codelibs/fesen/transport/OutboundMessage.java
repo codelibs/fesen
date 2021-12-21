@@ -53,7 +53,8 @@ abstract class OutboundMessage extends NetworkMessage {
             variableHeaderLength = Math.toIntExact(bytesStream.position() - preHeaderPosition);
         }
 
-        try (CompressibleBytesOutputStream stream = new CompressibleBytesOutputStream(bytesStream, TransportStatus.isCompress(status))) {
+        try (CompressibleBytesOutputStream stream =
+                 new CompressibleBytesOutputStream(bytesStream, TransportStatus.isCompress(status))) {
             stream.setVersion(version);
             stream.setFeatures(bytesStream.getFeatures());
 
@@ -114,7 +115,9 @@ abstract class OutboundMessage extends NetworkMessage {
         @Override
         protected void writeVariableHeader(StreamOutput stream) throws IOException {
             super.writeVariableHeader(stream);
-            stream.writeStringArray(features);
+            if (version.onOrAfter(Version.V_6_3_0)) {
+                stream.writeStringArray(features);
+            }
             stream.writeString(action);
         }
 
@@ -136,8 +139,8 @@ abstract class OutboundMessage extends NetworkMessage {
 
         private final Set<String> features;
 
-        Response(ThreadContext threadContext, Set<String> features, Writeable message, Version version, long requestId, boolean isHandshake,
-                boolean compress) {
+        Response(ThreadContext threadContext, Set<String> features, Writeable message, Version version, long requestId,
+                 boolean isHandshake, boolean compress) {
             super(threadContext, version, setStatus(compress, isHandshake, message), requestId, message);
             this.features = features;
         }

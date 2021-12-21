@@ -18,6 +18,13 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
+import com.carrotsearch.hppc.LongObjectHashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.util.FixedBitSet;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.core.Tuple;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,14 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.util.FixedBitSet;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.core.Tuple;
-
-import com.carrotsearch.hppc.LongObjectHashMap;
 
 /**
  * Basic implementation of the Wing and Gong Graph Search Algorithm, following the descriptions in
@@ -176,7 +175,6 @@ public class LinearizabilityChecker {
         public List<Event> copyEvents() {
             return new ArrayList<>(events);
         }
-
         /**
          * Completes the history with response events for invocations that are missing corresponding responses
          *
@@ -213,7 +211,10 @@ public class LinearizabilityChecker {
 
         @Override
         public String toString() {
-            return "History{" + "events=" + events + ", nextId=" + nextId + '}';
+            return "History{" +
+                "events=" + events +
+                ", nextId=" + nextId +
+                '}';
         }
 
     }
@@ -240,7 +241,7 @@ public class LinearizabilityChecker {
      * @return true iff the history is linearizable w.r.t. the given spec
      */
     public boolean isLinearizable(SequentialSpec spec, History history, Function<Object, Object> missingResponseGenerator,
-            BooleanSupplier terminateEarly) {
+                                  BooleanSupplier terminateEarly) {
         history = history.clone(); // clone history before completing it
         history.complete(missingResponseGenerator); // complete history
         final Collection<List<Event>> partitions = spec.partition(history.copyEvents());
@@ -314,10 +315,9 @@ public class LinearizabilityChecker {
         StringBuilder builder = new StringBuilder();
         partitions.forEach(new Consumer<List<Event>>() {
             int index = 0;
-
             @Override
             public void accept(List<Event> events) {
-                builder.append("Partition ").append(index++).append("\n");
+                builder.append("Partition " ).append(index++).append("\n");
                 builder.append(visualizePartition(events));
             }
         });
@@ -348,8 +348,9 @@ public class LinearizabilityChecker {
         int beginIndex = eventToPosition.get(Tuple.tuple(EventType.INVOCATION, id));
         int endIndex = eventToPosition.get(Tuple.tuple(EventType.RESPONSE, id));
         input = input.substring(0, Math.min(beginIndex + 25, input.length()));
-        return Strings.padStart(input, beginIndex + 25, ' ') + "   " + Strings.padStart("", endIndex - beginIndex, 'X') + "   " + output
-                + "  (" + entry.event.id + ")";
+        return Strings.padStart(input, beginIndex + 25, ' ') +
+            "   "  + Strings.padStart("", endIndex-beginIndex, 'X') + "   "
+            + output + "  (" + entry.event.id + ")";
     }
 
     /**
@@ -400,7 +401,8 @@ public class LinearizabilityChecker {
     }
 
     public enum EventType {
-        INVOCATION, RESPONSE
+        INVOCATION,
+        RESPONSE
     }
 
     public static class Event {
@@ -416,7 +418,11 @@ public class LinearizabilityChecker {
 
         @Override
         public String toString() {
-            return "Event{" + "type=" + type + ", value=" + value + ", id=" + id + '}';
+            return "Event{" +
+                "type=" + type +
+                ", value=" + value +
+                ", id=" + id +
+                '}';
         }
     }
 
@@ -453,6 +459,7 @@ public class LinearizabilityChecker {
             next.prev = this;
         }
     }
+
 
     /**
      * A cache optimized for small bit-counts (less than 64) and small number of unique permutations of state objects.

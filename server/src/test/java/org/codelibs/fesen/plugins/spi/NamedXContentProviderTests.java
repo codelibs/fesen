@@ -75,7 +75,8 @@ public class NamedXContentProviderTests extends ESTestCase {
                     new NamedXContentRegistry.Entry(Aggregation.class, new ParseField("test_aggregation"),
                             (parser, context) -> ParsedSimpleValue.fromXContent(parser, (String) context)),
                     new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField("test_suggestion"),
-                            (parser, context) -> TermSuggestion.fromXContent(parser, (String) context)));
+                            (parser, context) -> TermSuggestion.fromXContent(parser, (String) context))
+            );
         }
     }
 }

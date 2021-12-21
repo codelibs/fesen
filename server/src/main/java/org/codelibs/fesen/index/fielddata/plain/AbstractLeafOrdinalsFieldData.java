@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Function;
-
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.util.Accountable;
@@ -31,10 +27,16 @@ import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Function;
+
+
 public abstract class AbstractLeafOrdinalsFieldData implements LeafOrdinalsFieldData {
 
     public static final Function<SortedSetDocValues, ScriptDocValues<?>> DEFAULT_SCRIPT_FUNCTION =
-            ((Function<SortedSetDocValues, SortedBinaryDocValues>) FieldData::toString).andThen(ScriptDocValues.Strings::new);
+            ((Function<SortedSetDocValues, SortedBinaryDocValues>) FieldData::toString)
+            .andThen(ScriptDocValues.Strings::new);
 
     private final Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction;
 

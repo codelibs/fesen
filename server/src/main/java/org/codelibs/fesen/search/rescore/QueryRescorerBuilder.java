@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.rescore;
 
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -36,6 +30,12 @@ import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.index.query.QueryRewriteContext;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.rescore.QueryRescorer.QueryRescoreContext;
+
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
 
 public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> {
     public static final String NAME = "query";
@@ -53,10 +53,10 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
             } catch (IOException e) {
                 throw new ParsingException(p.getTokenLocation(), "Could not parse inner query", e);
             }
-        }, RESCORE_QUERY_FIELD);
+        } , RESCORE_QUERY_FIELD);
         QUERY_RESCORE_PARSER.declareFloat(InnerBuilder::setQueryWeight, QUERY_WEIGHT_FIELD);
         QUERY_RESCORE_PARSER.declareFloat(InnerBuilder::setRescoreQueryWeight, RESCORE_QUERY_WEIGHT_FIELD);
-        QUERY_RESCORE_PARSER.declareString((struct, value) -> struct.setScoreMode(QueryRescoreMode.fromString(value)), SCORE_MODE_FIELD);
+        QUERY_RESCORE_PARSER.declareString((struct, value) ->  struct.setScoreMode(QueryRescoreMode.fromString(value)), SCORE_MODE_FIELD);
     }
 
     public static final float DEFAULT_RESCORE_QUERYWEIGHT = 1.0f;
@@ -116,6 +116,7 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
         this.queryWeight = queryWeight;
         return this;
     }
+
 
     /**
      * Gets the original query weight for rescoring. The default is {@code 1.0}
@@ -195,8 +196,11 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
             return false;
         }
         QueryRescorerBuilder other = (QueryRescorerBuilder) obj;
-        return super.equals(obj) && Objects.equals(scoreMode, other.scoreMode) && Objects.equals(queryWeight, other.queryWeight)
-                && Objects.equals(rescoreQueryWeight, other.rescoreQueryWeight) && Objects.equals(queryBuilder, other.queryBuilder);
+        return super.equals(obj) &&
+               Objects.equals(scoreMode, other.scoreMode) &&
+               Objects.equals(queryWeight, other.queryWeight) &&
+               Objects.equals(rescoreQueryWeight, other.rescoreQueryWeight) &&
+               Objects.equals(queryBuilder, other.queryBuilder);
     }
 
     /**

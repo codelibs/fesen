@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.action.termvectors;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Term;
@@ -35,6 +29,12 @@ import org.codelibs.fesen.action.termvectors.TermVectorsRequest.Flag;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 // package only - this is an internal class!
 final class TermVectorsWriter {
@@ -52,7 +52,7 @@ final class TermVectorsWriter {
     }
 
     void setFields(Fields termVectorsByField, Set<String> selectedFields, EnumSet<Flag> flags, Fields topLevelFields,
-            @Nullable TermVectorsFilter termVectorsFilter) throws IOException {
+                   @Nullable TermVectorsFilter termVectorsFilter) throws IOException {
         int numFieldsWritten = 0;
         PostingsEnum docsAndPosEnum = null;
         PostingsEnum docsEnum = null;
@@ -125,12 +125,12 @@ final class TermVectorsWriter {
             numFieldsWritten++;
         }
         response.setTermVectorsField(output);
-        response.setHeader(
-                writeHeader(numFieldsWritten, flags.contains(Flag.TermStatistics), flags.contains(Flag.FieldStatistics), hasScores));
+        response.setHeader(writeHeader(numFieldsWritten, flags.contains(Flag.TermStatistics),
+            flags.contains(Flag.FieldStatistics), hasScores));
     }
 
-    private BytesReference writeHeader(int numFieldsWritten, boolean getTermStatistics, boolean getFieldStatistics, boolean scores)
-            throws IOException {
+    private BytesReference writeHeader(int numFieldsWritten, boolean getTermStatistics,
+                                       boolean getFieldStatistics, boolean scores) throws IOException {
         // now, write the information about offset of the terms in the
         // termVectors field
         BytesStreamOutput header = new BytesStreamOutput();
@@ -158,8 +158,8 @@ final class TermVectorsWriter {
         return docsEnum;
     }
 
-    private PostingsEnum writeTermWithDocsAndPos(TermsEnum iterator, PostingsEnum docsAndPosEnum, boolean positions, boolean offsets,
-            boolean payloads) throws IOException {
+    private PostingsEnum writeTermWithDocsAndPos(TermsEnum iterator, PostingsEnum docsAndPosEnum, boolean positions,
+                                                         boolean offsets, boolean payloads) throws IOException {
         docsAndPosEnum = iterator.postings(docsAndPosEnum, PostingsEnum.ALL);
         // for each term (iterator next) in this field (field)
         // iterate over the docs (should only be one)
@@ -273,50 +273,15 @@ final class TermVectorsWriter {
 
     /** Implements an empty {@link Terms}. */
     private static final Terms EMPTY_TERMS = new Terms() {
-        @Override
-        public TermsEnum iterator() {
-            return TermsEnum.EMPTY;
-        }
-
-        @Override
-        public long size() {
-            return 0;
-        }
-
-        @Override
-        public long getSumTotalTermFreq() {
-            return 0;
-        }
-
-        @Override
-        public long getSumDocFreq() {
-            return 0;
-        }
-
-        @Override
-        public int getDocCount() {
-            return 0;
-        }
-
-        @Override
-        public boolean hasFreqs() {
-            return false;
-        }
-
-        @Override
-        public boolean hasOffsets() {
-            return false;
-        }
-
-        @Override
-        public boolean hasPositions() {
-            return false;
-        }
-
-        @Override
-        public boolean hasPayloads() {
-            return false;
-        }
+        @Override public TermsEnum iterator() { return TermsEnum.EMPTY; }
+        @Override public long size() { return 0; }
+        @Override public long getSumTotalTermFreq() { return 0; }
+        @Override public long getSumDocFreq() { return 0; }
+        @Override public int getDocCount() { return 0; }
+        @Override public boolean hasFreqs() { return false; }
+        @Override public boolean hasOffsets() { return false; }
+        @Override public boolean hasPositions() { return false; }
+        @Override public boolean hasPayloads() { return false; }
     };
 
 }

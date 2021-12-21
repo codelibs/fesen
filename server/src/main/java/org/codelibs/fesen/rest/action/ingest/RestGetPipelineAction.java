@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.ingest;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -33,11 +29,17 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestGetPipelineAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_ingest/pipeline"), new Route(GET, "/_ingest/pipeline/{id}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_ingest/pipeline"),
+            new Route(GET, "/_ingest/pipeline/{id}")));
     }
 
     @Override

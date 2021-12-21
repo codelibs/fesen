@@ -16,8 +16,6 @@
 
 package org.codelibs.fesen.common.inject;
 
-import static java.util.Collections.emptySet;
-
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +25,8 @@ import org.codelibs.fesen.common.inject.internal.BindingImpl;
 import org.codelibs.fesen.common.inject.internal.Errors;
 import org.codelibs.fesen.common.inject.internal.MatcherAndConverter;
 import org.codelibs.fesen.common.inject.spi.TypeListenerBinding;
+
+import static java.util.Collections.emptySet;
 
 /**
  * The inheritable data within an injector. This class is intended to allow parent and local
@@ -73,7 +73,8 @@ interface State {
         }
 
         @Override
-        public MatcherAndConverter getConverter(String stringValue, TypeLiteral<?> type, Errors errors, Object source) {
+        public MatcherAndConverter getConverter(String stringValue, TypeLiteral<?> type, Errors errors,
+                                                Object source) {
             throw new UnsupportedOperationException();
         }
 
@@ -141,7 +142,8 @@ interface State {
     /**
      * Returns the matching converter for {@code type}, or null if none match.
      */
-    MatcherAndConverter getConverter(String stringValue, TypeLiteral<?> type, Errors errors, Object source);
+    MatcherAndConverter getConverter(
+            String stringValue, TypeLiteral<?> type, Errors errors, Object source);
 
     /**
      * Returns all converters at this level only.

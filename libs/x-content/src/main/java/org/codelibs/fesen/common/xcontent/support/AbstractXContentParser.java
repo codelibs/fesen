@@ -19,6 +19,13 @@
 
 package org.codelibs.fesen.common.xcontent.support;
 
+import org.codelibs.fesen.common.xcontent.DeprecationHandler;
+import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.common.xcontent.XContentParseException;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.Booleans;
+import org.codelibs.fesen.core.CheckedFunction;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,13 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import org.codelibs.fesen.common.xcontent.DeprecationHandler;
-import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
-import org.codelibs.fesen.common.xcontent.XContentParseException;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.core.Booleans;
-import org.codelibs.fesen.core.CheckedFunction;
 
 public abstract class AbstractXContentParser implements XContentParser {
 
@@ -82,12 +82,12 @@ public abstract class AbstractXContentParser implements XContentParser {
     @Override
     public boolean isBooleanValue() throws IOException {
         switch (currentToken()) {
-        case VALUE_BOOLEAN:
-            return true;
-        case VALUE_STRING:
-            return Booleans.isBoolean(textCharacters(), textOffset(), textLength());
-        default:
-            return false;
+            case VALUE_BOOLEAN:
+                return true;
+            case VALUE_STRING:
+                return Booleans.isBoolean(textCharacters(), textOffset(), textLength());
+            default:
+                return false;
         }
     }
 
@@ -172,8 +172,8 @@ public abstract class AbstractXContentParser implements XContentParser {
         final BigInteger bigIntegerValue;
         try {
             final BigDecimal bigDecimalValue = new BigDecimal(stringValue);
-            if (bigDecimalValue.compareTo(BIGDECIMAL_GREATER_THAN_LONG_MAX_VALUE) >= 0
-                    || bigDecimalValue.compareTo(BIGDECIMAL_LESS_THAN_LONG_MIN_VALUE) <= 0) {
+            if (bigDecimalValue.compareTo(BIGDECIMAL_GREATER_THAN_LONG_MAX_VALUE) >= 0 ||
+                bigDecimalValue.compareTo(BIGDECIMAL_LESS_THAN_LONG_MIN_VALUE) <= 0) {
                 throw new IllegalArgumentException("Value [" + stringValue + "] is out of range for a long");
             }
             bigIntegerValue = coerce ? bigDecimalValue.toBigInteger() : bigDecimalValue.toBigIntegerExact();
@@ -227,6 +227,7 @@ public abstract class AbstractXContentParser implements XContentParser {
 
     protected abstract float doFloatValue() throws IOException;
 
+
     @Override
     public double doubleValue() throws IOException {
         return doubleValue(DEFAULT_NUMBER_COERCE_POLICY);
@@ -276,8 +277,8 @@ public abstract class AbstractXContentParser implements XContentParser {
     }
 
     @Override
-    public <T> Map<String, T> map(Supplier<Map<String, T>> mapFactory, CheckedFunction<XContentParser, T, IOException> mapValueParser)
-            throws IOException {
+    public <T> Map<String, T> map(
+            Supplier<Map<String, T>> mapFactory, CheckedFunction<XContentParser, T, IOException> mapValueParser) throws IOException {
         final Map<String, T> map = mapFactory.get();
         if (findNonEmptyMapStart(this) == false) {
             return map;
@@ -317,7 +318,7 @@ public abstract class AbstractXContentParser implements XContentParser {
 
     // Read a map without bounds checks from a parser that is assumed to be at the map's first field's name token
     private static Map<String, Object> readMapEntries(XContentParser parser, Supplier<Map<String, Object>> mapFactory,
-            Map<String, Object> map) throws IOException {
+                                                      Map<String, Object> map) throws IOException {
         assert parser.currentToken() == Token.FIELD_NAME : "Expected field name but saw [" + parser.currentToken() + "]";
         do {
             // Must point to field name
@@ -358,8 +359,8 @@ public abstract class AbstractXContentParser implements XContentParser {
             token = parser.nextToken();
         }
         if (token != XContentParser.Token.START_ARRAY) {
-            throw new XContentParseException(parser.getTokenLocation(),
-                    "Failed to parse list:  expecting " + XContentParser.Token.START_ARRAY + " but got " + token);
+            throw new XContentParseException(parser.getTokenLocation(), "Failed to parse list:  expecting "
+                    + XContentParser.Token.START_ARRAY + " but got " + token);
         }
     }
 
@@ -384,28 +385,22 @@ public abstract class AbstractXContentParser implements XContentParser {
      * @param parser       parser to read from
      * @param mapFactory   map factory to use for reading objects
      */
-    private static Object readValueUnsafe(Token currentToken, XContentParser parser, Supplier<Map<String, Object>> mapFactory)
-            throws IOException {
-        assert currentToken == parser.currentToken() : "Supplied current token [" + currentToken
-                + "] is different from actual parser current token [" + parser.currentToken() + "]";
+    private static Object readValueUnsafe(Token currentToken, XContentParser parser,
+                                          Supplier<Map<String, Object>> mapFactory) throws IOException {
+        assert currentToken == parser.currentToken() : "Supplied current token [" + currentToken +
+                "] is different from actual parser current token [" + parser.currentToken() + "]";
         switch (currentToken) {
-        case VALUE_STRING:
-            return parser.text();
-        case VALUE_NUMBER:
-            return parser.numberValue();
-        case VALUE_BOOLEAN:
-            return parser.booleanValue();
-        case START_OBJECT: {
-            final Map<String, Object> map = mapFactory.get();
-            return parser.nextToken() != Token.FIELD_NAME ? map : readMapEntries(parser, mapFactory, map);
-        }
-        case START_ARRAY:
-            return readListUnsafe(parser, mapFactory);
-        case VALUE_EMBEDDED_OBJECT:
-            return parser.binaryValue();
-        case VALUE_NULL:
-        default:
-            return null;
+            case VALUE_STRING: return parser.text();
+            case VALUE_NUMBER: return parser.numberValue();
+            case VALUE_BOOLEAN: return parser.booleanValue();
+            case START_OBJECT: {
+                final Map<String, Object> map = mapFactory.get();
+                return parser.nextToken() != Token.FIELD_NAME ? map : readMapEntries(parser, mapFactory, map);
+            }
+            case START_ARRAY: return readListUnsafe(parser, mapFactory);
+            case VALUE_EMBEDDED_OBJECT: return parser.binaryValue();
+            case VALUE_NULL:
+            default: return null;
         }
     }
 

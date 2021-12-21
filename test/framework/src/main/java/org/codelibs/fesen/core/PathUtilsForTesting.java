@@ -19,9 +19,9 @@
 
 package org.codelibs.fesen.core;
 
-import java.nio.file.FileSystem;
-
 import org.apache.lucene.util.LuceneTestCase;
+
+import java.nio.file.FileSystem;
 
 /**
  * Exposes some package private stuff in PathUtils for framework purposes only!

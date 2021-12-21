@@ -45,10 +45,10 @@ public class PriorityComparatorTests extends ESTestCase {
     public void testPreferNewIndices() {
         RoutingNodes.UnassignedShards shards = new RoutingNodes.UnassignedShards(mock(RoutingNodes.class));
         List<ShardRouting> shardRoutings = Arrays.asList(
-                TestShardRouting.newShardRouting("oldest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
-                TestShardRouting.newShardRouting("newest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
+            TestShardRouting.newShardRouting("oldest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
+            TestShardRouting.newShardRouting("newest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
         Collections.shuffle(shardRoutings, random());
         for (ShardRouting routing : shardRoutings) {
             shards.add(routing);
@@ -79,10 +79,10 @@ public class PriorityComparatorTests extends ESTestCase {
     public void testPreferPriorityIndices() {
         RoutingNodes.UnassignedShards shards = new RoutingNodes.UnassignedShards(mock(RoutingNodes.class));
         List<ShardRouting> shardRoutings = Arrays.asList(
-                TestShardRouting.newShardRouting("oldest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
-                TestShardRouting.newShardRouting("newest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
+            TestShardRouting.newShardRouting("oldest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
+            TestShardRouting.newShardRouting("newest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
         Collections.shuffle(shardRoutings, random());
         for (ShardRouting routing : shardRoutings) {
             shards.add(routing);
@@ -113,10 +113,10 @@ public class PriorityComparatorTests extends ESTestCase {
     public void testPreferSystemIndices() {
         RoutingNodes.UnassignedShards shards = new RoutingNodes.UnassignedShards(mock(RoutingNodes.class));
         List<ShardRouting> shardRoutings = Arrays.asList(
-                TestShardRouting.newShardRouting("oldest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
-                TestShardRouting.newShardRouting("newest", 0, null, null, randomBoolean(), ShardRoutingState.UNASSIGNED,
-                        new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
+            TestShardRouting.newShardRouting("oldest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")),
+            TestShardRouting.newShardRouting("newest", 0, null, null,
+                randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
         Collections.shuffle(shardRoutings, random());
         for (ShardRouting routing : shardRoutings) {
             shards.add(routing);
@@ -166,16 +166,19 @@ public class PriorityComparatorTests extends ESTestCase {
             }
             // else sometimes just use the defaults
 
-            indices[i] = IndexMetadata.builder(String.format(Locale.ROOT, "idx_%04d", i)).system(isSystem)
-                    .settings(buildSettings(creationDate, priority)).build();
+            indices[i] = IndexMetadata.builder(String.format(Locale.ROOT, "idx_%04d", i))
+                .system(isSystem)
+                .settings(buildSettings(creationDate, priority))
+                .build();
 
             map.put(indices[i].getIndex().getName(), indices[i]);
         }
         int numShards = randomIntBetween(10, 100);
         for (int i = 0; i < numShards; i++) {
             IndexMetadata indexMeta = randomFrom(indices);
-            shards.add(TestShardRouting.newShardRouting(indexMeta.getIndex().getName(), randomIntBetween(1, 5), null, null, randomBoolean(),
-                    ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()), "foobar")));
+            shards.add(TestShardRouting.newShardRouting(indexMeta.getIndex().getName(), randomIntBetween(1, 5), null, null,
+                    randomBoolean(), ShardRoutingState.UNASSIGNED, new UnassignedInfo(randomFrom(UnassignedInfo.Reason.values()),
+                    "foobar")));
         }
         shards.sort(new PriorityComparator() {
             @Override
@@ -202,20 +205,30 @@ public class PriorityComparatorTests extends ESTestCase {
                             final String currentName = currentMeta.getIndex().getName();
 
                             if (prevName.equals(currentName) == false) {
-                                assertThat("indexName mismatch, expected:" + currentName + " after " + prevName, prevName,
-                                        greaterThan(currentName));
+                                assertThat(
+                                    "indexName mismatch, expected:" + currentName + " after " + prevName,
+                                    prevName,
+                                    greaterThan(currentName)
+                                );
                             }
                         } else {
-                            assertThat("creationDate mismatch, expected:" + currentCreationDate + " after " + prevCreationDate,
-                                    prevCreationDate, greaterThan(currentCreationDate));
+                            assertThat(
+                                "creationDate mismatch, expected:" + currentCreationDate + " after " + prevCreationDate,
+                                prevCreationDate, greaterThan(currentCreationDate)
+                            );
                         }
                     } else {
-                        assertThat("priority mismatch, expected:" + currentPriority + " after " + prevPriority, prevPriority,
-                                greaterThan(currentPriority));
+                        assertThat(
+                            "priority mismatch, expected:" + currentPriority + " after " + prevPriority,
+                            prevPriority, greaterThan(currentPriority)
+                        );
                     }
                 } else {
-                    assertThat("system mismatch, expected:" + currentMeta.isSystem() + " after " + prevMeta.isSystem(), prevMeta.isSystem(),
-                            greaterThan(currentMeta.isSystem()));
+                    assertThat(
+                        "system mismatch, expected:" + currentMeta.isSystem() + " after " + prevMeta.isSystem(),
+                        prevMeta.isSystem(),
+                        greaterThan(currentMeta.isSystem())
+                    );
                 }
             }
             previous = routing;
@@ -223,8 +236,12 @@ public class PriorityComparatorTests extends ESTestCase {
     }
 
     private static Settings buildSettings(int creationDate, int priority) {
-        return Settings.builder().put(IndexMetadata.SETTING_CREATION_DATE, creationDate).put(IndexMetadata.SETTING_PRIORITY, priority)
-                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
-                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0).build();
+        return Settings.builder()
+            .put(IndexMetadata.SETTING_CREATION_DATE, creationDate)
+            .put(IndexMetadata.SETTING_PRIORITY, priority)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
+            .build();
     }
 }

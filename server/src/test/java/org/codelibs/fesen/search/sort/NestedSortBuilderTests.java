@@ -120,7 +120,7 @@ public class NestedSortBuilderTests extends ESTestCase {
         int parameter = randomIntBetween(0, 2);
         switch (parameter) {
         case 0:
-            mutated = new NestedSortBuilder(original.getPath() + "_suffix");
+            mutated = new NestedSortBuilder(original.getPath()+"_suffix");
             mutated.setFilter(original.getFilter());
             mutated.setNestedSort(original.getNestedSort());
             break;
@@ -191,7 +191,8 @@ public class NestedSortBuilderTests extends ESTestCase {
         original = new NestedSortBuilder("firstLevel");
         ConstantScoreQueryBuilder constantScoreQueryBuilder = new ConstantScoreQueryBuilder(filterThatRewrites);
         original.setFilter(constantScoreQueryBuilder);
-        NestedSortBuilder nestedSortThatRewrites = new NestedSortBuilder("thirdLevel").setFilter(filterThatRewrites);
+        NestedSortBuilder nestedSortThatRewrites = new NestedSortBuilder("thirdLevel")
+                .setFilter(filterThatRewrites);
         original.setNestedSort(new NestedSortBuilder("secondLevel").setNestedSort(nestedSortThatRewrites));
         rewritten = original.rewrite(mockRewriteContext);
         assertNotSame(rewritten, original);

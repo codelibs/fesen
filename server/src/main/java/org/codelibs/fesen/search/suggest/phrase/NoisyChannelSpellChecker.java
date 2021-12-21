@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.synonym.SynonymFilter;
@@ -31,6 +27,10 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.CandidateSet;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 final class NoisyChannelSpellChecker {
     public static final double REAL_WORD_LIKELIHOOD = 0.95d;
@@ -45,8 +45,8 @@ final class NoisyChannelSpellChecker {
         this.tokenLimit = tokenLimit;
     }
 
-    Result getCorrections(TokenStream stream, final CandidateGenerator generator, float maxErrors, int numCorrections,
-            WordScorer wordScorer, float confidence, int gramSize) throws IOException {
+    Result getCorrections(TokenStream stream, final CandidateGenerator generator,
+            float maxErrors, int numCorrections, WordScorer wordScorer, float confidence, int gramSize) throws IOException {
 
         final List<CandidateSet> candidateSetsList = new ArrayList<>();
         DirectCandidateGenerator.analyze(stream, new DirectCandidateGenerator.TokenConsumer() {
@@ -55,7 +55,6 @@ final class NoisyChannelSpellChecker {
             private final BytesRefBuilder termsRef = new BytesRefBuilder();
             private boolean anyUnigram = false;
             private boolean anyTokens = false;
-
             @Override
             public void reset(TokenStream stream) {
                 super.reset(stream);

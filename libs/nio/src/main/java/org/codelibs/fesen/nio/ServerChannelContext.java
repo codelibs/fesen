@@ -46,7 +46,8 @@ public class ServerChannelContext extends ChannelContext<ServerSocketChannel> {
     private final CompletableContext<Void> bindContext = new CompletableContext<>();
 
     public ServerChannelContext(NioServerSocketChannel channel, ChannelFactory<?, ?> channelFactory, NioSelector selector,
-            Config.ServerSocket config, Consumer<NioSocketChannel> acceptor, Consumer<Exception> exceptionHandler) {
+                                Config.ServerSocket config, Consumer<NioSocketChannel> acceptor,
+                                Consumer<Exception> exceptionHandler) {
         super(channel.getRawChannel(), exceptionHandler);
         this.channel = channel;
         this.channelFactory = channelFactory;

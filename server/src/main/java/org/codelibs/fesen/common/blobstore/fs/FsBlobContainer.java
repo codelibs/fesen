@@ -19,7 +19,15 @@
 
 package org.codelibs.fesen.common.blobstore.fs;
 
-import static java.util.Collections.unmodifiableMap;
+import org.codelibs.fesen.common.UUIDs;
+import org.codelibs.fesen.common.blobstore.BlobContainer;
+import org.codelibs.fesen.common.blobstore.BlobMetadata;
+import org.codelibs.fesen.common.blobstore.BlobPath;
+import org.codelibs.fesen.common.blobstore.DeleteResult;
+import org.codelibs.fesen.common.blobstore.support.AbstractBlobContainer;
+import org.codelibs.fesen.common.blobstore.support.PlainBlobMetadata;
+import org.codelibs.fesen.common.io.Streams;
+import org.codelibs.fesen.core.internal.io.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,15 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.codelibs.fesen.common.UUIDs;
-import org.codelibs.fesen.common.blobstore.BlobContainer;
-import org.codelibs.fesen.common.blobstore.BlobMetadata;
-import org.codelibs.fesen.common.blobstore.BlobPath;
-import org.codelibs.fesen.common.blobstore.DeleteResult;
-import org.codelibs.fesen.common.blobstore.support.AbstractBlobContainer;
-import org.codelibs.fesen.common.blobstore.support.PlainBlobMetadata;
-import org.codelibs.fesen.common.io.Streams;
-import org.codelibs.fesen.core.internal.io.IOUtils;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * A file system based implementation of {@link org.codelibs.fesen.common.blobstore.BlobContainer}.
@@ -191,7 +191,7 @@ public class FsBlobContainer extends AbstractBlobContainer {
 
     @Override
     public void writeBlobAtomic(final String blobName, final InputStream inputStream, final long blobSize, boolean failIfAlreadyExists)
-            throws IOException {
+        throws IOException {
         final String tempBlob = tempBlobName(blobName);
         final Path tempBlobPath = path.resolve(tempBlob);
         try {
@@ -212,14 +212,14 @@ public class FsBlobContainer extends AbstractBlobContainer {
     private void writeToPath(InputStream inputStream, Path tempBlobPath, long blobSize) throws IOException {
         try (OutputStream outputStream = Files.newOutputStream(tempBlobPath, StandardOpenOption.CREATE_NEW)) {
             final int bufferSize = blobStore.bufferSizeInBytes();
-            org.codelibs.fesen.core.internal.io.Streams.copy(inputStream, outputStream,
-                    new byte[blobSize < bufferSize ? Math.toIntExact(blobSize) : bufferSize]);
+            org.codelibs.fesen.core.internal.io.Streams.copy(
+                    inputStream, outputStream, new byte[blobSize < bufferSize ? Math.toIntExact(blobSize) : bufferSize]);
         }
         IOUtils.fsync(tempBlobPath, false);
     }
 
     public void moveBlobAtomic(final String sourceBlobName, final String targetBlobName, final boolean failIfAlreadyExists)
-            throws IOException {
+        throws IOException {
         final Path sourceBlobPath = path.resolve(sourceBlobName);
         final Path targetBlobPath = path.resolve(targetBlobName);
         // If the target file exists then Files.move() behaviour is implementation specific

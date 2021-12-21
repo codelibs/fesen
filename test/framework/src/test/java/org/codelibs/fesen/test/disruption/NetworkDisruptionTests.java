@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.disruption.NetworkDisruption;
 import org.codelibs.fesen.test.disruption.NetworkDisruption.Bridge;
 import org.codelibs.fesen.test.disruption.NetworkDisruption.TwoPartitions;
 

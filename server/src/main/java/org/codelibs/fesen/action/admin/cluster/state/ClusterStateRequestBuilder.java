@@ -24,8 +24,8 @@ import org.codelibs.fesen.action.support.master.MasterNodeReadOperationRequestBu
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.core.TimeValue;
 
-public class ClusterStateRequestBuilder
-        extends MasterNodeReadOperationRequestBuilder<ClusterStateRequest, ClusterStateResponse, ClusterStateRequestBuilder> {
+public class ClusterStateRequestBuilder extends MasterNodeReadOperationRequestBuilder<ClusterStateRequest,
+        ClusterStateResponse, ClusterStateRequestBuilder> {
 
     public ClusterStateRequestBuilder(FesenClient client, ClusterStateAction action) {
         super(client, action, new ClusterStateRequest());

@@ -23,6 +23,7 @@ import static org.codelibs.fesen.action.ValidateActions.addValidationError;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.master.MasterNodeReadRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -44,6 +45,9 @@ public class GetStoredScriptRequest extends MasterNodeReadRequest<GetStoredScrip
 
     public GetStoredScriptRequest(StreamInput in) throws IOException {
         super(in);
+        if (in.getVersion().before(Version.V_6_0_0_alpha2)) {
+            in.readString(); // read lang from previous versions
+        }
 
         id = in.readString();
     }
@@ -51,6 +55,10 @@ public class GetStoredScriptRequest extends MasterNodeReadRequest<GetStoredScrip
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
+
+        if (out.getVersion().before(Version.V_6_0_0_alpha2)) {
+            out.writeString(""); // write an empty lang to previous versions
+        }
 
         out.writeString(id);
     }

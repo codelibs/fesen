@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.indices.recovery;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.lucene.store.IOContext;
@@ -42,6 +32,16 @@ import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.index.store.Store;
 import org.codelibs.fesen.index.store.StoreFileMetadata;
 import org.codelibs.fesen.transport.Transports;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MultiFileWriter extends AbstractRefCounted implements Releasable {
 
@@ -64,10 +64,11 @@ public class MultiFileWriter extends AbstractRefCounted implements Releasable {
     private final ConcurrentMap<String, IndexOutput> openIndexOutputs = ConcurrentCollections.newConcurrentMap();
     private final ConcurrentMap<String, FileChunkWriter> fileChunkWriters = ConcurrentCollections.newConcurrentMap();
 
+
     final Map<String, String> tempFileNames = ConcurrentCollections.newConcurrentMap();
 
     public void writeFileChunk(StoreFileMetadata fileMetadata, long position, BytesReference content, boolean lastChunk)
-            throws IOException {
+        throws IOException {
         assert Transports.assertNotTransportThread("multi_file_writer");
         final FileChunkWriter writer = fileChunkWriters.computeIfAbsent(fileMetadata.name(), name -> new FileChunkWriter());
         writer.writeChunk(new FileChunk(fileMetadata, content, position, lastChunk));
@@ -109,8 +110,8 @@ public class MultiFileWriter extends AbstractRefCounted implements Releasable {
         return indexOutput;
     }
 
-    private void innerWriteFileChunk(StoreFileMetadata fileMetadata, long position, BytesReference content, boolean lastChunk)
-            throws IOException {
+    private void innerWriteFileChunk(StoreFileMetadata fileMetadata, long position,
+                                     BytesReference content, boolean lastChunk) throws IOException {
         final String name = fileMetadata.name();
         IndexOutput indexOutput;
         if (position == 0) {
@@ -121,7 +122,7 @@ public class MultiFileWriter extends AbstractRefCounted implements Releasable {
         assert indexOutput.getFilePointer() == position : "file-pointer " + indexOutput.getFilePointer() + " != " + position;
         BytesRefIterator iterator = content.iterator();
         BytesRef scratch;
-        while ((scratch = iterator.next()) != null) { // we iterate over all pages - this is a 0-copy for all core impls
+        while((scratch = iterator.next()) != null) { // we iterate over all pages - this is a 0-copy for all core impls
             indexOutput.writeBytes(scratch.bytes, scratch.offset, scratch.length);
         }
         indexState.addRecoveredBytesToFile(name, content.length());
@@ -133,8 +134,8 @@ public class MultiFileWriter extends AbstractRefCounted implements Releasable {
                 indexOutput.close();
             }
             final String temporaryFileName = getTempNameForFile(name);
-            assert Arrays.asList(store.directory().listAll()).contains(temporaryFileName) : "expected: [" + temporaryFileName + "] in "
-                    + Arrays.toString(store.directory().listAll());
+            assert Arrays.asList(store.directory().listAll()).contains(temporaryFileName) :
+                "expected: [" + temporaryFileName + "] in " + Arrays.toString(store.directory().listAll());
             store.directory().sync(Collections.singleton(temporaryFileName));
             IndexOutput remove = removeOpenIndexOutputs(name);
             assert remove == null || remove == indexOutput; // remove maybe null if we got finished
@@ -183,7 +184,6 @@ public class MultiFileWriter extends AbstractRefCounted implements Releasable {
         final BytesReference content;
         final long position;
         final boolean lastChunk;
-
         FileChunk(StoreFileMetadata md, BytesReference content, long position, boolean lastChunk) {
             this.md = md;
             this.content = content;

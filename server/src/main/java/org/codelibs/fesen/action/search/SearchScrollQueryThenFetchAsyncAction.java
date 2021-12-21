@@ -19,8 +19,7 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.util.function.BiFunction;
-
+import com.carrotsearch.hppc.IntArrayList;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.ScoreDoc;
 import org.codelibs.fesen.action.ActionListener;
@@ -36,7 +35,7 @@ import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.search.query.ScrollQuerySearchResult;
 import org.codelibs.fesen.transport.Transport;
 
-import com.carrotsearch.hppc.IntArrayList;
+import java.util.function.BiFunction;
 
 final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncAction<ScrollQuerySearchResult> {
 
@@ -45,9 +44,10 @@ final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncActio
     private final AtomicArray<QuerySearchResult> queryResults;
 
     SearchScrollQueryThenFetchAsyncAction(Logger logger, ClusterService clusterService, SearchTransportService searchTransportService,
-            SearchPhaseController searchPhaseController, SearchScrollRequest request, SearchTask task, ParsedScrollId scrollId,
-            ActionListener<SearchResponse> listener) {
-        super(scrollId, logger, clusterService.state().nodes(), listener, searchPhaseController, request, searchTransportService);
+                                          SearchPhaseController searchPhaseController, SearchScrollRequest request, SearchTask task,
+                                          ParsedScrollId scrollId, ActionListener<SearchResponse> listener) {
+        super(scrollId, logger, clusterService.state().nodes(), listener, searchPhaseController, request,
+            searchTransportService);
         this.task = task;
         this.fetchResults = new AtomicArray<>(scrollId.getContext().length);
         this.queryResults = new AtomicArray<>(scrollId.getContext().length);
@@ -59,7 +59,7 @@ final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncActio
 
     @Override
     protected void executeInitialPhase(Transport.Connection connection, InternalScrollSearchRequest internalRequest,
-            SearchActionListener<ScrollQuerySearchResult> searchActionListener) {
+                                       SearchActionListener<ScrollQuerySearchResult> searchActionListener) {
         searchTransportService.sendExecuteScrollQuery(connection, internalRequest, task, searchActionListener);
     }
 
@@ -68,8 +68,8 @@ final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncActio
         return new SearchPhase("fetch") {
             @Override
             public void run() {
-                final SearchPhaseController.ReducedQueryPhase reducedQueryPhase =
-                        searchPhaseController.reducedScrollQueryPhase(queryResults.asList());
+                final SearchPhaseController.ReducedQueryPhase reducedQueryPhase = searchPhaseController.reducedScrollQueryPhase(
+                    queryResults.asList());
                 ScoreDoc[] scoreDocs = reducedQueryPhase.sortedTopDocs.scoreDocs;
                 if (scoreDocs.length == 0) {
                     sendResponse(reducedQueryPhase, fetchResults);
@@ -77,8 +77,8 @@ final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncActio
                 }
 
                 final IntArrayList[] docIdsToLoad = searchPhaseController.fillDocIdsToLoad(queryResults.length(), scoreDocs);
-                final ScoreDoc[] lastEmittedDocPerShard =
-                        searchPhaseController.getLastEmittedDocPerShard(reducedQueryPhase, queryResults.length());
+                final ScoreDoc[] lastEmittedDocPerShard = searchPhaseController.getLastEmittedDocPerShard(reducedQueryPhase,
+                    queryResults.length());
                 final CountDown counter = new CountDown(docIdsToLoad.length);
                 for (int i = 0; i < docIdsToLoad.length; i++) {
                     final int index = i;
@@ -86,29 +86,29 @@ final class SearchScrollQueryThenFetchAsyncAction extends SearchScrollAsyncActio
                     if (docIds != null) {
                         final QuerySearchResult querySearchResult = queryResults.get(index);
                         ScoreDoc lastEmittedDoc = lastEmittedDocPerShard[index];
-                        ShardFetchRequest shardFetchRequest =
-                                new ShardFetchRequest(querySearchResult.getContextId(), docIds, lastEmittedDoc);
+                        ShardFetchRequest shardFetchRequest = new ShardFetchRequest(querySearchResult.getContextId(), docIds,
+                            lastEmittedDoc);
                         SearchShardTarget searchShardTarget = querySearchResult.getSearchShardTarget();
                         DiscoveryNode node = clusterNodeLookup.apply(searchShardTarget.getClusterAlias(), searchShardTarget.getNodeId());
                         assert node != null : "target node is null in secondary phase";
                         Transport.Connection connection = getConnection(searchShardTarget.getClusterAlias(), node);
                         searchTransportService.sendExecuteFetchScroll(connection, shardFetchRequest, task,
-                                new SearchActionListener<FetchSearchResult>(querySearchResult.getSearchShardTarget(), index) {
-                                    @Override
-                                    protected void innerOnResponse(FetchSearchResult response) {
-                                        fetchResults.setOnce(response.getShardIndex(), response);
-                                        if (counter.countDown()) {
-                                            sendResponse(reducedQueryPhase, fetchResults);
-                                        }
+                            new SearchActionListener<FetchSearchResult>(querySearchResult.getSearchShardTarget(), index) {
+                                @Override
+                                protected void innerOnResponse(FetchSearchResult response) {
+                                    fetchResults.setOnce(response.getShardIndex(), response);
+                                    if (counter.countDown()) {
+                                        sendResponse(reducedQueryPhase, fetchResults);
                                     }
+                                }
 
-                                    @Override
-                                    public void onFailure(Exception t) {
-                                        onShardFailure(getName(), counter, querySearchResult.getContextId(), t,
-                                                querySearchResult.getSearchShardTarget(),
-                                                () -> sendResponsePhase(reducedQueryPhase, fetchResults));
-                                    }
-                                });
+                                @Override
+                                public void onFailure(Exception t) {
+                                    onShardFailure(getName(), counter, querySearchResult.getContextId(),
+                                        t, querySearchResult.getSearchShardTarget(),
+                                        () -> sendResponsePhase(reducedQueryPhase, fetchResults));
+                                }
+                            });
                     } else {
                         // the counter is set to the total size of docIdsToLoad
                         // which can have null values so we have to count them down too

@@ -19,12 +19,13 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.Collection;
-import java.util.Collections;
-
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.test.ESSingleNodeTestCase;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class MassiveWordListTests extends ESSingleNodeTestCase {
 
@@ -38,12 +39,13 @@ public class MassiveWordListTests extends ESSingleNodeTestCase {
         for (int i = 0; i < wordList.length; i++) {
             wordList[i] = "hello world";
         }
-        client().admin().indices().prepareCreate("test")
-                .setSettings(Settings.builder().put("index.number_of_shards", 1).put("analysis.analyzer.test_analyzer.type", "custom")
-                        .put("analysis.analyzer.test_analyzer.tokenizer", "standard")
-                        .putList("analysis.analyzer.test_analyzer.filter", "dictionary_decompounder", "lowercase")
-                        .put("analysis.filter.dictionary_decompounder.type", "dictionary_decompounder")
-                        .putList("analysis.filter.dictionary_decompounder.word_list", wordList))
-                .get();
+        client().admin().indices().prepareCreate("test").setSettings(Settings.builder()
+            .put("index.number_of_shards", 1)
+            .put("analysis.analyzer.test_analyzer.type", "custom")
+            .put("analysis.analyzer.test_analyzer.tokenizer", "standard")
+            .putList("analysis.analyzer.test_analyzer.filter", "dictionary_decompounder", "lowercase")
+            .put("analysis.filter.dictionary_decompounder.type", "dictionary_decompounder")
+            .putList("analysis.filter.dictionary_decompounder.word_list", wordList)
+        ).get();
     }
 }

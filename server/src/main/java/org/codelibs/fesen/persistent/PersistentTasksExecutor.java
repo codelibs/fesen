@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.persistent;
 
-import java.util.Map;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.persistent.PersistentTasksCustomMetadata.Assignment;
 import org.codelibs.fesen.persistent.PersistentTasksCustomMetadata.PersistentTask;
 import org.codelibs.fesen.tasks.TaskId;
+
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * An executor of tasks that can survive restart of requesting or executing node.
@@ -91,14 +91,13 @@ public abstract class PersistentTasksExecutor<Params extends PersistentTaskParam
      * <p>
      * Throws an exception if the supplied params cannot be executed on the cluster in the current state.
      */
-    public void validate(Params params, ClusterState clusterState) {
-    }
+    public void validate(Params params, ClusterState clusterState) {}
 
     /**
      * Creates a AllocatedPersistentTask for communicating with task manager
      */
     protected AllocatedPersistentTask createTask(long id, String type, String action, TaskId parentTaskId,
-            PersistentTask<Params> taskInProgress, Map<String, String> headers) {
+                                                 PersistentTask<Params> taskInProgress, Map<String, String> headers) {
         return new AllocatedPersistentTask(id, type, action, getDescription(taskInProgress), parentTaskId, headers);
     }
 

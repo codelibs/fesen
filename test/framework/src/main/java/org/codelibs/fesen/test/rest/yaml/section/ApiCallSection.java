@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static java.util.Collections.unmodifiableMap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.codelibs.fesen.client.NodeSelector;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Represents a test fragment that contains the information needed to call an api

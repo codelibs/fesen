@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.time;
 
+import org.codelibs.fesen.common.Strings;
+import org.joda.time.DateTime;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -29,9 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-
-import org.codelibs.fesen.common.Strings;
-import org.joda.time.DateTime;
 
 public interface DateFormatter {
 
@@ -95,8 +95,8 @@ public interface DateFormatter {
      * Return the given Joda {@link DateTime} formatted with this format.
      */
     default String formatJoda(DateTime dateTime) {
-        return format(
-                ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime.getMillis()), DateUtils.dateTimeZoneToZoneId(dateTime.getZone())));
+        return format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime.getMillis()),
+            DateUtils.dateTimeZoneToZoneId(dateTime.getZone())));
     }
 
     /**
@@ -137,7 +137,9 @@ public interface DateFormatter {
         // support the 6.x BWC compatible way of parsing java 8 dates
         String format = strip8Prefix(input);
         List<String> patterns = splitCombinedPatterns(format);
-        List<DateFormatter> formatters = patterns.stream().map(DateFormatters::forPattern).collect(Collectors.toList());
+        List<DateFormatter> formatters = patterns.stream()
+                                                 .map(DateFormatters::forPattern)
+                                                 .collect(Collectors.toList());
 
         return JavaDateFormatter.combined(input, formatters);
     }

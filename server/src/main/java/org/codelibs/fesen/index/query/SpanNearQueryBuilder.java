@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanNearQuery;
 import org.apache.lucene.search.spans.SpanQuery;
@@ -39,6 +31,14 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+
+import static org.codelibs.fesen.index.query.SpanQueryBuilder.SpanQueryBuilderUtil.checkNoBoost;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Matches spans which are near one another. One can specify slop, the maximum number
@@ -257,7 +257,7 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
             } else {
                 query = clauses.get(i).toQuery(context);
                 assert query instanceof SpanQuery;
-                builder.addClause((SpanQuery) query);
+                builder.addClause((SpanQuery)query);
             }
         }
         return builder.build();
@@ -275,7 +275,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
 
     @Override
     protected boolean doEquals(SpanNearQueryBuilder other) {
-        return Objects.equals(clauses, other.clauses) && Objects.equals(slop, other.slop) && Objects.equals(inOrder, other.inOrder);
+        return Objects.equals(clauses, other.clauses) &&
+               Objects.equals(slop, other.slop) &&
+               Objects.equals(inOrder, other.inOrder);
     }
 
     @Override
@@ -417,13 +419,15 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
                 return false;
             }
             SpanGapQueryBuilder other = (SpanGapQueryBuilder) obj;
-            return Objects.equals(fieldName, other.fieldName) && Objects.equals(width, other.width);
+            return Objects.equals(fieldName, other.fieldName) &&
+                Objects.equals(width, other.width);
         }
 
         @Override
         public final int hashCode() {
             return Objects.hash(getClass(), fieldName, width);
         }
+
 
         @Override
         public final String toString() {

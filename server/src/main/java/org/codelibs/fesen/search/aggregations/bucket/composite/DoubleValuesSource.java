@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Query;
@@ -34,6 +32,8 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 
+import java.io.IOException;
+
 /**
  * A {@link SingleDimensionValuesSource} for doubles.
  */
@@ -45,8 +45,8 @@ class DoubleValuesSource extends SingleDimensionValuesSource<Double> {
     private boolean missingCurrentValue;
 
     DoubleValuesSource(BigArrays bigArrays, MappedFieldType fieldType,
-            CheckedFunction<LeafReaderContext, SortedNumericDoubleValues, IOException> docValuesFunc, DocValueFormat format,
-            boolean missingBucket, int size, int reverseMul) {
+                       CheckedFunction<LeafReaderContext, SortedNumericDoubleValues, IOException> docValuesFunc,
+                       DocValueFormat format, boolean missingBucket, int size, int reverseMul) {
         super(bigArrays, format, fieldType, missingBucket, size, reverseMul);
         this.docValuesFunc = docValuesFunc;
         this.bits = missingBucket ? new BitArray(100, bigArrays) : null;
@@ -55,7 +55,7 @@ class DoubleValuesSource extends SingleDimensionValuesSource<Double> {
 
     @Override
     void copyCurrent(int slot) {
-        values = bigArrays.grow(values, slot + 1);
+        values = bigArrays.grow(values, slot+1);
         if (missingBucket && missingCurrentValue) {
             bits.clear(slot);
         } else {

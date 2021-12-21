@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -38,11 +34,15 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
 public class ExtendedStatsAggregationBuilder
         extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, ExtendedStatsAggregationBuilder> {
     public static final String NAME = "extended_stats";
     public static final ValuesSourceRegistry.RegistryKey<ExtendedStatsAggregatorProvider> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, ExtendedStatsAggregatorProvider.class);
+        new ValuesSourceRegistry.RegistryKey<>(NAME, ExtendedStatsAggregatorProvider.class);
 
     public static final ObjectParser<ExtendedStatsAggregationBuilder, String> PARSER =
             ObjectParser.fromBuilder(NAME, ExtendedStatsAggregationBuilder::new);
@@ -61,8 +61,8 @@ public class ExtendedStatsAggregationBuilder
         super(name);
     }
 
-    protected ExtendedStatsAggregationBuilder(ExtendedStatsAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected ExtendedStatsAggregationBuilder(ExtendedStatsAggregationBuilder clone,
+                                              AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.sigma = clone.sigma;
     }
@@ -104,7 +104,8 @@ public class ExtendedStatsAggregationBuilder
 
     @Override
     protected ExtendedStatsAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+                                                        AggregatorFactory parent,
+                                                        AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new ExtendedStatsAggregatorFactory(name, config, sigma, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
@@ -121,12 +122,9 @@ public class ExtendedStatsAggregationBuilder
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         ExtendedStatsAggregationBuilder other = (ExtendedStatsAggregationBuilder) obj;
         return Objects.equals(sigma, other.sigma);
     }

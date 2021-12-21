@@ -19,10 +19,9 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import org.codelibs.fesen.Version;
+import org.codelibs.fesen.analysis.common.AnalysisPredicateScript;
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
@@ -37,14 +36,23 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 import org.codelibs.fesen.test.IndexSettingsModule;
 
+import java.io.IOException;
+import java.util.Collections;
+
 public class PredicateTokenScriptFilterTests extends ESTokenStreamTestCase {
 
     public void testSimpleFilter() throws IOException {
-        Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
-        Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
-                .put("index.analysis.filter.f.type", "predicate_token_filter").put("index.analysis.filter.f.script.source", "my_script")
-                .put("index.analysis.analyzer.myAnalyzer.type", "custom").put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
-                .putList("index.analysis.analyzer.myAnalyzer.filter", "f").build();
+        Settings settings = Settings.builder()
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
+        Settings indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .put("index.analysis.filter.f.type", "predicate_token_filter")
+            .put("index.analysis.filter.f.script.source", "my_script")
+            .put("index.analysis.analyzer.myAnalyzer.type", "custom")
+            .put("index.analysis.analyzer.myAnalyzer.tokenizer", "standard")
+            .putList("index.analysis.analyzer.myAnalyzer.filter", "f")
+            .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", indexSettings);
 
         AnalysisPredicateScript.Factory factory = () -> new AnalysisPredicateScript() {
@@ -55,7 +63,7 @@ public class PredicateTokenScriptFilterTests extends ESTokenStreamTestCase {
         };
 
         @SuppressWarnings("unchecked")
-        ScriptService scriptService = new ScriptService(indexSettings, Collections.emptyMap(), Collections.emptyMap()) {
+        ScriptService scriptService = new ScriptService(indexSettings, Collections.emptyMap(), Collections.emptyMap()){
             @Override
             public <FactoryType> FactoryType compile(Script script, ScriptContext<FactoryType> context) {
                 assertEquals(context, AnalysisPredicateScript.CONTEXT);
@@ -66,13 +74,16 @@ public class PredicateTokenScriptFilterTests extends ESTokenStreamTestCase {
 
         CommonAnalysisPlugin plugin = new CommonAnalysisPlugin();
         plugin.createComponents(null, null, null, null, scriptService, null, null, null, null, null, null);
-        AnalysisModule module = new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(plugin));
+        AnalysisModule module
+            = new AnalysisModule(TestEnvironment.newEnvironment(settings), Collections.singletonList(plugin));
 
         IndexAnalyzers analyzers = module.getAnalysisRegistry().build(idxSettings);
 
         try (NamedAnalyzer analyzer = analyzers.get("myAnalyzer")) {
             assertNotNull(analyzer);
-            assertAnalyzesTo(analyzer, "Oh what a wonderful thing to be", new String[] { "Oh", "what", "to", "be" });
+            assertAnalyzesTo(analyzer, "Oh what a wonderful thing to be", new String[]{
+                "Oh", "what", "to", "be"
+            });
         }
 
     }

@@ -31,6 +31,8 @@ import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountFilterFactory;
 import org.apache.lucene.analysis.reverse.ReverseStringFilterFactory;
 import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
+import org.apache.lucene.analysis.te.TeluguNormalizationFilterFactory;
+import org.apache.lucene.analysis.te.TeluguStemFilterFactory;
 import org.codelibs.fesen.indices.analysis.AnalysisFactoryTestCase;
 
 public class CommonAnalysisFactoryTests extends AnalysisFactoryTestCase {
@@ -119,6 +121,8 @@ public class CommonAnalysisFactoryTests extends AnalysisFactoryTestCase {
         filters.put("arabicnormalization", ArabicNormalizationFilterFactory.class);
         filters.put("bengalinormalization", BengaliNormalizationFilterFactory.class);
         filters.put("germannormalization", GermanNormalizationFilterFactory.class);
+        filters.put("telugunormalization", TeluguNormalizationFilterFactory.class);
+        filters.put("telugustem", TeluguStemFilterFactory.class);
         filters.put("hindinormalization", HindiNormalizationFilterFactory.class);
         filters.put("indicnormalization", IndicNormalizationFilterFactory.class);
         filters.put("persiannormalization", PersianNormalizationFilterFactory.class);
@@ -148,13 +152,13 @@ public class CommonAnalysisFactoryTests extends AnalysisFactoryTestCase {
     @Override
     protected Map<String, Class<?>> getCharFilters() {
         Map<String, Class<?>> filters = new TreeMap<>(super.getCharFilters());
-        filters.put("htmlstrip", HtmlStripCharFilterFactory.class);
-        filters.put("mapping", MappingCharFilterFactory.class);
+        filters.put("htmlstrip",      HtmlStripCharFilterFactory.class);
+        filters.put("mapping",        MappingCharFilterFactory.class);
         filters.put("patternreplace", PatternReplaceCharFilterFactory.class);
 
         // TODO: these charfilters are not yet exposed: useful?
         // handling of zwnj for persian
-        filters.put("persian", Void.class);
+        filters.put("persian",        Void.class);
         return filters;
     }
 
@@ -267,9 +271,12 @@ public class CommonAnalysisFactoryTests extends AnalysisFactoryTestCase {
     }
 
     private void markedTestCase(String name, Map<String, Class<?>> map) {
-        List<String> unmarked = map.entrySet().stream().filter(e -> e.getValue() == MovedToAnalysisCommon.class).map(Map.Entry::getKey)
-                .sorted().collect(toList());
-        assertEquals(name + " marked in AnalysisFactoryTestCase as moved to analysis-common " + "but not mapped here", emptyList(),
-                unmarked);
+        List<String> unmarked = map.entrySet().stream()
+                .filter(e -> e.getValue() == MovedToAnalysisCommon.class)
+                .map(Map.Entry::getKey)
+                .sorted()
+                .collect(toList());
+        assertEquals(name + " marked in AnalysisFactoryTestCase as moved to analysis-common "
+                + "but not mapped here", emptyList(), unmarked);
     }
 }

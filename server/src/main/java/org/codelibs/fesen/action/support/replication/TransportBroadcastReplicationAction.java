@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.support.replication;
 
+import com.carrotsearch.hppc.cursors.IntObjectCursor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,13 +46,12 @@ import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.transport.TransportService;
 
-import com.carrotsearch.hppc.cursors.IntObjectCursor;
-
 /**
  * Base class for requests that should be executed on all shards of an index or several indices.
  * This action sends shard requests to all primary shards of the indices and they are then replicated like write requests
  */
-public abstract class TransportBroadcastReplicationAction<Request extends BroadcastRequest<Request>, Response extends BroadcastResponse, ShardRequest extends ReplicationRequest<ShardRequest>, ShardResponse extends ReplicationResponse>
+public abstract class TransportBroadcastReplicationAction<Request extends BroadcastRequest<Request>, Response extends BroadcastResponse,
+        ShardRequest extends ReplicationRequest<ShardRequest>, ShardResponse extends ReplicationResponse>
         extends HandledTransportAction<Request, Response> {
 
     private final TransportReplicationAction replicatedBroadcastShardAction;
@@ -58,8 +59,9 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
     private final IndexNameExpressionResolver indexNameExpressionResolver;
 
     public TransportBroadcastReplicationAction(String name, Writeable.Reader<Request> requestReader, ClusterService clusterService,
-            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-            TransportReplicationAction replicatedBroadcastShardAction) {
+                                               TransportService transportService,
+                                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+                                               TransportReplicationAction replicatedBroadcastShardAction) {
         super(name, transportService, actionFilters, requestReader);
         this.replicatedBroadcastShardAction = replicatedBroadcastShardAction;
         this.clusterService = clusterService;
@@ -95,8 +97,8 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
                     if (TransportActions.isShardNotAvailableException(e)) {
                         failures = new ReplicationResponse.ShardInfo.Failure[0];
                     } else {
-                        ReplicationResponse.ShardInfo.Failure failure =
-                                new ReplicationResponse.ShardInfo.Failure(shardId, null, e, ExceptionsHelper.status(e), true);
+                        ReplicationResponse.ShardInfo.Failure failure = new ReplicationResponse.ShardInfo.Failure(shardId, null, e,
+                            ExceptionsHelper.status(e), true);
                         failures = new ReplicationResponse.ShardInfo.Failure[totalNumCopies];
                         Arrays.fill(failures, failure);
                     }
@@ -126,8 +128,8 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
         for (String index : concreteIndices) {
             IndexMetadata indexMetadata = clusterState.metadata().getIndices().get(index);
             if (indexMetadata != null) {
-                for (IntObjectCursor<IndexShardRoutingTable> shardRouting : clusterState.getRoutingTable().indicesRouting().get(index)
-                        .getShards()) {
+                for (IntObjectCursor<IndexShardRoutingTable> shardRouting
+                        : clusterState.getRoutingTable().indicesRouting().get(index).getShards()) {
                     shardIds.add(shardRouting.value.shardId());
                 }
             }
@@ -158,7 +160,7 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
                 }
                 for (ReplicationResponse.ShardInfo.Failure failure : shardResponse.getShardInfo().getFailures()) {
                     shardFailures.add(new DefaultShardOperationFailedException(
-                            new BroadcastShardOperationFailedException(failure.fullShardId(), failure.getCause())));
+                        new BroadcastShardOperationFailedException(failure.fullShardId(), failure.getCause())));
                 }
             }
         }
@@ -166,5 +168,5 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
     }
 
     protected abstract BroadcastResponse newResponse(int successfulShards, int failedShards, int totalNumCopies,
-            List<DefaultShardOperationFailedException> shardFailures);
+                                                     List<DefaultShardOperationFailedException> shardFailures);
 }

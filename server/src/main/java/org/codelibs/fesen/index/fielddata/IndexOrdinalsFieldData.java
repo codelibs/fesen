@@ -23,6 +23,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.OrdinalMap;
 
+
 /**
  * Specialization of {@link IndexFieldData} for data that is indexed with ordinals.
  */

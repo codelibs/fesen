@@ -37,8 +37,8 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportShardMultiTermsVectorAction
-        extends TransportSingleShardAction<MultiTermVectorsShardRequest, MultiTermVectorsShardResponse> {
+public class TransportShardMultiTermsVectorAction extends
+        TransportSingleShardAction<MultiTermVectorsShardRequest, MultiTermVectorsShardResponse> {
 
     private final IndicesService indicesService;
 
@@ -46,8 +46,8 @@ public class TransportShardMultiTermsVectorAction
 
     @Inject
     public TransportShardMultiTermsVectorAction(ClusterService clusterService, TransportService transportService,
-            IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                                IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
+                                                IndexNameExpressionResolver indexNameExpressionResolver) {
         super(ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
                 MultiTermVectorsShardRequest::new, ThreadPool.Names.GET);
         this.indicesService = indicesService;
@@ -70,8 +70,8 @@ public class TransportShardMultiTermsVectorAction
 
     @Override
     protected ShardIterator shards(ClusterState state, InternalRequest request) {
-        return clusterService.operationRouting().getShards(state, request.concreteIndex(), request.request().shardId(),
-                request.request().preference());
+        return clusterService.operationRouting()
+                .getShards(state, request.concreteIndex(), request.request().shardId(), request.request().preference());
     }
 
     @Override
@@ -88,8 +88,8 @@ public class TransportShardMultiTermsVectorAction
                 if (TransportActions.isShardNotAvailableException(e)) {
                     throw e;
                 } else {
-                    logger.debug(() -> new ParameterizedMessage("{} failed to execute multi term vectors for [{}]/[{}]", shardId,
-                            termVectorsRequest.type(), termVectorsRequest.id()), e);
+                    logger.debug(() -> new ParameterizedMessage("{} failed to execute multi term vectors for [{}]/[{}]",
+                        shardId, termVectorsRequest.type(), termVectorsRequest.id()), e);
                     response.add(request.locations.get(i),
                             new MultiTermVectorsResponse.Failure(request.index(), termVectorsRequest.type(), termVectorsRequest.id(), e));
                 }
@@ -102,7 +102,7 @@ public class TransportShardMultiTermsVectorAction
     @Override
     protected String getExecutor(MultiTermVectorsShardRequest request, ShardId shardId) {
         IndexService indexService = indicesService.indexServiceSafe(shardId.getIndex());
-        return indexService.getIndexSettings().isSearchThrottled() ? ThreadPool.Names.SEARCH_THROTTLED
-                : super.getExecutor(request, shardId);
+        return indexService.getIndexSettings().isSearchThrottled() ? ThreadPool.Names.SEARCH_THROTTLED : super.getExecutor(request,
+            shardId);
     }
 }

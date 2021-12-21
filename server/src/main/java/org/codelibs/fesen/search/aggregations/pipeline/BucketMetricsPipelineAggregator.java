@@ -29,8 +29,8 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
 

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractNamedDiffable;
@@ -39,6 +33,12 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.repositories.RepositoryData;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Contains metadata about registered snapshot repositories
@@ -114,10 +114,8 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         RepositoriesMetadata that = (RepositoriesMetadata) o;
 
@@ -169,7 +167,7 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         this.repositories = in.readList(RepositoryMetadata::new);
     }
 
-    public static NamedDiff<Custom> readDiffFrom(StreamInput in) throws IOException {
+    public static NamedDiff<Custom> readDiffFrom(StreamInput in) throws  IOException {
         return readDiffFrom(Custom.class, TYPE, in);
     }
 
@@ -218,7 +216,8 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
                             }
                             pendingGeneration = parser.longValue();
                         } else {
-                            throw new FesenParseException("failed to parse repository [{}], unknown field [{}]", name, currentFieldName);
+                            throw new FesenParseException("failed to parse repository [{}], unknown field [{}]",
+                                name, currentFieldName);
                         }
                     } else {
                         throw new FesenParseException("failed to parse repository [{}]", name);

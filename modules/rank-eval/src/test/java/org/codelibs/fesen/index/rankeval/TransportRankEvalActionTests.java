@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.search.MultiSearchRequest;
 import org.codelibs.fesen.action.search.MultiSearchResponse;
@@ -35,10 +29,22 @@ import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.env.Environment;
+import org.codelibs.fesen.index.rankeval.DiscountedCumulativeGain;
+import org.codelibs.fesen.index.rankeval.RankEvalRequest;
+import org.codelibs.fesen.index.rankeval.RankEvalSpec;
+import org.codelibs.fesen.index.rankeval.RatedDocument;
+import org.codelibs.fesen.index.rankeval.RatedRequest;
+import org.codelibs.fesen.index.rankeval.TransportRankEvalAction;
 import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.transport.TransportService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
 
 public class TransportRankEvalActionTests extends ESTestCase {
 
@@ -53,8 +59,8 @@ public class TransportRankEvalActionTests extends ESTestCase {
         List<RatedRequest> specifications = new ArrayList<>();
         specifications
                 .add(new RatedRequest("amsterdam_query", Arrays.asList(new RatedDocument(indexName, "1", 3)), new SearchSourceBuilder()));
-        RankEvalRequest rankEvalRequest =
-                new RankEvalRequest(new RankEvalSpec(specifications, new DiscountedCumulativeGain()), new String[] { indexName });
+        RankEvalRequest rankEvalRequest = new RankEvalRequest(new RankEvalSpec(specifications, new DiscountedCumulativeGain()),
+                new String[] { indexName });
         SearchType expectedSearchType = randomFrom(SearchType.CURRENTLY_SUPPORTED);
         rankEvalRequest.searchType(expectedSearchType);
         IndicesOptions expectedIndicesOptions = IndicesOptions.fromOptions(randomBoolean(), randomBoolean(), randomBoolean(),
@@ -66,7 +72,7 @@ public class TransportRankEvalActionTests extends ESTestCase {
             public void multiSearch(MultiSearchRequest request, ActionListener<MultiSearchResponse> listener) {
                 assertEquals(1, request.requests().size());
                 assertEquals(expectedSearchType, request.requests().get(0).searchType());
-                assertArrayEquals(new String[] { indexName }, request.requests().get(0).indices());
+                assertArrayEquals(new String[]{indexName}, request.requests().get(0).indices());
                 assertEquals(expectedIndicesOptions, request.requests().get(0).indicesOptions());
             }
         };

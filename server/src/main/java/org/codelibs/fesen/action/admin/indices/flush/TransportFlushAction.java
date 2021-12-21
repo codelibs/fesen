@@ -38,10 +38,11 @@ public class TransportFlushAction
         extends TransportBroadcastReplicationAction<FlushRequest, FlushResponse, ShardFlushRequest, ReplicationResponse> {
 
     @Inject
-    public TransportFlushAction(ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver, TransportShardFlushAction replicatedFlushAction) {
+    public TransportFlushAction(ClusterService clusterService, TransportService transportService,
+                                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+                                TransportShardFlushAction replicatedFlushAction) {
         super(FlushAction.NAME, FlushRequest::new, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                replicatedFlushAction);
+            replicatedFlushAction);
     }
 
     @Override
@@ -55,8 +56,8 @@ public class TransportFlushAction
     }
 
     @Override
-    protected FlushResponse newResponse(int successfulShards, int failedShards, int totalNumCopies,
-            List<DefaultShardOperationFailedException> shardFailures) {
+    protected FlushResponse newResponse(int successfulShards, int failedShards, int totalNumCopies, List
+            <DefaultShardOperationFailedException> shardFailures) {
         return new FlushResponse(totalNumCopies, successfulShards, failedShards, shardFailures);
     }
 }

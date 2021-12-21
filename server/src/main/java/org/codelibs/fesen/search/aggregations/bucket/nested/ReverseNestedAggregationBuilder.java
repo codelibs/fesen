@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.nested;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -34,8 +30,12 @@ import org.codelibs.fesen.index.query.support.NestedScope;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<ReverseNestedAggregationBuilder> {
     public static final String NAME = "reverse_nested";
@@ -46,7 +46,8 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
         super(name);
     }
 
-    public ReverseNestedAggregationBuilder(ReverseNestedAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> map) {
+    public ReverseNestedAggregationBuilder(ReverseNestedAggregationBuilder clone,
+                                           Builder factoriesBuilder, Map<String, Object> map) {
         super(clone, factoriesBuilder, map);
         this.path = clone.path;
     }
@@ -162,7 +163,8 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
             }
         }
 
-        ReverseNestedAggregationBuilder factory = new ReverseNestedAggregationBuilder(aggregationName);
+        ReverseNestedAggregationBuilder factory = new ReverseNestedAggregationBuilder(
+                aggregationName);
         if (path != null) {
             factory.path(path);
         }
@@ -176,12 +178,9 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         ReverseNestedAggregationBuilder other = (ReverseNestedAggregationBuilder) obj;
         return Objects.equals(path, other.path);
     }

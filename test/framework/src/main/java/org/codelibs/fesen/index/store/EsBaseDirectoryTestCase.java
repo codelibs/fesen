@@ -1,13 +1,5 @@
 package org.codelibs.fesen.index.store;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.store.BaseDirectoryTestCase;
-import org.apache.lucene.util.LuceneTestCase;
-import org.apache.lucene.util.TimeUnits;
-import org.codelibs.fesen.bootstrap.BootstrapForTesting;
-import org.codelibs.fesen.test.junit.listeners.ReproduceInfoPrinter;
-
 /*
  * Licensed to Elasticsearch under one or more contributor
  * license agreements. See the NOTICE file distributed with
@@ -30,10 +22,20 @@ import org.codelibs.fesen.test.junit.listeners.ReproduceInfoPrinter;
 import com.carrotsearch.randomizedtesting.annotations.Listeners;
 import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.store.BaseDirectoryTestCase;
+import org.apache.lucene.util.LuceneTestCase;
+import org.apache.lucene.util.TimeUnits;
+import org.codelibs.fesen.bootstrap.BootstrapForTesting;
+import org.codelibs.fesen.test.junit.listeners.ReproduceInfoPrinter;
+
 /**
  * Extends Lucene's BaseDirectoryTestCase with ES test behavior.
  */
-@Listeners({ ReproduceInfoPrinter.class })
+@Listeners({
+  ReproduceInfoPrinter.class
+})
 @TimeoutSuite(millis = TimeUnits.HOUR)
 @LuceneTestCase.SuppressReproduceLine
 @LuceneTestCase.SuppressSysoutChecks(bugUrl = "we log a lot on purpose")

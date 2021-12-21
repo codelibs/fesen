@@ -50,14 +50,15 @@ public class InboundPipeline implements Releasable {
     private boolean isClosed = false;
 
     public InboundPipeline(Version version, StatsTracker statsTracker, PageCacheRecycler recycler, LongSupplier relativeTimeInMillis,
-            Supplier<CircuitBreaker> circuitBreaker, Function<String, RequestHandlerRegistry<TransportRequest>> registryFunction,
-            BiConsumer<TcpChannel, InboundMessage> messageHandler) {
+                           Supplier<CircuitBreaker> circuitBreaker,
+                           Function<String, RequestHandlerRegistry<TransportRequest>> registryFunction,
+                           BiConsumer<TcpChannel, InboundMessage> messageHandler) {
         this(statsTracker, relativeTimeInMillis, new InboundDecoder(version, recycler),
-                new InboundAggregator(circuitBreaker, registryFunction), messageHandler);
+            new InboundAggregator(circuitBreaker, registryFunction), messageHandler);
     }
 
     public InboundPipeline(StatsTracker statsTracker, LongSupplier relativeTimeInMillis, InboundDecoder decoder,
-            InboundAggregator aggregator, BiConsumer<TcpChannel, InboundMessage> messageHandler) {
+                           InboundAggregator aggregator, BiConsumer<TcpChannel, InboundMessage> messageHandler) {
         this.relativeTimeInMillis = relativeTimeInMillis;
         this.statsTracker = statsTracker;
         this.decoder = decoder;

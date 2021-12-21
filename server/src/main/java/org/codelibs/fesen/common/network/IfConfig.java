@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.network;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -27,9 +30,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Locale;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Simple class to log {@code ifconfig}-style output at DEBUG logging.
@@ -121,8 +121,12 @@ public final class IfConfig {
             sb.append("inet ");
             sb.append(NetworkAddress.format(address));
             int netmask = 0xFFFFFFFF << (32 - interfaceAddress.getNetworkPrefixLength());
-            sb.append(" netmask:").append(NetworkAddress.format(InetAddress.getByAddress(new byte[] { (byte) (netmask >>> 24),
-                    (byte) (netmask >>> 16 & 0xFF), (byte) (netmask >>> 8 & 0xFF), (byte) (netmask & 0xFF) })));
+            sb.append(" netmask:").append(NetworkAddress.format(InetAddress.getByAddress(new byte[]{
+                (byte) (netmask >>> 24),
+                (byte) (netmask >>> 16 & 0xFF),
+                (byte) (netmask >>> 8 & 0xFF),
+                (byte) (netmask & 0xFF)
+            })));
             InetAddress broadcast = interfaceAddress.getBroadcast();
             if (broadcast != null) {
                 sb.append(" broadcast:").append(NetworkAddress.format(broadcast));

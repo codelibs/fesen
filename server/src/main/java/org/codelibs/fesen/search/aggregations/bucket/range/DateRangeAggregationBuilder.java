@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Map;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.index.query.QueryShardContext;
@@ -36,13 +32,19 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
 public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeAggregationBuilder, RangeAggregator.Range> {
     public static final String NAME = "date_range";
-    public static final ValuesSourceRegistry.RegistryKey<RangeAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, RangeAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<RangeAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        RangeAggregatorSupplier.class
+    );
 
     public static final ObjectParser<DateRangeAggregationBuilder, String> PARSER =
-            ObjectParser.fromBuilder(NAME, DateRangeAggregationBuilder::new);
+            ObjectParser.fromBuilder(NAME,  DateRangeAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, true);
         PARSER.declareBoolean(DateRangeAggregationBuilder::keyed, RangeAggregator.KEYED_FIELD);
@@ -62,8 +64,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
         super(name, InternalDateRange.FACTORY);
     }
 
-    protected DateRangeAggregationBuilder(DateRangeAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected DateRangeAggregationBuilder(DateRangeAggregationBuilder clone,
+                                          AggregatorFactories.Builder factoriesBuilder,
+                                          Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -299,7 +302,8 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
 
     @Override
     protected DateRangeAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+                                                    AggregatorFactory parent,
+                                                    AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         // We need to call processRanges here so they are parsed and we know whether `now` has been used before we make
         // the decision of whether to cache the request
         RangeAggregator.Range[] ranges = processRanges(range -> {

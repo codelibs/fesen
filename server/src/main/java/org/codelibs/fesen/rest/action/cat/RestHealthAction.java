@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -32,6 +29,9 @@ import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestHealthAction extends AbstractCatAction {
 
@@ -54,6 +54,7 @@ public class RestHealthAction extends AbstractCatAction {
     protected void documentation(StringBuilder sb) {
         sb.append("/_cat/health\n");
     }
+
 
     @Override
     public RestChannelConsumer doCatRequest(final RestRequest request, final NodeClient client) {

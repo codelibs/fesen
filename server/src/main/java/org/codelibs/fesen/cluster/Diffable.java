@@ -21,6 +21,7 @@ package org.codelibs.fesen.cluster;
 
 import org.codelibs.fesen.common.io.stream.Writeable;
 
+
 /**
  * Cluster state part, changes in which can be serialized
  */

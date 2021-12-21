@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.shard;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FilterDirectory;
 import org.apache.lucene.store.IOContext;
@@ -35,6 +29,12 @@ import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.engine.Engine;
 import org.codelibs.fesen.index.store.Store;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 final class LocalShardSnapshot implements Closeable {
     private final IndexShard shard;
@@ -107,9 +107,9 @@ final class LocalShardSnapshot implements Closeable {
 
             @Override
             public Lock obtainLock(String name) throws IOException {
-                /* we do explicitly a no-lock instance since we hold an index commit from a SnapshotDeletionPolicy so we
-                 * can we certain that nobody messes with the files on disk. We also hold a ref on the store which means
-                 * no external source will delete files either.*/
+                    /* we do explicitly a no-lock instance since we hold an index commit from a SnapshotDeletionPolicy so we
+                     * can we certain that nobody messes with the files on disk. We also hold a ref on the store which means
+                     * no external source will delete files either.*/
                 return NoLockFactory.INSTANCE.obtainLock(in, name);
             }
 

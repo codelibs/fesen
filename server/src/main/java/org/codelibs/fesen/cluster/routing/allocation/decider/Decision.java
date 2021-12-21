@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.decider;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -34,6 +27,13 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This abstract class defining basic {@link Decision} used during shard
@@ -84,7 +84,9 @@ public abstract class Decision implements ToXContent, Writeable {
      * possible types of decisions
      */
     public enum Type implements Writeable {
-        YES(1), THROTTLE(2), NO(0);
+        YES(1),
+        THROTTLE(2),
+        NO(0);
 
         private final int id;
 
@@ -95,14 +97,14 @@ public abstract class Decision implements ToXContent, Writeable {
         public static Type readFrom(StreamInput in) throws IOException {
             int i = in.readVInt();
             switch (i) {
-            case 0:
-                return NO;
-            case 1:
-                return YES;
-            case 2:
-                return THROTTLE;
-            default:
-                throw new IllegalArgumentException("No Type for integer [" + i + "]");
+                case 0:
+                    return NO;
+                case 1:
+                    return YES;
+                case 2:
+                    return THROTTLE;
+                default:
+                    throw new IllegalArgumentException("No Type for integer [" + i + "]");
             }
         }
 
@@ -222,7 +224,9 @@ public abstract class Decision implements ToXContent, Writeable {
             }
 
             Decision.Single s = (Decision.Single) object;
-            return this.type == s.type && Objects.equals(label, s.label) && Objects.equals(getExplanation(), s.getExplanation());
+            return this.type == s.type &&
+                       Objects.equals(label, s.label) &&
+                       Objects.equals(getExplanation(), s.getExplanation());
         }
 
         @Override

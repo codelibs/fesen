@@ -25,7 +25,8 @@ import org.codelibs.fesen.core.TimeValue;
 /**
  * Base request builder for master node operations that support acknowledgements
  */
-public abstract class AcknowledgedRequestBuilder<Request extends AcknowledgedRequest<Request>, Response extends AcknowledgedResponse, RequestBuilder extends AcknowledgedRequestBuilder<Request, Response, RequestBuilder>>
+public abstract class AcknowledgedRequestBuilder<Request extends AcknowledgedRequest<Request>, Response extends AcknowledgedResponse,
+        RequestBuilder extends AcknowledgedRequestBuilder<Request, Response, RequestBuilder>>
         extends MasterNodeOperationRequestBuilder<Request, Response, RequestBuilder> {
 
     protected AcknowledgedRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {

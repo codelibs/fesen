@@ -81,8 +81,8 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
             if (expectedIndexResult.hasFailures() == false) {
                 assertThat(actualIndexResult.getException(), nullValue());
                 if (actualIndexResult.getShards() != null) {
-                    assertThat(Arrays.stream(actualIndexResult.getShards()).allMatch(shardResult -> shardResult.hasFailures() == false),
-                            is(true));
+                    assertThat(Arrays.stream(actualIndexResult.getShards())
+                        .allMatch(shardResult -> shardResult.hasFailures() == false), is(true));
                 }
             }
 
@@ -142,7 +142,8 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
 
         Index index = new Index("test", "uuid");
         IndexResult indexResult = new CloseIndexResponse.IndexResult(index);
-        CloseIndexResponse closeIndexResponse = new CloseIndexResponse(true, true, Collections.singletonList(indexResult));
+        CloseIndexResponse closeIndexResponse = new CloseIndexResponse(true, true,
+                Collections.singletonList(indexResult));
         assertEquals("{\"acknowledged\":true,\"shards_acknowledged\":true,\"indices\":{\"test\":{\"closed\":true}}}",
                 Strings.toString(closeIndexResponse));
 
@@ -150,11 +151,13 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
         shards[0] = new CloseIndexResponse.ShardResult(0, new CloseIndexResponse.ShardResult.Failure[] {
                 new CloseIndexResponse.ShardResult.Failure("test", 0, new ActionNotFoundTransportException("test"), "nodeId") });
         indexResult = new CloseIndexResponse.IndexResult(index, shards);
-        closeIndexResponse = new CloseIndexResponse(true, true, Collections.singletonList(indexResult));
+        closeIndexResponse = new CloseIndexResponse(true, true,
+                Collections.singletonList(indexResult));
         assertEquals("{\"acknowledged\":true,\"shards_acknowledged\":true,"
                 + "\"indices\":{\"test\":{\"closed\":false,\"failedShards\":{\"0\":{"
                 + "\"failures\":[{\"node\":\"nodeId\",\"shard\":0,\"index\":\"test\",\"status\":\"INTERNAL_SERVER_ERROR\","
-                + "\"reason\":{\"type\":\"action_not_found_transport_exception\"," + "\"reason\":\"No handler for action [test]\"}}]}}}}}",
+                + "\"reason\":{\"type\":\"action_not_found_transport_exception\","
+                + "\"reason\":\"No handler for action [test]\"}}]}}}}}",
                 Strings.toString(closeIndexResponse));
     }
 
@@ -162,7 +165,7 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
         {
             final CloseIndexResponse response = randomResponse();
             try (BytesStreamOutput out = new BytesStreamOutput()) {
-                out.setVersion(randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_2_0)));
+                out.setVersion(randomVersionBetween(random(), Version.V_6_0_0, VersionUtils.getPreviousVersion(Version.V_7_2_0)));
                 response.writeTo(out);
 
                 try (StreamInput in = out.bytes().streamInput()) {
@@ -178,7 +181,7 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
                 response.writeTo(out);
 
                 try (StreamInput in = out.bytes().streamInput()) {
-                    in.setVersion(randomVersionBetween(random(), Version.V_7_0_0, VersionUtils.getPreviousVersion(Version.V_7_2_0)));
+                    in.setVersion(randomVersionBetween(random(), Version.V_6_0_0, VersionUtils.getPreviousVersion(Version.V_7_2_0)));
                     final CloseIndexResponse deserializedResponse = new CloseIndexResponse(in);
                     assertThat(deserializedResponse.isAcknowledged(), equalTo(response.isAcknowledged()));
                 }
@@ -246,7 +249,9 @@ public class CloseIndexResponseTests extends AbstractWireSerializingTestCase<Clo
     }
 
     private static FesenException randomException(final Index index, final int id) {
-        return randomFrom(new IndexNotFoundException(index), new ActionNotFoundTransportException("test"),
-                new NoShardAvailableActionException(new ShardId(index, id)));
+        return randomFrom(
+            new IndexNotFoundException(index),
+            new ActionNotFoundTransportException("test"),
+            new NoShardAvailableActionException(new ShardId(index, id)));
     }
 }

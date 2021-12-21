@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.join.mapper;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.SortedDocValuesField;
@@ -49,6 +42,13 @@ import org.codelibs.fesen.index.mapper.TextSearchInfo;
 import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * A field mapper used internally by the {@link ParentJoinFieldMapper} to index
@@ -91,7 +91,7 @@ public final class ParentIdFieldMapper extends FieldMapper {
         @Override
         public ParentIdFieldMapper build(BuilderContext context) {
             return new ParentIdFieldMapper(name, parent, children, fieldType,
-                    new ParentIdFieldType(buildFullName(context), eagerGlobalOrdinals, meta));
+                new ParentIdFieldType(buildFullName(context), eagerGlobalOrdinals, meta));
         }
     }
 
@@ -131,8 +131,11 @@ public final class ParentIdFieldMapper extends FieldMapper {
     private final String parentName;
     private Set<String> children;
 
-    protected ParentIdFieldMapper(String simpleName, String parentName, Set<String> children, FieldType fieldType,
-            MappedFieldType mappedFieldType) {
+    protected ParentIdFieldMapper(String simpleName,
+                                  String parentName,
+                                  Set<String> children,
+                                  FieldType fieldType,
+                                  MappedFieldType mappedFieldType) {
         super(simpleName, fieldType, mappedFieldType, MultiFields.empty(), CopyTo.empty());
         this.parentName = parentName;
         this.children = children;
@@ -153,7 +156,6 @@ public final class ParentIdFieldMapper extends FieldMapper {
     public Query getParentFilter() {
         return new TermQuery(new Term(name().substring(0, name().indexOf('#')), parentName));
     }
-
     /**
      * Returns the children names associated with this mapper.
      */

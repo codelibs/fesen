@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.common.util.CollectionUtils.isEmpty;
-import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.ExceptionsHelper;
@@ -51,6 +42,15 @@ import org.codelibs.fesen.index.mapper.RoutingFieldMapper;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.threadpool.ThreadPool;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.common.util.CollectionUtils.isEmpty;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
+
 /**
  * A scrollable source of hits from a {@linkplain Client} instance.
  */
@@ -59,8 +59,8 @@ public class ClientScrollableHitSource extends ScrollableHitSource {
     private final SearchRequest firstSearchRequest;
 
     public ClientScrollableHitSource(Logger logger, BackoffPolicy backoffPolicy, ThreadPool threadPool, Runnable countSearchRetry,
-            Consumer<AsyncResponse> onResponse, Consumer<Exception> fail, ParentTaskAssigningClient client,
-            SearchRequest firstSearchRequest) {
+                                     Consumer<AsyncResponse> onResponse, Consumer<Exception> fail,
+                                     ParentTaskAssigningClient client, SearchRequest firstSearchRequest) {
         super(logger, backoffPolicy, threadPool, countSearchRetry, onResponse, fail);
         this.client = client;
         this.firstSearchRequest = firstSearchRequest;
@@ -137,7 +137,7 @@ public class ClientScrollableHitSource extends ScrollableHitSource {
             failures = emptyList();
         } else {
             failures = new ArrayList<>(response.getShardFailures().length);
-            for (ShardSearchFailure failure : response.getShardFailures()) {
+            for (ShardSearchFailure failure: response.getShardFailures()) {
                 String nodeId = failure.shard() == null ? null : failure.shard().getNodeId();
                 failures.add(new SearchFailure(failure.getCause(), failure.index(), failure.shardId(), nodeId));
             }
@@ -147,13 +147,14 @@ public class ClientScrollableHitSource extends ScrollableHitSource {
             hits = emptyList();
         } else {
             hits = new ArrayList<>(response.getHits().getHits().length);
-            for (SearchHit hit : response.getHits().getHits()) {
+            for (SearchHit hit: response.getHits().getHits()) {
                 hits.add(new ClientHit(hit));
             }
             hits = unmodifiableList(hits);
         }
         long total = response.getHits().getTotalHits().value;
-        return new Response(response.isTimedOut(), failures, total, hits, response.getScrollId());
+        return new Response(response.isTimedOut(), failures, total,
+                hits, response.getScrollId());
     }
 
     private static class ClientHit implements Hit {
@@ -189,7 +190,6 @@ public class ClientScrollableHitSource extends ScrollableHitSource {
         public XContentType getXContentType() {
             return XContentHelper.xContentType(source);
         }
-
         @Override
         public long getVersion() {
             return delegate.getVersion();

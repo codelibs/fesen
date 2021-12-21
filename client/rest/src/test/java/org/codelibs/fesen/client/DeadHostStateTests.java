@@ -19,6 +19,12 @@
 
 package org.codelibs.fesen.client;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.codelibs.fesen.client.DeadHostState;
+import org.codelibs.fesen.client.RestClientTestCase;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -28,12 +34,9 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
 public class DeadHostStateTests extends RestClientTestCase {
 
-    private static long[] EXPECTED_TIMEOUTS_SECONDS = new long[] { 60, 84, 120, 169, 240, 339, 480, 678, 960, 1357, 1800 };
+    private static long[] EXPECTED_TIMEOUTS_SECONDS = new long[]{60, 84, 120, 169, 240, 339, 480, 678, 960, 1357, 1800};
 
     public void testInitialDeadHostStateDefaultTimeSupplier() {
         DeadHostState deadHostState = new DeadHostState(DeadHostState.DEFAULT_TIME_SUPPLIER);
@@ -75,11 +78,12 @@ public class DeadHostStateTests extends RestClientTestCase {
 
     public void testCompareToDifferingTimeSupplier() {
         try {
-            new DeadHostState(DeadHostState.DEFAULT_TIME_SUPPLIER).compareTo(new DeadHostState(() -> 0L));
+            new DeadHostState(DeadHostState.DEFAULT_TIME_SUPPLIER).compareTo(
+                    new DeadHostState(() -> 0L));
             fail("expected failure");
         } catch (IllegalArgumentException e) {
-            assertEquals("can't compare DeadHostStates holding different time suppliers as they may " + "be based on different clocks",
-                    e.getMessage());
+            assertEquals("can't compare DeadHostStates holding different time suppliers as they may " +
+            "be based on different clocks", e.getMessage());
         }
     }
 

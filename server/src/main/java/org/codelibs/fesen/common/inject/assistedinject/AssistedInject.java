@@ -16,11 +16,11 @@
 
 package org.codelibs.fesen.common.inject.assistedinject;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * <p>Constructors annotated with {@code @AssistedInject} indicate that they can be instantiated by
@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  *             by position. In addition, values that use the standard {@literal @Inject} constructor
  *             annotation are eligible for method interception.
  */
-@Target({ CONSTRUCTOR })
+@Target({CONSTRUCTOR})
 @Retention(RUNTIME)
 @Deprecated
 public @interface AssistedInject {

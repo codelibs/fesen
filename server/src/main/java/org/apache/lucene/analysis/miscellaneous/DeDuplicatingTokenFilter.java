@@ -19,15 +19,15 @@
 
 package org.apache.lucene.analysis.miscellaneous;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.hash.MurmurHash3;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Inspects token streams for duplicate sequences of tokens. Token sequences
@@ -91,6 +91,7 @@ public class DeDuplicatingTokenFilter extends FilteringTokenFilter {
             this.byteStreamDuplicateSpotter = byteStreamDuplicateSpotter;
             this.windowSize = DuplicateByteSequenceSpotter.TREE_DEPTH;
         }
+
 
         @Override
         public final boolean incrementToken() throws IOException {

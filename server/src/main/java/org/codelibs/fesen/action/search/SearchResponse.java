@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.action.search.ShardSearchFailure.readShardSearchFailure;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.apache.lucene.search.TotalHits;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
@@ -54,6 +44,17 @@ import org.codelibs.fesen.search.internal.InternalSearchResponse;
 import org.codelibs.fesen.search.profile.ProfileShardResult;
 import org.codelibs.fesen.search.profile.SearchProfileShardResults;
 import org.codelibs.fesen.search.suggest.Suggest;
+
+import static org.codelibs.fesen.action.search.ShardSearchFailure.readShardSearchFailure;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 
 /**
  * A response of a search request.
@@ -91,7 +92,11 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                 shardFailures[i] = readShardSearchFailure(in);
             }
         }
-        clusters = new Clusters(in);
+        if (in.getVersion().onOrAfter(Version.V_6_1_0)) {
+            clusters = new Clusters(in);
+        } else {
+            clusters = Clusters.EMPTY;
+        }
         scrollId = in.readOptionalString();
         tookInMillis = in.readVLong();
         skippedShards = in.readVInt();
@@ -103,12 +108,13 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     }
 
     public SearchResponse(SearchResponseSections internalResponse, String scrollId, int totalShards, int successfulShards,
-            int skippedShards, long tookInMillis, ShardSearchFailure[] shardFailures, Clusters clusters) {
+                          int skippedShards, long tookInMillis, ShardSearchFailure[] shardFailures, Clusters clusters) {
         this(internalResponse, scrollId, totalShards, successfulShards, skippedShards, tookInMillis, shardFailures, clusters, null);
     }
 
     public SearchResponse(SearchResponseSections internalResponse, String scrollId, int totalShards, int successfulShards,
-            int skippedShards, long tookInMillis, ShardSearchFailure[] shardFailures, Clusters clusters, String pointInTimeId) {
+                          int skippedShards, long tookInMillis, ShardSearchFailure[] shardFailures, Clusters clusters,
+                          String pointInTimeId) {
         this.internalResponse = internalResponse;
         this.scrollId = scrollId;
         this.pointInTimeId = pointInTimeId;
@@ -119,8 +125,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         this.tookInMillis = tookInMillis;
         this.shardFailures = shardFailures;
         assert skippedShards <= totalShards : "skipped: " + skippedShards + " total: " + totalShards;
-        assert scrollId == null || pointInTimeId == null : "SearchResponse can't have both scrollId [" + scrollId
-                + "] and searchContextId [" + pointInTimeId + "]";
+        assert scrollId == null || pointInTimeId == null :
+            "SearchResponse can't have both scrollId [" + scrollId + "] and searchContextId [" + pointInTimeId + "]";
     }
 
     @Override
@@ -189,6 +195,7 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     public int getSuccessfulShards() {
         return successfulShards;
     }
+
 
     /**
      * The number of shards skipped due to pre-filtering
@@ -272,7 +279,7 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
             builder.field(NUM_REDUCE_PHASES.getPreferredName(), getNumReducePhases());
         }
         RestActions.buildBroadcastShardsHeader(builder, params, getTotalShards(), getSuccessfulShards(), getSkippedShards(),
-                getFailedShards(), getShardFailures());
+            getFailedShards(), getShardFailures());
         clusters.toXContent(builder, params);
         internalResponse.toXContent(builder, params);
         return builder;
@@ -348,7 +355,7 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                             }
                         } else if (token == Token.START_ARRAY) {
                             if (RestActions.FAILURES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                                while ((token = parser.nextToken()) != Token.END_ARRAY) {
+                                while((token = parser.nextToken()) != Token.END_ARRAY) {
                                     failures.add(ShardSearchFailure.fromXContent(parser));
                                 }
                             } else {
@@ -385,8 +392,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                 }
             }
         }
-        SearchResponseSections searchResponseSections =
-                new SearchResponseSections(hits, aggs, suggest, timedOut, terminatedEarly, profile, numReducePhases);
+        SearchResponseSections searchResponseSections = new SearchResponseSections(hits, aggs, suggest, timedOut, terminatedEarly,
+                profile, numReducePhases);
         return new SearchResponse(searchResponseSections, scrollId, totalShards, successfulShards, skippedShards, tookInMillis,
                 failures.toArray(ShardSearchFailure.EMPTY_ARRAY), clusters, searchContextId);
     }
@@ -401,7 +408,9 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         for (ShardSearchFailure shardSearchFailure : shardFailures) {
             shardSearchFailure.writeTo(out);
         }
-        clusters.writeTo(out);
+        if (out.getVersion().onOrAfter(Version.V_6_1_0)) {
+            clusters.writeTo(out);
+        }
         out.writeOptionalString(scrollId);
         out.writeVLong(tookInMillis);
         out.writeVInt(skippedShards);
@@ -433,10 +442,10 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         private final int skipped;
 
         public Clusters(int total, int successful, int skipped) {
-            assert total >= 0 && successful >= 0 && skipped >= 0 : "total: " + total + " successful: " + successful + " skipped: "
-                    + skipped;
-            assert successful <= total && skipped == total - successful : "total: " + total + " successful: " + successful + " skipped: "
-                    + skipped;
+            assert total >= 0 && successful >= 0 && skipped >= 0
+                    : "total: " + total + " successful: " + successful + " skipped: " + skipped;
+            assert successful <= total && skipped == total - successful
+                    : "total: " + total + " successful: " + successful + " skipped: " + skipped;
             this.total = total;
             this.successful = successful;
             this.skipped = skipped;
@@ -495,7 +504,9 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                 return false;
             }
             Clusters clusters = (Clusters) o;
-            return total == clusters.total && successful == clusters.successful && skipped == clusters.skipped;
+            return total == clusters.total &&
+                    successful == clusters.successful &&
+                    skipped == clusters.skipped;
         }
 
         @Override
@@ -511,9 +522,9 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     static SearchResponse empty(Supplier<Long> tookInMillisSupplier, Clusters clusters) {
         SearchHits searchHits = new SearchHits(new SearchHit[0], new TotalHits(0L, TotalHits.Relation.EQUAL_TO), Float.NaN);
-        InternalSearchResponse internalSearchResponse =
-                new InternalSearchResponse(searchHits, InternalAggregations.EMPTY, null, null, false, null, 0);
-        return new SearchResponse(internalSearchResponse, null, 0, 0, 0, tookInMillisSupplier.get(), ShardSearchFailure.EMPTY_ARRAY,
-                clusters, null);
+        InternalSearchResponse internalSearchResponse = new InternalSearchResponse(searchHits,
+            InternalAggregations.EMPTY, null, null, false, null, 0);
+        return new SearchResponse(internalSearchResponse, null, 0, 0, 0, tookInMillisSupplier.get(),
+            ShardSearchFailure.EMPTY_ARRAY, clusters, null);
     }
 }

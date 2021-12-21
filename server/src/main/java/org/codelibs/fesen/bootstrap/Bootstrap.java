@@ -19,22 +19,6 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
@@ -70,6 +54,22 @@ import org.codelibs.fesen.monitor.process.ProcessProbe;
 import org.codelibs.fesen.node.InternalSettingsPreparer;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.node.NodeValidationException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Internal startup code.
@@ -121,9 +121,9 @@ final class Bootstrap {
         // mlockall if requested
         if (mlockAll) {
             if (Constants.WINDOWS) {
-                Natives.tryVirtualLock();
+               Natives.tryVirtualLock();
             } else {
-                Natives.tryMlockall();
+               Natives.tryMlockall();
             }
         }
 
@@ -177,8 +177,11 @@ final class Bootstrap {
             throw new BootstrapException(e);
         }
 
-        initializeNatives(environment.tmpFile(), BootstrapSettings.MEMORY_LOCK_SETTING.get(settings),
-                BootstrapSettings.SYSTEM_CALL_FILTER_SETTING.get(settings), BootstrapSettings.CTRLHANDLER_SETTING.get(settings));
+        initializeNatives(
+                environment.tmpFile(),
+                BootstrapSettings.MEMORY_LOCK_SETTING.get(settings),
+                BootstrapSettings.SYSTEM_CALL_FILTER_SETTING.get(settings),
+                BootstrapSettings.CTRLHANDLER_SETTING.get(settings));
 
         // initialize probes before the security manager is installed
         initializeProbes();
@@ -192,8 +195,8 @@ final class Bootstrap {
                         LoggerContext context = (LoggerContext) LogManager.getContext(false);
                         Configurator.shutdown(context);
                         if (node != null && node.awaitClose(10, TimeUnit.SECONDS) == false) {
-                            throw new IllegalStateException(
-                                    "Node didn't stop within 10 seconds. " + "Any outstanding requests or tasks might get killed.");
+                            throw new IllegalStateException("Node didn't stop within 10 seconds. " +
+                                    "Any outstanding requests or tasks might get killed.");
                         }
                     } catch (IOException ex) {
                         throw new FesenException("failed to stop node", ex);
@@ -225,8 +228,9 @@ final class Bootstrap {
 
         node = new Node(environment) {
             @Override
-            protected void validateNodeBeforeAcceptingRequests(final BootstrapContext context,
-                    final BoundTransportAddress boundTransportAddress, List<BootstrapCheck> checks) throws NodeValidationException {
+            protected void validateNodeBeforeAcceptingRequests(
+                final BootstrapContext context,
+                final BoundTransportAddress boundTransportAddress, List<BootstrapCheck> checks) throws NodeValidationException {
                 BootstrapChecks.check(context, boundTransportAddress, checks);
             }
         };
@@ -251,7 +255,7 @@ final class Bootstrap {
             throw new BootstrapException(e);
         }
 
-        try {
+        try{
             if (keystore == null) {
                 final KeyStoreWrapper keyStoreWrapper = KeyStoreWrapper.create();
                 keyStoreWrapper.save(initialEnv.configFile(), new char[0]);
@@ -276,7 +280,7 @@ final class Bootstrap {
     static SecureString readPassphrase(InputStream stream, int maxLength) throws IOException {
         SecureString passphrase;
 
-        try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try(InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             passphrase = new SecureString(Terminal.readLineToCharArray(reader, maxLength));
         } catch (RuntimeException e) {
             if (e.getMessage().startsWith("Input exceeded maximum length")) {
@@ -293,7 +297,10 @@ final class Bootstrap {
         return passphrase;
     }
 
-    private static Environment createEnvironment(final Path pidFile, final SecureSettings secureSettings, final Settings initialSettings,
+    private static Environment createEnvironment(
+            final Path pidFile,
+            final SecureSettings secureSettings,
+            final Settings initialSettings,
             final Path configPath) {
         Settings.Builder builder = Settings.builder();
         if (pidFile != null) {
@@ -330,8 +337,11 @@ final class Bootstrap {
     /**
      * This method is invoked by {@link Fesen#main(String[])} to startup fesen.
      */
-    static void init(final boolean foreground, final Path pidFile, final boolean quiet, final Environment initialEnv)
-            throws BootstrapException, NodeValidationException, UserException {
+    static void init(
+            final boolean foreground,
+            final Path pidFile,
+            final boolean quiet,
+            final Environment initialEnv) throws BootstrapException, NodeValidationException, UserException {
         // force the class initializer for BootstrapInfo to run before
         // the security manager is installed
         BootstrapInfo.init();
@@ -348,9 +358,11 @@ final class Bootstrap {
             throw new BootstrapException(e);
         }
         if (JavaVersion.current().compareTo(JavaVersion.parse("11")) < 0) {
-            final String message = String.format(Locale.ROOT,
-                    "future versions of Fesen will require Java 11; " + "your Java version from [%s] does not meet this requirement",
-                    System.getProperty("java.home"));
+            final String message = String.format(
+                            Locale.ROOT,
+                            "future versions of Fesen will require Java 11; " +
+                                    "your Java version from [%s] does not meet this requirement",
+                            System.getProperty("java.home"));
             DeprecationLogger.getLogger(Bootstrap.class).deprecate("java_version_11_required", message);
         }
         if (environment.pidFile() != null) {
@@ -453,9 +465,8 @@ final class Bootstrap {
 
     private static void checkLucene() {
         if (Version.CURRENT.luceneVersion.equals(org.apache.lucene.util.Version.LATEST) == false) {
-            throw new AssertionError(
-                    "Lucene version mismatch this version of Fesen requires lucene version [" + Version.CURRENT.luceneVersion
-                            + "]  but the current lucene version is [" + org.apache.lucene.util.Version.LATEST + "]");
+            throw new AssertionError("Lucene version mismatch this version of Fesen requires lucene version ["
+                + Version.CURRENT.luceneVersion + "]  but the current lucene version is [" + org.apache.lucene.util.Version.LATEST + "]");
         }
     }
 

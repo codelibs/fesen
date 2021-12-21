@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index.query.functionscore;
 
-import java.io.IOException;
-import java.util.function.BiFunction;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.SearchModule;
+
+import java.io.IOException;
+import java.util.function.BiFunction;
 
 /**
  * Parser used for all decay functions, one instance each. It parses this kind

@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ValidateActions;
 import org.codelibs.fesen.common.Strings;
@@ -36,12 +31,21 @@ import org.codelibs.fesen.search.aggregations.bucket.histogram.DateHistogramAggr
 import org.codelibs.fesen.search.aggregations.bucket.histogram.HistogramAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * A factory that knows how to create an {@link PipelineAggregator} of a
  * specific type.
  */
 public abstract class PipelineAggregationBuilder
-        implements NamedWriteable, BaseAggregationBuilder, ToXContentFragment, Rewriteable<PipelineAggregationBuilder> {
+    implements
+        NamedWriteable,
+        BaseAggregationBuilder,
+        ToXContentFragment,
+        Rewriteable<PipelineAggregationBuilder> {
 
     protected final String name;
     protected final String[] bucketsPaths;
@@ -77,7 +81,6 @@ public abstract class PipelineAggregationBuilder
      * Makes sure this builder is properly configured.
      */
     protected abstract void validate(ValidationContext context);
-
     public abstract static class ValidationContext {
         /**
          * Build the context for the root of the aggregation tree.
@@ -91,9 +94,11 @@ public abstract class PipelineAggregationBuilder
         /**
          * Build the context for a node inside the aggregation tree.
          */
-        public static ValidationContext forInsideTree(AggregationBuilder parent, ActionRequestValidationException validationFailuresSoFar) {
+        public static ValidationContext forInsideTree(AggregationBuilder parent,
+                ActionRequestValidationException validationFailuresSoFar) {
             return new ForInsideTree(parent, validationFailuresSoFar);
         }
+
 
         private ActionRequestValidationException e;
 
@@ -163,12 +168,14 @@ public abstract class PipelineAggregationBuilder
                 if (parent instanceof HistogramAggregationBuilder) {
                     HistogramAggregationBuilder histoParent = (HistogramAggregationBuilder) parent;
                     if (histoParent.minDocCount() != 0) {
-                        addValidationError("parent histogram of " + type + " aggregation [" + name + "] must have min_doc_count of 0");
+                        addValidationError(
+                                "parent histogram of " + type + " aggregation [" + name + "] must have min_doc_count of 0");
                     }
                 } else if (parent instanceof DateHistogramAggregationBuilder) {
                     DateHistogramAggregationBuilder histoParent = (DateHistogramAggregationBuilder) parent;
                     if (histoParent.minDocCount() != 0) {
-                        addValidationError("parent histogram of " + type + " aggregation [" + name + "] must have min_doc_count of 0");
+                        addValidationError(
+                                "parent histogram of " + type + " aggregation [" + name + "] must have min_doc_count of 0");
                     }
                 } else if (parent instanceof AutoDateHistogramAggregationBuilder) {
                     // Nothing to check

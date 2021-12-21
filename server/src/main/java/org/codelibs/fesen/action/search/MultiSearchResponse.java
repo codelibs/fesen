@@ -19,15 +19,8 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -43,6 +36,13 @@ import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.core.TimeValue;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * A multi search response.
  */
@@ -50,8 +50,8 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
 
     private static final ParseField RESPONSES = new ParseField(Fields.RESPONSES);
     private static final ParseField TOOK_IN_MILLIS = new ParseField("took");
-    private static final ConstructingObjectParser<MultiSearchResponse, Void> PARSER = new ConstructingObjectParser<>("multi_search", true,
-            a -> new MultiSearchResponse(((List<Item>) a[0]).toArray(new Item[0]), (long) a[1]));
+    private static final ConstructingObjectParser<MultiSearchResponse, Void> PARSER = new ConstructingObjectParser<>("multi_search",
+            true, a -> new MultiSearchResponse(((List<Item>)a[0]).toArray(new Item[0]), (long) a[1]));
     static {
         PARSER.declareObjectArray(constructorArg(), (p, c) -> itemFromXContent(p), RESPONSES);
         PARSER.declareLong(constructorArg(), TOOK_IN_MILLIS);
@@ -69,7 +69,7 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
             this.exception = exception;
         }
 
-        Item(StreamInput in) throws IOException {
+        Item(StreamInput in) throws IOException{
             if (in.readBoolean()) {
                 this.response = new SearchResponse(in);
                 this.exception = null;
@@ -209,20 +209,20 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
         assert token == Token.FIELD_NAME;
         outer: for (; token != Token.END_OBJECT; token = parser.nextToken()) {
             switch (token) {
-            case FIELD_NAME:
-                fieldName = parser.currentName();
-                if ("error".equals(fieldName)) {
-                    item = new Item(null, FesenException.failureFromXContent(parser));
-                } else if ("status".equals(fieldName) == false) {
-                    item = new Item(SearchResponse.innerFromXContent(parser), null);
-                    break outer;
-                }
-                break;
-            case VALUE_NUMBER:
-                if ("status".equals(fieldName)) {
-                    // Ignore the status value
-                }
-                break;
+                case FIELD_NAME:
+                    fieldName = parser.currentName();
+                    if ("error".equals(fieldName)) {
+                        item = new Item(null, FesenException.failureFromXContent(parser));
+                    } else if ("status".equals(fieldName) == false) {
+                        item = new Item(SearchResponse.innerFromXContent(parser), null);
+                        break outer;
+                    }
+                    break;
+                case VALUE_NUMBER:
+                    if ("status".equals(fieldName)) {
+                        // Ignore the status value
+                    }
+                    break;
             }
         }
         assert parser.currentToken() == Token.END_OBJECT;

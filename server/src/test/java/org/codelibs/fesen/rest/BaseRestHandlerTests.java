@@ -90,7 +90,7 @@ public class BaseRestHandlerTests extends ESTestCase {
         RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withParams(params).build();
         RestChannel channel = new FakeRestChannel(request, randomBoolean(), 1);
         final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
+            expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
         assertThat(e, hasToString(containsString("request [/] contains unrecognized parameter: [unconsumed]")));
         assertFalse(executed.get());
     }
@@ -122,7 +122,7 @@ public class BaseRestHandlerTests extends ESTestCase {
         RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withParams(params).build();
         RestChannel channel = new FakeRestChannel(request, randomBoolean(), 1);
         final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
+            expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
         assertThat(e, hasToString(containsString("request [/] contains unrecognized parameters: [unconsumed-first], [unconsumed-second]")));
         assertFalse(executed.get());
     }
@@ -166,12 +166,16 @@ public class BaseRestHandlerTests extends ESTestCase {
         RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withParams(params).build();
         RestChannel channel = new FakeRestChannel(request, randomBoolean(), 1);
         final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
-        assertThat(e,
-                hasToString(containsString("request [/] contains unrecognized parameters: " + "[flied] -> did you mean [field]?, "
-                        + "[respones_param] -> did you mean [response_param]?, " + "[tokenzier] -> did you mean [tokenizer]?, "
-                        + "[very_close_to_parametre] -> did you mean any of [very_close_to_parameter_1, very_close_to_parameter_2]?, "
-                        + "[very_far_from_every_consumed_parameter]")));
+            expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));
+        assertThat(
+            e,
+            hasToString(containsString(
+                "request [/] contains unrecognized parameters: " +
+                    "[flied] -> did you mean [field]?, " +
+                    "[respones_param] -> did you mean [response_param]?, " +
+                    "[tokenzier] -> did you mean [tokenizer]?, " +
+                    "[very_close_to_parametre] -> did you mean any of [very_close_to_parameter_1, very_close_to_parameter_2]?, " +
+                    "[very_far_from_every_consumed_parameter]")));
         assertFalse(executed.get());
     }
 
@@ -305,7 +309,8 @@ public class BaseRestHandlerTests extends ESTestCase {
 
         try (XContentBuilder builder = JsonXContent.contentBuilder().startObject().endObject()) {
             final RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                    .withContent(new BytesArray(builder.toString()), XContentType.JSON).build();
+                    .withContent(new BytesArray(builder.toString()), XContentType.JSON)
+                    .build();
             final RestChannel channel = new FakeRestChannel(request, randomBoolean(), 1);
             handler.handleRequest(request, channel, mockClient);
             assertTrue(executed.get());
@@ -358,7 +363,8 @@ public class BaseRestHandlerTests extends ESTestCase {
 
         try (XContentBuilder builder = JsonXContent.contentBuilder().startObject().endObject()) {
             final RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
-                    .withContent(new BytesArray(builder.toString()), XContentType.JSON).build();
+                    .withContent(new BytesArray(builder.toString()), XContentType.JSON)
+                    .build();
             final RestChannel channel = new FakeRestChannel(request, randomBoolean(), 1);
             final IllegalArgumentException e =
                     expectThrows(IllegalArgumentException.class, () -> handler.handleRequest(request, channel, mockClient));

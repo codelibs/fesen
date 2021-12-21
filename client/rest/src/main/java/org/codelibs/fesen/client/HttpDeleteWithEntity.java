@@ -18,10 +18,10 @@
  */
 package org.codelibs.fesen.client;
 
-import java.net.URI;
-
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+
+import java.net.URI;
 
 /**
  * Allows to send DELETE requests providing a body (not supported out of the box)

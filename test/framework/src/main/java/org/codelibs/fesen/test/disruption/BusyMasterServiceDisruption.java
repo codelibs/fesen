@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.test.disruption;
 
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
 import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.Priority;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.test.InternalTestCluster;
+
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BusyMasterServiceDisruption extends SingleNodeDisruption {
     private final AtomicBoolean active = new AtomicBoolean();
@@ -54,20 +54,23 @@ public class BusyMasterServiceDisruption extends SingleNodeDisruption {
     }
 
     private void submitTask(ClusterService clusterService) {
-        clusterService.getMasterService().submitStateUpdateTask("service_disruption_block", new ClusterStateUpdateTask(priority) {
-            @Override
-            public ClusterState execute(ClusterState currentState) {
-                if (active.get()) {
-                    submitTask(clusterService);
+        clusterService.getMasterService().submitStateUpdateTask(
+            "service_disruption_block",
+            new ClusterStateUpdateTask(priority) {
+                @Override
+                public ClusterState execute(ClusterState currentState) {
+                    if (active.get()) {
+                        submitTask(clusterService);
+                    }
+                    return currentState;
                 }
-                return currentState;
-            }
 
-            @Override
-            public void onFailure(String source, Exception e) {
-                logger.error("unexpected error during disruption", e);
+                @Override
+                public void onFailure(String source, Exception e) {
+                    logger.error("unexpected error during disruption", e);
+                }
             }
-        });
+        );
     }
 
     @Override

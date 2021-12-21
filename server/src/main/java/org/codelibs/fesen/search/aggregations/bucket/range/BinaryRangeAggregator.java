@@ -18,14 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import static java.util.Collections.emptyList;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.search.ScoreMode;
@@ -41,6 +33,14 @@ import org.codelibs.fesen.search.aggregations.LeafBucketCollectorBase;
 import org.codelibs.fesen.search.aggregations.bucket.BucketsAggregator;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 /** A range aggregator for values that are stored in SORTED_SET doc values. */
 public final class BinaryRangeAggregator extends BucketsAggregator {
@@ -66,7 +66,9 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
     };
 
     private static int compare(BytesRef a, BytesRef b, int m) {
-        return a == null ? b == null ? 0 : -m : b == null ? m : a.compareTo(b);
+        return a == null
+                ? b == null ? 0 : -m
+                : b == null ? m : a.compareTo(b);
     }
 
     final ValuesSource.Bytes valuesSource;
@@ -74,9 +76,10 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
     final boolean keyed;
     final Range[] ranges;
 
-    public BinaryRangeAggregator(String name, AggregatorFactories factories, ValuesSource valuesSource, DocValueFormat format,
-            List<Range> ranges, boolean keyed, SearchContext context, Aggregator parent, CardinalityUpperBound cardinality,
-            Map<String, Object> metadata) throws IOException {
+    public BinaryRangeAggregator(String name, AggregatorFactories factories,
+            ValuesSource valuesSource, DocValueFormat format,
+            List<Range> ranges, boolean keyed, SearchContext context,
+            Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException {
         super(name, factories, context, parent, cardinality.multiply(ranges.size()), metadata);
         this.valuesSource = (ValuesSource.Bytes) valuesSource;
         this.format = format;
@@ -111,7 +114,8 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
             SortedBinaryDocValues values = valuesSource.bytesValues(ctx);
             return new SortedBinaryRangeLeafCollector(values, ranges, sub) {
                 @Override
-                protected void doCollect(LeafBucketCollector sub, int doc, long bucket) throws IOException {
+                protected void doCollect(LeafBucketCollector sub, int doc, long bucket)
+                        throws IOException {
                     collectBucket(sub, doc, bucket);
                 }
             };
@@ -124,10 +128,11 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
         final SortedSetDocValues values;
         final LeafBucketCollector sub;
 
-        SortedSetRangeLeafCollector(SortedSetDocValues values, Range[] ranges, LeafBucketCollector sub) throws IOException {
+        SortedSetRangeLeafCollector(SortedSetDocValues values,
+                Range[] ranges, LeafBucketCollector sub) throws IOException {
             super(sub, values);
             for (int i = 1; i < ranges.length; ++i) {
-                if (RANGE_COMPARATOR.compare(ranges[i - 1], ranges[i]) > 0) {
+                if (RANGE_COMPARATOR.compare(ranges[i-1], ranges[i]) > 0) {
                     throw new IllegalArgumentException("Ranges must be sorted");
                 }
             }
@@ -158,7 +163,7 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
             }
             maxTos[0] = tos[0];
             for (int i = 1; i < tos.length; ++i) {
-                maxTos[i] = Math.max(maxTos[i - 1], tos[i]);
+                maxTos[i] = Math.max(maxTos[i-1], tos[i]);
             }
         }
 
@@ -166,7 +171,9 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
         public void collect(int doc, long bucket) throws IOException {
             if (values.advanceExact(doc)) {
                 int lo = 0;
-                for (long ord = values.nextOrd(); ord != SortedSetDocValues.NO_MORE_ORDS; ord = values.nextOrd()) {
+                for (long ord = values
+                        .nextOrd(); ord != SortedSetDocValues.NO_MORE_ORDS; ord = values
+                                .nextOrd()) {
                     lo = collect(doc, ord, bucket, lo);
                 }
             }
@@ -185,8 +192,7 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
                 }
                 mid = (lo + hi) >>> 1;
             }
-            if (lo > hi)
-                return lo; // no potential candidate
+            if (lo > hi) return lo; // no potential candidate
 
             // binary search the lower bound
             int startLo = lo, startHi = mid;
@@ -232,10 +238,11 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
         final SortedBinaryDocValues values;
         final LeafBucketCollector sub;
 
-        SortedBinaryRangeLeafCollector(SortedBinaryDocValues values, Range[] ranges, LeafBucketCollector sub) {
+        SortedBinaryRangeLeafCollector(SortedBinaryDocValues values,
+                Range[] ranges, LeafBucketCollector sub) {
             super(sub, values);
             for (int i = 1; i < ranges.length; ++i) {
-                if (RANGE_COMPARATOR.compare(ranges[i - 1], ranges[i]) > 0) {
+                if (RANGE_COMPARATOR.compare(ranges[i-1], ranges[i]) > 0) {
                     throw new IllegalArgumentException("Ranges must be sorted");
                 }
             }
@@ -247,10 +254,10 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
                 maxTos[0] = ranges[0].to;
             }
             for (int i = 1; i < ranges.length; ++i) {
-                if (compare(ranges[i].to, maxTos[i - 1], -1) >= 0) {
+                if (compare(ranges[i].to, maxTos[i-1], -1) >= 0) {
                     maxTos[i] = ranges[i].to;
                 } else {
-                    maxTos[i] = maxTos[i - 1];
+                    maxTos[i] = maxTos[i-1];
                 }
             }
         }
@@ -279,8 +286,7 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
                 }
                 mid = (lo + hi) >>> 1;
             }
-            if (lo > hi)
-                return lo; // no potential candidate
+            if (lo > hi) return lo; // no potential candidate
 
             // binary search the lower bound
             int startLo = lo, startHi = mid;
@@ -322,10 +328,10 @@ public final class BinaryRangeAggregator extends BucketsAggregator {
     @Override
     public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
         return buildAggregationsForFixedBucketCount(owningBucketOrds, ranges.length,
-                (offsetInOwningOrd, docCount, subAggregationResults) -> {
-                    Range range = ranges[offsetInOwningOrd];
-                    return new InternalBinaryRange.Bucket(format, keyed, range.key, range.from, range.to, docCount, subAggregationResults);
-                }, buckets -> new InternalBinaryRange(name, format, keyed, buckets, metadata()));
+            (offsetInOwningOrd, docCount, subAggregationResults) -> {
+                Range range = ranges[offsetInOwningOrd];
+                return new InternalBinaryRange.Bucket(format, keyed, range.key, range.from, range.to, docCount, subAggregationResults);
+            }, buckets -> new InternalBinaryRange(name, format, keyed, buckets, metadata()));
     }
 
     @Override

@@ -87,12 +87,12 @@ public class FieldCapabilitiesIndexResponse extends ActionResponse implements Wr
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FieldCapabilitiesIndexResponse that = (FieldCapabilitiesIndexResponse) o;
-        return canMatch == that.canMatch && Objects.equals(indexName, that.indexName) && Objects.equals(responseMap, that.responseMap);
+        return canMatch == that.canMatch &&
+            Objects.equals(indexName, that.indexName) &&
+            Objects.equals(responseMap, that.responseMap);
     }
 
     @Override

@@ -69,14 +69,16 @@ public class ClusterConnectionManagerTests extends ESTestCase {
 
     @Before
     public void createConnectionManager() {
-        Settings settings = Settings.builder().put("node.name", ClusterConnectionManagerTests.class.getSimpleName()).build();
+        Settings settings = Settings.builder()
+            .put("node.name", ClusterConnectionManagerTests.class.getSimpleName())
+            .build();
         threadPool = new ThreadPool(settings);
         transport = mock(Transport.class);
         connectionManager = new ClusterConnectionManager(settings, transport);
         TimeValue oneSecond = new TimeValue(1000);
         TimeValue oneMinute = TimeValue.timeValueMinutes(1);
-        connectionProfile =
-                ConnectionProfile.buildSingleChannelProfile(TransportRequestOptions.Type.REG, oneSecond, oneSecond, oneMinute, false);
+        connectionProfile = ConnectionProfile.buildSingleChannelProfile(TransportRequestOptions.Type.REG, oneSecond, oneSecond,
+            oneMinute, false);
     }
 
     @After
@@ -99,6 +101,7 @@ public class ClusterConnectionManagerTests extends ESTestCase {
             }
         });
 
+
         DiscoveryNode node = new DiscoveryNode("", new TransportAddress(InetAddress.getLoopbackAddress(), 0), Version.CURRENT);
         Transport.Connection connection = new TestConnect(node);
         doAnswer(invocationOnMock -> {
@@ -114,8 +117,8 @@ public class ClusterConnectionManagerTests extends ESTestCase {
             connectionRef.set(c);
             l.onResponse(null);
         };
-        PlainActionFuture
-                .get(fut -> connectionManager.connectToNode(node, connectionProfile, validator, ActionListener.map(fut, x -> null)));
+        PlainActionFuture.get(
+            fut -> connectionManager.connectToNode(node, connectionProfile, validator, ActionListener.map(fut, x -> null)));
 
         assertFalse(connection.isClosed());
         assertTrue(connectionManager.nodeConnected(node));
@@ -185,18 +188,19 @@ public class ClusterConnectionManagerTests extends ESTestCase {
                     throw new RuntimeException(e);
                 }
                 CountDownLatch latch = new CountDownLatch(1);
-                connectionManager.connectToNode(node, connectionProfile, validator, ActionListener.wrap(c -> {
-                    nodeConnectedCount.incrementAndGet();
-                    if (connectionManager.nodeConnected(node) == false) {
-                        throw new AssertionError("Expected node to be connected");
-                    }
-                    assert latch.getCount() == 1;
-                    latch.countDown();
-                }, e -> {
-                    nodeFailureCount.incrementAndGet();
-                    assert latch.getCount() == 1;
-                    latch.countDown();
-                }));
+                connectionManager.connectToNode(node, connectionProfile, validator,
+                    ActionListener.wrap(c -> {
+                        nodeConnectedCount.incrementAndGet();
+                        if (connectionManager.nodeConnected(node) == false) {
+                            throw new AssertionError("Expected node to be connected");
+                        }
+                        assert latch.getCount() == 1;
+                        latch.countDown();
+                    }, e -> {
+                        nodeFailureCount.incrementAndGet();
+                        assert latch.getCount() == 1;
+                        latch.countDown();
+                    }));
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
@@ -229,6 +233,7 @@ public class ClusterConnectionManagerTests extends ESTestCase {
             assertEquals(0, connections.stream().filter(c -> c.isClosed() == false).count());
         }
 
+
         connectionManager.close();
         // The connection manager will close all open connections
         for (Transport.Connection connection : connections) {
@@ -250,6 +255,7 @@ public class ClusterConnectionManagerTests extends ESTestCase {
                 nodeDisconnectedCount.incrementAndGet();
             }
         });
+
 
         DiscoveryNode node = new DiscoveryNode("", new TransportAddress(InetAddress.getLoopbackAddress(), 0), Version.CURRENT);
         Transport.Connection connection = new TestConnect(node);
@@ -289,6 +295,7 @@ public class ClusterConnectionManagerTests extends ESTestCase {
                 nodeDisconnectedCount.incrementAndGet();
             }
         });
+
 
         DiscoveryNode node = new DiscoveryNode("", new TransportAddress(InetAddress.getLoopbackAddress(), 0), Version.CURRENT);
         doAnswer(invocationOnMock -> {
@@ -332,7 +339,7 @@ public class ClusterConnectionManagerTests extends ESTestCase {
 
         @Override
         public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-                throws TransportException {
+            throws TransportException {
         }
     }
 }

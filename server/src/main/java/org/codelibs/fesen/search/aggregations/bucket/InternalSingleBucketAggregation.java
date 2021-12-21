@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
@@ -35,6 +26,15 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.search.aggregations.support.AggregationPath;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A base class for all the single bucket aggregations.
@@ -51,7 +51,8 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
      * @param docCount      The document count in the single bucket.
      * @param aggregations  The already built sub-aggregations that are associated with the bucket.
      */
-    protected InternalSingleBucketAggregation(String name, long docCount, InternalAggregations aggregations, Map<String, Object> metadata) {
+    protected InternalSingleBucketAggregation(String name, long docCount, InternalAggregations aggregations,
+            Map<String, Object> metadata) {
         super(name, metadata);
         this.docCount = docCount;
         this.aggregations = aggregations;
@@ -117,15 +118,15 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
      * before allowing sibling pipelines to materialize.
      */
     @Override
-    public final InternalAggregation reducePipelines(InternalAggregation reducedAggs, ReduceContext reduceContext,
-            PipelineTree pipelineTree) {
+    public final InternalAggregation reducePipelines(
+            InternalAggregation reducedAggs, ReduceContext reduceContext, PipelineTree pipelineTree) {
         assert reduceContext.isFinalReduce();
         InternalAggregation reduced = this;
         if (pipelineTree.hasSubTrees()) {
             List<InternalAggregation> aggs = new ArrayList<>();
             for (Aggregation agg : getAggregations().asList()) {
                 PipelineTree subTree = pipelineTree.subTree(agg.getName());
-                aggs.add(((InternalAggregation) agg).reducePipelines((InternalAggregation) agg, reduceContext, subTree));
+                aggs.add(((InternalAggregation)agg).reducePipelines((InternalAggregation)agg, reduceContext, subTree));
             }
             InternalAggregations reducedSubAggs = InternalAggregations.from(aggs);
             reduced = create(reducedSubAggs);
@@ -163,8 +164,9 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
     @Override
     public final double sortValue(String key) {
         if (key != null && false == key.equals("doc_count")) {
-            throw new IllegalArgumentException("Unknown value key [" + key + "] for single-bucket aggregation [" + getName()
-                    + "]. Either use [doc_count] as key or drop the key all together.");
+            throw new IllegalArgumentException(
+                    "Unknown value key [" + key + "] for single-bucket aggregation [" + getName() +
+                    "]. Either use [doc_count] as key or drop the key all together.");
         }
         return docCount;
     }
@@ -195,15 +197,13 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalSingleBucketAggregation other = (InternalSingleBucketAggregation) obj;
-        return Objects.equals(docCount, other.docCount) && Objects.equals(aggregations, other.aggregations);
+        return Objects.equals(docCount, other.docCount) &&
+                Objects.equals(aggregations, other.aggregations);
     }
 
     @Override

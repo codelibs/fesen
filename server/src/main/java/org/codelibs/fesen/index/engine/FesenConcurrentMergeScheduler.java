@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.ConcurrentMergeScheduler;
 import org.apache.lucene.index.MergePolicy;
@@ -42,6 +37,11 @@ import org.codelibs.fesen.index.MergeSchedulerConfig;
 import org.codelibs.fesen.index.merge.MergeStats;
 import org.codelibs.fesen.index.merge.OnGoingMerge;
 import org.codelibs.fesen.index.shard.ShardId;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * An extension to the {@link ConcurrentMergeScheduler} that provides tracking on merge times, total
@@ -92,8 +92,8 @@ class FesenConcurrentMergeScheduler extends ConcurrentMergeScheduler {
 
         if (logger.isTraceEnabled()) {
             logger.trace("merge [{}] starting..., merging [{}] segments, [{}] docs, [{}] size, into [{}] estimated_size",
-                    OneMergeHelper.getSegmentName(merge), merge.segments.size(), totalNumDocs, new ByteSizeValue(totalSizeInBytes),
-                    new ByteSizeValue(merge.estimatedMergeBytes));
+                OneMergeHelper.getSegmentName(merge), merge.segments.size(), totalNumDocs, new ByteSizeValue(totalSizeInBytes),
+                new ByteSizeValue(merge.estimatedMergeBytes));
         }
         try {
             beforeMerge(onGoingMerge);
@@ -111,10 +111,12 @@ class FesenConcurrentMergeScheduler extends ConcurrentMergeScheduler {
             totalMergesNumDocs.inc(totalNumDocs);
             totalMergesSizeInBytes.inc(totalSizeInBytes);
             totalMerges.inc(tookMS);
-            long stoppedMS =
-                    TimeValue.nsecToMSec(merge.getMergeProgress().getPauseTimes().get(MergePolicy.OneMergeProgress.PauseReason.STOPPED));
-            long throttledMS =
-                    TimeValue.nsecToMSec(merge.getMergeProgress().getPauseTimes().get(MergePolicy.OneMergeProgress.PauseReason.PAUSED));
+            long stoppedMS = TimeValue.nsecToMSec(
+                merge.getMergeProgress().getPauseTimes().get(MergePolicy.OneMergeProgress.PauseReason.STOPPED)
+            );
+            long throttledMS = TimeValue.nsecToMSec(
+                merge.getMergeProgress().getPauseTimes().get(MergePolicy.OneMergeProgress.PauseReason.PAUSED)
+            );
             final Thread thread = Thread.currentThread();
             long totalBytesWritten = OneMergeHelper.getTotalBytesWritten(thread, merge);
             double mbPerSec = OneMergeHelper.getMbPerSec(thread, merge);
@@ -122,11 +124,16 @@ class FesenConcurrentMergeScheduler extends ConcurrentMergeScheduler {
             totalMergeThrottledTime.inc(throttledMS);
 
             String message = String.format(Locale.ROOT,
-                    "merge segment [%s] done: took [%s], [%,.1f MB], [%,d docs], [%s stopped], "
-                            + "[%s throttled], [%,.1f MB written], [%,.1f MB/sec throttle]",
-                    OneMergeHelper.getSegmentName(merge), TimeValue.timeValueMillis(tookMS), totalSizeInBytes / 1024f / 1024f, totalNumDocs,
-                    TimeValue.timeValueMillis(stoppedMS), TimeValue.timeValueMillis(throttledMS), totalBytesWritten / 1024f / 1024f,
-                    mbPerSec);
+                                           "merge segment [%s] done: took [%s], [%,.1f MB], [%,d docs], [%s stopped], " +
+                                               "[%s throttled], [%,.1f MB written], [%,.1f MB/sec throttle]",
+                                           OneMergeHelper.getSegmentName(merge),
+                                           TimeValue.timeValueMillis(tookMS),
+                                           totalSizeInBytes/1024f/1024f,
+                                           totalNumDocs,
+                                           TimeValue.timeValueMillis(stoppedMS),
+                                           TimeValue.timeValueMillis(throttledMS),
+                                           totalBytesWritten/1024f/1024f,
+                                           mbPerSec);
 
             if (tookMS > 20000) { // if more than 20 seconds, DEBUG log it
                 logger.debug("{}", message);
@@ -139,14 +146,12 @@ class FesenConcurrentMergeScheduler extends ConcurrentMergeScheduler {
     /**
      * A callback allowing for custom logic before an actual merge starts.
      */
-    protected void beforeMerge(OnGoingMerge merge) {
-    }
+    protected void beforeMerge(OnGoingMerge merge) {}
 
     /**
      * A callback allowing for custom logic before an actual merge starts.
      */
-    protected void afterMerge(OnGoingMerge merge) {
-    }
+    protected void afterMerge(OnGoingMerge merge) {}
 
     @Override
     public MergeScheduler clone() {
@@ -164,16 +169,18 @@ class FesenConcurrentMergeScheduler extends ConcurrentMergeScheduler {
     @Override
     protected MergeThread getMergeThread(MergeSource mergeSource, MergePolicy.OneMerge merge) throws IOException {
         MergeThread thread = super.getMergeThread(mergeSource, merge);
-        thread.setName(
-                EsExecutors.threadName(indexSettings, "[" + shardId.getIndexName() + "][" + shardId.id() + "]: " + thread.getName()));
+        thread.setName(EsExecutors.threadName(indexSettings, "[" + shardId.getIndexName() + "][" + shardId.id() + "]: " +
+            thread.getName()));
         return thread;
     }
 
     MergeStats stats() {
         final MergeStats mergeStats = new MergeStats();
         mergeStats.add(totalMerges.count(), totalMerges.sum(), totalMergesNumDocs.count(), totalMergesSizeInBytes.count(),
-                currentMerges.count(), currentMergesNumDocs.count(), currentMergesSizeInBytes.count(), totalMergeStoppedTime.count(),
-                totalMergeThrottledTime.count(), config.isAutoThrottle() ? getIORateLimitMBPerSec() : Double.POSITIVE_INFINITY);
+                currentMerges.count(), currentMergesNumDocs.count(), currentMergesSizeInBytes.count(),
+                totalMergeStoppedTime.count(),
+                totalMergeThrottledTime.count(),
+                config.isAutoThrottle() ? getIORateLimitMBPerSec() : Double.POSITIVE_INFINITY);
         return mergeStats;
     }
 

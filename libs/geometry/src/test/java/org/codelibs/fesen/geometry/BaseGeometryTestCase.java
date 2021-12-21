@@ -19,15 +19,27 @@
 
 package org.codelibs.fesen.geometry;
 
+import org.codelibs.fesen.geometry.Circle;
+import org.codelibs.fesen.geometry.Geometry;
+import org.codelibs.fesen.geometry.GeometryCollection;
+import org.codelibs.fesen.geometry.GeometryVisitor;
+import org.codelibs.fesen.geometry.Line;
+import org.codelibs.fesen.geometry.LinearRing;
+import org.codelibs.fesen.geometry.MultiLine;
+import org.codelibs.fesen.geometry.MultiPoint;
+import org.codelibs.fesen.geometry.MultiPolygon;
+import org.codelibs.fesen.geometry.Point;
+import org.codelibs.fesen.geometry.Polygon;
+import org.codelibs.fesen.geometry.Rectangle;
+import org.codelibs.fesen.geometry.utils.GeographyValidator;
+import org.codelibs.fesen.geometry.utils.WellKnownText;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.test.AbstractWireTestCase;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.geometry.utils.GeographyValidator;
-import org.codelibs.fesen.geometry.utils.WellKnownText;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.test.AbstractWireTestCase;
 
 abstract class BaseGeometryTestCase<T extends Geometry> extends AbstractWireTestCase<T> {
 
@@ -74,8 +86,7 @@ abstract class BaseGeometryTestCase<T extends Geometry> extends AbstractWireTest
 
             @Override
             public Object visit(GeometryCollection<?> collection) {
-                return verify(collection, "GeometryCollection");
-            }
+                return verify(collection, "GeometryCollection");            }
 
             @Override
             public Object visit(Line line) {

@@ -24,9 +24,9 @@ import java.util.Map;
 
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.Aggregator;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
@@ -42,25 +42,34 @@ public class BinaryRangeAggregatorFactory extends ValuesSourceAggregatorFactory 
     private final List<BinaryRangeAggregator.Range> ranges;
     private final boolean keyed;
 
-    public BinaryRangeAggregatorFactory(String name, ValuesSourceConfig config, List<BinaryRangeAggregator.Range> ranges, boolean keyed,
-            QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder, Map<String, Object> metadata)
-            throws IOException {
+    public BinaryRangeAggregatorFactory(String name,
+            ValuesSourceConfig config,
+            List<BinaryRangeAggregator.Range> ranges, boolean keyed,
+            QueryShardContext queryShardContext,
+            AggregatorFactory parent, Builder subFactoriesBuilder,
+            Map<String, Object> metadata) throws IOException {
         super(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
         this.ranges = ranges;
         this.keyed = keyed;
     }
 
     @Override
-    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent, Map<String, Object> metadata) throws IOException {
-        return new BinaryRangeAggregator(name, factories, null, config.format(), ranges, keyed, searchContext, parent,
-                CardinalityUpperBound.NONE, metadata);
+    protected Aggregator createUnmapped(SearchContext searchContext, Aggregator parent,
+            Map<String, Object> metadata) throws IOException {
+        return new BinaryRangeAggregator(name, factories, null, config.format(),
+                ranges, keyed, searchContext, parent, CardinalityUpperBound.NONE, metadata);
     }
 
     @Override
-    protected Aggregator doCreateInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
-            Map<String, Object> metadata) throws IOException {
-        return queryShardContext.getValuesSourceRegistry().getAggregator(IpRangeAggregationBuilder.REGISTRY_KEY, config).build(name,
-                factories, config.getValuesSource(), config.format(), ranges, keyed, searchContext, parent, cardinality, metadata);
+    protected Aggregator doCreateInternal(
+        SearchContext searchContext,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
+        return queryShardContext.getValuesSourceRegistry()
+            .getAggregator(IpRangeAggregationBuilder.REGISTRY_KEY, config)
+            .build(name, factories, config.getValuesSource(), config.format(), ranges, keyed, searchContext, parent, cardinality, metadata);
     }
 
 }

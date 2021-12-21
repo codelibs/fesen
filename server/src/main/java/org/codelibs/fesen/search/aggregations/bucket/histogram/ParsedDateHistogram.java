@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.List;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.List;
 
 public class ParsedDateHistogram extends ParsedMultiBucketAggregation<ParsedDateHistogram.ParsedBucket> implements Histogram {
 
@@ -44,7 +44,8 @@ public class ParsedDateHistogram extends ParsedMultiBucketAggregation<ParsedDate
     private static final ObjectParser<ParsedDateHistogram, Void> PARSER =
             new ObjectParser<>(ParsedDateHistogram.class.getSimpleName(), true, ParsedDateHistogram::new);
     static {
-        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
+        declareMultiBucketAggregationFields(PARSER,
+                parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 

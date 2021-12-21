@@ -69,8 +69,9 @@ public class TransportServiceDeserializationFailureTests extends ESTestCase {
                 }
             }
         };
-        final TransportService transportService = transport.createTransportService(Settings.EMPTY, deterministicTaskQueue.getThreadPool(),
-                TransportService.NOOP_TRANSPORT_INTERCEPTOR, ignored -> localNode, null, Collections.emptySet());
+        final TransportService transportService = transport.createTransportService(Settings.EMPTY,
+                deterministicTaskQueue.getThreadPool(), TransportService.NOOP_TRANSPORT_INTERCEPTOR, ignored -> localNode, null,
+                Collections.emptySet());
 
         transportService.registerRequestHandler(testActionName, ThreadPool.Names.SAME, TransportRequest.Empty::new,
                 (request, channel, task) -> channel.sendResponse(TransportResponse.Empty.INSTANCE));
@@ -85,8 +86,8 @@ public class TransportServiceDeserializationFailureTests extends ESTestCase {
         {
             // requests without a parent task are recorded directly in the response context
 
-            transportService.sendRequest(otherNode, testActionName, TransportRequest.Empty.INSTANCE, TransportRequestOptions.EMPTY,
-                    new TransportResponseHandler<TransportResponse.Empty>() {
+            transportService.sendRequest(otherNode, testActionName, TransportRequest.Empty.INSTANCE,
+                    TransportRequestOptions.EMPTY, new TransportResponseHandler<TransportResponse.Empty>() {
                         @Override
                         public void handleResponse(TransportResponse.Empty response) {
                             fail("should not be called");
@@ -113,8 +114,8 @@ public class TransportServiceDeserializationFailureTests extends ESTestCase {
                         }
                     });
 
-            final List<Transport.ResponseContext<? extends TransportResponse>> responseContexts =
-                    transport.getResponseHandlers().prune(ignored -> true);
+            final List<Transport.ResponseContext<? extends TransportResponse>> responseContexts
+                    = transport.getResponseHandlers().prune(ignored -> true);
             assertThat(responseContexts, hasSize(1));
             final TransportResponseHandler<? extends TransportResponse> handler = responseContexts.get(0).handler();
             assertThat(handler, hasToString(containsString("test handler without parent")));
@@ -163,8 +164,8 @@ public class TransportServiceDeserializationFailureTests extends ESTestCase {
                         }
                     });
 
-            final List<Transport.ResponseContext<? extends TransportResponse>> responseContexts =
-                    transport.getResponseHandlers().prune(ignored -> true);
+            final List<Transport.ResponseContext<? extends TransportResponse>> responseContexts
+                    = transport.getResponseHandlers().prune(ignored -> true);
             assertThat(responseContexts, hasSize(1));
             final TransportResponseHandler<? extends TransportResponse> handler = responseContexts.get(0).handler();
             assertThat(handler, hasToString(allOf(containsString("test handler with parent"), containsString(testActionName))));

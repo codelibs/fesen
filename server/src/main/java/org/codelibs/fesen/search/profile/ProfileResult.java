@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.search.profile;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -39,6 +29,16 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.TimeValue;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is the internal representation of a profiled Query, corresponding
@@ -65,8 +65,8 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     private final long nodeTime;
     private final List<ProfileResult> children;
 
-    public ProfileResult(String type, String description, Map<String, Long> breakdown, Map<String, Object> debug, long nodeTime,
-            List<ProfileResult> children) {
+    public ProfileResult(String type, String description, Map<String, Long> breakdown, Map<String, Object> debug,
+            long nodeTime, List<ProfileResult> children) {
         this.type = type;
         this.description = description;
         this.breakdown = Objects.requireNonNull(breakdown, "required breakdown argument missing");
@@ -78,7 +78,7 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     /**
      * Read from a stream.
      */
-    public ProfileResult(StreamInput in) throws IOException {
+    public ProfileResult(StreamInput in) throws IOException{
         this.type = in.readString();
         this.description = in.readString();
         this.nodeTime = in.readLong();
@@ -95,7 +95,7 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(type);
         out.writeString(description);
-        out.writeLong(nodeTime); // not Vlong because can be negative
+        out.writeLong(nodeTime);            // not Vlong because can be negative
         out.writeMap(breakdown, StreamOutput::writeString, StreamOutput::writeLong);
         if (out.getVersion().onOrAfter(Version.V_7_9_0)) {
             out.writeMap(debug, StreamOutput::writeString, StreamOutput::writeGenericValue);
@@ -184,7 +184,6 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         parser.declareObjectArray(optionalConstructorArg(), (p, c) -> fromXContent(p), CHILDREN);
         PARSER = parser.build();
     }
-
     public static ProfileResult fromXContent(XContentParser p) throws IOException {
         return PARSER.parse(p, null);
     }

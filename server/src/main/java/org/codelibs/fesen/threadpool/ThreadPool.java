@@ -19,28 +19,10 @@
 
 package org.codelibs.fesen.threadpool;
 
-import static java.util.Collections.unmodifiableMap;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -59,6 +41,25 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.node.ReportingService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.unmodifiableMap;
+
 public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     private static final Logger logger = LogManager.getLogger(ThreadPool.class);
@@ -66,8 +67,7 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     public static class Names {
         public static final String SAME = "same";
         public static final String GENERIC = "generic";
-        @Deprecated
-        public static final String LISTENER = "listener";
+        @Deprecated public static final String LISTENER = "listener";
         public static final String GET = "get";
         public static final String ANALYZE = "analyze";
         public static final String WRITE = "write";
@@ -86,7 +86,10 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     }
 
     public enum ThreadPoolType {
-        DIRECT("direct"), FIXED("fixed"), FIXED_AUTO_QUEUE_SIZE("fixed_auto_queue_size"), SCALING("scaling");
+        DIRECT("direct"),
+        FIXED("fixed"),
+        FIXED_AUTO_QUEUE_SIZE("fixed_auto_queue_size"),
+        SCALING("scaling");
 
         private final String type;
 
@@ -160,7 +163,8 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         return Collections.unmodifiableCollection(builders.values());
     }
 
-    public static Setting<TimeValue> ESTIMATED_TIME_INTERVAL_SETTING = Setting.timeSetting("thread_pool.estimated_time_interval",
+    public static Setting<TimeValue> ESTIMATED_TIME_INTERVAL_SETTING =
+        Setting.timeSetting("thread_pool.estimated_time_interval",
             TimeValue.timeValueMillis(200), TimeValue.ZERO, Setting.Property.NodeScope);
 
     public ThreadPool(final Settings settings, final ExecutorBuilder<?>... customBuilders) {
@@ -175,10 +179,10 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         builders.put(Names.WRITE, new FixedExecutorBuilder(settings, Names.WRITE, allocatedProcessors, 10000));
         builders.put(Names.GET, new FixedExecutorBuilder(settings, Names.GET, allocatedProcessors, 1000));
         builders.put(Names.ANALYZE, new FixedExecutorBuilder(settings, Names.ANALYZE, 1, 16));
-        builders.put(Names.SEARCH, new AutoQueueAdjustingExecutorBuilder(settings, Names.SEARCH, searchThreadPoolSize(allocatedProcessors),
-                1000, 1000, 1000, 2000));
-        builders.put(Names.SEARCH_THROTTLED,
-                new AutoQueueAdjustingExecutorBuilder(settings, Names.SEARCH_THROTTLED, 1, 100, 100, 100, 200));
+        builders.put(Names.SEARCH, new AutoQueueAdjustingExecutorBuilder(settings,
+                        Names.SEARCH, searchThreadPoolSize(allocatedProcessors), 1000, 1000, 1000, 2000));
+        builders.put(Names.SEARCH_THROTTLED, new AutoQueueAdjustingExecutorBuilder(settings,
+            Names.SEARCH_THROTTLED, 1, 100, 100, 100, 200));
         builders.put(Names.MANAGEMENT, new ScalingExecutorBuilder(Names.MANAGEMENT, 1, 5, TimeValue.timeValueMinutes(5)));
         // no queue as this means clients will need to handle rejections on listener queue even if the operation succeeded
         // the assumption here is that the listeners should be very lightweight on the listeners side
@@ -219,8 +223,13 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         executors.put(Names.SAME, new ExecutorHolder(DIRECT_EXECUTOR, new Info(Names.SAME, ThreadPoolType.DIRECT)));
         this.executors = unmodifiableMap(executors);
 
-        final List<Info> infos = executors.values().stream().filter(holder -> holder.info.getName().equals("same") == false)
-                .map(holder -> holder.info).collect(Collectors.toList());
+        final List<Info> infos =
+                executors
+                        .values()
+                        .stream()
+                        .filter(holder -> holder.info.getName().equals("same") == false)
+                        .map(holder -> holder.info)
+                        .collect(Collectors.toList());
         this.threadPoolInfo = new ThreadPoolInfo(infos);
         this.scheduler = Scheduler.initScheduler(settings);
         TimeValue estimatedTimeInterval = ESTIMATED_TIME_INTERVAL_SETTING.get(settings);
@@ -362,7 +371,7 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         } catch (EsRejectedExecutionException e) {
             if (e.isExecutorShutdown()) {
                 logger.debug(new ParameterizedMessage("could not schedule execution of [{}] after [{}] on [{}] as executor is shut down",
-                        command, delay, executor), e);
+                    command, delay, executor), e);
             } else {
                 throw e;
             }
@@ -371,12 +380,15 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     @Override
     public Cancellable scheduleWithFixedDelay(Runnable command, TimeValue interval, String executor) {
-        return new ReschedulingRunnable(command, interval, executor, this, (e) -> {
-            if (logger.isDebugEnabled()) {
-                logger.debug(() -> new ParameterizedMessage("scheduled task [{}] was rejected on thread pool [{}]", command, executor), e);
-            }
-        }, (e) -> logger.warn(() -> new ParameterizedMessage("failed to run scheduled task [{}] on thread pool [{}]", command, executor),
-                e));
+        return new ReschedulingRunnable(command, interval, executor, this,
+                (e) -> {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(() -> new ParameterizedMessage("scheduled task [{}] was rejected on thread pool [{}]",
+                                command, executor), e);
+                    }
+                },
+                (e) -> logger.warn(() -> new ParameterizedMessage("failed to run scheduled task [{}] on thread pool [{}]",
+                        command, executor), e));
     }
 
     protected final void stopCachedTimeThread() {
@@ -500,8 +512,8 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
                 executor.execute(runnable);
             } catch (EsRejectedExecutionException e) {
                 if (e.isExecutorShutdown()) {
-                    logger.debug(new ParameterizedMessage("could not schedule execution of [{}] on [{}] as executor is shut down", runnable,
-                            executor), e);
+                    logger.debug(new ParameterizedMessage("could not schedule execution of [{}] on [{}] as executor is shut down",
+                        runnable, executor), e);
                 } else {
                     throw e;
                 }
@@ -642,7 +654,13 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(name);
-            out.writeString(type.getType());
+            if (type == ThreadPoolType.FIXED_AUTO_QUEUE_SIZE &&
+                    out.getVersion().before(Version.V_6_0_0_alpha1)) {
+                // 5.x doesn't know about the "fixed_auto_queue_size" thread pool type, just write fixed.
+                out.writeString(ThreadPoolType.FIXED.getType());
+            } else {
+                out.writeString(type.getType());
+            }
             out.writeInt(min);
             out.writeInt(max);
             out.writeOptionalTimeValue(keepAlive);
@@ -710,15 +728,17 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     public static boolean terminate(ExecutorService service, long timeout, TimeUnit timeUnit) {
         if (service != null) {
             service.shutdown();
-            if (awaitTermination(service, timeout, timeUnit))
-                return true;
+            if (awaitTermination(service, timeout, timeUnit)) return true;
             service.shutdownNow();
             return awaitTermination(service, timeout, timeUnit);
         }
         return false;
     }
 
-    private static boolean awaitTermination(final ExecutorService service, final long timeout, final TimeUnit timeUnit) {
+    private static boolean awaitTermination(
+            final ExecutorService service,
+            final long timeout,
+            final TimeUnit timeUnit) {
         try {
             if (service.awaitTermination(timeout, timeUnit)) {
                 return true;
@@ -747,7 +767,10 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         return false;
     }
 
-    private static boolean awaitTermination(final ThreadPool threadPool, final long timeout, final TimeUnit timeUnit) {
+    private static boolean awaitTermination(
+            final ThreadPool threadPool,
+            final long timeout,
+            final TimeUnit timeUnit) {
         try {
             if (threadPool.awaitTermination(timeout, timeUnit)) {
                 return true;
@@ -763,8 +786,8 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     }
 
     public static boolean assertNotScheduleThread(String reason) {
-        assert Thread.currentThread().getName().contains("scheduler") == false : "Expected current thread [" + Thread.currentThread()
-                + "] to not be the scheduler thread. Reason: [" + reason + "]";
+        assert Thread.currentThread().getName().contains("scheduler") == false :
+            "Expected current thread [" + Thread.currentThread() + "] to not be the scheduler thread. Reason: [" + reason + "]";
         return true;
     }
 
@@ -776,8 +799,8 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         final StackTraceElement testingMethod = stackTraceElements[2];
         for (int i = 3; i < stackTraceElements.length; i++) {
             assert stackTraceElements[i].getClassName().equals(testingMethod.getClassName()) == false
-                    || stackTraceElements[i].getMethodName().equals(testingMethod.getMethodName()) == false : testingMethod.getClassName()
-                            + "#" + testingMethod.getMethodName() + " is called recursively";
+                || stackTraceElements[i].getMethodName().equals(testingMethod.getMethodName()) == false :
+                testingMethod.getClassName() + "#" + testingMethod.getMethodName() + " is called recursively";
         }
         return true;
     }

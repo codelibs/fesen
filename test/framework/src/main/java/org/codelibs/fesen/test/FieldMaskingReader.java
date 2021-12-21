@@ -18,18 +18,17 @@
  */
 package org.codelibs.fesen.test;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FieldFilterLeafReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.apache.lucene.index.FilterLeafReader;
 import org.apache.lucene.index.LeafReader;
 
+import java.io.IOException;
+import java.util.Collections;
+
 public class FieldMaskingReader extends FilterDirectoryReader {
     private final String field;
-
     public FieldMaskingReader(String field, DirectoryReader in) throws IOException {
         super(in, new FilterDirectoryReader.SubReaderWrapper() {
             @Override

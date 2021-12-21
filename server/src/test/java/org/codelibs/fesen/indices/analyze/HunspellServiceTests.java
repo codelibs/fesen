@@ -35,8 +35,11 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class HunspellServiceTests extends ESTestCase {
     public void testLocaleDirectoryWithNodeLevelConfig() throws Exception {
-        Settings settings = Settings.builder().put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean()).put(HUNSPELL_IGNORE_CASE.getKey(), true)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings settings = Settings.builder()
+                .put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
+                .put(HUNSPELL_IGNORE_CASE.getKey(), true)
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
 
         final Environment environment = new Environment(settings, getDataPath("/indices/analyze/conf_dir"));
         Dictionary dictionary = new HunspellService(settings, environment, emptyMap()).getDictionary("en_US");
@@ -45,10 +48,13 @@ public class HunspellServiceTests extends ESTestCase {
     }
 
     public void testLocaleDirectoryWithLocaleSpecificConfig() throws Exception {
-        Settings settings = Settings.builder().put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean()).put(HUNSPELL_IGNORE_CASE.getKey(), true)
+        Settings settings = Settings.builder()
+                .put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
+                .put(HUNSPELL_IGNORE_CASE.getKey(), true)
                 .put("indices.analysis.hunspell.dictionary.en_US.strict_affix_parsing", false)
                 .put("indices.analysis.hunspell.dictionary.en_US.ignore_case", false)
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
 
         final Path configPath = getDataPath("/indices/analyze/conf_dir");
         final Environment environment = new Environment(settings, configPath);
@@ -63,25 +69,31 @@ public class HunspellServiceTests extends ESTestCase {
     }
 
     public void testDicWithNoAff() throws Exception {
-        Settings settings = Settings.builder().put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings settings = Settings.builder()
+                .put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
 
-        IllegalStateException e = expectThrows(IllegalStateException.class, () -> {
-            final Environment environment = new Environment(settings, getDataPath("/indices/analyze/no_aff_conf_dir"));
-            new HunspellService(settings, environment, emptyMap()).getDictionary("en_US");
-        });
+        IllegalStateException e = expectThrows(IllegalStateException.class,
+                () -> {
+                    final Environment environment = new Environment(settings, getDataPath("/indices/analyze/no_aff_conf_dir"));
+                    new HunspellService(settings, environment, emptyMap()).getDictionary("en_US");
+                });
         assertEquals("failed to load hunspell dictionary for locale: en_US", e.getMessage());
         assertThat(e.getCause(), hasToString(containsString("Missing affix file")));
     }
 
     public void testDicWithTwoAffs() throws Exception {
-        Settings settings = Settings.builder().put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings settings = Settings.builder()
+                .put(HUNSPELL_LAZY_LOAD.getKey(), randomBoolean())
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
 
-        IllegalStateException e = expectThrows(IllegalStateException.class, () -> {
-            final Environment environment = new Environment(settings, getDataPath("/indices/analyze/two_aff_conf_dir"));
-            new HunspellService(settings, environment, emptyMap()).getDictionary("en_US");
-        });
+        IllegalStateException e = expectThrows(IllegalStateException.class,
+                () -> {
+                    final Environment environment = new Environment(settings, getDataPath("/indices/analyze/two_aff_conf_dir"));
+                    new HunspellService(settings, environment, emptyMap()).getDictionary("en_US");
+                });
         assertEquals("failed to load hunspell dictionary for locale: en_US", e.getMessage());
         assertThat(e.getCause(), hasToString(containsString("Too many affix files")));
     }

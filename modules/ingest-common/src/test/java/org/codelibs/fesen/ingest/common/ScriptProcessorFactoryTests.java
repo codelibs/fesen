@@ -19,20 +19,10 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
+import org.codelibs.fesen.ingest.common.ScriptProcessor;
 import org.codelibs.fesen.script.IngestScript;
 import org.codelibs.fesen.script.MockScriptEngine;
 import org.codelibs.fesen.script.Script;
@@ -42,6 +32,17 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.script.ScriptType;
 import org.codelibs.fesen.test.ESTestCase;
 import org.junit.Before;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ScriptProcessorFactoryTests extends ESTestCase {
 
@@ -95,8 +96,8 @@ public class ScriptProcessorFactoryTests extends ESTestCase {
         configMap.put("source", "bar");
         configMap.put("lang", "mockscript");
 
-        XContentParseException exception =
-                expectThrows(XContentParseException.class, () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
+        XContentParseException exception = expectThrows(XContentParseException.class,
+            () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
         assertThat(exception.getMessage(), containsString("[script] failed to parse field [source]"));
     }
 
@@ -104,8 +105,8 @@ public class ScriptProcessorFactoryTests extends ESTestCase {
         Map<String, Object> configMap = new HashMap<>();
         configMap.put("lang", "mockscript");
 
-        IllegalArgumentException exception =
-                expectThrows(IllegalArgumentException.class, () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
+        IllegalArgumentException exception = expectThrows(IllegalArgumentException.class,
+            () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
 
         assertThat(exception.getMessage(), is("must specify either [source] for an inline script or [id] for a stored script"));
     }
@@ -125,26 +126,33 @@ public class ScriptProcessorFactoryTests extends ESTestCase {
     public void testFactoryInvalidateWithInvalidCompiledScript() throws Exception {
         String randomType = randomFrom("source", "id");
         ScriptService mockedScriptService = mock(ScriptService.class);
-        ScriptException thrownException =
-                new ScriptException("compile-time exception", new RuntimeException(), Collections.emptyList(), "script", "mockscript");
+        ScriptException thrownException = new ScriptException("compile-time exception", new RuntimeException(),
+            Collections.emptyList(), "script", "mockscript");
         when(mockedScriptService.compile(any(), any())).thenThrow(thrownException);
         factory = new ScriptProcessor.Factory(mockedScriptService);
 
         Map<String, Object> configMap = new HashMap<>();
         configMap.put(randomType, "my_script");
 
-        FesenException exception = expectThrows(FesenException.class, () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
+        FesenException exception = expectThrows(FesenException.class,
+            () -> factory.create(null, randomAlphaOfLength(10), null, configMap));
 
         assertThat(exception.getMessage(), is("compile-time exception"));
     }
 
     public void testInlineIsCompiled() throws Exception {
         String scriptName = "foo";
-        ScriptService scriptService = new ScriptService(Settings.builder().build(), Collections.singletonMap(Script.DEFAULT_SCRIPT_LANG,
-                new MockScriptEngine(Script.DEFAULT_SCRIPT_LANG, Collections.singletonMap(scriptName, ctx -> {
-                    ctx.put("foo", "bar");
-                    return null;
-                }), Collections.emptyMap())), new HashMap<>(ScriptModule.CORE_CONTEXTS));
+        ScriptService scriptService = new ScriptService(Settings.builder().build(),
+            Collections.singletonMap(
+                Script.DEFAULT_SCRIPT_LANG, new MockScriptEngine(
+                    Script.DEFAULT_SCRIPT_LANG,
+                    Collections.singletonMap(scriptName, ctx -> {
+                        ctx.put("foo", "bar");
+                        return null;
+                    }),
+                    Collections.emptyMap()
+                )
+            ), new HashMap<>(ScriptModule.CORE_CONTEXTS));
         factory = new ScriptProcessor.Factory(scriptService);
 
         Map<String, Object> configMap = new HashMap<>();

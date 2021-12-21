@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.monitor.fs;
 
-import static org.codelibs.fesen.monitor.StatusInfo.Status.HEALTHY;
-import static org.codelibs.fesen.monitor.StatusInfo.Status.UNHEALTHY;
-
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.LongSupplier;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
@@ -48,6 +35,19 @@ import org.codelibs.fesen.monitor.NodeHealthService;
 import org.codelibs.fesen.monitor.StatusInfo;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import static org.codelibs.fesen.monitor.StatusInfo.Status.HEALTHY;
+import static org.codelibs.fesen.monitor.StatusInfo.Status.UNHEALTHY;
+
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.LongSupplier;
+import java.util.stream.Collectors;
 
 /**
  * Runs periodically and attempts to create a temp file to see if the filesystem is writable. If not then it marks the
@@ -69,12 +69,14 @@ public class FsHealthService extends AbstractLifecycleComponent implements NodeH
     private volatile Set<Path> unhealthyPaths;
 
     public static final Setting<Boolean> ENABLED_SETTING =
-            Setting.boolSetting("monitor.fs.health.enabled", true, Setting.Property.NodeScope, Setting.Property.Dynamic);
-    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING = Setting.timeSetting("monitor.fs.health.refresh_interval",
-            TimeValue.timeValueSeconds(120), TimeValue.timeValueMillis(1), Setting.Property.NodeScope);
+        Setting.boolSetting("monitor.fs.health.enabled", true, Setting.Property.NodeScope, Setting.Property.Dynamic);
+    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING =
+        Setting.timeSetting("monitor.fs.health.refresh_interval", TimeValue.timeValueSeconds(120), TimeValue.timeValueMillis(1),
+            Setting.Property.NodeScope);
     public static final Setting<TimeValue> SLOW_PATH_LOGGING_THRESHOLD_SETTING =
-            Setting.timeSetting("monitor.fs.health.slow_path_logging_threshold", TimeValue.timeValueSeconds(5),
-                    TimeValue.timeValueMillis(1), Setting.Property.NodeScope, Setting.Property.Dynamic);
+        Setting.timeSetting("monitor.fs.health.slow_path_logging_threshold", TimeValue.timeValueSeconds(5), TimeValue.timeValueMillis(1),
+            Setting.Property.NodeScope, Setting.Property.Dynamic);
+
 
     public FsHealthService(Settings settings, ClusterSettings clusterSettings, ThreadPool threadPool, NodeEnvironment nodeEnv) {
         this.threadPool = threadPool;
@@ -89,7 +91,8 @@ public class FsHealthService extends AbstractLifecycleComponent implements NodeH
 
     @Override
     protected void doStart() {
-        scheduledFuture = threadPool.scheduleWithFixedDelay(new FsHealthMonitor(), refreshInterval, ThreadPool.Names.GENERIC);
+        scheduledFuture = threadPool.scheduleWithFixedDelay(new FsHealthMonitor(), refreshInterval,
+                ThreadPool.Names.GENERIC);
     }
 
     @Override
@@ -120,19 +123,19 @@ public class FsHealthService extends AbstractLifecycleComponent implements NodeH
         } else if (unhealthyPaths == null) {
             statusInfo = new StatusInfo(HEALTHY, "health check passed");
         } else {
-            String info =
-                    "health check failed on [" + unhealthyPaths.stream().map(k -> k.toString()).collect(Collectors.joining(",")) + "]";
+            String info = "health check failed on [" + unhealthyPaths.stream()
+                .map(k -> k.toString()).collect(Collectors.joining(",")) + "]";
             statusInfo = new StatusInfo(UNHEALTHY, info);
         }
         return statusInfo;
     }
 
-    class FsHealthMonitor implements Runnable {
+     class FsHealthMonitor implements Runnable {
 
         static final String TEMP_FILE_NAME = ".es_temp_file";
         private byte[] byteToWrite;
 
-        FsHealthMonitor() {
+        FsHealthMonitor(){
             this.byteToWrite = UUIDs.randomBase64UUID().getBytes(StandardCharsets.UTF_8);
         }
 
@@ -172,8 +175,8 @@ public class FsHealthService extends AbstractLifecycleComponent implements NodeH
                         Files.delete(tempDataPath);
                         final long elapsedTime = currentTimeMillisSupplier.getAsLong() - executionStartTime;
                         if (elapsedTime > slowPathLoggingThreshold.millis()) {
-                            logger.warn("health check of [{}] took [{}ms] which is above the warn threshold of [{}]", path, elapsedTime,
-                                    slowPathLoggingThreshold);
+                            logger.warn("health check of [{}] took [{}ms] which is above the warn threshold of [{}]",
+                                path, elapsedTime, slowPathLoggingThreshold);
                         }
                     }
                 } catch (Exception ex) {
@@ -189,3 +192,4 @@ public class FsHealthService extends AbstractLifecycleComponent implements NodeH
         }
     }
 }
+

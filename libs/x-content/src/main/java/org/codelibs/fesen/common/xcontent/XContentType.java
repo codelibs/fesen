@@ -150,7 +150,8 @@ public enum XContentType {
      */
     private static String removeVersionInMediaType(String mediaType) {
         if (mediaType.contains("vnd.fesen")) {
-            return mediaType.replaceAll("vnd.fesen\\+", "").replaceAll("\\s*;\\s*compatible-with=\\d+", "");
+            return mediaType.replaceAll("vnd.fesen\\+", "")
+                .replaceAll("\\s*;\\s*compatible-with=\\d+", "");
         }
         return mediaType;
     }
@@ -176,9 +177,9 @@ public enum XContentType {
     }
 
     private static boolean isSameMediaTypeOrFormatAs(String stringType, XContentType type) {
-        return type.mediaTypeWithoutParameters().equalsIgnoreCase(stringType)
-                || stringType.toLowerCase(Locale.ROOT).startsWith(type.mediaTypeWithoutParameters().toLowerCase(Locale.ROOT) + ";")
-                || type.shortName().equalsIgnoreCase(stringType);
+        return type.mediaTypeWithoutParameters().equalsIgnoreCase(stringType) ||
+                stringType.toLowerCase(Locale.ROOT).startsWith(type.mediaTypeWithoutParameters().toLowerCase(Locale.ROOT) + ";") ||
+                type.shortName().equalsIgnoreCase(stringType);
     }
 
     private int index;

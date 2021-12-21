@@ -18,13 +18,6 @@
  */
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.document.LatLonPoint;
@@ -47,6 +40,13 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.VectorGeoPointShapeQueryProcessor;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Field Mapper for geo_point types.
@@ -72,8 +72,9 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
         }
 
         @Override
-        public GeoPointFieldMapper build(BuilderContext context, String simpleName, FieldType fieldType, MultiFields multiFields,
-                Explicit<Boolean> ignoreMalformed, Explicit<Boolean> ignoreZValue, ParsedPoint nullValue, CopyTo copyTo) {
+        public GeoPointFieldMapper build(BuilderContext context, String simpleName, FieldType fieldType,
+                                         MultiFields multiFields, Explicit<Boolean> ignoreMalformed,
+                                         Explicit<Boolean> ignoreZValue, ParsedPoint nullValue, CopyTo copyTo) {
             GeoPointFieldType ft = new GeoPointFieldType(buildFullName(context), indexed, fieldType.stored(), hasDocValues, meta);
             ft.setGeometryParser(new PointParser<>(name, ParsedGeoPoint::new, (parser, point) -> {
                 GeoUtils.parseGeoPoint(parser, point, ignoreZValue().value());
@@ -107,8 +108,9 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
         }
     }
 
-    public GeoPointFieldMapper(String simpleName, FieldType fieldType, MappedFieldType mappedFieldType, MultiFields multiFields,
-            Explicit<Boolean> ignoreMalformed, Explicit<Boolean> ignoreZValue, ParsedPoint nullValue, CopyTo copyTo) {
+    public GeoPointFieldMapper(String simpleName, FieldType fieldType, MappedFieldType mappedFieldType,
+                               MultiFields multiFields, Explicit<Boolean> ignoreMalformed,
+                               Explicit<Boolean> ignoreZValue, ParsedPoint nullValue, CopyTo copyTo) {
         super(simpleName, fieldType, mappedFieldType, multiFields, ignoreMalformed, ignoreZValue, nullValue, copyTo);
     }
 
@@ -155,11 +157,11 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
 
     @Override
     public GeoPointFieldType fieldType() {
-        return (GeoPointFieldType) mappedFieldType;
+        return (GeoPointFieldType)mappedFieldType;
     }
 
     public static class GeoPointFieldType extends AbstractPointGeometryFieldType<List<ParsedGeoPoint>, List<? extends GeoPoint>>
-            implements GeoShapeQueryable {
+        implements GeoShapeQueryable {
 
         private final VectorGeoPointShapeQueryProcessor queryProcessor;
 
@@ -196,8 +198,8 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
             } else if (origin instanceof String) {
                 originGeoPoint = GeoUtils.parseFromString((String) origin);
             } else {
-                throw new IllegalArgumentException("Illegal type [" + origin.getClass() + "] for [origin]! "
-                        + "Must be of type [geo_point] or [string] for geo_point fields!");
+                throw new IllegalArgumentException("Illegal type ["+ origin.getClass() + "] for [origin]! " +
+                    "Must be of type [geo_point] or [string] for geo_point fields!");
             }
             double pivotDouble = DistanceUnit.DEFAULT.parse(pivot, DistanceUnit.DEFAULT);
             return LatLonPoint.newDistanceFeatureQuery(name(), boost, originGeoPoint.lat(), originGeoPoint.lon(), pivotDouble);
@@ -245,16 +247,14 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
             double oLat;
             double oLon;
             if (other instanceof GeoPoint) {
-                GeoPoint o = (GeoPoint) other;
+                GeoPoint o = (GeoPoint)other;
                 oLat = o.lat();
                 oLon = o.lon();
             } else {
                 return false;
             }
-            if (Double.compare(oLat, lat) != 0)
-                return false;
-            if (Double.compare(oLon, lon) != 0)
-                return false;
+            if (Double.compare(oLat, lat) != 0) return false;
+            if (Double.compare(oLon, lon) != 0) return false;
 
             return true;
         }
@@ -283,7 +283,7 @@ public class GeoPointFieldMapper extends AbstractPointGeometryFieldMapper<List<P
 
         @Override
         public Class<List<? extends GeoPoint>> processedClass() {
-            return (Class<List<? extends GeoPoint>>) (Object) List.class;
+            return (Class<List<? extends GeoPoint>>)(Object)List.class;
         }
 
         @Override

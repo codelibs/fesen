@@ -19,17 +19,6 @@
 
 package org.codelibs.fesen.search.sort;
 
-import static java.util.Collections.unmodifiableMap;
-import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -48,6 +37,17 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.QueryShardException;
 import org.codelibs.fesen.index.query.Rewriteable;
 import org.codelibs.fesen.search.DocValueFormat;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static java.util.Collections.unmodifiableMap;
+import static org.codelibs.fesen.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
 
 public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWriteable, ToXContentObject, Rewriteable<SortBuilder<?>> {
 
@@ -77,8 +77,8 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
     /**
      * Create a {@linkplain BucketedSort} which is useful for sorting inside of aggregations.
      */
-    public abstract BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra)
-            throws IOException;
+    public abstract BucketedSort buildBucketedSort(QueryShardContext context,
+            int bucketSize, BucketedSort.ExtraData extra) throws IOException;
 
     /**
      * Set the order of sorting.
@@ -108,8 +108,8 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
                     String fieldName = parser.text();
                     sortFields.add(fieldOrScoreSort(fieldName));
                 } else {
-                    throw new IllegalArgumentException(
-                            "malformed sort format, " + "within the sort array, an object, or an actual string are allowed");
+                    throw new IllegalArgumentException("malformed sort format, "
+                            + "within the sort array, an object, or an actual string are allowed");
                 }
             }
         } else if (token == XContentParser.Token.VALUE_STRING) {
@@ -131,7 +131,8 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
         }
     }
 
-    private static void parseCompoundSortField(XContentParser parser, List<SortBuilder<?>> sortFields) throws IOException {
+    private static void parseCompoundSortField(XContentParser parser, List<SortBuilder<?>> sortFields)
+            throws IOException {
         XContentParser.Token token;
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -174,7 +175,8 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
                 }
             }
             if (sort) {
-                return Optional.of(new SortAndFormats(new Sort(sortFields.toArray(new SortField[sortFields.size()])),
+                return Optional.of(new SortAndFormats(
+                        new Sort(sortFields.toArray(new SortField[sortFields.size()])),
                         sortFormats.toArray(new DocValueFormat[sortFormats.size()])));
             }
         }
@@ -245,7 +247,7 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
         if (parentQuery != null) {
             if (objectMapper != null) {
                 childQuery = Queries.filtered(childQuery,
-                        new ToChildBlockJoinQuery(parentQuery, context.bitsetFilter(objectMapper.nestedTypeFilter())));
+                    new ToChildBlockJoinQuery(parentQuery, context.bitsetFilter(objectMapper.nestedTypeFilter())));
             }
         }
 

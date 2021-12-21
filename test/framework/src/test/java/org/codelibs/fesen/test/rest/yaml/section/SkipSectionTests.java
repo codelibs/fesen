@@ -19,22 +19,24 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
+import org.codelibs.fesen.test.VersionUtils;
+import org.codelibs.fesen.test.rest.yaml.section.SkipSection;
+
+import java.util.Collections;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.Collections;
-
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
-import org.codelibs.fesen.test.VersionUtils;
-
 public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCase {
 
     public void testSkipMultiRange() {
-        SkipSection section = new SkipSection("6.0.0 - 6.1.0, 7.1.0 - 7.5.0", Collections.emptyList(), "foobar");
+        SkipSection section = new SkipSection("6.0.0 - 6.1.0, 7.1.0 - 7.5.0",
+             Collections.emptyList() , "foobar");
 
         assertFalse(section.skip(Version.CURRENT));
         assertFalse(section.skip(Version.fromString("6.2.0")));
@@ -46,22 +48,25 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
         assertTrue(section.skip(Version.fromString("7.1.0")));
         assertTrue(section.skip(Version.fromString("7.5.0")));
 
-        section = new SkipSection("-  7.1.0, 7.2.0 - 7.5.0", Collections.emptyList(), "foobar");
+        section = new SkipSection("-  7.1.0, 7.2.0 - 7.5.0",
+            Collections.emptyList() , "foobar");
         assertTrue(section.skip(Version.fromString("7.0.0")));
         assertTrue(section.skip(Version.fromString("7.3.0")));
     }
 
     public void testSkip() {
-        SkipSection section = new SkipSection("7.0.0 - 7.1.0",
+        SkipSection section = new SkipSection("6.0.0 - 6.1.0",
                 randomBoolean() ? Collections.emptyList() : Collections.singletonList("warnings"), "foobar");
         assertFalse(section.skip(Version.CURRENT));
-        assertTrue(section.skip(Version.V_7_0_0));
-        section = new SkipSection(randomBoolean() ? null : "7.0.0 - 7.1.0", Collections.singletonList("boom"), "foobar");
+        assertTrue(section.skip(Version.V_6_0_0));
+        section = new SkipSection(randomBoolean() ? null : "6.0.0 - 6.1.0",
+                Collections.singletonList("boom"), "foobar");
         assertTrue(section.skip(Version.CURRENT));
     }
 
     public void testMessage() {
-        SkipSection section = new SkipSection("6.0.0 - 6.1.0", Collections.singletonList("warnings"), "foobar");
+        SkipSection section = new SkipSection("6.0.0 - 6.1.0",
+                Collections.singletonList("warnings"), "foobar");
         assertEquals("[FOOBAR] skipped, reason: [foobar] unsupported features [warnings]", section.getSkipMessage("FOOBAR"));
         section = new SkipSection(null, Collections.singletonList("warnings"), "foobar");
         assertEquals("[FOOBAR] skipped, reason: [foobar] unsupported features [warnings]", section.getSkipMessage("FOOBAR"));
@@ -70,18 +75,24 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
     }
 
     public void testParseSkipSectionVersionNoFeature() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "version:     \" - 7.1.1\"\n" + "reason:      Delete ignores the parent param");
+        parser = createParser(YamlXContent.yamlXContent,
+                "version:     \" - 6.1.1\"\n" +
+                "reason:      Delete ignores the parent param"
+        );
 
         SkipSection skipSection = SkipSection.parse(parser);
         assertThat(skipSection, notNullValue());
         assertThat(skipSection.getLowerVersion(), equalTo(VersionUtils.getFirstVersion()));
-        assertThat(skipSection.getUpperVersion(), equalTo(Version.V_7_1_1));
+        assertThat(skipSection.getUpperVersion(), equalTo(Version.V_6_1_1));
         assertThat(skipSection.getFeatures().size(), equalTo(0));
         assertThat(skipSection.getReason(), equalTo("Delete ignores the parent param"));
     }
 
     public void testParseSkipSectionAllVersions() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "version:     \" all \"\n" + "reason:      Delete ignores the parent param");
+        parser = createParser(YamlXContent.yamlXContent,
+            "version:     \" all \"\n" +
+            "reason:      Delete ignores the parent param"
+        );
 
         SkipSection skipSection = SkipSection.parse(parser);
         assertThat(skipSection, notNullValue());
@@ -92,7 +103,9 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
     }
 
     public void testParseSkipSectionFeatureNoVersion() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "features:     regex");
+        parser = createParser(YamlXContent.yamlXContent,
+                "features:     regex"
+        );
 
         SkipSection skipSection = SkipSection.parse(parser);
         assertThat(skipSection, notNullValue());
@@ -103,7 +116,9 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
     }
 
     public void testParseSkipSectionFeaturesNoVersion() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "features:     [regex1,regex2,regex3]");
+        parser = createParser(YamlXContent.yamlXContent,
+                "features:     [regex1,regex2,regex3]"
+        );
 
         SkipSection skipSection = SkipSection.parse(parser);
         assertThat(skipSection, notNullValue());
@@ -117,7 +132,10 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
 
     public void testParseSkipSectionBothFeatureAndVersion() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "version:     \" - 0.90.2\"\n" + "features:     regex\n" + "reason:      Delete ignores the parent param");
+                "version:     \" - 0.90.2\"\n" +
+                "features:     regex\n" +
+                "reason:      Delete ignores the parent param"
+        );
 
         SkipSection skipSection = SkipSection.parse(parser);
         assertEquals(VersionUtils.getFirstVersion(), skipSection.getLowerVersion());
@@ -127,14 +145,18 @@ public class SkipSectionTests extends AbstractClientYamlTestFragmentParserTestCa
     }
 
     public void testParseSkipSectionNoReason() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "version:     \" - 0.90.2\"\n");
+        parser = createParser(YamlXContent.yamlXContent,
+                "version:     \" - 0.90.2\"\n"
+        );
 
         Exception e = expectThrows(ParsingException.class, () -> SkipSection.parse(parser));
         assertThat(e.getMessage(), is("reason is mandatory within skip version section"));
     }
 
     public void testParseSkipSectionNoVersionNorFeature() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "reason:      Delete ignores the parent param\n");
+        parser = createParser(YamlXContent.yamlXContent,
+                "reason:      Delete ignores the parent param\n"
+        );
 
         Exception e = expectThrows(ParsingException.class, () -> SkipSection.parse(parser));
         assertThat(e.getMessage(), is("version or features is mandatory within skip section"));

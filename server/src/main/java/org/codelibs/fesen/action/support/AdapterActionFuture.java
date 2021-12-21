@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.support;
 
-import java.util.concurrent.TimeUnit;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionFuture;
 import org.codelibs.fesen.action.ActionListener;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.util.concurrent.BaseFuture;
 import org.codelibs.fesen.common.util.concurrent.FutureUtils;
 import org.codelibs.fesen.common.util.concurrent.UncategorizedExecutionException;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.util.concurrent.TimeUnit;
 
 public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements ActionFuture<T>, ActionListener<L> {
 

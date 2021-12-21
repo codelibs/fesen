@@ -27,6 +27,5 @@ import org.codelibs.fesen.search.aggregations.Aggregation;
  */
 public interface GeoCentroid extends Aggregation {
     GeoPoint centroid();
-
     long count();
 }

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.document.LatLonPoint;
 import org.apache.lucene.geo.Polygon;
@@ -40,8 +35,13 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-import org.codelibs.fesen.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQueryBuilder> {
     public static final String NAME = "geo_polygon";
@@ -195,7 +195,7 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
         double[] lats = new double[shellSize];
         double[] lons = new double[shellSize];
         GeoPoint p;
-        for (int i = 0; i < shellSize; ++i) {
+        for (int i=0; i<shellSize; ++i) {
             p = shell.get(i);
             lats[i] = p.lat();
             lons[i] = p.lon();
@@ -300,8 +300,10 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
 
     @Override
     protected boolean doEquals(GeoPolygonQueryBuilder other) {
-        return Objects.equals(validationMethod, other.validationMethod) && Objects.equals(fieldName, other.fieldName)
-                && Objects.equals(shell, other.shell) && Objects.equals(ignoreUnmapped, other.ignoreUnmapped);
+        return Objects.equals(validationMethod, other.validationMethod)
+                && Objects.equals(fieldName, other.fieldName)
+                && Objects.equals(shell, other.shell)
+                && Objects.equals(ignoreUnmapped, other.ignoreUnmapped);
     }
 
     @Override

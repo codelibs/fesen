@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.test.rest;
 
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
@@ -40,6 +36,10 @@ import org.codelibs.fesen.usage.UsageService;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+
 /**
  * A common base class for Rest*ActionTests. Provides access to a {@link RestController}
  * that can be used to register individual REST actions, and test request handling.
@@ -51,7 +51,10 @@ public abstract class RestActionTestCase extends ESTestCase {
     @Before
     public void setUpController() {
         verifyingClient = new VerifyingClient(this.getTestName());
-        controller = new RestController(Collections.emptySet(), null, verifyingClient, new NoneCircuitBreakerService(), new UsageService());
+        controller = new RestController(Collections.emptySet(), null,
+            verifyingClient,
+            new NoneCircuitBreakerService(),
+            new UsageService());
     }
 
     @After
@@ -111,14 +114,14 @@ public abstract class RestActionTestCase extends ESTestCase {
          * function should return either a subclass of {@link ActionResponse} or {@code null}.
          * @param verifier A function which is called in place of {@link #doExecute(ActionType, ActionRequest, ActionListener)}
          */
-        public <Request extends ActionRequest, Response extends ActionResponse> void setExecuteVerifier(
-                BiFunction<ActionType<Response>, Request, Void> verifier) {
+        public <Request extends ActionRequest, Response extends ActionResponse>
+        void setExecuteVerifier(BiFunction<ActionType<Response>, Request, Void> verifier) {
             executeVerifier.set(verifier);
         }
 
         @Override
-        public <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action, Request request,
-                ActionListener<Response> listener) {
+        public <Request extends ActionRequest, Response extends ActionResponse>
+        void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
             listener.onResponse((Response) executeVerifier.get().apply(action, request));
         }
 
@@ -127,21 +130,21 @@ public abstract class RestActionTestCase extends ESTestCase {
          * function should return either a subclass of {@link ActionResponse} or {@code null}.
          * @param verifier A function which is called in place of {@link #executeLocally(ActionType, ActionRequest, TaskListener)}
          */
-        public <Request extends ActionRequest, Response extends ActionResponse> void setExecuteLocallyVerifier(
-                BiFunction<ActionType<Response>, Request, Void> verifier) {
+        public <Request extends ActionRequest, Response extends ActionResponse>
+        void setExecuteLocallyVerifier(BiFunction<ActionType<Response>, Request, Void> verifier) {
             executeLocallyVerifier.set(verifier);
         }
 
         @Override
-        public <Request extends ActionRequest, Response extends ActionResponse> Task executeLocally(ActionType<Response> action,
-                Request request, ActionListener<Response> listener) {
+        public <Request extends ActionRequest, Response extends ActionResponse>
+        Task executeLocally(ActionType<Response> action, Request request, ActionListener<Response> listener) {
             listener.onResponse((Response) executeLocallyVerifier.get().apply(action, request));
             return null;
         }
 
         @Override
-        public <Request extends ActionRequest, Response extends ActionResponse> Task executeLocally(ActionType<Response> action,
-                Request request, TaskListener<Response> listener) {
+        public <Request extends ActionRequest, Response extends ActionResponse>
+        Task executeLocally(ActionType<Response> action, Request request, TaskListener<Response> listener) {
             listener.onResponse(null, (Response) executeLocallyVerifier.get().apply(action, request));
             return null;
         }

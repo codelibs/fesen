@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.cluster.action.index;
 
-import java.util.concurrent.Semaphore;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionListener;
@@ -33,8 +31,8 @@ import org.codelibs.fesen.cluster.service.ClusterService;
 import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.util.concurrent.RunOnce;
 import org.codelibs.fesen.common.util.concurrent.UncategorizedExecutionException;
 import org.codelibs.fesen.common.xcontent.XContentType;
@@ -43,17 +41,21 @@ import org.codelibs.fesen.index.Index;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.mapper.Mapping;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Called by shards in the cluster when their mapping was dynamically updated and it needs to be updated
  * in the cluster state meta data (and broadcast to all members).
  */
 public class MappingUpdatedAction {
 
-    public static final Setting<TimeValue> INDICES_MAPPING_DYNAMIC_TIMEOUT_SETTING = Setting
-            .positiveTimeSetting("indices.mapping.dynamic_timeout", TimeValue.timeValueSeconds(30), Property.Dynamic, Property.NodeScope);
+    public static final Setting<TimeValue> INDICES_MAPPING_DYNAMIC_TIMEOUT_SETTING =
+        Setting.positiveTimeSetting("indices.mapping.dynamic_timeout", TimeValue.timeValueSeconds(30),
+            Property.Dynamic, Property.NodeScope);
 
     public static final Setting<Integer> INDICES_MAX_IN_FLIGHT_UPDATES_SETTING =
-            Setting.intSetting("indices.mapping.max_in_flight_updates", 10, 1, 1000, Property.Dynamic, Property.NodeScope);
+        Setting.intSetting("indices.mapping.max_in_flight_updates", 10, 1, 1000,
+            Property.Dynamic, Property.NodeScope);
 
     private IndicesAdminClient client;
     private volatile TimeValue dynamicMappingUpdateTimeout;
@@ -126,10 +128,10 @@ public class MappingUpdatedAction {
         putMappingRequest.timeout(TimeValue.ZERO);
         if (clusterService.state().nodes().getMinNodeVersion().onOrAfter(Version.V_7_9_0)) {
             client.execute(AutoPutMappingAction.INSTANCE, putMappingRequest,
-                    ActionListener.wrap(r -> listener.onResponse(null), listener::onFailure));
+                ActionListener.wrap(r -> listener.onResponse(null), listener::onFailure));
         } else {
             client.putMapping(putMappingRequest,
-                    ActionListener.wrap(r -> listener.onResponse(null), e -> listener.onFailure(unwrapException(e))));
+                ActionListener.wrap(r -> listener.onResponse(null), e -> listener.onFailure(unwrapException(e))));
         }
     }
 

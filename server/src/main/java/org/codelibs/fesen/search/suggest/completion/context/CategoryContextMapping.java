@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.search.suggest.completion.context;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StoredField;
@@ -41,6 +31,16 @@ import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.mapper.KeywordFieldMapper;
 import org.codelibs.fesen.index.mapper.ParseContext;
 import org.codelibs.fesen.index.mapper.ParseContext.Document;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A {@link ContextMapping} that uses a simple string as a criteria
@@ -110,7 +110,8 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
      *  </ul>
      */
     @Override
-    public Set<String> parseContext(ParseContext parseContext, XContentParser parser) throws IOException, FesenParseException {
+    public Set<String> parseContext(ParseContext parseContext, XContentParser parser)
+            throws IOException, FesenParseException {
         final Set<String> contexts = new HashSet<>();
         Token token = parser.currentToken();
         if (token == Token.VALUE_STRING || token == Token.VALUE_NUMBER || token == Token.VALUE_BOOLEAN) {
@@ -120,7 +121,8 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
                 if (token == Token.VALUE_STRING || token == Token.VALUE_NUMBER || token == Token.VALUE_BOOLEAN) {
                     contexts.add(parser.text());
                 } else {
-                    throw new FesenParseException("context array must have string, number or boolean values, but was [" + token + "]");
+                    throw new FesenParseException(
+                            "context array must have string, number or boolean values, but was [" + token + "]");
                 }
             }
         } else {
@@ -138,15 +140,17 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
             values = new HashSet<>(fields.length);
             // TODO we should be checking mapped field types, not lucene field types
             for (IndexableField field : fields) {
-                if (field instanceof SortedDocValuesField || field instanceof SortedSetDocValuesField || field instanceof StoredField) {
+                if (field instanceof SortedDocValuesField ||
+                        field instanceof SortedSetDocValuesField ||
+                        field instanceof StoredField) {
                     // Ignore doc values and stored fields
                 } else if (field instanceof KeywordFieldMapper.KeywordField) {
                     values.add(field.binaryValue().utf8ToString());
                 } else if (field.stringValue() != null) {
                     values.add(field.stringValue());
                 } else {
-                    throw new IllegalArgumentException(
-                            "Failed to parse context field [" + fieldName + "], only keyword and text fields are accepted");
+                    throw new IllegalArgumentException("Failed to parse context field [" + fieldName +
+                            "], only keyword and text fields are accepted");
                 }
             }
         }
@@ -178,7 +182,8 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
     @Override
     public List<InternalQueryContext> toInternalQueryContexts(List<CategoryQueryContext> queryContexts) {
         List<InternalQueryContext> internalInternalQueryContexts = new ArrayList<>(queryContexts.size());
-        internalInternalQueryContexts.addAll(queryContexts.stream()
+        internalInternalQueryContexts.addAll(
+            queryContexts.stream()
                 .map(queryContext -> new InternalQueryContext(queryContext.getCategory(), queryContext.getBoost(), queryContext.isPrefix()))
                 .collect(Collectors.toList()));
         return internalInternalQueryContexts;
@@ -186,12 +191,9 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         CategoryContextMapping mapping = (CategoryContextMapping) o;
         return !(fieldName != null ? !fieldName.equals(mapping.fieldName) : mapping.fieldName != null);
     }

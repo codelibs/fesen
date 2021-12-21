@@ -18,20 +18,12 @@
  */
 package org.apache.lucene.queries;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexReaderContext;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermState;
 import org.apache.lucene.index.TermStates;
+import org.apache.lucene.index.TermState;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -42,6 +34,14 @@ import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.util.ArrayUtil;
 import org.apache.lucene.util.InPlaceMergeSorter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * BlendedTermQuery can be used to unify term statistics across
@@ -122,7 +122,7 @@ public abstract class BlendedTermQuery extends Query {
             }
         }
         if (maxDoc > minSumTTF) {
-            maxDoc = (int) minSumTTF;
+            maxDoc = (int)minSumTTF;
         }
         if (max == 0) {
             return; // we are done that term doesn't exist at all
@@ -139,7 +139,6 @@ public abstract class BlendedTermQuery extends Query {
                 tieBreak[i] = tieBreak[j];
                 tieBreak[j] = tmp;
             }
-
             @Override
             protected int compare(int i, int j) {
                 return Integer.compare(contexts[tieBreak[j]].docFreq(), contexts[tieBreak[i]].docFreq());
@@ -147,7 +146,8 @@ public abstract class BlendedTermQuery extends Query {
         }.sort(0, tieBreak.length);
         int prev = contexts[tieBreak[0]].docFreq();
         int actualDf = Math.min(maxDoc, max);
-        assert actualDf >= 0 : "DF must be >= 0";
+        assert actualDf >=0 : "DF must be >= 0";
+
 
         // here we try to add a little bias towards
         // the more popular (more frequent) fields
@@ -292,7 +292,7 @@ public abstract class BlendedTermQuery extends Query {
 
         @Override
         public int hashCode() {
-            return 31 * term.hashCode() + Float.hashCode(boost);
+            return  31 * term.hashCode() + Float.hashCode(boost);
         }
     }
 
@@ -304,7 +304,7 @@ public abstract class BlendedTermQuery extends Query {
         }
         if (terms.length == 1) {
             float boost = (boosts != null ? boosts[0] : 1f);
-            equalTermsAndBoosts = new TermAndBoost[] { new TermAndBoost(terms[0], boost) };
+            equalTermsAndBoosts = new TermAndBoost[] {new TermAndBoost(terms[0], boost)};
         } else {
             // sort the terms to make sure equals and hashCode are consistent
             // this should be a very small cost and equivalent to a HashSet but less object creation
@@ -354,7 +354,8 @@ public abstract class BlendedTermQuery extends Query {
                         query = new BoostQuery(query, boosts[i]);
                     }
                     if ((maxTermFrequency >= 1f && docFreqs[i] > maxTermFrequency)
-                            || (docFreqs[i] > (int) Math.ceil(maxTermFrequency * maxDoc))) {
+                            || (docFreqs[i] > (int) Math.ceil(maxTermFrequency
+                            * maxDoc))) {
                         highBuilder.add(query, BooleanClause.Occur.SHOULD);
                     } else {
                         lowBuilder.add(query, BooleanClause.Occur.SHOULD);
@@ -371,7 +372,10 @@ public abstract class BlendedTermQuery extends Query {
                 } else if (high.clauses().isEmpty()) {
                     return low;
                 } else {
-                    return new BooleanQuery.Builder().add(high, BooleanClause.Occur.SHOULD).add(low, BooleanClause.Occur.MUST).build();
+                    return new BooleanQuery.Builder()
+                        .add(high, BooleanClause.Occur.SHOULD)
+                        .add(low, BooleanClause.Occur.MUST)
+                        .build();
                 }
             }
         };

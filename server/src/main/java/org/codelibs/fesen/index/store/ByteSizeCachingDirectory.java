@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.store;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.NoSuchFileException;
-import java.util.Set;
-
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FilterDirectory;
 import org.apache.lucene.store.IOContext;
@@ -33,6 +26,13 @@ import org.apache.lucene.store.IndexOutput;
 import org.codelibs.fesen.common.lucene.store.FilterIndexOutput;
 import org.codelibs.fesen.common.util.SingleObjectCache;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.NoSuchFileException;
+import java.util.Set;
 
 final class ByteSizeCachingDirectory extends FilterDirectory {
 
@@ -80,7 +80,7 @@ final class ByteSizeCachingDirectory extends FilterDirectory {
                 // numOpenOutputs BEFORE computing the size of the directory.
                 final long modCount;
                 final boolean pendingWrite;
-                synchronized (ByteSizeCachingDirectory.this) {
+                synchronized(ByteSizeCachingDirectory.this) {
                     modCount = ByteSizeCachingDirectory.this.modCount;
                     pendingWrite = ByteSizeCachingDirectory.this.numOpenOutputs != 0;
                 }
@@ -106,7 +106,7 @@ final class ByteSizeCachingDirectory extends FilterDirectory {
                     // writes, so the size might be stale: recompute.
                     return true;
                 }
-                synchronized (ByteSizeCachingDirectory.this) {
+                synchronized(ByteSizeCachingDirectory.this) {
                     // If there are pending writes or if new files have been
                     // written/deleted since last time: recompute
                     return numOpenOutputs != 0 || cached.modCount != modCount;

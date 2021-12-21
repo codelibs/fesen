@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
@@ -46,6 +37,15 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.lucene.Lucene;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A query that allows for a pluggable boost function / filter. If it matches
@@ -146,6 +146,7 @@ public class FunctionScoreQuery extends Query {
         this(subQuery, function, CombineFunction.MULTIPLY, null, DEFAULT_MAX_BOOST);
     }
 
+
     /**
      * Creates a FunctionScoreQuery with a single function
      * @param subQuery The query to match.
@@ -167,8 +168,8 @@ public class FunctionScoreQuery extends Query {
      * @param minScore The minimum score to consider a document.
      * @param maxBoost The maximum applicable boost.
      */
-    public FunctionScoreQuery(Query subQuery, ScoreMode scoreMode, ScoreFunction[] functions, CombineFunction combineFunction,
-            Float minScore, float maxBoost) {
+    public FunctionScoreQuery(Query subQuery, ScoreMode scoreMode, ScoreFunction[] functions,
+                              CombineFunction combineFunction, Float minScore, float maxBoost) {
         if (Arrays.stream(functions).anyMatch(func -> func == null)) {
             throw new IllegalArgumentException("Score function should not be null");
         }
@@ -227,9 +228,9 @@ public class FunctionScoreQuery extends Query {
             return subQuery.createWeight(searcher, scoreMode, boost);
         }
 
-        org.apache.lucene.search.ScoreMode subQueryScoreMode =
-                combineFunction != CombineFunction.REPLACE ? org.apache.lucene.search.ScoreMode.COMPLETE
-                        : org.apache.lucene.search.ScoreMode.COMPLETE_NO_SCORES;
+        org.apache.lucene.search.ScoreMode subQueryScoreMode = combineFunction != CombineFunction.REPLACE
+                ? org.apache.lucene.search.ScoreMode.COMPLETE
+                : org.apache.lucene.search.ScoreMode.COMPLETE_NO_SCORES;
         Weight[] filterWeights = new Weight[functions.length];
         for (int i = 0; i < functions.length; ++i) {
             if (functions[i].needsScores()) {
@@ -237,8 +238,8 @@ public class FunctionScoreQuery extends Query {
             }
             if (functions[i] instanceof FilterScoreFunction) {
                 Query filter = ((FilterScoreFunction) functions[i]).filter;
-                filterWeights[i] =
-                        searcher.createWeight(searcher.rewrite(filter), org.apache.lucene.search.ScoreMode.COMPLETE_NO_SCORES, 1f);
+                filterWeights[i] = searcher.createWeight(searcher.rewrite(filter),
+                        org.apache.lucene.search.ScoreMode.COMPLETE_NO_SCORES, 1f);
             }
         }
         Weight subQueryWeight = subQuery.createWeight(searcher, subQueryScoreMode, boost);
@@ -281,8 +282,8 @@ public class FunctionScoreQuery extends Query {
                     docSets[i] = new Bits.MatchAllBits(context.reader().maxDoc());
                 }
             }
-            return new FunctionFactorScorer(this, subQueryScorer, scoreMode, functions, maxBoost, leafFunctions, docSets, combineFunction,
-                    needsScores);
+            return new FunctionFactorScorer(this, subQueryScorer, scoreMode, functions, maxBoost, leafFunctions,
+                docSets, combineFunction, needsScores);
         }
 
         @Override
@@ -307,8 +308,8 @@ public class FunctionScoreQuery extends Query {
                 List<Explanation> functionsExplanations = new ArrayList<>();
                 for (int i = 0; i < functions.length; ++i) {
                     if (filterWeights[i] != null) {
-                        final Bits docSet =
-                                Lucene.asSequentialAccessBits(context.reader().maxDoc(), filterWeights[i].scorerSupplier(context));
+                        final Bits docSet = Lucene.asSequentialAccessBits(
+                                context.reader().maxDoc(), filterWeights[i].scorerSupplier(context));
                         if (docSet.get(doc) == false) {
                             continue;
                         }
@@ -319,7 +320,7 @@ public class FunctionScoreQuery extends Query {
                         float factor = functionExplanation.getValue().floatValue();
                         Query filterQuery = ((FilterScoreFunction) function).filter;
                         Explanation filterExplanation = Explanation.match(factor, "function score, product of:",
-                                Explanation.match(1.0f, "match filter: " + filterQuery.toString()), functionExplanation);
+                            Explanation.match(1.0f, "match filter: " + filterQuery.toString()), functionExplanation);
                         functionsExplanations.add(filterExplanation);
                     } else {
                         functionsExplanations.add(functionExplanation);
@@ -336,8 +337,9 @@ public class FunctionScoreQuery extends Query {
                     int actualDoc = scorer.iterator().advance(doc);
                     assert (actualDoc == doc);
                     double score = scorer.computeScore(doc, expl.getValue().floatValue());
-                    factorExplanation = Explanation.match((float) score,
-                            "function score, score mode [" + scoreMode.toString().toLowerCase(Locale.ROOT) + "]", functionsExplanations);
+                    factorExplanation = Explanation.match(
+                        (float) score,
+                        "function score, score mode [" + scoreMode.toString().toLowerCase(Locale.ROOT) + "]", functionsExplanations);
                 }
                 expl = combineFunction.explain(expl, factorExplanation, maxBoost);
             }
@@ -365,8 +367,8 @@ public class FunctionScoreQuery extends Query {
         private final boolean needsScores;
 
         private FunctionFactorScorer(CustomBoostFactorWeight w, Scorer scorer, ScoreMode scoreMode, ScoreFunction[] functions,
-                float maxBoost, LeafScoreFunction[] leafFunctions, Bits[] docSets, CombineFunction scoreCombiner, boolean needsScores)
-                throws IOException {
+                                     float maxBoost, LeafScoreFunction[] leafFunctions, Bits[] docSets,
+                                     CombineFunction scoreCombiner, boolean needsScores) throws IOException {
             super(scorer, w);
             this.scoreMode = scoreMode;
             this.functions = functions;
@@ -401,60 +403,60 @@ public class FunctionScoreQuery extends Query {
 
         protected double computeScore(int docId, float subQueryScore) throws IOException {
             double factor = 1d;
-            switch (scoreMode) {
-            case FIRST:
-                for (int i = 0; i < leafFunctions.length; i++) {
-                    if (docSets[i].get(docId)) {
-                        factor = leafFunctions[i].score(docId, subQueryScore);
-                        break;
+            switch(scoreMode) {
+                case FIRST:
+                    for (int i = 0; i < leafFunctions.length; i++) {
+                        if (docSets[i].get(docId)) {
+                            factor = leafFunctions[i].score(docId, subQueryScore);
+                            break;
+                        }
                     }
-                }
-                break;
-            case MAX:
-                double maxFactor = Double.NEGATIVE_INFINITY;
-                for (int i = 0; i < leafFunctions.length; i++) {
-                    if (docSets[i].get(docId)) {
-                        maxFactor = Math.max(leafFunctions[i].score(docId, subQueryScore), maxFactor);
+                    break;
+                case MAX:
+                    double maxFactor = Double.NEGATIVE_INFINITY;
+                    for (int i = 0; i < leafFunctions.length; i++) {
+                        if (docSets[i].get(docId)) {
+                            maxFactor = Math.max(leafFunctions[i].score(docId, subQueryScore), maxFactor);
+                        }
                     }
-                }
-                if (maxFactor != Float.NEGATIVE_INFINITY) {
-                    factor = maxFactor;
-                }
-                break;
-            case MIN:
-                double minFactor = Double.POSITIVE_INFINITY;
-                for (int i = 0; i < leafFunctions.length; i++) {
-                    if (docSets[i].get(docId)) {
-                        minFactor = Math.min(leafFunctions[i].score(docId, subQueryScore), minFactor);
+                    if (maxFactor != Float.NEGATIVE_INFINITY) {
+                        factor = maxFactor;
                     }
-                }
-                if (minFactor != Float.POSITIVE_INFINITY) {
-                    factor = minFactor;
-                }
-                break;
-            case MULTIPLY:
-                for (int i = 0; i < leafFunctions.length; i++) {
-                    if (docSets[i].get(docId)) {
-                        factor *= leafFunctions[i].score(docId, subQueryScore);
+                    break;
+                case MIN:
+                    double minFactor = Double.POSITIVE_INFINITY;
+                    for (int i = 0; i < leafFunctions.length; i++) {
+                        if (docSets[i].get(docId)) {
+                            minFactor = Math.min(leafFunctions[i].score(docId, subQueryScore), minFactor);
+                        }
                     }
-                }
-                break;
-            default: // Avg / Total
-                double totalFactor = 0.0f;
-                double weightSum = 0;
-                for (int i = 0; i < leafFunctions.length; i++) {
-                    if (docSets[i].get(docId)) {
-                        totalFactor += leafFunctions[i].score(docId, subQueryScore);
-                        weightSum += functions[i].getWeight();
+                    if (minFactor != Float.POSITIVE_INFINITY) {
+                        factor = minFactor;
                     }
-                }
-                if (weightSum != 0) {
-                    factor = totalFactor;
-                    if (scoreMode == ScoreMode.AVG) {
-                        factor /= weightSum;
+                    break;
+                case MULTIPLY:
+                    for (int i = 0; i < leafFunctions.length; i++) {
+                        if (docSets[i].get(docId)) {
+                            factor *= leafFunctions[i].score(docId, subQueryScore);
+                        }
                     }
-                }
-                break;
+                    break;
+                default: // Avg / Total
+                    double totalFactor = 0.0f;
+                    double weightSum = 0;
+                    for (int i = 0; i < leafFunctions.length; i++) {
+                        if (docSets[i].get(docId)) {
+                            totalFactor += leafFunctions[i].score(docId, subQueryScore);
+                            weightSum += functions[i].getWeight();
+                        }
+                    }
+                    if (weightSum != 0) {
+                        factor = totalFactor;
+                        if (scoreMode == ScoreMode.AVG) {
+                            factor /= weightSum;
+                        }
+                    }
+                    break;
             }
             return factor;
         }
@@ -485,9 +487,10 @@ public class FunctionScoreQuery extends Query {
             return false;
         }
         FunctionScoreQuery other = (FunctionScoreQuery) o;
-        return Objects.equals(this.subQuery, other.subQuery) && this.maxBoost == other.maxBoost
-                && Objects.equals(this.combineFunction, other.combineFunction) && Objects.equals(this.minScore, other.minScore)
-                && Objects.equals(this.scoreMode, other.scoreMode) && Arrays.equals(this.functions, other.functions);
+        return Objects.equals(this.subQuery, other.subQuery) && this.maxBoost == other.maxBoost &&
+            Objects.equals(this.combineFunction, other.combineFunction) && Objects.equals(this.minScore, other.minScore) &&
+            Objects.equals(this.scoreMode, other.scoreMode) &&
+            Arrays.equals(this.functions, other.functions);
     }
 
     @Override

@@ -35,8 +35,7 @@ import org.codelibs.fesen.core.TimeValue;
 public class NodeAndClusterIdStateListener implements ClusterStateObserver.Listener {
     private static final Logger logger = LogManager.getLogger(NodeAndClusterIdStateListener.class);
 
-    private NodeAndClusterIdStateListener() {
-    }
+    private NodeAndClusterIdStateListener() {}
 
     /**
      * Subscribes for the first cluster state update where nodeId and clusterId is present
@@ -71,10 +70,8 @@ public class NodeAndClusterIdStateListener implements ClusterStateObserver.Liste
     }
 
     @Override
-    public void onClusterServiceClose() {
-    }
+    public void onClusterServiceClose() {}
 
     @Override
-    public void onTimeout(TimeValue timeout) {
-    }
+    public void onTimeout(TimeValue timeout) {}
 }

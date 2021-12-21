@@ -70,6 +70,7 @@ public class FreqTermsEnumTests extends ESTestCase {
         long totalTermFreq;
     }
 
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -149,7 +150,7 @@ public class FreqTermsEnumTests extends ESTestCase {
                 }
             }
         }
-        filter = new TermInSetQuery("id", filterTerms);
+        filter = new TermInSetQuery("id",filterTerms);
     }
 
     private void addFreqs(Document doc, Map<String, FreqHolder> reference) {
@@ -190,19 +191,19 @@ public class FreqTermsEnumTests extends ESTestCase {
         assertAgainstReference(false, true, filter, referenceFilter);
     }
 
-    private void assertAgainstReference(boolean docFreq, boolean totalTermFreq, Query filter, Map<String, FreqHolder> reference)
-            throws Exception {
+    private void assertAgainstReference(boolean docFreq, boolean totalTermFreq, Query filter,
+            Map<String, FreqHolder> reference) throws Exception {
         FreqTermsEnum freqTermsEnum = new FreqTermsEnum(reader, "field", docFreq, totalTermFreq, filter, BigArrays.NON_RECYCLING_INSTANCE);
         assertAgainstReference(freqTermsEnum, reference, docFreq, totalTermFreq);
     }
 
-    private void assertAgainstReference(FreqTermsEnum termsEnum, Map<String, FreqHolder> reference, boolean docFreq, boolean totalTermFreq)
-            throws Exception {
+    private void assertAgainstReference(FreqTermsEnum termsEnum, Map<String, FreqHolder> reference, boolean docFreq,
+            boolean totalTermFreq) throws Exception {
         int cycles = randomIntBetween(1, 5);
         for (int i = 0; i < cycles; i++) {
             List<String> terms = new ArrayList<>(Arrays.asList(this.terms));
 
-            Collections.shuffle(terms, random());
+           Collections.shuffle(terms, random());
             for (String term : terms) {
                 if (!termsEnum.seekExact(new BytesRef(term))) {
                     assertThat("term : " + term, reference.get(term).docFreq, is(0));

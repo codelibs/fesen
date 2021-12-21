@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.regex.Pattern;
-
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.pattern.PatternTokenizer;
 import org.codelibs.fesen.common.regex.Regex;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenizerFactory;
+
+import java.util.regex.Pattern;
 
 public class PatternTokenizerFactory extends AbstractTokenizerFactory {
 

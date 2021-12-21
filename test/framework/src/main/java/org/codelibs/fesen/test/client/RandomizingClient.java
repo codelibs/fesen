@@ -19,10 +19,7 @@
 
 package org.codelibs.fesen.test.client;
 
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 import org.apache.lucene.util.TestUtil;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.action.search.SearchType;
@@ -31,7 +28,9 @@ import org.codelibs.fesen.client.FilterClient;
 import org.codelibs.fesen.cluster.routing.Preference;
 import org.codelibs.fesen.core.TimeValue;
 
-import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /** A {@link Client} that randomizes request parameters. */
 public class RandomizingClient extends FilterClient {
@@ -43,11 +42,14 @@ public class RandomizingClient extends FilterClient {
     private final int preFilterShardSize;
     private final boolean doTimeout;
 
+
     public RandomizingClient(Client client, Random random) {
         super(client);
         // we don't use the QUERY_AND_FETCH types that break quite a lot of tests
         // given that they return `size*num_shards` hits instead of `size`
-        defaultSearchType = RandomPicks.randomFrom(random, Arrays.asList(SearchType.DFS_QUERY_THEN_FETCH, SearchType.QUERY_THEN_FETCH));
+        defaultSearchType = RandomPicks.randomFrom(random, Arrays.asList(
+                SearchType.DFS_QUERY_THEN_FETCH,
+                SearchType.QUERY_THEN_FETCH));
         if (random.nextInt(10) == 0) {
             defaultPreference = Preference.LOCAL.type();
         } else if (random.nextInt(10) == 0) {
@@ -63,7 +65,7 @@ public class RandomizingClient extends FilterClient {
             this.maxConcurrentShardRequests = -1; // randomly use the default
         }
         if (random.nextBoolean()) {
-            preFilterShardSize = 1 + random.nextInt(1 << random.nextInt(7));
+            preFilterShardSize =  1 + random.nextInt(1 << random.nextInt(7));
         } else {
             preFilterShardSize = -1;
         }
@@ -73,7 +75,7 @@ public class RandomizingClient extends FilterClient {
     @Override
     public SearchRequestBuilder prepareSearch(String... indices) {
         SearchRequestBuilder searchRequestBuilder = in.prepareSearch(indices).setSearchType(defaultSearchType)
-                .setPreference(defaultPreference).setBatchedReduceSize(batchedReduceSize);
+            .setPreference(defaultPreference).setBatchedReduceSize(batchedReduceSize);
         if (maxConcurrentShardRequests != -1) {
             searchRequestBuilder.setMaxConcurrentShardRequests(maxConcurrentShardRequests);
         }

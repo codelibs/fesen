@@ -19,20 +19,23 @@
 
 package org.codelibs.fesen.script;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.node.MockNode;
 import org.codelibs.fesen.plugins.Plugin;
+import org.codelibs.fesen.script.ScriptContext;
+import org.codelibs.fesen.script.ScriptEngine;
+import org.codelibs.fesen.script.ScriptService;
+import org.codelibs.fesen.script.StoredScriptSource;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 public class MockScriptService extends ScriptService {
     /**
      * Marker plugin used by {@link MockNode} to enable {@link MockScriptService}.
      */
-    public static class TestPlugin extends Plugin {
-    }
+    public static class TestPlugin extends Plugin {}
 
     public MockScriptService(Settings settings, Map<String, ScriptEngine> engines, Map<String, ScriptContext<?>> contexts) {
         super(settings, engines, contexts);
@@ -44,7 +47,7 @@ public class MockScriptService extends ScriptService {
     }
 
     public static <T> MockScriptService singleContext(ScriptContext<T> context, Function<String, T> compile,
-            Map<String, StoredScriptSource> storedLookup) {
+                                                      Map<String, StoredScriptSource> storedLookup) {
         ScriptEngine engine = new ScriptEngine() {
             @Override
             public String getType() {
@@ -53,7 +56,7 @@ public class MockScriptService extends ScriptService {
 
             @Override
             public <FactoryType> FactoryType compile(String name, String code, ScriptContext<FactoryType> context,
-                    Map<String, String> params) {
+                                                     Map<String, String> params) {
                 return context.factoryClazz.cast(compile.apply(code));
             }
 
@@ -63,7 +66,7 @@ public class MockScriptService extends ScriptService {
             }
         };
         return new MockScriptService(Settings.EMPTY, org.codelibs.fesen.core.Map.of("lang", engine),
-                org.codelibs.fesen.core.Map.of(context.name, context)) {
+            org.codelibs.fesen.core.Map.of(context.name, context)) {
             @Override
             protected StoredScriptSource getScriptFromClusterState(String id) {
                 return storedLookup.get(id);

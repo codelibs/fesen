@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+
+import java.io.IOException;
 
 public class ParsedValueCount extends ParsedAggregation implements ValueCount {
 
@@ -58,8 +58,8 @@ public class ParsedValueCount extends ParsedAggregation implements ValueCount {
         return builder;
     }
 
-    private static final ObjectParser<ParsedValueCount, Void> PARSER =
-            new ObjectParser<>(ParsedValueCount.class.getSimpleName(), true, ParsedValueCount::new);
+    private static final ObjectParser<ParsedValueCount, Void> PARSER = new ObjectParser<>(ParsedValueCount.class.getSimpleName(), true,
+            ParsedValueCount::new);
 
     static {
         declareAggregationFields(PARSER);

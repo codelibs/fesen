@@ -19,26 +19,6 @@
 
 package org.codelibs.fesen.test;
 
-import static org.codelibs.fesen.discovery.DiscoveryModule.DISCOVERY_SEED_PROVIDERS_SETTING;
-import static org.codelibs.fesen.discovery.SettingsBasedSeedHostsProvider.DISCOVERY_SEED_HOSTS_SETTING;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.action.admin.cluster.remote.RemoteInfoAction;
 import org.codelibs.fesen.action.admin.cluster.remote.RemoteInfoRequest;
 import org.codelibs.fesen.client.Client;
@@ -54,6 +34,26 @@ import org.codelibs.fesen.transport.nio.MockNioTransportPlugin;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.codelibs.fesen.discovery.DiscoveryModule.DISCOVERY_SEED_PROVIDERS_SETTING;
+import static org.codelibs.fesen.discovery.SettingsBasedSeedHostsProvider.DISCOVERY_SEED_HOSTS_SETTING;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 
 public abstract class AbstractMultiClustersTestCase extends ESTestCase {
     public static final String LOCAL_CLUSTER = RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY;
@@ -101,12 +101,12 @@ public abstract class AbstractMultiClustersTestCase extends ESTestCase {
             final String clusterName = clusterAlias.equals(LOCAL_CLUSTER) ? "main-cluster" : clusterAlias;
             final int numberOfNodes = randomIntBetween(1, 3);
             final List<Class<? extends Plugin>> mockPlugins =
-                    Arrays.asList(MockHttpTransport.TestPlugin.class, MockTransportService.TestPlugin.class, MockNioTransportPlugin.class);
+               Arrays.asList(MockHttpTransport.TestPlugin.class, MockTransportService.TestPlugin.class, MockNioTransportPlugin.class);
             final Collection<Class<? extends Plugin>> nodePlugins = nodePlugins(clusterAlias);
             final Settings nodeSettings = Settings.EMPTY;
             final NodeConfigurationSource nodeConfigurationSource = nodeConfigurationSource(nodeSettings, nodePlugins);
             final InternalTestCluster cluster = new InternalTestCluster(randomLong(), createTempDir(), true, true, numberOfNodes,
-                    numberOfNodes, clusterName, nodeConfigurationSource, 0, clusterName + "-", mockPlugins, Function.identity());
+                numberOfNodes, clusterName, nodeConfigurationSource, 0, clusterName + "-", mockPlugins, Function.identity());
             cluster.beforeTest(random(), 0);
             clusters.put(clusterAlias, cluster);
         }
@@ -161,14 +161,16 @@ public abstract class AbstractMultiClustersTestCase extends ESTestCase {
         for (Map.Entry<String, List<String>> entry : seedNodes.entrySet()) {
             final String clusterAlias = entry.getKey();
             final String seeds = entry.getValue().stream()
-                    .map(node -> cluster(clusterAlias).getInstance(TransportService.class, node).boundAddress().publishAddress().toString())
-                    .collect(Collectors.joining(","));
+                .map(node -> cluster(clusterAlias).getInstance(TransportService.class, node).boundAddress().publishAddress().toString())
+                .collect(Collectors.joining(","));
             settings.put("cluster.remote." + clusterAlias + ".seeds", seeds);
         }
         client().admin().cluster().prepareUpdateSettings().setPersistentSettings(settings).get();
         assertBusy(() -> {
-            List<RemoteConnectionInfo> remoteConnectionInfos = client().execute(RemoteInfoAction.INSTANCE, new RemoteInfoRequest())
-                    .actionGet().getInfos().stream().filter(RemoteConnectionInfo::isConnected).collect(Collectors.toList());
+            List<RemoteConnectionInfo> remoteConnectionInfos = client()
+                .execute(RemoteInfoAction.INSTANCE, new RemoteInfoRequest()).actionGet().getInfos()
+                .stream().filter(RemoteConnectionInfo::isConnected)
+                .collect(Collectors.toList());
             final long totalConnections = seedNodes.values().stream().map(List::size).count();
             assertThat(remoteConnectionInfos, hasSize(Math.toIntExact(totalConnections)));
         });

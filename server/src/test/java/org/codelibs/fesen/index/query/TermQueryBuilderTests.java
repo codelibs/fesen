@@ -50,38 +50,38 @@ public class TermQueryBuilderTests extends AbstractTermQueryTestCase<TermQueryBu
         String fieldName = null;
         Object value;
         switch (randomIntBetween(0, 3)) {
-        case 0:
-            if (randomBoolean()) {
-                fieldName = BOOLEAN_FIELD_NAME;
-            }
-            value = randomBoolean();
-            break;
-        case 1:
-            if (randomBoolean()) {
-                fieldName = randomFrom(TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME);
-            }
-            if (frequently()) {
-                value = randomAlphaOfLengthBetween(1, 10);
-            } else {
-                // generate unicode string in 10% of cases
-                JsonStringEncoder encoder = JsonStringEncoder.getInstance();
-                value = new String(encoder.quoteAsString(randomUnicodeOfLength(10)));
-            }
-            break;
-        case 2:
-            if (randomBoolean()) {
-                fieldName = INT_FIELD_NAME;
-            }
-            value = randomInt(10000);
-            break;
-        case 3:
-            if (randomBoolean()) {
-                fieldName = DOUBLE_FIELD_NAME;
-            }
-            value = randomDouble();
-            break;
-        default:
-            throw new UnsupportedOperationException();
+            case 0:
+                if (randomBoolean()) {
+                    fieldName = BOOLEAN_FIELD_NAME;
+                }
+                value = randomBoolean();
+                break;
+            case 1:
+                if (randomBoolean()) {
+                    fieldName = randomFrom(TEXT_FIELD_NAME, TEXT_ALIAS_FIELD_NAME);
+                }
+                if (frequently()) {
+                    value = randomAlphaOfLengthBetween(1, 10);
+                } else {
+                    // generate unicode string in 10% of cases
+                    JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+                    value = new String(encoder.quoteAsString(randomUnicodeOfLength(10)));
+                }
+                break;
+            case 2:
+                if (randomBoolean()) {
+                    fieldName = INT_FIELD_NAME;
+                }
+                value = randomInt(10000);
+                break;
+            case 3:
+                if (randomBoolean()) {
+                    fieldName = DOUBLE_FIELD_NAME;
+                }
+                value = randomDouble();
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
 
         if (fieldName == null) {
@@ -102,7 +102,7 @@ public class TermQueryBuilderTests extends AbstractTermQueryTestCase<TermQueryBu
     @Override
     protected void doAssertLuceneQuery(TermQueryBuilder queryBuilder, Query query, QueryShardContext context) throws IOException {
         assertThat(query, either(instanceOf(TermQuery.class)).or(instanceOf(PointRangeQuery.class)).or(instanceOf(MatchNoDocsQuery.class))
-                .or(instanceOf(AutomatonQuery.class)));
+            .or(instanceOf(AutomatonQuery.class)));
         MappedFieldType mapper = context.fieldMapper(queryBuilder.fieldName());
         if (query instanceof TermQuery) {
             TermQuery termQuery = (TermQuery) query;
@@ -127,14 +127,25 @@ public class TermQueryBuilderTests extends AbstractTermQueryTestCase<TermQueryBu
     }
 
     public void testTermArray() throws IOException {
-        String queryAsString = "{\n" + "    \"term\": {\n" + "        \"age\": [34, 35]\n" + "    }\n" + "}";
+        String queryAsString = "{\n" +
+                "    \"term\": {\n" +
+                "        \"age\": [34, 35]\n" +
+                "    }\n" +
+                "}";
         ParsingException e = expectThrows(ParsingException.class, () -> parseQuery(queryAsString));
         assertEquals("[term] query does not support array of values", e.getMessage());
     }
 
     public void testFromJson() throws IOException {
-        String json = "{\n" + "  \"term\" : {\n" + "    \"exact_value\" : {\n" + "      \"value\" : \"Quick Foxes!\",\n"
-                + "      \"boost\" : 1.0\n" + "    }\n" + "  }\n" + "}";
+        String json =
+                "{\n" +
+                "  \"term\" : {\n" +
+                "    \"exact_value\" : {\n" +
+                "      \"value\" : \"Quick Foxes!\",\n" +
+                "      \"boost\" : 1.0\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
         TermQueryBuilder parsed = (TermQueryBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -145,24 +156,42 @@ public class TermQueryBuilderTests extends AbstractTermQueryTestCase<TermQueryBu
         TermQueryBuilder query = new TermQueryBuilder(GEO_POINT_FIELD_NAME, "2,3");
         QueryShardContext context = createShardContext();
         QueryShardException e = expectThrows(QueryShardException.class, () -> query.toQuery(context));
-        assertEquals("Geometry fields do not support exact searching, " + "use dedicated geometry queries instead: [mapped_geo_point]",
-                e.getMessage());
+        assertEquals("Geometry fields do not support exact searching, "
+                + "use dedicated geometry queries instead: [mapped_geo_point]", e.getMessage());
     }
 
     public void testParseFailsWithMultipleFields() throws IOException {
-        String json = "{\n" + "  \"term\" : {\n" + "    \"message1\" : {\n" + "      \"value\" : \"this\"\n" + "    },\n"
-                + "    \"message2\" : {\n" + "      \"value\" : \"this\"\n" + "    }\n" + "  }\n" + "}";
+        String json = "{\n" +
+                "  \"term\" : {\n" +
+                "    \"message1\" : {\n" +
+                "      \"value\" : \"this\"\n" +
+                "    },\n" +
+                "    \"message2\" : {\n" +
+                "      \"value\" : \"this\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
         ParsingException e = expectThrows(ParsingException.class, () -> parseQuery(json));
         assertEquals("[term] query doesn't support multiple fields, found [message1] and [message2]", e.getMessage());
 
-        String shortJson = "{\n" + "  \"term\" : {\n" + "    \"message1\" : \"this\",\n" + "    \"message2\" : \"this\"\n" + "  }\n" + "}";
+        String shortJson = "{\n" +
+                "  \"term\" : {\n" +
+                "    \"message1\" : \"this\",\n" +
+                "    \"message2\" : \"this\"\n" +
+                "  }\n" +
+                "}";
         e = expectThrows(ParsingException.class, () -> parseQuery(shortJson));
         assertEquals("[term] query doesn't support multiple fields, found [message1] and [message2]", e.getMessage());
     }
 
     public void testParseAndSerializeBigInteger() throws IOException {
-        String json =
-                "{\n" + "  \"term\" : {\n" + "    \"foo\" : {\n" + "      \"value\" : 80315953321748200608\n" + "    }\n" + "  }\n" + "}";
+        String json = "{\n" +
+                "  \"term\" : {\n" +
+                "    \"foo\" : {\n" +
+                "      \"value\" : 80315953321748200608\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
         QueryBuilder parsedQuery = parseQuery(json);
         assertSerialization(parsedQuery);
     }
@@ -192,7 +221,8 @@ public class TermQueryBuilderTests extends AbstractTermQueryTestCase<TermQueryBu
         QueryShardContext context = createShardContext();
         context.setAllowUnmappedFields(true);
         TermQueryBuilder queryBuilder = new TermQueryBuilder("unmapped_field", "foo");
-        IllegalStateException e = expectThrows(IllegalStateException.class, () -> queryBuilder.toQuery(context));
+        IllegalStateException e = expectThrows(IllegalStateException.class,
+                () -> queryBuilder.toQuery(context));
         assertEquals("Rewrite first", e.getMessage());
     }
 }

@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-
 import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.util.CharTokenizer;
+
+import java.io.IOException;
 
 @Deprecated
 class XLowerCaseTokenizer extends Tokenizer {
@@ -67,13 +67,13 @@ class XLowerCaseTokenizer extends Tokenizer {
             final int charCount = Character.charCount(c);
             bufferIndex += charCount;
 
-            if (Character.isLetter(c)) { // if it's a token char
-                if (length == 0) { // start of token
+            if (Character.isLetter(c)) {               // if it's a token char
+                if (length == 0) {                // start of token
                     assert start == -1;
                     start = offset + bufferIndex - charCount;
                     end = start;
-                } else if (length >= buffer.length - 1) { // check if a supplementary could run out of bounds
-                    buffer = termAtt.resizeBuffer(2 + length); // make sure a supplementary fits in the buffer
+                } else if (length >= buffer.length-1) { // check if a supplementary could run out of bounds
+                    buffer = termAtt.resizeBuffer(2+length); // make sure a supplementary fits in the buffer
                 }
                 end += charCount;
                 length += Character.toChars(Character.toLowerCase(c), buffer, length); // buffer it, normalized
@@ -81,8 +81,8 @@ class XLowerCaseTokenizer extends Tokenizer {
                 if (length >= maxTokenLen) { // buffer overflow! make sure to check for >= surrogate pair could break == test
                     break;
                 }
-            } else if (length > 0) { // at non-Letter w/ chars
-                break; // return 'em
+            } else if (length > 0) {           // at non-Letter w/ chars
+                break;                           // return 'em
             }
         }
 

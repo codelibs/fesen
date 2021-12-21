@@ -38,8 +38,8 @@ public class PercentilesBucketPipelineAggregator extends BucketMetricsPipelineAg
     private boolean keyed = true;
     private List<Double> data;
 
-    PercentilesBucketPipelineAggregator(String name, double[] percents, boolean keyed, String[] bucketsPaths, GapPolicy gapPolicy,
-            DocValueFormat formatter, Map<String, Object> metadata) {
+    PercentilesBucketPipelineAggregator(String name, double[] percents, boolean keyed, String[] bucketsPaths,
+                                        GapPolicy gapPolicy, DocValueFormat formatter, Map<String, Object> metadata) {
         super(name, bucketsPaths, gapPolicy, formatter, metadata);
         this.percents = percents;
         this.keyed = keyed;
@@ -73,7 +73,7 @@ public class PercentilesBucketPipelineAggregator extends BucketMetricsPipelineAg
 
     @Override
     protected void preCollection() {
-        data = new ArrayList<>(1024);
+       data = new ArrayList<>(1024);
     }
 
     @Override

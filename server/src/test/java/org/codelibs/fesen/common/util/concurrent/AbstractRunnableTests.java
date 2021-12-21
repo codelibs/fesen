@@ -89,7 +89,8 @@ public class AbstractRunnableTests extends ESTestCase {
             public void onAfter() {
                 try {
                     afterCallable.call();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     fail(e.toString());
                 }
             }
@@ -123,7 +124,8 @@ public class AbstractRunnableTests extends ESTestCase {
             public void onAfter() {
                 try {
                     afterCallable.call();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     fail(e.toString());
                 }
             }
@@ -145,7 +147,8 @@ public class AbstractRunnableTests extends ESTestCase {
 
                 try {
                     failureCallable.call();
-                } catch (Exception inner) {
+                }
+                catch (Exception inner) {
                     inner.addSuppressed(e);
                     fail(inner.toString());
                 }

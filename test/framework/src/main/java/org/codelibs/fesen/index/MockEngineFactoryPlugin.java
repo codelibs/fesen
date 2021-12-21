@@ -18,18 +18,19 @@
  */
 package org.codelibs.fesen.index;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.lucene.index.AssertingDirectoryReader;
 import org.apache.lucene.index.FilterDirectoryReader;
 import org.codelibs.fesen.common.settings.Setting;
+import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.engine.EngineFactory;
 import org.codelibs.fesen.plugins.EnginePlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.test.engine.MockEngineFactory;
 import org.codelibs.fesen.test.engine.MockEngineSupport;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A plugin to use {@link MockEngineFactory}.

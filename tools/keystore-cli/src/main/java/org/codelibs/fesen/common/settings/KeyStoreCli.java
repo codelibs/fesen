@@ -21,6 +21,9 @@ package org.codelibs.fesen.common.settings;
 
 import org.codelibs.fesen.cli.LoggingAwareMultiCommand;
 import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.common.settings.ChangeKeyStorePasswordCommand;
+import org.codelibs.fesen.common.settings.HasPasswordKeyStoreCommand;
+import org.codelibs.fesen.common.settings.UpgradeKeyStoreCommand;
 
 /**
  * A cli tool for managing secrets in the fesen keystore.

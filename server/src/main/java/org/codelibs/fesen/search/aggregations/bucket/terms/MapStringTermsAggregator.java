@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import static org.codelibs.fesen.search.aggregations.InternalOrder.isKeyOrder;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.LongConsumer;
-import java.util.function.Supplier;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.util.BytesRef;
@@ -52,6 +42,16 @@ import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.Significanc
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import static org.codelibs.fesen.search.aggregations.InternalOrder.isKeyOrder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.LongConsumer;
+
 /**
  * An aggregator of string values that hashes the strings on the fly rather
  * than up front like the {@link GlobalOrdinalsStringTermsAggregator}.
@@ -62,11 +62,22 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
     private final BytesKeyedBucketOrds bucketOrds;
     private final IncludeExclude.StringFilter includeExclude;
 
-    public MapStringTermsAggregator(String name, AggregatorFactories factories, CollectorSource collectorSource,
-            Function<MapStringTermsAggregator, ResultStrategy<?, ?>> resultStrategy, BucketOrder order, DocValueFormat format,
-            BucketCountThresholds bucketCountThresholds, IncludeExclude.StringFilter includeExclude, SearchContext context,
-            Aggregator parent, SubAggCollectionMode collectionMode, boolean showTermDocCountError, CardinalityUpperBound cardinality,
-            Map<String, Object> metadata) throws IOException {
+    public MapStringTermsAggregator(
+        String name,
+        AggregatorFactories factories,
+        CollectorSource collectorSource,
+        Function<MapStringTermsAggregator, ResultStrategy<?, ?>> resultStrategy,
+        BucketOrder order,
+        DocValueFormat format,
+        BucketCountThresholds bucketCountThresholds,
+        IncludeExclude.StringFilter includeExclude,
+        SearchContext context,
+        Aggregator parent,
+        SubAggCollectionMode collectionMode,
+        boolean showTermDocCountError,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException {
         super(name, factories, context, parent, order, format, bucketCountThresholds, collectionMode, showTermDocCountError, metadata);
         this.collectorSource = collectorSource;
         this.resultStrategy = resultStrategy.apply(this); // ResultStrategy needs a reference to the Aggregator to do its job.
@@ -84,7 +95,12 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
 
     @Override
     public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, LeafBucketCollector sub) throws IOException {
-        return resultStrategy.wrapCollector(collectorSource.getLeafCollector(includeExclude, ctx, sub, this::addRequestCircuitBreakerBytes,
+        return resultStrategy.wrapCollector(
+            collectorSource.getLeafCollector(
+                includeExclude,
+                ctx,
+                sub,
+                this::addRequestCircuitBreakerBytes,
                 (s, doc, owningBucketOrd, bytes) -> {
                     long bucketOrdinal = bucketOrds.add(owningBucketOrd, bytes);
                     if (bucketOrdinal < 0) { // already seen
@@ -93,7 +109,9 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
                     } else {
                         collectBucket(s, doc, bucketOrdinal);
                     }
-                }));
+                }
+            )
+        );
     }
 
     @Override
@@ -124,10 +142,14 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
     public interface CollectorSource extends Releasable {
         boolean needsScores();
 
-        LeafBucketCollector getLeafCollector(IncludeExclude.StringFilter includeExclude, LeafReaderContext ctx, LeafBucketCollector sub,
-                LongConsumer addRequestCircuitBreakerBytes, CollectConsumer consumer) throws IOException;
+        LeafBucketCollector getLeafCollector(
+            IncludeExclude.StringFilter includeExclude,
+            LeafReaderContext ctx,
+            LeafBucketCollector sub,
+            LongConsumer addRequestCircuitBreakerBytes,
+            CollectConsumer consumer
+        ) throws IOException;
     }
-
     @FunctionalInterface
     public interface CollectConsumer {
         void accept(LeafBucketCollector sub, int doc, long owningBucketOrd, BytesRef bytes) throws IOException;
@@ -149,8 +171,13 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
         }
 
         @Override
-        public LeafBucketCollector getLeafCollector(IncludeExclude.StringFilter includeExclude, LeafReaderContext ctx,
-                LeafBucketCollector sub, LongConsumer addRequestCircuitBreakerBytes, CollectConsumer consumer) throws IOException {
+        public LeafBucketCollector getLeafCollector(
+            IncludeExclude.StringFilter includeExclude,
+            LeafReaderContext ctx,
+            LeafBucketCollector sub,
+            LongConsumer addRequestCircuitBreakerBytes,
+            CollectConsumer consumer
+        ) throws IOException {
             SortedBinaryDocValues values = valuesSource.bytesValues(ctx);
             return new LeafBucketCollectorBase(sub, values) {
                 final BytesRefBuilder previous = new BytesRefBuilder();
@@ -181,15 +208,15 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 
     /**
      * Strategy for building results.
      */
     abstract class ResultStrategy<R extends InternalAggregation, B extends InternalMultiBucketAggregation.InternalBucket>
-            implements Releasable {
+        implements
+            Releasable {
 
         private InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
             B[][] topBucketsPerOrd = buildTopBucketsPerOrd(owningBucketOrds.length);
@@ -399,8 +426,8 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
                 reduceOrder = order;
             }
             return new StringTerms(name, reduceOrder, order, bucketCountThresholds.getRequiredSize(),
-                    bucketCountThresholds.getMinDocCount(), metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError,
-                    otherDocCount, Arrays.asList(topBuckets), 0);
+                bucketCountThresholds.getMinDocCount(), metadata(), format, bucketCountThresholds.getShardSize(), showTermDocCountError,
+                otherDocCount, Arrays.asList(topBuckets), 0);
         }
 
         @Override
@@ -409,8 +436,7 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 
     /**
@@ -423,8 +449,11 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
 
         private LongArray subsetSizes = context.bigArrays().newLongArray(1, true);
 
-        SignificantTermsResults(SignificanceLookup significanceLookup, SignificanceHeuristic significanceHeuristic,
-                CardinalityUpperBound cardinality) {
+        SignificantTermsResults(
+            SignificanceLookup significanceLookup,
+            SignificanceHeuristic significanceHeuristic,
+            CardinalityUpperBound cardinality
+        ) {
             backgroundFrequencies = significanceLookup.bytesLookup(context.bigArrays(), cardinality);
             supersetSize = significanceLookup.supersetSize();
             this.significanceHeuristic = significanceHeuristic;
@@ -448,8 +477,7 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
         }
 
         @Override
-        void collectZeroDocEntriesIfNeeded(long owningBucketOrd) throws IOException {
-        }
+        void collectZeroDocEntriesIfNeeded(long owningBucketOrd) throws IOException {}
 
         @Override
         Supplier<SignificantStringTerms.Bucket> emptyBucketBuilder(long owningBucketOrd) {
@@ -464,7 +492,7 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
 
         @Override
         void updateBucket(SignificantStringTerms.Bucket spare, BytesKeyedBucketOrds.BucketOrdsEnum ordsEnum, long docCount)
-                throws IOException {
+            throws IOException {
 
             ordsEnum.readValue(spare.termBytes);
             spare.bucketOrd = ordsEnum.ord();
@@ -506,8 +534,17 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
 
         @Override
         SignificantStringTerms buildResult(long owningBucketOrd, long otherDocCount, SignificantStringTerms.Bucket[] topBuckets) {
-            return new SignificantStringTerms(name, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getMinDocCount(),
-                    metadata(), format, subsetSizes.get(owningBucketOrd), supersetSize, significanceHeuristic, Arrays.asList(topBuckets));
+            return new SignificantStringTerms(
+                name,
+                bucketCountThresholds.getRequiredSize(),
+                bucketCountThresholds.getMinDocCount(),
+                metadata(),
+                format,
+                subsetSizes.get(owningBucketOrd),
+                supersetSize,
+                significanceHeuristic,
+                Arrays.asList(topBuckets)
+            );
         }
 
         @Override
@@ -521,3 +558,4 @@ public class MapStringTermsAggregator extends AbstractStringTermsAggregator {
         }
     }
 }
+

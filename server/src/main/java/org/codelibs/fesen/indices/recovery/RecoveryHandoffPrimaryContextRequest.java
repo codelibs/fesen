@@ -54,7 +54,7 @@ class RecoveryHandoffPrimaryContextRequest extends TransportRequest {
      * @param primaryContext the primary context
      */
     RecoveryHandoffPrimaryContextRequest(final long recoveryId, final ShardId shardId,
-            final ReplicationTracker.PrimaryContext primaryContext) {
+                                         final ReplicationTracker.PrimaryContext primaryContext) {
         this.recoveryId = recoveryId;
         this.shardId = shardId;
         this.primaryContext = primaryContext;
@@ -82,7 +82,10 @@ class RecoveryHandoffPrimaryContextRequest extends TransportRequest {
 
     @Override
     public String toString() {
-        return "RecoveryHandoffPrimaryContextRequest{" + "recoveryId=" + recoveryId + ", shardId=" + shardId + ", primaryContext="
-                + primaryContext + '}';
+        return "RecoveryHandoffPrimaryContextRequest{" +
+                "recoveryId=" + recoveryId +
+                ", shardId=" + shardId +
+                ", primaryContext=" + primaryContext +
+                '}';
     }
 }

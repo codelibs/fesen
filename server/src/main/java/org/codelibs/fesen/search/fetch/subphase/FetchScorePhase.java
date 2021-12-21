@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.search.fetch.subphase;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreMode;
@@ -30,6 +28,8 @@ import org.apache.lucene.search.Weight;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
+
+import java.io.IOException;
 
 public class FetchScorePhase implements FetchSubPhase {
 

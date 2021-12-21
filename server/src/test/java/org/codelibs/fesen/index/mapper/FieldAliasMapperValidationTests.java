@@ -46,8 +46,11 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
         ObjectMapper objectMapper = createObjectMapper("some.path");
         FieldAliasMapper aliasMapper = new FieldAliasMapper("path", "some.path", "field");
 
-        MapperParsingException e = expectThrows(MapperParsingException.class, () -> new MappingLookup(Collections.emptyList(),
-                singletonList(objectMapper), singletonList(aliasMapper), 0, Lucene.STANDARD_ANALYZER));
+        MapperParsingException e = expectThrows(MapperParsingException.class, () ->
+            new MappingLookup(
+                Collections.emptyList(),
+                singletonList(objectMapper),
+                singletonList(aliasMapper), 0, Lucene.STANDARD_ANALYZER));
         assertEquals("Alias [some.path] is defined both as an object and an alias", e.getMessage());
     }
 
@@ -56,8 +59,11 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
         FieldMapper invalidField = new MockFieldMapper("invalid");
         FieldAliasMapper invalidAlias = new FieldAliasMapper("invalid", "invalid", "field");
 
-        MapperParsingException e = expectThrows(MapperParsingException.class, () -> new MappingLookup(Arrays.asList(field, invalidField),
-                emptyList(), singletonList(invalidAlias), 0, Lucene.STANDARD_ANALYZER));
+        MapperParsingException e = expectThrows(MapperParsingException.class, () ->
+            new MappingLookup(
+                Arrays.asList(field, invalidField),
+                emptyList(),
+                singletonList(invalidAlias), 0, Lucene.STANDARD_ANALYZER));
 
         assertEquals("Alias [invalid] is defined both as an alias and a concrete field", e.getMessage());
     }
@@ -67,46 +73,57 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
         FieldAliasMapper alias = new FieldAliasMapper("alias", "alias", "field");
         FieldAliasMapper invalidAlias = new FieldAliasMapper("invalid-alias", "invalid-alias", "alias");
 
-        MappingLookup mappers =
-                new MappingLookup(singletonList(field), emptyList(), Arrays.asList(alias, invalidAlias), 0, Lucene.STANDARD_ANALYZER);
+        MappingLookup mappers = new MappingLookup(
+            singletonList(field),
+            emptyList(),
+            Arrays.asList(alias, invalidAlias), 0, Lucene.STANDARD_ANALYZER);
         alias.validate(mappers);
 
         MapperParsingException e = expectThrows(MapperParsingException.class, () -> invalidAlias.validate(mappers));
 
-        assertEquals("Invalid [path] value [alias] for field alias [invalid-alias]: an alias" + " cannot refer to another alias.",
-                e.getMessage());
+        assertEquals("Invalid [path] value [alias] for field alias [invalid-alias]: an alias" +
+            " cannot refer to another alias.", e.getMessage());
     }
 
     public void testAliasThatRefersToItself() {
         FieldAliasMapper invalidAlias = new FieldAliasMapper("invalid-alias", "invalid-alias", "invalid-alias");
 
         MapperParsingException e = expectThrows(MapperParsingException.class, () -> {
-            MappingLookup mappers = new MappingLookup(emptyList(), emptyList(), singletonList(invalidAlias), 0, null);
+            MappingLookup mappers = new MappingLookup(
+                emptyList(),
+                emptyList(),
+                singletonList(invalidAlias), 0, null);
             invalidAlias.validate(mappers);
         });
 
-        assertEquals("Invalid [path] value [invalid-alias] for field alias [invalid-alias]: an alias" + " cannot refer to itself.",
-                e.getMessage());
+        assertEquals("Invalid [path] value [invalid-alias] for field alias [invalid-alias]: an alias" +
+            " cannot refer to itself.", e.getMessage());
     }
 
     public void testAliasWithNonExistentPath() {
         FieldAliasMapper invalidAlias = new FieldAliasMapper("invalid-alias", "invalid-alias", "non-existent");
 
         MapperParsingException e = expectThrows(MapperParsingException.class, () -> {
-            MappingLookup mappers = new MappingLookup(emptyList(), emptyList(), singletonList(invalidAlias), 0, Lucene.STANDARD_ANALYZER);
+            MappingLookup mappers = new MappingLookup(
+                emptyList(),
+                emptyList(),
+                singletonList(invalidAlias), 0, Lucene.STANDARD_ANALYZER);
             invalidAlias.validate(mappers);
         });
 
-        assertEquals("Invalid [path] value [non-existent] for field alias [invalid-alias]: an alias"
-                + " must refer to an existing field in the mappings.", e.getMessage());
+        assertEquals("Invalid [path] value [non-existent] for field alias [invalid-alias]: an alias" +
+            " must refer to an existing field in the mappings.", e.getMessage());
     }
 
     public void testFieldAliasWithNestedScope() {
         ObjectMapper objectMapper = createNestedObjectMapper("nested");
         FieldAliasMapper aliasMapper = new FieldAliasMapper("alias", "nested.alias", "nested.field");
 
-        MappingLookup mappers = new MappingLookup(singletonList(createFieldMapper("nested", "field")), singletonList(objectMapper),
-                singletonList(aliasMapper), 0, Lucene.STANDARD_ANALYZER);
+        MappingLookup mappers = new MappingLookup(
+            singletonList(createFieldMapper("nested", "field")),
+            singletonList(objectMapper),
+            singletonList(aliasMapper),
+            0, Lucene.STANDARD_ANALYZER);
         aliasMapper.validate(mappers);
     }
 
@@ -114,9 +131,11 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
 
         FieldAliasMapper aliasMapper = new FieldAliasMapper("alias", "object2.alias", "object1.field");
 
-        MappingLookup mappers = new MappingLookup(singletonList(createFieldMapper("object1", "field")),
-                Arrays.asList(createObjectMapper("object1"), createObjectMapper("object2")), singletonList(aliasMapper), 0,
-                Lucene.STANDARD_ANALYZER);
+        MappingLookup mappers = new MappingLookup(
+            singletonList(createFieldMapper("object1", "field")),
+            Arrays.asList(createObjectMapper("object1"), createObjectMapper("object2")),
+            singletonList(aliasMapper),
+            0, Lucene.STANDARD_ANALYZER);
         aliasMapper.validate(mappers);
     }
 
@@ -125,14 +144,17 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
         FieldAliasMapper aliasMapper = new FieldAliasMapper("alias", "alias", "nested.field");
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> {
-            MappingLookup mappers = new MappingLookup(singletonList(createFieldMapper("nested", "field")),
-                    Collections.singletonList(objectMapper), singletonList(aliasMapper), 0, Lucene.STANDARD_ANALYZER);
+            MappingLookup mappers = new MappingLookup(
+                singletonList(createFieldMapper("nested", "field")),
+                Collections.singletonList(objectMapper),
+                singletonList(aliasMapper),
+                0, Lucene.STANDARD_ANALYZER);
             aliasMapper.validate(mappers);
         });
 
-        String expectedMessage = "Invalid [path] value [nested.field] for field alias [alias]: "
-                + "an alias must have the same nested scope as its target. The alias is not nested, "
-                + "but the target's nested scope is [nested].";
+        String expectedMessage = "Invalid [path] value [nested.field] for field alias [alias]: " +
+            "an alias must have the same nested scope as its target. The alias is not nested, " +
+            "but the target's nested scope is [nested].";
         assertEquals(expectedMessage, e.getMessage());
     }
 
@@ -140,20 +162,24 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
         FieldAliasMapper aliasMapper = new FieldAliasMapper("alias", "nested2.alias", "nested1.field");
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> {
-            MappingLookup mappers = new MappingLookup(singletonList(createFieldMapper("nested1", "field")),
-                    Arrays.asList(createNestedObjectMapper("nested1"), createNestedObjectMapper("nested2")), singletonList(aliasMapper), 0,
-                    Lucene.STANDARD_ANALYZER);
+            MappingLookup mappers = new MappingLookup(
+                singletonList(createFieldMapper("nested1", "field")),
+                Arrays.asList(createNestedObjectMapper("nested1"), createNestedObjectMapper("nested2")),
+                singletonList(aliasMapper),
+                0, Lucene.STANDARD_ANALYZER);
             aliasMapper.validate(mappers);
         });
 
-        String expectedMessage = "Invalid [path] value [nested1.field] for field alias [nested2.alias]: "
-                + "an alias must have the same nested scope as its target. The alias's nested scope is [nested2], "
-                + "but the target's nested scope is [nested1].";
+
+        String expectedMessage = "Invalid [path] value [nested1.field] for field alias [nested2.alias]: " +
+            "an alias must have the same nested scope as its target. The alias's nested scope is [nested2], " +
+            "but the target's nested scope is [nested1].";
         assertEquals(expectedMessage, e.getMessage());
     }
 
-    private static final Settings SETTINGS =
-            Settings.builder().put(IndexMetadata.SETTING_INDEX_VERSION_CREATED.getKey(), Version.CURRENT).build();
+    private static final Settings SETTINGS = Settings.builder()
+        .put(IndexMetadata.SETTING_INDEX_VERSION_CREATED.getKey(), Version.CURRENT)
+        .build();
 
     private static FieldMapper createFieldMapper(String parent, String name) {
         Mapper.BuilderContext context = new Mapper.BuilderContext(SETTINGS, new ContentPath(parent));
@@ -161,12 +187,16 @@ public class FieldAliasMapperValidationTests extends ESTestCase {
     }
 
     private static ObjectMapper createObjectMapper(String name) {
-        return new ObjectMapper(name, name, new Explicit<>(true, false), ObjectMapper.Nested.NO, ObjectMapper.Dynamic.FALSE, emptyMap(),
-                Settings.EMPTY);
+        return new ObjectMapper(name, name,
+            new Explicit<>(true, false),
+            ObjectMapper.Nested.NO,
+            ObjectMapper.Dynamic.FALSE, emptyMap(), Settings.EMPTY);
     }
 
     private static ObjectMapper createNestedObjectMapper(String name) {
-        return new ObjectMapper(name, name, new Explicit<>(true, false), ObjectMapper.Nested.newNested(), ObjectMapper.Dynamic.FALSE,
-                emptyMap(), Settings.EMPTY);
+        return new ObjectMapper(name, name,
+            new Explicit<>(true, false),
+            ObjectMapper.Nested.newNested(),
+            ObjectMapper.Dynamic.FALSE, emptyMap(), Settings.EMPTY);
     }
 }

@@ -19,21 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeStringArrayValue;
-import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeStringValue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.CompositeIndicesRequest;
@@ -54,6 +39,21 @@ import org.codelibs.fesen.tasks.CancellableTask;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeBooleanValue;
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeStringArrayValue;
+import static org.codelibs.fesen.common.xcontent.support.XContentMapValues.nodeStringValue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 /**
  * A multi search API request.
  */
@@ -66,8 +66,7 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
 
-    public MultiSearchRequest() {
-    }
+    public MultiSearchRequest() {}
 
     /**
      * Add a search request to execute. Note, the order is important, the search response will be returned in the
@@ -138,6 +137,7 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
         return this;
     }
 
+
     public MultiSearchRequest(StreamInput in) throws IOException {
         super(in);
         maxConcurrentSearchRequests = in.readVInt();
@@ -160,13 +160,12 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         MultiSearchRequest that = (MultiSearchRequest) o;
-        return maxConcurrentSearchRequests == that.maxConcurrentSearchRequests && Objects.equals(requests, that.requests)
-                && Objects.equals(indicesOptions, that.indicesOptions);
+        return maxConcurrentSearchRequests == that.maxConcurrentSearchRequests &&
+                Objects.equals(requests, that.requests) &&
+                Objects.equals(indicesOptions, that.indicesOptions);
     }
 
     @Override
@@ -174,10 +173,18 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
         return Objects.hash(maxConcurrentSearchRequests, requests, indicesOptions);
     }
 
-    public static void readMultiLineFormat(BytesReference data, XContent xContent,
-            CheckedBiConsumer<SearchRequest, XContentParser, IOException> consumer, String[] indices, IndicesOptions indicesOptions,
-            String[] types, String routing, String searchType, Boolean ccsMinimizeRoundtrips, NamedXContentRegistry registry,
-            boolean allowExplicitIndex, DeprecationLogger deprecationLogger) throws IOException {
+    public static void readMultiLineFormat(BytesReference data,
+                                           XContent xContent,
+                                           CheckedBiConsumer<SearchRequest, XContentParser, IOException> consumer,
+                                           String[] indices,
+                                           IndicesOptions indicesOptions,
+                                           String[] types,
+                                           String routing,
+                                           String searchType,
+                                           Boolean ccsMinimizeRoundtrips,
+                                           NamedXContentRegistry registry,
+                                           boolean allowExplicitIndex,
+                                           DeprecationLogger deprecationLogger) throws IOException {
         int from = 0;
         byte marker = xContent.streamSeparator();
         while (true) {
@@ -189,8 +196,8 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
             if (nextMarker == 0) {
                 from = nextMarker + 1;
                 deprecationLogger.deprecate("multi_search_empty_first_line",
-                        "support for empty first line before any action metadata in msearch API is deprecated and "
-                                + "will be removed in the next major version");
+                    "support for empty first line before any action metadata in msearch API is deprecated and " +
+                    "will be removed in the next major version");
                 continue;
             }
 
@@ -217,7 +224,7 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
             // now parse the action
             if (nextMarker - from > 0) {
                 try (InputStream stream = data.slice(from, nextMarker - from).streamInput();
-                        XContentParser parser = xContent.createParser(registry, LoggingDeprecationHandler.INSTANCE, stream)) {
+                     XContentParser parser = xContent.createParser(registry, LoggingDeprecationHandler.INSTANCE, stream)) {
                     Map<String, Object> source = parser.map();
                     Object expandWildcards = null;
                     Object ignoreUnavailable = null;
@@ -257,7 +264,7 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
                         }
                     }
                     defaultOptions = IndicesOptions.fromParameters(expandWildcards, ignoreUnavailable, allowNoIndices, ignoreThrottled,
-                            defaultOptions);
+                        defaultOptions);
                 }
             }
             searchRequest.indicesOptions(defaultOptions);
@@ -271,7 +278,7 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
             }
             BytesReference bytes = data.slice(from, nextMarker - from);
             try (InputStream stream = bytes.streamInput();
-                    XContentParser parser = xContent.createParser(registry, LoggingDeprecationHandler.INSTANCE, stream)) {
+                 XContentParser parser = xContent.createParser(registry, LoggingDeprecationHandler.INSTANCE, stream)) {
                 consumer.accept(searchRequest, parser);
             }
             // move pointers
@@ -350,7 +357,9 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
         return new CancellableTask(id, type, action, "", parentTaskId, headers) {
             @Override
             public String getDescription() {
-                return requests.stream().map(SearchRequest::buildDescription).collect(Collectors.joining(action + "[", ",", "]"));
+                return requests.stream()
+                    .map(SearchRequest::buildDescription)
+                    .collect(Collectors.joining(action + "[", ",", "]"));
             }
 
             @Override

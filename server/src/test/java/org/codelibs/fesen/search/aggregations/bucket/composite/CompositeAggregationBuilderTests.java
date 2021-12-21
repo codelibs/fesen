@@ -44,11 +44,11 @@ public class CompositeAggregationBuilderTests extends BaseAggregationTestCase<Co
             histo.script(new Script(randomAlphaOfLengthBetween(10, 20)));
         }
         if (randomBoolean()) {
-            histo.calendarInterval(
-                    randomFrom(DateHistogramInterval.days(1), DateHistogramInterval.minutes(1), DateHistogramInterval.weeks(1)));
+            histo.calendarInterval(randomFrom(DateHistogramInterval.days(1),
+                DateHistogramInterval.minutes(1), DateHistogramInterval.weeks(1)));
         } else {
-            histo.fixedInterval(randomFrom(new DateHistogramInterval(randomNonNegativeLong() + "ms"), DateHistogramInterval.days(10),
-                    DateHistogramInterval.hours(10)));
+            histo.fixedInterval(randomFrom(new DateHistogramInterval(randomNonNegativeLong() + "ms"),
+                DateHistogramInterval.days(10), DateHistogramInterval.hours(10)));
         }
         if (randomBoolean()) {
             histo.timeZone(randomZone());
@@ -107,20 +107,20 @@ public class CompositeAggregationBuilderTests extends BaseAggregationTestCase<Co
             int type = randomIntBetween(0, 3);
             type = 3;
             switch (type) {
-            case 0:
-                sources.add(randomTermsSourceBuilder());
-                break;
-            case 1:
-                sources.add(randomDateHistogramSourceBuilder());
-                break;
-            case 2:
-                sources.add(randomHistogramSourceBuilder());
-                break;
-            case 3:
-                sources.add(randomGeoTileGridValuesSourceBuilder());
-                break;
-            default:
-                throw new AssertionError("wrong branch");
+                case 0:
+                    sources.add(randomTermsSourceBuilder());
+                    break;
+                case 1:
+                    sources.add(randomDateHistogramSourceBuilder());
+                    break;
+                case 2:
+                    sources.add(randomHistogramSourceBuilder());
+                    break;
+                case 3:
+                    sources.add(randomGeoTileGridValuesSourceBuilder());
+                    break;
+                default:
+                    throw new AssertionError("wrong branch");
             }
         }
         return new CompositeAggregationBuilder(randomAlphaOfLength(10), sources);

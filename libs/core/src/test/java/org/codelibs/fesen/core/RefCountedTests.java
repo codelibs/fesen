@@ -18,20 +18,17 @@
  */
 package org.codelibs.fesen.core;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.codelibs.fesen.core.AbstractRefCounted;
+import org.codelibs.fesen.test.ESTestCase;
+import org.hamcrest.Matchers;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.codelibs.fesen.test.ESTestCase;
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class RefCountedTests extends ESTestCase {
     public void testRefCount() throws IOException {

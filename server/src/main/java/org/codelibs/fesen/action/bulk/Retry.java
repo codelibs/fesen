@@ -18,13 +18,6 @@
  */
 package org.codelibs.fesen.action.bulk;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.support.PlainActionFuture;
@@ -33,6 +26,13 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.RemoteTransportException;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 /**
  * Encapsulates synchronous and asynchronous retry logic.
@@ -54,7 +54,7 @@ public class Retry {
      * @param listener A listener that is invoked when the bulk request finishes or completes with an exception. The listener is not
      */
     public void withBackoff(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer, BulkRequest bulkRequest,
-            ActionListener<BulkResponse> listener) {
+                            ActionListener<BulkResponse> listener) {
         RetryHandler r = new RetryHandler(backoffPolicy, consumer, listener, scheduler);
         r.execute(bulkRequest);
     }
@@ -68,7 +68,7 @@ public class Retry {
      * @return a future representing the bulk response returned by the client.
      */
     public PlainActionFuture<BulkResponse> withBackoff(BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer,
-            BulkRequest bulkRequest) {
+                                                       BulkRequest bulkRequest) {
         PlainActionFuture<BulkResponse> future = PlainActionFuture.newFuture();
         withBackoff(consumer, bulkRequest, future);
         return future;
@@ -91,7 +91,7 @@ public class Retry {
         private volatile Scheduler.Cancellable retryCancellable;
 
         RetryHandler(BackoffPolicy backoffPolicy, BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer,
-                ActionListener<BulkResponse> listener, Scheduler scheduler) {
+                     ActionListener<BulkResponse> listener, Scheduler scheduler) {
             this.backoff = backoffPolicy.iterator();
             this.consumer = consumer;
             this.listener = listener;

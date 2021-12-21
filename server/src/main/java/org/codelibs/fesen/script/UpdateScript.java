@@ -30,13 +30,16 @@ import org.codelibs.fesen.common.logging.DeprecationLogger;
  */
 public abstract class UpdateScript {
 
-    private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of("_type", value -> {
-        deprecationLogger.deprecate("update-script", "[types removal] Looking up doc types [_type] in scripts is deprecated.");
-        return value;
-    });
+    private static final DeprecationLogger deprecationLogger =
+            DeprecationLogger.getLogger(DynamicMap.class);
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
+            "_type", value -> {
+                deprecationLogger.deprecate("update-script",
+                        "[types removal] Looking up doc types [_type] in scripts is deprecated.");
+                return value;
+            });
 
-    public static final String[] PARAMETERS = {};
+    public static final String[] PARAMETERS = { };
 
     /** The context used to compile {@link UpdateScript} factories. */
     public static final ScriptContext<Factory> CONTEXT = new ScriptContext<>("update", Factory.class);

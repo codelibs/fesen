@@ -19,14 +19,8 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collection;
-import java.util.Collections;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.ReferenceCounted;
 
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.network.NetworkService;
@@ -38,6 +32,7 @@ import org.codelibs.fesen.common.util.MockPageCacheRecycler;
 import org.codelibs.fesen.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.http.HttpServerTransport;
 import org.codelibs.fesen.http.HttpTransportSettings;
+import org.codelibs.fesen.http.netty4.Netty4HttpServerTransport;
 import org.codelibs.fesen.indices.breaker.NoneCircuitBreakerService;
 import org.codelibs.fesen.rest.BytesRestResponse;
 import org.codelibs.fesen.rest.RestChannel;
@@ -50,8 +45,14 @@ import org.codelibs.fesen.transport.SharedGroupFactory;
 import org.junit.After;
 import org.junit.Before;
 
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.util.ReferenceCounted;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Collection;
+import java.util.Collections;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 public class Netty4BadRequestTests extends ESTestCase {
 
@@ -91,8 +92,8 @@ public class Netty4BadRequestTests extends ESTestCase {
 
         Settings settings = Settings.builder().put(HttpTransportSettings.SETTING_HTTP_PORT.getKey(), getPortRange()).build();
         try (HttpServerTransport httpServerTransport = new Netty4HttpServerTransport(settings, networkService, bigArrays, threadPool,
-                xContentRegistry(), dispatcher, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS),
-                new SharedGroupFactory(Settings.EMPTY))) {
+            xContentRegistry(), dispatcher, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS),
+            new SharedGroupFactory(Settings.EMPTY))) {
             httpServerTransport.start();
             final TransportAddress transportAddress = randomFrom(httpServerTransport.boundAddress().boundAddresses());
 
@@ -105,7 +106,9 @@ public class Netty4BadRequestTests extends ESTestCase {
                     final Collection<String> responseBodies = Netty4HttpClient.returnHttpResponseBodies(responses);
                     assertThat(responseBodies, hasSize(1));
                     assertThat(responseBodies.iterator().next(), containsString("\"type\":\"bad_parameter_exception\""));
-                    assertThat(responseBodies.iterator().next(), containsString(
+                    assertThat(
+                        responseBodies.iterator().next(),
+                        containsString(
                             "\"reason\":\"java.lang.IllegalArgumentException: unterminated escape sequence at end of string: %\""));
                 } finally {
                     responses.forEach(ReferenceCounted::release);

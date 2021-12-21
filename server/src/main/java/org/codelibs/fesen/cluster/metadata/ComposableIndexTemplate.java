@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.cluster.metadata.DataStream.TimestampField.FIXED_TIMESTAMP_FIELD;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
@@ -44,6 +35,15 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.mapper.MapperService;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.cluster.metadata.DataStream.TimestampField.FIXED_TIMESTAMP_FIELD;
+
 /**
  * An index template is comprised of a set of index patterns, an optional template, and a list of
  * ids corresponding to component templates that should be composed in order when creating a new
@@ -59,9 +59,15 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
     private static final ParseField DATA_STREAM = new ParseField("data_stream");
 
     @SuppressWarnings("unchecked")
-    public static final ConstructingObjectParser<ComposableIndexTemplate, Void> PARSER =
-            new ConstructingObjectParser<>("index_template", false, a -> new ComposableIndexTemplate((List<String>) a[0], (Template) a[1],
-                    (List<String>) a[2], (Long) a[3], (Long) a[4], (Map<String, Object>) a[5], (DataStreamTemplate) a[6]));
+    public static final ConstructingObjectParser<ComposableIndexTemplate, Void> PARSER = new ConstructingObjectParser<>("index_template",
+        false,
+        a -> new ComposableIndexTemplate((List<String>) a[0],
+            (Template) a[1],
+            (List<String>) a[2],
+            (Long) a[3],
+            (Long) a[4],
+            (Map<String, Object>) a[5],
+            (DataStreamTemplate) a[6]));
 
     static {
         PARSER.declareStringArray(ConstructingObjectParser.constructorArg(), INDEX_PATTERNS);
@@ -96,13 +102,13 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
     }
 
     public ComposableIndexTemplate(List<String> indexPatterns, @Nullable Template template, @Nullable List<String> componentTemplates,
-            @Nullable Long priority, @Nullable Long version, @Nullable Map<String, Object> metadata) {
+                                   @Nullable Long priority, @Nullable Long version, @Nullable Map<String, Object> metadata) {
         this(indexPatterns, template, componentTemplates, priority, version, metadata, null);
     }
 
     public ComposableIndexTemplate(List<String> indexPatterns, @Nullable Template template, @Nullable List<String> componentTemplates,
-            @Nullable Long priority, @Nullable Long version, @Nullable Map<String, Object> metadata,
-            @Nullable DataStreamTemplate dataStreamTemplate) {
+                                   @Nullable Long priority, @Nullable Long version, @Nullable Map<String, Object> metadata,
+                                   @Nullable DataStreamTemplate dataStreamTemplate) {
         this.indexPatterns = indexPatterns;
         this.template = template;
         this.componentTemplates = componentTemplates;
@@ -215,8 +221,8 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.indexPatterns, this.template, this.componentTemplates, this.priority, this.version, this.metadata,
-                this.dataStreamTemplate);
+        return Objects.hash(this.indexPatterns, this.template, this.componentTemplates, this.priority, this.version,
+            this.metadata, this.dataStreamTemplate);
     }
 
     @Override
@@ -228,10 +234,13 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
             return false;
         }
         ComposableIndexTemplate other = (ComposableIndexTemplate) obj;
-        return Objects.equals(this.indexPatterns, other.indexPatterns) && Objects.equals(this.template, other.template)
-                && Objects.equals(this.componentTemplates, other.componentTemplates) && Objects.equals(this.priority, other.priority)
-                && Objects.equals(this.version, other.version) && Objects.equals(this.metadata, other.metadata)
-                && Objects.equals(this.dataStreamTemplate, other.dataStreamTemplate);
+        return Objects.equals(this.indexPatterns, other.indexPatterns) &&
+            Objects.equals(this.template, other.template) &&
+            Objects.equals(this.componentTemplates, other.componentTemplates) &&
+            Objects.equals(this.priority, other.priority) &&
+            Objects.equals(this.version, other.version) &&
+            Objects.equals(this.metadata, other.metadata) &&
+            Objects.equals(this.dataStreamTemplate, other.dataStreamTemplate);
     }
 
     @Override
@@ -241,8 +250,10 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
 
     public static class DataStreamTemplate implements Writeable, ToXContentObject {
 
-        private static final ObjectParser<DataStreamTemplate, Void> PARSER =
-                new ObjectParser<>("data_stream_template", DataStreamTemplate::new);
+        private static final ObjectParser<DataStreamTemplate, Void> PARSER = new ObjectParser<>(
+            "data_stream_template",
+            DataStreamTemplate::new
+        );
 
         public DataStreamTemplate() {
         }
@@ -260,7 +271,8 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
          */
         public Map<String, Object> getDataStreamMappingSnippet() {
             // _data_stream_timestamp meta fields default to @timestamp:
-            return singletonMap(MapperService.SINGLE_MAPPING_NAME, singletonMap("_data_stream_timestamp", singletonMap("enabled", true)));
+            return singletonMap(MapperService.SINGLE_MAPPING_NAME, singletonMap("_data_stream_timestamp",
+                singletonMap("enabled", true)));
         }
 
         @Override
@@ -276,8 +288,7 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
+            if (this == o) return true;
             return o != null && getClass() == o.getClass();
         }
 

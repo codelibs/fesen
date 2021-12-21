@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.search.profile.aggregation;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.profile.Timer;
+
+import java.io.IOException;
 
 public class ProfilingLeafBucketCollector extends LeafBucketCollector {
 

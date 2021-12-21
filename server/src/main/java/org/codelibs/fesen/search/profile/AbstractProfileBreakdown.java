@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.search.profile;
 
-import static java.util.Collections.emptyMap;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * A record of timings for the various operations that may happen during query execution.

@@ -284,8 +284,15 @@ public class PainlessExecuteAction extends ActionType<PainlessExecuteAction.Resp
         Request(StreamInput in) throws IOException {
             super(in);
             script = new Script(in);
-            context = fromScriptContextName(in.readString());
-            contextSetup = in.readOptionalWriteable(ContextSetup::new);
+            if (in.getVersion().before(Version.V_6_4_0)) {
+                byte scriptContextId = in.readByte();
+                assert scriptContextId == 0;
+                context = null;
+                contextSetup = null;
+            } else {
+                context = fromScriptContextName(in.readString());
+                contextSetup = in.readOptionalWriteable(ContextSetup::new);
+            }
         }
 
         public Script getScript() {
@@ -321,8 +328,12 @@ public class PainlessExecuteAction extends ActionType<PainlessExecuteAction.Resp
         public void writeTo(StreamOutput out) throws IOException {
             super.writeTo(out);
             script.writeTo(out);
-            out.writeString(context.name);
-            out.writeOptionalWriteable(contextSetup);
+            if (out.getVersion().before(Version.V_6_4_0)) {
+                out.writeByte((byte) 0);
+            } else {
+                out.writeString(context.name);
+                out.writeOptionalWriteable(contextSetup);
+            }
         }
 
         // For testing only:

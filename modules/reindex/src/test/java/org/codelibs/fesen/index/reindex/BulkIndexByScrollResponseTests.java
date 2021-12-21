@@ -19,18 +19,20 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
+import org.codelibs.fesen.action.bulk.BulkItemResponse;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.codelibs.fesen.action.bulk.BulkItemResponse;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.index.reindex.ScrollableHitSource.SearchFailure;
-import org.codelibs.fesen.test.ESTestCase;
+import static java.util.Collections.emptyList;
+import static org.codelibs.fesen.core.TimeValue.timeValueMillis;
 
 public class BulkIndexByScrollResponseTests extends ESTestCase {
     public void testMergeConstructor() {

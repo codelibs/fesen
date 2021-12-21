@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
 
+import java.io.IOException;
+
 class StupidBackoffScorer extends WordScorer {
     private final double discount;
 
-    StupidBackoffScorer(IndexReader reader, Terms terms, String field, double realWordLikelihood, BytesRef separator, double discount)
-            throws IOException {
+    StupidBackoffScorer(IndexReader reader, Terms terms,String field,
+                            double realWordLikelihood, BytesRef separator, double discount) throws IOException {
         super(reader, terms, field, realWordLikelihood, separator);
         this.discount = discount;
     }

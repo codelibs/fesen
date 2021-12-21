@@ -17,18 +17,20 @@
  * under the License.
  */
 
+
 package org.codelibs.fesen.search.aggregations.bucket.terms.heuristic;
 
-import java.io.IOException;
 
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 
+import java.io.IOException;
+
 public class MutualInformation extends NXYSignificanceHeuristic {
     public static final String NAME = "mutual_information";
-    public static final ConstructingObjectParser<MutualInformation, Void> PARSER =
-            new ConstructingObjectParser<>(NAME, buildFromParsedArgs(MutualInformation::new));
+    public static final ConstructingObjectParser<MutualInformation, Void> PARSER = new ConstructingObjectParser<>(
+        NAME, buildFromParsedArgs(MutualInformation::new));
     static {
         NXYSignificanceHeuristic.declareParseFields(PARSER);
     }
@@ -45,6 +47,7 @@ public class MutualInformation extends NXYSignificanceHeuristic {
     public MutualInformation(StreamInput in) throws IOException {
         super(in);
     }
+
 
     @Override
     public boolean equals(Object other) {
@@ -69,10 +72,11 @@ public class MutualInformation extends NXYSignificanceHeuristic {
     public double getScore(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize) {
         Frequencies frequencies = computeNxys(subsetFreq, subsetSize, supersetFreq, supersetSize, "MutualInformation");
 
-        double score = (getMITerm(frequencies.N00, frequencies.N0_, frequencies.N_0, frequencies.N)
-                + getMITerm(frequencies.N01, frequencies.N0_, frequencies.N_1, frequencies.N)
-                + getMITerm(frequencies.N10, frequencies.N1_, frequencies.N_0, frequencies.N)
-                + getMITerm(frequencies.N11, frequencies.N1_, frequencies.N_1, frequencies.N)) / log2;
+        double score = (getMITerm(frequencies.N00, frequencies.N0_, frequencies.N_0, frequencies.N) +
+                getMITerm(frequencies.N01, frequencies.N0_, frequencies.N_1, frequencies.N) +
+                getMITerm(frequencies.N10, frequencies.N1_, frequencies.N_0, frequencies.N) +
+                getMITerm(frequencies.N11, frequencies.N1_, frequencies.N_1, frequencies.N))
+                / log2;
 
         if (Double.isNaN(score)) {
             score = Double.NEGATIVE_INFINITY;
@@ -93,7 +97,7 @@ public class MutualInformation extends NXYSignificanceHeuristic {
                 + N01 / N * Math.log((N * N01) / (N0_ * N_1))
                 + N10 / N * Math.log((N * N10) / (N1_ * N_0))
                 + N00 / N * Math.log((N * N00) / (N0_ * N_0));
-    
+
         but we get many NaN if we do not take case of the 0s */
 
     double getMITerm(double Nxy, double Nx_, double N_y, double N) {
@@ -134,3 +138,4 @@ public class MutualInformation extends NXYSignificanceHeuristic {
         }
     }
 }
+

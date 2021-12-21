@@ -29,8 +29,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
  * {@value org.codelibs.fesen.action.admin.cluster.node.liveness.TransportLivenessAction#NAME}
  */
 public final class LivenessRequest extends ActionRequest {
-    public LivenessRequest() {
-    }
+    public LivenessRequest() {}
 
     public LivenessRequest(StreamInput in) throws IOException {
         super(in);

@@ -19,13 +19,8 @@
 
 package org.codelibs.fesen.action.support;
 
-import static org.codelibs.fesen.ExceptionsHelper.detailedMessage;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -36,6 +31,11 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.rest.RestStatus;
 
+import java.io.IOException;
+
+import static org.codelibs.fesen.ExceptionsHelper.detailedMessage;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
 public class DefaultShardOperationFailedException extends ShardOperationFailedException implements Writeable {
 
     private static final String INDEX = "index";
@@ -43,7 +43,7 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
     private static final String REASON = "reason";
 
     public static final ConstructingObjectParser<DefaultShardOperationFailedException, Void> PARSER = new ConstructingObjectParser<>(
-            "failures", true, arg -> new DefaultShardOperationFailedException((String) arg[0], (int) arg[1], (Throwable) arg[2]));
+        "failures", true, arg -> new DefaultShardOperationFailedException((String) arg[0], (int) arg[1] ,(Throwable) arg[2]));
 
     protected static <T extends DefaultShardOperationFailedException> void declareFields(ConstructingObjectParser<T, Void> objectParser) {
         objectParser.declareString(constructorArg(), new ParseField(INDEX));
@@ -55,8 +55,7 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
         declareFields(PARSER);
     }
 
-    protected DefaultShardOperationFailedException() {
-    }
+    protected DefaultShardOperationFailedException() {}
 
     protected DefaultShardOperationFailedException(StreamInput in) throws IOException {
         readFrom(in, this);
@@ -64,7 +63,7 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
 
     public DefaultShardOperationFailedException(FesenException e) {
         super(e.getIndex() == null ? null : e.getIndex().getName(), e.getShardId() == null ? -1 : e.getShardId().getId(),
-                detailedMessage(e), e.status(), e);
+            detailedMessage(e), e.status(), e);
     }
 
     public DefaultShardOperationFailedException(String index, int shardId, Throwable cause) {

@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.percolator;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Collections;
-
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -48,10 +42,19 @@ import org.codelibs.fesen.index.mapper.Mapper;
 import org.codelibs.fesen.index.mapper.ParseContext;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.TermQueryBuilder;
+import org.elasticsearch.mock.orig.Mockito;
+import org.codelibs.fesen.percolator.PercolateQuery;
+import org.codelibs.fesen.percolator.PercolateQueryBuilder;
+import org.codelibs.fesen.percolator.PercolatorFieldMapper;
 import org.codelibs.fesen.search.SearchModule;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.test.ESTestCase;
-import org.elasticsearch.mock.orig.Mockito;
+
+import java.io.IOException;
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class QueryBuilderStoreTests extends ESTestCase {
 
@@ -73,17 +76,18 @@ public class QueryBuilderStoreTests extends ESTestCase {
             IndexWriterConfig config = new IndexWriterConfig(new WhitespaceAnalyzer());
             config.setMergePolicy(NoMergePolicy.INSTANCE);
             Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
-            BinaryFieldMapper fieldMapper =
-                    PercolatorFieldMapper.Builder.createQueryBuilderFieldBuilder(new Mapper.BuilderContext(settings, new ContentPath(0)));
+            BinaryFieldMapper fieldMapper = PercolatorFieldMapper.Builder.createQueryBuilderFieldBuilder(
+                new Mapper.BuilderContext(settings, new ContentPath(0)));
 
-            Version version = Version.V_7_0_0;
+            Version version = Version.V_6_0_0_beta2;
             try (IndexWriter indexWriter = new IndexWriter(directory, config)) {
                 for (int i = 0; i < queryBuilders.length; i++) {
                     queryBuilders[i] = new TermQueryBuilder(randomAlphaOfLength(4), randomAlphaOfLength(8));
                     ParseContext parseContext = mock(ParseContext.class);
                     ParseContext.Document document = new ParseContext.Document();
                     when(parseContext.doc()).thenReturn(document);
-                    PercolatorFieldMapper.createQueryBuilderField(version, fieldMapper, queryBuilders[i], parseContext);
+                    PercolatorFieldMapper.createQueryBuilderField(version,
+                        fieldMapper, queryBuilders[i], parseContext);
                     indexWriter.addDocument(document);
                 }
             }
@@ -93,7 +97,7 @@ public class QueryBuilderStoreTests extends ESTestCase {
             when(queryShardContext.getWriteableRegistry()).thenReturn(writableRegistry());
             when(queryShardContext.getXContentRegistry()).thenReturn(xContentRegistry());
             when(queryShardContext.getForField(fieldMapper.fieldType()))
-                    .thenReturn(new BytesBinaryIndexFieldData(fieldMapper.name(), CoreValuesSourceType.BYTES));
+                .thenReturn(new BytesBinaryIndexFieldData(fieldMapper.name(), CoreValuesSourceType.BYTES));
             when(queryShardContext.fieldMapper(Mockito.anyString())).thenAnswer(invocation -> {
                 final String fieldName = (String) invocation.getArguments()[0];
                 return new KeywordFieldMapper.KeywordFieldType(fieldName);

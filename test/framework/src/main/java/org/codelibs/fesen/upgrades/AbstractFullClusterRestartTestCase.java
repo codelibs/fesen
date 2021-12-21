@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.upgrades;
 
-import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.client.Request;
 import org.codelibs.fesen.common.Strings;
@@ -34,15 +28,21 @@ import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.test.rest.ESRestTestCase;
 import org.junit.Before;
 
+import java.io.IOException;
+import java.util.Map;
+
+import static org.codelibs.fesen.common.xcontent.XContentFactory.jsonBuilder;
+import static org.hamcrest.Matchers.equalTo;
+
 public abstract class AbstractFullClusterRestartTestCase extends ESRestTestCase {
 
     private static final boolean runningAgainstOldCluster = Booleans.parseBoolean(System.getProperty("tests.is_old_cluster"));
 
     @Before
     public void init() throws IOException {
-        assertThat("we don't need this branch if we aren't compatible with 7.0",
-                Version.CURRENT.minimumIndexCompatibilityVersion().onOrBefore(Version.V_7_0_0), equalTo(true));
-        if (isRunningAgainstOldCluster() && getOldClusterVersion().before(Version.V_8_0_0)) {
+        assertThat("we don't need this branch if we aren't compatible with 6.0",
+                Version.CURRENT.minimumIndexCompatibilityVersion().onOrBefore(Version.V_6_0_0), equalTo(true));
+        if (isRunningAgainstOldCluster() && getOldClusterVersion().before(Version.V_7_0_0)) {
             XContentBuilder template = jsonBuilder();
             template.startObject();
             {

@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index.rankeval;
 
-import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.CoreMatchers.containsString;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.codelibs.fesen.action.OriginalIndices;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -39,10 +30,22 @@ import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.index.rankeval.EvalQueryQuality;
+import org.codelibs.fesen.index.rankeval.RatedDocument;
+import org.codelibs.fesen.index.rankeval.RecallAtK;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.search.SearchHit;
 import org.codelibs.fesen.search.SearchShardTarget;
 import org.codelibs.fesen.test.ESTestCase;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.codelibs.fesen.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class RecallAtKTests extends ESTestCase {
 
@@ -88,7 +91,7 @@ public class RecallAtKTests extends ESTestCase {
 
         RecallAtK recallAtN = new RecallAtK(2, 5);
 
-        EvalQueryQuality evaluated = recallAtN.evaluate("id", toSearchHits(rated.subList(0, 3), "test"), rated);
+        EvalQueryQuality evaluated = recallAtN.evaluate("id", toSearchHits(rated.subList(0,3), "test"), rated);
         assertEquals((double) 1 / 3, evaluated.metricScore(), 0.00001);
         assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
         assertEquals(3, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
@@ -200,7 +203,8 @@ public class RecallAtKTests extends ESTestCase {
 
     public void testSerialization() throws IOException {
         RecallAtK original = createTestItem();
-        RecallAtK deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()), RecallAtK::new);
+        RecallAtK deserialized = ESTestCase.copyWriteable(original, new NamedWriteableRegistry(Collections.emptyList()),
+            RecallAtK::new);
         assertEquals(deserialized, original);
         assertEquals(deserialized.hashCode(), original.hashCode());
         assertNotSame(deserialized, original);
@@ -217,15 +221,18 @@ public class RecallAtKTests extends ESTestCase {
     private static RecallAtK mutate(RecallAtK original) {
         RecallAtK recallAtK;
         switch (randomIntBetween(0, 1)) {
-        case 0:
-            recallAtK = new RecallAtK(randomValueOtherThan(original.getRelevantRatingThreshold(), () -> randomIntBetween(0, 10)),
+            case 0:
+                recallAtK = new RecallAtK(
+                    randomValueOtherThan(original.getRelevantRatingThreshold(), () -> randomIntBetween(0, 10)),
                     original.forcedSearchSize().getAsInt());
-            break;
-        case 1:
-            recallAtK = new RecallAtK(original.getRelevantRatingThreshold(), original.forcedSearchSize().getAsInt() + 1);
-            break;
-        default:
-            throw new IllegalStateException("The test should only allow two parameters mutated");
+                break;
+            case 1:
+                recallAtK = new RecallAtK(
+                    original.getRelevantRatingThreshold(),
+                    original.forcedSearchSize().getAsInt() + 1);
+                break;
+            default:
+                throw new IllegalStateException("The test should only allow two parameters mutated");
         }
         return recallAtK;
     }

@@ -35,22 +35,24 @@ import org.codelibs.fesen.node.NodeService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportNodesInfoAction
-        extends TransportNodesAction<NodesInfoRequest, NodesInfoResponse, TransportNodesInfoAction.NodeInfoRequest, NodeInfo> {
+public class TransportNodesInfoAction extends TransportNodesAction<NodesInfoRequest,
+                                                                   NodesInfoResponse,
+                                                                   TransportNodesInfoAction.NodeInfoRequest,
+                                                                   NodeInfo> {
 
     private final NodeService nodeService;
 
     @Inject
-    public TransportNodesInfoAction(ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-            NodeService nodeService, ActionFilters actionFilters) {
-        super(NodesInfoAction.NAME, threadPool, clusterService, transportService, actionFilters, NodesInfoRequest::new,
-                NodeInfoRequest::new, ThreadPool.Names.MANAGEMENT, NodeInfo.class);
+    public TransportNodesInfoAction(ThreadPool threadPool, ClusterService clusterService,
+                                    TransportService transportService, NodeService nodeService, ActionFilters actionFilters) {
+        super(NodesInfoAction.NAME, threadPool, clusterService, transportService, actionFilters,
+            NodesInfoRequest::new, NodeInfoRequest::new, ThreadPool.Names.MANAGEMENT, NodeInfo.class);
         this.nodeService = nodeService;
     }
 
     @Override
-    protected NodesInfoResponse newResponse(NodesInfoRequest nodesInfoRequest, List<NodeInfo> responses,
-            List<FailedNodeException> failures) {
+    protected NodesInfoResponse newResponse(NodesInfoRequest nodesInfoRequest,
+                                            List<NodeInfo> responses, List<FailedNodeException> failures) {
         return new NodesInfoResponse(clusterService.getClusterName(), responses, failures);
     }
 
@@ -68,15 +70,18 @@ public class TransportNodesInfoAction
     protected NodeInfo nodeOperation(NodeInfoRequest nodeRequest) {
         NodesInfoRequest request = nodeRequest.request;
         Set<String> metrics = request.requestedMetrics();
-        return nodeService.info(metrics.contains(NodesInfoRequest.Metric.SETTINGS.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.OS.metricName()), metrics.contains(NodesInfoRequest.Metric.PROCESS.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.JVM.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.THREAD_POOL.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.TRANSPORT.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.HTTP.metricName()), metrics.contains(NodesInfoRequest.Metric.PLUGINS.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.INGEST.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.AGGREGATIONS.metricName()),
-                metrics.contains(NodesInfoRequest.Metric.INDICES.metricName()));
+        return nodeService.info(
+            metrics.contains(NodesInfoRequest.Metric.SETTINGS.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.OS.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.PROCESS.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.JVM.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.THREAD_POOL.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.TRANSPORT.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.HTTP.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.PLUGINS.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.INGEST.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.AGGREGATIONS.metricName()),
+            metrics.contains(NodesInfoRequest.Metric.INDICES.metricName()));
     }
 
     public static class NodeInfoRequest extends BaseNodeRequest {

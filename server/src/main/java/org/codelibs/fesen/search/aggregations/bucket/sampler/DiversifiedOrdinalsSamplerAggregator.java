@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.sampler;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
@@ -30,7 +26,6 @@ import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.search.DiversifiedTopDocsCollector;
 import org.apache.lucene.search.DiversifiedTopDocsCollector.ScoreDocKey;
-import org.apache.lucene.search.TopDocsCollector;
 import org.codelibs.fesen.index.fielddata.AbstractNumericDocValues;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
@@ -38,15 +33,27 @@ import org.codelibs.fesen.search.aggregations.bucket.DeferringBucketCollector;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
+import org.apache.lucene.search.TopDocsCollector;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class DiversifiedOrdinalsSamplerAggregator extends SamplerAggregator {
 
     private ValuesSource.Bytes.WithOrdinals.FieldData valuesSource;
     private int maxDocsPerValue;
 
-    DiversifiedOrdinalsSamplerAggregator(String name, int shardSize, AggregatorFactories factories, SearchContext context,
-            Aggregator parent, Map<String, Object> metadata, ValuesSourceConfig valuesSourceConfig, int maxDocsPerValue)
-            throws IOException {
+    DiversifiedOrdinalsSamplerAggregator(
+        String name,
+        int shardSize,
+        AggregatorFactories factories,
+        SearchContext context,
+        Aggregator parent,
+        Map<String, Object> metadata,
+        ValuesSourceConfig valuesSourceConfig,
+        int maxDocsPerValue
+    ) throws IOException {
         super(name, shardSize, factories, context, parent, metadata);
         assert valuesSourceConfig.hasValues();
         this.valuesSource = (ValuesSource.Bytes.WithOrdinals.FieldData) valuesSourceConfig.getValuesSource();
@@ -86,6 +93,7 @@ public class DiversifiedOrdinalsSamplerAggregator extends SamplerAggregator {
         // a lookup from fesen's ValuesSource
         class ValuesDiversifiedTopDocsCollector extends DiversifiedTopDocsCollector {
 
+
             ValuesDiversifiedTopDocsCollector(int numHits, int maxHitsPerKey) {
                 super(numHits, maxHitsPerKey);
             }
@@ -124,7 +132,8 @@ public class DiversifiedOrdinalsSamplerAggregator extends SamplerAggregator {
                             // Check there isn't a second value for this
                             // document
                             if (globalOrds.nextOrd() != SortedSetDocValues.NO_MORE_ORDS) {
-                                throw new IllegalArgumentException("Sample diversifying key must be a single valued-field");
+                                throw new IllegalArgumentException(
+                                        "Sample diversifying key must be a single valued-field");
                             }
                             return true;
                         } else {

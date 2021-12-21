@@ -83,13 +83,14 @@ public class InternalAdjacencyMatrixTests extends InternalMultiBucketAggregation
             for (InternalAdjacencyMatrix.InternalBucket bucket : input.getBuckets()) {
                 if (bucket.getDocCount() > 0) {
                     expectedCounts.compute(bucket.getKeyAsString(),
-                            (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
+                        (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
                 }
             }
         }
         final Map<String, Long> actualCounts = new TreeMap<>();
         for (InternalAdjacencyMatrix.InternalBucket bucket : reduced.getBuckets()) {
-            actualCounts.compute(bucket.getKeyAsString(), (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
+            actualCounts.compute(bucket.getKeyAsString(),
+                    (key, oldValue) -> (oldValue == null ? 0 : oldValue) + bucket.getDocCount());
         }
         assertEquals(expectedCounts, actualCounts);
     }

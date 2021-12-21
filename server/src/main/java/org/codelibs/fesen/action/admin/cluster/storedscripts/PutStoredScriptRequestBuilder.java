@@ -25,8 +25,8 @@ import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-public class PutStoredScriptRequestBuilder
-        extends AcknowledgedRequestBuilder<PutStoredScriptRequest, AcknowledgedResponse, PutStoredScriptRequestBuilder> {
+public class PutStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<PutStoredScriptRequest,
+    AcknowledgedResponse, PutStoredScriptRequestBuilder> {
 
     public PutStoredScriptRequestBuilder(FesenClient client, PutStoredScriptAction action) {
         super(client, action, new PutStoredScriptRequest());

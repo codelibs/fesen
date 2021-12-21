@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.Arrays;
-import java.util.Base64;
-
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.UnicodeUtil;
+
+import java.util.Arrays;
+import java.util.Base64;
 
 public final class Uid {
 
@@ -49,17 +49,13 @@ public final class Uid {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Uid uid = (Uid) o;
 
-        if (id != null ? !id.equals(uid.id) : uid.id != null)
-            return false;
-        if (type != null ? !type.equals(uid.type) : uid.type != null)
-            return false;
+        if (id != null ? !id.equals(uid.id) : uid.id != null) return false;
+        if (type != null ? !type.equals(uid.type) : uid.type != null) return false;
 
         return true;
     }
@@ -85,35 +81,39 @@ public final class Uid {
         // 'xxx=' and 'xxx' could be considered the same id
         final int length = id.length();
         switch (length & 0x03) {
-        case 0:
-            break;
-        case 1:
-            return false;
-        case 2:
-            // the last 2 symbols (12 bits) are encoding 1 byte (8 bits)
-            // so the last symbol only actually uses 8-6=2 bits and can only take 4 values
-            char last = id.charAt(length - 1);
-            if (last != 'A' && last != 'Q' && last != 'g' && last != 'w') {
+            case 0:
+                break;
+            case 1:
                 return false;
-            }
-            break;
-        case 3:
-            // The last 3 symbols (18 bits) are encoding 2 bytes (16 bits)
-            // so the last symbol only actually uses 16-12=4 bits and can only take 16 values
-            last = id.charAt(length - 1);
-            if (last != 'A' && last != 'E' && last != 'I' && last != 'M' && last != 'Q' && last != 'U' && last != 'Y' && last != 'c'
-                    && last != 'g' && last != 'k' && last != 'o' && last != 's' && last != 'w' && last != '0' && last != '4'
-                    && last != '8') {
-                return false;
-            }
-            break;
-        default:
-            // number & 0x03 is always in [0,3]
-            throw new AssertionError("Impossible case");
+            case 2:
+                // the last 2 symbols (12 bits) are encoding 1 byte (8 bits)
+                // so the last symbol only actually uses 8-6=2 bits and can only take 4 values
+                char last = id.charAt(length - 1);
+                if (last != 'A' && last != 'Q' && last != 'g' && last != 'w') {
+                    return false;
+                }
+                break;
+            case 3:
+                // The last 3 symbols (18 bits) are encoding 2 bytes (16 bits)
+                // so the last symbol only actually uses 16-12=4 bits and can only take 16 values
+                last = id.charAt(length - 1);
+                if (last != 'A' && last != 'E' && last != 'I' && last != 'M' && last != 'Q'&& last != 'U'&& last != 'Y'
+                    && last != 'c'&& last != 'g'&& last != 'k' && last != 'o' && last != 's' && last != 'w'
+                    && last != '0' && last != '4' && last != '8') {
+                    return false;
+                }
+                break;
+            default:
+                // number & 0x03 is always in [0,3]
+                throw new AssertionError("Impossible case");
         }
         for (int i = 0; i < length; ++i) {
             final char c = id.charAt(i);
-            final boolean allowed = (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-' || c == '_';
+            final boolean allowed =
+                (c >= '0' && c <= '9') ||
+                    (c >= 'A' && c <= 'Z') ||
+                    (c >= 'a' && c <= 'z') ||
+                    c == '-' || c == '_';
             if (allowed == false) {
                 return false;
             }
@@ -144,7 +144,7 @@ public final class Uid {
             } else {
                 b2 = id.charAt(i + 1) - '0';
             }
-            b[1 + i / 2] = (byte) ((b1 << 4) | b2);
+            b[1 + i/2] = (byte) ((b1 << 4) | b2);
         }
         return new BytesRef(b);
     }
@@ -237,12 +237,12 @@ public final class Uid {
         }
         final int magicChar = Byte.toUnsignedInt(idBytes[offset]);
         switch (magicChar) {
-        case NUMERIC:
-            return decodeNumericId(idBytes, offset, length);
-        case UTF8:
-            return decodeUtf8Id(idBytes, offset, length);
-        default:
-            return decodeBase64Id(idBytes, offset, length);
+            case NUMERIC:
+                return decodeNumericId(idBytes, offset, length);
+            case UTF8:
+                return decodeUtf8Id(idBytes, offset, length);
+            default:
+                return decodeBase64Id(idBytes, offset, length);
         }
     }
 }

@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.action.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.action.ShardOperationFailedException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SearchPhaseExecutionException extends FesenException {
     private final String phaseName;

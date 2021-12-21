@@ -52,8 +52,8 @@ public class AliasActionsTests extends ESTestCase {
             Exception e = expectThrows(IllegalArgumentException.class, () -> new AliasActions(type).validate());
             assertEquals("One of [index] or [indices] is required", e.getMessage());
         } else {
-            Exception e =
-                    expectThrows(IllegalArgumentException.class, () -> new AliasActions(type).alias(randomAlphaOfLength(5)).validate());
+            Exception e = expectThrows(IllegalArgumentException.class,
+                    () -> new AliasActions(type).alias(randomAlphaOfLength(5)).validate());
             assertEquals("One of [index] or [indices] is required", e.getMessage());
             e = expectThrows(IllegalArgumentException.class, () -> new AliasActions(type).index(randomAlphaOfLength(5)).validate());
             assertEquals("One of [alias] or [aliases] is required", e.getMessage());
@@ -61,8 +61,8 @@ public class AliasActionsTests extends ESTestCase {
     }
 
     public void testEmptyIndex() {
-        Exception e =
-                expectThrows(IllegalArgumentException.class, () -> new AliasActions(randomFrom(AliasActions.Type.values())).index(null));
+        Exception e = expectThrows(IllegalArgumentException.class,
+                () -> new AliasActions(randomFrom(AliasActions.Type.values())).index(null));
         assertEquals("[index] can't be empty string", e.getMessage());
         e = expectThrows(IllegalArgumentException.class, () -> new AliasActions(randomFrom(AliasActions.Type.values())).index(""));
         assertEquals("[index] can't be empty string", e.getMessage());

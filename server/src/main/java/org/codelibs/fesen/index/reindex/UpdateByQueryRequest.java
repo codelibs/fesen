@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.action.IndicesRequest;
 import org.codelibs.fesen.action.search.SearchRequest;
 import org.codelibs.fesen.action.support.IndicesOptions;
@@ -31,6 +29,8 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.query.QueryBuilder;
 import org.codelibs.fesen.tasks.TaskId;
 
+import java.io.IOException;
+
 /**
  * Request to update some documents. That means you can't change their type, id, index, or anything like that. This implements
  * CompositeIndicesRequest but in a misleading way. Rather than returning all the subrequests that it will make it tries to return a
@@ -38,7 +38,7 @@ import org.codelibs.fesen.tasks.TaskId;
  * destination index and things.
  */
 public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<UpdateByQueryRequest>
-        implements IndicesRequest.Replaceable, ToXContentObject {
+    implements IndicesRequest.Replaceable, ToXContentObject {
     /**
      * Ingest pipeline to set on index requests made by this action.
      */

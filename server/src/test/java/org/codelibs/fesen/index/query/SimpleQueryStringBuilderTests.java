@@ -76,8 +76,8 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     @Override
     protected SimpleQueryStringBuilder doCreateTestQueryBuilder() {
         // we avoid strings with "now" since those can have different caching policies that are checked elsewhere
-        String queryText =
-                randomValueOtherThanMany(s -> s.toLowerCase(Locale.ROOT).contains("now"), () -> randomAlphaOfLengthBetween(1, 10));
+        String queryText = randomValueOtherThanMany(s -> s.toLowerCase(Locale.ROOT).contains("now"),
+                () -> randomAlphaOfLengthBetween(1, 10));
         SimpleQueryStringBuilder result = new SimpleQueryStringBuilder(queryText);
         if (randomBoolean()) {
             result.analyzeWildcard(randomBoolean());
@@ -152,16 +152,16 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
         assertEquals("Wrong default default lenient field.", false, SimpleQueryStringBuilder.DEFAULT_LENIENT);
 
         assertEquals("Wrong default default fuzzy prefix length.", FuzzyQuery.defaultPrefixLength, qb.fuzzyPrefixLength());
-        assertEquals("Wrong default default fuzzy prefix length field.", FuzzyQuery.defaultPrefixLength,
-                SimpleQueryStringBuilder.DEFAULT_FUZZY_PREFIX_LENGTH);
+        assertEquals("Wrong default default fuzzy prefix length field.",
+            FuzzyQuery.defaultPrefixLength, SimpleQueryStringBuilder.DEFAULT_FUZZY_PREFIX_LENGTH);
 
         assertEquals("Wrong default default fuzzy max expansions.", FuzzyQuery.defaultMaxExpansions, qb.fuzzyMaxExpansions());
-        assertEquals("Wrong default default fuzzy max expansions field.", FuzzyQuery.defaultMaxExpansions,
-                SimpleQueryStringBuilder.DEFAULT_FUZZY_MAX_EXPANSIONS);
+        assertEquals("Wrong default default fuzzy max expansions field.",
+            FuzzyQuery.defaultMaxExpansions, SimpleQueryStringBuilder.DEFAULT_FUZZY_MAX_EXPANSIONS);
 
         assertEquals("Wrong default default fuzzy transpositions.", FuzzyQuery.defaultTranspositions, qb.fuzzyTranspositions());
-        assertEquals("Wrong default default fuzzy transpositions field.", FuzzyQuery.defaultTranspositions,
-                SimpleQueryStringBuilder.DEFAULT_FUZZY_TRANSPOSITIONS);
+        assertEquals("Wrong default default fuzzy transpositions field.",
+            FuzzyQuery.defaultTranspositions, SimpleQueryStringBuilder.DEFAULT_FUZZY_TRANSPOSITIONS);
     }
 
     public void testDefaultNullComplainFlags() {
@@ -173,7 +173,7 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
 
     public void testDefaultEmptyComplainFlags() {
         SimpleQueryStringBuilder qb = new SimpleQueryStringBuilder("The quick brown fox.");
-        qb.flags(new SimpleQueryStringFlag[] {});
+        qb.flags(new SimpleQueryStringFlag[]{});
         assertEquals("Setting flags to empty should result in returning to default value.", SimpleQueryStringBuilder.DEFAULT_FLAGS,
                 qb.flags());
     }
@@ -229,7 +229,7 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
 
     public void testFieldCannotBeEmptyAndWeighted() {
         SimpleQueryStringBuilder qb = createTestQueryBuilder();
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class, () -> qb.field("", AbstractQueryBuilder.DEFAULT_BOOST));
+        IllegalArgumentException  e = expectThrows(IllegalArgumentException.class, () -> qb.field("", AbstractQueryBuilder.DEFAULT_BOOST));
         assertEquals("supplied field is null or empty", e.getMessage());
     }
 
@@ -244,8 +244,15 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     }
 
     public void testDefaultFieldParsing() throws IOException {
+        assumeTrue("5.x behaves differently, so skip on non-6.x indices",
+                indexSettings().getIndexVersionCreated().onOrAfter(Version.V_6_0_0_alpha1));
+
         String query = randomAlphaOfLengthBetween(1, 10).toLowerCase(Locale.ROOT);
-        String contentString = "{\n" + "    \"simple_query_string\" : {\n" + "      \"query\" : \"" + query + "\"" + "    }\n" + "}";
+        String contentString = "{\n" +
+                "    \"simple_query_string\" : {\n" +
+                "      \"query\" : \"" + query + "\"" +
+                "    }\n" +
+                "}";
         SimpleQueryStringBuilder queryBuilder = (SimpleQueryStringBuilder) parseQuery(contentString);
         assertThat(queryBuilder.value(), equalTo(query));
         assertThat(queryBuilder.fields(), notNullValue());
@@ -273,8 +280,9 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
             assertThat(query, instanceOf(DisjunctionMaxQuery.class));
             DisjunctionMaxQuery maxQuery = (DisjunctionMaxQuery) query;
             for (Query disjunct : maxQuery.getDisjuncts()) {
-                assertThat(disjunct,
-                        either(instanceOf(TermQuery.class)).or(instanceOf(BoostQuery.class)).or(instanceOf(MatchNoDocsQuery.class)));
+                assertThat(disjunct, either(instanceOf(TermQuery.class))
+                    .or(instanceOf(BoostQuery.class))
+                    .or(instanceOf(MatchNoDocsQuery.class)));
                 Query termQuery = disjunct;
                 if (disjunct instanceof BoostQuery) {
                     termQuery = ((BoostQuery) disjunct).getQuery();
@@ -292,8 +300,8 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
                 assertTermOrBoostQuery(query, field.getKey(), queryBuilder.value(), field.getValue());
             }
         } else if (queryBuilder.fields().size() == 0) {
-            assertThat(query,
-                    either(instanceOf(DisjunctionMaxQuery.class)).or(instanceOf(MatchNoDocsQuery.class)).or(instanceOf(TermQuery.class)));
+            assertThat(query, either(instanceOf(DisjunctionMaxQuery.class))
+                .or(instanceOf(MatchNoDocsQuery.class)).or(instanceOf(TermQuery.class)));
             if (query instanceof DisjunctionMaxQuery) {
                 for (Query disjunct : (DisjunctionMaxQuery) query) {
                     assertThat(disjunct, either(instanceOf(TermQuery.class)).or(instanceOf(MatchNoDocsQuery.class)));
@@ -348,12 +356,24 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     }
 
     public void testFromJson() throws IOException {
-        String json = "{\n" + "  \"simple_query_string\" : {\n" + "    \"query\" : \"\\\"fried eggs\\\" +(eggplant | potato) -frittata\",\n"
-                + "    \"fields\" : [ \"body^5.0\" ],\n" + "    \"analyzer\" : \"snowball\",\n" + "    \"flags\" : -1,\n"
-                + "    \"default_operator\" : \"and\",\n" + "    \"lenient\" : false,\n" + "    \"analyze_wildcard\" : false,\n"
-                + "    \"quote_field_suffix\" : \".quote\",\n" + "    \"auto_generate_synonyms_phrase_query\" : true,\n"
-                + "    \"fuzzy_prefix_length\" : 1,\n" + "    \"fuzzy_max_expansions\" : 5,\n" + "    \"fuzzy_transpositions\" : false,\n"
-                + "    \"boost\" : 1.0\n" + "  }\n" + "}";
+        String json =
+                "{\n" +
+                "  \"simple_query_string\" : {\n" +
+                "    \"query\" : \"\\\"fried eggs\\\" +(eggplant | potato) -frittata\",\n" +
+                "    \"fields\" : [ \"body^5.0\" ],\n" +
+                "    \"analyzer\" : \"snowball\",\n" +
+                "    \"flags\" : -1,\n" +
+                "    \"default_operator\" : \"and\",\n" +
+                "    \"lenient\" : false,\n" +
+                "    \"analyze_wildcard\" : false,\n" +
+                "    \"quote_field_suffix\" : \".quote\",\n" +
+                "    \"auto_generate_synonyms_phrase_query\" : true,\n" +
+                "    \"fuzzy_prefix_length\" : 1,\n" +
+                "    \"fuzzy_max_expansions\" : 5,\n" +
+                "    \"fuzzy_transpositions\" : false,\n" +
+                "    \"boost\" : 1.0\n" +
+                "  }\n" +
+                "}";
 
         SimpleQueryStringBuilder parsed = (SimpleQueryStringBuilder) parseQuery(json);
         checkGeneratedJson(json, parsed);
@@ -404,16 +424,28 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
 
     public void testExpandedTerms() throws Exception {
         // Prefix
-        Query query = new SimpleQueryStringBuilder("aBc*").field(TEXT_FIELD_NAME).analyzer("whitespace").toQuery(createShardContext());
+        Query query = new SimpleQueryStringBuilder("aBc*")
+                .field(TEXT_FIELD_NAME)
+                .analyzer("whitespace")
+                .toQuery(createShardContext());
         assertEquals(new PrefixQuery(new Term(TEXT_FIELD_NAME, "aBc")), query);
-        query = new SimpleQueryStringBuilder("aBc*").field(TEXT_FIELD_NAME).analyzer("standard").toQuery(createShardContext());
+        query = new SimpleQueryStringBuilder("aBc*")
+                .field(TEXT_FIELD_NAME)
+                .analyzer("standard")
+                .toQuery(createShardContext());
         assertEquals(new PrefixQuery(new Term(TEXT_FIELD_NAME, "abc")), query);
 
         // Fuzzy
-        query = new SimpleQueryStringBuilder("aBc~1").field(TEXT_FIELD_NAME).analyzer("whitespace").toQuery(createShardContext());
+        query = new SimpleQueryStringBuilder("aBc~1")
+                .field(TEXT_FIELD_NAME)
+                .analyzer("whitespace")
+                .toQuery(createShardContext());
         FuzzyQuery expected = new FuzzyQuery(new Term(TEXT_FIELD_NAME, "aBc"), 1);
         assertEquals(expected, query);
-        query = new SimpleQueryStringBuilder("aBc~1").field(TEXT_FIELD_NAME).analyzer("standard").toQuery(createShardContext());
+        query = new SimpleQueryStringBuilder("aBc~1")
+                .field(TEXT_FIELD_NAME)
+                .analyzer("standard")
+                .toQuery(createShardContext());
         expected = new FuzzyQuery(new Term(TEXT_FIELD_NAME, "abc"), 1);
         assertEquals(expected, query);
     }
@@ -422,17 +454,21 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
         SimpleQueryStringQueryParser.Settings settings = new SimpleQueryStringQueryParser.Settings();
         settings.analyzeWildcard(true);
         SimpleQueryStringQueryParser parser = new SimpleQueryStringQueryParser(new StandardAnalyzer(),
-                Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
+            Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
         for (Operator op : Operator.values()) {
             BooleanClause.Occur defaultOp = op.toBooleanClauseOccur();
             parser.setDefaultOperator(defaultOp);
             Query query = parser.parse("first foo-bar-foobar* last");
-            Query expectedQuery = new BooleanQuery.Builder()
+            Query expectedQuery =
+                new BooleanQuery.Builder()
                     .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "first")), defaultOp))
-                    .add(new BooleanQuery.Builder().add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "foo")), defaultOp))
-                            .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), defaultOp))
-                            .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")), defaultOp)).build(), defaultOp)
-                    .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "last")), defaultOp)).build();
+                    .add(new BooleanQuery.Builder()
+                        .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "foo")), defaultOp))
+                        .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), defaultOp))
+                        .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")), defaultOp))
+                        .build(), defaultOp)
+                    .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "last")), defaultOp))
+                    .build();
             assertThat(query, equalTo(expectedQuery));
         }
     }
@@ -441,29 +477,29 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
         SimpleQueryStringQueryParser.Settings settings = new SimpleQueryStringQueryParser.Settings();
         settings.analyzeWildcard(true);
         SimpleQueryStringQueryParser parser = new SimpleQueryStringQueryParser(new MockRepeatAnalyzer(),
-                Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
+            Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
         for (Operator op : Operator.values()) {
             BooleanClause.Occur defaultOp = op.toBooleanClauseOccur();
             parser.setDefaultOperator(defaultOp);
             Query query = parser.parse("first foo-bar-foobar* last");
             Query expectedQuery = new BooleanQuery.Builder()
-                    .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "first"), new Term(TEXT_FIELD_NAME, "first")),
-                            defaultOp))
+                .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "first"),
+                    new Term(TEXT_FIELD_NAME, "first")), defaultOp))
+                .add(new BooleanQuery.Builder()
+                    .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "foo"),
+                        new Term(TEXT_FIELD_NAME, "foo")), defaultOp))
+                    .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "bar"),
+                        new Term(TEXT_FIELD_NAME, "bar")), defaultOp))
                     .add(new BooleanQuery.Builder()
-                            .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "foo"), new Term(TEXT_FIELD_NAME, "foo")),
-                                    defaultOp))
-                            .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "bar"), new Term(TEXT_FIELD_NAME, "bar")),
-                                    defaultOp))
-                            .add(new BooleanQuery.Builder()
-                                    .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")),
-                                            BooleanClause.Occur.SHOULD))
-                                    .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")),
-                                            BooleanClause.Occur.SHOULD))
-                                    .build(), defaultOp)
-                            .build(), defaultOp)
-                    .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "last"), new Term(TEXT_FIELD_NAME, "last")),
-                            defaultOp))
-                    .build();
+                        .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")),
+                            BooleanClause.Occur.SHOULD))
+                        .add(new BooleanClause(new PrefixQuery(new Term(TEXT_FIELD_NAME, "foobar")),
+                            BooleanClause.Occur.SHOULD))
+                        .build(), defaultOp)
+                    .build(), defaultOp)
+                .add(new BooleanClause(new SynonymQuery(new Term(TEXT_FIELD_NAME, "last"),
+                    new Term(TEXT_FIELD_NAME, "last")), defaultOp))
+                .build();
             assertThat(query, equalTo(expectedQuery));
         }
     }
@@ -472,38 +508,51 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
         SimpleQueryStringQueryParser.Settings settings = new SimpleQueryStringQueryParser.Settings();
         settings.analyzeWildcard(true);
         SimpleQueryStringQueryParser parser = new SimpleQueryStringQueryParser(new MockSynonymAnalyzer(),
-                Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
+            Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
         for (Operator op : Operator.values()) {
             BooleanClause.Occur defaultOp = op.toBooleanClauseOccur();
             parser.setDefaultOperator(defaultOp);
             // non-phrase won't detect multi-word synonym because of whitespace splitting
             Query query = parser.parse("guinea pig");
 
-            Query expectedQuery =
-                    new BooleanQuery.Builder().add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "guinea")), defaultOp))
-                            .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "pig")), defaultOp)).build();
+            Query expectedQuery = new BooleanQuery.Builder()
+                .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "guinea")), defaultOp))
+                .add(new BooleanClause(new TermQuery(new Term(TEXT_FIELD_NAME, "pig")), defaultOp))
+                .build();
             assertThat(query, equalTo(expectedQuery));
 
             // phrase will pick it up
             query = parser.parse("\"guinea pig\"");
             SpanTermQuery span1 = new SpanTermQuery(new Term(TEXT_FIELD_NAME, "guinea"));
             SpanTermQuery span2 = new SpanTermQuery(new Term(TEXT_FIELD_NAME, "pig"));
-            expectedQuery = new SpanOrQuery(new SpanNearQuery(new SpanQuery[] { span1, span2 }, 0, true),
-                    new SpanTermQuery(new Term(TEXT_FIELD_NAME, "cavy")));
+            expectedQuery = new SpanOrQuery(
+                new SpanNearQuery(new SpanQuery[] { span1, span2 }, 0, true),
+                new SpanTermQuery(new Term(TEXT_FIELD_NAME, "cavy")));
 
             assertThat(query, equalTo(expectedQuery));
 
             // phrase with slop
             query = parser.parse("big \"tiny guinea pig\"~2");
-            PhraseQuery pq1 = new PhraseQuery.Builder().add(new Term(TEXT_FIELD_NAME, "tiny")).add(new Term(TEXT_FIELD_NAME, "guinea"))
-                    .add(new Term(TEXT_FIELD_NAME, "pig")).setSlop(2).build();
-            PhraseQuery pq2 = new PhraseQuery.Builder().add(new Term(TEXT_FIELD_NAME, "tiny")).add(new Term(TEXT_FIELD_NAME, "cavy"))
-                    .setSlop(2).build();
+            PhraseQuery pq1 = new PhraseQuery.Builder()
+                .add(new Term(TEXT_FIELD_NAME, "tiny"))
+                .add(new Term(TEXT_FIELD_NAME, "guinea"))
+                .add(new Term(TEXT_FIELD_NAME, "pig"))
+                .setSlop(2)
+                .build();
+            PhraseQuery pq2 = new PhraseQuery.Builder()
+                .add(new Term(TEXT_FIELD_NAME, "tiny"))
+                .add(new Term(TEXT_FIELD_NAME, "cavy"))
+                .setSlop(2)
+                .build();
 
-            expectedQuery = new BooleanQuery.Builder().add(new TermQuery(new Term(TEXT_FIELD_NAME, "big")), defaultOp)
-                    .add(new BooleanQuery.Builder().add(pq1, BooleanClause.Occur.SHOULD).add(pq2, BooleanClause.Occur.SHOULD).build(),
-                            defaultOp)
-                    .build();
+            expectedQuery = new BooleanQuery.Builder()
+                .add(new TermQuery(new Term(TEXT_FIELD_NAME, "big")), defaultOp)
+                .add(new BooleanQuery.Builder()
+                        .add(pq1, BooleanClause.Occur.SHOULD)
+                        .add(pq2, BooleanClause.Occur.SHOULD)
+                        .build(),
+                    defaultOp)
+                .build();
             assertThat(query, equalTo(expectedQuery));
         }
     }
@@ -513,14 +562,14 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
         settings.analyzeWildcard(true);
         settings.quoteFieldSuffix("_2");
         SimpleQueryStringQueryParser parser = new SimpleQueryStringQueryParser(new MockSynonymAnalyzer(),
-                Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
+            Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
         assertEquals(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), parser.parse("bar"));
         assertEquals(new TermQuery(new Term(KEYWORD_FIELD_NAME, "bar")), parser.parse("\"bar\""));
 
         // Now check what happens if the quote field does not exist
         settings.quoteFieldSuffix(".quote");
-        parser = new SimpleQueryStringQueryParser(new MockSynonymAnalyzer(), Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings,
-                createShardContext());
+        parser = new SimpleQueryStringQueryParser(new MockSynonymAnalyzer(),
+            Collections.singletonMap(TEXT_FIELD_NAME, 1.0f), -1, settings, createShardContext());
         assertEquals(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), parser.parse("bar"));
         assertEquals(new TermQuery(new Term(TEXT_FIELD_NAME, "bar")), parser.parse("\"bar\""));
     }
@@ -528,48 +577,74 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     public void testDefaultField() throws Exception {
         QueryShardContext context = createShardContext();
         // default value `*` sets leniency to true
-        Query query = new SimpleQueryStringBuilder("hello").toQuery(context);
+        Query query = new SimpleQueryStringBuilder("hello")
+            .toQuery(context);
         assertQueryWithAllFieldsWildcard(query);
 
         try {
             // `*` is in the list of the default_field => leniency set to true
-            context.getIndexSettings().updateIndexMetadata(newIndexMeta("index", context.getIndexSettings().getSettings(),
-                    Settings.builder().putList("index.query.default_field", TEXT_FIELD_NAME, "*", KEYWORD_FIELD_NAME).build()));
-            query = new SimpleQueryStringBuilder("hello").toQuery(context);
+            context.getIndexSettings().updateIndexMetadata(
+                newIndexMeta("index", context.getIndexSettings().getSettings(), Settings.builder().putList("index.query.default_field",
+                    TEXT_FIELD_NAME, "*", KEYWORD_FIELD_NAME).build())
+            );
+            query = new SimpleQueryStringBuilder("hello")
+                .toQuery(context);
             assertQueryWithAllFieldsWildcard(query);
 
-            context.getIndexSettings().updateIndexMetadata(newIndexMeta("index", context.getIndexSettings().getSettings(),
-                    Settings.builder().putList("index.query.default_field", TEXT_FIELD_NAME, KEYWORD_FIELD_NAME + "^5").build()));
-            query = new SimpleQueryStringBuilder("hello").toQuery(context);
-            Query expected = new DisjunctionMaxQuery(Arrays.asList(new TermQuery(new Term(TEXT_FIELD_NAME, "hello")),
-                    new BoostQuery(new TermQuery(new Term(KEYWORD_FIELD_NAME, "hello")), 5.0f)), 1.0f);
+            context.getIndexSettings().updateIndexMetadata(
+                newIndexMeta("index", context.getIndexSettings().getSettings(), Settings.builder().putList("index.query.default_field",
+                    TEXT_FIELD_NAME, KEYWORD_FIELD_NAME + "^5").build())
+            );
+            query = new SimpleQueryStringBuilder("hello")
+                .toQuery(context);
+            Query expected = new DisjunctionMaxQuery(
+                Arrays.asList(
+                    new TermQuery(new Term(TEXT_FIELD_NAME, "hello")),
+                    new BoostQuery(new TermQuery(new Term(KEYWORD_FIELD_NAME, "hello")), 5.0f)
+                ), 1.0f
+            );
             assertEquals(expected, query);
         } finally {
             // Reset to the default value
-            context.getIndexSettings().updateIndexMetadata(newIndexMeta("index", context.getIndexSettings().getSettings(),
-                    Settings.builder().putList("index.query.default_field", "*").build()));
+            context.getIndexSettings().updateIndexMetadata(
+                newIndexMeta("index",
+                    context.getIndexSettings().getSettings(), Settings.builder().putList("index.query.default_field", "*").build())
+            );
         }
     }
 
     public void testAllFieldsWildcard() throws Exception {
         QueryShardContext context = createShardContext();
-        Query query = new SimpleQueryStringBuilder("hello").field("*").toQuery(context);
+        Query query = new SimpleQueryStringBuilder("hello")
+            .field("*")
+            .toQuery(context);
         assertQueryWithAllFieldsWildcard(query);
 
-        query = new SimpleQueryStringBuilder("hello").field(TEXT_FIELD_NAME).field("*").field(KEYWORD_FIELD_NAME).toQuery(context);
+        query = new SimpleQueryStringBuilder("hello")
+            .field(TEXT_FIELD_NAME)
+            .field("*")
+            .field(KEYWORD_FIELD_NAME)
+            .toQuery(context);
         assertQueryWithAllFieldsWildcard(query);
     }
 
     public void testToFuzzyQuery() throws Exception {
-        Query query = new SimpleQueryStringBuilder("text~2").field(TEXT_FIELD_NAME).fuzzyPrefixLength(2).fuzzyMaxExpansions(5)
-                .fuzzyTranspositions(false).toQuery(createShardContext());
+        Query query = new SimpleQueryStringBuilder("text~2")
+            .field(TEXT_FIELD_NAME)
+            .fuzzyPrefixLength(2)
+            .fuzzyMaxExpansions(5)
+            .fuzzyTranspositions(false)
+            .toQuery(createShardContext());
         FuzzyQuery expected = new FuzzyQuery(new Term(TEXT_FIELD_NAME, "text"), 2, 2, 5, false);
         assertEquals(expected, query);
     }
 
     public void testLenientToPrefixQuery() throws Exception {
-        Query query = new SimpleQueryStringBuilder("t*").field(DATE_FIELD_NAME).field(TEXT_FIELD_NAME).lenient(true)
-                .toQuery(createShardContext());
+        Query query = new SimpleQueryStringBuilder("t*")
+            .field(DATE_FIELD_NAME)
+            .field(TEXT_FIELD_NAME)
+            .lenient(true)
+            .toQuery(createShardContext());
         List<Query> expectedQueries = new ArrayList<>();
         expectedQueries.add(new MatchNoDocsQuery(""));
         expectedQueries.add(new PrefixQuery(new Term(TEXT_FIELD_NAME, "t")));
@@ -578,43 +653,75 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
     }
 
     public void testWithStopWords() throws Exception {
-        Query query = new SimpleQueryStringBuilder("the quick fox").field(TEXT_FIELD_NAME).analyzer("stop").toQuery(createShardContext());
-        Query expected = new BooleanQuery.Builder().add(new TermQuery(new Term(TEXT_FIELD_NAME, "quick")), BooleanClause.Occur.SHOULD)
-                .add(new TermQuery(new Term(TEXT_FIELD_NAME, "fox")), BooleanClause.Occur.SHOULD).build();
+        Query query = new SimpleQueryStringBuilder("the quick fox")
+            .field(TEXT_FIELD_NAME)
+            .analyzer("stop")
+            .toQuery(createShardContext());
+        Query expected = new BooleanQuery.Builder()
+            .add(new TermQuery(new Term(TEXT_FIELD_NAME, "quick")), BooleanClause.Occur.SHOULD)
+            .add(new TermQuery(new Term(TEXT_FIELD_NAME, "fox")), BooleanClause.Occur.SHOULD)
+            .build();
         assertEquals(expected, query);
 
-        query = new SimpleQueryStringBuilder("the quick fox").field(TEXT_FIELD_NAME).field(KEYWORD_FIELD_NAME).analyzer("stop")
-                .toQuery(createShardContext());
+        query = new SimpleQueryStringBuilder("the quick fox")
+            .field(TEXT_FIELD_NAME)
+            .field(KEYWORD_FIELD_NAME)
+            .analyzer("stop")
+            .toQuery(createShardContext());
         expected = new BooleanQuery.Builder()
-                .add(new DisjunctionMaxQuery(Arrays.asList(new TermQuery(new Term(TEXT_FIELD_NAME, "quick")),
-                        new TermQuery(new Term(KEYWORD_FIELD_NAME, "quick"))), 1.0f), BooleanClause.Occur.SHOULD)
-                .add(new DisjunctionMaxQuery(
-                        Arrays.asList(new TermQuery(new Term(TEXT_FIELD_NAME, "fox")), new TermQuery(new Term(KEYWORD_FIELD_NAME, "fox"))),
-                        1.0f), BooleanClause.Occur.SHOULD)
-                .build();
+            .add(new DisjunctionMaxQuery(
+                Arrays.asList(
+                    new TermQuery(new Term(TEXT_FIELD_NAME, "quick")),
+                    new TermQuery(new Term(KEYWORD_FIELD_NAME, "quick"))
+                ), 1.0f), BooleanClause.Occur.SHOULD)
+            .add(new DisjunctionMaxQuery(
+                Arrays.asList(
+                    new TermQuery(new Term(TEXT_FIELD_NAME, "fox")),
+                    new TermQuery(new Term(KEYWORD_FIELD_NAME, "fox"))
+                ), 1.0f), BooleanClause.Occur.SHOULD)
+            .build();
         assertEquals(expected, query);
 
-        query = new SimpleQueryStringBuilder("the").field(TEXT_FIELD_NAME).field(KEYWORD_FIELD_NAME).analyzer("stop")
-                .toQuery(createShardContext());
+        query = new SimpleQueryStringBuilder("the")
+            .field(TEXT_FIELD_NAME)
+            .field(KEYWORD_FIELD_NAME)
+            .analyzer("stop")
+            .toQuery(createShardContext());
         assertEquals(new MatchNoDocsQuery(), query);
 
-        query = new BoolQueryBuilder().should(new SimpleQueryStringBuilder("the").field(TEXT_FIELD_NAME).analyzer("stop"))
-                .toQuery(createShardContext());
-        expected = new BooleanQuery.Builder().add(new MatchNoDocsQuery(), BooleanClause.Occur.SHOULD).build();
+        query = new BoolQueryBuilder()
+            .should(
+                new SimpleQueryStringBuilder("the")
+                    .field(TEXT_FIELD_NAME)
+                    .analyzer("stop")
+            )
+            .toQuery(createShardContext());
+        expected = new BooleanQuery.Builder()
+            .add(new MatchNoDocsQuery(), BooleanClause.Occur.SHOULD)
+            .build();
         assertEquals(expected, query);
 
         query = new BoolQueryBuilder()
-                .should(new SimpleQueryStringBuilder("the").field(TEXT_FIELD_NAME).field(KEYWORD_FIELD_NAME).analyzer("stop"))
-                .toQuery(createShardContext());
+            .should(
+                new SimpleQueryStringBuilder("the")
+                    .field(TEXT_FIELD_NAME)
+                    .field(KEYWORD_FIELD_NAME)
+                    .analyzer("stop")
+            )
+            .toQuery(createShardContext());
         assertEquals(expected, query);
     }
 
     public void testWithPrefixStopWords() throws Exception {
-        Query query = new SimpleQueryStringBuilder("the* quick fox").field(TEXT_FIELD_NAME).analyzer("stop").toQuery(createShardContext());
-        BooleanQuery expected =
-                new BooleanQuery.Builder().add(new PrefixQuery(new Term(TEXT_FIELD_NAME, "the")), BooleanClause.Occur.SHOULD)
-                        .add(new TermQuery(new Term(TEXT_FIELD_NAME, "quick")), BooleanClause.Occur.SHOULD)
-                        .add(new TermQuery(new Term(TEXT_FIELD_NAME, "fox")), BooleanClause.Occur.SHOULD).build();
+        Query query = new SimpleQueryStringBuilder("the* quick fox")
+            .field(TEXT_FIELD_NAME)
+            .analyzer("stop")
+            .toQuery(createShardContext());
+        BooleanQuery expected = new BooleanQuery.Builder()
+            .add(new PrefixQuery(new Term(TEXT_FIELD_NAME, "the")), BooleanClause.Occur.SHOULD)
+            .add(new TermQuery(new Term(TEXT_FIELD_NAME, "quick")), BooleanClause.Occur.SHOULD)
+            .add(new TermQuery(new Term(TEXT_FIELD_NAME, "fox")), BooleanClause.Occur.SHOULD)
+            .build();
         assertEquals(expected, query);
     }
 
@@ -625,26 +732,43 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
      * disjunction clause. Instead those disjunctions should be eliminated completely.
      */
     public void testUnmappedFieldNoTokenWithAndOperator() throws IOException {
-        Query query = new SimpleQueryStringBuilder("first & second").field(TEXT_FIELD_NAME).field("unmapped").field("another_unmapped")
-                .defaultOperator(Operator.AND).toQuery(createShardContext());
-        BooleanQuery expected = new BooleanQuery.Builder().add(new TermQuery(new Term(TEXT_FIELD_NAME, "first")), BooleanClause.Occur.MUST)
-                .add(new TermQuery(new Term(TEXT_FIELD_NAME, "second")), BooleanClause.Occur.MUST).build();
-        assertEquals(expected, query);
-        query = new SimpleQueryStringBuilder("first & second").field("unmapped").field("another_unmapped").defaultOperator(Operator.AND)
+        Query query = new SimpleQueryStringBuilder("first & second")
+                .field(TEXT_FIELD_NAME)
+                .field("unmapped")
+                .field("another_unmapped")
+                .defaultOperator(Operator.AND)
                 .toQuery(createShardContext());
-        expected = new BooleanQuery.Builder().add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST)
-                .add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST).add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST).build();
+        BooleanQuery expected = new BooleanQuery.Builder()
+                .add(new TermQuery(new Term(TEXT_FIELD_NAME, "first")), BooleanClause.Occur.MUST)
+                .add(new TermQuery(new Term(TEXT_FIELD_NAME, "second")), BooleanClause.Occur.MUST)
+                .build();
+        assertEquals(expected, query);
+        query = new SimpleQueryStringBuilder("first & second")
+            .field("unmapped")
+            .field("another_unmapped")
+            .defaultOperator(Operator.AND)
+            .toQuery(createShardContext());
+        expected = new BooleanQuery.Builder()
+            .add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST)
+            .add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST)
+            .add(new MatchNoDocsQuery(), BooleanClause.Occur.MUST)
+            .build();
         assertEquals(expected, query);
     }
 
     public void testNegativeFieldBoost() {
-        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> new SimpleQueryStringBuilder("the quick fox")
-                .field(TEXT_FIELD_NAME, -1.0f).field(KEYWORD_FIELD_NAME).toQuery(createShardContext()));
+        IllegalArgumentException exc = expectThrows(IllegalArgumentException.class,
+            () -> new SimpleQueryStringBuilder("the quick fox")
+                .field(TEXT_FIELD_NAME, -1.0f)
+                .field(KEYWORD_FIELD_NAME)
+                .toQuery(createShardContext()));
         assertThat(exc.getMessage(), containsString("negative [boost]"));
     }
 
     private static IndexMetadata newIndexMeta(String name, Settings oldIndexSettings, Settings indexSettings) {
-        Settings build = Settings.builder().put(oldIndexSettings).put(indexSettings).build();
+        Settings build = Settings.builder().put(oldIndexSettings)
+            .put(indexSettings)
+            .build();
         return IndexMetadata.builder(name).settings(build).build();
     }
 
@@ -658,8 +782,8 @@ public class SimpleQueryStringBuilderTests extends AbstractQueryTestCase<SimpleQ
             }
         }
         assertEquals(9, noMatchNoDocsQueries);
-        assertThat(disjunctionMaxQuery.getDisjuncts(),
-                hasItems(new TermQuery(new Term(TEXT_FIELD_NAME, "hello")), new TermQuery(new Term(KEYWORD_FIELD_NAME, "hello"))));
+        assertThat(disjunctionMaxQuery.getDisjuncts(), hasItems(new TermQuery(new Term(TEXT_FIELD_NAME, "hello")),
+            new TermQuery(new Term(KEYWORD_FIELD_NAME, "hello"))));
     }
 
     /**

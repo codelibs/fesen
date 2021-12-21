@@ -28,8 +28,11 @@ import org.codelibs.fesen.test.ESTestCase;
 import java.io.IOException;
 
 public class GetSettingsRequestTests extends ESTestCase {
-    private static final GetSettingsRequest TEST_700_REQUEST =
-            new GetSettingsRequest().includeDefaults(true).humanReadable(true).indices("test_index").names("test_setting_key");
+    private static final GetSettingsRequest TEST_700_REQUEST = new GetSettingsRequest()
+            .includeDefaults(true)
+            .humanReadable(true)
+            .indices("test_index")
+            .names("test_setting_key");
 
     public void testSerdeRoundTrip() throws IOException {
         BytesStreamOutput bso = new BytesStreamOutput();

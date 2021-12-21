@@ -16,11 +16,11 @@
 
 package org.codelibs.fesen.tools.jar.relocator;
 
+import org.objectweb.asm.commons.Remapper;
+
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.objectweb.asm.commons.Remapper;
 
 /**
  * Remaps class names and types using defined {@link Relocation} rules.

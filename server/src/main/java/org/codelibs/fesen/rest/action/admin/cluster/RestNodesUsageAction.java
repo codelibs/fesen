@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.codelibs.fesen.action.admin.cluster.node.usage.NodesUsageRequest;
 import org.codelibs.fesen.action.admin.cluster.node.usage.NodesUsageResponse;
 import org.codelibs.fesen.client.node.NodeClient;
@@ -41,12 +32,24 @@ import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestBuilderListener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestNodesUsageAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_nodes/usage"), new Route(GET, "/_nodes/{nodeId}/usage"),
-                new Route(GET, "/_nodes/usage/{metric}"), new Route(GET, "/_nodes/{nodeId}/usage/{metric}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_nodes/usage"),
+            new Route(GET, "/_nodes/{nodeId}/usage"),
+            new Route(GET, "/_nodes/usage/{metric}"),
+            new Route(GET, "/_nodes/{nodeId}/usage/{metric}")));
     }
 
     @Override

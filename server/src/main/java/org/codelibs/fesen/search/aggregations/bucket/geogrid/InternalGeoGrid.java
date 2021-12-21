@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.geogrid;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -35,6 +26,15 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.InternalMultiBucketAggregation;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Represents a grid of cells where each cell's location is determined by a specific geo hashing algorithm.
@@ -148,15 +148,13 @@ public abstract class InternalGeoGrid<B extends InternalGeoGridBucket>
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalGeoGrid other = (InternalGeoGrid) obj;
-        return Objects.equals(requiredSize, other.requiredSize) && Objects.equals(buckets, other.buckets);
+        return Objects.equals(requiredSize, other.requiredSize)
+            && Objects.equals(buckets, other.buckets);
     }
 
 }

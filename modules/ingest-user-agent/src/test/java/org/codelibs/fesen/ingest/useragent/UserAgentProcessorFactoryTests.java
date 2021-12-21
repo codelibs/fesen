@@ -19,8 +19,14 @@
 
 package org.codelibs.fesen.ingest.useragent;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.ingest.useragent.IngestUserAgentPlugin;
+import org.codelibs.fesen.ingest.useragent.UserAgentCache;
+import org.codelibs.fesen.ingest.useragent.UserAgentParser;
+import org.codelibs.fesen.ingest.useragent.UserAgentProcessor;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.BeforeClass;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,10 +48,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.BeforeClass;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 public class UserAgentProcessorFactoryTests extends ESTestCase {
 
@@ -165,8 +169,10 @@ public class UserAgentProcessorFactoryTests extends ESTestCase {
         int numFields = scaledRandomIntBetween(1, UserAgentProcessor.Property.values().length);
         Set<String> warnings = new HashSet<>();
         Set<UserAgentProcessor.Property> deprecated = Arrays.stream(UserAgentProcessor.Property.class.getFields())
-                .filter(Field::isEnumConstant).filter(field -> field.isAnnotationPresent(Deprecated.class))
-                .map(field -> UserAgentProcessor.Property.valueOf(field.getName())).collect(Collectors.toSet());
+            .filter(Field::isEnumConstant)
+            .filter(field -> field.isAnnotationPresent(Deprecated.class))
+            .map(field -> UserAgentProcessor.Property.valueOf(field.getName()))
+            .collect(Collectors.toSet());
         for (int i = 0; i < numFields; i++) {
             UserAgentProcessor.Property property = UserAgentProcessor.Property.values()[i];
             if (deprecated.contains(property)) {

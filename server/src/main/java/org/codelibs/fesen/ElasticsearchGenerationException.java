@@ -28,14 +28,14 @@ public class ElasticsearchGenerationException extends FesenGenerationException {
 
     public ElasticsearchGenerationException(String msg) {
         super(msg);
-    }
+     }
 
     public ElasticsearchGenerationException(String msg, Throwable cause) {
         super(msg, cause);
-    }
+     }
 
     public ElasticsearchGenerationException(StreamInput in) throws IOException {
         super(in);
-    }
+     }
 
 }

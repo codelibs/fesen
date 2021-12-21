@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.store.ByteArrayDataInput;
 import org.apache.lucene.util.Accountable;
@@ -30,7 +26,11 @@ import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.index.fielddata.LeafFieldData;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 
-abstract class AbstractBinaryDVLeafFieldData implements LeafFieldData {
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
+abstract class  AbstractBinaryDVLeafFieldData implements LeafFieldData {
     private final BinaryDocValues values;
 
     AbstractBinaryDVLeafFieldData(BinaryDocValues values) {
@@ -85,6 +85,7 @@ abstract class AbstractBinaryDVLeafFieldData implements LeafFieldData {
 
         };
     }
+
 
     @Override
     public void close() {

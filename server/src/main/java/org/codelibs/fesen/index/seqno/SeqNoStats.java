@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.index.seqno;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class SeqNoStats implements ToXContentFragment, Writeable {
 
@@ -40,7 +40,8 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
     private final long globalCheckpoint;
 
     public SeqNoStats(long maxSeqNo, long localCheckpoint, long globalCheckpoint) {
-        assert localCheckpoint <= maxSeqNo : "local checkpoint [" + localCheckpoint + "] is above maximum seq no [" + maxSeqNo + "]";
+        assert localCheckpoint <= maxSeqNo:
+            "local checkpoint [" + localCheckpoint + "] is above maximum seq no [" + maxSeqNo + "]";
         // note that the global checkpoint can be higher from both maxSeqNo and localCheckpoint
         // as we use this stats object to describe lucene commits as well as live statistic.
         this.maxSeqNo = maxSeqNo;
@@ -85,12 +86,12 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         final SeqNoStats that = (SeqNoStats) o;
-        return maxSeqNo == that.maxSeqNo && localCheckpoint == that.localCheckpoint && globalCheckpoint == that.globalCheckpoint;
+        return maxSeqNo == that.maxSeqNo &&
+            localCheckpoint == that.localCheckpoint &&
+            globalCheckpoint == that.globalCheckpoint;
     }
 
     @Override
@@ -100,7 +101,10 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
 
     @Override
     public String toString() {
-        return "SeqNoStats{" + "maxSeqNo=" + maxSeqNo + ", localCheckpoint=" + localCheckpoint + ", globalCheckpoint=" + globalCheckpoint
-                + '}';
+        return "SeqNoStats{" +
+            "maxSeqNo=" + maxSeqNo +
+            ", localCheckpoint=" + localCheckpoint +
+            ", globalCheckpoint=" + globalCheckpoint +
+            '}';
     }
 }

@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.engine;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.LongSupplier;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.lease.Releasable;
@@ -32,6 +27,11 @@ import org.codelibs.fesen.index.seqno.RetentionLease;
 import org.codelibs.fesen.index.seqno.RetentionLeases;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.translog.Translog;
+
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 /**
  * A policy that controls how many soft-deleted documents should be retained for peer-recovery and querying history changes purpose.
@@ -48,7 +48,10 @@ final class SoftDeletesPolicy {
     // provides the retention leases used to calculate the minimum sequence number to retain
     private final Supplier<RetentionLeases> retentionLeasesSupplier;
 
-    SoftDeletesPolicy(final LongSupplier globalCheckpointSupplier, final long minRetainedSeqNo, final long retentionOperations,
+    SoftDeletesPolicy(
+            final LongSupplier globalCheckpointSupplier,
+            final long minRetainedSeqNo,
+            final long retentionOperations,
             final Supplier<RetentionLeases> retentionLeasesSupplier) {
         this.globalCheckpointSupplier = globalCheckpointSupplier;
         this.retentionOperations = retentionOperations;
@@ -71,8 +74,8 @@ final class SoftDeletesPolicy {
      */
     synchronized void setLocalCheckpointOfSafeCommit(long newCheckpoint) {
         if (newCheckpoint < this.localCheckpointOfSafeCommit) {
-            throw new IllegalArgumentException("Local checkpoint can't go backwards; " + "new checkpoint [" + newCheckpoint + "],"
-                    + "current checkpoint [" + localCheckpointOfSafeCommit + "]");
+            throw new IllegalArgumentException("Local checkpoint can't go backwards; " +
+                "new checkpoint [" + newCheckpoint + "]," + "current checkpoint [" + localCheckpointOfSafeCommit + "]");
         }
         this.localCheckpointOfSafeCommit = newCheckpoint;
     }
@@ -121,8 +124,12 @@ final class SoftDeletesPolicy {
              */
 
             // calculate the minimum sequence number to retain based on retention leases
-            final long minimumRetainingSequenceNumber =
-                    retentionLeases.leases().stream().mapToLong(RetentionLease::retainingSequenceNumber).min().orElse(Long.MAX_VALUE);
+            final long minimumRetainingSequenceNumber = retentionLeases
+                    .leases()
+                    .stream()
+                    .mapToLong(RetentionLease::retainingSequenceNumber)
+                    .min()
+                    .orElse(Long.MAX_VALUE);
             /*
              * The minimum sequence number to retain is the minimum of the minimum based on retention leases, and the number of operations
              * below the global checkpoint to retain (index.soft_deletes.retention.operations). The additional increments on the global

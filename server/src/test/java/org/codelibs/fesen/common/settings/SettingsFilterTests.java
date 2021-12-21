@@ -50,22 +50,66 @@ public class SettingsFilterTests extends ESTestCase {
 
     public void testSettingsFiltering() throws IOException {
 
-        testFiltering(Settings.builder().put("foo", "foo_test").put("foo1", "foo1_test").put("bar", "bar_test").put("bar1", "bar1_test")
-                .put("bar.2", "bar2_test").build(), Settings.builder().put("foo1", "foo1_test").build(), "foo", "bar*");
+        testFiltering(Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("foo1", "foo1_test")
+                        .put("bar", "bar_test")
+                        .put("bar1", "bar1_test")
+                        .put("bar.2", "bar2_test")
+                        .build(),
+                    Settings.builder()
+                        .put("foo1", "foo1_test")
+                        .build(),
+                "foo", "bar*"
+        );
 
-        testFiltering(
-                Settings.builder().put("foo", "foo_test").put("foo1", "foo1_test").put("bar", "bar_test").put("bar1", "bar1_test")
-                        .put("bar.2", "bar2_test").build(),
-                Settings.builder().put("foo", "foo_test").put("foo1", "foo1_test").build(), "bar*");
+        testFiltering(Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("foo1", "foo1_test")
+                        .put("bar", "bar_test")
+                        .put("bar1", "bar1_test")
+                        .put("bar.2", "bar2_test")
+                        .build(),
+                Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("foo1", "foo1_test")
+                        .build(),
+                "bar*"
+        );
 
-        testFiltering(Settings.builder().put("foo", "foo_test").put("foo1", "foo1_test").put("bar", "bar_test").put("bar1", "bar1_test")
-                .put("bar.2", "bar2_test").build(), Settings.builder().build(), "foo", "bar*", "foo*");
+        testFiltering(Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("foo1", "foo1_test")
+                        .put("bar", "bar_test")
+                        .put("bar1", "bar1_test")
+                        .put("bar.2", "bar2_test")
+                        .build(),
+                Settings.builder()
+                        .build(),
+                "foo", "bar*", "foo*"
+        );
 
-        testFiltering(Settings.builder().put("foo", "foo_test").put("bar", "bar_test").put("baz", "baz_test").build(),
-                Settings.builder().put("foo", "foo_test").put("bar", "bar_test").put("baz", "baz_test").build());
+        testFiltering(Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("bar", "bar_test")
+                        .put("baz", "baz_test")
+                        .build(),
+                Settings.builder()
+                        .put("foo", "foo_test")
+                        .put("bar", "bar_test")
+                        .put("baz", "baz_test")
+                        .build()
+        );
 
-        testFiltering(Settings.builder().put("a.b.something.d", "foo_test").put("a.b.something.c", "foo1_test").build(),
-                Settings.builder().put("a.b.something.c", "foo1_test").build(), "a.b.*.d");
+        testFiltering(Settings.builder()
+                .put("a.b.something.d", "foo_test")
+                .put("a.b.something.c", "foo1_test")
+                .build(),
+            Settings.builder()
+                .put("a.b.something.c", "foo1_test")
+                .build(),
+            "a.b.*.d"
+        );
     }
 
     public void testFilteredSettingIsNotLogged() throws Exception {
@@ -74,9 +118,10 @@ public class SettingsFilterTests extends ESTestCase {
 
         Setting<String> filteredSetting = Setting.simpleString("key", Property.Filtered);
         assertExpectedLogMessages((testLogger) -> Setting.logSettingUpdate(filteredSetting, newSettings, oldSettings, testLogger),
-                new MockLogAppender.SeenEventExpectation("secure logging", "org.codelibs.fesen.test", Level.INFO, "updating [key]"),
-                new MockLogAppender.UnseenEventExpectation("unwanted old setting name", "org.codelibs.fesen.test", Level.INFO, "*old*"),
-                new MockLogAppender.UnseenEventExpectation("unwanted new setting name", "org.codelibs.fesen.test", Level.INFO, "*new*"));
+            new MockLogAppender.SeenEventExpectation("secure logging", "org.codelibs.fesen.test", Level.INFO, "updating [key]"),
+            new MockLogAppender.UnseenEventExpectation("unwanted old setting name", "org.codelibs.fesen.test", Level.INFO, "*old*"),
+            new MockLogAppender.UnseenEventExpectation("unwanted new setting name", "org.codelibs.fesen.test", Level.INFO, "*new*")
+        );
     }
 
     public void testRegularSettingUpdateIsFullyLogged() throws Exception {
@@ -85,12 +130,12 @@ public class SettingsFilterTests extends ESTestCase {
 
         Setting<String> regularSetting = Setting.simpleString("key");
         assertExpectedLogMessages((testLogger) -> Setting.logSettingUpdate(regularSetting, newSettings, oldSettings, testLogger),
-                new MockLogAppender.SeenEventExpectation("regular logging", "org.codelibs.fesen.test", Level.INFO,
-                        "updating [key] from [old] to [new]"));
+            new MockLogAppender.SeenEventExpectation("regular logging", "org.codelibs.fesen.test", Level.INFO,
+            "updating [key] from [old] to [new]"));
     }
 
-    private void assertExpectedLogMessages(Consumer<Logger> consumer, MockLogAppender.LoggingExpectation... expectations)
-            throws IllegalAccessException {
+    private void assertExpectedLogMessages(Consumer<Logger> consumer,
+                                           MockLogAppender.LoggingExpectation ... expectations) throws IllegalAccessException {
         Logger testLogger = LogManager.getLogger("org.codelibs.fesen.test");
         MockLogAppender appender = new MockLogAppender();
         Loggers.addAppender(testLogger, appender);

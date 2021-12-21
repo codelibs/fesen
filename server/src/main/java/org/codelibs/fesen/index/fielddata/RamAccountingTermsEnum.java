@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.index.fielddata;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.FilteredTermsEnum;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.index.fielddata.plain.AbstractIndexOrdinalsFieldData;
+
+import java.io.IOException;
 
 /**
  * {@link TermsEnum} that takes a CircuitBreaker, increasing the breaker
@@ -43,8 +43,10 @@ public final class RamAccountingTermsEnum extends FilteredTermsEnum {
     private long totalBytes;
     private long flushBuffer;
 
-    public RamAccountingTermsEnum(TermsEnum termsEnum, CircuitBreaker breaker, AbstractIndexOrdinalsFieldData.PerValueEstimator estimator,
-            String fieldName) {
+
+    public RamAccountingTermsEnum(TermsEnum termsEnum, CircuitBreaker breaker,
+                                  AbstractIndexOrdinalsFieldData.PerValueEstimator estimator,
+                                  String fieldName) {
         super(termsEnum);
         this.breaker = breaker;
         this.termsEnum = termsEnum;

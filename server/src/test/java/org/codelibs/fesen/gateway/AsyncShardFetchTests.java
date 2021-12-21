@@ -178,8 +178,8 @@ public class AsyncShardFetchTests extends ESTestCase {
         assertThat(test.reroute.get(), equalTo(0));
 
         // handle a failure with incorrect round id, wait on reroute incrementing
-        test.processAsyncFetch(Collections.emptyList(),
-                Collections.singletonList(new FailedNodeException(node1.getId(), "dummy failure", failure1)), 0);
+        test.processAsyncFetch(Collections.emptyList(), Collections.singletonList(
+            new FailedNodeException(node1.getId(), "dummy failure", failure1)), 0);
         assertThat(fetchData.hasData(), equalTo(false));
         assertThat(test.reroute.get(), equalTo(1));
 
@@ -415,8 +415,7 @@ public class AsyncShardFetchTests extends ESTestCase {
                             entry.executeLatch.await();
                             if (entry.failure != null) {
                                 processAsyncFetch(null,
-                                        Collections.singletonList(new FailedNodeException(nodeId, "unexpected", entry.failure)),
-                                        fetchingRound);
+                                    Collections.singletonList(new FailedNodeException(nodeId, "unexpected", entry.failure)), fetchingRound);
                             } else {
                                 processAsyncFetch(Collections.singletonList(entry.response), null, fetchingRound);
                             }
@@ -432,6 +431,7 @@ public class AsyncShardFetchTests extends ESTestCase {
             }
         }
     }
+
 
     static class Response extends BaseNodeResponse {
 

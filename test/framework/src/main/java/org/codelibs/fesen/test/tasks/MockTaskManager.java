@@ -19,21 +19,21 @@
 
 package org.codelibs.fesen.test.tasks;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskAwareRequest;
 import org.codelibs.fesen.tasks.TaskManager;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A mock task manager that allows adding listeners for events
@@ -43,7 +43,7 @@ public class MockTaskManager extends TaskManager {
     private static final Logger logger = LogManager.getLogger(MockTaskManager.class);
 
     public static final Setting<Boolean> USE_MOCK_TASK_MANAGER_SETTING =
-            Setting.boolSetting("tests.mock.taskmanager.enabled", false, Property.NodeScope);
+        Setting.boolSetting("tests.mock.taskmanager.enabled", false, Property.NodeScope);
 
     private final Collection<MockTaskManagerListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -58,8 +58,11 @@ public class MockTaskManager extends TaskManager {
             try {
                 listener.onTaskRegistered(task);
             } catch (Exception e) {
-                logger.warn((Supplier<?>) () -> new ParameterizedMessage(
-                        "failed to notify task manager listener about registering the task with id {}", task.getId()), e);
+                logger.warn(
+                    (Supplier<?>) () -> new ParameterizedMessage(
+                        "failed to notify task manager listener about registering the task with id {}",
+                        task.getId()),
+                    e);
             }
         }
         return task;
@@ -73,7 +76,8 @@ public class MockTaskManager extends TaskManager {
                 try {
                     listener.onTaskUnregistered(task);
                 } catch (Exception e) {
-                    logger.warn((Supplier<?>) () -> new ParameterizedMessage(
+                    logger.warn(
+                        (Supplier<?>) () -> new ParameterizedMessage(
                             "failed to notify task manager listener about unregistering the task with id {}", task.getId()), e);
                 }
             }
@@ -89,8 +93,11 @@ public class MockTaskManager extends TaskManager {
             try {
                 listener.waitForTaskCompletion(task);
             } catch (Exception e) {
-                logger.warn((Supplier<?>) () -> new ParameterizedMessage(
-                        "failed to notify task manager listener about waitForTaskCompletion the task with id {}", task.getId()), e);
+                logger.warn(
+                    (Supplier<?>) () -> new ParameterizedMessage(
+                        "failed to notify task manager listener about waitForTaskCompletion the task with id {}",
+                        task.getId()),
+                    e);
             }
         }
         super.waitForTaskCompletion(task, untilInNanos);

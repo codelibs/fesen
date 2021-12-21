@@ -19,19 +19,6 @@
 
 package org.codelibs.fesen.test;
 
-import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.function.Predicate;
-
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.DeprecationHandler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -41,6 +28,21 @@ import org.codelibs.fesen.common.xcontent.XContentHelper;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.XContentTestUtils;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.function.Predicate;
+
+import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class XContentTestUtilsTests extends ESTestCase {
 
@@ -74,7 +76,7 @@ public class XContentTestUtilsTests extends ESTestCase {
         builder.endObject();
 
         try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(builder), builder.contentType())) {
+            DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(builder), builder.contentType())) {
             parser.nextToken();
             List<String> insertPaths = XContentTestUtils.getInsertPaths(parser, new Stack<>());
             assertEquals(5, insertPaths.size());
@@ -100,7 +102,7 @@ public class XContentTestUtilsTests extends ESTestCase {
         builder = XContentTestUtils.insertIntoXContent(XContentType.JSON.xContent(), BytesReference.bytes(builder),
                 Collections.singletonList("inn\\.er1"), () -> "field2", () -> "value2");
         try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(builder), builder.contentType())) {
+            DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.bytes(builder), builder.contentType())) {
             Map<String, Object> map = parser.map();
             assertEquals(2, map.size());
             assertEquals("value1", map.get("field1"));
@@ -112,6 +114,7 @@ public class XContentTestUtilsTests extends ESTestCase {
             assertEquals(0, ((Map<String, Object>) innerMap.get("inner2")).size());
         }
     }
+
 
     @SuppressWarnings("unchecked")
     public void testInsertRandomXContent() throws IOException {

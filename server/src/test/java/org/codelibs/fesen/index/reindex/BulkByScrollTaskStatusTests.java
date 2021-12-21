@@ -98,15 +98,17 @@ public class BulkByScrollTaskStatusTests extends AbstractXContentTestCase<BulkBy
             return randomWorkingStatus(null);
         }
         boolean canHaveNullStatues = randomBoolean();
-        List<BulkByScrollTask.StatusOrException> statuses = IntStream.range(0, between(0, 10)).mapToObj(i -> {
-            if (canHaveNullStatues && LuceneTestCase.rarely()) {
-                return null;
-            }
-            if (randomBoolean()) {
-                return new BulkByScrollTask.StatusOrException(new FesenException(randomAlphaOfLength(5)));
-            }
-            return new BulkByScrollTask.StatusOrException(randomWorkingStatus(i));
-        }).collect(toList());
+        List<BulkByScrollTask.StatusOrException> statuses = IntStream.range(0, between(0, 10))
+                .mapToObj(i -> {
+                    if (canHaveNullStatues && LuceneTestCase.rarely()) {
+                        return null;
+                    }
+                    if (randomBoolean()) {
+                        return new BulkByScrollTask.StatusOrException(new FesenException(randomAlphaOfLength(5)));
+                    }
+                    return new BulkByScrollTask.StatusOrException(randomWorkingStatus(i));
+                })
+                .collect(toList());
         return new BulkByScrollTask.Status(statuses, randomBoolean() ? "test" : null);
     }
 
@@ -115,12 +117,14 @@ public class BulkByScrollTaskStatusTests extends AbstractXContentTestCase<BulkBy
             return randomWorkingStatus(null);
         }
         boolean canHaveNullStatues = randomBoolean();
-        List<BulkByScrollTask.StatusOrException> statuses = IntStream.range(0, between(0, 10)).mapToObj(i -> {
-            if (canHaveNullStatues && LuceneTestCase.rarely()) {
-                return null;
-            }
-            return new BulkByScrollTask.StatusOrException(randomWorkingStatus(i));
-        }).collect(toList());
+        List<BulkByScrollTask.StatusOrException> statuses = IntStream.range(0, between(0, 10))
+            .mapToObj(i -> {
+                if (canHaveNullStatues && LuceneTestCase.rarely()) {
+                    return null;
+                }
+                return new BulkByScrollTask.StatusOrException(randomWorkingStatus(i));
+            })
+            .collect(toList());
         return new BulkByScrollTask.Status(statuses, randomBoolean() ? "test" : null);
     }
 
@@ -136,22 +140,26 @@ public class BulkByScrollTaskStatusTests extends AbstractXContentTestCase<BulkBy
         long bulkRetries = between(0, 10000000);
         long searchRetries = between(0, 100000);
         // smallest unit of time during toXContent is Milliseconds
-        TimeUnit[] timeUnits = { TimeUnit.MILLISECONDS, TimeUnit.SECONDS, TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS };
+        TimeUnit[] timeUnits = {TimeUnit.MILLISECONDS, TimeUnit.SECONDS, TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS};
         TimeValue throttled = new TimeValue(randomIntBetween(0, 1000), randomFrom(timeUnits));
         TimeValue throttledUntil = new TimeValue(randomIntBetween(0, 1000), randomFrom(timeUnits));
-        return new BulkByScrollTask.Status(sliceId, total, updated, created, deleted, batches, versionConflicts, noops, bulkRetries,
-                searchRetries, throttled, abs(Randomness.get().nextFloat()), randomBoolean() ? null : randomSimpleString(Randomness.get()),
-                throttledUntil);
+        return
+            new BulkByScrollTask.Status(
+                sliceId, total, updated, created, deleted, batches, versionConflicts, noops,
+                bulkRetries, searchRetries, throttled, abs(Randomness.get().nextFloat()),
+                randomBoolean() ? null : randomSimpleString(Randomness.get()), throttledUntil
+            );
     }
 
-    public static void assertEqualStatus(BulkByScrollTask.Status expected, BulkByScrollTask.Status actual, boolean includeUpdated,
-            boolean includeCreated) {
+    public static void assertEqualStatus(BulkByScrollTask.Status expected, BulkByScrollTask.Status actual,
+                                         boolean includeUpdated, boolean includeCreated) {
         assertNotSame(expected, actual);
         assertTrue(expected.equalsWithoutSliceStatus(actual, includeUpdated, includeCreated));
         assertThat(expected.getSliceStatuses().size(), equalTo(actual.getSliceStatuses().size()));
-        for (int i = 0; i < expected.getSliceStatuses().size(); i++) {
-            BulkByScrollTaskStatusOrExceptionTests.assertEqualStatusOrException(expected.getSliceStatuses().get(i),
-                    actual.getSliceStatuses().get(i), includeUpdated, includeCreated);
+        for (int i = 0; i< expected.getSliceStatuses().size(); i++) {
+            BulkByScrollTaskStatusOrExceptionTests.assertEqualStatusOrException(
+                expected.getSliceStatuses().get(i), actual.getSliceStatuses().get(i), includeUpdated, includeCreated
+            );
         }
     }
 
@@ -189,8 +197,8 @@ public class BulkByScrollTaskStatusTests extends AbstractXContentTestCase<BulkBy
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-                getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance, this::assertEqualInstances,
-                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+            getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
+            this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 
     @Override

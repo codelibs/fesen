@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import static org.hamcrest.Matchers.instanceOf;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.TermFrequencyAttribute;
 import org.apache.lucene.document.FeatureField;
@@ -34,7 +28,19 @@ import org.apache.lucene.search.TermQuery;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.List;
+import org.codelibs.fesen.index.mapper.DocumentMapper;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperExtrasPlugin;
+import org.codelibs.fesen.index.mapper.MapperParsingException;
+import org.codelibs.fesen.index.mapper.ParseContext;
+import org.codelibs.fesen.index.mapper.ParsedDocument;
 import org.codelibs.fesen.plugins.Plugin;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.hamcrest.Matchers.instanceOf;
 
 public class RankFeatureFieldMapperTests extends MapperTestCase {
 
@@ -95,8 +101,9 @@ public class RankFeatureFieldMapperTests extends MapperTestCase {
     }
 
     public void testNegativeScoreImpact() throws Exception {
-        DocumentMapper mapper =
-                createDocumentMapper(fieldMapping(b -> b.field("type", "rank_feature").field("positive_score_impact", false)));
+        DocumentMapper mapper = createDocumentMapper(
+            fieldMapping(b -> b.field("type", "rank_feature").field("positive_score_impact", false))
+        );
 
         ParsedDocument doc1 = mapper.parse(source(b -> b.field("field", 10)));
         IndexableField[] fields = doc1.rootDoc().getFields("_feature");
@@ -122,8 +129,10 @@ public class RankFeatureFieldMapperTests extends MapperTestCase {
             b.endObject().endObject();
         }));
 
-        MapperParsingException e =
-                expectThrows(MapperParsingException.class, () -> mapper.parse(source(b -> b.field("field", Arrays.asList(10, 20)))));
+        MapperParsingException e = expectThrows(
+            MapperParsingException.class,
+            () -> mapper.parse(source(b -> b.field("field", Arrays.asList(10, 20))))
+        );
         assertEquals("[rank_feature] fields do not support indexing multiple values for the same field [field] in the same document",
                 e.getCause().getMessage());
 

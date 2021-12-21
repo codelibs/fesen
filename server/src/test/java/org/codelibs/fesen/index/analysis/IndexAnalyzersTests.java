@@ -87,7 +87,7 @@ public class IndexAnalyzersTests extends ESTestCase {
     public void testClose() throws IOException {
 
         AtomicInteger closes = new AtomicInteger(0);
-        NamedAnalyzer a = new NamedAnalyzer("default", AnalyzerScope.INDEX, new WhitespaceAnalyzer()) {
+        NamedAnalyzer a = new NamedAnalyzer("default", AnalyzerScope.INDEX, new WhitespaceAnalyzer()){
             @Override
             public void close() {
                 super.close();
@@ -95,7 +95,7 @@ public class IndexAnalyzersTests extends ESTestCase {
             }
         };
 
-        NamedAnalyzer n = new NamedAnalyzer("keyword_normalizer", AnalyzerScope.INDEX, new KeywordAnalyzer()) {
+        NamedAnalyzer n = new NamedAnalyzer("keyword_normalizer", AnalyzerScope.INDEX, new KeywordAnalyzer()){
             @Override
             public void close() {
                 super.close();
@@ -103,7 +103,7 @@ public class IndexAnalyzersTests extends ESTestCase {
             }
         };
 
-        NamedAnalyzer w = new NamedAnalyzer("whitespace_normalizer", AnalyzerScope.INDEX, new WhitespaceAnalyzer()) {
+        NamedAnalyzer w = new NamedAnalyzer("whitespace_normalizer", AnalyzerScope.INDEX, new WhitespaceAnalyzer()){
             @Override
             public void close() {
                 super.close();
@@ -111,8 +111,8 @@ public class IndexAnalyzersTests extends ESTestCase {
             }
         };
 
-        IndexAnalyzers ia = new IndexAnalyzers(Collections.singletonMap("default", a), Collections.singletonMap("n", n),
-                Collections.singletonMap("w", w));
+        IndexAnalyzers ia = new IndexAnalyzers(Collections.singletonMap("default", a),
+            Collections.singletonMap("n", n), Collections.singletonMap("w", w));
         ia.close();
         assertEquals(3, closes.get());
 

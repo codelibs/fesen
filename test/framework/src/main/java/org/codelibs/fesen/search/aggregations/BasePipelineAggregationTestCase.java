@@ -45,6 +45,9 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.indices.IndicesModule;
 import org.codelibs.fesen.plugins.SearchPlugin;
 import org.codelibs.fesen.search.SearchModule;
+import org.codelibs.fesen.search.aggregations.AggregationBuilder;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories;
+import org.codelibs.fesen.search.aggregations.PipelineAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.PipelineAggregationBuilder.ValidationContext;
 import org.codelibs.fesen.search.aggregations.pipeline.AbstractPipelineAggregationBuilder;
 import org.codelibs.fesen.test.AbstractQueryTestCase;
@@ -75,8 +78,10 @@ public abstract class BasePipelineAggregationTestCase<AF extends AbstractPipelin
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Settings settings = Settings.builder().put("node.name", AbstractQueryTestCase.class.toString())
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings settings = Settings.builder()
+            .put("node.name", AbstractQueryTestCase.class.toString())
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+            .build();
         IndicesModule indicesModule = new IndicesModule(Collections.emptyList());
         SearchModule searchModule = new SearchModule(settings, false, plugins());
         List<NamedWriteableRegistry.Entry> entries = new ArrayList<>();
@@ -168,6 +173,7 @@ public abstract class BasePipelineAggregationTestCase<AF extends AbstractPipelin
         }
     }
 
+
     public void testEqualsAndHashcode() throws IOException {
         // TODO we only change name and boost, we should extend by any sub-test supplying a "mutate" method that randomly changes one
         // aspect of the object under test
@@ -197,7 +203,7 @@ public abstract class BasePipelineAggregationTestCase<AF extends AbstractPipelin
             }
         } else {
             if (randomBoolean()) {
-                types = new String[] { Metadata.ALL };
+                types = new String[]{Metadata.ALL};
             } else {
                 types = new String[0];
             }
@@ -208,13 +214,13 @@ public abstract class BasePipelineAggregationTestCase<AF extends AbstractPipelin
     public String randomNumericField() {
         int randomInt = randomInt(3);
         switch (randomInt) {
-        case 0:
-            return DATE_FIELD_NAME;
-        case 1:
-            return DOUBLE_FIELD_NAME;
-        case 2:
-        default:
-            return INT_FIELD_NAME;
+            case 0:
+                return DATE_FIELD_NAME;
+            case 1:
+                return DOUBLE_FIELD_NAME;
+            case 2:
+            default:
+                return INT_FIELD_NAME;
         }
     }
 

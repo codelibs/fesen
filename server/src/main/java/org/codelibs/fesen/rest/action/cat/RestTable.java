@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.common.io.Streams;
@@ -46,6 +36,16 @@ import org.codelibs.fesen.rest.RestChannel;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class RestTable {
 
@@ -100,7 +100,7 @@ public class RestTable {
 
         List<Integer> rowOrder = getRowOrder(table, request);
 
-        for (Integer row : rowOrder) {
+        for (Integer row: rowOrder) {
             for (int col = 0; col < headers.size(); col++) {
                 DisplayHeader header = headers.get(col);
                 boolean isLastColumn = col == lastHeader;
@@ -136,10 +136,10 @@ public class RestTable {
                     columnHeader = columnHeader.substring(0, columnHeader.length() - ":asc".length());
                 }
                 if (headerAliasMap.containsKey(columnHeader)) {
-                    ordering.add(new ColumnOrderElement(headerAliasMap.get(columnHeader), reverse));
+                        ordering.add(new ColumnOrderElement(headerAliasMap.get(columnHeader), reverse));
                 } else {
                     throw new UnsupportedOperationException(
-                            String.format(Locale.ROOT, "Unable to sort by unknown sort key `%s`", columnHeader));
+                        String.format(Locale.ROOT, "Unable to sort by unknown sort key `%s`", columnHeader));
                 }
             }
             Collections.sort(rowOrder, new TableIndexComparator(table, ordering));
@@ -199,6 +199,7 @@ public class RestTable {
         return display;
     }
 
+
     static boolean checkOutputTimestamp(DisplayHeader dispHeader, RestRequest request) {
         return checkOutputTimestamp(dispHeader.name, request);
     }
@@ -210,6 +211,7 @@ public class RestTable {
             return true;
         }
     }
+
 
     /**
      * Extracts all the required fields from the RestRequest 'h' parameter. In order to support wildcards like
@@ -299,7 +301,7 @@ public class RestTable {
     }
 
     public static void pad(Table.Cell cell, int width, RestRequest request, UTF8StreamWriter out) throws IOException {
-        pad(cell, width, request, out, false);
+      pad(cell, width, request, out, false);
     }
 
     public static void pad(Table.Cell cell, int width, RestRequest request, UTF8StreamWriter out, boolean isLast) throws IOException {
@@ -441,7 +443,8 @@ public class RestTable {
                 for (ColumnOrderElement orderingElement : ordering) {
                     String column = orderingElement.getColumn();
                     if (tableMap.containsKey(column)) {
-                        int comparison = compareCell(tableMap.get(column).get(rowIndex1).value, tableMap.get(column).get(rowIndex2).value);
+                        int comparison = compareCell(tableMap.get(column).get(rowIndex1).value,
+                            tableMap.get(column).get(rowIndex2).value);
                         if (comparison != 0) {
                             return orderingElement.isReversed() ? -1 * comparison : comparison;
                         }
@@ -450,7 +453,7 @@ public class RestTable {
                 return 0;
             } else {
                 throw new AssertionError(String.format(Locale.ENGLISH, "Invalid comparison of indices (%s, %s): Table has %s rows.",
-                        rowIndex1, rowIndex2, table.getRows().size()));
+                    rowIndex1, rowIndex2, table.getRows().size()));
             }
         }
     }

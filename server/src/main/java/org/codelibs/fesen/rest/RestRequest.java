@@ -19,22 +19,6 @@
 
 package org.codelibs.fesen.rest;
 
-import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
-import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.util.SetOnce;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
@@ -53,6 +37,22 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.http.HttpChannel;
 import org.codelibs.fesen.http.HttpRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static org.codelibs.fesen.common.unit.ByteSizeValue.parseBytesSizeValue;
+import static org.codelibs.fesen.core.TimeValue.parseTimeValue;
 
 public class RestRequest implements ToXContent.Params {
 
@@ -80,12 +80,12 @@ public class RestRequest implements ToXContent.Params {
     }
 
     protected RestRequest(NamedXContentRegistry xContentRegistry, Map<String, String> params, String path,
-            Map<String, List<String>> headers, HttpRequest httpRequest, HttpChannel httpChannel) {
+                          Map<String, List<String>> headers, HttpRequest httpRequest, HttpChannel httpChannel) {
         this(xContentRegistry, params, path, headers, httpRequest, httpChannel, requestIdGenerator.incrementAndGet());
     }
 
-    private RestRequest(NamedXContentRegistry xContentRegistry, Map<String, String> params, String path, Map<String, List<String>> headers,
-            HttpRequest httpRequest, HttpChannel httpChannel, long requestId) {
+    private RestRequest(NamedXContentRegistry xContentRegistry, Map<String, String> params, String path,
+                        Map<String, List<String>> headers, HttpRequest httpRequest, HttpChannel httpChannel, long requestId) {
         final XContentType xContentType;
         try {
             xContentType = parseContentType(headers.get("Content-Type"));
@@ -106,7 +106,7 @@ public class RestRequest implements ToXContent.Params {
 
     protected RestRequest(RestRequest restRequest) {
         this(restRequest.getXContentRegistry(), restRequest.params(), restRequest.path(), restRequest.getHeaders(),
-                restRequest.getHttpRequest(), restRequest.getHttpChannel(), restRequest.getRequestId());
+            restRequest.getHttpRequest(), restRequest.getHttpChannel(), restRequest.getRequestId());
     }
 
     /**
@@ -132,7 +132,7 @@ public class RestRequest implements ToXContent.Params {
         Map<String, String> params = params(httpRequest.uri());
         String path = path(httpRequest.uri());
         return new RestRequest(xContentRegistry, params, path, httpRequest.getHeaders(), httpRequest, httpChannel,
-                requestIdGenerator.incrementAndGet());
+            requestIdGenerator.incrementAndGet());
     }
 
     private static Map<String, String> params(final String uri) {
@@ -167,10 +167,10 @@ public class RestRequest implements ToXContent.Params {
      * @throws ContentTypeHeaderException if the Content-Type header can not be parsed
      */
     public static RestRequest requestWithoutParameters(NamedXContentRegistry xContentRegistry, HttpRequest httpRequest,
-            HttpChannel httpChannel) {
+                                                       HttpChannel httpChannel) {
         Map<String, String> params = Collections.emptyMap();
         return new RestRequest(xContentRegistry, params, httpRequest.uri(), httpRequest.getHeaders(), httpRequest, httpChannel,
-                requestIdGenerator.incrementAndGet());
+            requestIdGenerator.incrementAndGet());
     }
 
     public enum Method {
@@ -325,7 +325,11 @@ public class RestRequest implements ToXContent.Params {
      * @return the list of currently unconsumed parameters.
      */
     List<String> unconsumedParams() {
-        return params.keySet().stream().filter(p -> !consumedParams.contains(p)).collect(Collectors.toList());
+        return params
+            .keySet()
+            .stream()
+            .filter(p -> !consumedParams.contains(p))
+            .collect(Collectors.toList());
     }
 
     public float paramAsFloat(String key, float defaultValue) {
@@ -461,8 +465,8 @@ public class RestRequest implements ToXContent.Params {
             BytesReference content = tuple.v2();
             XContentType xContentType = tuple.v1();
             try (InputStream stream = content.streamInput();
-                    XContentParser parser =
-                            xContentType.xContent().createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, stream)) {
+                 XContentParser parser = xContentType.xContent()
+                     .createParser(xContentRegistry, LoggingDeprecationHandler.INSTANCE, stream)) {
                 withParser.accept(parser);
             }
         } else {
@@ -509,7 +513,7 @@ public class RestRequest implements ToXContent.Params {
         if (elements.length > 0) {
             final String[] splitMediaType = elements[0].split("/");
             if (splitMediaType.length == 2 && TCHAR_PATTERN.matcher(splitMediaType[0]).matches()
-                    && TCHAR_PATTERN.matcher(splitMediaType[1].trim()).matches()) {
+                && TCHAR_PATTERN.matcher(splitMediaType[1].trim()).matches()) {
                 return XContentType.fromMediaType(elements[0]);
             } else {
                 throw new IllegalArgumentException("invalid Content-Type header [" + rawContentType + "]");

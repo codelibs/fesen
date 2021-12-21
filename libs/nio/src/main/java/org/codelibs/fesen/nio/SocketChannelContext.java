@@ -19,6 +19,11 @@
 
 package org.codelibs.fesen.nio;
 
+import org.codelibs.fesen.core.CompletableContext;
+import org.codelibs.fesen.core.internal.net.NetUtils;
+import org.codelibs.fesen.nio.utils.ByteBufferUtils;
+import org.codelibs.fesen.nio.utils.ExceptionsHelper;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -35,11 +40,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
-import org.codelibs.fesen.core.CompletableContext;
-import org.codelibs.fesen.core.internal.net.NetUtils;
-import org.codelibs.fesen.nio.utils.ByteBufferUtils;
-import org.codelibs.fesen.nio.utils.ExceptionsHelper;
 
 /**
  * This context should implement the specific logic for a channel. When a channel receives a notification
@@ -65,7 +65,8 @@ public abstract class SocketChannelContext extends ChannelContext<SocketChannel>
     private Exception connectException;
 
     protected SocketChannelContext(NioSocketChannel channel, NioSelector selector, Config.Socket socketConfig,
-            Consumer<Exception> exceptionHandler, NioChannelHandler channelHandler, InboundChannelBuffer channelBuffer) {
+                                   Consumer<Exception> exceptionHandler, NioChannelHandler channelHandler,
+                                   InboundChannelBuffer channelBuffer) {
         super(channel.getRawChannel(), exceptionHandler);
         this.selector = selector;
         this.channel = channel;

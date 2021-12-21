@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.common.geo;
 
-import java.io.IOException;
-import java.text.ParseException;
-
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.geometry.Geometry;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 public class WKTGeometryFormat implements GeometryFormat<Geometry> {
     public static final String NAME = "wkt";

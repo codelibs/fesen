@@ -19,12 +19,7 @@
 
 package org.codelibs.fesen.snapshots;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.cluster.SnapshotsInProgress;
 import org.codelibs.fesen.core.Nullable;
@@ -33,7 +28,12 @@ import org.codelibs.fesen.repositories.IndexId;
 import org.codelibs.fesen.repositories.RepositoryShardId;
 import org.codelibs.fesen.repositories.ShardGenerations;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Holds information about currently in-flight shard level snapshot or clone operations on a per-shard level.
@@ -74,13 +74,13 @@ public final class InFlightShardSnapshotStates {
     }
 
     private static void addStateInformation(Map<String, Map<Integer, String>> generations, Map<String, Set<Integer>> busyIds,
-            SnapshotsInProgress.ShardSnapshotStatus shardState, int shardId, String indexName) {
+                                            SnapshotsInProgress.ShardSnapshotStatus shardState, int shardId, String indexName) {
         if (shardState.isActive()) {
             busyIds.computeIfAbsent(indexName, k -> new HashSet<>()).add(shardId);
             assert assertGenerationConsistency(generations, indexName, shardId, shardState.generation());
         } else if (shardState.state() == SnapshotsInProgress.ShardState.SUCCESS) {
-            assert busyIds.getOrDefault(indexName, Collections.emptySet())
-                    .contains(shardId) == false : "Can't have a successful operation queued after an in-progress operation";
+            assert busyIds.getOrDefault(indexName, Collections.emptySet()).contains(shardId) == false :
+                "Can't have a successful operation queued after an in-progress operation";
             generations.computeIfAbsent(indexName, k -> new HashMap<>()).put(shardId, shardState.generation());
         }
     }
@@ -96,13 +96,14 @@ public final class InFlightShardSnapshotStates {
      */
     private final Map<String, Set<Integer>> activeShardIds;
 
+
     private InFlightShardSnapshotStates(Map<String, Map<Integer, String>> generations, Map<String, Set<Integer>> activeShardIds) {
         this.generations = generations;
         this.activeShardIds = activeShardIds;
     }
 
-    private static boolean assertGenerationConsistency(Map<String, Map<Integer, String>> generations, String indexName, int shardId,
-            @Nullable String activeGeneration) {
+    private static boolean assertGenerationConsistency(Map<String, Map<Integer, String>> generations, String indexName,
+                                                       int shardId, @Nullable String activeGeneration) {
         final String bestGeneration = generations.getOrDefault(indexName, Collections.emptyMap()).get(shardId);
         assert bestGeneration == null || activeGeneration == null || activeGeneration.equals(bestGeneration);
         return true;

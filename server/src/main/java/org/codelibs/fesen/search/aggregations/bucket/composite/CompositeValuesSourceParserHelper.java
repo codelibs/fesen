@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
@@ -30,16 +26,21 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.AbstractObjectParser;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.ToXContent.Params;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.search.aggregations.support.ValueType;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
 
 public class CompositeValuesSourceParserHelper {
 
     static <VB extends CompositeValuesSourceBuilder<VB>, T> void declareValuesSourceFields(AbstractObjectParser<VB, T> objectParser) {
-        objectParser.declareField(VB::field, XContentParser::text, new ParseField("field"), ObjectParser.ValueType.STRING);
+        objectParser.declareField(VB::field, XContentParser::text,
+            new ParseField("field"), ObjectParser.ValueType.STRING);
         objectParser.declareBoolean(VB::missingBucket, new ParseField("missing_bucket"));
 
         objectParser.declareField(VB::userValuetypeHint, p -> {
@@ -47,10 +48,10 @@ public class CompositeValuesSourceParserHelper {
             return valueType;
         }, new ParseField("value_type"), ObjectParser.ValueType.STRING);
 
-        objectParser.declareField(VB::script, (parser, context) -> Script.parse(parser), Script.SCRIPT_PARSE_FIELD,
-                ObjectParser.ValueType.OBJECT_OR_STRING);
+        objectParser.declareField(VB::script,
+            (parser, context) -> Script.parse(parser), Script.SCRIPT_PARSE_FIELD, ObjectParser.ValueType.OBJECT_OR_STRING);
 
-        objectParser.declareField(VB::order, XContentParser::text, new ParseField("order"), ObjectParser.ValueType.STRING);
+        objectParser.declareField(VB::order,  XContentParser::text, new ParseField("order"), ObjectParser.ValueType.STRING);
     }
 
     public static void writeTo(CompositeValuesSourceBuilder<?> builder, StreamOutput out) throws IOException {
@@ -64,7 +65,7 @@ public class CompositeValuesSourceParserHelper {
         } else if (builder.getClass() == GeoTileGridValuesSourceBuilder.class) {
             if (out.getVersion().before(Version.V_7_5_0)) {
                 throw new IOException("Attempting to serialize [" + builder.getClass().getSimpleName()
-                        + "] to a node with unsupported version [" + out.getVersion() + "]");
+                    + "] to a node with unsupported version [" + out.getVersion() + "]");
             }
             code = 3;
         } else {
@@ -76,17 +77,17 @@ public class CompositeValuesSourceParserHelper {
 
     public static CompositeValuesSourceBuilder<?> readFrom(StreamInput in) throws IOException {
         int code = in.readByte();
-        switch (code) {
-        case 0:
-            return new TermsValuesSourceBuilder(in);
-        case 1:
-            return new DateHistogramValuesSourceBuilder(in);
-        case 2:
-            return new HistogramValuesSourceBuilder(in);
-        case 3:
-            return new GeoTileGridValuesSourceBuilder(in);
-        default:
-            throw new IOException("Invalid code " + code);
+        switch(code) {
+            case 0:
+                return new TermsValuesSourceBuilder(in);
+            case 1:
+                return new DateHistogramValuesSourceBuilder(in);
+            case 2:
+                return new HistogramValuesSourceBuilder(in);
+            case 3:
+                return new GeoTileGridValuesSourceBuilder(in);
+            default:
+                throw new IOException("Invalid code " + code);
         }
     }
 
@@ -104,21 +105,21 @@ public class CompositeValuesSourceParserHelper {
         token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
         final CompositeValuesSourceBuilder<?> builder;
-        switch (type) {
-        case TermsValuesSourceBuilder.TYPE:
-            builder = TermsValuesSourceBuilder.parse(name, parser);
-            break;
-        case DateHistogramValuesSourceBuilder.TYPE:
-            builder = DateHistogramValuesSourceBuilder.PARSER.parse(parser, name);
-            break;
-        case HistogramValuesSourceBuilder.TYPE:
-            builder = HistogramValuesSourceBuilder.parse(name, parser);
-            break;
-        case GeoTileGridValuesSourceBuilder.TYPE:
-            builder = GeoTileGridValuesSourceBuilder.parse(name, parser);
-            break;
-        default:
-            throw new ParsingException(parser.getTokenLocation(), "invalid source type: " + type);
+        switch(type) {
+            case TermsValuesSourceBuilder.TYPE:
+                builder = TermsValuesSourceBuilder.parse(name, parser);
+                break;
+            case DateHistogramValuesSourceBuilder.TYPE:
+                builder = DateHistogramValuesSourceBuilder.PARSER.parse(parser, name);
+                break;
+            case HistogramValuesSourceBuilder.TYPE:
+                builder = HistogramValuesSourceBuilder.parse(name, parser);
+                break;
+            case GeoTileGridValuesSourceBuilder.TYPE:
+                builder = GeoTileGridValuesSourceBuilder.parse(name, parser);
+                break;
+            default:
+                throw new ParsingException(parser.getTokenLocation(), "invalid source type: " + type);
         }
         parser.nextToken();
         parser.nextToken();

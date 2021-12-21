@@ -46,8 +46,9 @@ public class IndicesSegmentsRequestTests extends ESSingleNodeTestCase {
     @Before
     public void setupIndex() {
         Settings settings = Settings.builder()
-                // don't allow any merges so that the num docs is the expected segments
-                .put(MergePolicyConfig.INDEX_MERGE_ENABLED, false).build();
+            // don't allow any merges so that the num docs is the expected segments
+            .put(MergePolicyConfig.INDEX_MERGE_ENABLED, false)
+            .build();
         createIndex("test", settings);
 
         int numDocs = scaledRandomIntBetween(100, 1000);

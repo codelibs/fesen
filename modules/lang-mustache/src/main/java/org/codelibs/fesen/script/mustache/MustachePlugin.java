@@ -44,7 +44,7 @@ import org.codelibs.fesen.script.ScriptEngine;
 public class MustachePlugin extends Plugin implements ScriptPlugin, ActionPlugin, SearchPlugin {
 
     @Override
-    public ScriptEngine getScriptEngine(Settings settings, Collection<ScriptContext<?>> contexts) {
+    public ScriptEngine getScriptEngine(Settings settings, Collection<ScriptContext<?>>contexts) {
         return new MustacheScriptEngine();
     }
 
@@ -58,7 +58,9 @@ public class MustachePlugin extends Plugin implements ScriptPlugin, ActionPlugin
     public List<RestHandler> getRestHandlers(Settings settings, RestController restController, ClusterSettings clusterSettings,
             IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver,
             Supplier<DiscoveryNodes> nodesInCluster) {
-        return Arrays.asList(new RestSearchTemplateAction(), new RestMultiSearchTemplateAction(settings),
+        return Arrays.asList(
+                new RestSearchTemplateAction(),
+                new RestMultiSearchTemplateAction(settings),
                 new RestRenderSearchTemplateAction());
     }
 }

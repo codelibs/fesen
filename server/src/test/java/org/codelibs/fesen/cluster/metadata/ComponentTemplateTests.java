@@ -91,9 +91,12 @@ public class ComponentTemplateTests extends AbstractDiffableSerializationTestCas
 
     public static Map<String, AliasMetadata> randomAliases() {
         String aliasName = randomAlphaOfLength(5);
-        AliasMetadata aliasMeta = AliasMetadata.builder(aliasName).filter("{\"term\":{\"year\":" + randomIntBetween(1, 3000) + "}}")
-                .routing(randomBoolean() ? null : randomAlphaOfLength(3)).isHidden(randomBoolean() ? null : randomBoolean())
-                .writeIndex(randomBoolean() ? null : randomBoolean()).build();
+        AliasMetadata aliasMeta = AliasMetadata.builder(aliasName)
+            .filter("{\"term\":{\"year\":" + randomIntBetween(1, 3000) + "}}")
+            .routing(randomBoolean() ? null : randomAlphaOfLength(3))
+            .isHidden(randomBoolean() ? null : randomBoolean())
+            .writeIndex(randomBoolean() ? null : randomBoolean())
+            .build();
         return Collections.singletonMap(aliasName, aliasMeta);
     }
 
@@ -107,12 +110,14 @@ public class ComponentTemplateTests extends AbstractDiffableSerializationTestCas
     }
 
     private static Settings randomSettings() {
-        return Settings.builder().put(IndexMetadata.SETTING_BLOCKS_READ, randomBoolean())
-                .put(IndexMetadata.SETTING_BLOCKS_WRITE, randomBoolean())
-                .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, randomIntBetween(1, 10))
-                .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, randomIntBetween(0, 5))
-                .put(IndexMetadata.SETTING_BLOCKS_WRITE, randomBoolean()).put(IndexMetadata.SETTING_PRIORITY, randomIntBetween(0, 100000))
-                .build();
+        return Settings.builder()
+            .put(IndexMetadata.SETTING_BLOCKS_READ, randomBoolean())
+            .put(IndexMetadata.SETTING_BLOCKS_WRITE, randomBoolean())
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, randomIntBetween(1, 10))
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, randomIntBetween(0, 5))
+            .put(IndexMetadata.SETTING_BLOCKS_WRITE, randomBoolean())
+            .put(IndexMetadata.SETTING_PRIORITY, randomIntBetween(0, 100000))
+            .build();
     }
 
     private static Map<String, Object> randomMeta() {
@@ -120,7 +125,7 @@ public class ComponentTemplateTests extends AbstractDiffableSerializationTestCas
             return Collections.singletonMap(randomAlphaOfLength(4), randomAlphaOfLength(4));
         } else {
             return Collections.singletonMap(randomAlphaOfLength(5),
-                    Collections.singletonMap(randomAlphaOfLength(4), randomAlphaOfLength(4)));
+                Collections.singletonMap(randomAlphaOfLength(4), randomAlphaOfLength(4)));
         }
     }
 
@@ -131,34 +136,37 @@ public class ComponentTemplateTests extends AbstractDiffableSerializationTestCas
 
     public static ComponentTemplate mutateTemplate(ComponentTemplate orig) {
         switch (randomIntBetween(0, 2)) {
-        case 0:
-            switch (randomIntBetween(0, 2)) {
             case 0:
-                Template ot = orig.template();
-                return new ComponentTemplate(new Template(randomValueOtherThan(ot.settings(), ComponentTemplateTests::randomSettings),
-                        ot.mappings(), ot.aliases()), orig.version(), orig.metadata());
-            case 1:
-                Template ot2 = orig.template();
-                return new ComponentTemplate(new Template(ot2.settings(),
-                        randomValueOtherThan(ot2.mappings(), ComponentTemplateTests::randomMappings), ot2.aliases()), orig.version(),
-                        orig.metadata());
-            case 2:
-                Template ot3 = orig.template();
-                return new ComponentTemplate(
-                        new Template(ot3.settings(), ot3.mappings(),
+                switch (randomIntBetween(0, 2)) {
+                    case 0:
+                        Template ot = orig.template();
+                        return new ComponentTemplate(
+                            new Template(randomValueOtherThan(ot.settings(), ComponentTemplateTests::randomSettings),
+                                ot.mappings(), ot.aliases()),
+                            orig.version(), orig.metadata());
+                    case 1:
+                        Template ot2 = orig.template();
+                        return new ComponentTemplate(
+                            new Template(ot2.settings(),
+                                randomValueOtherThan(ot2.mappings(), ComponentTemplateTests::randomMappings), ot2.aliases()),
+                            orig.version(), orig.metadata());
+                    case 2:
+                        Template ot3 = orig.template();
+                        return new ComponentTemplate(
+                            new Template(ot3.settings(), ot3.mappings(),
                                 randomValueOtherThan(ot3.aliases(), ComponentTemplateTests::randomAliases)),
-                        orig.version(), orig.metadata());
+                            orig.version(), orig.metadata());
+                    default:
+                        throw new IllegalStateException("illegal randomization branch");
+                }
+            case 1:
+                return new ComponentTemplate(orig.template(), randomValueOtherThan(orig.version(), ESTestCase::randomNonNegativeLong),
+                    orig.metadata());
+            case 2:
+                return new ComponentTemplate(orig.template(), orig.version(),
+                    randomValueOtherThan(orig.metadata(), ComponentTemplateTests::randomMeta));
             default:
                 throw new IllegalStateException("illegal randomization branch");
-            }
-        case 1:
-            return new ComponentTemplate(orig.template(), randomValueOtherThan(orig.version(), ESTestCase::randomNonNegativeLong),
-                    orig.metadata());
-        case 2:
-            return new ComponentTemplate(orig.template(), orig.version(),
-                    randomValueOtherThan(orig.metadata(), ComponentTemplateTests::randomMeta));
-        default:
-            throw new IllegalStateException("illegal randomization branch");
         }
     }
 }

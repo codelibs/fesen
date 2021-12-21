@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.cache;
 
+import org.codelibs.fesen.common.util.concurrent.ReleasableLock;
+import org.codelibs.fesen.core.Tuple;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,9 +37,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.ToLongBiFunction;
-
-import org.codelibs.fesen.common.util.concurrent.ReleasableLock;
-import org.codelibs.fesen.core.Tuple;
 
 /**
  * A simple concurrent cache.
@@ -94,7 +94,8 @@ public class Cache<K, V> {
     private ToLongBiFunction<K, V> weigher = (k, v) -> 1;
 
     // the removal callback
-    private RemovalListener<K, V> removalListener = notification -> {};
+    private RemovalListener<K, V> removalListener = notification -> {
+    };
 
     // use CacheBuilder to construct
     Cache() {
@@ -335,8 +336,7 @@ public class Cache<K, V> {
     }
 
     public static final int NUMBER_OF_SEGMENTS = 256;
-    @SuppressWarnings("unchecked")
-    private final CacheSegment<K, V>[] segments = new CacheSegment[NUMBER_OF_SEGMENTS];
+    @SuppressWarnings("unchecked") private final CacheSegment<K, V>[] segments = new CacheSegment[NUMBER_OF_SEGMENTS];
 
     {
         for (int i = 0; i < segments.length; i++) {
@@ -485,8 +485,8 @@ public class Cache<K, V> {
             promote(tuple.v1(), now);
         }
         if (replaced) {
-            removalListener
-                    .onRemoval(new RemovalNotification<>(tuple.v2().key, tuple.v2().value, RemovalNotification.RemovalReason.REPLACED));
+            removalListener.onRemoval(new RemovalNotification<>(tuple.v2().key, tuple.v2().value,
+                RemovalNotification.RemovalReason.REPLACED));
         }
     }
 
@@ -730,15 +730,15 @@ public class Cache<K, V> {
         boolean promoted = true;
         try (ReleasableLock ignored = lruLock.acquire()) {
             switch (entry.state) {
-            case DELETED:
-                promoted = false;
-                break;
-            case EXISTING:
-                relinkAtHead(entry);
-                break;
-            case NEW:
-                linkAtHead(entry);
-                break;
+                case DELETED:
+                    promoted = false;
+                    break;
+                case EXISTING:
+                    relinkAtHead(entry);
+                    break;
+                case NEW:
+                    linkAtHead(entry);
+                    break;
             }
             if (promoted) {
                 evict(now);
@@ -782,8 +782,8 @@ public class Cache<K, V> {
     }
 
     private boolean isExpired(Entry<K, V> entry, long now) {
-        return (entriesExpireAfterAccess && now - entry.accessTime > expireAfterAccessNanos)
-                || (entriesExpireAfterWrite && now - entry.writeTime > expireAfterWriteNanos);
+        return (entriesExpireAfterAccess && now - entry.accessTime > expireAfterAccessNanos) ||
+                (entriesExpireAfterWrite && now - entry.writeTime > expireAfterWriteNanos);
     }
 
     private boolean unlink(Entry<K, V> entry) {

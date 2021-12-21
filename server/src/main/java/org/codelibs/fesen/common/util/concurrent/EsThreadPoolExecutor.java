@@ -106,8 +106,8 @@ public class EsThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     private boolean assertDefaultContext(Runnable r) {
-        assert contextHolder.isDefaultContext() : "the thread context is not the default context and the thread ["
-                + Thread.currentThread().getName() + "] is being returned to the pool after executing [" + r + "]";
+        assert contextHolder.isDefaultContext() : "the thread context is not the default context and the thread [" +
+            Thread.currentThread().getName() + "] is being returned to the pool after executing [" + r + "]";
         return true;
     }
 

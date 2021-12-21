@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.common.geo.parsers;
 
-import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.util.List;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Explicit;
 import org.codelibs.fesen.common.geo.GeoPoint;
@@ -41,6 +36,11 @@ import org.codelibs.fesen.common.logging.Loggers;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.index.mapper.AbstractShapeGeometryFieldMapper;
 import org.locationtech.jts.geom.Coordinate;
+
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.List;
 
 /**
  * Parses shape geometry represented in WKT format
@@ -61,8 +61,7 @@ public class GeoWKTParser {
     private static final String EOL = "END-OF-LINE";
 
     // no instance
-    private GeoWKTParser() {
-    }
+    private GeoWKTParser() {}
 
     public static ShapeBuilder parse(XContentParser parser, final AbstractShapeGeometryFieldMapper shapeMapper)
             throws IOException, FesenParseException {
@@ -76,10 +75,11 @@ public class GeoWKTParser {
 
     /** throws an exception if the parsed geometry type does not match the expected shape type */
     public static ShapeBuilder parseExpectedType(XContentParser parser, final GeoShapeType shapeType,
-            final AbstractShapeGeometryFieldMapper shapeMapper) throws IOException, FesenParseException {
+                                                 final AbstractShapeGeometryFieldMapper shapeMapper)
+            throws IOException, FesenParseException {
         try (StringReader reader = new StringReader(parser.text())) {
-            Explicit<Boolean> ignoreZValue =
-                    (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE : shapeMapper.ignoreZValue();
+            Explicit<Boolean> ignoreZValue = (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE :
+                shapeMapper.ignoreZValue();
             Explicit<Boolean> coerce = (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.COERCE : shapeMapper.coerce();
             // setup the tokenizer; configured to read words w/o numbers
             StreamTokenizer tokenizer = new StreamTokenizer(reader);
@@ -101,7 +101,8 @@ public class GeoWKTParser {
 
     /** parse geometry from the stream tokenizer */
     private static ShapeBuilder parseGeometry(StreamTokenizer stream, GeoShapeType shapeType, final boolean ignoreZValue,
-            final boolean coerce) throws IOException, FesenParseException {
+                                              final boolean coerce)
+            throws IOException, FesenParseException {
         final GeoShapeType type = GeoShapeType.forName(nextWord(stream));
         if (shapeType != null && shapeType != GeoShapeType.GEOMETRYCOLLECTION) {
             if (type.wktName().equals(shapeType.wktName()) == false) {
@@ -109,24 +110,24 @@ public class GeoWKTParser {
             }
         }
         switch (type) {
-        case POINT:
-            return parsePoint(stream, ignoreZValue, coerce);
-        case MULTIPOINT:
-            return parseMultiPoint(stream, ignoreZValue, coerce);
-        case LINESTRING:
-            return parseLine(stream, ignoreZValue, coerce);
-        case MULTILINESTRING:
-            return parseMultiLine(stream, ignoreZValue, coerce);
-        case POLYGON:
-            return parsePolygon(stream, ignoreZValue, coerce);
-        case MULTIPOLYGON:
-            return parseMultiPolygon(stream, ignoreZValue, coerce);
-        case ENVELOPE:
-            return parseBBox(stream);
-        case GEOMETRYCOLLECTION:
-            return parseGeometryCollection(stream, ignoreZValue, coerce);
-        default:
-            throw new IllegalArgumentException("Unknown geometry type: " + type);
+            case POINT:
+                return parsePoint(stream, ignoreZValue, coerce);
+            case MULTIPOINT:
+                return parseMultiPoint(stream, ignoreZValue, coerce);
+            case LINESTRING:
+                return parseLine(stream, ignoreZValue, coerce);
+            case MULTILINESTRING:
+                return parseMultiLine(stream, ignoreZValue, coerce);
+            case POLYGON:
+                return parsePolygon(stream, ignoreZValue, coerce);
+            case MULTIPOLYGON:
+                return parseMultiPolygon(stream, ignoreZValue, coerce);
+            case ENVELOPE:
+                return parseBBox(stream);
+            case GEOMETRYCOLLECTION:
+                return parseGeometryCollection(stream, ignoreZValue, coerce);
+            default:
+                throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
     }
 
@@ -231,7 +232,8 @@ public class GeoWKTParser {
             }
         }
         if (coordinates.size() < 4) {
-            throw new FesenParseException("invalid number of points in LinearRing (found [{}] - must be >= 4)", coordinates.size());
+            throw new FesenParseException("invalid number of points in LinearRing (found [{}] - must be >= 4)",
+                coordinates.size());
         }
         return new LineStringBuilder(coordinates);
     }
@@ -256,7 +258,7 @@ public class GeoWKTParser {
             return null;
         }
         PolygonBuilder builder = new PolygonBuilder(parseLinearRing(stream, ignoreZValue, coerce),
-                AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value());
+            AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value());
         while (nextCloserOrComma(stream).equals(COMMA)) {
             builder.hole(parseLinearRing(stream, ignoreZValue, coerce));
         }
@@ -276,12 +278,13 @@ public class GeoWKTParser {
     }
 
     private static GeometryCollectionBuilder parseGeometryCollection(StreamTokenizer stream, final boolean ignoreZValue,
-            final boolean coerce) throws IOException, FesenParseException {
+                                                                     final boolean coerce)
+            throws IOException, FesenParseException {
         if (nextEmptyOrOpen(stream).equals(EMPTY)) {
             return null;
         }
-        GeometryCollectionBuilder builder =
-                new GeometryCollectionBuilder().shape(parseGeometry(stream, GeoShapeType.GEOMETRYCOLLECTION, ignoreZValue, coerce));
+        GeometryCollectionBuilder builder = new GeometryCollectionBuilder().shape(
+            parseGeometry(stream, GeoShapeType.GEOMETRYCOLLECTION, ignoreZValue, coerce));
         while (nextCloserOrComma(stream).equals(COMMA)) {
             builder.shape(parseGeometry(stream, null, ignoreZValue, coerce));
         }
@@ -291,15 +294,12 @@ public class GeoWKTParser {
     /** next word in the stream */
     private static String nextWord(StreamTokenizer stream) throws FesenParseException, IOException {
         switch (stream.nextToken()) {
-        case StreamTokenizer.TT_WORD:
-            final String word = stream.sval;
-            return word.equalsIgnoreCase(EMPTY) ? EMPTY : word;
-        case '(':
-            return LPAREN;
-        case ')':
-            return RPAREN;
-        case ',':
-            return COMMA;
+            case StreamTokenizer.TT_WORD:
+                final String word = stream.sval;
+                return word.equalsIgnoreCase(EMPTY) ? EMPTY : word;
+            case '(': return LPAREN;
+            case ')': return RPAREN;
+            case ',': return COMMA;
         }
         throw new FesenParseException("expected word but found: " + tokenString(stream), stream.lineno());
     }
@@ -321,14 +321,10 @@ public class GeoWKTParser {
 
     private static String tokenString(StreamTokenizer stream) {
         switch (stream.ttype) {
-        case StreamTokenizer.TT_WORD:
-            return stream.sval;
-        case StreamTokenizer.TT_EOF:
-            return EOF;
-        case StreamTokenizer.TT_EOL:
-            return EOL;
-        case StreamTokenizer.TT_NUMBER:
-            return NUMBER;
+            case StreamTokenizer.TT_WORD: return stream.sval;
+            case StreamTokenizer.TT_EOF: return EOF;
+            case StreamTokenizer.TT_EOL: return EOL;
+            case StreamTokenizer.TT_NUMBER: return NUMBER;
         }
         return "'" + (char) stream.ttype + "'";
     }
@@ -344,7 +340,8 @@ public class GeoWKTParser {
         if (next.equals(EMPTY) || next.equals(LPAREN)) {
             return next;
         }
-        throw new FesenParseException("expected " + EMPTY + " or " + LPAREN + " but found: " + tokenString(stream), stream.lineno());
+        throw new FesenParseException("expected " + EMPTY + " or " + LPAREN
+            + " but found: " + tokenString(stream), stream.lineno());
     }
 
     private static String nextCloser(StreamTokenizer stream) throws IOException, FesenParseException {
@@ -366,13 +363,15 @@ public class GeoWKTParser {
         if (token.equals(COMMA) || token.equals(RPAREN)) {
             return token;
         }
-        throw new FesenParseException("expected " + COMMA + " or " + RPAREN + " but found: " + tokenString(stream), stream.lineno());
+        throw new FesenParseException("expected " + COMMA + " or " + RPAREN
+            + " but found: " + tokenString(stream), stream.lineno());
     }
 
     /** next word in the stream */
     private static void checkEOF(StreamTokenizer stream) throws FesenParseException, IOException {
         if (stream.nextToken() != StreamTokenizer.TT_EOF) {
-            throw new FesenParseException("expected end of WKT string but found additional text: " + tokenString(stream), stream.lineno());
+            throw new FesenParseException("expected end of WKT string but found additional text: "
+                + tokenString(stream), stream.lineno());
         }
     }
 }

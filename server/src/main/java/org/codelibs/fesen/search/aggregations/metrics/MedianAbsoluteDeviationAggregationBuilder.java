@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -35,17 +31,21 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder.LeafOnly;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.search.aggregations.support.ValuesSourceAggregationBuilder.LeafOnly;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSource.Numeric, MedianAbsoluteDeviationAggregationBuilder> {
 
     public static final String NAME = "median_absolute_deviation";
     public static final ValuesSourceRegistry.RegistryKey<MedianAbsoluteDeviationAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, MedianAbsoluteDeviationAggregatorSupplier.class);
+        new ValuesSourceRegistry.RegistryKey<>(NAME, MedianAbsoluteDeviationAggregatorSupplier.class);
 
     private static final ParseField COMPRESSION_FIELD = new ParseField("compression");
 
@@ -72,7 +72,8 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
     }
 
     protected MedianAbsoluteDeviationAggregationBuilder(MedianAbsoluteDeviationAggregationBuilder clone,
-            AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
+                                                        AggregatorFactories.Builder factoriesBuilder,
+                                                        Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.compression = clone.compression;
     }
@@ -90,7 +91,7 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
     public MedianAbsoluteDeviationAggregationBuilder compression(double compression) {
         if (compression <= 0d) {
             throw new IllegalArgumentException(
-                    "[" + COMPRESSION_FIELD.getPreferredName() + "] must be greater than 0. Found [" + compression + "] in [" + name + "]");
+                "[" + COMPRESSION_FIELD.getPreferredName() + "] must be greater than 0. Found [" + compression + "] in [" + name + "]");
         }
         this.compression = compression;
         return this;
@@ -112,10 +113,13 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
-        return new MedianAbsoluteDeviationAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata,
-                compression);
+    protected ValuesSourceAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                       ValuesSourceConfig config,
+                                                       AggregatorFactory parent,
+                                                       AggregatorFactories.Builder subFactoriesBuilder)
+        throws IOException {
+        return new MedianAbsoluteDeviationAggregatorFactory(name, config, queryShardContext,
+            parent, subFactoriesBuilder, metadata, compression);
     }
 
     @Override
@@ -131,12 +135,9 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         MedianAbsoluteDeviationAggregationBuilder other = (MedianAbsoluteDeviationAggregationBuilder) obj;
         return Objects.equals(compression, other.compression);
     }

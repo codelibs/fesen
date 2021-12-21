@@ -19,23 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.lang.Math.min;
-import static java.util.Collections.emptyList;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Strings;
@@ -56,6 +39,23 @@ import org.codelibs.fesen.tasks.CancellableTask;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
 import org.codelibs.fesen.tasks.TaskInfo;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.min;
+import static java.util.Collections.emptyList;
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 
 /**
  * Task storing information about a currently running BulkByScroll request.
@@ -101,8 +101,8 @@ public class BulkByScrollTask extends CancellableTask {
             throw new IllegalStateException("This task is not set to be a leader of other slice subtasks");
         }
 
-        List<BulkByScrollTask.StatusOrException> sliceStatuses =
-                Arrays.asList(new BulkByScrollTask.StatusOrException[leaderState.getSlices()]);
+        List<BulkByScrollTask.StatusOrException> sliceStatuses = Arrays.asList(
+            new BulkByScrollTask.StatusOrException[leaderState.getSlices()]);
         for (TaskInfo t : sliceInfo) {
             BulkByScrollTask.Status status = (BulkByScrollTask.Status) t.getStatus();
             sliceStatuses.set(status.getSliceId(), new BulkByScrollTask.StatusOrException(status));
@@ -307,8 +307,10 @@ public class BulkByScrollTask extends CancellableTask {
         public Status buildStatus() {
             if (sliceStatuses.isEmpty()) {
                 try {
-                    return new Status(sliceId, total, updated, created, deleted, batches, versionConflicts, noops, bulkRetries,
-                            searchRetries, throttled, requestsPerSecond, reasonCancelled, throttledUntil);
+                    return new Status(
+                        sliceId, total, updated, created, deleted, batches, versionConflicts, noops, bulkRetries,
+                        searchRetries, throttled, requestsPerSecond, reasonCancelled, throttledUntil
+                    );
                 } catch (NullPointerException npe) {
                     throw new IllegalArgumentException("a required field is null when building Status");
                 }
@@ -382,8 +384,11 @@ public class BulkByScrollTask extends CancellableTask {
         }
 
         @SuppressWarnings("unchecked")
-        static final ConstructingObjectParser<Tuple<Long, Long>, Void> RETRIES_PARSER =
-                new ConstructingObjectParser<>("bulk_by_scroll_task_status_retries", true, a -> new Tuple(a[0], a[1]));
+        static final ConstructingObjectParser<Tuple<Long, Long>, Void> RETRIES_PARSER = new ConstructingObjectParser<>(
+            "bulk_by_scroll_task_status_retries",
+            true,
+            a -> new Tuple(a[0], a[1])
+        );
         static {
             RETRIES_PARSER.declareLong(constructorArg(), new ParseField(RETRIES_BULK_FIELD));
             RETRIES_PARSER.declareLong(constructorArg(), new ParseField(RETRIES_SEARCH_FIELD));
@@ -403,8 +408,9 @@ public class BulkByScrollTask extends CancellableTask {
             parser.declareFloat(StatusBuilder::setRequestsPerSecond, new ParseField(REQUESTS_PER_SEC_FIELD));
             parser.declareString(StatusBuilder::setReasonCancelled, new ParseField(CANCELED_FIELD));
             parser.declareLong(StatusBuilder::setThrottledUntil, new ParseField(THROTTLED_UNTIL_RAW_FIELD));
-            parser.declareObjectArray(StatusBuilder::setSliceStatuses, (p, c) -> StatusOrException.fromXContent(p),
-                    new ParseField(SLICES_FIELD));
+            parser.declareObjectArray(
+                StatusBuilder::setSliceStatuses, (p, c) -> StatusOrException.fromXContent(p), new ParseField(SLICES_FIELD)
+            );
         }
 
         private final Integer sliceId;
@@ -562,7 +568,8 @@ public class BulkByScrollTask extends CancellableTask {
          * {@link StatusOrException#fromXContent(XContentParser)} tries to peek at a field first before deciding
          * what needs to be it cannot use an {@link ObjectParser}.
          */
-        public XContentBuilder innerXContent(XContentBuilder builder, Params params) throws IOException {
+        public XContentBuilder innerXContent(XContentBuilder builder, Params params)
+                throws IOException {
             if (sliceId != null) {
                 builder.field(SLICE_ID_FIELD, sliceId);
             }
@@ -577,8 +584,7 @@ public class BulkByScrollTask extends CancellableTask {
             builder.field(BATCHES_FIELD, batches);
             builder.field(VERSION_CONFLICTS_FIELD, versionConflicts);
             builder.field(NOOPS_FIELD, noops);
-            builder.startObject(RETRIES_FIELD);
-            {
+            builder.startObject(RETRIES_FIELD); {
                 builder.field(RETRIES_BULK_FIELD, bulkRetries);
                 builder.field(RETRIES_SEARCH_FIELD, searchRetries);
             }
@@ -606,7 +612,7 @@ public class BulkByScrollTask extends CancellableTask {
         public static Status fromXContent(XContentParser parser) throws IOException {
             XContentParser.Token token;
             if (parser.currentToken() == Token.START_OBJECT) {
-                token = parser.nextToken();
+                 token = parser.nextToken();
             } else {
                 token = parser.nextToken();
             }
@@ -640,44 +646,44 @@ public class BulkByScrollTask extends CancellableTask {
                     }
                 } else { // else if it is a value
                     switch (fieldName) {
-                    case Status.SLICE_ID_FIELD:
-                        builder.setSliceId(parser.intValue());
-                        break;
-                    case Status.TOTAL_FIELD:
-                        builder.setTotal(parser.longValue());
-                        break;
-                    case Status.UPDATED_FIELD:
-                        builder.setUpdated(parser.longValue());
-                        break;
-                    case Status.CREATED_FIELD:
-                        builder.setCreated(parser.longValue());
-                        break;
-                    case Status.DELETED_FIELD:
-                        builder.setDeleted(parser.longValue());
-                        break;
-                    case Status.BATCHES_FIELD:
-                        builder.setBatches(parser.intValue());
-                        break;
-                    case Status.VERSION_CONFLICTS_FIELD:
-                        builder.setVersionConflicts(parser.longValue());
-                        break;
-                    case Status.NOOPS_FIELD:
-                        builder.setNoops(parser.longValue());
-                        break;
-                    case Status.THROTTLED_RAW_FIELD:
-                        builder.setThrottled(parser.longValue());
-                        break;
-                    case Status.REQUESTS_PER_SEC_FIELD:
-                        builder.setRequestsPerSecond(parser.floatValue());
-                        break;
-                    case Status.CANCELED_FIELD:
-                        builder.setReasonCancelled(parser.text());
-                        break;
-                    case Status.THROTTLED_UNTIL_RAW_FIELD:
-                        builder.setThrottledUntil(parser.longValue());
-                        break;
-                    default:
-                        break;
+                        case Status.SLICE_ID_FIELD:
+                            builder.setSliceId(parser.intValue());
+                            break;
+                        case Status.TOTAL_FIELD:
+                            builder.setTotal(parser.longValue());
+                            break;
+                        case Status.UPDATED_FIELD:
+                            builder.setUpdated(parser.longValue());
+                            break;
+                        case Status.CREATED_FIELD:
+                            builder.setCreated(parser.longValue());
+                            break;
+                        case Status.DELETED_FIELD:
+                            builder.setDeleted(parser.longValue());
+                            break;
+                        case Status.BATCHES_FIELD:
+                            builder.setBatches(parser.intValue());
+                            break;
+                        case Status.VERSION_CONFLICTS_FIELD:
+                            builder.setVersionConflicts(parser.longValue());
+                            break;
+                        case Status.NOOPS_FIELD:
+                            builder.setNoops(parser.longValue());
+                            break;
+                        case Status.THROTTLED_RAW_FIELD:
+                            builder.setThrottled(parser.longValue());
+                            break;
+                        case Status.REQUESTS_PER_SEC_FIELD:
+                            builder.setRequestsPerSecond(parser.floatValue());
+                            break;
+                        case Status.CANCELED_FIELD:
+                            builder.setReasonCancelled(parser.text());
+                            break;
+                        case Status.THROTTLED_UNTIL_RAW_FIELD:
+                            builder.setThrottledUntil(parser.longValue());
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -812,22 +818,31 @@ public class BulkByScrollTask extends CancellableTask {
 
         @Override
         public int hashCode() {
-            return Objects.hash(sliceId, total, updated, created, deleted, batches, versionConflicts, noops, searchRetries, bulkRetries,
-                    throttled, requestsPerSecond, reasonCancelled, throttledUntil, sliceStatuses);
+            return Objects.hash(
+                sliceId, total, updated, created, deleted, batches, versionConflicts, noops, searchRetries,
+                bulkRetries, throttled, requestsPerSecond, reasonCancelled, throttledUntil, sliceStatuses
+            );
         }
 
         public boolean equalsWithoutSliceStatus(Object o, boolean includeUpdated, boolean includeCreated) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Status other = (Status) o;
-            return Objects.equals(sliceId, other.sliceId) && total == other.total && (!includeUpdated || updated == other.updated)
-                    && (!includeCreated || created == other.created) && deleted == other.deleted && batches == other.batches
-                    && versionConflicts == other.versionConflicts && noops == other.noops && searchRetries == other.searchRetries
-                    && bulkRetries == other.bulkRetries && Objects.equals(throttled, other.throttled)
-                    && requestsPerSecond == other.requestsPerSecond && Objects.equals(reasonCancelled, other.reasonCancelled)
-                    && Objects.equals(throttledUntil, other.throttledUntil);
+            return
+                Objects.equals(sliceId, other.sliceId) &&
+                    total == other.total &&
+                    (!includeUpdated || updated == other.updated) &&
+                    (!includeCreated || created == other.created) &&
+                    deleted == other.deleted &&
+                    batches == other.batches &&
+                    versionConflicts == other.versionConflicts &&
+                    noops == other.noops &&
+                    searchRetries == other.searchRetries &&
+                    bulkRetries == other.bulkRetries &&
+                    Objects.equals(throttled, other.throttled) &&
+                    requestsPerSecond == other.requestsPerSecond &&
+                    Objects.equals(reasonCancelled, other.reasonCancelled) &&
+                    Objects.equals(throttledUntil, other.throttledUntil);
         }
 
         @Override
@@ -873,6 +888,7 @@ public class BulkByScrollTask extends CancellableTask {
             EXPECTED_EXCEPTION_FIELDS.add("error");
             EXPECTED_EXCEPTION_FIELDS.add("root_cause");
         }
+
 
         public StatusOrException(Status status) {
             this.status = status;
@@ -952,8 +968,10 @@ public class BulkByScrollTask extends CancellableTask {
                     String fieldName = parser.currentName();
                     // weird way to ignore unknown tokens
                     if (Status.FIELDS_SET.contains(fieldName)) {
-                        return new StatusOrException(Status.innerFromXContent(parser));
-                    } else if (EXPECTED_EXCEPTION_FIELDS.contains(fieldName)) {
+                        return new StatusOrException(
+                            Status.innerFromXContent(parser)
+                        );
+                    } else if (EXPECTED_EXCEPTION_FIELDS.contains(fieldName)){
                         return new StatusOrException(FesenException.innerFromXContent(parser, false));
                     } else {
                         // Ignore unknown tokens
@@ -986,7 +1004,8 @@ public class BulkByScrollTask extends CancellableTask {
                 return false;
             }
             BulkByScrollTask.StatusOrException other = (StatusOrException) obj;
-            return Objects.equals(status, other.status) && Objects.equals(exception, other.exception);
+            return Objects.equals(status, other.status)
+                    && Objects.equals(exception, other.exception);
         }
 
         @Override

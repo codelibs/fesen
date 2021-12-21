@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.Collections;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
@@ -28,6 +26,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.util.Collections;
 
 /**
  * A field mapper that records fields that have been ignored because they were malformed.

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.action.search;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -36,6 +30,12 @@ import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.search.Scroll;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class SearchScrollRequest extends ActionRequest implements ToXContentObject {
 
@@ -130,7 +130,8 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
             return false;
         }
         SearchScrollRequest that = (SearchScrollRequest) o;
-        return Objects.equals(scrollId, that.scrollId) && Objects.equals(scroll, that.scroll);
+        return Objects.equals(scrollId, that.scrollId) &&
+                Objects.equals(scroll, that.scroll);
     }
 
     @Override
@@ -140,7 +141,10 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     @Override
     public String toString() {
-        return "SearchScrollRequest{" + "scrollId='" + scrollId + '\'' + ", scroll=" + scroll + '}';
+        return "SearchScrollRequest{" +
+                "scrollId='" + scrollId + '\'' +
+                ", scroll=" + scroll +
+                '}';
     }
 
     @Override

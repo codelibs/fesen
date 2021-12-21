@@ -66,7 +66,7 @@ public class SearchContextId {
         for (SearchPhaseResult searchPhaseResult : searchPhaseResults) {
             final SearchShardTarget target = searchPhaseResult.getSearchShardTarget();
             shards.put(target.getShardId(),
-                    new SearchContextIdForNode(target.getClusterAlias(), target.getNodeId(), searchPhaseResult.getContextId()));
+                new SearchContextIdForNode(target.getClusterAlias(), target.getNodeId(), searchPhaseResult.getContextId()));
         }
         try (BytesStreamOutput out = new BytesStreamOutput()) {
             out.setVersion(version);

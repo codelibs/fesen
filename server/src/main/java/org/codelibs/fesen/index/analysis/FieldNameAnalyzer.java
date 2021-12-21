@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.util.Map;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.DelegatingAnalyzerWrapper;
 import org.codelibs.fesen.common.collect.CopyOnWriteHashMap;
+
+import java.util.Map;
 
 public final class FieldNameAnalyzer extends DelegatingAnalyzerWrapper {
 

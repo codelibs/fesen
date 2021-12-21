@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.action.admin.cluster.RestListTasksAction.listTasksResponseListener;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Supplier;
@@ -35,6 +30,12 @@ import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.tasks.TaskId;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.action.admin.cluster.RestListTasksAction.listTasksResponseListener;
+
 
 public class RestCancelTasksAction extends BaseRestHandler {
     private final Supplier<DiscoveryNodes> nodesInCluster;
@@ -50,7 +51,8 @@ public class RestCancelTasksAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/_tasks/_cancel"), new Route(POST, "/_tasks/{task_id}/_cancel")));
+        return unmodifiableList(asList(new Route(POST, "/_tasks/_cancel"),
+            new Route(POST, "/_tasks/{task_id}/_cancel")));
     }
 
     @Override
@@ -67,8 +69,8 @@ public class RestCancelTasksAction extends BaseRestHandler {
         cancelTasksRequest.setActions(actions);
         cancelTasksRequest.setParentTaskId(parentTaskId);
         cancelTasksRequest.setWaitForCompletion(request.paramAsBoolean("wait_for_completion", cancelTasksRequest.waitForCompletion()));
-        return channel -> client.admin().cluster().cancelTasks(cancelTasksRequest,
-                listTasksResponseListener(nodesInCluster, groupBy, channel));
+        return channel ->
+            client.admin().cluster().cancelTasks(cancelTasksRequest, listTasksResponseListener(nodesInCluster, groupBy, channel));
     }
 
     @Override

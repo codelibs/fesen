@@ -34,3 +34,4 @@ public class GetSnapshotsAction extends ActionType<GetSnapshotsResponse> {
     }
 
 }
+

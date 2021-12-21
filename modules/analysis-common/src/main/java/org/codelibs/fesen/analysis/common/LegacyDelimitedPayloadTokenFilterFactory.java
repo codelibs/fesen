@@ -27,7 +27,8 @@ import org.codelibs.fesen.index.IndexSettings;
 
 public class LegacyDelimitedPayloadTokenFilterFactory extends DelimitedPayloadTokenFilterFactory {
 
-    private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(LegacyDelimitedPayloadTokenFilterFactory.class);
+    private static final DeprecationLogger deprecationLogger =
+            DeprecationLogger.getLogger(LegacyDelimitedPayloadTokenFilterFactory.class);
 
     LegacyDelimitedPayloadTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, env, name, settings);
@@ -35,7 +36,9 @@ public class LegacyDelimitedPayloadTokenFilterFactory extends DelimitedPayloadTo
             throw new IllegalArgumentException(
                     "[delimited_payload_filter] is not supported for new indices, use [delimited_payload] instead");
         }
-        deprecationLogger.deprecate("analysis_legacy_delimited_payload_filter",
+        if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_6_2_0)) {
+            deprecationLogger.deprecate("analysis_legacy_delimited_payload_filter",
                 "Deprecated [delimited_payload_filter] used, replaced by [delimited_payload]");
+        }
     }
 }

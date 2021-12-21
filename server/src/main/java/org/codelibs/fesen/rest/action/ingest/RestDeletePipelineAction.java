@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.ingest;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -30,6 +27,9 @@ import org.codelibs.fesen.client.node.NodeClient;
 import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
 
 public class RestDeletePipelineAction extends BaseRestHandler {
     @Override

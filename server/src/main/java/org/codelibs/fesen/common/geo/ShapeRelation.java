@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.common.geo;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.lucene.document.ShapeField.QueryRelation;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
+
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Enum representing the relationship between a Query / Filter Shape and indexed Shapes
@@ -33,7 +33,10 @@ import org.codelibs.fesen.common.io.stream.Writeable;
  */
 public enum ShapeRelation implements Writeable {
 
-    INTERSECTS("intersects"), DISJOINT("disjoint"), WITHIN("within"), CONTAINS("contains");
+    INTERSECTS("intersects"),
+    DISJOINT("disjoint"),
+    WITHIN("within"),
+    CONTAINS("contains");
 
     private final String relationName;
 
@@ -63,16 +66,12 @@ public enum ShapeRelation implements Writeable {
     /** Maps ShapeRelation to Lucene's LatLonShapeRelation */
     public QueryRelation getLuceneRelation() {
         switch (this) {
-        case INTERSECTS:
-            return QueryRelation.INTERSECTS;
-        case DISJOINT:
-            return QueryRelation.DISJOINT;
-        case WITHIN:
-            return QueryRelation.WITHIN;
-        case CONTAINS:
-            return QueryRelation.CONTAINS;
-        default:
-            throw new IllegalArgumentException("ShapeRelation [" + this + "] not supported");
+            case INTERSECTS: return QueryRelation.INTERSECTS;
+            case DISJOINT: return QueryRelation.DISJOINT;
+            case WITHIN: return QueryRelation.WITHIN;
+            case CONTAINS: return QueryRelation.CONTAINS;
+            default:
+                throw new IllegalArgumentException("ShapeRelation [" + this + "] not supported");
         }
     }
 

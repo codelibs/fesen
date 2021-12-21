@@ -19,13 +19,14 @@
 
 package org.codelibs.fesen.monitor.os;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
+
+import java.io.IOException;
 
 public class OsInfo implements ReportingService.Info {
 
@@ -37,8 +38,14 @@ public class OsInfo implements ReportingService.Info {
     private final String arch;
     private final String version;
 
-    public OsInfo(final long refreshInterval, final int availableProcessors, final int allocatedProcessors, final String name,
-            final String prettyName, final String arch, final String version) {
+    public OsInfo(
+            final long refreshInterval,
+            final int availableProcessors,
+            final int allocatedProcessors,
+            final String name,
+            final String prettyName,
+            final String arch,
+            final String version) {
         this.refreshInterval = refreshInterval;
         this.availableProcessors = availableProcessors;
         this.allocatedProcessors = allocatedProcessors;
@@ -53,7 +60,11 @@ public class OsInfo implements ReportingService.Info {
         this.availableProcessors = in.readInt();
         this.allocatedProcessors = in.readInt();
         this.name = in.readOptionalString();
-        this.prettyName = in.readOptionalString();
+        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
+            this.prettyName = in.readOptionalString();
+        } else {
+            this.prettyName = null;
+        }
         this.arch = in.readOptionalString();
         this.version = in.readOptionalString();
     }
@@ -64,7 +75,9 @@ public class OsInfo implements ReportingService.Info {
         out.writeInt(availableProcessors);
         out.writeInt(allocatedProcessors);
         out.writeOptionalString(name);
-        out.writeOptionalString(prettyName);
+        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
+            out.writeOptionalString(prettyName);
+        }
         out.writeOptionalString(arch);
         out.writeOptionalString(version);
     }

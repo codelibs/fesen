@@ -58,7 +58,7 @@ public class SyncedFlushSingleNodeTests extends ESSingleNodeTestCase {
         final List<ShardRouting> activeShards = shardRoutingTable.activeShards();
         assertEquals("exactly one active shard", 1, activeShards.size());
         Map<String, SyncedFlushService.PreSyncedFlushResponse> preSyncedResponses =
-                SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
+            SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
         assertEquals("exactly one commit id", 1, preSyncedResponses.size());
         client().prepareIndex("test", "test", "2").setSource("{}", XContentType.JSON).get();
         String syncId = UUIDs.randomBase64UUID();
@@ -141,8 +141,10 @@ public class SyncedFlushSingleNodeTests extends ESSingleNodeTestCase {
     }
 
     public void testSyncFailsOnIndexClosedOrMissing() throws InterruptedException {
-        createIndex("test",
-                Settings.builder().put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1).put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0).build());
+        createIndex("test", Settings.builder()
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
+            .build());
         IndexService test = getInstanceFromNode(IndicesService.class).indexService(resolveIndex("test"));
         final IndexShard shard = test.getShardOrNull(0);
         assertNotNull(shard);
@@ -187,7 +189,7 @@ public class SyncedFlushSingleNodeTests extends ESSingleNodeTestCase {
         final List<ShardRouting> activeShards = shardRoutingTable.activeShards();
         assertEquals("exactly one active shard", 1, activeShards.size());
         Map<String, SyncedFlushService.PreSyncedFlushResponse> preSyncedResponses =
-                SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
+            SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
         assertEquals("exactly one commit id", 1, preSyncedResponses.size());
         if (randomBoolean()) {
             client().prepareIndex("test", "test", "2").setSource("{}", XContentType.JSON).get();
@@ -221,7 +223,7 @@ public class SyncedFlushSingleNodeTests extends ESSingleNodeTestCase {
         final List<ShardRouting> activeShards = shardRoutingTable.activeShards();
         assertEquals("exactly one active shard", 1, activeShards.size());
         Map<String, SyncedFlushService.PreSyncedFlushResponse> preSyncedResponses =
-                SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
+            SyncedFlushUtil.sendPreSyncRequests(flushService, activeShards, state, shardId);
         assertEquals("exactly one commit id", 1, preSyncedResponses.size());
         preSyncedResponses.clear(); // wipe it...
         String syncId = UUIDs.randomBase64UUID();
@@ -238,5 +240,6 @@ public class SyncedFlushSingleNodeTests extends ESSingleNodeTestCase {
         assertFalse(syncedFlushResult.shardResponses().get(activeShards.get(0)).success());
         assertEquals("no commit id from pre-sync flush", syncedFlushResult.shardResponses().get(activeShards.get(0)).failureReason());
     }
+
 
 }

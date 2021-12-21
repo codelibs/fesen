@@ -19,9 +19,27 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static org.hamcrest.core.Is.is;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.QueryStringDecoder;
+
+import org.codelibs.fesen.common.Randomness;
+import org.codelibs.fesen.common.bytes.BytesArray;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.http.HttpPipelinedRequest;
+import org.codelibs.fesen.http.HttpPipelinedResponse;
+import org.codelibs.fesen.http.HttpResponse;
+import org.codelibs.fesen.http.netty4.Netty4HttpPipeliningHandler;
+import org.codelibs.fesen.http.netty4.Netty4HttpRequest;
+import org.codelibs.fesen.rest.RestStatus;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.After;
 
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
@@ -36,25 +54,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.codelibs.fesen.common.Randomness;
-import org.codelibs.fesen.common.bytes.BytesArray;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.http.HttpPipelinedRequest;
-import org.codelibs.fesen.http.HttpPipelinedResponse;
-import org.codelibs.fesen.http.HttpResponse;
-import org.codelibs.fesen.rest.RestStatus;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.After;
-
-import io.netty.buffer.ByteBufUtil;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.hamcrest.core.Is.is;
 
 public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
 
@@ -88,8 +90,8 @@ public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
 
     public void testThatPipeliningWorksWithFastSerializedRequests() throws InterruptedException {
         final int numberOfRequests = randomIntBetween(2, 128);
-        final EmbeddedChannel embeddedChannel =
-                new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests), new WorkEmulatorHandler());
+        final EmbeddedChannel embeddedChannel = new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests),
+            new WorkEmulatorHandler());
 
         for (int i = 0; i < numberOfRequests; i++) {
             embeddedChannel.writeInbound(createHttpRequest("/" + String.valueOf(i)));
@@ -115,8 +117,8 @@ public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
 
     public void testThatPipeliningWorksWhenSlowRequestsInDifferentOrder() throws InterruptedException {
         final int numberOfRequests = randomIntBetween(2, 128);
-        final EmbeddedChannel embeddedChannel =
-                new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests), new WorkEmulatorHandler());
+        final EmbeddedChannel embeddedChannel = new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests),
+            new WorkEmulatorHandler());
 
         for (int i = 0; i < numberOfRequests; i++) {
             embeddedChannel.writeInbound(createHttpRequest("/" + String.valueOf(i)));
@@ -145,8 +147,8 @@ public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
 
     public void testThatPipeliningClosesConnectionWithTooManyEvents() throws InterruptedException {
         final int numberOfRequests = randomIntBetween(2, 128);
-        final EmbeddedChannel embeddedChannel =
-                new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests), new WorkEmulatorHandler());
+        final EmbeddedChannel embeddedChannel = new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests),
+            new WorkEmulatorHandler());
 
         for (int i = 0; i < 1 + numberOfRequests + 1; i++) {
             embeddedChannel.writeInbound(createHttpRequest("/" + Integer.toString(i)));
@@ -173,7 +175,8 @@ public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
 
     public void testPipeliningRequestsAreReleased() throws InterruptedException {
         final int numberOfRequests = 10;
-        final EmbeddedChannel embeddedChannel = new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests + 1));
+        final EmbeddedChannel embeddedChannel =
+            new EmbeddedChannel(new Netty4HttpPipeliningHandler(logger, numberOfRequests + 1));
 
         for (int i = 0; i < numberOfRequests; i++) {
             embeddedChannel.writeInbound(createHttpRequest("/" + i));
@@ -203,6 +206,7 @@ public class Netty4HttpPipeliningHandlerTests extends ESTestCase {
             assertTrue(promise.cause() instanceof ClosedChannelException);
         }
     }
+
 
     private void assertReadHttpMessageHasContent(EmbeddedChannel embeddedChannel, String expectedContent) {
         FullHttpResponse response = (FullHttpResponse) embeddedChannel.outboundMessages().poll();

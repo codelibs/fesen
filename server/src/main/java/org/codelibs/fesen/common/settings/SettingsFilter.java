@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.settings;
 
+import org.codelibs.fesen.common.Strings;
+import org.codelibs.fesen.common.regex.Regex;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+import org.codelibs.fesen.rest.RestRequest;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.regex.Regex;
-import org.codelibs.fesen.common.xcontent.ToXContent.Params;
-import org.codelibs.fesen.rest.RestRequest;
 
 /**
  * A class that allows to filter settings objects by simple regular expression patterns or full settings keys.

@@ -30,9 +30,10 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.TokenFilterFactory;
 
+
 public class EdgeNGramTokenFilterFactory extends AbstractTokenFilterFactory {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(EdgeNGramTokenFilterFactory.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(EdgeNGramTokenFilterFactory.class);
 
     private final int minGram;
 
@@ -53,13 +54,10 @@ public class EdgeNGramTokenFilterFactory extends AbstractTokenFilterFactory {
     }
 
     static int parseSide(String side) {
-        switch (side) {
-        case "front":
-            return SIDE_FRONT;
-        case "back":
-            return SIDE_BACK;
-        default:
-            throw new IllegalArgumentException("invalid side: " + side);
+        switch(side) {
+            case "front": return SIDE_FRONT;
+            case "back": return SIDE_BACK;
+            default: throw new IllegalArgumentException("invalid side: " + side);
         }
     }
 
@@ -91,9 +89,10 @@ public class EdgeNGramTokenFilterFactory extends AbstractTokenFilterFactory {
     public TokenFilterFactory getSynonymFilter() {
         if (indexSettings.getIndexVersionCreated().onOrAfter(Version.V_7_0_0)) {
             throw new IllegalArgumentException("Token filter [" + name() + "] cannot be used to parse synonyms");
-        } else {
-            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters",
-                    "Token filter [" + name() + "] will not be usable to parse synonyms after v7.0");
+        }
+        else {
+            DEPRECATION_LOGGER.deprecate("synonym_tokenfilters", "Token filter [" + name()
+                + "] will not be usable to parse synonyms after v7.0");
             return this;
         }
     }

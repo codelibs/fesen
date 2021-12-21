@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.round;
-import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
@@ -37,6 +27,16 @@ import org.codelibs.fesen.common.util.concurrent.RunOnce;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.Scheduler;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
+import static org.codelibs.fesen.core.TimeValue.timeValueNanos;
 
 /**
  * Task behavior for {@link BulkByScrollTask} that does the actual work of querying and indexing
@@ -48,7 +48,7 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
     /**
      * Maximum wait time allowed for throttling.
      */
-    private static final TimeValue MAX_THROTTLE_WAIT_TIME = TimeValue.timeValueHours(1);
+    private static final TimeValue MAX_THROTTLE_WAIT_TIME =  TimeValue.timeValueHours(1);
 
     private final BulkByScrollTask task;
 
@@ -90,9 +90,21 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
     }
 
     public BulkByScrollTask.Status getStatus() {
-        return new BulkByScrollTask.Status(sliceId, total.get(), updated.get(), created.get(), deleted.get(), batch.get(),
-                versionConflicts.get(), noops.get(), bulkRetries.get(), searchRetries.get(), timeValueNanos(throttledNanos.get()),
-                getRequestsPerSecond(), task.getReasonCancelled(), throttledUntil());
+        return new BulkByScrollTask.Status(
+            sliceId,
+            total.get(),
+            updated.get(),
+            created.get(),
+            deleted.get(),
+            batch.get(),
+            versionConflicts.get(),
+            noops.get(),
+            bulkRetries.get(),
+            searchRetries.get(),
+            timeValueNanos(throttledNanos.get()),
+            getRequestsPerSecond(),
+            task.getReasonCancelled(),
+            throttledUntil());
     }
 
     public void handleCancel() {
@@ -171,14 +183,14 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
      * rescheduled over and over again.
      */
     public void delayPrepareBulkRequest(ThreadPool threadPool, long lastBatchStartTimeNS, int lastBatchSize,
-            AbstractRunnable prepareBulkRequestRunnable) {
+                                        AbstractRunnable prepareBulkRequestRunnable) {
         // Synchronize so we are less likely to schedule the same request twice.
         synchronized (delayedPrepareBulkRequestReference) {
             TimeValue delay = throttleWaitTime(lastBatchStartTimeNS, System.nanoTime(), lastBatchSize);
             logger.debug("[{}]: preparing bulk request for [{}]", task.getId(), delay);
             try {
-                delayedPrepareBulkRequestReference.set(
-                        new DelayedPrepareBulkRequest(threadPool, getRequestsPerSecond(), delay, new RunOnce(prepareBulkRequestRunnable)));
+                delayedPrepareBulkRequestReference.set(new DelayedPrepareBulkRequest(threadPool, getRequestsPerSecond(),
+                    delay, new RunOnce(prepareBulkRequestRunnable)));
             } catch (EsRejectedExecutionException e) {
                 prepareBulkRequestRunnable.onRejection(e);
             }
@@ -255,7 +267,7 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
                  * prepareBulkRequest. We can't just reschedule the request further
                  * out in the future because the bulk context might time out. */
                 logger.debug("[{}]: skipping rescheduling because the new throttle [{}] is slower than the old one [{}]", task.getId(),
-                        newRequestsPerSecond, requestsPerSecond);
+                    newRequestsPerSecond, requestsPerSecond);
                 return this;
             }
 

@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.index.fielddata.ordinals;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Function;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.OrdinalMap;
@@ -33,16 +27,22 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.plain.AbstractLeafOrdinalsFieldData;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * Concrete implementation of {@link IndexOrdinalsFieldData} for global ordinals.
@@ -63,8 +63,12 @@ public final class GlobalOrdinalsIndexFieldData implements IndexOrdinalsFieldDat
     private final LeafOrdinalsFieldData[] segmentAfd;
     private final Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction;
 
-    protected GlobalOrdinalsIndexFieldData(String fieldName, ValuesSourceType valuesSourceType, LeafOrdinalsFieldData[] segmentAfd,
-            OrdinalMap ordinalMap, long memorySizeInBytes, Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction) {
+    protected GlobalOrdinalsIndexFieldData(String fieldName,
+                                           ValuesSourceType valuesSourceType,
+                                           LeafOrdinalsFieldData[] segmentAfd,
+                                           OrdinalMap ordinalMap,
+                                           long memorySizeInBytes,
+                                           Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction) {
         this.fieldName = fieldName;
         this.valuesSourceType = valuesSourceType;
         this.memorySizeInBytes = memorySizeInBytes;
@@ -234,14 +238,14 @@ public final class GlobalOrdinalsIndexFieldData implements IndexOrdinalsFieldDat
                     return segmentAfd[context.ord].ramBytesUsed();
                 }
 
+
                 @Override
                 public Collection<Accountable> getChildResources() {
                     return segmentAfd[context.ord].getChildResources();
                 }
 
                 @Override
-                public void close() {
-                }
+                public void close() {}
             };
         }
 

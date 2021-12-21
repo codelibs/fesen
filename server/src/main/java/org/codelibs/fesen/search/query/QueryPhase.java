@@ -19,22 +19,6 @@
 
 package org.codelibs.fesen.search.query;
 
-import static org.codelibs.fesen.search.query.QueryCollectorContext.createEarlyTerminationCollectorContext;
-import static org.codelibs.fesen.search.query.QueryCollectorContext.createFilteredCollectorContext;
-import static org.codelibs.fesen.search.query.QueryCollectorContext.createMinScoreCollectorContext;
-import static org.codelibs.fesen.search.query.QueryCollectorContext.createMultiCollectorContext;
-import static org.codelibs.fesen.search.query.TopDocsCollectorContext.createTopDocsCollectorContext;
-import static org.codelibs.fesen.search.query.TopDocsCollectorContext.shortcutTotalHitCount;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.LongPoint;
@@ -69,8 +53,8 @@ import org.codelibs.fesen.common.util.concurrent.QueueResizingEsThreadPoolExecut
 import org.codelibs.fesen.core.Booleans;
 import org.codelibs.fesen.core.CheckedConsumer;
 import org.codelibs.fesen.index.IndexSortConfig;
-import org.codelibs.fesen.index.mapper.DateFieldMapper.DateFieldType;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.DateFieldMapper.DateFieldType;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.SearchContextSourcePrinter;
 import org.codelibs.fesen.search.SearchService;
@@ -86,6 +70,23 @@ import org.codelibs.fesen.search.sort.SortAndFormats;
 import org.codelibs.fesen.search.suggest.SuggestPhase;
 import org.codelibs.fesen.tasks.TaskCancelledException;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import static org.codelibs.fesen.search.query.QueryCollectorContext.createEarlyTerminationCollectorContext;
+import static org.codelibs.fesen.search.query.QueryCollectorContext.createFilteredCollectorContext;
+import static org.codelibs.fesen.search.query.QueryCollectorContext.createMinScoreCollectorContext;
+import static org.codelibs.fesen.search.query.QueryCollectorContext.createMultiCollectorContext;
+import static org.codelibs.fesen.search.query.TopDocsCollectorContext.createTopDocsCollectorContext;
+import static org.codelibs.fesen.search.query.TopDocsCollectorContext.shortcutTotalHitCount;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
 
 /**
  * Query phase of a search request, used to run the query and get back from each shard information about the matching documents
@@ -130,9 +131,9 @@ public class QueryPhase {
     public void execute(SearchContext searchContext) throws QueryPhaseExecutionException {
         if (searchContext.hasOnlySuggest()) {
             suggestPhase.execute(searchContext);
-            searchContext.queryResult().topDocs(
-                    new TopDocsAndMaxScore(new TopDocs(new TotalHits(0, TotalHits.Relation.EQUAL_TO), Lucene.EMPTY_SCORE_DOCS), Float.NaN),
-                    new DocValueFormat[0]);
+            searchContext.queryResult().topDocs(new TopDocsAndMaxScore(
+                    new TopDocs(new TotalHits(0, TotalHits.Relation.EQUAL_TO), Lucene.EMPTY_SCORE_DOCS), Float.NaN),
+                new DocValueFormat[0]);
             return;
         }
 
@@ -153,7 +154,8 @@ public class QueryPhase {
         aggregationPhase.execute(searchContext);
 
         if (searchContext.getProfilers() != null) {
-            ProfileShardResult shardResults = SearchProfileShardResults.buildShardResults(searchContext.getProfilers());
+            ProfileShardResult shardResults = SearchProfileShardResults
+                .buildShardResults(searchContext.getProfilers());
             searchContext.queryResult().profileResults(shardResults);
         }
     }
@@ -189,8 +191,10 @@ public class QueryPhase {
                         // now this gets interesting: since we sort in index-order, we can directly
                         // skip to the desired doc
                         if (after != null) {
-                            query = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST)
-                                    .add(new MinDocQuery(after.doc + 1), BooleanClause.Occur.FILTER).build();
+                            query = new BooleanQuery.Builder()
+                                .add(query, BooleanClause.Occur.MUST)
+                                .add(new MinDocQuery(after.doc + 1), BooleanClause.Occur.FILTER)
+                                .build();
                         }
                         // ... and stop collecting after ${size} matches
                         searchContext.terminateAfter(searchContext.size());
@@ -198,10 +202,10 @@ public class QueryPhase {
                         // now this gets interesting: since the search sort is a prefix of the index sort, we can directly
                         // skip to the desired doc
                         if (after != null) {
-                            query = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST)
-                                    .add(new SearchAfterSortedDocQuery(searchContext.sort().sort, (FieldDoc) after),
-                                            BooleanClause.Occur.FILTER)
-                                    .build();
+                            query = new BooleanQuery.Builder()
+                                .add(query, BooleanClause.Occur.MUST)
+                                .add(new SearchAfterSortedDocQuery(searchContext.sort().sort, (FieldDoc) after), BooleanClause.Occur.FILTER)
+                                .build();
                         }
                     }
                 }
@@ -256,8 +260,8 @@ public class QueryPhase {
                 }
             }
 
-            boolean timeoutSet = scrollContext == null && searchContext.timeout() != null
-                    && searchContext.timeout().equals(SearchService.NO_TIMEOUT) == false;
+            boolean timeoutSet = scrollContext == null && searchContext.timeout() != null &&
+                searchContext.timeout().equals(SearchService.NO_TIMEOUT) == false;
 
             final Runnable timeoutRunnable;
             if (timeoutSet) {
@@ -286,14 +290,14 @@ public class QueryPhase {
             try {
                 boolean shouldRescore;
                 // if we are optimizing sort and there are no other collectors
-                if (sortAndFormatsForRewrittenNumericSort != null && collectors.size() == 0 && searchContext.getProfilers() == null) {
+                if (sortAndFormatsForRewrittenNumericSort!=null && collectors.size()==0 && searchContext.getProfilers()==null) {
                     shouldRescore = searchWithCollectorManager(searchContext, searcher, query, leafSorter, timeoutSet);
                 } else {
                     shouldRescore = searchWithCollector(searchContext, searcher, query, collectors, hasFilterCollector, timeoutSet);
                 }
 
                 // if we rewrote numeric long or date sort, restore fieldDocs based on the original sort
-                if (sortAndFormatsForRewrittenNumericSort != null) {
+                if (sortAndFormatsForRewrittenNumericSort!=null) {
                     searchContext.sort(sortAndFormatsForRewrittenNumericSort); // restore SortAndFormats
                     restoreTopFieldDocs(queryResult, sortAndFormatsForRewrittenNumericSort);
                 }
@@ -308,7 +312,7 @@ public class QueryPhase {
             } finally {
                 // Search phase has finished, no longer need to check for timeout
                 // otherwise aggregation phase might get cancelled.
-                if (timeoutRunnable != null) {
+                if (timeoutRunnable!=null) {
                     searcher.removeQueryCancellation(timeoutRunnable);
                 }
             }
@@ -354,6 +358,7 @@ public class QueryPhase {
         return topDocsFactory.shouldRescore();
     }
 
+
     /*
      * We use collectorManager during sort optimization, where
      * we have already checked that there are no other collectors, no filters,
@@ -363,7 +368,7 @@ public class QueryPhase {
     private static boolean searchWithCollectorManager(SearchContext searchContext, ContextIndexSearcher searcher, Query query,
             CheckedConsumer<List<LeafReaderContext>, IOException> leafSorter, boolean timeoutSet) throws IOException {
         final IndexReader reader = searchContext.searcher().getIndexReader();
-        final int numHits = Math.min(searchContext.from() + searchContext.size(), Math.max(1, reader.numDocs()));
+        final int numHits = Math.min(searchContext.from() + searchContext.size(),  Math.max(1, reader.numDocs()));
         final SortAndFormats sortAndFormats = searchContext.sort();
 
         int totalHitsThreshold;
@@ -382,8 +387,8 @@ public class QueryPhase {
             }
         }
 
-        CollectorManager<TopFieldCollector, TopFieldDocs> sharedManager =
-                TopFieldCollector.createSharedManager(sortAndFormats.sort, numHits, null, totalHitsThreshold);
+        CollectorManager<TopFieldCollector, TopFieldDocs> sharedManager = TopFieldCollector.createSharedManager(
+            sortAndFormats.sort, numHits, null, totalHitsThreshold);
 
         List<LeafReaderContext> leaves = new ArrayList<>(searcher.getIndexReader().leaves());
         leafSorter.accept(leaves);
@@ -401,91 +406,70 @@ public class QueryPhase {
         return false; // no rescoring when sorting by field
     }
 
-    private static Query tryRewriteLongSort(SearchContext searchContext, IndexReader reader, Query query, boolean hasFilterCollector)
-            throws IOException {
-        if ((searchContext.from() + searchContext.size()) <= 0)
-            return null;
-        if (searchContext.searchAfter() != null)
-            return null; //TODO: handle sort optimization with search after
-        if (searchContext.scrollContext() != null)
-            return null;
-        if (searchContext.collapse() != null)
-            return null;
-        if (searchContext.trackScores())
-            return null;
-        if (searchContext.aggregations() != null)
-            return null;
+    private static Query tryRewriteLongSort(SearchContext searchContext, IndexReader reader,
+                                            Query query, boolean hasFilterCollector) throws IOException {
+        if ((searchContext.from() + searchContext.size()) <= 0) return null;
+        if (searchContext.searchAfter() != null) return null; //TODO: handle sort optimization with search after
+        if (searchContext.scrollContext() != null) return null;
+        if (searchContext.collapse() != null) return null;
+        if (searchContext.trackScores()) return null;
+        if (searchContext.aggregations() != null) return null;
         if (canEarlyTerminate(reader, searchContext.sort())) {
             // disable this optimization if index sorting matches the query sort since it's already optimized by index searcher
             return null;
         }
         Sort sort = searchContext.sort().sort;
         SortField sortField = sort.getSort()[0];
-        if (SortField.Type.LONG.equals(IndexSortConfig.getSortFieldType(sortField)) == false)
-            return null;
+        if (SortField.Type.LONG.equals(IndexSortConfig.getSortFieldType(sortField)) == false) return null;
 
         // check if this is a field of type Long or Date, that is indexed and has doc values
         String fieldName = sortField.getField();
-        if (fieldName == null)
-            return null; // happens when _score or _doc is the 1st sort field
-        if (searchContext.mapperService() == null)
-            return null; // mapperService can be null in tests
+        if (fieldName == null) return null; // happens when _score or _doc is the 1st sort field
+        if (searchContext.mapperService() == null) return null; // mapperService can be null in tests
         final MappedFieldType fieldType = searchContext.mapperService().fieldType(fieldName);
-        if (fieldType == null)
-            return null; // for unmapped fields, default behaviour depending on "unmapped_type" flag
-        if ((fieldType.typeName().equals("long") == false) && (fieldType instanceof DateFieldType == false))
-            return null;
-        if (fieldType.isSearchable() == false)
-            return null;
-        if (fieldType.hasDocValues() == false)
-            return null;
+        if (fieldType == null) return null; // for unmapped fields, default behaviour depending on "unmapped_type" flag
+        if ((fieldType.typeName().equals("long") == false) && (fieldType instanceof DateFieldType == false)) return null;
+        if (fieldType.isSearchable() == false) return null;
+        if (fieldType.hasDocValues() == false) return null;
+
 
         // check that all sorts are actual document fields or _doc
         for (int i = 1; i < sort.getSort().length; i++) {
             SortField sField = sort.getSort()[i];
             String sFieldName = sField.getField();
             if (sFieldName == null) {
-                if (SortField.FIELD_DOC.equals(sField) == false)
-                    return null;
+                if (SortField.FIELD_DOC.equals(sField) == false) return null;
             } else {
                 //TODO: find out how to cover _script sort that don't use _score
-                if (searchContext.mapperService().fieldType(sFieldName) == null)
-                    return null; // could be _script sort that uses _score
+                if (searchContext.mapperService().fieldType(sFieldName) == null) return null; // could be _script sort that uses _score
             }
         }
 
         // check that setting of missing values allows optimization
-        if (sortField.getMissingValue() == null)
-            return null;
+        if (sortField.getMissingValue() == null) return null;
         Long missingValue = (Long) sortField.getMissingValue();
-        boolean missingValuesAccordingToSort = (sortField.getReverse() && (missingValue == Long.MIN_VALUE))
-                || ((sortField.getReverse() == false) && (missingValue == Long.MAX_VALUE));
-        if (missingValuesAccordingToSort == false)
-            return null;
+        boolean missingValuesAccordingToSort = (sortField.getReverse() && (missingValue == Long.MIN_VALUE)) ||
+            ((sortField.getReverse() == false) && (missingValue == Long.MAX_VALUE));
+        if (missingValuesAccordingToSort == false) return null;
 
         int docCount = PointValues.getDocCount(reader, fieldName);
         // is not worth to run optimization on small index
-        if (docCount <= 512)
-            return null;
+        if (docCount <= 512) return null;
 
         // check for multiple values
-        if (PointValues.size(reader, fieldName) != docCount)
-            return null; //TODO: handle multiple values
+        if (PointValues.size(reader, fieldName) != docCount) return null; //TODO: handle multiple values
 
         // check if the optimization makes sense with the track_total_hits setting
         if (searchContext.trackTotalHitsUpTo() == Integer.MAX_VALUE) {
             // with filter, we can't pre-calculate hitsCount, we need to explicitly calculate them => optimization does't make sense
-            if (hasFilterCollector)
-                return null;
+            if (hasFilterCollector) return null;
             // if we can't pre-calculate hitsCount based on the query type, optimization does't make sense
-            if (shortcutTotalHitCount(reader, query) == -1)
-                return null;
+            if (shortcutTotalHitCount(reader, query) == -1) return null;
         }
 
         byte[] minValueBytes = PointValues.getMinPackedValue(reader, fieldName);
         byte[] maxValueBytes = PointValues.getMaxPackedValue(reader, fieldName);
-        if ((maxValueBytes == null) || (minValueBytes == null))
-            return null;
+        if ((maxValueBytes == null) || (minValueBytes == null)) return null;
         long minValue = LongPoint.decodeDimension(minValueBytes, 0);
         long maxValue = LongPoint.decodeDimension(maxValueBytes, 0);
 
@@ -493,8 +477,7 @@ public class QueryPhase {
         if (minValue == maxValue) {
             rewrittenQuery = new DocValuesFieldExistsQuery(fieldName);
         } else {
-            if (indexFieldHasDuplicateData(reader, fieldName))
-                return null;
+            if (indexFieldHasDuplicateData(reader, fieldName)) return null;
             long origin = (sortField.getReverse()) ? maxValue : minValue;
             long pivotDistance = (maxValue - minValue) >>> 1; // division by 2 on the unsigned representation to avoid overflow
             if (pivotDistance == 0) { // 0 if maxValue = (minValue + 1)
@@ -502,9 +485,10 @@ public class QueryPhase {
             }
             rewrittenQuery = LongPoint.newDistanceFeatureQuery(sortField.getField(), 1, origin, pivotDistance);
         }
-        rewrittenQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.FILTER) // filter for original query
-                .add(rewrittenQuery, BooleanClause.Occur.SHOULD) //should for rewrittenQuery
-                .build();
+        rewrittenQuery = new BooleanQuery.Builder()
+            .add(query, BooleanClause.Occur.FILTER) // filter for original query
+            .add(rewrittenQuery, BooleanClause.Occur.SHOULD) //should for rewrittenQuery
+            .build();
         return rewrittenQuery;
     }
 
@@ -521,7 +505,7 @@ public class QueryPhase {
                 if (values == null) {
                     sortValues[ctx.ord] = missingValue;
                 } else {
-                    byte[] sortValue = sortField.getReverse() ? values.getMaxPackedValue() : values.getMinPackedValue();
+                    byte[] sortValue = sortField.getReverse() ? values.getMaxPackedValue(): values.getMinPackedValue();
                     sortValues[ctx.ord] = sortValue == null ? missingValue : LongPoint.decodeDimension(sortValue, 0);
                 }
             }
@@ -556,7 +540,8 @@ public class QueryPhase {
             // sort by score
             // queries that return constant scores will return docs in index
             // order since Lucene tie-breaks on the doc id
-            return query.getClass() == ConstantScoreQuery.class || query.getClass() == MatchAllDocsQuery.class;
+            return query.getClass() == ConstantScoreQuery.class
+                || query.getClass() == MatchAllDocsQuery.class;
         } else {
             return Sort.INDEXORDER.equals(sf.sort);
         }
@@ -589,14 +574,13 @@ public class QueryPhase {
         long docsDupl = 0; // number of docs in segments with duplicate data that would NOT benefit optimization
         for (LeafReaderContext lrc : reader.leaves()) {
             PointValues pointValues = lrc.reader().getPointValues(field);
-            if (pointValues == null)
-                continue;
+            if (pointValues == null) continue;
             int docCount = pointValues.getDocCount();
             if (docCount <= 512) { // skipping small segments as estimateMedianCount doesn't work well on them
                 continue;
             }
-            assert (pointValues.size() == docCount); // TODO: modify the code to handle multiple values
-            int duplDocCount = docCount / 2; // expected doc count of duplicate data
+            assert(pointValues.size() == docCount); // TODO: modify the code to handle multiple values
+            int duplDocCount = docCount/2; // expected doc count of duplicate data
             if (pointsHaveDuplicateData(pointValues, duplDocCount)) {
                 docsDupl += docCount;
             } else {
@@ -614,7 +598,7 @@ public class QueryPhase {
             long midValue = Math.floorDiv(minValue, 2) + Math.floorDiv(maxValue, 2); // to avoid overflow first divide each value by 2
             long countLeft = estimatePointCount(pointValues, minValue, midValue);
             long countRight = estimatePointCount(pointValues, midValue + 1, maxValue);
-            if ((countLeft >= countRight) && (countLeft > duplDocCount)) {
+            if ((countLeft >= countRight) && (countLeft > duplDocCount) ) {
                 maxValue = midValue;
             } else if ((countRight > countLeft) && (countRight > duplDocCount)) {
                 minValue = midValue + 1;
@@ -625,6 +609,7 @@ public class QueryPhase {
         return hasDuplicateData;
     }
 
+
     private static long estimatePointCount(PointValues pointValues, long minValue, long maxValue) {
         final byte[] minValueAsBytes = new byte[Long.BYTES];
         LongPoint.encodeDimension(minValue, minValueAsBytes, 0);
@@ -633,25 +618,22 @@ public class QueryPhase {
 
         PointValues.IntersectVisitor visitor = new PointValues.IntersectVisitor() {
             @Override
-            public void grow(int count) {
-            }
+            public void grow(int count) {}
 
             @Override
-            public void visit(int docID) {
-            }
+            public void visit(int docID) {}
 
             @Override
-            public void visit(int docID, byte[] packedValue) {
-            }
+            public void visit(int docID, byte[] packedValue) {}
 
             @Override
             public PointValues.Relation compare(byte[] minPackedValue, byte[] maxPackedValue) {
-                if (FutureArrays.compareUnsigned(minPackedValue, 0, Long.BYTES, maxValueAsBytes, 0, Long.BYTES) > 0
-                        || FutureArrays.compareUnsigned(maxPackedValue, 0, Long.BYTES, minValueAsBytes, 0, Long.BYTES) < 0) {
+                if (FutureArrays.compareUnsigned(minPackedValue, 0, Long.BYTES, maxValueAsBytes, 0, Long.BYTES) > 0 ||
+                    FutureArrays.compareUnsigned(maxPackedValue, 0, Long.BYTES, minValueAsBytes, 0, Long.BYTES) < 0) {
                     return PointValues.Relation.CELL_OUTSIDE_QUERY;
                 }
-                if (FutureArrays.compareUnsigned(minPackedValue, 0, Long.BYTES, minValueAsBytes, 0, Long.BYTES) < 0
-                        || FutureArrays.compareUnsigned(maxPackedValue, 0, Long.BYTES, maxValueAsBytes, 0, Long.BYTES) > 0) {
+                if (FutureArrays.compareUnsigned(minPackedValue, 0, Long.BYTES, minValueAsBytes, 0, Long.BYTES) < 0 ||
+                    FutureArrays.compareUnsigned(maxPackedValue, 0, Long.BYTES, maxValueAsBytes, 0, Long.BYTES) > 0) {
                     return PointValues.Relation.CELL_CROSSES_QUERY;
                 }
                 return PointValues.Relation.CELL_INSIDE_QUERY;
@@ -660,6 +642,5 @@ public class QueryPhase {
         return pointValues.estimatePointCount(visitor);
     }
 
-    private static class TimeExceededException extends RuntimeException {
-    }
+    private static class TimeExceededException extends RuntimeException {}
 }

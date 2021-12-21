@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.index.fielddata;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.util.NumericUtils;
+
+import java.io.IOException;
 
 /**
  * {@link SortedNumericDoubleValues} instance that wraps a {@link SortedNumericDocValues}

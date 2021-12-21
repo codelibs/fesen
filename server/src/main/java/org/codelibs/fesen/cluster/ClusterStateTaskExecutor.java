@@ -58,7 +58,7 @@ public interface ClusterStateTaskExecutor<T> {
      * This allows groupd task description but the submitting source.
      */
     default String describeTasks(List<T> tasks) {
-        return String.join(", ", tasks.stream().map(t -> (CharSequence) t.toString()).filter(t -> t.length() > 0)::iterator);
+        return String.join(", ", tasks.stream().map(t -> (CharSequence)t.toString()).filter(t -> t.length() > 0)::iterator);
     }
 
     /**
@@ -120,7 +120,8 @@ public interface ClusterStateTaskExecutor<T> {
             }
 
             ClusterTasksResult<T> build(ClusterTasksResult<T> result, ClusterState previousState) {
-                return new ClusterTasksResult<>(result.resultingState == null ? previousState : result.resultingState, executionResults);
+                return new ClusterTasksResult<>(result.resultingState == null ? previousState : result.resultingState,
+                    executionResults);
             }
         }
     }

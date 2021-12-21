@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.index.analysis;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -31,6 +27,10 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParseException;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class NameOrDefinition implements Writeable, ToXContentFragment {
     // exactly one of these two members is not null
@@ -79,7 +79,7 @@ public class NameOrDefinition implements Writeable, ToXContentFragment {
             return new NameOrDefinition(parser.map());
         }
         throw new XContentParseException(parser.getTokenLocation(),
-                "Expected [VALUE_STRING] or [START_OBJECT], got " + parser.currentToken());
+            "Expected [VALUE_STRING] or [START_OBJECT], got " + parser.currentToken());
     }
 
     @Override
@@ -96,12 +96,11 @@ public class NameOrDefinition implements Writeable, ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         NameOrDefinition that = (NameOrDefinition) o;
-        return Objects.equals(name, that.name) && Objects.equals(definition, that.definition);
+        return Objects.equals(name, that.name) &&
+            Objects.equals(definition, that.definition);
     }
 
     @Override

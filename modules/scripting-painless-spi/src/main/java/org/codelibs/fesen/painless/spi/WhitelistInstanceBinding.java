@@ -55,8 +55,9 @@ public class WhitelistInstanceBinding {
     public final Map<Class<?>, Object> painlessAnnotations;
 
     /** Standard constructor. All values must be not {@code null}. */
-    public WhitelistInstanceBinding(String origin, Object targetInstance, String methodName, String returnCanonicalTypeName,
-            List<String> canonicalTypeNameParameters, List<Object> painlessAnnotations) {
+    public WhitelistInstanceBinding(String origin, Object targetInstance,
+            String methodName, String returnCanonicalTypeName, List<String> canonicalTypeNameParameters,
+            List<Object> painlessAnnotations) {
 
         this.origin = Objects.requireNonNull(origin);
         this.targetInstance = Objects.requireNonNull(targetInstance);

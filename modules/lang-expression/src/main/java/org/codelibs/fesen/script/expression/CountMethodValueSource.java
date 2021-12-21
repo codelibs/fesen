@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.script.expression;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DoubleValues;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
+
+import java.io.IOException;
 
 /**
  * A ValueSource to create FunctionValues to get the count of the number of values in a field for a document.
@@ -55,10 +55,8 @@ final class CountMethodValueSource extends FieldDataBasedDoubleValuesSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         CountMethodValueSource that = (CountMethodValueSource) o;
         return fieldData.equals(that.fieldData);
     }

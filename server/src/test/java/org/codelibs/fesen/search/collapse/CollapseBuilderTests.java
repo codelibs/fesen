@@ -151,25 +151,28 @@ public class CollapseBuilderTests extends AbstractSerializingTestCase<CollapseBu
         try (IndexReader reader = DirectoryReader.open(dir)) {
             when(shardContext.getIndexReader()).thenReturn(reader);
 
-            MappedFieldType numberFieldType = new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG);
+            MappedFieldType numberFieldType =
+                new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG);
             when(shardContext.fieldMapper("field")).thenReturn(numberFieldType);
             CollapseBuilder builder = new CollapseBuilder("field");
             CollapseContext collapseContext = builder.build(shardContext);
             assertEquals(collapseContext.getFieldType(), numberFieldType);
 
-            numberFieldType = new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG, true, false, false, false,
-                    null, Collections.emptyMap());
+            numberFieldType =
+                new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG, true, false,
+                    false, false, null, Collections.emptyMap());
             when(shardContext.fieldMapper("field")).thenReturn(numberFieldType);
             IllegalArgumentException exc = expectThrows(IllegalArgumentException.class, () -> builder.build(shardContext));
             assertEquals(exc.getMessage(), "cannot collapse on field `field` without `doc_values`");
 
-            numberFieldType = new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG, false, false, true, false,
-                    null, Collections.emptyMap());
+            numberFieldType =
+                new NumberFieldMapper.NumberFieldType("field", NumberFieldMapper.NumberType.LONG, false, false,
+                    true, false, null, Collections.emptyMap());
             when(shardContext.fieldMapper("field")).thenReturn(numberFieldType);
             builder.setInnerHits(new InnerHitBuilder());
             exc = expectThrows(IllegalArgumentException.class, () -> builder.build(shardContext));
             assertEquals(exc.getMessage(),
-                    "cannot expand `inner_hits` for collapse field `field`, only indexed field can retrieve `inner_hits`");
+                "cannot expand `inner_hits` for collapse field `field`, only indexed field can retrieve `inner_hits`");
 
             MappedFieldType keywordFieldType = new KeywordFieldMapper.KeywordFieldType("field");
             when(shardContext.fieldMapper("field")).thenReturn(keywordFieldType);
@@ -187,7 +190,7 @@ public class CollapseBuilderTests extends AbstractSerializingTestCase<CollapseBu
             kbuilder.setInnerHits(new InnerHitBuilder());
             exc = expectThrows(IllegalArgumentException.class, () -> builder.build(shardContext));
             assertEquals(exc.getMessage(),
-                    "cannot expand `inner_hits` for collapse field `field`, only indexed field can retrieve `inner_hits`");
+                "cannot expand `inner_hits` for collapse field `field`, only indexed field can retrieve `inner_hits`");
 
         }
     }
@@ -236,6 +239,6 @@ public class CollapseBuilderTests extends AbstractSerializingTestCase<CollapseBu
     @Override
     protected String[] getShuffleFieldsExceptions() {
         //disable xcontent shuffling on the highlight builder
-        return new String[] { "fields" };
+        return new String[]{"fields"};
     }
 }

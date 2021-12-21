@@ -99,8 +99,8 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
 
         @Override
         public List<PreConfiguredTokenizer> getPreConfiguredTokenizers() {
-            return Collections.singletonList(
-                    PreConfiguredTokenizer.singleton("mock-whitespace", () -> new MockTokenizer(MockTokenizer.WHITESPACE, false)));
+            return Collections.singletonList(PreConfiguredTokenizer.singleton("mock-whitespace",
+                () -> new MockTokenizer(MockTokenizer.WHITESPACE, false)));
         }
 
         // Based on DelimitedPayloadTokenFilter:
@@ -109,6 +109,7 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
             private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
             private final PayloadAttribute payAtt = addAttribute(PayloadAttribute.class);
             private final PayloadEncoder encoder;
+
 
             MockPayloadTokenFilter(TokenStream input, char delimiter, PayloadEncoder encoder) {
                 super(input);
@@ -156,21 +157,22 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
         String delimiter = createRandomDelimiter(tokens);
         String queryString = createString(tokens, payloads, encoding, delimiter.charAt(0));
         //create the mapping
-        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties").startObject("field")
-                .field("type", "text").field("term_vector", "with_positions_offsets_payloads").field("analyzer", "payload_test").endObject()
-                .endObject().endObject().endObject();
-        Settings setting = Settings.builder().put("index.analysis.analyzer.payload_test.tokenizer", "mock-whitespace")
-                .putList("index.analysis.analyzer.payload_test.filter", "my_delimited_payload")
-                .put("index.analysis.filter.my_delimited_payload.delimiter", delimiter)
-                .put("index.analysis.filter.my_delimited_payload.encoding", encodingString)
-                .put("index.analysis.filter.my_delimited_payload.type", "mock_payload_filter").build();
+        XContentBuilder mapping = jsonBuilder().startObject().startObject("type1").startObject("properties")
+                .startObject("field").field("type", "text").field("term_vector", "with_positions_offsets_payloads")
+                .field("analyzer", "payload_test").endObject().endObject().endObject().endObject();
+        Settings setting =  Settings.builder()
+            .put("index.analysis.analyzer.payload_test.tokenizer", "mock-whitespace")
+            .putList("index.analysis.analyzer.payload_test.filter", "my_delimited_payload")
+            .put("index.analysis.filter.my_delimited_payload.delimiter", delimiter)
+            .put("index.analysis.filter.my_delimited_payload.encoding", encodingString)
+            .put("index.analysis.filter.my_delimited_payload.type", "mock_payload_filter").build();
         createIndex("test", setting, "type1", mapping);
 
         client().prepareIndex("test", "type1", Integer.toString(1))
                 .setSource(jsonBuilder().startObject().field("field", queryString).endObject()).execute().actionGet();
         client().admin().indices().prepareRefresh().get();
-        TermVectorsRequestBuilder resp = client().prepareTermVectors("test", "type1", Integer.toString(1)).setPayloads(true)
-                .setOffsets(true).setPositions(true).setSelectedFields();
+        TermVectorsRequestBuilder resp = client().prepareTermVectors("test", "type1", Integer.toString(1))
+                .setPayloads(true).setOffsets(true).setPositions(true).setSelectedFields();
         TermVectorsResponse response = resp.execute().actionGet();
         assertThat("doc id 1 doesn't exists but should", response.isExists(), equalTo(true));
         Fields fields = response.getFields();
@@ -186,12 +188,12 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
             assertNotNull(docsAndPositions);
             for (int k = 0; k < docsAndPositions.freq(); k++) {
                 docsAndPositions.nextPosition();
-                if (docsAndPositions.getPayload() != null) {
-                    String infoString = "\nterm: " + term + " has payload \n" + docsAndPositions.getPayload().toString()
-                            + "\n but should have payload \n" + curPayloads.get(k).toString();
+                if (docsAndPositions.getPayload()!=null){
+                    String infoString = "\nterm: " + term + " has payload \n"+ docsAndPositions.getPayload().toString() +
+                            "\n but should have payload \n"+curPayloads.get(k).toString();
                     assertThat(infoString, docsAndPositions.getPayload(), equalTo(curPayloads.get(k)));
                 } else {
-                    String infoString = "\nterm: " + term + " has no payload but should have payload \n" + curPayloads.get(k).toString();
+                    String infoString = "\nterm: " + term + " has no payload but should have payload \n"+curPayloads.get(k).toString();
                     assertThat(infoString, curPayloads.get(k).length, equalTo(0));
                 }
             }
@@ -213,21 +215,21 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
             if (payload.length > 0) {
                 resultString = resultString + delimiter;
                 switch (encoding) {
-                case 0: {
-                    resultString = resultString + Float.toString(PayloadHelper.decodeFloat(payload.bytes, payload.offset));
-                    break;
-                }
-                case 1: {
-                    resultString = resultString + Integer.toString(PayloadHelper.decodeInt(payload.bytes, payload.offset));
-                    break;
-                }
-                case 2: {
-                    resultString = resultString + payload.utf8ToString();
-                    break;
-                }
-                default: {
-                    throw new FesenException("unsupported encoding type");
-                }
+                    case 0: {
+                        resultString = resultString + Float.toString(PayloadHelper.decodeFloat(payload.bytes, payload.offset));
+                        break;
+                    }
+                    case 1: {
+                        resultString = resultString + Integer.toString(PayloadHelper.decodeInt(payload.bytes, payload.offset));
+                        break;
+                    }
+                    case 2: {
+                        resultString = resultString + payload.utf8ToString();
+                        break;
+                    }
+                    default: {
+                        throw new FesenException("unsupported encoding type");
+                    }
                 }
             }
             resultString = resultString + " ";
@@ -248,15 +250,15 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
     private String createRandomDelimiter(String[] tokens) {
         String delimiter = "";
         boolean isTokenOrWhitespace = true;
-        while (isTokenOrWhitespace) {
+        while(isTokenOrWhitespace) {
             isTokenOrWhitespace = false;
             delimiter = randomUnicodeOfLength(1);
-            for (String token : tokens) {
-                if (token.contains(delimiter)) {
+            for(String token:tokens) {
+                if(token.contains(delimiter)) {
                     isTokenOrWhitespace = true;
                 }
             }
-            if (Character.isWhitespace(delimiter.charAt(0))) {
+            if(Character.isWhitespace(delimiter.charAt(0))) {
                 isTokenOrWhitespace = true;
             }
         }
@@ -270,28 +272,28 @@ public class GetTermVectorsTests extends ESSingleNodeTestCase {
             boolean createPayload = randomBoolean();
             if (createPayload) {
                 switch (encoding) {
-                case 0: {
-                    float theFloat = randomFloat();
-                    payloads.get(token).add(new BytesRef(PayloadHelper.encodeFloat(theFloat)));
-                    break;
-                }
-                case 1: {
-                    payloads.get(token).add(new BytesRef(PayloadHelper.encodeInt(randomInt())));
-                    break;
-                }
-                case 2: {
-                    String payload = randomUnicodeOfLengthBetween(50, 100);
-                    for (int c = 0; c < payload.length(); c++) {
-                        if (Character.isWhitespace(payload.charAt(c))) {
-                            payload = payload.replace(payload.charAt(c), 'w');
-                        }
+                    case 0: {
+                        float theFloat = randomFloat();
+                        payloads.get(token).add(new BytesRef(PayloadHelper.encodeFloat(theFloat)));
+                        break;
                     }
-                    payloads.get(token).add(new BytesRef(payload));
-                    break;
-                }
-                default: {
-                    throw new FesenException("unsupported encoding type");
-                }
+                    case 1: {
+                        payloads.get(token).add(new BytesRef(PayloadHelper.encodeInt(randomInt())));
+                        break;
+                    }
+                    case 2: {
+                        String payload = randomUnicodeOfLengthBetween(50, 100);
+                        for (int c = 0; c < payload.length(); c++) {
+                            if (Character.isWhitespace(payload.charAt(c))) {
+                                payload = payload.replace(payload.charAt(c), 'w');
+                            }
+                        }
+                        payloads.get(token).add(new BytesRef(payload));
+                        break;
+                    }
+                    default: {
+                        throw new FesenException("unsupported encoding type");
+                    }
                 }
             } else {
                 payloads.get(token).add(new BytesRef());

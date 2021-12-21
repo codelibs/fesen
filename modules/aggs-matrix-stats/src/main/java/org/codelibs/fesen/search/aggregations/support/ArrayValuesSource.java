@@ -18,12 +18,13 @@
  */
 package org.codelibs.fesen.search.aggregations.support;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.search.MultiValueMode;
+import org.codelibs.fesen.search.aggregations.support.ValuesSource;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Class to encapsulate a set of ValuesSource objects labeled by field name

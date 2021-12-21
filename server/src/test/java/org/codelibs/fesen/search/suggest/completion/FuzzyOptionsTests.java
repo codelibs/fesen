@@ -75,8 +75,8 @@ public class FuzzyOptionsTests extends ESTestCase {
     public void testSerialization() throws IOException {
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
             FuzzyOptions testModel = randomFuzzyOptions();
-            FuzzyOptions deserializedModel =
-                    copyWriteable(testModel, new NamedWriteableRegistry(Collections.emptyList()), FuzzyOptions::new);
+            FuzzyOptions deserializedModel = copyWriteable(testModel, new NamedWriteableRegistry(Collections.emptyList()),
+                    FuzzyOptions::new);
             assertEquals(testModel, deserializedModel);
             assertEquals(testModel.hashCode(), deserializedModel.hashCode());
             assertNotSame(testModel, deserializedModel);

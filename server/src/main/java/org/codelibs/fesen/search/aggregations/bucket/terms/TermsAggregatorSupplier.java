@@ -30,8 +30,18 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 interface TermsAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, ValuesSource valuesSource, BucketOrder order, DocValueFormat format,
-            TermsAggregator.BucketCountThresholds bucketCountThresholds, IncludeExclude includeExclude, String executionHint,
-            SearchContext context, Aggregator parent, Aggregator.SubAggCollectionMode subAggCollectMode, boolean showTermDocCountError,
-            CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
+    Aggregator build(String name,
+                     AggregatorFactories factories,
+                     ValuesSource valuesSource,
+                     BucketOrder order,
+                     DocValueFormat format,
+                     TermsAggregator.BucketCountThresholds bucketCountThresholds,
+                     IncludeExclude includeExclude,
+                     String executionHint,
+                     SearchContext context,
+                     Aggregator parent,
+                     Aggregator.SubAggCollectionMode subAggCollectMode,
+                     boolean showTermDocCountError,
+                     CardinalityUpperBound cardinality,
+                     Map<String, Object> metadata) throws IOException;
 }

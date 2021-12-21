@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.ingest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.DiffableUtils;
@@ -39,6 +31,14 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Holds the ingest pipelines that are available in the cluster
  */
@@ -46,11 +46,11 @@ public final class IngestMetadata implements Metadata.Custom {
 
     public static final String TYPE = "ingest";
     private static final ParseField PIPELINES_FIELD = new ParseField("pipeline");
-    private static final ObjectParser<List<PipelineConfiguration>, Void> INGEST_METADATA_PARSER =
-            new ObjectParser<>("ingest_metadata", ArrayList::new);
+    private static final ObjectParser<List<PipelineConfiguration>, Void> INGEST_METADATA_PARSER = new ObjectParser<>(
+            "ingest_metadata", ArrayList::new);
 
     static {
-        INGEST_METADATA_PARSER.declareObjectArray(List::addAll, PipelineConfiguration.getParser(), PIPELINES_FIELD);
+        INGEST_METADATA_PARSER.declareObjectArray(List::addAll , PipelineConfiguration.getParser(), PIPELINES_FIELD);
     }
 
     // We can't use Pipeline class directly in cluster state, because we don't have the processor factories around when
@@ -140,7 +140,7 @@ public final class IngestMetadata implements Metadata.Custom {
 
         IngestMetadataDiff(StreamInput in) throws IOException {
             pipelines = DiffableUtils.readJdkMapDiff(in, DiffableUtils.getStringKeySerializer(), PipelineConfiguration::readFrom,
-                    PipelineConfiguration::readDiffFrom);
+                PipelineConfiguration::readDiffFrom);
         }
 
         @Override
@@ -161,10 +161,8 @@ public final class IngestMetadata implements Metadata.Custom {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         IngestMetadata that = (IngestMetadata) o;
 

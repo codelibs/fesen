@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.containsString;
 
 public class BulkByScrollTaskTests extends ESTestCase {
     public void testStatusHatesNegatives() {
-        checkStatusNegatives(-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "sliceId");
+        checkStatusNegatives(-1  ,  0, 0, 0, 0, 0, 0, 0, 0, 0, "sliceId");
         checkStatusNegatives(null, -1, 0, 0, 0, 0, 0, 0, 0, 0, "total");
         checkStatusNegatives(null, 0, -1, 0, 0, 0, 0, 0, 0, 0, "updated");
         checkStatusNegatives(null, 0, 0, -1, 0, 0, 0, 0, 0, 0, "created");
@@ -75,8 +75,8 @@ public class BulkByScrollTaskTests extends ESTestCase {
         XContentBuilder builder = JsonXContent.contentBuilder();
         BulkByScrollTask.Status completedStatus = new BulkByScrollTask.Status(2, 0, 0, 0, 0, 0, 0, 0, 0, 0, timeValueMillis(0),
                 Float.POSITIVE_INFINITY, null, timeValueMillis(0));
-        BulkByScrollTask.Status status =
-                new BulkByScrollTask.Status(Arrays.asList(null, null, new BulkByScrollTask.StatusOrException(completedStatus)), null);
+        BulkByScrollTask.Status status = new BulkByScrollTask.Status(
+                Arrays.asList(null, null, new BulkByScrollTask.StatusOrException(completedStatus)), null);
         status.toXContent(builder, ToXContent.EMPTY_PARAMS);
         assertThat(Strings.toString(builder), containsString("\"slices\":[null,null,{\"slice_id\":2"));
     }
@@ -84,8 +84,8 @@ public class BulkByScrollTaskTests extends ESTestCase {
     public void testXContentRepresentationOfSliceFailures() throws IOException {
         XContentBuilder builder = JsonXContent.contentBuilder();
         Exception e = new Exception();
-        BulkByScrollTask.Status status =
-                new BulkByScrollTask.Status(Arrays.asList(null, null, new BulkByScrollTask.StatusOrException(e)), null);
+        BulkByScrollTask.Status status = new BulkByScrollTask.Status(Arrays.asList(null, null, new BulkByScrollTask.StatusOrException(e)),
+                null);
         status.toXContent(builder, ToXContent.EMPTY_PARAMS);
         assertThat(Strings.toString(builder), containsString("\"slices\":[null,null,{\"type\":\"exception\""));
     }

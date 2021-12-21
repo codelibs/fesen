@@ -68,8 +68,10 @@ public class BitSetFilterCacheTests extends ESTestCase {
     }
 
     public void testInvalidateEntries() throws Exception {
-        IndexWriter writer = new IndexWriter(new ByteBuffersDirectory(),
-                new IndexWriterConfig(new StandardAnalyzer()).setMergePolicy(new LogByteSizeMergePolicy()));
+        IndexWriter writer = new IndexWriter(
+                new ByteBuffersDirectory(),
+                new IndexWriterConfig(new StandardAnalyzer()).setMergePolicy(new LogByteSizeMergePolicy())
+        );
         Document document = new Document();
         document.add(new StringField("field", "value", Field.Store.NO));
         writer.addDocument(document);
@@ -126,8 +128,10 @@ public class BitSetFilterCacheTests extends ESTestCase {
     }
 
     public void testListener() throws IOException {
-        IndexWriter writer = new IndexWriter(new ByteBuffersDirectory(),
-                new IndexWriterConfig(new StandardAnalyzer()).setMergePolicy(new LogByteSizeMergePolicy()));
+        IndexWriter writer = new IndexWriter(
+                new ByteBuffersDirectory(),
+                new IndexWriterConfig(new StandardAnalyzer()).setMergePolicy(new LogByteSizeMergePolicy())
+        );
         Document document = new Document();
         document.add(new StringField("field", "value", Field.Store.NO));
         writer.addDocument(document);
@@ -200,7 +204,10 @@ public class BitSetFilterCacheTests extends ESTestCase {
         });
 
         Directory dir = newDirectory();
-        IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
+        IndexWriter writer = new IndexWriter(
+                dir,
+                newIndexWriterConfig()
+        );
         writer.addDocument(new Document());
         DirectoryReader reader = DirectoryReader.open(writer);
         writer.close();

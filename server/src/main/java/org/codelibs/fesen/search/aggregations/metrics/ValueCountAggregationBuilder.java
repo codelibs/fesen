@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -38,10 +35,15 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource, ValueCountAggregationBuilder> {
     public static final String NAME = "value_count";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, MetricAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        MetricAggregatorSupplier.class
+    );
 
     public static final ObjectParser<ValueCountAggregationBuilder, String> PARSER =
             ObjectParser.fromBuilder(NAME, ValueCountAggregationBuilder::new);
@@ -57,8 +59,8 @@ public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder
         super(name);
     }
 
-    protected ValueCountAggregationBuilder(ValueCountAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected ValueCountAggregationBuilder(ValueCountAggregationBuilder clone,
+                                           AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -90,8 +92,10 @@ public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder
     }
 
     @Override
-    protected ValueCountAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
-            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected ValueCountAggregatorFactory innerBuild(QueryShardContext queryShardContext,
+                                                        ValuesSourceConfig config,
+                                                        AggregatorFactory parent,
+                                                        AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new ValueCountAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.script;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.search.lookup.DocLookup;
+
+import java.io.IOException;
 
 /**
  * A float encapsulation that dynamically accesses the score of a document.
@@ -48,12 +48,12 @@ public final class ScoreAccessor extends Number {
 
     @Override
     public int intValue() {
-        return (int) score();
+        return (int)score();
     }
 
     @Override
     public long longValue() {
-        return (long) score();
+        return (long)score();
     }
 
     @Override

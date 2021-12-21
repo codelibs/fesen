@@ -61,8 +61,16 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
         }, (deferringCollector, finalCollector) -> {
             deferringCollector.prepareSelectedBuckets(0, 8, 9);
 
-            equalTo(org.codelibs.fesen.core.Map.of(0L, org.codelibs.fesen.core.List.of(0, 1, 2, 3, 4, 5, 6, 7), 1L,
-                    org.codelibs.fesen.core.List.of(8), 2L, org.codelibs.fesen.core.List.of(9)));
+            equalTo(
+                org.codelibs.fesen.core.Map.of(
+                    0L,
+                    org.codelibs.fesen.core.List.of(0, 1, 2, 3, 4, 5, 6, 7),
+                    1L,
+                    org.codelibs.fesen.core.List.of(8),
+                    2L,
+                    org.codelibs.fesen.core.List.of(9)
+                )
+            );
         });
     }
 
@@ -79,8 +87,19 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
         }, (deferringCollector, finalCollector) -> {
             deferringCollector.prepareSelectedBuckets(0, 8, 9);
 
-            assertThat(finalCollector.collection, equalTo(org.codelibs.fesen.core.Map.of(0L, org.codelibs.fesen.core.List.of(4, 5, 6, 7),
-                    1L, org.codelibs.fesen.core.List.of(8), 2L, org.codelibs.fesen.core.List.of(9))));
+            assertThat(
+                finalCollector.collection,
+                equalTo(
+                    org.codelibs.fesen.core.Map.of(
+                        0L,
+                        org.codelibs.fesen.core.List.of(4, 5, 6, 7),
+                        1L,
+                        org.codelibs.fesen.core.List.of(8),
+                        2L,
+                        org.codelibs.fesen.core.List.of(9)
+                    )
+                )
+            );
         });
     }
 
@@ -98,13 +117,26 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
         }, (deferringCollector, finalCollector) -> {
             deferringCollector.prepareSelectedBuckets(0, 8, 9);
 
-            assertThat(finalCollector.collection, equalTo(org.codelibs.fesen.core.Map.of(0L, org.codelibs.fesen.core.List.of(0, 1, 2, 3),
-                    1L, org.codelibs.fesen.core.List.of(8), 2L, org.codelibs.fesen.core.List.of(9))));
+            assertThat(
+                finalCollector.collection,
+                equalTo(
+                    org.codelibs.fesen.core.Map.of(
+                        0L,
+                        org.codelibs.fesen.core.List.of(0, 1, 2, 3),
+                        1L,
+                        org.codelibs.fesen.core.List.of(8),
+                        2L,
+                        org.codelibs.fesen.core.List.of(9)
+                    )
+                )
+            );
         });
     }
 
-    private void testCase(BiFunction<MergingBucketsDeferringCollector, LeafBucketCollector, LeafBucketCollector> leafCollector,
-            CheckedBiConsumer<MergingBucketsDeferringCollector, CollectingBucketCollector, IOException> verify) throws IOException {
+    private void testCase(
+        BiFunction<MergingBucketsDeferringCollector, LeafBucketCollector, LeafBucketCollector> leafCollector,
+        CheckedBiConsumer<MergingBucketsDeferringCollector, CollectingBucketCollector, IOException> verify
+    ) throws IOException {
         try (Directory directory = newDirectory()) {
             try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig())) {
                 for (int i = 0; i < 10; i++) {
@@ -130,12 +162,10 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
                     }
 
                     @Override
-                    public void preCollection() throws IOException {
-                    }
+                    public void preCollection() throws IOException {}
 
                     @Override
-                    public void postCollection() throws IOException {
-                    }
+                    public void postCollection() throws IOException {}
 
                     @Override
                     public LeafBucketCollector getLeafCollector(LeafReaderContext ctx) throws IOException {
@@ -168,11 +198,9 @@ public class MergingBucketsDeferringCollectorTests extends AggregatorTestCase {
         }
 
         @Override
-        public void preCollection() throws IOException {
-        }
+        public void preCollection() throws IOException {}
 
         @Override
-        public void postCollection() throws IOException {
-        }
+        public void postCollection() throws IOException {}
     }
 }

@@ -145,7 +145,7 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
     }
 
     public static void assertEqualGenerators(PhraseSuggestionContext.DirectCandidateGenerator first,
-            PhraseSuggestionContext.DirectCandidateGenerator second) {
+                                                PhraseSuggestionContext.DirectCandidateGenerator second) {
         assertEquals(first.field(), second.field());
         assertEquals(first.accuracy(), second.accuracy(), Float.MIN_VALUE);
         assertEquals(first.maxTermFreq(), second.maxTermFreq(), Float.MIN_VALUE);
@@ -169,15 +169,18 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
     public void testIllegalXContent() throws IOException {
         // test missing fieldname
         String directGenerator = "{ }";
-        assertIllegalXContent(directGenerator, IllegalArgumentException.class, "Required [field]");
+        assertIllegalXContent(directGenerator, IllegalArgumentException.class,
+                "Required [field]");
 
         // test unknown field
         directGenerator = "{ \"unknown_param\" : \"f1\" }";
-        assertIllegalXContent(directGenerator, IllegalArgumentException.class, "[direct_generator] unknown field [unknown_param]");
+        assertIllegalXContent(directGenerator, IllegalArgumentException.class,
+                "[direct_generator] unknown field [unknown_param]");
 
         // test bad value for field (e.g. size expects an int)
         directGenerator = "{ \"size\" : \"xxl\" }";
-        assertIllegalXContent(directGenerator, XContentParseException.class, "[direct_generator] failed to parse field [size]");
+        assertIllegalXContent(directGenerator, XContentParseException.class,
+                "[direct_generator] failed to parse field [size]");
 
         // test unexpected token
         directGenerator = "{ \"size\" : [ \"xxl\" ] }";
@@ -203,11 +206,11 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
             try (IndexReader reader = DirectoryReader.open(writer)) {
                 writer.close();
                 DirectSpellChecker spellchecker = new DirectSpellChecker();
-                DirectCandidateGenerator generator =
-                        new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_MORE_POPULAR, reader, 0f, 10);
+                DirectCandidateGenerator generator = new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_MORE_POPULAR,
+                    reader, 0f, 10);
                 DirectCandidateGenerator.CandidateSet candidateSet =
-                        generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
-                                generator.createCandidate(new BytesRef("fooz"), false)));
+                    generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
+                    generator.createCandidate(new BytesRef("fooz"), false)));
                 assertThat(candidateSet.candidates.length, equalTo(1));
                 assertThat(candidateSet.candidates[0].termStats.docFreq, equalTo(numDocs - 1));
                 assertThat(candidateSet.candidates[0].termStats.totalTermFreq, equalTo((long) numDocs - 1));
@@ -217,8 +220,10 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
 
                 spellchecker = new DirectSpellChecker();
                 spellchecker.setThresholdFrequency(0.5f);
-                generator = new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_MORE_POPULAR, reader, 0f, 10);
-                candidateSet = generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
+                generator = new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_MORE_POPULAR,
+                    reader, 0f, 10);
+                candidateSet =
+                    generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
                         generator.createCandidate(new BytesRef("fooz"), false)));
                 assertThat(candidateSet.candidates.length, equalTo(1));
                 assertThat(candidateSet.candidates[0].termStats.docFreq, equalTo(numDocs - 1));
@@ -229,8 +234,10 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
 
                 spellchecker = new DirectSpellChecker();
                 spellchecker.setThresholdFrequency(0.5f);
-                generator = new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_ALWAYS, reader, 0f, 10);
-                candidateSet = generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
+                generator = new DirectCandidateGenerator(spellchecker, "field", SuggestMode.SUGGEST_ALWAYS,
+                    reader, 0f, 10);
+                candidateSet =
+                    generator.drawCandidates(new DirectCandidateGenerator.CandidateSet(DirectCandidateGenerator.Candidate.EMPTY,
                         generator.createCandidate(new BytesRef("fooz"), false)));
                 assertThat(candidateSet.candidates.length, equalTo(01));
 
@@ -265,7 +272,8 @@ public class DirectCandidateGeneratorTests extends ESTestCase {
         maybeSet(generator::postFilter, randomAlphaOfLengthBetween(1, 20));
         maybeSet(generator::size, randomIntBetween(1, 20));
         maybeSet(generator::sort, randomFrom("score", "frequency"));
-        maybeSet(generator::stringDistance, randomFrom("internal", "damerau_levenshtein", "levenshtein", "jaro_winkler", "ngram"));
+        maybeSet(generator::stringDistance,
+                randomFrom("internal", "damerau_levenshtein", "levenshtein", "jaro_winkler", "ngram"));
         maybeSet(generator::suggestMode, randomFrom("missing", "popular", "always"));
         return generator;
     }

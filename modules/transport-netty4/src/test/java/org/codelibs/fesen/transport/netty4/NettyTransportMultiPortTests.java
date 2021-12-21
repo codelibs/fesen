@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.transport.netty4;
 
-import static org.hamcrest.Matchers.is;
-
-import java.util.Collections;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.component.Lifecycle;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
@@ -37,7 +33,12 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.SharedGroupFactory;
 import org.codelibs.fesen.transport.TcpTransport;
 import org.codelibs.fesen.transport.TransportSettings;
+import org.codelibs.fesen.transport.netty4.Netty4Transport;
 import org.junit.Before;
+
+import java.util.Collections;
+
+import static org.hamcrest.Matchers.is;
 
 public class NettyTransportMultiPortTests extends ESTestCase {
 
@@ -53,8 +54,12 @@ public class NettyTransportMultiPortTests extends ESTestCase {
     }
 
     public void testThatNettyCanBindToMultiplePorts() throws Exception {
-        Settings settings = Settings.builder().put("network.host", host).put(TransportSettings.PORT.getKey(), 22) // will not actually bind to this
-                .put("transport.profiles.default.port", 0).put("transport.profiles.client1.port", 0).build();
+        Settings settings = Settings.builder()
+            .put("network.host", host)
+            .put(TransportSettings.PORT.getKey(), 22) // will not actually bind to this
+            .put("transport.profiles.default.port", 0)
+            .put("transport.profiles.client1.port", 0)
+            .build();
 
         ThreadPool threadPool = new TestThreadPool("tst");
         try (TcpTransport transport = startTransport(settings, threadPool)) {
@@ -66,8 +71,11 @@ public class NettyTransportMultiPortTests extends ESTestCase {
     }
 
     public void testThatDefaultProfileInheritsFromStandardSettings() throws Exception {
-        Settings settings = Settings.builder().put("network.host", host).put(TransportSettings.PORT.getKey(), 0)
-                .put("transport.profiles.client1.port", 0).build();
+        Settings settings = Settings.builder()
+            .put("network.host", host)
+            .put(TransportSettings.PORT.getKey(), 0)
+            .put("transport.profiles.client1.port", 0)
+            .build();
 
         ThreadPool threadPool = new TestThreadPool("tst");
         try (TcpTransport transport = startTransport(settings, threadPool)) {
@@ -80,8 +88,11 @@ public class NettyTransportMultiPortTests extends ESTestCase {
 
     public void testThatProfileWithoutPortSettingsFails() throws Exception {
 
-        Settings settings = Settings.builder().put("network.host", host).put(TransportSettings.PORT.getKey(), 0)
-                .put("transport.profiles.client1.whatever", "foo").build();
+        Settings settings = Settings.builder()
+            .put("network.host", host)
+            .put(TransportSettings.PORT.getKey(), 0)
+            .put("transport.profiles.client1.whatever", "foo")
+            .build();
 
         ThreadPool threadPool = new TestThreadPool("tst");
         try {
@@ -93,8 +104,11 @@ public class NettyTransportMultiPortTests extends ESTestCase {
     }
 
     public void testThatDefaultProfilePortOverridesGeneralConfiguration() throws Exception {
-        Settings settings = Settings.builder().put("network.host", host).put(TransportSettings.PORT.getKey(), 22) // will not actually bind to this
-                .put("transport.profiles.default.port", 0).build();
+        Settings settings = Settings.builder()
+            .put("network.host", host)
+            .put(TransportSettings.PORT.getKey(), 22) // will not actually bind to this
+            .put("transport.profiles.default.port", 0)
+            .build();
 
         ThreadPool threadPool = new TestThreadPool("tst");
         try (TcpTransport transport = startTransport(settings, threadPool)) {
@@ -108,8 +122,8 @@ public class NettyTransportMultiPortTests extends ESTestCase {
     private TcpTransport startTransport(Settings settings, ThreadPool threadPool) {
         PageCacheRecycler recycler = new MockPageCacheRecycler(Settings.EMPTY);
         TcpTransport transport = new Netty4Transport(settings, Version.CURRENT, threadPool, new NetworkService(Collections.emptyList()),
-                recycler, new NamedWriteableRegistry(Collections.emptyList()), new NoneCircuitBreakerService(),
-                new SharedGroupFactory(settings));
+            recycler, new NamedWriteableRegistry(Collections.emptyList()), new NoneCircuitBreakerService(),
+            new SharedGroupFactory(settings));
         transport.start();
 
         assertThat(transport.lifecycleState(), is(Lifecycle.State.STARTED));

@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.aggregations.metrics.ParsedSingleValueNumericMetricsAggregation;
+
+import java.io.IOException;
 
 public class ParsedSimpleValue extends ParsedSingleValueNumericMetricsAggregation implements SimpleValue {
 
@@ -33,8 +33,8 @@ public class ParsedSimpleValue extends ParsedSingleValueNumericMetricsAggregatio
         return InternalSimpleValue.NAME;
     }
 
-    private static final ObjectParser<ParsedSimpleValue, Void> PARSER =
-            new ObjectParser<>(ParsedSimpleValue.class.getSimpleName(), true, ParsedSimpleValue::new);
+    private static final ObjectParser<ParsedSimpleValue, Void> PARSER = new ObjectParser<>(ParsedSimpleValue.class.getSimpleName(), true,
+            ParsedSimpleValue::new);
 
     static {
         declareSingleValueFields(PARSER, Double.NaN);

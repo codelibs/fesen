@@ -19,7 +19,11 @@
 
 package org.codelibs.fesen.client;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.http.HttpHost;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.NodeSelector;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.Node.Roles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.http.HttpHost;
-import org.codelibs.fesen.client.Node.Roles;
+import static org.junit.Assert.assertEquals;
 
 public class NodeSelectorTests extends RestClientTestCase {
     public void testAny() {
@@ -76,7 +79,9 @@ public class NodeSelectorTests extends RestClientTestCase {
         if (ingest) {
             roles.add("ingest");
         }
-        return new Node(new HttpHost("dummy"), Collections.<HttpHost> emptySet(), randomAsciiAlphanumOfLength(5),
-                randomAsciiAlphanumOfLength(5), new Roles(roles), Collections.<String, List<String>> emptyMap());
+        return new Node(new HttpHost("dummy"), Collections.<HttpHost>emptySet(),
+                randomAsciiAlphanumOfLength(5), randomAsciiAlphanumOfLength(5),
+                new Roles(roles),
+                Collections.<String, List<String>>emptyMap());
     }
 }

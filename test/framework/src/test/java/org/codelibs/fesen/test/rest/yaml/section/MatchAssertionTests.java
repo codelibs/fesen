@@ -24,8 +24,9 @@ import static org.hamcrest.Matchers.containsString;
 
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.test.ESTestCase;
+import org.codelibs.fesen.test.rest.yaml.section.MatchAssertion;
 
-public class MatchAssertionTests extends ESTestCase {
+public class MatchAssertionTests extends ESTestCase  {
 
     public void testNull() {
         XContentLocation xContentLocation = new XContentLocation(0, 0);
@@ -48,7 +49,8 @@ public class MatchAssertionTests extends ESTestCase {
         XContentLocation xContentLocation = new XContentLocation(0, 0);
         MatchAssertion matchAssertion = new MatchAssertion(xContentLocation, "field", singletonMap("a", null));
         matchAssertion.doAssert(singletonMap("a", null), matchAssertion.getExpectedValue());
-        AssertionError e = expectThrows(AssertionError.class, () -> matchAssertion.doAssert(emptyMap(), matchAssertion.getExpectedValue()));
+        AssertionError e = expectThrows(AssertionError.class, () ->
+            matchAssertion.doAssert(emptyMap(), matchAssertion.getExpectedValue()));
         assertThat(e.getMessage(), containsString("expected [null] but not found"));
     }
 }

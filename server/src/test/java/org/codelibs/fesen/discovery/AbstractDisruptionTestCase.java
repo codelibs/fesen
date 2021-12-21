@@ -59,6 +59,7 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
 
     static final TimeValue DISRUPTION_HEALING_OVERHEAD = TimeValue.timeValueSeconds(40); // we use 30s as timeout in many places.
 
+
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
         return Settings.builder().put(super.nodeSettings(nodeOrdinal)).put(DEFAULT_SETTINGS).build();
@@ -67,8 +68,8 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
     @Override
     public Settings indexSettings() {
         return Settings.builder().put(super.indexSettings())
-                // sync global checkpoint quickly so we can verify seq_no_stats aligned between all copies after tests.
-                .put(IndexService.GLOBAL_CHECKPOINT_SYNC_INTERVAL_SETTING.getKey(), "1s").build();
+            // sync global checkpoint quickly so we can verify seq_no_stats aligned between all copies after tests.
+            .put(IndexService.GLOBAL_CHECKPOINT_SYNC_INTERVAL_SETTING.getKey(), "1s").build();
     }
 
     @Override
@@ -92,8 +93,8 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
 
     @Override
     public void setDisruptionScheme(ServiceDisruptionScheme scheme) {
-        if (scheme instanceof NetworkDisruption
-                && ((NetworkDisruption) scheme).getNetworkLinkDisruptionType() == NetworkDisruption.UNRESPONSIVE) {
+        if (scheme instanceof NetworkDisruption &&
+                ((NetworkDisruption) scheme).getNetworkLinkDisruptionType() == NetworkDisruption.UNRESPONSIVE) {
             // the network unresponsive disruption may leave operations in flight
             // this is because this disruption scheme swallows requests by design
             // as such, these operations will never be marked as finished
@@ -119,7 +120,8 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
         return nodes;
     }
 
-    public static final Settings DEFAULT_SETTINGS = Settings.builder().put(LeaderChecker.LEADER_CHECK_TIMEOUT_SETTING.getKey(), "5s") // for hitting simulated network failures quickly
+    public static final Settings DEFAULT_SETTINGS = Settings.builder()
+            .put(LeaderChecker.LEADER_CHECK_TIMEOUT_SETTING.getKey(), "5s") // for hitting simulated network failures quickly
             .put(LeaderChecker.LEADER_CHECK_RETRY_COUNT_SETTING.getKey(), 1) // for hitting simulated network failures quickly
             .put(FollowersChecker.FOLLOWER_CHECK_TIMEOUT_SETTING.getKey(), "5s") // for hitting simulated network failures quickly
             .put(FollowersChecker.FOLLOWER_CHECK_RETRY_COUNT_SETTING.getKey(), 1) // for hitting simulated network failures quickly
@@ -155,7 +157,7 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
             if (expectedBlocks != null) {
                 for (ClusterBlockLevel level : expectedBlocks.levels()) {
                     assertTrue("node [" + node + "] does have level [" + level + "] in it's blocks",
-                            state.getBlocks().hasGlobalBlockWithLevel(level));
+                        state.getBlocks().hasGlobalBlockWithLevel(level));
                 }
             }
         }, maxWaitTime.getMillis(), TimeUnit.MILLISECONDS);
@@ -169,7 +171,8 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
                 masterNode = state.nodes().getMasterNode().getName();
             }
             logger.trace("[{}] master is [{}]", node, state.nodes().getMasterNode());
-            assertThat("node [" + node + "] still has [" + masterNode + "] as master", oldMasterNode, not(equalTo(masterNode)));
+            assertThat("node [" + node + "] still has [" + masterNode + "] as master",
+                    oldMasterNode, not(equalTo(masterNode)));
         }, 30, TimeUnit.SECONDS);
     }
 
@@ -195,17 +198,17 @@ public abstract class AbstractDisruptionTestCase extends ESIntegTestCase {
         }
         final NetworkLinkDisruptionType disruptionType;
         switch (randomInt(2)) {
-        case 0:
-            disruptionType = NetworkDisruption.UNRESPONSIVE;
-            break;
-        case 1:
-            disruptionType = NetworkDisruption.DISCONNECT;
-            break;
-        case 2:
-            disruptionType = NetworkDisruption.NetworkDelay.random(random());
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case 0:
+                disruptionType = NetworkDisruption.UNRESPONSIVE;
+                break;
+            case 1:
+                disruptionType = NetworkDisruption.DISCONNECT;
+                break;
+            case 2:
+                disruptionType = NetworkDisruption.NetworkDelay.random(random());
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
         final ServiceDisruptionScheme scheme;
         if (rarely()) {

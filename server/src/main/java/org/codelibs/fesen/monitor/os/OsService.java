@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.monitor.os;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.util.SingleObjectCache;
 import org.codelibs.fesen.common.util.concurrent.EsExecutors;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.node.ReportingService;
+
+import java.io.IOException;
 
 public class OsService implements ReportingService<OsInfo> {
 
@@ -39,8 +39,9 @@ public class OsService implements ReportingService<OsInfo> {
     private final OsInfo info;
     private final SingleObjectCache<OsStats> osStatsCache;
 
-    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING = Setting.timeSetting("monitor.os.refresh_interval",
-            TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1), Property.NodeScope);
+    public static final Setting<TimeValue> REFRESH_INTERVAL_SETTING =
+        Setting.timeSetting("monitor.os.refresh_interval", TimeValue.timeValueSeconds(1), TimeValue.timeValueSeconds(1),
+                Property.NodeScope);
 
     public OsService(Settings settings) throws IOException {
         this.probe = OsProbe.getInstance();

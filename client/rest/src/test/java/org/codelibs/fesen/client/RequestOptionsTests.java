@@ -19,6 +19,18 @@
 
 package org.codelibs.fesen.client;
 
+import org.apache.http.Header;
+import org.apache.http.client.config.RequestConfig;
+import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory;
+import org.codelibs.fesen.client.RequestOptions;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.WarningsHandler;
+import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -26,17 +38,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.apache.http.client.config.RequestConfig;
-import org.codelibs.fesen.client.HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory;
-
 public class RequestOptionsTests extends RestClientTestCase {
     public void testDefault() {
-        assertEquals(Collections.<Header> emptyList(), RequestOptions.DEFAULT.getHeaders());
+        assertEquals(Collections.<Header>emptyList(), RequestOptions.DEFAULT.getHeaders());
         assertEquals(HttpAsyncResponseConsumerFactory.DEFAULT, RequestOptions.DEFAULT.getHttpAsyncResponseConsumerFactory());
         assertEquals(RequestOptions.DEFAULT, RequestOptions.DEFAULT.toBuilder().build());
     }
@@ -68,8 +72,8 @@ public class RequestOptionsTests extends RestClientTestCase {
         assertEquals(headers, options.getHeaders());
 
         try {
-            options.getHeaders()
-                    .add(new RequestOptions.ReqHeader(randomAsciiAlphanumOfLengthBetween(5, 10), randomAsciiAlphanumOfLength(3)));
+            options.getHeaders().add(
+                    new RequestOptions.ReqHeader(randomAsciiAlphanumOfLengthBetween(5, 10), randomAsciiAlphanumOfLength(3)));
             fail("expected failure");
         } catch (UnsupportedOperationException e) {
             assertNull(e.getMessage());

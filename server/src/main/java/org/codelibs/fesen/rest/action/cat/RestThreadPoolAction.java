@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,11 +49,17 @@ import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPoolInfo;
 import org.codelibs.fesen.threadpool.ThreadPoolStats;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+
 public class RestThreadPoolAction extends AbstractCatAction {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_cat/thread_pool"), new Route(GET, "/_cat/thread_pool/{thread_pool_patterns}")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_cat/thread_pool"),
+            new Route(GET, "/_cat/thread_pool/{thread_pool_patterns}")));
     }
 
     @Override
@@ -82,7 +84,8 @@ public class RestThreadPoolAction extends AbstractCatAction {
             @Override
             public void processResponse(final ClusterStateResponse clusterStateResponse) {
                 NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
-                nodesInfoRequest.clear().addMetrics(NodesInfoRequest.Metric.PROCESS.metricName(),
+                nodesInfoRequest.clear().addMetrics(
+                        NodesInfoRequest.Metric.PROCESS.metricName(),
                         NodesInfoRequest.Metric.THREAD_POOL.metricName());
                 client.admin().cluster().nodesInfo(nodesInfoRequest, new RestActionListener<NodesInfoResponse>(channel) {
                     @Override
@@ -93,7 +96,7 @@ public class RestThreadPoolAction extends AbstractCatAction {
                             @Override
                             public RestResponse buildResponse(NodesStatsResponse nodesStatsResponse) throws Exception {
                                 return RestTable.buildResponse(
-                                        buildTable(request, clusterStateResponse, nodesInfoResponse, nodesStatsResponse), channel);
+                                    buildTable(request, clusterStateResponse, nodesInfoResponse, nodesStatsResponse), channel);
                             }
                         });
                     }
@@ -191,8 +194,7 @@ public class RestThreadPoolAction extends AbstractCatAction {
             }
             for (Map.Entry<String, ThreadPoolStats.Stats> entry : poolThreadStats.entrySet()) {
 
-                if (!included.contains(entry.getKey()))
-                    continue;
+                if (!included.contains(entry.getKey())) continue;
 
                 table.startRow();
 
@@ -232,7 +234,7 @@ public class RestThreadPoolAction extends AbstractCatAction {
                 }
 
                 table.addCell(entry.getKey());
-                table.addCell(poolInfo == null ? null : poolInfo.getThreadPoolType().getType());
+                table.addCell(poolInfo == null  ? null : poolInfo.getThreadPoolType().getType());
                 table.addCell(poolStats == null ? null : poolStats.getActive());
                 table.addCell(poolStats == null ? null : poolStats.getThreads());
                 table.addCell(poolStats == null ? null : poolStats.getQueue());

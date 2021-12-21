@@ -62,7 +62,8 @@ public class IndicesRequestCacheTests extends ESTestCase {
         IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
 
         writer.addDocument(newDoc(0, "foo"));
-        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TermQueryBuilder termQuery = new TermQueryBuilder("id", "0");
         BytesReference termBytes = XContentHelper.toXContent(termQuery, XContentType.JSON, false);
         AtomicBoolean indexShard = new AtomicBoolean(true);
@@ -112,7 +113,7 @@ public class IndicesRequestCacheTests extends ESTestCase {
 
     public void testCacheDifferentReaders() throws Exception {
         IndicesRequestCache cache = new IndicesRequestCache(Settings.EMPTY);
-        AtomicBoolean indexShard = new AtomicBoolean(true);
+        AtomicBoolean indexShard =  new AtomicBoolean(true);
         ShardRequestCache requestCacheStats = new ShardRequestCache();
         Directory dir = newDirectory();
         IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
@@ -186,6 +187,7 @@ public class IndicesRequestCacheTests extends ESTestCase {
         assertEquals(cacheSize, requestCacheStats.stats().getMemorySize().bytesAsInt());
         assertEquals(1, cache.numRegisteredCloseListeners());
 
+
         // release
         if (randomBoolean()) {
             secondReader.close();
@@ -214,14 +216,16 @@ public class IndicesRequestCacheTests extends ESTestCase {
             IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
 
             writer.addDocument(newDoc(0, "foo"));
-            DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+            DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+                new ShardId("foo", "bar", 1));
             TermQueryBuilder termQuery = new TermQueryBuilder("id", "0");
             BytesReference termBytes = XContentHelper.toXContent(termQuery, XContentType.JSON, false);
             TestEntity entity = new TestEntity(requestCacheStats, indexShard);
             Loader loader = new Loader(reader, 0);
 
             writer.updateDocument(new Term("id", "0"), newDoc(0, "bar"));
-            DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+            DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+                new ShardId("foo", "bar", 1));
             TestEntity secondEntity = new TestEntity(requestCacheStats, indexShard);
             Loader secondLoader = new Loader(secondReader, 0);
 
@@ -232,27 +236,31 @@ public class IndicesRequestCacheTests extends ESTestCase {
             size = requestCacheStats.stats().getMemorySize();
             IOUtils.close(reader, secondReader, writer, dir, cache);
         }
-        IndicesRequestCache cache = new IndicesRequestCache(
-                Settings.builder().put(IndicesRequestCache.INDICES_CACHE_QUERY_SIZE.getKey(), size.getBytes() + 1 + "b").build());
+        IndicesRequestCache cache = new IndicesRequestCache(Settings.builder()
+            .put(IndicesRequestCache.INDICES_CACHE_QUERY_SIZE.getKey(), size.getBytes()+1 +"b")
+            .build());
         AtomicBoolean indexShard = new AtomicBoolean(true);
         ShardRequestCache requestCacheStats = new ShardRequestCache();
         Directory dir = newDirectory();
         IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
 
         writer.addDocument(newDoc(0, "foo"));
-        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TermQueryBuilder termQuery = new TermQueryBuilder("id", "0");
         BytesReference termBytes = XContentHelper.toXContent(termQuery, XContentType.JSON, false);
         TestEntity entity = new TestEntity(requestCacheStats, indexShard);
         Loader loader = new Loader(reader, 0);
 
         writer.updateDocument(new Term("id", "0"), newDoc(0, "bar"));
-        DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TestEntity secondEntity = new TestEntity(requestCacheStats, indexShard);
         Loader secondLoader = new Loader(secondReader, 0);
 
         writer.updateDocument(new Term("id", "0"), newDoc(0, "baz"));
-        DirectoryReader thirdReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader thirdReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TestEntity thirddEntity = new TestEntity(requestCacheStats, indexShard);
         Loader thirdLoader = new Loader(thirdReader, 0);
 
@@ -270,27 +278,30 @@ public class IndicesRequestCacheTests extends ESTestCase {
 
     public void testClearAllEntityIdentity() throws Exception {
         IndicesRequestCache cache = new IndicesRequestCache(Settings.EMPTY);
-        AtomicBoolean indexShard = new AtomicBoolean(true);
+        AtomicBoolean indexShard =  new AtomicBoolean(true);
 
         ShardRequestCache requestCacheStats = new ShardRequestCache();
         Directory dir = newDirectory();
         IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
 
         writer.addDocument(newDoc(0, "foo"));
-        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TermQueryBuilder termQuery = new TermQueryBuilder("id", "0");
         BytesReference termBytes = XContentHelper.toXContent(termQuery, XContentType.JSON, false);
         TestEntity entity = new TestEntity(requestCacheStats, indexShard);
         Loader loader = new Loader(reader, 0);
 
         writer.updateDocument(new Term("id", "0"), newDoc(0, "bar"));
-        DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader secondReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TestEntity secondEntity = new TestEntity(requestCacheStats, indexShard);
         Loader secondLoader = new Loader(secondReader, 0);
 
         writer.updateDocument(new Term("id", "0"), newDoc(0, "baz"));
-        DirectoryReader thirdReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
-        AtomicBoolean differentIdentity = new AtomicBoolean(true);
+        DirectoryReader thirdReader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
+        AtomicBoolean differentIdentity =  new AtomicBoolean(true);
         TestEntity thirddEntity = new TestEntity(requestCacheStats, differentIdentity);
         Loader thirdLoader = new Loader(thirdReader, 0);
 
@@ -312,13 +323,14 @@ public class IndicesRequestCacheTests extends ESTestCase {
         assertEquals(hitCount + 1, requestCacheStats.stats().getHitCount());
         assertEquals("baz", value3.streamInput().readString());
 
+
         IOUtils.close(reader, secondReader, thirdReader, writer, dir, cache);
 
     }
 
     public Iterable<Field> newDoc(int id, String value) {
-        return Arrays.asList(newField("id", Integer.toString(id), StringField.TYPE_STORED),
-                newField("value", value, StringField.TYPE_STORED));
+        return Arrays.asList(newField("id", Integer.toString(id), StringField.TYPE_STORED), newField("value", value,
+            StringField.TYPE_STORED));
     }
 
     private static class Loader implements CheckedSupplier<BytesReference, IOException> {
@@ -357,7 +369,8 @@ public class IndicesRequestCacheTests extends ESTestCase {
         IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig());
 
         writer.addDocument(newDoc(0, "foo"));
-        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer), new ShardId("foo", "bar", 1));
+        DirectoryReader reader = FesenDirectoryReader.wrap(DirectoryReader.open(writer),
+            new ShardId("foo", "bar", 1));
         TermQueryBuilder termQuery = new TermQueryBuilder("id", "0");
         BytesReference termBytes = XContentHelper.toXContent(termQuery, XContentType.JSON, false);
         AtomicBoolean indexShard = new AtomicBoolean(true);
@@ -389,7 +402,7 @@ public class IndicesRequestCacheTests extends ESTestCase {
         // load again after invalidate
         entity = new TestEntity(requestCacheStats, indexShard);
         loader = new Loader(reader, 0);
-        cache.invalidate(entity, reader, termBytes);
+        cache.invalidate(entity, reader,  termBytes);
         value = cache.getOrCompute(entity, loader, reader, termBytes);
         assertEquals("foo", value.streamInput().readString());
         assertEquals(1, requestCacheStats.stats().getHitCount());
@@ -448,7 +461,6 @@ public class IndicesRequestCacheTests extends ESTestCase {
     private class TestBytesReference extends AbstractBytesReference {
 
         int dummyValue;
-
         TestBytesReference(int dummyValue) {
             this.dummyValue = dummyValue;
         }
@@ -499,7 +511,6 @@ public class IndicesRequestCacheTests extends ESTestCase {
     private class TestEntity extends AbstractIndexShardCacheEntity {
         private final AtomicBoolean standInForIndexShard;
         private final ShardRequestCache shardRequestCache;
-
         private TestEntity(ShardRequestCache shardRequestCache, AtomicBoolean standInForIndexShard) {
             this.standInForIndexShard = standInForIndexShard;
             this.shardRequestCache = shardRequestCache;
@@ -512,7 +523,7 @@ public class IndicesRequestCacheTests extends ESTestCase {
 
         @Override
         public boolean isOpen() {
-            return standInForIndexShard.get();
+           return standInForIndexShard.get();
         }
 
         @Override

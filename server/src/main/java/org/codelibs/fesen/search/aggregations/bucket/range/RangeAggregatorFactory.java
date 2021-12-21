@@ -31,10 +31,28 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 
 public class RangeAggregatorFactory extends AbstractRangeAggregatorFactory<RangeAggregator.Range> {
 
-    public RangeAggregatorFactory(String name, ValuesSourceConfig config, Range[] ranges, boolean keyed, Factory<?, ?> rangeFactory,
-            QueryShardContext queryShardContext, AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder,
-            Map<String, Object> metadata) throws IOException {
-        super(name, RangeAggregationBuilder.REGISTRY_KEY, config, ranges, keyed, rangeFactory, queryShardContext, parent,
-                subFactoriesBuilder, metadata);
+    public RangeAggregatorFactory(
+        String name,
+        ValuesSourceConfig config,
+        Range[] ranges,
+        boolean keyed,
+        Factory<?, ?> rangeFactory,
+        QueryShardContext queryShardContext,
+        AggregatorFactory parent,
+        AggregatorFactories.Builder subFactoriesBuilder,
+        Map<String, Object> metadata
+    ) throws IOException {
+        super(
+            name,
+            RangeAggregationBuilder.REGISTRY_KEY,
+            config,
+            ranges,
+            keyed,
+            rangeFactory,
+            queryShardContext,
+            parent,
+            subFactoriesBuilder,
+            metadata
+        );
     }
 }

@@ -45,7 +45,7 @@ import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureField
 import static org.codelibs.fesen.test.XContentTestUtils.insertRandomFields;
 import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
-public class SearchProfileShardResultsTests extends ESTestCase {
+public class SearchProfileShardResultsTests  extends ESTestCase {
 
     public static SearchProfileShardResults createTestItem() {
         int size = rarely() ? 0 : randomIntBetween(1, 2);
@@ -83,7 +83,8 @@ public class SearchProfileShardResultsTests extends ESTestCase {
         if (addRandomFields) {
             // The ProfileResults "breakdown" section just consists of key/value pairs, we shouldn't add anything random there
             // also we don't want to insert into the root object here, its just the PROFILE_FIELD itself
-            Predicate<String> excludeFilter = (s) -> s.isEmpty() || s.endsWith(ProfileResult.BREAKDOWN.getPreferredName())
+            Predicate<String> excludeFilter = (s) -> s.isEmpty()
+                    || s.endsWith(ProfileResult.BREAKDOWN.getPreferredName())
                     || s.endsWith(ProfileResult.DEBUG.getPreferredName());
             mutated = insertRandomFields(xContentType, originalBytes, excludeFilter, random());
         } else {

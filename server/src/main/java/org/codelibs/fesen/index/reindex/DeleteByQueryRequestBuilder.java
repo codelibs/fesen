@@ -24,13 +24,16 @@ import org.codelibs.fesen.action.search.SearchAction;
 import org.codelibs.fesen.action.search.SearchRequestBuilder;
 import org.codelibs.fesen.client.FesenClient;
 
-public class DeleteByQueryRequestBuilder extends AbstractBulkByScrollRequestBuilder<DeleteByQueryRequest, DeleteByQueryRequestBuilder> {
+public class DeleteByQueryRequestBuilder extends
+        AbstractBulkByScrollRequestBuilder<DeleteByQueryRequest, DeleteByQueryRequestBuilder> {
 
     public DeleteByQueryRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action) {
         this(client, action, new SearchRequestBuilder(client, SearchAction.INSTANCE));
     }
 
-    private DeleteByQueryRequestBuilder(FesenClient client, ActionType<BulkByScrollResponse> action, SearchRequestBuilder search) {
+    private DeleteByQueryRequestBuilder(FesenClient client,
+                                        ActionType<BulkByScrollResponse> action,
+                                        SearchRequestBuilder search) {
         super(client, action, search, new DeleteByQueryRequest(search.request()));
     }
 

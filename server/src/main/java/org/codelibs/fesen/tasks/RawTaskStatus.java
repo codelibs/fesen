@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.tasks;
 
-import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.convertToMap;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentHelper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.convertToMap;
 
 /**
  * Raw, unparsed status from the task results index.

@@ -19,25 +19,26 @@
 
 package org.codelibs.fesen.rest;
 
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE;
-import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.util.Supplier;
-import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.FesenStatusException;
+import org.codelibs.fesen.ExceptionsHelper;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE;
+import static org.codelibs.fesen.FesenException.REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT;
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
 
 public class BytesRestResponse extends RestResponse {
 
@@ -96,8 +97,8 @@ public class BytesRestResponse extends RestResponse {
         ToXContent.Params params = paramsFromRequest(channel.request());
         if (params.paramAsBoolean(REST_EXCEPTION_SKIP_STACK_TRACE, REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT) && e != null) {
             // log exception only if it is not returned in the response
-            Supplier<?> messageSupplier =
-                    () -> new ParameterizedMessage("path: {}, params: {}", channel.request().rawPath(), channel.request().params());
+            Supplier<?> messageSupplier = () -> new ParameterizedMessage("path: {}, params: {}",
+                    channel.request().rawPath(), channel.request().params());
             if (status.getStatus() < 500) {
                 SUPPRESSED_ERROR_LOGGER.debug(messageSupplier, e);
             } else {
@@ -133,7 +134,7 @@ public class BytesRestResponse extends RestResponse {
     private ToXContent.Params paramsFromRequest(RestRequest restRequest) {
         ToXContent.Params params = restRequest;
         if (params.paramAsBoolean("error_trace", !REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT) && false == skipStackTrace()) {
-            params = new ToXContent.DelegatingMapParams(singletonMap(REST_EXCEPTION_SKIP_STACK_TRACE, "false"), params);
+            params =  new ToXContent.DelegatingMapParams(singletonMap(REST_EXCEPTION_SKIP_STACK_TRACE, "false"), params);
         }
         return params;
     }
@@ -142,8 +143,8 @@ public class BytesRestResponse extends RestResponse {
         return false;
     }
 
-    private void build(XContentBuilder builder, ToXContent.Params params, RestStatus status, boolean detailedErrorsEnabled, Exception e)
-            throws IOException {
+    private void build(XContentBuilder builder, ToXContent.Params params, RestStatus status,
+                       boolean detailedErrorsEnabled, Exception e) throws IOException {
         builder.startObject();
         FesenException.generateFailureXContent(builder, params, e, detailedErrorsEnabled);
         builder.field(STATUS, status.getStatus());
@@ -151,8 +152,10 @@ public class BytesRestResponse extends RestResponse {
     }
 
     static BytesRestResponse createSimpleErrorResponse(RestChannel channel, RestStatus status, String errorMessage) throws IOException {
-        return new BytesRestResponse(status,
-                channel.newErrorBuilder().startObject().field("error", errorMessage).field("status", status.getStatus()).endObject());
+        return new BytesRestResponse(status, channel.newErrorBuilder().startObject()
+            .field("error", errorMessage)
+            .field("status", status.getStatus())
+            .endObject());
     }
 
     public static FesenStatusException errorFromXContent(XContentParser parser) throws IOException {

@@ -36,9 +36,10 @@ public class RoutingFieldTypeTests extends FieldTypeTestCase {
         Query expected = new PrefixQuery(new Term("_routing", new BytesRef("foo*")));
         assertEquals(expected, ft.prefixQuery("foo*", null, MOCK_QSC));
 
-        FesenException ee = expectThrows(FesenException.class, () -> ft.prefixQuery("foo*", null, MOCK_QSC_DISALLOW_EXPENSIVE));
-        assertEquals("[prefix] queries cannot be executed when 'search.allow_expensive_queries' is set to false. "
-                + "For optimised prefix queries on text fields please enable [index_prefixes].", ee.getMessage());
+        FesenException ee = expectThrows(FesenException.class,
+                () -> ft.prefixQuery("foo*", null, MOCK_QSC_DISALLOW_EXPENSIVE));
+        assertEquals("[prefix] queries cannot be executed when 'search.allow_expensive_queries' is set to false. " +
+                "For optimised prefix queries on text fields please enable [index_prefixes].", ee.getMessage());
     }
 
     public void testRegexpQuery() {
@@ -49,7 +50,8 @@ public class RoutingFieldTypeTests extends FieldTypeTestCase {
 
         FesenException ee = expectThrows(FesenException.class,
                 () -> ft.regexpQuery("foo?", randomInt(10), 0, randomInt(10) + 1, null, MOCK_QSC_DISALLOW_EXPENSIVE));
-        assertEquals("[regexp] queries cannot be executed when 'search.allow_expensive_queries' is set to false.", ee.getMessage());
+        assertEquals("[regexp] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
+                ee.getMessage());
     }
 
     public void testWildcardQuery() {
@@ -58,7 +60,9 @@ public class RoutingFieldTypeTests extends FieldTypeTestCase {
         Query expected = new WildcardQuery(new Term("_routing", new BytesRef("foo*")));
         assertEquals(expected, ft.wildcardQuery("foo*", null, MOCK_QSC));
 
-        FesenException ee = expectThrows(FesenException.class, () -> ft.wildcardQuery("valu*", null, MOCK_QSC_DISALLOW_EXPENSIVE));
-        assertEquals("[wildcard] queries cannot be executed when 'search.allow_expensive_queries' is set to false.", ee.getMessage());
+        FesenException ee = expectThrows(FesenException.class,
+                () -> ft.wildcardQuery("valu*", null, MOCK_QSC_DISALLOW_EXPENSIVE));
+        assertEquals("[wildcard] queries cannot be executed when 'search.allow_expensive_queries' is set to false.",
+                ee.getMessage());
     }
 }

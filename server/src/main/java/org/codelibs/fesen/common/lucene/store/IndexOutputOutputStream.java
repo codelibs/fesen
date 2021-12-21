@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common.lucene.store;
 
+import org.apache.lucene.store.IndexOutput;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.lucene.store.IndexOutput;
 
 /**
  * {@link OutputStream} that writes into underlying IndexOutput

@@ -22,6 +22,6 @@ package org.codelibs.fesen.action.admin.indices.shrink;
 /**
  * The type of the resize operation
  */
-public enum ResizeType {
+public enum  ResizeType {
     SHRINK, SPLIT, CLONE;
 }

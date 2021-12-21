@@ -19,22 +19,23 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.RandomDocumentPicks;
+import org.codelibs.fesen.ingest.common.JoinProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.RandomDocumentPicks;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 public class JoinProcessorTests extends ESTestCase {
 
-    private static final String[] SEPARATORS = new String[] { "-", "_", "." };
+    private static final String[] SEPARATORS = new String[]{"-", "_", "."};
 
     public void testJoinStrings() throws Exception {
         IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
@@ -83,7 +84,7 @@ public class JoinProcessorTests extends ESTestCase {
         Processor processor = new JoinProcessor(randomAlphaOfLength(10), null, fieldName, "-", fieldName);
         try {
             processor.execute(ingestDocument);
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertThat(e.getMessage(), equalTo("field [" + fieldName + "] of type [java.lang.String] cannot be cast to [java.util.List]"));
         }
     }
@@ -94,7 +95,7 @@ public class JoinProcessorTests extends ESTestCase {
         Processor processor = new JoinProcessor(randomAlphaOfLength(10), null, fieldName, "-", fieldName);
         try {
             processor.execute(ingestDocument);
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString("not present as part of path [" + fieldName + "]"));
         }
     }
@@ -104,7 +105,7 @@ public class JoinProcessorTests extends ESTestCase {
         Processor processor = new JoinProcessor(randomAlphaOfLength(10), null, "field", "-", "field");
         try {
             processor.execute(ingestDocument);
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             assertThat(e.getMessage(), equalTo("field [field] is null, cannot join."));
         }
     }

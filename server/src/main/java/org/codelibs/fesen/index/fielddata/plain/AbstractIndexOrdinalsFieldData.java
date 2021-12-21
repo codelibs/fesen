@@ -18,9 +18,6 @@
  */
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.io.IOException;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.DirectoryReader;
@@ -41,6 +38,9 @@ import org.codelibs.fesen.index.fielddata.ordinals.GlobalOrdinalsIndexFieldData;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.function.Function;
+
 public abstract class AbstractIndexOrdinalsFieldData implements IndexOrdinalsFieldData {
     private static final Logger logger = LogManager.getLogger(AbstractBinaryDVLeafFieldData.class);
 
@@ -50,8 +50,13 @@ public abstract class AbstractIndexOrdinalsFieldData implements IndexOrdinalsFie
     protected final CircuitBreakerService breakerService;
     protected final Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction;
 
-    protected AbstractIndexOrdinalsFieldData(String fieldName, ValuesSourceType valuesSourceType, IndexFieldDataCache cache,
-            CircuitBreakerService breakerService, Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction) {
+    protected AbstractIndexOrdinalsFieldData(
+        String fieldName,
+        ValuesSourceType valuesSourceType,
+        IndexFieldDataCache cache,
+        CircuitBreakerService breakerService,
+        Function<SortedSetDocValues, ScriptDocValues<?>> scriptFunction
+    ) {
         this.fieldName = fieldName;
         this.valuesSourceType = valuesSourceType;
         this.cache = cache;
@@ -143,7 +148,13 @@ public abstract class AbstractIndexOrdinalsFieldData implements IndexOrdinalsFie
 
     @Override
     public IndexOrdinalsFieldData loadGlobalDirect(DirectoryReader indexReader) throws Exception {
-        return GlobalOrdinalsBuilder.build(indexReader, this, breakerService, logger, scriptFunction);
+        return GlobalOrdinalsBuilder.build(
+            indexReader,
+            this,
+            breakerService,
+            logger,
+            scriptFunction
+        );
     }
 
     @Override

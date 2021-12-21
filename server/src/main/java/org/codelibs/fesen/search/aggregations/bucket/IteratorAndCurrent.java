@@ -50,3 +50,4 @@ public class IteratorAndCurrent<B extends InternalMultiBucketAggregation.Interna
         return current = iterator.next();
     }
 }
+

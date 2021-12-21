@@ -19,9 +19,6 @@
 
 package org.apache.lucene.search.vectorhighlight;
 
-import java.io.IOException;
-import java.util.Collection;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BlendedTermQuery;
@@ -36,6 +33,9 @@ import org.apache.lucene.search.spans.SpanTermQuery;
 import org.codelibs.fesen.common.lucene.search.MultiPhrasePrefixQuery;
 import org.codelibs.fesen.common.lucene.search.function.FunctionScoreQuery;
 import org.codelibs.fesen.index.search.ESToParentBlockJoinQuery;
+
+import java.io.IOException;
+import java.util.Collection;
 
 // LUCENE MONITOR
 // TODO: remove me!
@@ -75,7 +75,7 @@ public class CustomFieldQuery extends FieldQuery {
             flatten(blendedTermQuery.rewrite(reader), reader, flatQueries, boost);
         } else if (sourceQuery instanceof org.apache.lucene.queries.function.FunctionScoreQuery) {
             org.apache.lucene.queries.function.FunctionScoreQuery funcScoreQuery =
-                    (org.apache.lucene.queries.function.FunctionScoreQuery) sourceQuery;
+                (org.apache.lucene.queries.function.FunctionScoreQuery) sourceQuery;
             //flatten query with query boost
             flatten(funcScoreQuery.getWrappedQuery(), reader, flatQueries, boost);
         } else if (sourceQuery instanceof SynonymQuery) {
@@ -128,7 +128,7 @@ public class CustomFieldQuery extends FieldQuery {
             Term[] t = terms[currentPos];
             for (int i = 0; i < t.length; i++) {
                 termsIdx[currentPos] = i;
-                convertMultiPhraseQuery(currentPos + 1, termsIdx, orig, terms, pos, reader, flatQueries);
+                convertMultiPhraseQuery(currentPos+1, termsIdx, orig, terms, pos, reader, flatQueries);
             }
         }
     }

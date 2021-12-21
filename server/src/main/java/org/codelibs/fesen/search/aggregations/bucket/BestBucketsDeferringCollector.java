@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.CollectionTerminatedException;
 import org.apache.lucene.search.DocIdSetIterator;
@@ -42,6 +37,11 @@ import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 import org.codelibs.fesen.search.aggregations.MultiBucketCollector;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A specialization of {@link DeferringBucketCollector} that collects all

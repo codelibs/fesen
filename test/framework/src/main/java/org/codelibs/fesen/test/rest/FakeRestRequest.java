@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.test.rest;
 
-import java.net.InetSocketAddress;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -36,15 +30,21 @@ import org.codelibs.fesen.http.HttpResponse;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestStatus;
 
+import java.net.InetSocketAddress;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class FakeRestRequest extends RestRequest {
 
     public FakeRestRequest() {
         this(NamedXContentRegistry.EMPTY, new FakeHttpRequest(Method.GET, "", BytesArray.EMPTY, new HashMap<>()), new HashMap<>(),
-                new FakeHttpChannel(null));
+            new FakeHttpChannel(null));
     }
 
     private FakeRestRequest(NamedXContentRegistry xContentRegistry, HttpRequest httpRequest, Map<String, String> params,
-            HttpChannel httpChannel) {
+                            HttpChannel httpChannel) {
         super(xContentRegistry, params, httpRequest.uri(), httpRequest.getHeaders(), httpRequest, httpChannel);
     }
 
@@ -61,7 +61,7 @@ public class FakeRestRequest extends RestRequest {
         }
 
         private FakeHttpRequest(Method method, String uri, BytesReference content, Map<String, List<String>> headers,
-                Exception inboundException) {
+                                Exception inboundException) {
             this.method = method;
             this.uri = uri;
             this.content = content;

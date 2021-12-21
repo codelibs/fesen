@@ -18,14 +18,6 @@
  */
 package org.codelibs.fesen.transport;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -37,6 +29,14 @@ import org.codelibs.fesen.common.util.concurrent.ListenableFuture;
 import org.codelibs.fesen.common.util.concurrent.RunOnce;
 import org.codelibs.fesen.core.AbstractRefCounted;
 import org.codelibs.fesen.core.internal.io.IOUtils;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class manages node connections within a cluster. The connection is opened by the underlying transport.
@@ -101,8 +101,9 @@ public class ClusterConnectionManager implements ConnectionManager {
      * The ActionListener will be called on the calling thread or the generic thread pool.
      */
     @Override
-    public void connectToNode(DiscoveryNode node, ConnectionProfile connectionProfile, ConnectionValidator connectionValidator,
-            ActionListener<Void> listener) throws ConnectTransportException {
+    public void connectToNode(DiscoveryNode node, ConnectionProfile connectionProfile,
+                              ConnectionValidator connectionValidator,
+                              ActionListener<Void> listener) throws ConnectTransportException {
         ConnectionProfile resolvedProfile = ConnectionProfile.resolveConnectionProfile(connectionProfile, defaultProfile);
         if (node == null) {
             listener.onFailure(new ConnectTransportException(null, "can't connect to a null node"));
@@ -136,36 +137,37 @@ public class ClusterConnectionManager implements ConnectionManager {
 
         final RunOnce releaseOnce = new RunOnce(connectingRefCounter::decRef);
         internalOpenConnection(node, resolvedProfile, ActionListener.wrap(conn -> {
-            connectionValidator.validate(conn, resolvedProfile, ActionListener.wrap(ignored -> {
-                assert Transports.assertNotTransportThread("connection validator success");
-                try {
-                    if (connectedNodes.putIfAbsent(node, conn) != null) {
-                        logger.debug("existing connection to node [{}], closing new redundant connection", node);
-                        IOUtils.closeWhileHandlingException(conn);
-                    } else {
-                        logger.debug("connected to node [{}]", node);
-                        try {
-                            connectionListener.onNodeConnected(node, conn);
-                        } finally {
-                            final Transport.Connection finalConnection = conn;
-                            conn.addCloseListener(ActionListener.wrap(() -> {
-                                logger.trace("unregistering {} after connection close and marking as disconnected", node);
-                                connectedNodes.remove(node, finalConnection);
-                                connectionListener.onNodeDisconnected(node, conn);
-                            }));
+            connectionValidator.validate(conn, resolvedProfile, ActionListener.wrap(
+                ignored -> {
+                    assert Transports.assertNotTransportThread("connection validator success");
+                    try {
+                        if (connectedNodes.putIfAbsent(node, conn) != null) {
+                            logger.debug("existing connection to node [{}], closing new redundant connection", node);
+                            IOUtils.closeWhileHandlingException(conn);
+                        } else {
+                            logger.debug("connected to node [{}]", node);
+                            try {
+                                connectionListener.onNodeConnected(node, conn);
+                            } finally {
+                                final Transport.Connection finalConnection = conn;
+                                conn.addCloseListener(ActionListener.wrap(() -> {
+                                    logger.trace("unregistering {} after connection close and marking as disconnected", node);
+                                    connectedNodes.remove(node, finalConnection);
+                                    connectionListener.onNodeDisconnected(node, conn);
+                                }));
+                            }
                         }
+                    } finally {
+                        ListenableFuture<Void> future = pendingConnections.remove(node);
+                        assert future == currentListener : "Listener in pending map is different than the expected listener";
+                        releaseOnce.run();
+                        future.onResponse(null);
                     }
-                } finally {
-                    ListenableFuture<Void> future = pendingConnections.remove(node);
-                    assert future == currentListener : "Listener in pending map is different than the expected listener";
-                    releaseOnce.run();
-                    future.onResponse(null);
-                }
-            }, e -> {
-                assert Transports.assertNotTransportThread("connection validator failure");
-                IOUtils.closeWhileHandlingException(conn);
-                failConnectionListeners(node, releaseOnce, e, currentListener);
-            }));
+                }, e -> {
+                    assert Transports.assertNotTransportThread("connection validator failure");
+                    IOUtils.closeWhileHandlingException(conn);
+                    failConnectionListeners(node, releaseOnce, e, currentListener);
+                }));
         }, e -> {
             assert Transports.assertNotTransportThread("internalOpenConnection failure");
             failConnectionListeners(node, releaseOnce, e, currentListener);
@@ -248,7 +250,7 @@ public class ClusterConnectionManager implements ConnectionManager {
     }
 
     private void internalOpenConnection(DiscoveryNode node, ConnectionProfile connectionProfile,
-            ActionListener<Transport.Connection> listener) {
+                                        ActionListener<Transport.Connection> listener) {
         transport.openConnection(node, connectionProfile, ActionListener.map(listener, connection -> {
             assert Transports.assertNotTransportThread("internalOpenConnection success");
             try {

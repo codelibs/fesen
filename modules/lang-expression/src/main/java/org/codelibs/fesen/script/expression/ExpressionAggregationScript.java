@@ -20,7 +20,6 @@
 package org.codelibs.fesen.script.expression;
 
 import java.io.IOException;
-
 import org.apache.lucene.expressions.Bindings;
 import org.apache.lucene.expressions.Expression;
 import org.apache.lucene.expressions.SimpleBindings;
@@ -94,7 +93,7 @@ class ExpressionAggregationScript implements AggregationScript.LeafFactory {
                 // _value isn't used in script if specialValue == null
                 if (specialValue != null) {
                     if (value instanceof Number) {
-                        specialValue.setValue(((Number) value).doubleValue());
+                        specialValue.setValue(((Number)value).doubleValue());
                     } else {
                         throw new GeneralScriptException("Cannot use expression with text variable using " + exprScript);
                     }

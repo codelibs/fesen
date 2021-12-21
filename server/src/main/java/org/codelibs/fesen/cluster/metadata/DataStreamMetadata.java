@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.cluster.metadata;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.DiffableUtils;
@@ -37,6 +31,12 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import java.io.IOException;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Custom {@link Metadata} implementation for storing a map of {@link DataStream}s and their names.
  */
@@ -45,8 +45,8 @@ public class DataStreamMetadata implements Metadata.Custom {
     public static final String TYPE = "data_stream";
     private static final ParseField DATA_STREAM = new ParseField("data_stream");
     @SuppressWarnings("unchecked")
-    private static final ConstructingObjectParser<DataStreamMetadata, Void> PARSER =
-            new ConstructingObjectParser<>(TYPE, false, a -> new DataStreamMetadata((Map<String, DataStream>) a[0]));
+    private static final ConstructingObjectParser<DataStreamMetadata, Void> PARSER = new ConstructingObjectParser<>(TYPE, false,
+        a -> new DataStreamMetadata((Map<String, DataStream>) a[0]));
 
     static {
         PARSER.declareObject(ConstructingObjectParser.constructorArg(), (p, c) -> {
@@ -161,12 +161,13 @@ public class DataStreamMetadata implements Metadata.Custom {
         final Diff<Map<String, DataStream>> dataStreamDiff;
 
         DataStreamMetadataDiff(DataStreamMetadata before, DataStreamMetadata after) {
-            this.dataStreamDiff = DiffableUtils.diff(before.dataStreams, after.dataStreams, DiffableUtils.getStringKeySerializer());
+            this.dataStreamDiff = DiffableUtils.diff(before.dataStreams, after.dataStreams,
+                DiffableUtils.getStringKeySerializer());
         }
 
         DataStreamMetadataDiff(StreamInput in) throws IOException {
-            this.dataStreamDiff =
-                    DiffableUtils.readJdkMapDiff(in, DiffableUtils.getStringKeySerializer(), DataStream::new, DataStream::readDiffFrom);
+            this.dataStreamDiff = DiffableUtils.readJdkMapDiff(in, DiffableUtils.getStringKeySerializer(),
+                DataStream::new, DataStream::readDiffFrom);
         }
 
         @Override

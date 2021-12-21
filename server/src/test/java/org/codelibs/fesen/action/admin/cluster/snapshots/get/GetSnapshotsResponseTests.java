@@ -54,8 +54,8 @@ public class GetSnapshotsResponseTests extends AbstractSerializingTestCase<GetSn
             ShardId shardId = new ShardId("index", UUIDs.base64UUID(), 2);
             List<SnapshotShardFailure> shardFailures = Collections.singletonList(new SnapshotShardFailure("node-id", shardId, "reason"));
             snapshots.add(new SnapshotInfo(snapshotId, Arrays.asList("index1", "index2"), Collections.singletonList("ds"),
-                    System.currentTimeMillis(), reason, System.currentTimeMillis(), randomIntBetween(2, 3), shardFailures, randomBoolean(),
-                    SnapshotInfoTests.randomUserMetadata()));
+                System.currentTimeMillis(), reason, System.currentTimeMillis(), randomIntBetween(2, 3), shardFailures, randomBoolean(),
+                SnapshotInfoTests.randomUserMetadata()));
         }
         return new GetSnapshotsResponse(snapshots);
     }

@@ -41,8 +41,10 @@ public class RestGetComposableIndexTemplateAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return Arrays.asList(new Route(GET, "/_index_template"), new Route(GET, "/_index_template/{name}"),
-                new Route(HEAD, "/_index_template/{name}"));
+        return Arrays.asList(
+            new Route(GET, "/_index_template"),
+            new Route(GET, "/_index_template/{name}"),
+            new Route(HEAD, "/_index_template/{name}"));
     }
 
     @Override
@@ -59,7 +61,8 @@ public class RestGetComposableIndexTemplateAction extends BaseRestHandler {
 
         final boolean implicitAll = getRequest.name() == null;
 
-        return channel -> client.execute(GetComposableIndexTemplateAction.INSTANCE, getRequest,
+        return channel ->
+            client.execute(GetComposableIndexTemplateAction.INSTANCE, getRequest,
                 new RestToXContentListener<GetComposableIndexTemplateAction.Response>(channel) {
                     @Override
                     protected RestStatus getStatus(final GetComposableIndexTemplateAction.Response response) {

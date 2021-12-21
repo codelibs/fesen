@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import static org.codelibs.fesen.cluster.routing.allocation.AbstractAllocationDecision.discoveryNodeToXContent;
-
-import java.io.IOException;
-import java.util.Comparator;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
@@ -36,13 +31,20 @@ import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 
+import static org.codelibs.fesen.cluster.routing.allocation.AbstractAllocationDecision.discoveryNodeToXContent;
+
+import java.io.IOException;
+import java.util.Comparator;
+
 /**
  * This class represents the shard allocation decision and its explanation for a single node.
  */
 public class NodeAllocationResult implements ToXContentObject, Writeable, Comparable<NodeAllocationResult> {
 
-    private static final Comparator<NodeAllocationResult> nodeResultComparator = Comparator.comparing(NodeAllocationResult::getNodeDecision)
-            .thenComparingInt(NodeAllocationResult::getWeightRanking).thenComparing(r -> r.getNode().getId());
+    private static final Comparator<NodeAllocationResult> nodeResultComparator =
+        Comparator.comparing(NodeAllocationResult::getNodeDecision)
+            .thenComparingInt(NodeAllocationResult::getWeightRanking)
+            .thenComparing(r -> r.getNode().getId());
 
     private final DiscoveryNode node;
     @Nullable

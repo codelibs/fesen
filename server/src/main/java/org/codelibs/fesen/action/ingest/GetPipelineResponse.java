@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.action.ingest;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -39,6 +30,15 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.ingest.PipelineConfiguration;
 import org.codelibs.fesen.rest.RestStatus;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class GetPipelineResponse extends ActionResponse implements StatusToXContentObject {
 
@@ -102,13 +102,13 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
     public static GetPipelineResponse fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
         List<PipelineConfiguration> pipelines = new ArrayList<>();
-        while (parser.nextToken().equals(Token.FIELD_NAME)) {
+        while(parser.nextToken().equals(Token.FIELD_NAME)) {
             String pipelineId = parser.currentName();
             parser.nextToken();
             try (XContentBuilder contentBuilder = XContentBuilder.builder(parser.contentType().xContent())) {
                 contentBuilder.generator().copyCurrentStructure(parser);
                 PipelineConfiguration pipeline =
-                        new PipelineConfiguration(pipelineId, BytesReference.bytes(contentBuilder), contentBuilder.contentType());
+                    new PipelineConfiguration(pipelineId, BytesReference.bytes(contentBuilder), contentBuilder.contentType());
                 pipelines.add(pipeline);
             }
         }
@@ -120,17 +120,17 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
     public boolean equals(Object other) {
         if (other == null) {
             return false;
-        } else if (other instanceof GetPipelineResponse) {
-            GetPipelineResponse otherResponse = (GetPipelineResponse) other;
+        } else if (other instanceof GetPipelineResponse){
+            GetPipelineResponse otherResponse = (GetPipelineResponse)other;
             if (pipelines == null) {
                 return otherResponse.pipelines == null;
             } else {
                 // We need a map here because order does not matter for equality
                 Map<String, PipelineConfiguration> otherPipelineMap = new HashMap<>();
-                for (PipelineConfiguration pipeline : otherResponse.pipelines) {
+                for (PipelineConfiguration pipeline: otherResponse.pipelines) {
                     otherPipelineMap.put(pipeline.getId(), pipeline);
                 }
-                for (PipelineConfiguration pipeline : pipelines) {
+                for (PipelineConfiguration pipeline: pipelines) {
                     PipelineConfiguration otherPipeline = otherPipelineMap.get(pipeline.getId());
                     if (!pipeline.equals(otherPipeline)) {
                         return false;
@@ -151,7 +151,7 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
     @Override
     public int hashCode() {
         int result = 1;
-        for (PipelineConfiguration pipeline : pipelines) {
+        for (PipelineConfiguration pipeline: pipelines) {
             // We only take the sum here to ensure that the order does not matter.
             result += (pipeline == null ? 0 : pipeline.hashCode());
         }

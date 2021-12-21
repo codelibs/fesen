@@ -40,9 +40,13 @@ public class RestTasksActionTests extends ESTestCase {
 
     public void testConsumesParameters() throws Exception {
         RestTasksAction action = new RestTasksAction(() -> DiscoveryNodes.EMPTY_NODES);
-        FakeRestRequest fakeRestRequest =
-                new FakeRestRequest.Builder(NamedXContentRegistry.EMPTY).withParams(MapBuilder.<String, String> newMapBuilder()
-                        .put("parent_task_id", "the node:3").put("nodes", "node1,node2").put("actions", "*").map()).build();
+        FakeRestRequest fakeRestRequest = new FakeRestRequest.Builder(NamedXContentRegistry.EMPTY)
+            .withParams(MapBuilder.<String, String>newMapBuilder()
+                .put("parent_task_id", "the node:3")
+                .put("nodes", "node1,node2")
+                .put("actions", "*")
+                .map()
+            ).build();
         FakeRestChannel fakeRestChannel = new FakeRestChannel(fakeRestRequest, false, 1);
         try (NoOpNodeClient nodeClient = buildNodeClient()) {
             action.handleRequest(fakeRestRequest, fakeRestChannel, nodeClient);
@@ -56,8 +60,8 @@ public class RestTasksActionTests extends ESTestCase {
         return new NoOpNodeClient(getTestName()) {
             @Override
             @SuppressWarnings("unchecked")
-            public <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action,
-                    Request request, ActionListener<Response> listener) {
+            public <Request extends ActionRequest, Response extends ActionResponse>
+            void doExecute(ActionType<Response> action, Request request, ActionListener<Response> listener) {
                 listener.onResponse((Response) new ListTasksResponse(emptyList(), emptyList(), emptyList()));
             }
         };

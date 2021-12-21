@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.synonym.SolrSynonymParser;
 import org.apache.lucene.util.CharsRef;
 import org.apache.lucene.util.CharsRefBuilder;
+
+import java.io.IOException;
 
 public class ESSolrSynonymParser extends SolrSynonymParser {
     private static final Logger logger = LogManager.getLogger(ESSolrSynonymParser.class);

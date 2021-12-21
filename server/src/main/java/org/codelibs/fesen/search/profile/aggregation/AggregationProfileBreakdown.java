@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.search.profile.aggregation;
 
-import static java.util.Collections.unmodifiableMap;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.fesen.search.profile.AbstractProfileBreakdown;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * {@linkplain AbstractProfileBreakdown} customized to work with aggregations.

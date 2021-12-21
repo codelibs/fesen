@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
@@ -35,6 +31,10 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResponse> implements ToXContentFragment {
 
@@ -65,8 +65,12 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
         indicesStats = new ClusterStatsIndices(getNodes(), mappingStats, analysisStats);
     }
 
-    public ClusterStatsResponse(long timestamp, String clusterUUID, ClusterName clusterName, List<ClusterStatsNodeResponse> nodes,
-            List<FailedNodeException> failures, ClusterState state) {
+    public ClusterStatsResponse(long timestamp,
+                                String clusterUUID,
+                                ClusterName clusterName,
+                                List<ClusterStatsNodeResponse> nodes,
+                                List<FailedNodeException> failures,
+                                ClusterState state) {
         super(clusterName, nodes, failures);
         this.clusterUUID = clusterUUID;
         this.timestamp = timestamp;

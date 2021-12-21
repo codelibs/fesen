@@ -19,11 +19,16 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.util.Collections;
-
 import org.apache.lucene.search.Query;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.MetadataFieldMapper;
+import org.codelibs.fesen.index.mapper.TextSearchInfo;
+import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.util.Collections;
 
 /**
  * This meta field only exists because rank feature fields index everything into a

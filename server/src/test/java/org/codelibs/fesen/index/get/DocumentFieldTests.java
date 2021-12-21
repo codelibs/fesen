@@ -100,13 +100,14 @@ public class DocumentFieldTests extends ESTestCase {
     }
 
     public static Tuple<DocumentField, DocumentField> randomDocumentField(XContentType xContentType) {
-        return randomDocumentField(xContentType, randomBoolean(), fieldName -> false); // don't exclude any meta-fields
+        return randomDocumentField(xContentType, randomBoolean(), fieldName -> false);  // don't exclude any meta-fields
     }
 
     public static Tuple<DocumentField, DocumentField> randomDocumentField(XContentType xContentType, boolean isMetafield,
             Predicate<String> excludeMetaFieldFilter) {
         if (isMetafield) {
-            String metaField = randomValueOtherThanMany(excludeMetaFieldFilter, () -> randomFrom(IndicesModule.getBuiltInMetadataFields()));
+            String metaField = randomValueOtherThanMany(excludeMetaFieldFilter,
+                () -> randomFrom(IndicesModule.getBuiltInMetadataFields()));
             DocumentField documentField;
             if (metaField.equals(IgnoredFieldMapper.NAME)) {
                 int numValues = randomIntBetween(1, 3);
@@ -122,23 +123,25 @@ public class DocumentFieldTests extends ESTestCase {
             return Tuple.tuple(documentField, documentField);
         } else {
             switch (randomIntBetween(0, 2)) {
-            case 0:
-                String fieldName = randomAlphaOfLengthBetween(3, 10);
-                Tuple<List<Object>, List<Object>> tuple = RandomObjects.randomStoredFieldValues(random(), xContentType);
-                DocumentField input = new DocumentField(fieldName, tuple.v1());
-                DocumentField expected = new DocumentField(fieldName, tuple.v2());
-                return Tuple.tuple(input, expected);
-            case 1:
-                List<Object> listValues = randomList(1, 5, () -> randomList(1, 5, ESTestCase::randomInt));
-                DocumentField listField = new DocumentField(randomAlphaOfLength(5), listValues);
-                return Tuple.tuple(listField, listField);
-            case 2:
-                List<Object> objectValues = randomList(1, 5, () -> Map.of(randomAlphaOfLength(5), randomInt(), randomAlphaOfLength(5),
-                        randomBoolean(), randomAlphaOfLength(5), randomAlphaOfLength(10)));
-                DocumentField objectField = new DocumentField(randomAlphaOfLength(5), objectValues);
-                return Tuple.tuple(objectField, objectField);
-            default:
-                throw new IllegalStateException();
+                case 0:
+                    String fieldName = randomAlphaOfLengthBetween(3, 10);
+                    Tuple<List<Object>, List<Object>> tuple = RandomObjects.randomStoredFieldValues(random(), xContentType);
+                    DocumentField input = new DocumentField(fieldName, tuple.v1());
+                    DocumentField expected = new DocumentField(fieldName, tuple.v2());
+                    return Tuple.tuple(input, expected);
+                case 1:
+                    List<Object> listValues = randomList(1, 5, () -> randomList(1, 5, ESTestCase::randomInt));
+                    DocumentField listField = new DocumentField(randomAlphaOfLength(5), listValues);
+                    return Tuple.tuple(listField, listField);
+                case 2:
+                    List<Object> objectValues = randomList(1, 5, () ->
+                        Map.of(randomAlphaOfLength(5), randomInt(),
+                            randomAlphaOfLength(5), randomBoolean(),
+                            randomAlphaOfLength(5), randomAlphaOfLength(10)));
+                    DocumentField objectField = new DocumentField(randomAlphaOfLength(5), objectValues);
+                    return Tuple.tuple(objectField, objectField);
+                default:
+                    throw new IllegalStateException();
             }
         }
     }

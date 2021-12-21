@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.core.Nullable;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.core.Nullable;
 
 /**
  * Calculate a doubly exponential weighted moving average
@@ -92,13 +92,13 @@ public class HoltLinearModel extends MovAvgModel {
     public MovAvgModel neighboringModel() {
         double newValue = Math.random();
         switch ((int) (Math.random() * 2)) {
-        case 0:
-            return new HoltLinearModel(newValue, this.beta);
-        case 1:
-            return new HoltLinearModel(this.alpha, newValue);
-        default:
-            assert (false) : "Random value fell outside of range [0-1]";
-            return new HoltLinearModel(newValue, this.beta); // This should never technically happen...
+            case 0:
+                return new HoltLinearModel(newValue, this.beta);
+            case 1:
+                return new HoltLinearModel(this.alpha, newValue);
+            default:
+                assert (false): "Random value fell outside of range [0-1]";
+                return new HoltLinearModel(newValue, this.beta);    // This should never technically happen...
         }
     }
 
@@ -163,6 +163,7 @@ public class HoltLinearModel extends MovAvgModel {
         }
     };
 
+
     @Override
     public int hashCode() {
         return Objects.hash(alpha, beta);
@@ -177,8 +178,10 @@ public class HoltLinearModel extends MovAvgModel {
             return false;
         }
         HoltLinearModel other = (HoltLinearModel) obj;
-        return Objects.equals(alpha, other.alpha) && Objects.equals(beta, other.beta);
+        return Objects.equals(alpha, other.alpha)
+                && Objects.equals(beta, other.beta);
     }
+
 
     public static class HoltLinearModelBuilder implements MovAvgModelBuilder {
         private double alpha = DEFAULT_ALPHA;
@@ -227,3 +230,4 @@ public class HoltLinearModel extends MovAvgModel {
         }
     }
 }
+

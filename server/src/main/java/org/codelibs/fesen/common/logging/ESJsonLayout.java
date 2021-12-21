@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.common.logging;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Node;
@@ -38,6 +30,14 @@ import org.apache.logging.log4j.core.layout.AbstractStringLayout;
 import org.apache.logging.log4j.core.layout.ByteBufferDestination;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.codelibs.fesen.common.Strings;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Formats log events as strings in a json format.
@@ -76,8 +76,10 @@ public class ESJsonLayout extends AbstractStringLayout {
 
     protected ESJsonLayout(String typeName, Charset charset, String[] esmessagefields) {
         super(charset);
-        this.patternLayout =
-                PatternLayout.newBuilder().withPattern(pattern(typeName, esmessagefields)).withAlwaysWriteExceptions(false).build();
+        this.patternLayout = PatternLayout.newBuilder()
+                                          .withPattern(pattern(typeName, esmessagefields))
+                                          .withAlwaysWriteExceptions(false)
+                                          .build();
     }
 
     private String pattern(String type, String[] esMessageFields) {
@@ -98,6 +100,7 @@ public class ESJsonLayout extends AbstractStringLayout {
         }
         return createPattern(map, Stream.of(esMessageFields).collect(Collectors.toSet()));
     }
+
 
     private String createPattern(Map<String, Object> map, Set<String> esMessageFields) {
         StringBuilder sb = new StringBuilder();
@@ -143,7 +146,9 @@ public class ESJsonLayout extends AbstractStringLayout {
     }
 
     @PluginFactory
-    public static ESJsonLayout createLayout(String type, Charset charset, String[] esmessagefields) {
+    public static ESJsonLayout createLayout(String type,
+                                            Charset charset,
+                                            String[] esmessagefields) {
         return new ESJsonLayout(type, charset, esmessagefields);
     }
 
@@ -152,7 +157,7 @@ public class ESJsonLayout extends AbstractStringLayout {
     }
 
     public static class Builder<B extends ESJsonLayout.Builder<B>> extends AbstractStringLayout.Builder<B>
-            implements org.apache.logging.log4j.core.util.Builder<ESJsonLayout> {
+        implements org.apache.logging.log4j.core.util.Builder<ESJsonLayout> {
 
         @PluginAttribute("type_name")
         String type;
@@ -169,7 +174,7 @@ public class ESJsonLayout extends AbstractStringLayout {
 
         @Override
         public ESJsonLayout build() {
-            String[] split = Strings.isNullOrEmpty(esMessageFields) ? new String[] {} : esMessageFields.split(",");
+            String[] split = Strings.isNullOrEmpty(esMessageFields) ? new String[]{} : esMessageFields.split(",");
             return ESJsonLayout.createLayout(type, charset, split);
         }
 

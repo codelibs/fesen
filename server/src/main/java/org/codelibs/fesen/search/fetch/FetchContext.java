@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.fetch;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.mapper.MapperService;
@@ -32,14 +29,17 @@ import org.codelibs.fesen.search.fetch.subphase.FetchFieldsContext;
 import org.codelibs.fesen.search.fetch.subphase.FetchSourceContext;
 import org.codelibs.fesen.search.fetch.subphase.FieldAndFormat;
 import org.codelibs.fesen.search.fetch.subphase.InnerHitsContext;
-import org.codelibs.fesen.search.fetch.subphase.InnerHitsContext.InnerHitSubContext;
 import org.codelibs.fesen.search.fetch.subphase.ScriptFieldsContext;
+import org.codelibs.fesen.search.fetch.subphase.InnerHitsContext.InnerHitSubContext;
 import org.codelibs.fesen.search.fetch.subphase.highlight.SearchHighlightContext;
 import org.codelibs.fesen.search.internal.ContextIndexSearcher;
 import org.codelibs.fesen.search.internal.SearchContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.lookup.SourceLookup;
 import org.codelibs.fesen.search.rescore.RescoreContext;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Encapsulates state required to execute fetch phases

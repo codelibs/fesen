@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
 import org.apache.lucene.document.HalfFloatPoint;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.DocValuesType;
@@ -36,18 +31,23 @@ import org.apache.lucene.util.NumericUtils;
 import org.codelibs.fesen.common.time.DateUtils;
 import org.codelibs.fesen.index.fielddata.FieldData;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;
 import org.codelibs.fesen.index.fielddata.LeafNumericFieldData;
 import org.codelibs.fesen.index.fielddata.NumericDoubleValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.LongValuesComparatorSource;
 import org.codelibs.fesen.index.mapper.DocValueFetcher;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  * FieldData backed by {@link LeafReader#getSortedNumericDocValues(String)}
@@ -64,7 +64,10 @@ public class SortedNumericIndexFieldData extends IndexNumericFieldData {
         }
 
         @Override
-        public SortedNumericIndexFieldData build(IndexFieldDataCache cache, CircuitBreakerService breakerService) {
+        public SortedNumericIndexFieldData build(
+            IndexFieldDataCache cache,
+            CircuitBreakerService breakerService
+        ) {
             return new SortedNumericIndexFieldData(name, numericType);
         }
     }
@@ -98,8 +101,8 @@ public class SortedNumericIndexFieldData extends IndexNumericFieldData {
     protected XFieldComparatorSource dateComparatorSource(Object missingValue, MultiValueMode sortMode, Nested nested) {
         if (numericType == NumericType.DATE_NANOSECONDS) {
             // converts date_nanos values to millisecond resolution
-            return new LongValuesComparatorSource(this, missingValue, sortMode, nested,
-                    dvs -> convertNumeric(dvs, DateUtils::toMilliSeconds));
+            return new LongValuesComparatorSource(this, missingValue,
+                sortMode, nested, dvs -> convertNumeric(dvs, DateUtils::toMilliSeconds));
         }
         return new LongValuesComparatorSource(this, missingValue, sortMode, nested);
     }
@@ -108,8 +111,8 @@ public class SortedNumericIndexFieldData extends IndexNumericFieldData {
     protected XFieldComparatorSource dateNanosComparatorSource(Object missingValue, MultiValueMode sortMode, Nested nested) {
         if (numericType == NumericType.DATE) {
             // converts date values to nanosecond resolution
-            return new LongValuesComparatorSource(this, missingValue, sortMode, nested,
-                    dvs -> convertNumeric(dvs, DateUtils::toNanoSeconds));
+            return new LongValuesComparatorSource(this, missingValue,
+                sortMode, nested, dvs -> convertNumeric(dvs, DateUtils::toNanoSeconds));
         }
         return new LongValuesComparatorSource(this, missingValue, sortMode, nested);
     }
@@ -130,16 +133,16 @@ public class SortedNumericIndexFieldData extends IndexNumericFieldData {
         final String field = fieldName;
 
         switch (numericType) {
-        case HALF_FLOAT:
-            return new SortedNumericHalfFloatFieldData(reader, field);
-        case FLOAT:
-            return new SortedNumericFloatFieldData(reader, field);
-        case DOUBLE:
-            return new SortedNumericDoubleFieldData(reader, field);
-        case DATE_NANOSECONDS:
-            return new NanoSecondFieldData(reader, field, numericType);
-        default:
-            return new SortedNumericLongFieldData(reader, field, numericType);
+            case HALF_FLOAT:
+                return new SortedNumericHalfFloatFieldData(reader, field);
+            case FLOAT:
+                return new SortedNumericFloatFieldData(reader, field);
+            case DOUBLE:
+                return new SortedNumericDoubleFieldData(reader, field);
+            case DATE_NANOSECONDS:
+                return new NanoSecondFieldData(reader, field, numericType);
+            default:
+                return new SortedNumericLongFieldData(reader, field, numericType);
         }
     }
 

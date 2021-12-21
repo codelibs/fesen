@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.codecs.blocktree.FieldReader;
@@ -40,11 +38,11 @@ import org.codelibs.fesen.common.breaker.CircuitBreaker;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.IndexFieldDataCache;
 import org.codelibs.fesen.index.fielddata.IndexOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.LeafOrdinalsFieldData;
 import org.codelibs.fesen.index.fielddata.RamAccountingTermsEnum;
+import org.codelibs.fesen.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
 import org.codelibs.fesen.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
 import org.codelibs.fesen.index.fielddata.ordinals.Ordinals;
 import org.codelibs.fesen.index.fielddata.ordinals.OrdinalsBuilder;
@@ -54,6 +52,8 @@ import org.codelibs.fesen.search.MultiValueMode;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.BucketedSort;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
 
 public class PagedBytesIndexFieldData extends AbstractIndexOrdinalsFieldData {
     private static final Logger logger = LogManager.getLogger(PagedBytesIndexFieldData.class);
@@ -77,12 +77,20 @@ public class PagedBytesIndexFieldData extends AbstractIndexOrdinalsFieldData {
 
         @Override
         public IndexOrdinalsFieldData build(IndexFieldDataCache cache, CircuitBreakerService breakerService) {
-            return new PagedBytesIndexFieldData(name, valuesSourceType, cache, breakerService, minFrequency, maxFrequency, minSegmentSize);
+            return new PagedBytesIndexFieldData(name, valuesSourceType, cache, breakerService,
+                    minFrequency, maxFrequency, minSegmentSize);
         }
     }
 
-    public PagedBytesIndexFieldData(String fieldName, ValuesSourceType valuesSourceType, IndexFieldDataCache cache,
-            CircuitBreakerService breakerService, double minFrequency, double maxFrequency, int minSegmentSize) {
+    public PagedBytesIndexFieldData(
+        String fieldName,
+        ValuesSourceType valuesSourceType,
+        IndexFieldDataCache cache,
+        CircuitBreakerService breakerService,
+        double minFrequency,
+        double maxFrequency,
+        int minSegmentSize
+    ) {
         super(fieldName, valuesSourceType, cache, breakerService, AbstractLeafOrdinalsFieldData.DEFAULT_SCRIPT_FUNCTION);
         this.minFrequency = minFrequency;
         this.maxFrequency = maxFrequency;
@@ -108,7 +116,7 @@ public class PagedBytesIndexFieldData extends AbstractIndexOrdinalsFieldData {
         LeafOrdinalsFieldData data = null;
 
         PagedBytesEstimator estimator =
-                new PagedBytesEstimator(context, breakerService.getBreaker(CircuitBreaker.FIELDDATA), getFieldName());
+            new PagedBytesEstimator(context, breakerService.getBreaker(CircuitBreaker.FIELDDATA), getFieldName());
         Terms terms = reader.terms(getFieldName());
         if (terms == null) {
             data = AbstractLeafOrdinalsFieldData.empty();
@@ -205,8 +213,8 @@ public class PagedBytesIndexFieldData extends AbstractIndexOrdinalsFieldData {
                     final Stats stats = ((FieldReader) fieldTerms).getStats();
                     long totalTermBytes = stats.totalTermBytes;
                     if (logger.isTraceEnabled()) {
-                        logger.trace("totalTermBytes: {}, terms.size(): {}, terms.getSumDocFreq(): {}", totalTermBytes, terms.size(),
-                                terms.getSumDocFreq());
+                        logger.trace("totalTermBytes: {}, terms.size(): {}, terms.getSumDocFreq(): {}",
+                                totalTermBytes, terms.size(), terms.getSumDocFreq());
                     }
                     long totalBytes = totalTermBytes + (2 * terms.size()) + (4 * terms.getSumDocFreq());
                     return totalBytes;
@@ -262,8 +270,12 @@ public class PagedBytesIndexFieldData extends AbstractIndexOrdinalsFieldData {
                 docCount = reader.maxDoc();
             }
             if (docCount >= minSegmentSize) {
-                final int minFreq = minFrequency > 1.0 ? (int) minFrequency : (int) (docCount * minFrequency);
-                final int maxFreq = maxFrequency > 1.0 ? (int) maxFrequency : (int) (docCount * maxFrequency);
+                final int minFreq = minFrequency > 1.0
+                    ? (int) minFrequency
+                    : (int)(docCount * minFrequency);
+                final int maxFreq = maxFrequency > 1.0
+                    ? (int) maxFrequency
+                    : (int)(docCount * maxFrequency);
                 if (minFreq > 1 || maxFreq < docCount) {
                     iterator = new FrequencyFilter(iterator, minFreq, maxFreq);
                 }

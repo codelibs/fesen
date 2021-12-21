@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.repositories;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public final class RepositoryStatsSnapshot implements Writeable, ToXContentObject {
     public static final long UNKNOWN_CLUSTER_VERSION = -1;
@@ -36,7 +36,10 @@ public final class RepositoryStatsSnapshot implements Writeable, ToXContentObjec
     private final long clusterVersion;
     private final boolean archived;
 
-    public RepositoryStatsSnapshot(RepositoryInfo repositoryInfo, RepositoryStats repositoryStats, long clusterVersion, boolean archived) {
+    public RepositoryStatsSnapshot(RepositoryInfo repositoryInfo,
+                                   RepositoryStats repositoryStats,
+                                   long clusterVersion,
+                                   boolean archived) {
         assert archived != (clusterVersion == UNKNOWN_CLUSTER_VERSION);
         this.repositoryInfo = repositoryInfo;
         this.repositoryStats = repositoryStats;
@@ -90,13 +93,13 @@ public final class RepositoryStatsSnapshot implements Writeable, ToXContentObjec
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         RepositoryStatsSnapshot that = (RepositoryStatsSnapshot) o;
-        return repositoryInfo.equals(that.repositoryInfo) && repositoryStats.equals(that.repositoryStats)
-                && clusterVersion == that.clusterVersion && archived == that.archived;
+        return repositoryInfo.equals(that.repositoryInfo) &&
+            repositoryStats.equals(that.repositoryStats) &&
+            clusterVersion == that.clusterVersion &&
+            archived == that.archived;
     }
 
     @Override

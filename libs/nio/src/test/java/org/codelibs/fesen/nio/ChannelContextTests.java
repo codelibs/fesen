@@ -19,12 +19,11 @@
 
 package org.codelibs.fesen.nio;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.codelibs.fesen.nio.ChannelContext;
+import org.codelibs.fesen.nio.NioChannel;
+import org.codelibs.fesen.nio.NioSelector;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -40,8 +39,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ChannelContextTests extends ESTestCase {
 

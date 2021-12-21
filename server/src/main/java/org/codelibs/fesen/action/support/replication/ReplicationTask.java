@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.action.support.replication;
 
-import static java.util.Objects.requireNonNull;
-
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.tasks.TaskId;
+
+import java.io.IOException;
+import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Task that tracks replication actions.

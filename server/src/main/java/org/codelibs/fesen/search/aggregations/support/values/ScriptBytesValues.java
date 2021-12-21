@@ -18,16 +18,16 @@
  */
 package org.codelibs.fesen.search.aggregations.support.values;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Collection;
-
 import org.apache.lucene.search.Scorable;
 import org.codelibs.fesen.common.lucene.ScorerAware;
 import org.codelibs.fesen.common.util.CollectionUtils;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 import org.codelibs.fesen.index.fielddata.SortingBinaryDocValues;
 import org.codelibs.fesen.script.AggregationScript;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 /**
  * {@link SortedBinaryDocValues} implementation that reads values from a script.

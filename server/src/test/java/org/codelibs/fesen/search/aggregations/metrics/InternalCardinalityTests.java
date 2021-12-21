@@ -73,7 +73,8 @@ public class InternalCardinalityTests extends InternalAggregationTestCase<Intern
 
     @Override
     protected void assertReduced(InternalCardinality reduced, List<InternalCardinality> inputs) {
-        HyperLogLogPlusPlus[] algos = inputs.stream().map(InternalCardinality::getState).toArray(size -> new HyperLogLogPlusPlus[size]);
+        HyperLogLogPlusPlus[] algos = inputs.stream().map(InternalCardinality::getState)
+                .toArray(size -> new HyperLogLogPlusPlus[size]);
         if (algos.length > 0) {
             HyperLogLogPlusPlus result = algos[0];
             for (int i = 1; i < algos.length; i++) {

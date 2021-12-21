@@ -19,8 +19,12 @@
 
 package org.codelibs.fesen.index.shard;
 
+
 public enum IndexShardState {
-    CREATED((byte) 0), RECOVERING((byte) 1), POST_RECOVERY((byte) 2), STARTED((byte) 3),
+    CREATED((byte) 0),
+    RECOVERING((byte) 1),
+    POST_RECOVERY((byte) 2),
+    STARTED((byte) 3),
     // previously, 4 was the RELOCATED state
     CLOSED((byte) 5);
 

@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codelibs.fesen.common.xcontent.XContentLocation;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.common.xcontent.XContentParser;
 
 /**
  * Represents an is_true assert section:

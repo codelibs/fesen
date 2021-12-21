@@ -19,17 +19,19 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.equalTo;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.ingest.common.DotExpanderProcessor;
+import org.codelibs.fesen.ingest.common.RenameProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.equalTo;
 
 public class DotExpanderProcessorTests extends ESTestCase {
 
@@ -88,7 +90,7 @@ public class DotExpanderProcessorTests extends ESTestCase {
         // into [foo].[bar], so foo should be renamed first into `[foo].[bar]:
         IngestDocument document = new IngestDocument(source, Collections.emptyMap());
         Processor processor = new RenameProcessor("_tag", null, new TestTemplateService.MockTemplateScript.Factory("foo"),
-                new TestTemplateService.MockTemplateScript.Factory("foo.bar"), false);
+            new TestTemplateService.MockTemplateScript.Factory("foo.bar"), false);
         processor.execute(document);
         processor = new DotExpanderProcessor("_tag", null, null, "foo.bar");
         processor.execute(document);
@@ -142,6 +144,7 @@ public class DotExpanderProcessorTests extends ESTestCase {
         assertThat(document.getFieldValue("field.foo.bar", Map.class).size(), equalTo(1));
         assertThat(document.getFieldValue("field.foo.bar.baz", String.class), equalTo("value"));
     }
+
 
     public void testEscapeFields_doNothingIfFieldNotInSourceDoc() throws Exception {
         //asking to expand a (literal) field that is not present in the source document

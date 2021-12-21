@@ -19,19 +19,8 @@
 
 package org.codelibs.fesen.test.rest.yaml;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.carrotsearch.randomizedtesting.RandomizedTest;
+import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
 import org.apache.http.HttpHost;
 import org.apache.lucene.util.TimeUnits;
 import org.codelibs.fesen.Version;
@@ -58,8 +47,18 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.carrotsearch.randomizedtesting.RandomizedTest;
-import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Runs a suite of yaml tests shared with all the official Fesen
@@ -157,8 +156,12 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         restTestExecutionContext.clear();
     }
 
-    protected ClientYamlTestClient initClientYamlTestClient(final ClientYamlSuiteRestSpec restSpec, final RestClient restClient,
-            final List<HttpHost> hosts, final Version esVersion, final Version masterVersion) {
+    protected ClientYamlTestClient initClientYamlTestClient(
+            final ClientYamlSuiteRestSpec restSpec,
+            final RestClient restClient,
+            final List<HttpHost> hosts,
+            final Version esVersion,
+            final Version masterVersion) {
         return new ClientYamlTestClient(restSpec, restClient, hosts, esVersion, masterVersion, this::getClientBuilderWithSniffedHosts);
     }
 
@@ -199,10 +202,10 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
                 suites.add(suite);
                 try {
                     suite.validate();
-                } catch (IllegalArgumentException e) {
+                } catch(IllegalArgumentException e) {
                     if (validationException == null) {
-                        validationException =
-                                new IllegalArgumentException("Validation errors for the following test suites:\n- " + e.getMessage());
+                        validationException = new IllegalArgumentException("Validation errors for the following test suites:\n- "
+                            + e.getMessage());
                     } else {
                         String previousMessage = validationException.getMessage();
                         Throwable[] suppressed = validationException.getSuppressed();
@@ -223,7 +226,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         List<Object[]> tests = new ArrayList<>();
         for (ClientYamlTestSuite yamlTestSuite : suites) {
             for (ClientYamlTestSection testSection : yamlTestSuite.getTestSections()) {
-                tests.add(new Object[] { new ClientYamlTestCandidate(yamlTestSuite, testSection) });
+                tests.add(new Object[]{ new ClientYamlTestCandidate(yamlTestSuite, testSection) });
             }
         }
         //sort the candidates so they will always be in the same order before being shuffled, for repeatability
@@ -269,7 +272,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
     private static String[] resolvePathsProperty(String propertyName, String defaultValue) {
         String property = System.getProperty(propertyName);
         if (!Strings.hasLength(property)) {
-            return defaultValue == null ? Strings.EMPTY_ARRAY : new String[] { defaultValue };
+            return defaultValue == null ? Strings.EMPTY_ARRAY : new String[]{defaultValue};
         } else {
             return property.split(PATHS_SEPARATOR);
         }
@@ -290,7 +293,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
                         if (methodsList.contains("GET") && restApi.isBodySupported()) {
                             if (!methodsList.contains("POST")) {
                                 errorMessage.append("\n- ").append(restApi.getName())
-                                        .append(" supports GET with a body but doesn't support POST");
+                                    .append(" supports GET with a body but doesn't support POST");
                             }
                         }
                     }
@@ -339,19 +342,19 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         //skip test if it matches one of the blacklist globs
         for (BlacklistedPathPatternMatcher blacklistedPathMatcher : blacklistPathMatchers) {
             String testPath = testCandidate.getSuitePath() + "/" + testCandidate.getTestSection().getName();
-            assumeFalse("[" + testCandidate.getTestPath() + "] skipped, reason: blacklisted",
-                    blacklistedPathMatcher.isSuffixMatch(testPath));
+            assumeFalse("[" + testCandidate.getTestPath() + "] skipped, reason: blacklisted", blacklistedPathMatcher
+                .isSuffixMatch(testPath));
         }
 
         //skip test if the whole suite (yaml file) is disabled
         assumeFalse(testCandidate.getSetupSection().getSkipSection().getSkipMessage(testCandidate.getSuitePath()),
-                testCandidate.getSetupSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
+            testCandidate.getSetupSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
         //skip test if the whole suite (yaml file) is disabled
         assumeFalse(testCandidate.getTeardownSection().getSkipSection().getSkipMessage(testCandidate.getSuitePath()),
-                testCandidate.getTeardownSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
+            testCandidate.getTeardownSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
         //skip test if test section is disabled
         assumeFalse(testCandidate.getTestSection().getSkipSection().getSkipMessage(testCandidate.getTestPath()),
-                testCandidate.getTestSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
+            testCandidate.getTestSection().getSkipSection().skip(restTestExecutionContext.esVersion()));
 
         //let's check that there is something to run, otherwise there might be a problem with the test section
         if (testCandidate.getTestSection().getExecutableSections().size() == 0) {
@@ -404,8 +407,9 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
             executableSection.execute(restTestExecutionContext);
         } catch (AssertionError | Exception e) {
             // Dump the stash on failure. Instead of dumping it in true json we escape `\n`s so stack traces are easier to read
-            logger.info("Stash dump on test failure [{}]", Strings.toString(restTestExecutionContext.stash(), true, true)
-                    .replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t"));
+            logger.info("Stash dump on test failure [{}]",
+                    Strings.toString(restTestExecutionContext.stash(), true, true)
+                            .replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t"));
             if (e instanceof AssertionError) {
                 throw new AssertionError(errorMessage(executableSection, e), e);
             } else {
@@ -427,8 +431,10 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
      * {@link RestClientBuilder} for a client with that metadata.
      */
     protected final RestClientBuilder getClientBuilderWithSniffedHosts() throws IOException {
-        FesenNodesSniffer.Scheme scheme = FesenNodesSniffer.Scheme.valueOf(getProtocol().toUpperCase(Locale.ROOT));
-        FesenNodesSniffer sniffer = new FesenNodesSniffer(adminClient(), FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT, scheme);
+        FesenNodesSniffer.Scheme scheme =
+            FesenNodesSniffer.Scheme.valueOf(getProtocol().toUpperCase(Locale.ROOT));
+        FesenNodesSniffer sniffer = new FesenNodesSniffer(
+                adminClient(), FesenNodesSniffer.DEFAULT_SNIFF_REQUEST_TIMEOUT, scheme);
         RestClientBuilder builder = RestClient.builder(sniffer.sniff().toArray(new Node[0]));
         configureClient(builder, restClientSettings());
         return builder;

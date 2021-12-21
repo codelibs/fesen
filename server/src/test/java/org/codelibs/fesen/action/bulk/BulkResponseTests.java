@@ -81,7 +81,8 @@ public class BulkResponseTests extends ESTestCase {
                 Tuple<Throwable, FesenException> failures = randomExceptions();
 
                 Exception bulkItemCause = (Exception) failures.v1();
-                bulkItems[i] = new BulkItemResponse(i, opType, new BulkItemResponse.Failure(index, type, id, bulkItemCause));
+                bulkItems[i] = new BulkItemResponse(i, opType,
+                        new BulkItemResponse.Failure(index, type, id, bulkItemCause));
                 expectedBulkItems[i] = new BulkItemResponse(i, opType,
                         new BulkItemResponse.Failure(index, type, id, failures.v2(), ExceptionsHelper.status(bulkItemCause)));
             }

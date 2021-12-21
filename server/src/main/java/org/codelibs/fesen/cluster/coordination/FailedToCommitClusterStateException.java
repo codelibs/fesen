@@ -21,6 +21,7 @@ package org.codelibs.fesen.cluster.coordination;
 import java.io.IOException;
 
 import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.cluster.coordination.ClusterStatePublisher;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 
 /**

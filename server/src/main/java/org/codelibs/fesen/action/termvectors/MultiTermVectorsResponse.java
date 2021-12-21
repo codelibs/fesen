@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.termvectors;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class MultiTermVectorsResponse extends ActionResponse implements Iterable<MultiTermVectorsItemResponse>, ToXContentObject {
 

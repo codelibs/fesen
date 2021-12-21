@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509ExtendedTrustManager;
 
 /**
  * A {@link org.codelibs.fesen.common.ssl.SslTrustConfig} that reads a list of PEM encoded trusted certificates (CAs) from the file
@@ -83,12 +82,11 @@ public final class PemTrustConfig implements SslTrustConfig {
         try {
             return PemUtils.readCertificates(this.certificateAuthorities);
         } catch (FileNotFoundException | NoSuchFileException e) {
-            throw new SslConfigException(
-                    "cannot configure trust using PEM certificates [" + caPathsAsString() + "] because one or more files do not exist", e);
+            throw new SslConfigException("cannot configure trust using PEM certificates [" + caPathsAsString()
+                + "] because one or more files do not exist", e);
         } catch (IOException e) {
-            throw new SslConfigException(
-                    "cannot configure trust using PEM certificates [" + caPathsAsString() + "] because one or more files cannot be read",
-                    e);
+            throw new SslConfigException("cannot configure trust using PEM certificates [" + caPathsAsString()
+                + "] because one or more files cannot be read", e);
         }
     }
 
@@ -115,7 +113,10 @@ public final class PemTrustConfig implements SslTrustConfig {
     }
 
     private String caPathsAsString() {
-        return certificateAuthorities.stream().map(Path::toAbsolutePath).map(Object::toString).collect(Collectors.joining(","));
+        return certificateAuthorities.stream()
+            .map(Path::toAbsolutePath)
+            .map(Object::toString)
+            .collect(Collectors.joining(","));
     }
 
 }

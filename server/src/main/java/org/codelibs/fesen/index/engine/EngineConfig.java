@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.index.engine;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.LongSupplier;
-import java.util.function.Supplier;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.index.MergePolicy;
@@ -47,6 +42,11 @@ import org.codelibs.fesen.index.translog.TranslogConfig;
 import org.codelibs.fesen.indices.IndexingMemoryController;
 import org.codelibs.fesen.indices.breaker.CircuitBreakerService;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 /*
  * Holds all the configuration that is used to create an {@link Engine}.
@@ -102,16 +102,16 @@ public final class EngineConfig {
      */
     public static final Setting<String> INDEX_CODEC_SETTING = new Setting<>("index.codec", "default", s -> {
         switch (s) {
-        case "default":
-        case "best_compression":
-        case "lucene_default":
-            return s;
-        default:
-            if (Codec.availableCodecs().contains(s) == false) { // we don't error message the not officially supported ones
-                throw new IllegalArgumentException(
+            case "default":
+            case "best_compression":
+            case "lucene_default":
+                return s;
+            default:
+                if (Codec.availableCodecs().contains(s) == false) { // we don't error message the not officially supported ones
+                    throw new IllegalArgumentException(
                         "unknown value for [index.codec] must be one of [default, best_compression] but was: " + s);
-            }
-            return s;
+                }
+                return s;
         }
     }, Property.IndexScope, Property.NodeScope);
 
@@ -122,21 +122,26 @@ public final class EngineConfig {
      * this setting won't be reflected re-enabled optimization until the engine is restarted or the index is closed and reopened.
      * The default is <code>true</code>
      */
-    public static final Setting<Boolean> INDEX_OPTIMIZE_AUTO_GENERATED_IDS =
-            Setting.boolSetting("index.optimize_auto_generated_id", true, Property.IndexScope, Property.Dynamic);
+    public static final Setting<Boolean> INDEX_OPTIMIZE_AUTO_GENERATED_IDS = Setting.boolSetting("index.optimize_auto_generated_id", true,
+        Property.IndexScope, Property.Dynamic);
 
     private final TranslogConfig translogConfig;
 
     /**
      * Creates a new {@link org.codelibs.fesen.index.engine.EngineConfig}
      */
-    public EngineConfig(ShardId shardId, ThreadPool threadPool, IndexSettings indexSettings, Engine.Warmer warmer, Store store,
-            MergePolicy mergePolicy, Analyzer analyzer, Similarity similarity, CodecService codecService,
-            Engine.EventListener eventListener, QueryCache queryCache, QueryCachingPolicy queryCachingPolicy, TranslogConfig translogConfig,
-            TimeValue flushMergesAfter, List<ReferenceManager.RefreshListener> externalRefreshListener,
-            List<ReferenceManager.RefreshListener> internalRefreshListener, Sort indexSort, CircuitBreakerService circuitBreakerService,
-            LongSupplier globalCheckpointSupplier, Supplier<RetentionLeases> retentionLeasesSupplier, LongSupplier primaryTermSupplier,
-            TombstoneDocSupplier tombstoneDocSupplier) {
+    public EngineConfig(ShardId shardId, ThreadPool threadPool,
+                        IndexSettings indexSettings, Engine.Warmer warmer, Store store,
+                        MergePolicy mergePolicy, Analyzer analyzer,
+                        Similarity similarity, CodecService codecService, Engine.EventListener eventListener,
+                        QueryCache queryCache, QueryCachingPolicy queryCachingPolicy,
+                        TranslogConfig translogConfig, TimeValue flushMergesAfter,
+                        List<ReferenceManager.RefreshListener> externalRefreshListener,
+                        List<ReferenceManager.RefreshListener> internalRefreshListener, Sort indexSort,
+                        CircuitBreakerService circuitBreakerService, LongSupplier globalCheckpointSupplier,
+                        Supplier<RetentionLeases> retentionLeasesSupplier,
+                        LongSupplier primaryTermSupplier,
+                        TombstoneDocSupplier tombstoneDocSupplier) {
         this.shardId = shardId;
         this.indexSettings = indexSettings;
         this.threadPool = threadPool;
@@ -277,9 +282,7 @@ public final class EngineConfig {
     /**
      * Returns the engines shard ID
      */
-    public ShardId getShardId() {
-        return shardId;
-    }
+    public ShardId getShardId() { return shardId; }
 
     /**
      * Returns the analyzer as the default analyzer in the engines {@link org.apache.lucene.index.IndexWriter}
@@ -321,9 +324,7 @@ public final class EngineConfig {
      * should be automatically flushed. This is used to free up transient disk usage of potentially large segments that
      * are written after the engine became inactive from an indexing perspective.
      */
-    public TimeValue getFlushMergesAfter() {
-        return flushMergesAfter;
-    }
+    public TimeValue getFlushMergesAfter() { return flushMergesAfter; }
 
     /**
      * The refresh listeners to add to Lucene for externally visible refreshes
@@ -335,9 +336,8 @@ public final class EngineConfig {
     /**
      * The refresh listeners to add to Lucene for internally visible refreshes. These listeners will also be invoked on external refreshes
      */
-    public List<ReferenceManager.RefreshListener> getInternalRefreshListener() {
-        return internalRefreshListener;
-    }
+    public List<ReferenceManager.RefreshListener> getInternalRefreshListener() { return internalRefreshListener;}
+
 
     /**
      * returns true if the engine is allowed to optimize indexing operations with an auto-generated ID

@@ -47,10 +47,10 @@ import static org.hamcrest.object.HasToString.hasToString;
 public class TransportClientTests extends ESTestCase {
 
     public void testThatUsingAClosedClientThrowsAnException() throws ExecutionException, InterruptedException {
-        final TransportClient client = new MockTransportClient(Settings.EMPTY);
+        final TransportClient client =  new MockTransportClient(Settings.EMPTY);
         client.close();
         final IllegalStateException e =
-                expectThrows(IllegalStateException.class, () -> client.admin().cluster().health(new ClusterHealthRequest()).get());
+            expectThrows(IllegalStateException.class, () -> client.admin().cluster().health(new ClusterHealthRequest()).get());
         assertThat(e, hasToString(containsString("transport client is closed")));
     }
 
@@ -60,14 +60,18 @@ public class TransportClientTests extends ESTestCase {
      * {@link NamedWriteableRegistry} of the transport client
      */
     public void testPluginNamedWriteablesRegistered() {
-        Settings baseSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        Settings baseSettings = Settings.builder()
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
         try (TransportClient client = new MockTransportClient(baseSettings, Arrays.asList(MockPlugin.class))) {
             assertNotNull(client.namedWriteableRegistry.getReader(MockPlugin.MockNamedWriteable.class, MockPlugin.MockNamedWriteable.NAME));
         }
     }
 
     public void testSettingsContainsTransportClient() {
-        final Settings baseSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        final Settings baseSettings = Settings.builder()
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+            .build();
         try (TransportClient client = new MockTransportClient(baseSettings, Arrays.asList(MockPlugin.class))) {
             final Settings settings = TransportSettings.DEFAULT_FEATURES_SETTING.get(client.settings());
             assertThat(settings.keySet(), hasItem("transport_client"));
@@ -76,7 +80,9 @@ public class TransportClientTests extends ESTestCase {
     }
 
     public void testDefaultHeader() {
-        final Settings baseSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
+        final Settings baseSettings = Settings.builder()
+                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir())
+                .build();
         try (TransportClient client = new MockTransportClient(baseSettings, Arrays.asList(MockPlugin.class))) {
             final ThreadContext threadContext = client.threadPool().getThreadContext();
             assertEquals("true", threadContext.getHeader("test"));
@@ -87,7 +93,7 @@ public class TransportClientTests extends ESTestCase {
 
         @Override
         public List<Entry> getNamedWriteables() {
-            return Arrays.asList(new Entry[] { new Entry(MockNamedWriteable.class, MockNamedWriteable.NAME, MockNamedWriteable::new) });
+            return Arrays.asList(new Entry[]{ new Entry(MockNamedWriteable.class, MockNamedWriteable.NAME, MockNamedWriteable::new)});
         }
 
         @Override

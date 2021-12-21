@@ -52,10 +52,11 @@ public class IndicesStatsResponseTests extends ESTestCase {
         final IndicesStatsResponse response = new IndicesStatsResponse(null, 0, 0, 0, null);
         final String level = randomAlphaOfLength(16);
         final ToXContent.Params params = new ToXContent.MapParams(Collections.singletonMap("level", level));
-        final IllegalArgumentException e =
-                expectThrows(IllegalArgumentException.class, () -> response.toXContent(JsonXContent.contentBuilder(), params));
-        assertThat(e,
-                hasToString(containsString("level parameter must be one of [cluster] or [indices] or [shards] but was [" + level + "]")));
+        final IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
+            () -> response.toXContent(JsonXContent.contentBuilder(), params));
+        assertThat(
+            e,
+            hasToString(containsString("level parameter must be one of [cluster] or [indices] or [shards] but was [" + level + "]")));
     }
 
     public void testGetIndices() {
@@ -75,8 +76,8 @@ public class IndicesStatsResponseTests extends ESTestCase {
                 ShardPath shardPath = new ShardPath(false, path, path, shId);
                 ShardRouting routing = createShardRouting(index, shId, (shardId == 0));
                 shards.add(new ShardStats(routing, shardPath, null, null, null, null));
-                AtomicLong primaryShardsCounter =
-                        expectedIndexToPrimaryShardsCount.computeIfAbsent(index.getName(), k -> new AtomicLong(0L));
+                AtomicLong primaryShardsCounter = expectedIndexToPrimaryShardsCount.computeIfAbsent(index.getName(),
+                        k -> new AtomicLong(0L));
                 if (routing.primary()) {
                     primaryShardsCounter.incrementAndGet();
                 }
@@ -84,8 +85,8 @@ public class IndicesStatsResponseTests extends ESTestCase {
                 shardsCounter.incrementAndGet();
             }
         }
-        final IndicesStatsResponse indicesStatsResponse =
-                new IndicesStatsResponse(shards.toArray(new ShardStats[shards.size()]), 0, 0, 0, null);
+        final IndicesStatsResponse indicesStatsResponse = new IndicesStatsResponse(shards.toArray(new ShardStats[shards.size()]), 0, 0, 0,
+                null);
         Map<String, IndexStats> indexStats = indicesStatsResponse.getIndices();
 
         assertThat(indexStats.size(), is(noOfIndexes));

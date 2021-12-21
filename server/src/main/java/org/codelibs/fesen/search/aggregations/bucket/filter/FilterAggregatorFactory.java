@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.filter;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
@@ -35,13 +32,16 @@ import org.codelibs.fesen.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.search.aggregations.CardinalityUpperBound;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class FilterAggregatorFactory extends AggregatorFactory {
 
     private Weight weight;
     private Query filter;
 
-    public FilterAggregatorFactory(String name, QueryBuilder filterBuilder, QueryShardContext queryShardContext, AggregatorFactory parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
+    public FilterAggregatorFactory(String name, QueryBuilder filterBuilder, QueryShardContext queryShardContext,
+            AggregatorFactory parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metadata) throws IOException {
         super(name, queryShardContext, parent, subFactoriesBuilder, metadata);
         filter = filterBuilder.toQuery(queryShardContext);
     }
@@ -68,8 +68,10 @@ public class FilterAggregatorFactory extends AggregatorFactory {
     }
 
     @Override
-    public Aggregator createInternal(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality,
-            Map<String, Object> metadata) throws IOException {
+    public Aggregator createInternal(SearchContext searchContext,
+                                        Aggregator parent,
+                                        CardinalityUpperBound cardinality,
+                                        Map<String, Object> metadata) throws IOException {
         return new FilterAggregator(name, () -> this.getWeight(), factories, searchContext, parent, cardinality, metadata);
     }
 

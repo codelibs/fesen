@@ -44,10 +44,8 @@ public final class ObjectPath {
 
     private static Object evalContext(String path, Object ctx) {
         final String[] parts;
-        if (path == null || path.isEmpty())
-            parts = EMPTY_ARRAY;
-        else
-            parts = path.split("\\.");
+        if (path == null || path.isEmpty()) parts = EMPTY_ARRAY;
+        else parts = path.split("\\.");
         for (String part : parts) {
             if (ctx == null) {
                 return null;

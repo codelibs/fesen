@@ -74,8 +74,10 @@ public class TaskBatcherTests extends TaskExecutorTests {
 
         @Override
         protected void onTimeout(List<? extends BatchedTask> tasks, TimeValue timeout) {
-            threadPool.generic().execute(() -> tasks.forEach(task -> ((UpdateTask) task).listener.onFailure(task.source,
-                    new ProcessClusterEventTimeoutException(timeout, task.source))));
+            threadPool.generic().execute(
+                () -> tasks.forEach(
+                    task -> ((UpdateTask) task).listener.onFailure(task.source,
+                        new ProcessClusterEventTimeoutException(timeout, task.source))));
         }
 
         class UpdateTask extends BatchedTask {
@@ -88,8 +90,8 @@ public class TaskBatcherTests extends TaskExecutorTests {
 
             @Override
             public String describeTasks(List<? extends BatchedTask> tasks) {
-                return ((TestExecutor<Object>) batchingKey)
-                        .describeTasks(tasks.stream().map(BatchedTask::getTask).collect(Collectors.toList()));
+                return ((TestExecutor<Object>) batchingKey).describeTasks(
+                    tasks.stream().map(BatchedTask::getTask).collect(Collectors.toList()));
             }
         }
 
@@ -100,15 +102,17 @@ public class TaskBatcherTests extends TaskExecutorTests {
         submitTask(source, testTask, testTask, testTask, testTask);
     }
 
-    private <T> void submitTask(String source, T task, ClusterStateTaskConfig config, TestExecutor<T> executor, TestListener listener) {
+    private <T> void submitTask(String source, T task, ClusterStateTaskConfig config, TestExecutor<T> executor,
+                               TestListener listener) {
         submitTasks(source, Collections.singletonMap(task, listener), config, executor);
     }
 
-    private <T> void submitTasks(final String source, final Map<T, TestListener> tasks, final ClusterStateTaskConfig config,
-            final TestExecutor<T> executor) {
+    private <T> void submitTasks(final String source,
+                                final Map<T, TestListener> tasks, final ClusterStateTaskConfig config,
+                                final TestExecutor<T> executor) {
         List<TestTaskBatcher.UpdateTask> safeTasks = tasks.entrySet().stream()
-                .map(e -> taskBatcher.new UpdateTask(config.priority(), source, e.getKey(), e.getValue(), executor))
-                .collect(Collectors.toList());
+            .map(e -> taskBatcher.new UpdateTask(config.priority(), source, e.getKey(), e.getValue(), executor))
+            .collect(Collectors.toList());
         taskBatcher.submitTasks(safeTasks, config.timeout());
     }
 
@@ -116,7 +120,8 @@ public class TaskBatcherTests extends TaskExecutorTests {
     public void testTimedOutTaskCleanedUp() throws Exception {
         super.testTimedOutTaskCleanedUp();
         synchronized (taskBatcher.tasksPerBatchingKey) {
-            assertTrue("expected empty map but was " + taskBatcher.tasksPerBatchingKey, taskBatcher.tasksPerBatchingKey.isEmpty());
+            assertTrue("expected empty map but was " + taskBatcher.tasksPerBatchingKey,
+                taskBatcher.tasksPerBatchingKey.isEmpty());
         }
     }
 
@@ -152,6 +157,7 @@ public class TaskBatcherTests extends TaskExecutorTests {
         startedProcessing.acquire(1);
         assertThat(executionOrder, equalTo(Arrays.asList("A0")));
 
+
         // these will be the first batch
         submitTask("1", "A1", config, executorA, noopListener);
         submitTask("2", "A2", config, executorA, noopListener);
@@ -164,6 +170,7 @@ public class TaskBatcherTests extends TaskExecutorTests {
         // setup the queue with pending tasks for another executor same priority
         submitTask("3", "B3", config, executorB, noopListener);
         submitTask("4", "B4", config, executorB, noopListener);
+
 
         submitTask("5", "A5", config, executorA, noopListener);
         submitTask("6", "A6", config, executorA, noopListener);
@@ -222,8 +229,8 @@ public class TaskBatcherTests extends TaskExecutorTests {
                 try {
                     barrier.await();
                     for (int j = 0; j < tasksSubmittedPerThread; j++) {
-                        submitTask("[" + index + "][" + j + "]", j, ClusterStateTaskConfig.build(randomFrom(Priority.values())),
-                                executors[index], listener);
+                        submitTask("[" + index + "][" + j + "]", j,
+                            ClusterStateTaskConfig.build(randomFrom(Priority.values())), executors[index], listener);
                     }
                     barrier.await();
                 } catch (InterruptedException | BrokenBarrierException e) {
@@ -301,13 +308,21 @@ public class TaskBatcherTests extends TaskExecutorTests {
                 }
             };
 
-            submitTask("first time", task, ClusterStateTaskConfig.build(Priority.NORMAL), executor, listener);
+            submitTask("first time", task, ClusterStateTaskConfig.build(Priority.NORMAL), executor,
+                listener);
 
-            final IllegalStateException e = expectThrows(IllegalStateException.class,
-                    () -> submitTask("second time", task, ClusterStateTaskConfig.build(Priority.NORMAL), executor, listener));
+            final IllegalStateException e =
+                expectThrows(
+                    IllegalStateException.class,
+                    () -> submitTask(
+                        "second time",
+                        task,
+                        ClusterStateTaskConfig.build(Priority.NORMAL),
+                        executor, listener));
             assertThat(e, hasToString(containsString("task [1] with source [second time] is already queued")));
 
-            submitTask("third time a charm", new SimpleTask(1), ClusterStateTaskConfig.build(Priority.NORMAL), executor, listener);
+            submitTask("third time a charm", new SimpleTask(1),
+                ClusterStateTaskConfig.build(Priority.NORMAL), executor, listener);
 
             assertThat(latch.getCount(), equalTo(2L));
         }

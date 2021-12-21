@@ -69,17 +69,13 @@ abstract class TermVersionRequest extends TransportRequest implements Writeable 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TermVersionRequest versionTerm = (TermVersionRequest) o;
 
-        if (term != versionTerm.term)
-            return false;
-        if (version != versionTerm.version)
-            return false;
+        if (term != versionTerm.term) return false;
+        if (version != versionTerm.version) return false;
         return sourceNode.equals(versionTerm.sourceNode);
     }
 
@@ -93,6 +89,10 @@ abstract class TermVersionRequest extends TransportRequest implements Writeable 
 
     @Override
     public String toString() {
-        return "TermVersionRequest{" + "term=" + term + ", version=" + version + ", sourceNode=" + sourceNode + '}';
+        return "TermVersionRequest{" +
+            "term=" + term +
+            ", version=" + version +
+            ", sourceNode=" + sourceNode +
+            '}';
     }
 }

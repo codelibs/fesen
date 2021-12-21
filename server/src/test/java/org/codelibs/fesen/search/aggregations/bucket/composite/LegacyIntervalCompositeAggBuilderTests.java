@@ -49,8 +49,8 @@ public class LegacyIntervalCompositeAggBuilderTests extends BaseAggregationTestC
             histo.script(new Script(randomAlphaOfLengthBetween(10, 20)));
         }
         if (randomBoolean()) {
-            histo.dateHistogramInterval(
-                    randomFrom(DateHistogramInterval.days(1), DateHistogramInterval.minutes(1), DateHistogramInterval.weeks(1)));
+            histo.dateHistogramInterval(randomFrom(DateHistogramInterval.days(1),
+                DateHistogramInterval.minutes(1), DateHistogramInterval.weeks(1)));
         } else {
             histo.interval(randomNonNegativeLong());
         }
@@ -100,17 +100,17 @@ public class LegacyIntervalCompositeAggBuilderTests extends BaseAggregationTestC
         for (int i = 0; i < numSources; i++) {
             int type = randomIntBetween(0, 2);
             switch (type) {
-            case 0:
-                sources.add(randomTermsSourceBuilder());
-                break;
-            case 1:
-                sources.add(randomDateHistogramSourceBuilder());
-                break;
-            case 2:
-                sources.add(randomHistogramSourceBuilder());
-                break;
-            default:
-                throw new AssertionError("wrong branch");
+                case 0:
+                    sources.add(randomTermsSourceBuilder());
+                    break;
+                case 1:
+                    sources.add(randomDateHistogramSourceBuilder());
+                    break;
+                case 2:
+                    sources.add(randomHistogramSourceBuilder());
+                    break;
+                default:
+                    throw new AssertionError("wrong branch");
             }
         }
         return new CompositeAggregationBuilder(randomAlphaOfLength(10), sources);

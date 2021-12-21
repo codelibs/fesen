@@ -29,6 +29,7 @@ import org.codelibs.fesen.rest.RestStatus;
  */
 public class RepositoryVerificationException extends RepositoryException {
 
+
     public RepositoryVerificationException(String repository, String msg) {
         super(repository, msg);
     }
@@ -42,7 +43,8 @@ public class RepositoryVerificationException extends RepositoryException {
         return RestStatus.INTERNAL_SERVER_ERROR;
     }
 
-    public RepositoryVerificationException(StreamInput in) throws IOException {
+    public RepositoryVerificationException(StreamInput in) throws IOException{
         super(in);
     }
 }
+

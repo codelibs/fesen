@@ -161,14 +161,14 @@ public class BytesRestResponseTests extends ESTestCase {
                 new SearchShardTarget("node_1", new ShardId("foo", "_na_", 1), null, OriginalIndices.NONE));
         ShardSearchFailure failure1 = new ShardSearchFailure(new ParsingException(1, 2, "foobar", null),
                 new SearchShardTarget("node_1", new ShardId("foo", "_na_", 2), null, OriginalIndices.NONE));
-        SearchPhaseExecutionException ex =
-                new SearchPhaseExecutionException("search", "all shards failed", new ShardSearchFailure[] { failure, failure1 });
+        SearchPhaseExecutionException ex = new SearchPhaseExecutionException("search", "all shards failed",
+            new ShardSearchFailure[] {failure, failure1});
         BytesRestResponse response = new BytesRestResponse(channel, new RemoteTransportException("foo", ex));
         String text = response.content().utf8ToString();
-        String expected = "{\"error\":{\"root_cause\":[{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}],"
-                + "\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\",\"phase\":\"search\",\"grouped\":true,"
-                + "\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\",\"reason\":{\"type\":\"parsing_exception\","
-                + "\"reason\":\"foobar\",\"line\":1,\"col\":2}}]},\"status\":400}";
+        String expected = "{\"error\":{\"root_cause\":[{\"type\":\"parsing_exception\",\"reason\":\"foobar\",\"line\":1,\"col\":2}]," +
+            "\"type\":\"search_phase_execution_exception\",\"reason\":\"all shards failed\",\"phase\":\"search\",\"grouped\":true," +
+            "\"failed_shards\":[{\"shard\":1,\"index\":\"foo\",\"node\":\"node_1\",\"reason\":{\"type\":\"parsing_exception\"," +
+            "\"reason\":\"foobar\",\"line\":1,\"col\":2}}]},\"status\":400}";
         assertEquals(expected.trim(), text.trim());
         String stackTrace = ExceptionsHelper.stackTrace(ex);
         assertTrue(stackTrace.contains("Caused by: ParsingException[foobar]"));
@@ -210,73 +210,73 @@ public class BytesRestResponseTests extends ESTestCase {
         boolean addHeadersOrMetadata = false;
 
         switch (randomIntBetween(0, 5)) {
-        case 0:
-            original = new FesenException("FesenException without cause");
-            if (detailed) {
-                addHeadersOrMetadata = randomBoolean();
-                reason = "FesenException without cause";
-            } else {
-                reason = "FesenException[FesenException without cause]";
-            }
-            break;
-        case 1:
-            original = new FesenException("FesenException with a cause", new FileNotFoundException("missing"));
-            if (detailed) {
-                addHeadersOrMetadata = randomBoolean();
-                type = "exception";
-                reason = "FesenException with a cause";
-                cause = new FesenException("Fesen exception [type=file_not_found_exception, reason=missing]");
-            } else {
-                reason = "FesenException[FesenException with a cause]";
-            }
-            break;
-        case 2:
-            original = new ResourceNotFoundException("FesenException with custom status");
-            status = RestStatus.NOT_FOUND;
-            if (detailed) {
-                addHeadersOrMetadata = randomBoolean();
-                type = "resource_not_found_exception";
-                reason = "FesenException with custom status";
-            } else {
-                reason = "ResourceNotFoundException[FesenException with custom status]";
-            }
-            break;
-        case 3:
-            TransportAddress address = buildNewFakeTransportAddress();
-            original = new RemoteTransportException("remote", address, "action",
-                    new ResourceAlreadyExistsException("FesenWrapperException with a cause that has a custom status"));
-            status = RestStatus.BAD_REQUEST;
-            if (detailed) {
-                type = "resource_already_exists_exception";
-                reason = "FesenWrapperException with a cause that has a custom status";
-            } else {
-                reason = "RemoteTransportException[[remote][" + address.toString() + "][action]]";
-            }
-            break;
-        case 4:
-            original = new RemoteTransportException("FesenWrapperException with a cause that has a special treatment",
-                    new IllegalArgumentException("wrong"));
-            status = RestStatus.BAD_REQUEST;
-            if (detailed) {
-                type = "illegal_argument_exception";
-                reason = "wrong";
-            } else {
-                reason = "RemoteTransportException[[FesenWrapperException with a cause that has a special treatment]]";
-            }
-            break;
-        case 5:
-            status = randomFrom(RestStatus.values());
-            original = new FesenStatusException("FesenStatusException with random status", status);
-            if (detailed) {
-                addHeadersOrMetadata = randomBoolean();
-                type = "status_exception";
-                reason = "FesenStatusException with random status";
-            } else {
-                reason = "FesenStatusException[FesenStatusException with random status]";
-            }
-            break;
-        default:
-            throw new UnsupportedOperationException("Failed to generate random exception");
+            case 0:
+                original = new FesenException("FesenException without cause");
+                if (detailed) {
+                    addHeadersOrMetadata = randomBoolean();
+                    reason = "FesenException without cause";
+                } else {
+                    reason = "FesenException[FesenException without cause]";
+                }
+                break;
+            case 1:
+                original = new FesenException("FesenException with a cause", new FileNotFoundException("missing"));
+                if (detailed) {
+                    addHeadersOrMetadata = randomBoolean();
+                    type = "exception";
+                    reason = "FesenException with a cause";
+                    cause = new FesenException("Fesen exception [type=file_not_found_exception, reason=missing]");
+                } else {
+                    reason = "FesenException[FesenException with a cause]";
+                }
+                break;
+            case 2:
+                original = new ResourceNotFoundException("FesenException with custom status");
+                status = RestStatus.NOT_FOUND;
+                if (detailed) {
+                    addHeadersOrMetadata = randomBoolean();
+                    type = "resource_not_found_exception";
+                    reason = "FesenException with custom status";
+                } else {
+                    reason = "ResourceNotFoundException[FesenException with custom status]";
+                }
+                break;
+            case 3:
+                TransportAddress address = buildNewFakeTransportAddress();
+                original = new RemoteTransportException("remote", address, "action",
+                        new ResourceAlreadyExistsException("FesenWrapperException with a cause that has a custom status"));
+                status = RestStatus.BAD_REQUEST;
+                if (detailed) {
+                    type = "resource_already_exists_exception";
+                    reason = "FesenWrapperException with a cause that has a custom status";
+                } else {
+                    reason = "RemoteTransportException[[remote][" + address.toString() + "][action]]";
+                }
+                break;
+            case 4:
+                original = new RemoteTransportException("FesenWrapperException with a cause that has a special treatment",
+                        new IllegalArgumentException("wrong"));
+                status = RestStatus.BAD_REQUEST;
+                if (detailed) {
+                    type = "illegal_argument_exception";
+                    reason = "wrong";
+                } else {
+                    reason = "RemoteTransportException[[FesenWrapperException with a cause that has a special treatment]]";
+                }
+                break;
+            case 5:
+                status = randomFrom(RestStatus.values());
+                original = new FesenStatusException("FesenStatusException with random status", status);
+                if (detailed) {
+                    addHeadersOrMetadata = randomBoolean();
+                    type = "status_exception";
+                    reason = "FesenStatusException with random status";
+                } else {
+                    reason = "FesenStatusException[FesenStatusException with random status]";
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Failed to generate random exception");
         }
 
         String message = "Fesen exception [type=" + type + ", reason=" + reason + "]";

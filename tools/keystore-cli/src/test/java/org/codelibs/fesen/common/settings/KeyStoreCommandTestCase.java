@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.common.settings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
@@ -30,17 +27,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
+
 import org.apache.lucene.util.LuceneTestCase;
 import org.codelibs.fesen.cli.CommandTestCase;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.core.PathUtilsForTesting;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.TestEnvironment;
 import org.junit.After;
 import org.junit.Before;
-
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 
 /**
  * Base test case for manipulating the ES keystore.
@@ -118,8 +117,12 @@ public abstract class KeyStoreCommandTestCase extends CommandTestCase {
             }
             int eof = input.read();
             if (eof != -1) {
-                fail("Found extra bytes in file stream from keystore, expected " + expectedBytes.length + " bytes but found 0x"
-                        + Integer.toHexString(eof));
+                fail(
+                    "Found extra bytes in file stream from keystore, expected "
+                        + expectedBytes.length
+                        + " bytes but found 0x"
+                        + Integer.toHexString(eof)
+                );
             }
         }
 

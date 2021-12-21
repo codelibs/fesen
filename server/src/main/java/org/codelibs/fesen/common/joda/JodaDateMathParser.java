@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.common.joda;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.function.LongSupplier;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.time.DateMathParser;
 import org.codelibs.fesen.common.time.DateUtils;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Objects;
+import java.util.function.LongSupplier;
 
 /**
  * A parser for date/time formatted text with optional date math.
@@ -79,7 +79,7 @@ public class JodaDateMathParser implements DateMathParser {
             timeZone = DateTimeZone.UTC;
         }
         MutableDateTime dateTime = new MutableDateTime(time, timeZone);
-        for (int i = 0; i < mathString.length();) {
+        for (int i = 0; i < mathString.length(); ) {
             char c = mathString.charAt(i++);
             final boolean round;
             final int sign;
@@ -122,58 +122,58 @@ public class JodaDateMathParser implements DateMathParser {
             char unit = mathString.charAt(i++);
             MutableDateTime.Property propertyToRound = null;
             switch (unit) {
-            case 'y':
-                if (round) {
-                    propertyToRound = dateTime.yearOfCentury();
-                } else {
-                    dateTime.addYears(sign * num);
-                }
-                break;
-            case 'M':
-                if (round) {
-                    propertyToRound = dateTime.monthOfYear();
-                } else {
-                    dateTime.addMonths(sign * num);
-                }
-                break;
-            case 'w':
-                if (round) {
-                    propertyToRound = dateTime.weekOfWeekyear();
-                } else {
-                    dateTime.addWeeks(sign * num);
-                }
-                break;
-            case 'd':
-                if (round) {
-                    propertyToRound = dateTime.dayOfMonth();
-                } else {
-                    dateTime.addDays(sign * num);
-                }
-                break;
-            case 'h':
-            case 'H':
-                if (round) {
-                    propertyToRound = dateTime.hourOfDay();
-                } else {
-                    dateTime.addHours(sign * num);
-                }
-                break;
-            case 'm':
-                if (round) {
-                    propertyToRound = dateTime.minuteOfHour();
-                } else {
-                    dateTime.addMinutes(sign * num);
-                }
-                break;
-            case 's':
-                if (round) {
-                    propertyToRound = dateTime.secondOfMinute();
-                } else {
-                    dateTime.addSeconds(sign * num);
-                }
-                break;
-            default:
-                throw new FesenParseException("unit [{}] not supported for date math [{}]", unit, mathString);
+                case 'y':
+                    if (round) {
+                        propertyToRound = dateTime.yearOfCentury();
+                    } else {
+                        dateTime.addYears(sign * num);
+                    }
+                    break;
+                case 'M':
+                    if (round) {
+                        propertyToRound = dateTime.monthOfYear();
+                    } else {
+                        dateTime.addMonths(sign * num);
+                    }
+                    break;
+                case 'w':
+                    if (round) {
+                        propertyToRound = dateTime.weekOfWeekyear();
+                    } else {
+                        dateTime.addWeeks(sign * num);
+                    }
+                    break;
+                case 'd':
+                    if (round) {
+                        propertyToRound = dateTime.dayOfMonth();
+                    } else {
+                        dateTime.addDays(sign * num);
+                    }
+                    break;
+                case 'h':
+                case 'H':
+                    if (round) {
+                        propertyToRound = dateTime.hourOfDay();
+                    } else {
+                        dateTime.addHours(sign * num);
+                    }
+                    break;
+                case 'm':
+                    if (round) {
+                        propertyToRound = dateTime.minuteOfHour();
+                    } else {
+                        dateTime.addMinutes(sign * num);
+                    }
+                    break;
+                case 's':
+                    if (round) {
+                        propertyToRound = dateTime.secondOfMinute();
+                    } else {
+                        dateTime.addSeconds(sign * num);
+                    }
+                    break;
+                default:
+                    throw new FesenParseException("unit [{}] not supported for date math [{}]", unit, mathString);
             }
             if (propertyToRound != null) {
                 if (roundUp) {
@@ -212,7 +212,8 @@ public class JodaDateMathParser implements DateMathParser {
             }
             return date.getMillis();
         } catch (IllegalArgumentException e) {
-            throw new FesenParseException("failed to parse date field [{}] with format [{}]", e, value, dateTimeFormatter.pattern());
+            throw new FesenParseException("failed to parse date field [{}] with format [{}]", e, value,
+                dateTimeFormatter.pattern());
         }
     }
 

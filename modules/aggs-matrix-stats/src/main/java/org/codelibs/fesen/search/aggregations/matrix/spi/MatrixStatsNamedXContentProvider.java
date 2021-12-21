@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.matrix.spi;
 
-import static java.util.Collections.singletonList;
-
-import java.util.List;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.xcontent.ContextParser;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.plugins.spi.NamedXContentProvider;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.matrix.stats.ParsedMatrixStats;
+
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 public class MatrixStatsNamedXContentProvider implements NamedXContentProvider {
 

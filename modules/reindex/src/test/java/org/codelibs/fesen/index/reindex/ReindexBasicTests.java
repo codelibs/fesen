@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +27,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.codelibs.fesen.action.index.IndexRequestBuilder;
+import org.codelibs.fesen.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.ReindexRequestBuilder;
+
+import static org.codelibs.fesen.index.query.QueryBuilders.termQuery;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertHitCount;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class ReindexBasicTests extends ReindexTestCase {
     public void testFiltering() throws Exception {
@@ -146,7 +149,11 @@ public class ReindexBasicTests extends ReindexTestCase {
         int expectedSlices = expectedSliceStatuses(slices, docs.keySet());
 
         String[] sourceIndexNames = docs.keySet().toArray(new String[docs.size()]);
-        ReindexRequestBuilder request = reindex().source(sourceIndexNames).destination("dest", "type").refresh(true).setSlices(slices);
+        ReindexRequestBuilder request = reindex()
+            .source(sourceIndexNames)
+            .destination("dest", "type")
+            .refresh(true)
+            .setSlices(slices);
 
         BulkByScrollResponse response = request.get();
         assertThat(response, matcher().created(allDocs.size()).slices(hasSize(expectedSlices)));
@@ -154,8 +161,11 @@ public class ReindexBasicTests extends ReindexTestCase {
     }
 
     public void testMissingSources() {
-        BulkByScrollResponse response =
-                updateByQuery().source("missing-index-*").refresh(true).setSlices(AbstractBulkByScrollRequest.AUTO_SLICES).get();
+        BulkByScrollResponse response = updateByQuery()
+            .source("missing-index-*")
+            .refresh(true)
+            .setSlices(AbstractBulkByScrollRequest.AUTO_SLICES)
+            .get();
         assertThat(response, matcher().created(0).slices(hasSize(0)));
     }
 

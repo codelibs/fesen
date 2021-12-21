@@ -19,20 +19,6 @@
 
 package org.codelibs.fesen.index.translog;
 
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.index.DirectoryReader;
@@ -54,6 +40,20 @@ import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.index.shard.RemoveCorruptedShardDataCommand;
 import org.codelibs.fesen.index.shard.ShardPath;
 
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class TruncateTranslogAction {
 
     protected static final Logger logger = LogManager.getLogger(TruncateTranslogAction.class);
@@ -63,8 +63,9 @@ public class TruncateTranslogAction {
         this.namedXContentRegistry = namedXContentRegistry;
     }
 
-    public Tuple<RemoveCorruptedShardDataCommand.CleanStatus, String> getCleanStatus(ShardPath shardPath, ClusterState clusterState,
-            Directory indexDirectory) throws IOException {
+    public Tuple<RemoveCorruptedShardDataCommand.CleanStatus, String> getCleanStatus(ShardPath shardPath,
+                                                                                     ClusterState clusterState,
+                                                                                     Directory indexDirectory) throws IOException {
         final Path indexPath = shardPath.resolveIndex();
         final Path translogPath = shardPath.resolveTranslog();
         final List<IndexCommit> commits;
@@ -133,9 +134,9 @@ public class TruncateTranslogAction {
             throw new FesenException("shard must have a valid translog UUID");
         }
 
-        final long globalCheckpoint =
-                commitData.containsKey(SequenceNumbers.MAX_SEQ_NO) ? Long.parseLong(commitData.get(SequenceNumbers.MAX_SEQ_NO))
-                        : SequenceNumbers.UNASSIGNED_SEQ_NO;
+        final long globalCheckpoint = commitData.containsKey(SequenceNumbers.MAX_SEQ_NO)
+            ? Long.parseLong(commitData.get(SequenceNumbers.MAX_SEQ_NO))
+            : SequenceNumbers.UNASSIGNED_SEQ_NO;
 
         terminal.println("Translog UUID      : " + translogUUID);
         terminal.println("History UUID       : " + historyUUID);
@@ -151,7 +152,7 @@ public class TruncateTranslogAction {
         writeEmptyCheckpoint(tempEmptyCheckpoint, translogLen, gen, globalCheckpoint);
 
         terminal.println("Removing existing translog files");
-        IOUtils.rm(translogFiles.toArray(new Path[] {}));
+        IOUtils.rm(translogFiles.toArray(new Path[]{}));
 
         terminal.println("Creating new empty checkpoint at [" + realEmptyCheckpoint + "]");
         Files.move(tempEmptyCheckpoint, realEmptyCheckpoint, StandardCopyOption.ATOMIC_MOVE);
@@ -169,25 +170,27 @@ public class TruncateTranslogAction {
             final long translogGlobalCheckpoint = Translog.readGlobalCheckpoint(translogPath, translogUUID);
             final IndexMetadata indexMetadata = clusterState.metadata().getIndexSafe(shardPath.getShardId().getIndex());
             final IndexSettings indexSettings = new IndexSettings(indexMetadata, Settings.EMPTY);
-            final TranslogConfig translogConfig =
-                    new TranslogConfig(shardPath.getShardId(), translogPath, indexSettings, BigArrays.NON_RECYCLING_INSTANCE);
+            final TranslogConfig translogConfig = new TranslogConfig(shardPath.getShardId(), translogPath,
+                indexSettings, BigArrays.NON_RECYCLING_INSTANCE);
             long primaryTerm = indexSettings.getIndexMetadata().primaryTerm(shardPath.getShardId().id());
             // We open translog to check for corruption, do not clean anything.
-            final TranslogDeletionPolicy retainAllTranslogPolicy =
-                    new TranslogDeletionPolicy(Long.MAX_VALUE, Long.MAX_VALUE, Integer.MAX_VALUE) {
-                        @Override
-                        long minTranslogGenRequired(List<TranslogReader> readers, TranslogWriter writer) {
-                            long minGen = writer.generation;
-                            for (TranslogReader reader : readers) {
-                                minGen = Math.min(reader.generation, minGen);
-                            }
-                            return minGen;
-                        }
-                    };
-            try (Translog translog = new Translog(translogConfig, translogUUID, retainAllTranslogPolicy, () -> translogGlobalCheckpoint,
-                    () -> primaryTerm, seqNo -> {}); Translog.Snapshot snapshot = translog.newSnapshot(0, Long.MAX_VALUE)) {
+            final TranslogDeletionPolicy retainAllTranslogPolicy = new TranslogDeletionPolicy(
+                Long.MAX_VALUE, Long.MAX_VALUE, Integer.MAX_VALUE) {
+                @Override
+                long minTranslogGenRequired(List<TranslogReader> readers, TranslogWriter writer) {
+                    long minGen = writer.generation;
+                    for (TranslogReader reader : readers) {
+                        minGen = Math.min(reader.generation, minGen);
+                    }
+                    return minGen;
+                }
+            };
+            try (Translog translog = new Translog(translogConfig, translogUUID,
+                retainAllTranslogPolicy, () -> translogGlobalCheckpoint, () -> primaryTerm, seqNo -> {});
+                 Translog.Snapshot snapshot = translog.newSnapshot(0, Long.MAX_VALUE)) {
                 //noinspection StatementWithEmptyBody we are just checking that we can iterate through the whole snapshot
-                while (snapshot.next() != null) {}
+                while (snapshot.next() != null) {
+                }
             }
             return true;
         } catch (TranslogCorruptedException e) {
@@ -198,10 +201,10 @@ public class TruncateTranslogAction {
     /** Write a checkpoint file to the given location with the given generation */
     private static void writeEmptyCheckpoint(Path filename, int translogLength, long translogGeneration, long globalCheckpoint)
             throws IOException {
-        Checkpoint emptyCheckpoint =
-                Checkpoint.emptyTranslogCheckpoint(translogLength, translogGeneration, globalCheckpoint, translogGeneration);
-        Checkpoint.write(FileChannel::open, filename, emptyCheckpoint, StandardOpenOption.WRITE, StandardOpenOption.READ,
-                StandardOpenOption.CREATE_NEW);
+        Checkpoint emptyCheckpoint = Checkpoint.emptyTranslogCheckpoint(translogLength, translogGeneration,
+            globalCheckpoint, translogGeneration);
+        Checkpoint.write(FileChannel::open, filename, emptyCheckpoint,
+            StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.CREATE_NEW);
         // fsync with metadata here to make sure.
         IOUtils.fsync(filename, false);
     }
@@ -221,9 +224,12 @@ public class TruncateTranslogAction {
     private String deletingFilesDetails(Path translogPath, Set<Path> files) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Documents inside of translog files will be lost.\n").append("  The following files will be DELETED at ")
-                .append(translogPath).append("\n\n");
-        for (Iterator<Path> it = files.iterator(); it.hasNext();) {
+        builder
+            .append("Documents inside of translog files will be lost.\n")
+            .append("  The following files will be DELETED at ")
+            .append(translogPath)
+            .append("\n\n");
+        for(Iterator<Path> it = files.iterator();it.hasNext();) {
             builder.append("  --> ").append(it.next().getFileName());
             if (it.hasNext()) {
                 builder.append("\n");

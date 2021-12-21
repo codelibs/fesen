@@ -23,8 +23,8 @@ import org.codelibs.fesen.action.support.master.AcknowledgedRequestBuilder;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.client.FesenClient;
 
-public class DeleteStoredScriptRequestBuilder
-        extends AcknowledgedRequestBuilder<DeleteStoredScriptRequest, AcknowledgedResponse, DeleteStoredScriptRequestBuilder> {
+public class DeleteStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<DeleteStoredScriptRequest,
+    AcknowledgedResponse, DeleteStoredScriptRequestBuilder> {
 
     public DeleteStoredScriptRequestBuilder(FesenClient client, DeleteStoredScriptAction action) {
         super(client, action, new DeleteStoredScriptRequest());

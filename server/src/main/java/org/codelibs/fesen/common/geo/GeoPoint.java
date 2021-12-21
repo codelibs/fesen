@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.common.geo;
 
-import static org.codelibs.fesen.index.mapper.AbstractGeometryFieldMapper.Names.IGNORE_Z_VALUE;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Locale;
-
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.document.LatLonPoint;
 import org.apache.lucene.geo.GeoEncodingUtils;
@@ -42,6 +36,12 @@ import org.codelibs.fesen.geometry.ShapeType;
 import org.codelibs.fesen.geometry.utils.GeographyValidator;
 import org.codelibs.fesen.geometry.utils.Geohash;
 import org.codelibs.fesen.geometry.utils.WellKnownText;
+
+import static org.codelibs.fesen.index.mapper.AbstractPointGeometryFieldMapper.Names.IGNORE_Z_VALUE;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class GeoPoint implements ToXContentFragment {
 
@@ -99,16 +99,18 @@ public class GeoPoint implements ToXContentFragment {
         return parseGeoHash(value, effectivePoint);
     }
 
+
     public GeoPoint resetFromCoordinates(String value, final boolean ignoreZValue) {
         String[] vals = value.split(",");
         if (vals.length > 3) {
-            throw new FesenParseException("failed to parse [{}], expected 2 or 3 coordinates " + "but found: [{}]", vals.length);
+            throw new FesenParseException("failed to parse [{}], expected 2 or 3 coordinates "
+                + "but found: [{}]", vals.length);
         }
         final double lat;
         final double lon;
         try {
             lat = Double.parseDouble(vals[0].trim());
-        } catch (NumberFormatException ex) {
+         } catch (NumberFormatException ex) {
             throw new FesenParseException("latitude must be a number");
         }
         try {
@@ -125,12 +127,14 @@ public class GeoPoint implements ToXContentFragment {
     private GeoPoint resetFromWKT(String value, boolean ignoreZValue) {
         Geometry geometry;
         try {
-            geometry = new WellKnownText(false, new GeographyValidator(ignoreZValue)).fromWKT(value);
+            geometry = new WellKnownText(false, new GeographyValidator(ignoreZValue))
+                .fromWKT(value);
         } catch (Exception e) {
             throw new FesenParseException("Invalid WKT format", e);
         }
         if (geometry.type() != ShapeType.POINT) {
-            throw new FesenParseException("[geo_point] supports only POINT among WKT primitives, " + "but found " + geometry.type());
+            throw new FesenParseException("[geo_point] supports only POINT among WKT primitives, " +
+                "but found " + geometry.type());
         }
         Point point = (Point) geometry;
         return reset(point.getY(), point.getX());
@@ -142,14 +146,14 @@ public class GeoPoint implements ToXContentFragment {
         } else {
             Rectangle rectangle = Geohash.toBoundingBox(geohash);
             switch (effectivePoint) {
-            case TOP_LEFT:
-                return reset(rectangle.getMaxY(), rectangle.getMinX());
-            case TOP_RIGHT:
-                return reset(rectangle.getMaxY(), rectangle.getMaxX());
-            case BOTTOM_RIGHT:
-                return reset(rectangle.getMinY(), rectangle.getMaxX());
-            default:
-                throw new IllegalArgumentException("Unsupported effective point " + effectivePoint);
+                case TOP_LEFT:
+                    return reset(rectangle.getMaxY(), rectangle.getMinX());
+                case TOP_RIGHT:
+                    return reset(rectangle.getMaxY(), rectangle.getMaxX());
+                case BOTTOM_RIGHT:
+                    return reset(rectangle.getMinY(), rectangle.getMaxX());
+                default:
+                    throw new IllegalArgumentException("Unsupported effective point " + effectivePoint);
             }
         }
     }
@@ -166,10 +170,14 @@ public class GeoPoint implements ToXContentFragment {
         if (field instanceof LatLonPoint) {
             BytesRef br = field.binaryValue();
             byte[] bytes = Arrays.copyOfRange(br.bytes, br.offset, br.length);
-            return this.reset(GeoEncodingUtils.decodeLatitude(bytes, 0), GeoEncodingUtils.decodeLongitude(bytes, Integer.BYTES));
+            return this.reset(
+                GeoEncodingUtils.decodeLatitude(bytes, 0),
+                GeoEncodingUtils.decodeLongitude(bytes, Integer.BYTES));
         } else if (field instanceof LatLonDocValuesField) {
-            long encoded = (long) (field.numericValue());
-            return this.reset(GeoEncodingUtils.decodeLatitude((int) (encoded >>> 32)), GeoEncodingUtils.decodeLongitude((int) encoded));
+            long encoded = (long)(field.numericValue());
+            return this.reset(
+                GeoEncodingUtils.decodeLatitude((int)(encoded >>> 32)),
+                GeoEncodingUtils.decodeLongitude((int)encoded));
         }
         return resetFromIndexHash(Long.parseLong(field.stringValue()));
     }
@@ -185,7 +193,7 @@ public class GeoPoint implements ToXContentFragment {
     }
 
     public GeoPoint resetFromGeoHash(long geohashLong) {
-        final int level = (int) (12 - (geohashLong & 15));
+        final int level = (int)(12 - (geohashLong&15));
         return this.resetFromIndexHash(BitUtil.flipFlop((geohashLong >>> 4) << ((level * 5) + 2)));
     }
 
@@ -215,17 +223,13 @@ public class GeoPoint implements ToXContentFragment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         GeoPoint geoPoint = (GeoPoint) o;
 
-        if (Double.compare(geoPoint.lat, lat) != 0)
-            return false;
-        if (Double.compare(geoPoint.lon, lon) != 0)
-            return false;
+        if (Double.compare(geoPoint.lat, lat) != 0) return false;
+        if (Double.compare(geoPoint.lon, lon) != 0) return false;
 
         return true;
     }
@@ -261,8 +265,8 @@ public class GeoPoint implements ToXContentFragment {
 
     public static double assertZValue(final boolean ignoreZValue, double zValue) {
         if (ignoreZValue == false) {
-            throw new FesenParseException("Exception parsing coordinates: found Z value [{}] but [{}] " + "parameter is [{}]", zValue,
-                    IGNORE_Z_VALUE, ignoreZValue);
+            throw new FesenParseException("Exception parsing coordinates: found Z value [{}] but [{}] "
+                + "parameter is [{}]", zValue, IGNORE_Z_VALUE, ignoreZValue);
         }
         return zValue;
     }

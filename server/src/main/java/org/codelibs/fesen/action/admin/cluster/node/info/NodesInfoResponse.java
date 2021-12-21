@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.info;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.action.FailedNodeException;
 import org.codelibs.fesen.action.support.nodes.BaseNodesResponse;
 import org.codelibs.fesen.cluster.ClusterName;
@@ -42,6 +38,10 @@ import org.codelibs.fesen.monitor.process.ProcessInfo;
 import org.codelibs.fesen.search.aggregations.support.AggregationInfo;
 import org.codelibs.fesen.threadpool.ThreadPoolInfo;
 import org.codelibs.fesen.transport.TransportInfo;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class NodesInfoResponse extends BaseNodesResponse<NodeInfo> implements ToXContentFragment {
 

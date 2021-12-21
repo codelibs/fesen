@@ -88,7 +88,7 @@ abstract class FailAndRetryMockTransport<Response extends TransportResponse> imp
 
             @Override
             public void sendRequest(long requestId, String action, TransportRequest request, TransportRequestOptions options)
-                    throws TransportException {
+                throws TransportException {
                 //we make sure that nodes get added to the connected ones when calling addTransportAddress, by returning proper nodes info
                 if (connectMode) {
                     if (TransportLivenessAction.NAME.equals(action)) {
@@ -158,6 +158,7 @@ abstract class FailAndRetryMockTransport<Response extends TransportResponse> imp
         return triedNodes;
     }
 
+
     @Override
     public BoundTransportAddress boundAddress() {
         return null;
@@ -184,16 +185,13 @@ abstract class FailAndRetryMockTransport<Response extends TransportResponse> imp
     }
 
     @Override
-    public void start() {
-    }
+    public void start() {}
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
     public Map<String, BoundTransportAddress> profileBoundAddresses() {

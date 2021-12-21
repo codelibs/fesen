@@ -56,8 +56,11 @@ import static org.mockito.Mockito.when;
 
 public class DanglingIndicesStateTests extends ESTestCase {
 
-    private static Settings indexSettings = Settings.builder().put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
-            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0).put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
+    private static Settings indexSettings = Settings.builder()
+            .put(IndexMetadata.SETTING_NUMBER_OF_SHARDS, 1)
+            .put(IndexMetadata.SETTING_NUMBER_OF_REPLICAS, 0)
+            .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+            .build();
 
     // The setting AUTO_IMPORT_DANGLING_INDICES_SETTING is deprecated, so we must disable
     // warning checks or all the tests will fail.
@@ -109,8 +112,10 @@ public class DanglingIndicesStateTests extends ESTestCase {
             IndexMetadata dangledIndex = IndexMetadata.builder("test1").settings(settings).build();
             metaStateService.writeIndex("test_write", dangledIndex);
 
-            Map<Index, IndexMetadata> newDanglingIndices =
-                    danglingState.findNewDanglingIndices(singletonMap(dangledIndex.getIndex(), dangledIndex), metadata);
+            Map<Index, IndexMetadata> newDanglingIndices = danglingState.findNewDanglingIndices(
+                singletonMap(dangledIndex.getIndex(), dangledIndex),
+                metadata
+            );
             assertThat(newDanglingIndices, is(anEmptyMap()));
         }
     }
@@ -205,19 +210,22 @@ public class DanglingIndicesStateTests extends ESTestCase {
             MetaStateService metaStateService = new MetaStateService(env, xContentRegistry());
             DanglingIndicesState danglingState = createDanglingIndicesState(env, metaStateService);
 
-            final Settings.Builder danglingSettings =
-                    Settings.builder().put(indexSettings).put(IndexMetadata.SETTING_INDEX_UUID, "test1UUID");
+            final Settings.Builder danglingSettings = Settings.builder()
+                .put(indexSettings)
+                .put(IndexMetadata.SETTING_INDEX_UUID, "test1UUID");
             IndexMetadata dangledIndex = IndexMetadata.builder("test_index").settings(danglingSettings).build();
             metaStateService.writeIndex("test_write", dangledIndex);
 
             // Build another index with the same name but a different UUID
-            final Settings.Builder existingSettings =
-                    Settings.builder().put(indexSettings).put(IndexMetadata.SETTING_INDEX_UUID, "test2UUID");
+            final Settings.Builder existingSettings = Settings.builder()
+                .put(indexSettings)
+                .put(IndexMetadata.SETTING_INDEX_UUID, "test2UUID");
             IndexMetadata existingIndex = IndexMetadata.builder("test_index").settings(existingSettings).build();
             metaStateService.writeIndex("test_write", existingIndex);
 
-            final ImmutableOpenMap<String, IndexMetadata> indices =
-                    ImmutableOpenMap.<String, IndexMetadata> builder().fPut(dangledIndex.getIndex().getName(), existingIndex).build();
+            final ImmutableOpenMap<String, IndexMetadata> indices = ImmutableOpenMap.<String, IndexMetadata>builder()
+                .fPut(dangledIndex.getIndex().getName(), existingIndex)
+                .build();
             final Metadata metadata = Metadata.builder().indices(indices).build();
 
             // All dangling indices should be found...
@@ -236,8 +244,10 @@ public class DanglingIndicesStateTests extends ESTestCase {
             DanglingIndicesState danglingState = createDanglingIndicesState(env, metaStateService);
 
             final Settings.Builder settings = Settings.builder().put(indexSettings).put(IndexMetadata.SETTING_INDEX_UUID, "test1UUID");
-            IndexMetadata dangledIndex = IndexMetadata.builder("test1").settings(settings)
-                    .putAlias(AliasMetadata.newAliasMetadataBuilder("test_aliasd").build()).build();
+            IndexMetadata dangledIndex = IndexMetadata.builder("test1")
+                .settings(settings)
+                .putAlias(AliasMetadata.newAliasMetadataBuilder("test_aliasd").build())
+                .build();
             metaStateService.writeIndex("test_write", dangledIndex);
             assertThat(dangledIndex.getAliases().size(), equalTo(1));
 
@@ -263,7 +273,12 @@ public class DanglingIndicesStateTests extends ESTestCase {
             final ClusterService clusterServiceMock = mock(ClusterService.class);
             when(clusterServiceMock.getSettings()).thenReturn(allocateSettings);
 
-            new DanglingIndicesState(env, metaStateService, localAllocateDangledIndices, clusterServiceMock);
+            new DanglingIndicesState(
+                env,
+                metaStateService,
+                localAllocateDangledIndices,
+                clusterServiceMock
+            );
 
             verify(clusterServiceMock, never()).addListener(any());
         }
@@ -281,8 +296,11 @@ public class DanglingIndicesStateTests extends ESTestCase {
             final ClusterService clusterServiceMock = mock(ClusterService.class);
             when(clusterServiceMock.getSettings()).thenReturn(allocateSettings);
 
-            DanglingIndicesState danglingIndicesState =
-                    new DanglingIndicesState(env, metaStateService, localAllocateDangledIndices, clusterServiceMock);
+            DanglingIndicesState danglingIndicesState = new DanglingIndicesState(
+                env,
+                metaStateService,
+                localAllocateDangledIndices, clusterServiceMock
+            );
 
             assertTrue("Expected dangling imports to be enabled", danglingIndicesState.isAutoImportDanglingIndicesEnabled());
 

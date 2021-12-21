@@ -19,6 +19,25 @@
 
 package org.codelibs.fesen.search.suggest.term;
 
+import org.apache.lucene.search.spell.DirectSpellChecker;
+import org.apache.lucene.search.spell.JaroWinklerDistance;
+import org.apache.lucene.search.spell.LevenshteinDistance;
+import org.apache.lucene.search.spell.LuceneLevenshteinDistance;
+import org.apache.lucene.search.spell.NGramDistance;
+import org.apache.lucene.search.spell.StringDistance;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.common.ParsingException;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.io.stream.Writeable;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.index.query.QueryShardContext;
+import org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings;
+import org.codelibs.fesen.search.suggest.SortBy;
+import org.codelibs.fesen.search.suggest.SuggestionBuilder;
+import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
+
 import static org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings.DEFAULT_ACCURACY;
 import static org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings.DEFAULT_MAX_EDITS;
 import static org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings.DEFAULT_MAX_INSPECTIONS;
@@ -40,25 +59,6 @@ import static org.codelibs.fesen.search.suggest.phrase.DirectCandidateGeneratorB
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
-
-import org.apache.lucene.search.spell.DirectSpellChecker;
-import org.apache.lucene.search.spell.JaroWinklerDistance;
-import org.apache.lucene.search.spell.LevenshteinDistance;
-import org.apache.lucene.search.spell.LuceneLevenshteinDistance;
-import org.apache.lucene.search.spell.NGramDistance;
-import org.apache.lucene.search.spell.StringDistance;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.io.stream.Writeable;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.query.QueryShardContext;
-import org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings;
-import org.codelibs.fesen.search.suggest.SortBy;
-import org.codelibs.fesen.search.suggest.SuggestionBuilder;
-import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
 
 /**
  * Defines the actual suggest command. Each command uses the global options
@@ -426,7 +426,7 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
                     tmpSuggestion.minDocFreq(parser.floatValue());
                 } else {
                     throw new ParsingException(parser.getTokenLocation(),
-                            "suggester[term] doesn't support field [" + currentFieldName + "]");
+                                                  "suggester[term] doesn't support field [" + currentFieldName + "]");
                 }
             } else {
                 throw new ParsingException(parser.getTokenLocation(), "suggester[term] parsing failed on [" + currentFieldName + "]");
@@ -435,7 +435,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
         // now we should have field name, check and copy fields over to the suggestion builder we return
         if (fieldname == null) {
-            throw new FesenParseException("the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
+            throw new FesenParseException(
+                "the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new TermSuggestionBuilder(fieldname, tmpSuggestion);
     }
@@ -467,17 +468,22 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     @Override
     protected boolean doEquals(TermSuggestionBuilder other) {
-        return Objects.equals(suggestMode, other.suggestMode) && Objects.equals(accuracy, other.accuracy)
-                && Objects.equals(sort, other.sort) && Objects.equals(stringDistance, other.stringDistance)
-                && Objects.equals(maxEdits, other.maxEdits) && Objects.equals(maxInspections, other.maxInspections)
-                && Objects.equals(maxTermFreq, other.maxTermFreq) && Objects.equals(prefixLength, other.prefixLength)
-                && Objects.equals(minWordLength, other.minWordLength) && Objects.equals(minDocFreq, other.minDocFreq);
+        return Objects.equals(suggestMode, other.suggestMode) &&
+               Objects.equals(accuracy, other.accuracy) &&
+               Objects.equals(sort, other.sort) &&
+               Objects.equals(stringDistance, other.stringDistance) &&
+               Objects.equals(maxEdits, other.maxEdits) &&
+               Objects.equals(maxInspections, other.maxInspections) &&
+               Objects.equals(maxTermFreq, other.maxTermFreq) &&
+               Objects.equals(prefixLength, other.prefixLength) &&
+               Objects.equals(minWordLength, other.minWordLength) &&
+               Objects.equals(minDocFreq, other.minDocFreq);
     }
 
     @Override
     protected int doHashCode() {
-        return Objects.hash(suggestMode, accuracy, sort, stringDistance, maxEdits, maxInspections, maxTermFreq, prefixLength, minWordLength,
-                minDocFreq);
+        return Objects.hash(suggestMode, accuracy, sort, stringDistance, maxEdits, maxInspections,
+                            maxTermFreq, prefixLength, minWordLength, minDocFreq);
     }
 
     /** An enum representing the valid suggest modes. */
@@ -500,7 +506,7 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
         ALWAYS {
             @Override
             public org.apache.lucene.search.spell.SuggestMode toLucene() {
-                return org.apache.lucene.search.spell.SuggestMode.SUGGEST_ALWAYS;
+              return org.apache.lucene.search.spell.SuggestMode.SUGGEST_ALWAYS;
             }
         };
 
@@ -573,18 +579,17 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
             Objects.requireNonNull(str, "Input string is null");
             final String distanceVal = str.toLowerCase(Locale.ROOT);
             switch (distanceVal) {
-            case "internal":
-                return INTERNAL;
-            case "damerau_levenshtein":
-                return DAMERAU_LEVENSHTEIN;
-            case "levenshtein":
-                return LEVENSHTEIN;
-            case "ngram":
-                return NGRAM;
-            case "jaro_winkler":
-                return JARO_WINKLER;
-            default:
-                throw new IllegalArgumentException("Illegal distance option " + str);
+                case "internal":
+                    return INTERNAL;
+                case "damerau_levenshtein":
+                    return DAMERAU_LEVENSHTEIN;
+                case "levenshtein":
+                    return LEVENSHTEIN;
+                case "ngram":
+                    return NGRAM;
+                case "jaro_winkler":
+                    return JARO_WINKLER;
+                default: throw new IllegalArgumentException("Illegal distance option " + str);
             }
         }
 

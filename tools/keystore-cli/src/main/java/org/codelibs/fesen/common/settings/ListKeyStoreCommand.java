@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.env.Environment;
-
 import joptsimple.OptionSet;
+
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.env.Environment;
 
 /**
  * A subcommand for the keystore cli to list all settings in the keystore.

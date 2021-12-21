@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.util.Objects;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -36,6 +32,10 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.SortOrder;
+
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Objects;
 
 /**
  * A {@link ValuesSource} builder for {@link CompositeAggregationBuilder}
@@ -63,13 +63,21 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
         if (in.readBoolean()) {
             this.userValueTypeHint = ValueType.readFromStream(in);
         }
-        this.missingBucket = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            this.missingBucket = in.readBoolean();
+        } else {
+            this.missingBucket = false;
+        }
         if (in.getVersion().before(Version.V_7_0_0)) {
             // skip missing value for BWC
             in.readGenericValue();
         }
         this.order = SortOrder.readFromStream(in);
-        this.format = in.readOptionalString();
+        if (in.getVersion().onOrAfter(Version.V_6_3_0)) {
+            this.format = in.readOptionalString();
+        } else {
+            this.format = null;
+        }
     }
 
     @Override
@@ -86,13 +94,17 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
         if (hasValueType) {
             userValueTypeHint.writeTo(out);
         }
-        out.writeBoolean(missingBucket);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            out.writeBoolean(missingBucket);
+        }
         if (out.getVersion().before(Version.V_7_0_0)) {
             // write missing value for BWC
             out.writeGenericValue(null);
         }
         order.writeTo(out);
-        out.writeOptionalString(format);
+        if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+            out.writeOptionalString(format);
+        }
         innerWriteTo(out);
     }
 
@@ -129,16 +141,17 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         @SuppressWarnings("unchecked")
         AB that = (AB) o;
-        return Objects.equals(field, that.field()) && Objects.equals(script, that.script())
-                && Objects.equals(userValueTypeHint, that.userValuetypeHint()) && Objects.equals(missingBucket, that.missingBucket())
-                && Objects.equals(order, that.order()) && Objects.equals(format, that.format());
+        return Objects.equals(field, that.field()) &&
+            Objects.equals(script, that.script()) &&
+            Objects.equals(userValueTypeHint, that.userValuetypeHint()) &&
+            Objects.equals(missingBucket, that.missingBucket()) &&
+            Objects.equals(order, that.order()) &&
+            Objects.equals(format, that.format());
     }
 
     public String name() {
@@ -233,6 +246,7 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
         return (AB) this;
     }
 
+
     /**
      * Sets the {@link SortOrder} to use to sort values produced this source
      */
@@ -275,14 +289,14 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
      *  @param queryShardContext   The shard context for this source.
      * @param config    The {@link ValuesSourceConfig} for this source.
      */
-    protected abstract CompositeValuesSourceConfig innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config)
-            throws IOException;
+    protected abstract CompositeValuesSourceConfig innerBuild(QueryShardContext queryShardContext,
+                                                                ValuesSourceConfig config) throws IOException;
 
     protected abstract ValuesSourceType getDefaultValuesSourceType();
 
     public final CompositeValuesSourceConfig build(QueryShardContext queryShardContext) throws IOException {
-        ValuesSourceConfig config = ValuesSourceConfig.resolve(queryShardContext, userValueTypeHint, field, script, null, timeZone(),
-                format, getDefaultValuesSourceType());
+        ValuesSourceConfig config = ValuesSourceConfig.resolve(queryShardContext,
+            userValueTypeHint, field, script, null, timeZone(), format, getDefaultValuesSourceType());
         return innerBuild(queryShardContext, config);
     }
 

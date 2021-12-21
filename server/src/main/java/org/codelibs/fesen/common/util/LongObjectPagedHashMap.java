@@ -19,10 +19,12 @@
 
 package org.codelibs.fesen.common.util;
 
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.codelibs.fesen.common.lease.Releasables;
+
 
 /**
  * A hash table from native longs to objects. This implementation resolves collisions
@@ -48,7 +50,7 @@ public class LongObjectPagedHashMap<T> extends AbstractPagedHashMap implements I
      * was not present in the hash table.
      */
     public T get(long key) {
-        for (long i = slot(hash(key), mask);; i = nextSlot(i, mask)) {
+        for (long i = slot(hash(key), mask); ; i = nextSlot(i, mask)) {
             final T value = values.get(i);
             if (value == null) {
                 return null;
@@ -77,7 +79,7 @@ public class LongObjectPagedHashMap<T> extends AbstractPagedHashMap implements I
      * associated value or null if there was no entry associated with this key.
      */
     public T remove(long key) {
-        for (long i = slot(hash(key), mask);; i = nextSlot(i, mask)) {
+        for (long i = slot(hash(key), mask); ; i = nextSlot(i, mask)) {
             final T previous = values.set(i, null);
             if (previous == null) {
                 return null;
@@ -98,7 +100,7 @@ public class LongObjectPagedHashMap<T> extends AbstractPagedHashMap implements I
         if (value == null) {
             throw new IllegalArgumentException("Null values are not supported");
         }
-        for (long i = slot(hash(key), mask);; i = nextSlot(i, mask)) {
+        for (long i = slot(hash(key), mask); ; i = nextSlot(i, mask)) {
             final T previous = values.set(i, value);
             if (previous == null) {
                 // slot was free

@@ -18,20 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import static java.lang.Math.log10;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.round;
-
-import java.io.CharArrayReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -52,6 +38,20 @@ import org.apache.lucene.util.CharsRef;
 import org.apache.lucene.util.CharsRefBuilder;
 import org.codelibs.fesen.core.internal.io.IOUtils;
 
+import java.io.CharArrayReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.lang.Math.log10;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
+
 public final class DirectCandidateGenerator extends CandidateGenerator {
 
     private final DirectSpellChecker spellchecker;
@@ -71,7 +71,8 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
 
     public DirectCandidateGenerator(DirectSpellChecker spellchecker, String field, SuggestMode suggestMode, IndexReader reader,
             double nonErrorLikelihood, int numCandidates) throws IOException {
-        this(spellchecker, field, suggestMode, reader, nonErrorLikelihood, numCandidates, null, null, MultiTerms.getTerms(reader, field));
+        this(spellchecker, field, suggestMode, reader, nonErrorLikelihood,
+                numCandidates, null, null, MultiTerms.getTerms(reader, field));
     }
 
     public DirectCandidateGenerator(DirectSpellChecker spellchecker, String field, SuggestMode suggestMode, IndexReader reader,
@@ -84,12 +85,12 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
         this.numCandidates = numCandidates;
         this.suggestMode = suggestMode;
         this.reader = reader;
-        this.sumTotalTermFreq = terms.getSumTotalTermFreq() == -1 ? reader.maxDoc() : terms.getSumTotalTermFreq();
+        this.sumTotalTermFreq =  terms.getSumTotalTermFreq() == -1 ? reader.maxDoc() : terms.getSumTotalTermFreq();
         this.preFilter = preFilter;
         this.postFilter = postFilter;
         this.nonErrorLikelihood = nonErrorLikelihood;
         float thresholdFrequency = spellchecker.getThresholdFrequency();
-        this.frequencyPlateau = thresholdFrequency >= 1.0f ? (int) thresholdFrequency : (int) (reader.maxDoc() * thresholdFrequency);
+        this.frequencyPlateau = thresholdFrequency >= 1.0f ? (int) thresholdFrequency: (int) (reader.maxDoc() * thresholdFrequency);
         termsEnum = terms.iterator();
     }
 
@@ -110,14 +111,15 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
         return internalTermStats(term);
     }
 
+
     public TermStats internalTermStats(BytesRef term) throws IOException {
         if (termsEnum.seekExact(term)) {
             return new TermStats(termsEnum.docFreq(),
-                    /**
-                     * We use the {@link TermsEnum#docFreq()} for fields that don't
-                     * record the {@link TermsEnum#totalTermFreq()}.
-                     */
-                    termsEnum.totalTermFreq() == -1 ? termsEnum.docFreq() : termsEnum.totalTermFreq());
+                /**
+                 * We use the {@link TermsEnum#docFreq()} for fields that don't
+                 * record the {@link TermsEnum#totalTermFreq()}.
+                 */
+                termsEnum.totalTermFreq() == -1 ? termsEnum.docFreq() : termsEnum.totalTermFreq());
         }
         return new TermStats(0, 0);
     }
@@ -156,8 +158,8 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
                 SuggestWord suggestWord = suggestSimilar[i];
                 BytesRef candidate = new BytesRef(suggestWord.string);
                 TermStats termStats = internalTermStats(candidate);
-                postFilter(new Candidate(candidate, termStats, suggestWord.score, score(termStats, suggestWord.score, sumTotalTermFreq),
-                        false), spare, byteSpare, candidates);
+                postFilter(new Candidate(candidate, termStats,
+                    suggestWord.score, score(termStats, suggestWord.score, sumTotalTermFreq), false), spare, byteSpare, candidates);
             }
             set.addCandidates(candidates);
             return set;
@@ -193,7 +195,7 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
                 public void nextToken() throws IOException {
                     this.fillBytesRef(result);
 
-                    if (posIncAttr.getPositionIncrement() > 0 && result.get().bytesEquals(candidate.term)) {
+                    if (posIncAttr.getPositionIncrement() > 0 && result.get().bytesEquals(candidate.term))  {
                         BytesRef term = result.toBytesRef();
                         // We should not use frequency(term) here because it will analyze the term again
                         // If preFilter and postFilter are the same analyzer it would fail.
@@ -210,13 +212,15 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
     }
 
     private double score(TermStats termStats, double errorScore, long dictionarySize) {
-        return errorScore * (((double) termStats.totalTermFreq + 1) / ((double) dictionarySize + 1));
+        return errorScore * (((double)termStats.totalTermFreq + 1) / ((double)dictionarySize +1));
     }
 
     // package protected for test
     int thresholdTermFrequency(int docFreq) {
         if (docFreq > 0) {
-            return (int) min(max(0, round(docFreq * (log10(docFreq - frequencyPlateau) * (1.0 / log10(LOG_BASE))) + 1)), Integer.MAX_VALUE);
+            return (int) min(
+                max(0, round(docFreq * (log10(docFreq - frequencyPlateau) * (1.0 / log10(LOG_BASE))) + 1)), Integer.MAX_VALUE
+            );
         }
         return 0;
     }
@@ -239,8 +243,7 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
 
         public abstract void nextToken() throws IOException;
 
-        public void end() {
-        }
+        public void end() {}
     }
 
     public static class CandidateSet {
@@ -266,7 +269,7 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
         public void addOneCandidate(Candidate candidate) {
             Candidate[] candidates = new Candidate[this.candidates.length + 1];
             System.arraycopy(this.candidates, 0, candidates, 0, this.candidates.length);
-            candidates[candidates.length - 1] = candidate;
+            candidates[candidates.length-1] = candidate;
             this.candidates = candidates;
         }
 
@@ -290,8 +293,11 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
 
         @Override
         public String toString() {
-            return "Candidate [term=" + term.utf8ToString() + ", stringDistance=" + stringDistance + ", score=" + score + ", termStats="
-                    + termStats + (userInput ? ", userInput" : "") + "]";
+            return "Candidate [term=" + term.utf8ToString()
+                    + ", stringDistance=" + stringDistance
+                    + ", score=" + score
+                    + ", termStats=" + termStats
+                    + (userInput ? ", userInput" : "") + "]";
         }
 
         @Override
@@ -304,19 +310,14 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
             Candidate other = (Candidate) obj;
             if (term == null) {
-                if (other.term != null)
-                    return false;
+                if (other.term != null) return false;
             } else {
-                if (!term.equals(other.term))
-                    return false;
+                if (!term.equals(other.term)) return false;
             }
             return true;
         }
@@ -342,8 +343,9 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
             throws IOException {
         spare.copyUTF8Bytes(toAnalyze);
         CharsRef charsRef = spare.get();
-        try (TokenStream ts = analyzer.tokenStream(field, new CharArrayReader(charsRef.chars, charsRef.offset, charsRef.length))) {
-            return analyze(ts, consumer);
+        try (TokenStream ts = analyzer.tokenStream(
+                                  field, new CharArrayReader(charsRef.chars, charsRef.offset, charsRef.length))) {
+             return analyze(ts, consumer);
         }
     }
 

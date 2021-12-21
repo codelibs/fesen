@@ -19,21 +19,24 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.io.IOException;
-
+import org.codelibs.fesen.analysis.common.CommonAnalysisPlugin;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.analysis.AnalysisTestsHelper;
 import org.codelibs.fesen.test.ESTokenStreamTestCase;
 
+import java.io.IOException;
+
 public class ElisionFilterFactoryTests extends ESTokenStreamTestCase {
 
     public void testElisionFilterWithNoArticles() throws IOException {
-        Settings settings = Settings.builder().put("index.analysis.filter.elision.type", "elision")
-                .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
+        Settings settings = Settings.builder()
+            .put("index.analysis.filter.elision.type", "elision")
+            .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
+            .build();
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin()));
+            () -> AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin()));
 
         assertEquals("elision filter requires [articles] or [articles_path] setting", e.getMessage());
     }

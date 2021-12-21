@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.HdrHistogram.DoubleHistogram;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.io.IOException;
+import java.util.Map;
 
 class HDRPercentilesAggregator extends AbstractHDRPercentilesAggregator {
 

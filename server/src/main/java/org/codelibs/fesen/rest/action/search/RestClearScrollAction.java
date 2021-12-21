@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.search;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -33,11 +29,17 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
+
 public class RestClearScrollAction extends BaseRestHandler {
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(DELETE, "/_search/scroll"), new Route(DELETE, "/_search/scroll/{scroll_id}")));
+        return unmodifiableList(asList(
+            new Route(DELETE, "/_search/scroll"),
+            new Route(DELETE, "/_search/scroll/{scroll_id}")));
     }
 
     @Override

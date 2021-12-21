@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Terms;
@@ -31,6 +26,11 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.script.TemplateScript;
 import org.codelibs.fesen.search.suggest.DirectSpellcheckerSettings;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class PhraseSuggestionContext extends SuggestionContext {
     static final boolean DEFAULT_COLLATE_PRUNE = false;
@@ -91,7 +91,7 @@ class PhraseSuggestionContext extends SuggestionContext {
     }
 
     public List<DirectCandidateGenerator> generators() {
-        return this.generators;
+        return this.generators ;
     }
 
     public void setGramSize(int gramSize) {
@@ -161,7 +161,7 @@ class PhraseSuggestionContext extends SuggestionContext {
     }
 
     public void setRequireUnigram(boolean requireUnigram) {
-        this.requireUnigram = requireUnigram;
+        this.requireUnigram  = requireUnigram;
     }
 
     public boolean getRequireUnigram() {

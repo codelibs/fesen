@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.lucene.index;
 
-import java.io.IOException;
-
 import org.apache.lucene.codecs.StoredFieldsReader;
 import org.apache.lucene.index.CodecReader;
 import org.apache.lucene.index.FilterLeafReader;
 import org.apache.lucene.index.LeafReader;
+
+import java.io.IOException;
 
 /**
  * A {@link FilterLeafReader} that exposes a {@link StoredFieldsReader}

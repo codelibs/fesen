@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.bootstrap;
 
-import java.nio.file.Path;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.Constants;
-import org.codelibs.fesen.bootstrap.JNAKernel32Library.SizeT;
 import org.codelibs.fesen.monitor.jvm.JvmInfo;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.WString;
+import static org.codelibs.fesen.bootstrap.JNAKernel32Library.SizeT;
+
+import java.nio.file.Path;
 
 /**
  * This class performs the actual work with JNA and library bindings to call native methods. It should only be used after
@@ -38,8 +39,7 @@ import com.sun.jna.WString;
 class JNANatives {
 
     /** no instantiation */
-    private JNANatives() {
-    }
+    private JNANatives() {}
 
     private static final Logger logger = LogManager.getLogger(JNANatives.class);
 
@@ -91,19 +91,21 @@ class JNANatives {
         }
 
         // mlockall failed for some reason
-        logger.warn("Unable to lock JVM Memory: error={}, reason={}", errno, errMsg);
+        logger.warn("Unable to lock JVM Memory: error={}, reason={}", errno , errMsg);
         logger.warn("This can result in part of the JVM being swapped out.");
         if (errno == JNACLibrary.ENOMEM) {
             if (rlimitSuccess) {
                 logger.warn("Increase RLIMIT_MEMLOCK, soft limit: {}, hard limit: {}", rlimitToString(softLimit),
-                        rlimitToString(hardLimit));
+                    rlimitToString(hardLimit));
                 if (Constants.LINUX) {
                     // give specific instructions for the linux case to make it easy
                     String user = System.getProperty("user.name");
-                    logger.warn(
-                            "These can be adjusted by modifying /etc/security/limits.conf, for example: \n"
-                                    + "\t# allow user '{}' mlockall\n" + "\t{} soft memlock unlimited\n" + "\t{} hard memlock unlimited",
-                            user, user, user);
+                    logger.warn("These can be adjusted by modifying /etc/security/limits.conf, for example: \n" +
+                                "\t# allow user '{}' mlockall\n" +
+                                "\t{} soft memlock unlimited\n" +
+                                "\t{} hard memlock unlimited",
+                                user, user, user
+                                );
                     logger.warn("If you are logged in interactively, you will have to re-login for the new limits to take effect.");
                 }
             } else {

@@ -24,18 +24,15 @@ import org.apache.lucene.util.AttributeReflector;
 
 /** Default implementation of {@link DisableGraphAttribute}. */
 public class DisableGraphAttributeImpl extends AttributeImpl implements DisableGraphAttribute {
-    public DisableGraphAttributeImpl() {
-    }
+    public DisableGraphAttributeImpl() {}
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public void reflectWith(AttributeReflector reflector) {
     }
 
     @Override
-    public void copyTo(AttributeImpl target) {
-    }
+    public void copyTo(AttributeImpl target) {}
 }

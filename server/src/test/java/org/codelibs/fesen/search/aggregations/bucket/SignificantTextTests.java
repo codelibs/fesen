@@ -38,9 +38,9 @@ public class SignificantTextTests extends BaseAggregationTestCase<SignificantTex
             factory.bucketCountThresholds().setRequiredSize(randomIntBetween(1, Integer.MAX_VALUE));
         }
         if (randomBoolean()) {
-            factory.sourceFieldNames(Arrays.asList(new String[] { "foo", "bar" }));
+            factory.sourceFieldNames(Arrays.asList(new String []{"foo", "bar"}));
         }
-
+        
         if (randomBoolean()) {
             factory.bucketCountThresholds().setShardSize(randomIntBetween(1, Integer.MAX_VALUE));
         }

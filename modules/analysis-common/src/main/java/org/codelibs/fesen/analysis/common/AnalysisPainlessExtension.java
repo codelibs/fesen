@@ -19,19 +19,19 @@
 
 package org.codelibs.fesen.analysis.common;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.painless.spi.PainlessExtension;
 import org.codelibs.fesen.painless.spi.Whitelist;
 import org.codelibs.fesen.painless.spi.WhitelistLoader;
 import org.codelibs.fesen.script.ScriptContext;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class AnalysisPainlessExtension implements PainlessExtension {
 
     private static final Whitelist WHITELIST =
-            WhitelistLoader.loadFromResourceFiles(AnalysisPainlessExtension.class, "painless_whitelist.txt");
+        WhitelistLoader.loadFromResourceFiles(AnalysisPainlessExtension.class, "painless_whitelist.txt");
 
     @Override
     public Map<ScriptContext<?>, List<Whitelist>> getContextWhitelists() {

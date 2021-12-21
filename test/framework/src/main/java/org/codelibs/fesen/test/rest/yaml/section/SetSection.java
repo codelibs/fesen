@@ -18,14 +18,14 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a set section:

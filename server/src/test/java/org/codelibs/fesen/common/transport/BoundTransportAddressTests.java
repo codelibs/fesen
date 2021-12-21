@@ -46,7 +46,7 @@ public class BoundTransportAddressTests extends ESTestCase {
             transportAddressList.add(new TransportAddress(address, randomIntBetween(9200, 9299)));
         }
         final BoundTransportAddress transportAddress =
-                new BoundTransportAddress(transportAddressList.toArray(new TransportAddress[0]), transportAddressList.get(0));
+            new BoundTransportAddress(transportAddressList.toArray(new TransportAddress[0]), transportAddressList.get(0));
         assertThat(transportAddress.boundAddresses().length, equalTo(transportAddressList.size()));
 
         // serialize

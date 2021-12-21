@@ -32,13 +32,14 @@ import org.codelibs.fesen.test.ESTestCase;
 public class MappingVisitorTests extends ESTestCase {
 
     private static void collectTypes(Map<String, ?> mapping, Set<String> types) {
-        MappingVisitor.visitMapping(mapping, m -> {
-            if (m.containsKey("type")) {
-                types.add(m.get("type").toString());
-            } else {
-                types.add("object");
-            }
-        });
+        MappingVisitor.visitMapping(mapping,
+                m -> {
+                    if (m.containsKey("type")) {
+                        types.add(m.get("type").toString());
+                    } else {
+                        types.add("object");
+                    }
+                });
     }
 
     public void testCountTopLevelFields() {

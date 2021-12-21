@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.create;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.support.master.ShardsAcknowledgedResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A response for a create index action.
  */
@@ -40,8 +40,8 @@ public class CreateIndexResponse extends ShardsAcknowledgedResponse {
 
     private static final ParseField INDEX = new ParseField("index");
 
-    private static final ConstructingObjectParser<CreateIndexResponse, Void> PARSER = new ConstructingObjectParser<>("create_index", true,
-            args -> new CreateIndexResponse((boolean) args[0], (boolean) args[1], (String) args[2]));
+    private static final ConstructingObjectParser<CreateIndexResponse, Void> PARSER = new ConstructingObjectParser<>("create_index",
+        true, args -> new CreateIndexResponse((boolean) args[0], (boolean) args[1], (String) args[2]));
 
     static {
         declareFields(PARSER);

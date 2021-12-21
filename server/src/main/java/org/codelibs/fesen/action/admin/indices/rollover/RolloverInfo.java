@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.rollover;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.cluster.AbstractDiffable;
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.common.ParseField;
@@ -35,6 +31,10 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Class for holding Rollover related information within an index
  */
@@ -45,10 +45,10 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<RolloverInfo, String> PARSER = new ConstructingObjectParser<>("rollover_info", false,
-            (a, alias) -> new RolloverInfo(alias, (List<Condition<?>>) a[0], (Long) a[1]));
+        (a, alias) -> new RolloverInfo(alias, (List<Condition<?>>) a[0], (Long) a[1]));
     static {
-        PARSER.declareNamedObjects(ConstructingObjectParser.constructorArg(), (p, c, n) -> p.namedObject(Condition.class, n, c),
-                CONDITION_FIELD);
+        PARSER.declareNamedObjects(ConstructingObjectParser.constructorArg(),
+            (p, c, n) -> p.namedObject(Condition.class, n, c), CONDITION_FIELD);
         PARSER.declareLong(ConstructingObjectParser.constructorArg(), TIME_FIELD);
     }
 
@@ -122,7 +122,9 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
             return false;
         }
         RolloverInfo other = (RolloverInfo) obj;
-        return Objects.equals(alias, other.alias) && Objects.equals(metConditions, other.metConditions) && Objects.equals(time, other.time);
+        return Objects.equals(alias, other.alias) &&
+            Objects.equals(metConditions, other.metConditions) &&
+            Objects.equals(time, other.time);
     }
 
     @Override

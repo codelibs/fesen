@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.action.termvectors;
 
+import com.carrotsearch.hppc.IntArrayList;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,6 @@ import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.support.single.shard.SingleShardRequest;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
-
-import com.carrotsearch.hppc.IntArrayList;
 
 public class MultiTermVectorsShardRequest extends SingleShardRequest<MultiTermVectorsShardRequest> {
 
@@ -80,6 +80,7 @@ public class MultiTermVectorsShardRequest extends SingleShardRequest<MultiTermVe
     public String preference() {
         return this.preference;
     }
+
 
     public void add(int location, TermVectorsRequest request) {
         this.locations.add(location);

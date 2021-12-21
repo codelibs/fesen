@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.flush;
 
-import static java.util.Collections.unmodifiableMap;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.cluster.routing.ShardRouting;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -38,6 +29,15 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.indices.flush.ShardsSyncedFlushResult;
 import org.codelibs.fesen.indices.flush.SyncedFlushService;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * The result of performing a sync flush operation on all shards of multiple indices
@@ -60,11 +60,11 @@ public class SyncedFlushResponse extends ActionResponse implements ToXContentFra
         shardCounts = new ShardCounts(in);
         Map<String, List<ShardsSyncedFlushResult>> tmpShardsResultPerIndex = new HashMap<>();
         int numShardsResults = in.readInt();
-        for (int i = 0; i < numShardsResults; i++) {
+        for (int i =0 ; i< numShardsResults; i++) {
             String index = in.readString();
             List<ShardsSyncedFlushResult> shardsSyncedFlushResults = new ArrayList<>();
             int numShards = in.readInt();
-            for (int j = 0; j < numShards; j++) {
+            for (int j =0; j< numShards; j++) {
                 shardsSyncedFlushResults.add(new ShardsSyncedFlushResult(in));
             }
             tmpShardsResultPerIndex.put(index, shardsSyncedFlushResults);

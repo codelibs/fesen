@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.template.delete;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.ActionListener;
@@ -38,8 +36,10 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+
 public class TransportDeleteComposableIndexTemplateAction
-        extends TransportMasterNodeAction<DeleteComposableIndexTemplateAction.Request, AcknowledgedResponse> {
+    extends TransportMasterNodeAction<DeleteComposableIndexTemplateAction.Request, AcknowledgedResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportDeleteComposableIndexTemplateAction.class);
 
@@ -47,10 +47,11 @@ public class TransportDeleteComposableIndexTemplateAction
 
     @Inject
     public TransportDeleteComposableIndexTemplateAction(TransportService transportService, ClusterService clusterService,
-            ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                                        ThreadPool threadPool, MetadataIndexTemplateService indexTemplateService,
+                                                        ActionFilters actionFilters,
+                                                        IndexNameExpressionResolver indexNameExpressionResolver) {
         super(DeleteComposableIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                DeleteComposableIndexTemplateAction.Request::new, indexNameExpressionResolver);
+            DeleteComposableIndexTemplateAction.Request::new, indexNameExpressionResolver);
         this.indexTemplateService = indexTemplateService;
     }
 
@@ -72,7 +73,7 @@ public class TransportDeleteComposableIndexTemplateAction
 
     @Override
     protected void masterOperation(final DeleteComposableIndexTemplateAction.Request request, final ClusterState state,
-            final ActionListener<AcknowledgedResponse> listener) {
+                                   final ActionListener<AcknowledgedResponse> listener) {
         indexTemplateService.removeIndexTemplateV2(request.name(), request.masterNodeTimeout(), listener);
     }
 }

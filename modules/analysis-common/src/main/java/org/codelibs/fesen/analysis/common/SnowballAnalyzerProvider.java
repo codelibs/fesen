@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.analysis.common;
 
-import static java.util.Collections.unmodifiableMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.de.GermanAnalyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
@@ -33,6 +28,11 @@ import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractIndexAnalyzerProvider;
 import org.codelibs.fesen.index.analysis.Analysis;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Creates a SnowballAnalyzer initialized with stopwords and Snowball filter. Only

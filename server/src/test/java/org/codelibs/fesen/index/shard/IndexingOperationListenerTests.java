@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.Matchers.is;
 
-public class IndexingOperationListenerTests extends ESTestCase {
+public class IndexingOperationListenerTests extends ESTestCase{
 
     // this test also tests if calls are correct if one or more listeners throw exceptions
     public void testListenersAreExecuted() {
@@ -60,14 +60,14 @@ public class IndexingOperationListenerTests extends ESTestCase {
             public void postIndex(ShardId shardId, Engine.Index index, Engine.IndexResult result) {
                 assertThat(shardId, is(randomShardId));
                 switch (result.getResultType()) {
-                case SUCCESS:
-                    postIndex.incrementAndGet();
-                    break;
-                case FAILURE:
-                    postIndex(shardId, index, result.getFailure());
-                    break;
-                default:
-                    throw new IllegalArgumentException("unknown result type: " + result.getResultType());
+                    case SUCCESS:
+                        postIndex.incrementAndGet();
+                        break;
+                    case FAILURE:
+                        postIndex(shardId, index, result.getFailure());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unknown result type: " + result.getResultType());
                 }
             }
 
@@ -88,14 +88,14 @@ public class IndexingOperationListenerTests extends ESTestCase {
             public void postDelete(ShardId shardId, Engine.Delete delete, Engine.DeleteResult result) {
                 assertThat(shardId, is(randomShardId));
                 switch (result.getResultType()) {
-                case SUCCESS:
-                    postDelete.incrementAndGet();
-                    break;
-                case FAILURE:
-                    postDelete(shardId, delete, result.getFailure());
-                    break;
-                default:
-                    throw new IllegalArgumentException("unknown result type: " + result.getResultType());
+                    case SUCCESS:
+                        postDelete.incrementAndGet();
+                        break;
+                    case FAILURE:
+                        postDelete(shardId, delete, result.getFailure());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unknown result type: " + result.getResultType());
                 }
             }
 
@@ -146,7 +146,7 @@ public class IndexingOperationListenerTests extends ESTestCase {
         }
         Collections.shuffle(indexingOperationListeners, random());
         IndexingOperationListener.CompositeListener compositeListener =
-                new IndexingOperationListener.CompositeListener(indexingOperationListeners, logger);
+            new IndexingOperationListener.CompositeListener(indexingOperationListeners, logger);
         ParsedDocument doc = InternalEngineTests.createParsedDoc("1", null);
         Engine.Delete delete = new Engine.Delete("test", "1", new Term("_id", Uid.encodeId(doc.id())), randomNonNegativeLong());
         Engine.Index index = new Engine.Index(new Term("_id", Uid.encodeId(doc.id())), randomNonNegativeLong(), doc);

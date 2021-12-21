@@ -19,15 +19,15 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import java.util.Iterator;
-import java.util.function.Consumer;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.action.bulk.BackoffPolicy;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
+
+import java.util.Iterator;
+import java.util.function.Consumer;
 
 class RetryListener implements RejectAwareActionListener<ScrollableHitSource.Response> {
     private final Logger logger;
@@ -38,8 +38,8 @@ class RetryListener implements RejectAwareActionListener<ScrollableHitSource.Res
     private int retryCount = 0;
 
     RetryListener(Logger logger, ThreadPool threadPool, BackoffPolicy backoffPolicy,
-            Consumer<RejectAwareActionListener<ScrollableHitSource.Response>> retryScrollHandler,
-            ActionListener<ScrollableHitSource.Response> delegate) {
+                          Consumer<RejectAwareActionListener<ScrollableHitSource.Response>> retryScrollHandler,
+                          ActionListener<ScrollableHitSource.Response> delegate) {
         this.logger = logger;
         this.threadPool = threadPool;
         this.retries = backoffPolicy.iterator();
@@ -65,7 +65,8 @@ class RetryListener implements RejectAwareActionListener<ScrollableHitSource.Res
             logger.trace(() -> new ParameterizedMessage("retrying rejected search after [{}]", delay), e);
             schedule(() -> retryScrollHandler.accept(this), delay);
         } else {
-            logger.warn(() -> new ParameterizedMessage("giving up on search because we retried [{}] times without success", retryCount), e);
+            logger.warn(() -> new ParameterizedMessage(
+                "giving up on search because we retried [{}] times without success", retryCount), e);
             delegate.onFailure(e);
         }
     }

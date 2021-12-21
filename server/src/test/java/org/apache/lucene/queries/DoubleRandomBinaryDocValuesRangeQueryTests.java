@@ -43,16 +43,16 @@ public class DoubleRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinary
 
     private double nextDoubleInternal() {
         switch (random().nextInt(5)) {
-        case 0:
-            return Double.NEGATIVE_INFINITY;
-        case 1:
-            return Double.POSITIVE_INFINITY;
-        default:
-            if (random().nextBoolean()) {
-                return random().nextDouble();
-            } else {
-                return (random().nextInt(15) - 7) / 3d;
-            }
+            case 0:
+                return Double.NEGATIVE_INFINITY;
+            case 1:
+                return Double.POSITIVE_INFINITY;
+            default:
+                if (random().nextBoolean()) {
+                    return random().nextDouble();
+                } else {
+                    return (random().nextInt(15) - 7) / 3d;
+                }
         }
     }
 
@@ -99,13 +99,13 @@ public class DoubleRandomBinaryDocValuesRangeQueryTests extends BaseRandomBinary
 
         @Override
         protected boolean isDisjoint(Range o) {
-            DoubleTestRange other = (DoubleTestRange) o;
+            DoubleTestRange other = (DoubleTestRange)o;
             return this.min > other.max || this.max < other.min;
         }
 
         @Override
         protected boolean isWithin(Range o) {
-            DoubleTestRange other = (DoubleTestRange) o;
+            DoubleTestRange other = (DoubleTestRange)o;
             if ((this.min >= other.min && this.max <= other.max) == false) {
                 // not within:
                 return false;

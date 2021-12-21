@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ObjectParser;
@@ -37,10 +34,15 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class SumAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, SumAggregationBuilder> {
     public static final String NAME = "sum";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(NAME, MetricAggregatorSupplier.class);
+    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        NAME,
+        MetricAggregatorSupplier.class
+    );
 
     public static final ObjectParser<SumAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, SumAggregationBuilder::new);
     static {
@@ -55,8 +57,9 @@ public class SumAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
         super(name);
     }
 
-    protected SumAggregationBuilder(SumAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected SumAggregationBuilder(SumAggregationBuilder clone,
+                                    AggregatorFactories.Builder factoriesBuilder,
+                                    Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
@@ -83,8 +86,9 @@ public class SumAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
     }
 
     @Override
-    protected SumAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config, AggregatorFactory parent,
-            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+    protected SumAggregatorFactory innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config,
+                                              AggregatorFactory parent,
+                                              AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         return new SumAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 

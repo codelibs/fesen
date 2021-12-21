@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -32,6 +26,12 @@ import org.codelibs.fesen.common.xcontent.XContentParserUtils;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParsedBinaryRange extends ParsedMultiBucketAggregation<ParsedBinaryRange.ParsedBucket> implements Range {
 
@@ -48,7 +48,8 @@ public class ParsedBinaryRange extends ParsedMultiBucketAggregation<ParsedBinary
     private static final ObjectParser<ParsedBinaryRange, Void> PARSER =
             new ObjectParser<>(ParsedBinaryRange.class.getSimpleName(), true, ParsedBinaryRange::new);
     static {
-        declareMultiBucketAggregationFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
+        declareMultiBucketAggregationFields(PARSER,
+                parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 

@@ -19,6 +19,26 @@
 
 package org.codelibs.fesen.ingest.geoip;
 
+import com.maxmind.db.Network;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
+import com.maxmind.geoip2.model.AsnResponse;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.model.CountryResponse;
+import com.maxmind.geoip2.record.City;
+import com.maxmind.geoip2.record.Continent;
+import com.maxmind.geoip2.record.Country;
+import com.maxmind.geoip2.record.Location;
+import com.maxmind.geoip2.record.Subdivision;
+
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.SpecialPermission;
+import org.codelibs.fesen.common.network.InetAddresses;
+import org.codelibs.fesen.common.network.NetworkAddress;
+import org.codelibs.fesen.ingest.AbstractProcessor;
+import org.codelibs.fesen.ingest.IngestDocument;
+import org.codelibs.fesen.ingest.Processor;
+import org.codelibs.fesen.ingest.geoip.IngestGeoIpPlugin.GeoIpCache;
+
 import static org.codelibs.fesen.ingest.ConfigurationUtils.newConfigurationException;
 import static org.codelibs.fesen.ingest.ConfigurationUtils.readBooleanProperty;
 import static org.codelibs.fesen.ingest.ConfigurationUtils.readOptionalList;
@@ -37,26 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.SpecialPermission;
-import org.codelibs.fesen.common.network.InetAddresses;
-import org.codelibs.fesen.common.network.NetworkAddress;
-import org.codelibs.fesen.ingest.AbstractProcessor;
-import org.codelibs.fesen.ingest.IngestDocument;
-import org.codelibs.fesen.ingest.Processor;
-import org.codelibs.fesen.ingest.geoip.IngestGeoIpPlugin.GeoIpCache;
-
-import com.maxmind.db.Network;
-import com.maxmind.geoip2.exception.AddressNotFoundException;
-import com.maxmind.geoip2.model.AsnResponse;
-import com.maxmind.geoip2.model.CityResponse;
-import com.maxmind.geoip2.model.CountryResponse;
-import com.maxmind.geoip2.record.City;
-import com.maxmind.geoip2.record.Continent;
-import com.maxmind.geoip2.record.Country;
-import com.maxmind.geoip2.record.Location;
-import com.maxmind.geoip2.record.Subdivision;
 
 public final class GeoIpProcessor extends AbstractProcessor {
 
@@ -85,9 +85,15 @@ public final class GeoIpProcessor extends AbstractProcessor {
      * @param cache         a geo-IP cache
      * @param firstOnly     true if only first result should be returned in case of array
      */
-    GeoIpProcessor(final String tag, String description, final String field, final DatabaseReaderLazyLoader lazyLoader,
-            final String targetField, final Set<Property> properties, final boolean ignoreMissing, final GeoIpCache cache,
-            boolean firstOnly) {
+    GeoIpProcessor(
+        final String tag,
+        String description, final String field,
+        final DatabaseReaderLazyLoader lazyLoader,
+        final String targetField,
+        final Set<Property> properties,
+        final boolean ignoreMissing,
+        final GeoIpCache cache,
+        boolean firstOnly) {
         super(tag, description);
         this.field = field;
         this.targetField = targetField;
@@ -168,7 +174,8 @@ public final class GeoIpProcessor extends AbstractProcessor {
                 geoData = Collections.emptyMap();
             }
         } else {
-            throw new FesenParseException("Unsupported database type [" + lazyLoader.getDatabaseType() + "]", new IllegalStateException());
+            throw new FesenParseException("Unsupported database type [" + lazyLoader.getDatabaseType()
+                + "]", new IllegalStateException());
         }
         return geoData;
     }
@@ -196,16 +203,16 @@ public final class GeoIpProcessor extends AbstractProcessor {
 
     private Map<String, Object> retrieveCityGeoData(InetAddress ipAddress) {
         SpecialPermission.check();
-        CityResponse response = AccessController
-                .doPrivileged((PrivilegedAction<CityResponse>) () -> cache.putIfAbsent(ipAddress, CityResponse.class, ip -> {
-                    try {
-                        return lazyLoader.get().city(ip);
-                    } catch (AddressNotFoundException e) {
-                        throw new AddressNotFoundRuntimeException(e);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }));
+        CityResponse response = AccessController.doPrivileged((PrivilegedAction<CityResponse>) () ->
+            cache.putIfAbsent(ipAddress, CityResponse.class, ip -> {
+                try {
+                    return lazyLoader.get().city(ip);
+                } catch (AddressNotFoundException e) {
+                    throw new AddressNotFoundRuntimeException(e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }));
 
         Country country = response.getCountry();
         City city = response.getCity();
@@ -216,65 +223,65 @@ public final class GeoIpProcessor extends AbstractProcessor {
         Map<String, Object> geoData = new HashMap<>();
         for (Property property : this.properties) {
             switch (property) {
-            case IP:
-                geoData.put("ip", NetworkAddress.format(ipAddress));
-                break;
-            case COUNTRY_ISO_CODE:
-                String countryIsoCode = country.getIsoCode();
-                if (countryIsoCode != null) {
-                    geoData.put("country_iso_code", countryIsoCode);
-                }
-                break;
-            case COUNTRY_NAME:
-                String countryName = country.getName();
-                if (countryName != null) {
-                    geoData.put("country_name", countryName);
-                }
-                break;
-            case CONTINENT_NAME:
-                String continentName = continent.getName();
-                if (continentName != null) {
-                    geoData.put("continent_name", continentName);
-                }
-                break;
-            case REGION_ISO_CODE:
-                // ISO 3166-2 code for country subdivisions.
-                // See iso.org/iso-3166-country-codes.html
-                String countryIso = country.getIsoCode();
-                String subdivisionIso = subdivision.getIsoCode();
-                if (countryIso != null && subdivisionIso != null) {
-                    String regionIsoCode = countryIso + "-" + subdivisionIso;
-                    geoData.put("region_iso_code", regionIsoCode);
-                }
-                break;
-            case REGION_NAME:
-                String subdivisionName = subdivision.getName();
-                if (subdivisionName != null) {
-                    geoData.put("region_name", subdivisionName);
-                }
-                break;
-            case CITY_NAME:
-                String cityName = city.getName();
-                if (cityName != null) {
-                    geoData.put("city_name", cityName);
-                }
-                break;
-            case TIMEZONE:
-                String locationTimeZone = location.getTimeZone();
-                if (locationTimeZone != null) {
-                    geoData.put("timezone", locationTimeZone);
-                }
-                break;
-            case LOCATION:
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-                if (latitude != null && longitude != null) {
-                    Map<String, Object> locationObject = new HashMap<>();
-                    locationObject.put("lat", latitude);
-                    locationObject.put("lon", longitude);
-                    geoData.put("location", locationObject);
-                }
-                break;
+                case IP:
+                    geoData.put("ip", NetworkAddress.format(ipAddress));
+                    break;
+                case COUNTRY_ISO_CODE:
+                    String countryIsoCode = country.getIsoCode();
+                    if (countryIsoCode != null) {
+                        geoData.put("country_iso_code", countryIsoCode);
+                    }
+                    break;
+                case COUNTRY_NAME:
+                    String countryName = country.getName();
+                    if (countryName != null) {
+                        geoData.put("country_name", countryName);
+                    }
+                    break;
+                case CONTINENT_NAME:
+                    String continentName = continent.getName();
+                    if (continentName != null) {
+                        geoData.put("continent_name", continentName);
+                    }
+                    break;
+                case REGION_ISO_CODE:
+                    // ISO 3166-2 code for country subdivisions.
+                    // See iso.org/iso-3166-country-codes.html
+                    String countryIso = country.getIsoCode();
+                    String subdivisionIso = subdivision.getIsoCode();
+                    if (countryIso != null && subdivisionIso != null) {
+                        String regionIsoCode = countryIso + "-" + subdivisionIso;
+                        geoData.put("region_iso_code", regionIsoCode);
+                    }
+                    break;
+                case REGION_NAME:
+                    String subdivisionName = subdivision.getName();
+                    if (subdivisionName != null) {
+                        geoData.put("region_name", subdivisionName);
+                    }
+                    break;
+                case CITY_NAME:
+                    String cityName = city.getName();
+                    if (cityName != null) {
+                        geoData.put("city_name", cityName);
+                    }
+                    break;
+                case TIMEZONE:
+                    String locationTimeZone = location.getTimeZone();
+                    if (locationTimeZone != null) {
+                        geoData.put("timezone", locationTimeZone);
+                    }
+                    break;
+                case LOCATION:
+                    Double latitude = location.getLatitude();
+                    Double longitude = location.getLongitude();
+                    if (latitude != null && longitude != null) {
+                        Map<String, Object> locationObject = new HashMap<>();
+                        locationObject.put("lat", latitude);
+                        locationObject.put("lon", longitude);
+                        geoData.put("location", locationObject);
+                    }
+                    break;
             }
         }
         return geoData;
@@ -282,16 +289,16 @@ public final class GeoIpProcessor extends AbstractProcessor {
 
     private Map<String, Object> retrieveCountryGeoData(InetAddress ipAddress) {
         SpecialPermission.check();
-        CountryResponse response = AccessController
-                .doPrivileged((PrivilegedAction<CountryResponse>) () -> cache.putIfAbsent(ipAddress, CountryResponse.class, ip -> {
-                    try {
-                        return lazyLoader.get().country(ip);
-                    } catch (AddressNotFoundException e) {
-                        throw new AddressNotFoundRuntimeException(e);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }));
+        CountryResponse response = AccessController.doPrivileged((PrivilegedAction<CountryResponse>) () ->
+            cache.putIfAbsent(ipAddress, CountryResponse.class, ip -> {
+                try {
+                    return lazyLoader.get().country(ip);
+                } catch (AddressNotFoundException e) {
+                    throw new AddressNotFoundRuntimeException(e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }));
 
         Country country = response.getCountry();
         Continent continent = response.getContinent();
@@ -299,27 +306,27 @@ public final class GeoIpProcessor extends AbstractProcessor {
         Map<String, Object> geoData = new HashMap<>();
         for (Property property : this.properties) {
             switch (property) {
-            case IP:
-                geoData.put("ip", NetworkAddress.format(ipAddress));
-                break;
-            case COUNTRY_ISO_CODE:
-                String countryIsoCode = country.getIsoCode();
-                if (countryIsoCode != null) {
-                    geoData.put("country_iso_code", countryIsoCode);
-                }
-                break;
-            case COUNTRY_NAME:
-                String countryName = country.getName();
-                if (countryName != null) {
-                    geoData.put("country_name", countryName);
-                }
-                break;
-            case CONTINENT_NAME:
-                String continentName = continent.getName();
-                if (continentName != null) {
-                    geoData.put("continent_name", continentName);
-                }
-                break;
+                case IP:
+                    geoData.put("ip", NetworkAddress.format(ipAddress));
+                    break;
+                case COUNTRY_ISO_CODE:
+                    String countryIsoCode = country.getIsoCode();
+                    if (countryIsoCode != null) {
+                        geoData.put("country_iso_code", countryIsoCode);
+                    }
+                    break;
+                case COUNTRY_NAME:
+                    String countryName = country.getName();
+                    if (countryName != null) {
+                        geoData.put("country_name", countryName);
+                    }
+                    break;
+                case CONTINENT_NAME:
+                    String continentName = continent.getName();
+                    if (continentName != null) {
+                        geoData.put("continent_name", continentName);
+                    }
+                    break;
             }
         }
         return geoData;
@@ -327,16 +334,16 @@ public final class GeoIpProcessor extends AbstractProcessor {
 
     private Map<String, Object> retrieveAsnGeoData(InetAddress ipAddress) {
         SpecialPermission.check();
-        AsnResponse response =
-                AccessController.doPrivileged((PrivilegedAction<AsnResponse>) () -> cache.putIfAbsent(ipAddress, AsnResponse.class, ip -> {
-                    try {
-                        return lazyLoader.get().asn(ip);
-                    } catch (AddressNotFoundException e) {
-                        throw new AddressNotFoundRuntimeException(e);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }));
+        AsnResponse response = AccessController.doPrivileged((PrivilegedAction<AsnResponse>) () ->
+            cache.putIfAbsent(ipAddress, AsnResponse.class, ip -> {
+                try {
+                    return lazyLoader.get().asn(ip);
+                } catch (AddressNotFoundException e) {
+                    throw new AddressNotFoundRuntimeException(e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }));
 
         Integer asn = response.getAutonomousSystemNumber();
         String organization_name = response.getAutonomousSystemOrganization();
@@ -345,37 +352,40 @@ public final class GeoIpProcessor extends AbstractProcessor {
         Map<String, Object> geoData = new HashMap<>();
         for (Property property : this.properties) {
             switch (property) {
-            case IP:
-                geoData.put("ip", NetworkAddress.format(ipAddress));
-                break;
-            case ASN:
-                if (asn != null) {
-                    geoData.put("asn", asn);
-                }
-                break;
-            case ORGANIZATION_NAME:
-                if (organization_name != null) {
-                    geoData.put("organization_name", organization_name);
-                }
-                break;
-            case NETWORK:
-                if (network != null) {
-                    geoData.put("network", network.toString());
-                }
-                break;
+                case IP:
+                    geoData.put("ip", NetworkAddress.format(ipAddress));
+                    break;
+                case ASN:
+                    if (asn != null) {
+                        geoData.put("asn", asn);
+                    }
+                    break;
+                case ORGANIZATION_NAME:
+                    if (organization_name != null) {
+                        geoData.put("organization_name", organization_name);
+                    }
+                    break;
+                case NETWORK:
+                    if (network != null) {
+                        geoData.put("network", network.toString());
+                    }
+                    break;
             }
         }
         return geoData;
     }
 
     public static final class Factory implements Processor.Factory {
-        static final Set<Property> DEFAULT_CITY_PROPERTIES =
-                Collections.unmodifiableSet(EnumSet.of(Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE,
-                        Property.REGION_ISO_CODE, Property.REGION_NAME, Property.CITY_NAME, Property.LOCATION));
-        static final Set<Property> DEFAULT_COUNTRY_PROPERTIES =
-                Collections.unmodifiableSet(EnumSet.of(Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE));
-        static final Set<Property> DEFAULT_ASN_PROPERTIES =
-                Collections.unmodifiableSet(EnumSet.of(Property.IP, Property.ASN, Property.ORGANIZATION_NAME, Property.NETWORK));
+        static final Set<Property> DEFAULT_CITY_PROPERTIES = Collections.unmodifiableSet(EnumSet.of(
+            Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE, Property.REGION_ISO_CODE,
+            Property.REGION_NAME, Property.CITY_NAME, Property.LOCATION
+        ));
+        static final Set<Property> DEFAULT_COUNTRY_PROPERTIES = Collections.unmodifiableSet(EnumSet.of(
+            Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE
+        ));
+        static final Set<Property> DEFAULT_ASN_PROPERTIES = Collections.unmodifiableSet(EnumSet.of(
+            Property.IP, Property.ASN, Property.ORGANIZATION_NAME, Property.NETWORK
+        ));
 
         private final Map<String, DatabaseReaderLazyLoader> databaseReaders;
 
@@ -391,8 +401,10 @@ public final class GeoIpProcessor extends AbstractProcessor {
         }
 
         @Override
-        public GeoIpProcessor create(final Map<String, Processor.Factory> registry, final String processorTag, final String description,
-                final Map<String, Object> config) throws IOException {
+        public GeoIpProcessor create(
+                final Map<String, Processor.Factory> registry,
+                final String processorTag,
+                final String description, final Map<String, Object> config) throws IOException {
             String ipField = readStringProperty(TYPE, processorTag, config, "field");
             String targetField = readStringProperty(TYPE, processorTag, config, "target_field", "geoip");
             String databaseFile = readStringProperty(TYPE, processorTag, config, "database_file", "GeoLite2-City.mmdb");
@@ -402,7 +414,8 @@ public final class GeoIpProcessor extends AbstractProcessor {
 
             DatabaseReaderLazyLoader lazyLoader = databaseReaders.get(databaseFile);
             if (lazyLoader == null) {
-                throw newConfigurationException(TYPE, processorTag, "database_file", "database file [" + databaseFile + "] doesn't exist");
+                throw newConfigurationException(TYPE, processorTag,
+                    "database_file", "database file [" + databaseFile + "] doesn't exist");
             }
 
             final String databaseType = lazyLoader.getDatabaseType();
@@ -426,13 +439,13 @@ public final class GeoIpProcessor extends AbstractProcessor {
                 } else if (databaseType.endsWith(ASN_DB_SUFFIX)) {
                     properties = DEFAULT_ASN_PROPERTIES;
                 } else {
-                    throw newConfigurationException(TYPE, processorTag, "database_file",
-                            "Unsupported database type [" + databaseType + "]");
+                    throw newConfigurationException(TYPE, processorTag, "database_file", "Unsupported database type ["
+                        + databaseType + "]");
                 }
             }
 
             return new GeoIpProcessor(processorTag, description, ipField, lazyLoader, targetField, properties, ignoreMissing, cache,
-                    firstOnly);
+                firstOnly);
         }
     }
 
@@ -449,15 +462,30 @@ public final class GeoIpProcessor extends AbstractProcessor {
 
     enum Property {
 
-        IP, COUNTRY_ISO_CODE, COUNTRY_NAME, CONTINENT_NAME, REGION_ISO_CODE, REGION_NAME, CITY_NAME, TIMEZONE, LOCATION, ASN, ORGANIZATION_NAME, NETWORK;
+        IP,
+        COUNTRY_ISO_CODE,
+        COUNTRY_NAME,
+        CONTINENT_NAME,
+        REGION_ISO_CODE,
+        REGION_NAME,
+        CITY_NAME,
+        TIMEZONE,
+        LOCATION,
+        ASN,
+        ORGANIZATION_NAME,
+        NETWORK;
 
-        static final EnumSet<Property> ALL_CITY_PROPERTIES =
-                EnumSet.of(Property.IP, Property.COUNTRY_ISO_CODE, Property.COUNTRY_NAME, Property.CONTINENT_NAME, Property.REGION_ISO_CODE,
-                        Property.REGION_NAME, Property.CITY_NAME, Property.TIMEZONE, Property.LOCATION);
-        static final EnumSet<Property> ALL_COUNTRY_PROPERTIES =
-                EnumSet.of(Property.IP, Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE);
-        static final EnumSet<Property> ALL_ASN_PROPERTIES =
-                EnumSet.of(Property.IP, Property.ASN, Property.ORGANIZATION_NAME, Property.NETWORK);
+        static final EnumSet<Property> ALL_CITY_PROPERTIES = EnumSet.of(
+            Property.IP, Property.COUNTRY_ISO_CODE, Property.COUNTRY_NAME, Property.CONTINENT_NAME,
+            Property.REGION_ISO_CODE, Property.REGION_NAME, Property.CITY_NAME, Property.TIMEZONE,
+            Property.LOCATION
+        );
+        static final EnumSet<Property> ALL_COUNTRY_PROPERTIES = EnumSet.of(
+            Property.IP, Property.CONTINENT_NAME, Property.COUNTRY_NAME, Property.COUNTRY_ISO_CODE
+        );
+        static final EnumSet<Property> ALL_ASN_PROPERTIES = EnumSet.of(
+            Property.IP, Property.ASN, Property.ORGANIZATION_NAME, Property.NETWORK
+        );
 
         public static Property parseProperty(String databaseType, String value) {
             Set<Property> validProperties = EnumSet.noneOf(Property.class);
@@ -476,8 +504,8 @@ public final class GeoIpProcessor extends AbstractProcessor {
                 }
                 return property;
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(
-                        "illegal property value [" + value + "]. valid values are " + Arrays.toString(validProperties.toArray()));
+                throw new IllegalArgumentException("illegal property value [" + value + "]. valid values are " +
+                    Arrays.toString(validProperties.toArray()));
             }
         }
     }

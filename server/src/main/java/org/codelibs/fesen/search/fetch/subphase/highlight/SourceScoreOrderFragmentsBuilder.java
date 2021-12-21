@@ -18,26 +18,29 @@
  */
 package org.codelibs.fesen.search.fetch.subphase.highlight;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.highlight.Encoder;
 import org.apache.lucene.search.vectorhighlight.BoundaryScanner;
 import org.apache.lucene.search.vectorhighlight.FieldFragList.WeightedFragInfo;
-import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
+
+import java.io.IOException;
+import java.util.List;
 
 public class SourceScoreOrderFragmentsBuilder extends ScoreOrderFragmentsBuilder {
 
     private final MappedFieldType fieldType;
     private final SourceLookup sourceLookup;
 
-    public SourceScoreOrderFragmentsBuilder(MappedFieldType fieldType, SourceLookup sourceLookup, String[] preTags, String[] postTags,
-            BoundaryScanner boundaryScanner) {
+    public SourceScoreOrderFragmentsBuilder(MappedFieldType fieldType,
+                                            SourceLookup sourceLookup,
+                                            String[] preTags,
+                                            String[] postTags,
+                                            BoundaryScanner boundaryScanner) {
         super(preTags, postTags, boundaryScanner);
         this.fieldType = fieldType;
         this.sourceLookup = sourceLookup;
@@ -55,8 +58,8 @@ public class SourceScoreOrderFragmentsBuilder extends ScoreOrderFragmentsBuilder
     }
 
     @Override
-    protected String makeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo, String[] preTags,
-            String[] postTags, Encoder encoder) {
+    protected String makeFragment( StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo,
+            String[] preTags, String[] postTags, Encoder encoder ){
         WeightedFragInfo weightedFragInfo = FragmentBuilderHelper.fixWeightedFragInfo(fieldType, values, fragInfo);
         return super.makeFragment(buffer, index, values, weightedFragInfo, preTags, postTags, encoder);
     }

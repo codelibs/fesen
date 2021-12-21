@@ -34,9 +34,11 @@ import org.codelibs.fesen.test.IndexSettingsModule;
 public class StopAnalyzerTests extends ESTokenStreamTestCase {
     public void testDefaultsCompoundAnalysis() throws Exception {
         String json = "/org/codelibs/fesen/index/analysis/stop.json";
-        Settings settings = Settings.builder().loadFromStream(json, getClass().getResourceAsStream(json), false)
+        Settings settings = Settings.builder()
+            .loadFromStream(json, getClass().getResourceAsStream(json), false)
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
-                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT).build();
+                .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
+                .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
         IndexAnalyzers indexAnalyzers = createTestAnalysis(idxSettings, settings).indexAnalyzers;
         NamedAnalyzer analyzer1 = indexAnalyzers.get("analyzer1");

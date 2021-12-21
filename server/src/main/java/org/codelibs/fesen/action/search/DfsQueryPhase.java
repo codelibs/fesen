@@ -18,10 +18,6 @@
  */
 package org.codelibs.fesen.action.search;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.search.SearchPhaseResult;
 import org.codelibs.fesen.search.SearchShardTarget;
@@ -30,6 +26,10 @@ import org.codelibs.fesen.search.dfs.DfsSearchResult;
 import org.codelibs.fesen.search.query.QuerySearchRequest;
 import org.codelibs.fesen.search.query.QuerySearchResult;
 import org.codelibs.fesen.transport.Transport;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * This search phase fans out to every shards to execute a distributed search with a pre-collected distributed frequencies for all
@@ -47,8 +47,11 @@ final class DfsQueryPhase extends SearchPhase {
     private final SearchTransportService searchTransportService;
     private final SearchProgressListener progressListener;
 
-    DfsQueryPhase(List<DfsSearchResult> searchResults, AggregatedDfs dfs, QueryPhaseResultConsumer queryResult,
-            Function<ArraySearchPhaseResults<SearchPhaseResult>, SearchPhase> nextPhaseFactory, SearchPhaseContext context) {
+    DfsQueryPhase(List<DfsSearchResult> searchResults,
+                  AggregatedDfs dfs,
+                  QueryPhaseResultConsumer queryResult,
+                  Function<ArraySearchPhaseResults<SearchPhaseResult>, SearchPhase> nextPhaseFactory,
+                  SearchPhaseContext context) {
         super("dfs_query");
         this.progressListener = context.getTask().getProgressListener();
         this.queryResult = queryResult;
@@ -67,44 +70,46 @@ final class DfsQueryPhase extends SearchPhase {
     public void run() throws IOException {
         // TODO we can potentially also consume the actual per shard results from the initial phase here in the aggregateDfs
         // to free up memory early
-        final CountedCollector<SearchPhaseResult> counter = new CountedCollector<>(queryResult, searchResults.size(),
-                () -> context.executeNextPhase(this, nextPhaseFactory.apply(queryResult)), context);
+        final CountedCollector<SearchPhaseResult> counter = new CountedCollector<>(
+            queryResult,
+            searchResults.size(),
+            () -> context.executeNextPhase(this, nextPhaseFactory.apply(queryResult)), context);
         for (final DfsSearchResult dfsResult : searchResults) {
             final SearchShardTarget searchShardTarget = dfsResult.getSearchShardTarget();
             Transport.Connection connection = context.getConnection(searchShardTarget.getClusterAlias(), searchShardTarget.getNodeId());
-            QuerySearchRequest querySearchRequest = new QuerySearchRequest(searchShardTarget.getOriginalIndices(), dfsResult.getContextId(),
-                    dfsResult.getShardSearchRequest(), dfs);
+            QuerySearchRequest querySearchRequest = new QuerySearchRequest(searchShardTarget.getOriginalIndices(),
+                    dfsResult.getContextId(), dfsResult.getShardSearchRequest(), dfs);
             final int shardIndex = dfsResult.getShardIndex();
             searchTransportService.sendExecuteQuery(connection, querySearchRequest, context.getTask(),
-                    new SearchActionListener<QuerySearchResult>(searchShardTarget, shardIndex) {
+                new SearchActionListener<QuerySearchResult>(searchShardTarget, shardIndex) {
 
-                        @Override
-                        protected void innerOnResponse(QuerySearchResult response) {
-                            try {
-                                counter.onResult(response);
-                            } catch (Exception e) {
-                                context.onPhaseFailure(DfsQueryPhase.this, "", e);
+                    @Override
+                    protected void innerOnResponse(QuerySearchResult response) {
+                        try {
+                            counter.onResult(response);
+                        } catch (Exception e) {
+                            context.onPhaseFailure(DfsQueryPhase.this, "", e);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        try {
+                            context.getLogger().debug(() -> new ParameterizedMessage("[{}] Failed to execute query phase",
+                                querySearchRequest.contextId()), exception);
+                            progressListener.notifyQueryFailure(shardIndex, searchShardTarget, exception);
+                            counter.onFailure(shardIndex, searchShardTarget, exception);
+                        } finally {
+                            if (context.getRequest().pointInTimeBuilder() == null) {
+                                // the query might not have been executed at all (for example because thread pool rejected
+                                // execution) and the search context that was created in dfs phase might not be released.
+                                // release it again to be in the safe side
+                                context.sendReleaseSearchContext(
+                                    querySearchRequest.contextId(), connection, searchShardTarget.getOriginalIndices());
                             }
                         }
-
-                        @Override
-                        public void onFailure(Exception exception) {
-                            try {
-                                context.getLogger().debug(() -> new ParameterizedMessage("[{}] Failed to execute query phase",
-                                        querySearchRequest.contextId()), exception);
-                                progressListener.notifyQueryFailure(shardIndex, searchShardTarget, exception);
-                                counter.onFailure(shardIndex, searchShardTarget, exception);
-                            } finally {
-                                if (context.getRequest().pointInTimeBuilder() == null) {
-                                    // the query might not have been executed at all (for example because thread pool rejected
-                                    // execution) and the search context that was created in dfs phase might not be released.
-                                    // release it again to be in the safe side
-                                    context.sendReleaseSearchContext(querySearchRequest.contextId(), connection,
-                                            searchShardTarget.getOriginalIndices());
-                                }
-                            }
-                        }
-                    });
+                    }
+                });
         }
     }
 }

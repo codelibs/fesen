@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.grok;
 
-import java.nio.charset.StandardCharsets;
-import java.util.function.Consumer;
-
 import org.codelibs.fesen.grok.GrokCaptureConfig.NativeExtracterMap;
 import org.joni.Region;
+
+import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 
 /**
  * The type defined for the field in the pattern.
@@ -70,20 +70,20 @@ enum GrokCaptureType {
 
     static GrokCaptureType fromString(String str) {
         switch (str) {
-        case "string":
-            return STRING;
-        case "int":
-            return INTEGER;
-        case "long":
-            return LONG;
-        case "float":
-            return FLOAT;
-        case "double":
-            return DOUBLE;
-        case "boolean":
-            return BOOLEAN;
-        default:
-            return STRING;
+            case "string":
+                return STRING;
+            case "int":
+                return INTEGER;
+            case "long":
+                return LONG;
+            case "float":
+                return FLOAT;
+            case "double":
+                return DOUBLE;
+            case "boolean":
+                return BOOLEAN;
+            default:
+                return STRING;
         }
     }
 

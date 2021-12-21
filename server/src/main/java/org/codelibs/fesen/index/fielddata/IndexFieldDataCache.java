@@ -32,7 +32,7 @@ public interface IndexFieldDataCache {
     <FD extends LeafFieldData, IFD extends IndexFieldData<FD>> FD load(LeafReaderContext context, IFD indexFieldData) throws Exception;
 
     <FD extends LeafFieldData, IFD extends IndexFieldData.Global<FD>> IFD load(DirectoryReader indexReader, IFD indexFieldData)
-            throws Exception;
+        throws Exception;
 
     /**
      * Clears all the field data stored cached in on this index.
@@ -49,28 +49,26 @@ public interface IndexFieldDataCache {
         /**
          * Called after the fielddata is loaded during the cache phase
          */
-        default void onCache(ShardId shardId, String fieldName, Accountable ramUsage) {
-        }
+        default void onCache(ShardId shardId, String fieldName, Accountable ramUsage){}
 
         /**
          * Called after the fielddata is unloaded
          */
-        default void onRemoval(ShardId shardId, String fieldName, boolean wasEvicted, long sizeInBytes) {
-        }
+        default void onRemoval(ShardId shardId, String fieldName, boolean wasEvicted, long sizeInBytes){}
     }
 
     class None implements IndexFieldDataCache {
 
         @Override
         public <FD extends LeafFieldData, IFD extends IndexFieldData<FD>> FD load(LeafReaderContext context, IFD indexFieldData)
-                throws Exception {
+            throws Exception {
             return indexFieldData.loadDirect(context);
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <FD extends LeafFieldData, IFD extends IndexFieldData.Global<FD>> IFD load(DirectoryReader indexReader, IFD indexFieldData)
-                throws Exception {
+        public <FD extends LeafFieldData, IFD extends IndexFieldData.Global<FD>> IFD load(DirectoryReader indexReader,
+                                                                                          IFD indexFieldData) throws Exception {
             return (IFD) indexFieldData.loadGlobalDirect(indexReader);
         }
 

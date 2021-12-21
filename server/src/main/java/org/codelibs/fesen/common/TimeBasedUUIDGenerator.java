@@ -57,7 +57,7 @@ class TimeBasedUUIDGenerator implements UUIDGenerator {
     }
 
     @Override
-    public String getBase64UUID() {
+    public String getBase64UUID()  {
         final int sequenceId = sequenceNumber.incrementAndGet() & 0xffffff;
         long currentTimeMillis = currentTimeMillis();
 

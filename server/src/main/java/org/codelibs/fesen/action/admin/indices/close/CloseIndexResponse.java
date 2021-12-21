@@ -18,13 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.indices.close;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
@@ -38,6 +31,13 @@ import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.index.Index;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 public class CloseIndexResponse extends ShardsAcknowledgedResponse {
 

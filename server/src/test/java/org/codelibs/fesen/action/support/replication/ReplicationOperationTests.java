@@ -107,7 +107,7 @@ public class ReplicationOperationTests extends ESTestCase {
         if (primaryShard.relocating() && randomBoolean()) {
             // simulate execution of the replication phase on the relocation target node after relocation source was marked as relocated
             initialState = ClusterState.builder(initialState)
-                    .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
+                .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
             primaryShard = primaryShard.getTargetRelocatingShard();
         }
         // add a few in-sync allocation ids that don't have corresponding routing entries
@@ -158,7 +158,8 @@ public class ReplicationOperationTests extends ESTestCase {
         assertThat(shardInfo.getFailed(), equalTo(reportedFailures.size()));
         assertThat(shardInfo.getFailures(), arrayWithSize(reportedFailures.size()));
         assertThat(shardInfo.getSuccessful(), equalTo(1 + expectedReplicas.size() - simulatedFailures.size()));
-        final List<ShardRouting> unassignedShards = indexShardRoutingTable.shardsWithState(ShardRoutingState.UNASSIGNED);
+        final List<ShardRouting> unassignedShards =
+            indexShardRoutingTable.shardsWithState(ShardRoutingState.UNASSIGNED);
         final int totalShards = 1 + expectedReplicas.size() + unassignedShards.size() + untrackedShards.size();
         assertThat(replicationGroup.toString(), shardInfo.getTotal(), equalTo(totalShards));
 
@@ -180,7 +181,7 @@ public class ReplicationOperationTests extends ESTestCase {
         if (primaryShard.relocating() && randomBoolean()) {
             // simulate execution of the replication phase on the relocation target node after relocation source was marked as relocated
             initialState = ClusterState.builder(initialState)
-                    .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
+                .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
             primaryShard = primaryShard.getTargetRelocatingShard();
         }
         // add a few in-sync allocation ids that don't have corresponding routing entries
@@ -224,7 +225,7 @@ public class ReplicationOperationTests extends ESTestCase {
 
         final TestPrimary primary = new TestPrimary(primaryShard, () -> replicationGroup, threadPool);
         final TestReplicationOperation op = new TestReplicationOperation(request, primary, listener, replicasProxy, primaryTerm,
-                TimeValue.timeValueMillis(20), TimeValue.timeValueSeconds(60));
+            TimeValue.timeValueMillis(20), TimeValue.timeValueSeconds(60));
         op.execute();
         assertThat("request was not processed on primary", request.processedOnPrimary.get(), equalTo(true));
         assertThat(request.processedOnReplicas, equalTo(expectedReplicas));
@@ -244,7 +245,7 @@ public class ReplicationOperationTests extends ESTestCase {
     }
 
     private void addTrackingInfo(IndexShardRoutingTable indexShardRoutingTable, ShardRouting primaryShard, Set<String> trackedShards,
-            Set<String> untrackedShards) {
+                                 Set<String> untrackedShards) {
         for (ShardRouting shr : indexShardRoutingTable.shards()) {
             if (shr.unassigned() == false) {
                 if (shr.initializing()) {
@@ -279,7 +280,7 @@ public class ReplicationOperationTests extends ESTestCase {
         if (primaryShard.relocating() && randomBoolean()) {
             // simulate execution of the replication phase on the relocation target node after relocation source was marked as relocated
             initialState = ClusterState.builder(initialState)
-                    .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
+                .nodes(DiscoveryNodes.builder(initialState.nodes()).localNodeId(primaryShard.relocatingNodeId())).build();
             primaryShard = primaryShard.getTargetRelocatingShard();
         }
         // add an in-sync allocation id that doesn't have a corresponding routing entry
@@ -308,15 +309,15 @@ public class ReplicationOperationTests extends ESTestCase {
             shardActionFailure = new NodeClosedException(new DiscoveryNode("foo", buildNewFakeTransportAddress(), Version.CURRENT));
         } else if (randomBoolean()) {
             DiscoveryNode node = new DiscoveryNode("foo", buildNewFakeTransportAddress(), Version.CURRENT);
-            shardActionFailure =
-                    new SendRequestTransportException(node, ShardStateAction.SHARD_FAILED_ACTION_NAME, new NodeClosedException(node));
+            shardActionFailure = new SendRequestTransportException(
+                node, ShardStateAction.SHARD_FAILED_ACTION_NAME, new NodeClosedException(node));
         } else {
             shardActionFailure = new ShardStateAction.NoLongerPrimaryShardException(failedReplica.shardId(), "the king is dead");
         }
         final TestReplicaProxy replicasProxy = new TestReplicaProxy(expectedFailures) {
             @Override
             public void failShardIfNeeded(ShardRouting replica, long primaryTerm, String message, Exception exception,
-                    ActionListener<Void> shardActionListener) {
+                                          ActionListener<Void> shardActionListener) {
                 if (testPrimaryDemotedOnStaleShardCopies) {
                     super.failShardIfNeeded(replica, primaryTerm, message, exception, shardActionListener);
                 } else {
@@ -327,7 +328,7 @@ public class ReplicationOperationTests extends ESTestCase {
 
             @Override
             public void markShardCopyAsStaleIfNeeded(ShardId shardId, String allocationId, long primaryTerm,
-                    ActionListener<Void> shardActionListener) {
+                                                     ActionListener<Void> shardActionListener) {
                 if (testPrimaryDemotedOnStaleShardCopies) {
                     shardActionListener.onFailure(shardActionFailure);
                 } else {
@@ -353,7 +354,8 @@ public class ReplicationOperationTests extends ESTestCase {
         } else {
             assertFalse(primaryFailed.get());
         }
-        assertListenerThrows("should throw exception to trigger retry", listener, ReplicationOperation.RetryOnPrimaryException.class);
+        assertListenerThrows("should throw exception to trigger retry", listener,
+            ReplicationOperation.RetryOnPrimaryException.class);
     }
 
     public void testAddedReplicaAfterPrimaryOperation() throws Exception {
@@ -369,7 +371,7 @@ public class ReplicationOperationTests extends ESTestCase {
         final ClusterState stateWithAddedReplicas;
         if (randomBoolean()) {
             stateWithAddedReplicas = state(index, true, ShardRoutingState.STARTED,
-                    randomBoolean() ? ShardRoutingState.INITIALIZING : ShardRoutingState.STARTED);
+                randomBoolean() ? ShardRoutingState.INITIALIZING : ShardRoutingState.STARTED);
         } else {
             stateWithAddedReplicas = state(index, true, ShardRoutingState.RELOCATING);
         }
@@ -398,7 +400,8 @@ public class ReplicationOperationTests extends ESTestCase {
 
         Request request = new Request(shardId);
         PlainActionFuture<TestPrimary.Result> listener = new PlainActionFuture<>();
-        final TestReplicationOperation op = new TestReplicationOperation(request, primary, listener, new TestReplicaProxy(), primaryTerm);
+        final TestReplicationOperation op = new TestReplicationOperation(request, primary, listener,
+            new TestReplicaProxy(), primaryTerm);
         op.execute();
 
         assertThat("request was not processed on primary", request.processedOnPrimary.get(), equalTo(true));
@@ -413,8 +416,8 @@ public class ReplicationOperationTests extends ESTestCase {
         final int unassignedReplicas = randomInt(2);
         final int totalShards = 1 + assignedReplicas + unassignedReplicas;
         final int activeShardCount = randomIntBetween(0, totalShards);
-        Request request = new Request(shardId)
-                .waitForActiveShards(activeShardCount == totalShards ? ActiveShardCount.ALL : ActiveShardCount.from(activeShardCount));
+        Request request = new Request(shardId).waitForActiveShards(
+            activeShardCount == totalShards ? ActiveShardCount.ALL : ActiveShardCount.from(activeShardCount));
         final boolean passesActiveShardCheck = activeShardCount <= assignedReplicas + 1;
 
         ShardRoutingState[] replicaStates = new ShardRoutingState[assignedReplicas + unassignedReplicas];
@@ -426,10 +429,10 @@ public class ReplicationOperationTests extends ESTestCase {
         }
 
         final ClusterState state = state(index, true, ShardRoutingState.STARTED, replicaStates);
-        logger.debug(
-                "using active shard count of [{}], assigned shards [{}], total shards [{}]." + " expecting op to [{}]. using state: \n{}",
-                request.waitForActiveShards(), 1 + assignedReplicas, 1 + assignedReplicas + unassignedReplicas,
-                passesActiveShardCheck ? "succeed" : "retry", state);
+        logger.debug("using active shard count of [{}], assigned shards [{}], total shards [{}]." +
+                " expecting op to [{}]. using state: \n{}",
+            request.waitForActiveShards(), 1 + assignedReplicas, 1 + assignedReplicas + unassignedReplicas,
+            passesActiveShardCheck ? "succeed" : "retry", state);
         final long primaryTerm = state.metadata().index(index).primaryTerm(shardId.id());
         final IndexShardRoutingTable shardRoutingTable = state.routingTable().index(index).shard(shardId.id());
 
@@ -440,18 +443,20 @@ public class ReplicationOperationTests extends ESTestCase {
 
         PlainActionFuture<TestPrimary.Result> listener = new PlainActionFuture<>();
         final ShardRouting primaryShard = shardRoutingTable.primaryShard();
-        final TestReplicationOperation op =
-                new TestReplicationOperation(request, new TestPrimary(primaryShard, () -> initialReplicationGroup, threadPool), listener,
-                        new TestReplicaProxy(), logger, threadPool, "test", primaryTerm);
+        final TestReplicationOperation op = new TestReplicationOperation(request,
+            new TestPrimary(primaryShard, () -> initialReplicationGroup, threadPool),
+                listener, new TestReplicaProxy(), logger, threadPool, "test", primaryTerm);
 
         if (passesActiveShardCheck) {
             assertThat(op.checkActiveShardCount(), nullValue());
             op.execute();
-            assertTrue("operations should have been performed, active shard count is met", request.processedOnPrimary.get());
+            assertTrue("operations should have been performed, active shard count is met",
+                request.processedOnPrimary.get());
         } else {
             assertThat(op.checkActiveShardCount(), notNullValue());
             op.execute();
-            assertFalse("operations should not have been perform, active shard count is *NOT* met", request.processedOnPrimary.get());
+            assertFalse("operations should not have been perform, active shard count is *NOT* met",
+                request.processedOnPrimary.get());
             assertListenerThrows("should throw exception to trigger retry", listener, UnavailableShardsException.class);
         }
     }
@@ -475,27 +480,27 @@ public class ReplicationOperationTests extends ESTestCase {
         final boolean fatal = randomBoolean();
         final AtomicBoolean primaryFailed = new AtomicBoolean();
         final ReplicationOperation.Primary<Request, Request, TestPrimary.Result> primary =
-                new TestPrimary(primaryRouting, () -> initialReplicationGroup, threadPool) {
+            new TestPrimary(primaryRouting, () -> initialReplicationGroup, threadPool) {
 
-                    @Override
-                    public void failShard(String message, Exception exception) {
-                        primaryFailed.set(true);
+            @Override
+            public void failShard(String message, Exception exception) {
+                primaryFailed.set(true);
+            }
+
+            @Override
+            public void updateLocalCheckpointForShard(String allocationId, long checkpoint) {
+                if (primaryRouting.allocationId().getId().equals(allocationId)) {
+                    super.updateLocalCheckpointForShard(allocationId, checkpoint);
+                } else {
+                    if (fatal) {
+                        throw new NullPointerException();
+                    } else {
+                        throw new AlreadyClosedException("already closed");
                     }
+                }
+            }
 
-                    @Override
-                    public void updateLocalCheckpointForShard(String allocationId, long checkpoint) {
-                        if (primaryRouting.allocationId().getId().equals(allocationId)) {
-                            super.updateLocalCheckpointForShard(allocationId, checkpoint);
-                        } else {
-                            if (fatal) {
-                                throw new NullPointerException();
-                            } else {
-                                throw new AlreadyClosedException("already closed");
-                            }
-                        }
-                    }
-
-                };
+        };
 
         final PlainActionFuture<TestPrimary.Result> listener = new PlainActionFuture<>();
         final ReplicationOperation.Replicas<Request> replicas = new TestReplicaProxy(Collections.emptyMap());
@@ -532,6 +537,7 @@ public class ReplicationOperationTests extends ESTestCase {
         }
         return expectedReplicas;
     }
+
 
     public static class Request extends ReplicationRequest<Request> {
         public AtomicBoolean processedOnPrimary = new AtomicBoolean();
@@ -716,8 +722,13 @@ public class ReplicationOperationTests extends ESTestCase {
         }
 
         @Override
-        public void performOn(final ShardRouting replica, final Request request, final long primaryTerm, final long globalCheckpoint,
-                final long maxSeqNoOfUpdatesOrDeletes, final ActionListener<ReplicationOperation.ReplicaResponse> listener) {
+        public void performOn(
+                final ShardRouting replica,
+                final Request request,
+                final long primaryTerm,
+                final long globalCheckpoint,
+                final long maxSeqNoOfUpdatesOrDeletes,
+                final ActionListener<ReplicationOperation.ReplicaResponse> listener) {
             boolean added = request.processedOnReplicas.add(replica);
             if (retryable == false) {
                 assertTrue("replica request processed twice on [" + replica + "]", added);
@@ -726,7 +737,7 @@ public class ReplicationOperationTests extends ESTestCase {
             // should not have run.
             if (retryable == false || added) {
                 assertFalse("primary post replication actions should run after replication",
-                        request.runPostReplicationActionsOnPrimary.get());
+                    request.runPostReplicationActionsOnPrimary.get());
             }
             // If this is a retryable scenario and this is the second try, we finish successfully
             int n = attemptsNumber.incrementAndGet();
@@ -744,7 +755,7 @@ public class ReplicationOperationTests extends ESTestCase {
 
         @Override
         public void failShardIfNeeded(ShardRouting replica, long primaryTerm, String message, Exception exception,
-                ActionListener<Void> listener) {
+                                      ActionListener<Void> listener) {
             if (failedReplicas.add(replica) == false) {
                 fail("replica [" + replica + "] was failed twice");
             }
@@ -770,24 +781,25 @@ public class ReplicationOperationTests extends ESTestCase {
                 ActionListener<TestPrimary.Result> listener, Replicas<Request> replicas, long primaryTerm,
                 TimeValue initialRetryBackoffBound, TimeValue retryTimeout) {
             this(request, primary, listener, replicas, ReplicationOperationTests.this.logger, threadPool, "test", primaryTerm,
-                    initialRetryBackoffBound, retryTimeout);
+                initialRetryBackoffBound, retryTimeout);
         }
 
         TestReplicationOperation(Request request, Primary<Request, Request, TestPrimary.Result> primary,
-                ActionListener<TestPrimary.Result> listener, Replicas<Request> replicas, long primaryTerm) {
+                                 ActionListener<TestPrimary.Result> listener, Replicas<Request> replicas, long primaryTerm) {
             this(request, primary, listener, replicas, ReplicationOperationTests.this.logger, threadPool, "test", primaryTerm);
         }
 
         TestReplicationOperation(Request request, Primary<Request, Request, TestPrimary.Result> primary,
-                ActionListener<TestPrimary.Result> listener, Replicas<Request> replicas, Logger logger, ThreadPool threadPool,
-                String opType, long primaryTerm) {
+                                 ActionListener<TestPrimary.Result> listener,
+                                 Replicas<Request> replicas, Logger logger, ThreadPool threadPool, String opType, long primaryTerm) {
             this(request, primary, listener, replicas, logger, threadPool, opType, primaryTerm, TimeValue.timeValueMillis(50),
-                    TimeValue.timeValueSeconds(1));
+                TimeValue.timeValueSeconds(1));
         }
 
         TestReplicationOperation(Request request, Primary<Request, Request, TestPrimary.Result> primary,
-                ActionListener<TestPrimary.Result> listener, Replicas<Request> replicas, Logger logger, ThreadPool threadPool,
-                String opType, long primaryTerm, TimeValue initialRetryBackoffBound, TimeValue retryTimeout) {
+                                 ActionListener<TestPrimary.Result> listener,
+                                 Replicas<Request> replicas, Logger logger, ThreadPool threadPool, String opType, long primaryTerm,
+                                 TimeValue initialRetryBackoffBound, TimeValue retryTimeout) {
             super(request, primary, listener, replicas, logger, threadPool, opType, primaryTerm, initialRetryBackoffBound, retryTimeout);
         }
     }

@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.ActionResponse;
+import org.codelibs.fesen.cluster.ClusterModule;
 import org.codelibs.fesen.cluster.ClusterName;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.node.DiscoveryNodes;
@@ -43,11 +44,17 @@ public class ClusterStateResponse extends ActionResponse {
     public ClusterStateResponse(StreamInput in) throws IOException {
         super(in);
         clusterName = new ClusterName(in);
-        clusterState = in.readOptionalWriteable(innerIn -> ClusterState.readFrom(innerIn, null));
+        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
+            clusterState = in.readOptionalWriteable(innerIn -> ClusterState.readFrom(innerIn, null));
+        } else {
+            clusterState = ClusterState.readFrom(in, null);
+        }
         if (in.getVersion().before(Version.V_7_0_0)) {
             new ByteSizeValue(in);
         }
-        waitForTimedOut = in.readBoolean();
+        if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
+            waitForTimedOut = in.readBoolean();
+        }
     }
 
     public ClusterStateResponse(ClusterName clusterName, ClusterState clusterState, boolean waitForTimedOut) {
@@ -82,32 +89,46 @@ public class ClusterStateResponse extends ActionResponse {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         clusterName.writeTo(out);
-        out.writeOptionalWriteable(clusterState);
+        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
+            out.writeOptionalWriteable(clusterState);
+        } else {
+            if (out.getVersion().onOrAfter(Version.V_6_3_0)) {
+                clusterState.writeTo(out);
+            } else {
+                ClusterModule.filterCustomsForPre63Clients(clusterState).writeTo(out);
+            }
+        }
         if (out.getVersion().before(Version.V_7_0_0)) {
             ByteSizeValue.ZERO.writeTo(out);
         }
-        out.writeBoolean(waitForTimedOut);
+        if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
+            out.writeBoolean(waitForTimedOut);
+        }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         ClusterStateResponse response = (ClusterStateResponse) o;
-        return waitForTimedOut == response.waitForTimedOut && Objects.equals(clusterName, response.clusterName) &&
-        // Best effort. Only compare cluster state version and master node id,
-        // because cluster state doesn't implement equals()
-                Objects.equals(getVersion(clusterState), getVersion(response.clusterState))
-                && Objects.equals(getMasterNodeId(clusterState), getMasterNodeId(response.clusterState));
+        return waitForTimedOut == response.waitForTimedOut &&
+            Objects.equals(clusterName, response.clusterName) &&
+            // Best effort. Only compare cluster state version and master node id,
+            // because cluster state doesn't implement equals()
+            Objects.equals(getVersion(clusterState), getVersion(response.clusterState)) &&
+            Objects.equals(getMasterNodeId(clusterState), getMasterNodeId(response.clusterState));
     }
 
     @Override
     public int hashCode() {
         // Best effort. Only use cluster state version and master node id,
         // because cluster state doesn't implement  hashcode()
-        return Objects.hash(clusterName, getVersion(clusterState), getMasterNodeId(clusterState), waitForTimedOut);
+        return Objects.hash(
+            clusterName,
+            getVersion(clusterState),
+            getMasterNodeId(clusterState),
+            waitForTimedOut
+        );
     }
 
     private static String getMasterNodeId(ClusterState clusterState) {

@@ -19,25 +19,25 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.Rounding;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.common.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.DocValueFormat;
+
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Represent hard_bounds and extended_bounds in date-histogram aggregations.
@@ -49,7 +49,8 @@ public class LongBounds implements ToXContentFragment, Writeable {
     static final ParseField MIN_FIELD = new ParseField("min");
     static final ParseField MAX_FIELD = new ParseField("max");
 
-    public static final ConstructingObjectParser<LongBounds, Void> PARSER = new ConstructingObjectParser<>("bounds", a -> {
+    public static final ConstructingObjectParser<LongBounds, Void> PARSER = new ConstructingObjectParser<>(
+            "bounds", a -> {
         assert a.length == 2;
         Long min = null;
         Long max = null;
@@ -163,8 +164,8 @@ public class LongBounds implements ToXContentFragment, Writeable {
             max = format.parseLong(maxAsStr, false, queryShardContext::nowInMillis);
         }
         if (min != null && max != null && min.compareTo(max) > 0) {
-            throw new IllegalArgumentException("[" + boundsName + ".min][" + min + "] cannot be greater than " + "[" + boundsName + ".max]["
-                    + max + "] for histogram aggregation [" + aggName + "]");
+            throw new IllegalArgumentException("[" + boundsName + ".min][" + min + "] cannot be greater than " +
+                    "[" + boundsName + ".max][" + max + "] for histogram aggregation [" + aggName + "]");
         }
         return new LongBounds(min, max, minAsStr, maxAsStr);
     }
@@ -172,7 +173,9 @@ public class LongBounds implements ToXContentFragment, Writeable {
     LongBounds round(Rounding rounding) {
         // Extended bounds shouldn't be effected by the offset
         Rounding effectiveRounding = rounding.withoutOffset();
-        return new LongBounds(min != null ? effectiveRounding.round(min) : null, max != null ? effectiveRounding.round(max) : null);
+        return new LongBounds(
+                min != null ? effectiveRounding.round(min) : null,
+                max != null ? effectiveRounding.round(max) : null);
     }
 
     @Override
@@ -204,7 +207,9 @@ public class LongBounds implements ToXContentFragment, Writeable {
             return false;
         }
         LongBounds other = (LongBounds) obj;
-        return Objects.equals(min, other.min) && Objects.equals(max, other.max) && Objects.equals(minAsStr, other.minAsStr)
+        return Objects.equals(min, other.min)
+                && Objects.equals(max, other.max)
+                && Objects.equals(minAsStr, other.minAsStr)
                 && Objects.equals(maxAsStr, other.maxAsStr);
     }
 

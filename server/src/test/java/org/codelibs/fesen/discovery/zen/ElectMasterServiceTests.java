@@ -51,8 +51,8 @@ public class ElectMasterServiceTests extends ESTestCase {
             if (randomBoolean()) {
                 roles.add(DiscoveryNodeRole.MASTER_ROLE);
             }
-            DiscoveryNode node =
-                    new DiscoveryNode("n_" + i, "n_" + i, buildNewFakeTransportAddress(), Collections.emptyMap(), roles, Version.CURRENT);
+            DiscoveryNode node = new DiscoveryNode("n_" + i, "n_" + i, buildNewFakeTransportAddress(), Collections.emptyMap(),
+                    roles, Version.CURRENT);
             nodes.add(node);
         }
 
@@ -66,15 +66,16 @@ public class ElectMasterServiceTests extends ESTestCase {
         for (int i = 0; i < count; i++) {
             Set<DiscoveryNodeRole> roles = new HashSet<>();
             roles.add(DiscoveryNodeRole.MASTER_ROLE);
-            DiscoveryNode node =
-                    new DiscoveryNode("n_" + i, "n_" + i, buildNewFakeTransportAddress(), Collections.emptyMap(), roles, Version.CURRENT);
+            DiscoveryNode node = new DiscoveryNode("n_" + i, "n_" + i, buildNewFakeTransportAddress(), Collections.emptyMap(),
+                roles, Version.CURRENT);
             candidates.add(
-                    new MasterCandidate(node, randomBoolean() ? MasterCandidate.UNRECOVERED_CLUSTER_VERSION : randomNonNegativeLong()));
+                new MasterCandidate(node, randomBoolean() ? MasterCandidate.UNRECOVERED_CLUSTER_VERSION : randomNonNegativeLong()));
         }
 
         Collections.shuffle(candidates, random());
         return candidates;
     }
+
 
     public void testSortByMasterLikelihood() {
         List<DiscoveryNode> nodes = generateRandomNodes();
@@ -95,7 +96,7 @@ public class ElectMasterServiceTests extends ESTestCase {
     public void testTieBreakActiveMasters() {
         List<DiscoveryNode> nodes = generateRandomCandidates().stream().map(MasterCandidate::getNode).collect(Collectors.toList());
         DiscoveryNode bestMaster = electMasterService().tieBreakActiveMasters(nodes);
-        for (DiscoveryNode node : nodes) {
+        for (DiscoveryNode node: nodes) {
             if (node.equals(bestMaster) == false) {
                 assertTrue(bestMaster.getId().compareTo(node.getId()) < 0);
             }
@@ -133,10 +134,10 @@ public class ElectMasterServiceTests extends ESTestCase {
                 // nothing much to test here
             } else if (candidate.getClusterStateVersion() == master.getClusterStateVersion()) {
                 assertThat("candidate " + candidate + " has a lower or equal id than master " + master, candidate.getNode().getId(),
-                        greaterThan(master.getNode().getId()));
+                    greaterThan(master.getNode().getId()));
             } else {
                 assertThat("candidate " + master + " has a higher cluster state version than candidate " + candidate,
-                        master.getClusterStateVersion(), greaterThan(candidate.getClusterStateVersion()));
+                    master.getClusterStateVersion(), greaterThan(candidate.getClusterStateVersion()));
             }
         }
     }

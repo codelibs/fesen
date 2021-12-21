@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.ingest.common;
 
+import org.codelibs.fesen.ingest.common.AbstractStringProcessor;
+import org.codelibs.fesen.ingest.common.URLDecodeProcessor;
+
 public class URLDecodeProcessorFactoryTests extends AbstractStringProcessorFactoryTestCase {
     @Override
     protected AbstractStringProcessor.Factory newFactory() {

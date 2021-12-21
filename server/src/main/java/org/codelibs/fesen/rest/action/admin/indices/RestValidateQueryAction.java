@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestStatus.OK;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.codelibs.fesen.action.admin.indices.validate.query.QueryExplanation;
 import org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryRequest;
 import org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryResponse;
@@ -44,15 +35,29 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestStatus.OK;
+
 public class RestValidateQueryAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestValidateQueryAction.class);
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" + " Specifying types in validate query requests is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE = "[types removal]" +
+        " Specifying types in validate query requests is deprecated.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(GET, "/_validate/query"), new Route(POST, "/_validate/query"),
-                new Route(GET, "/{index}/_validate/query"), new Route(POST, "/{index}/_validate/query"),
-                new Route(GET, "/{index}/{type}/_validate/query"), new Route(POST, "/{index}/{type}/_validate/query")));
+        return unmodifiableList(asList(
+            new Route(GET, "/_validate/query"),
+            new Route(POST, "/_validate/query"),
+            new Route(GET, "/{index}/_validate/query"),
+            new Route(POST, "/{index}/_validate/query"),
+            new Route(GET, "/{index}/{type}/_validate/query"),
+            new Route(POST, "/{index}/{type}/_validate/query")));
     }
 
     @Override

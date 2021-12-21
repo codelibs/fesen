@@ -18,6 +18,7 @@
  */
 package org.codelibs.fesen.search.aggregations.metrics;
 
+
 /**
  * Statistics over a set of values (either aggregated over field data or scripts)
  */

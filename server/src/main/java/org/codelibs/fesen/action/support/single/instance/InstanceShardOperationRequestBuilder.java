@@ -25,7 +25,8 @@ import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.client.FesenClient;
 import org.codelibs.fesen.core.TimeValue;
 
-public abstract class InstanceShardOperationRequestBuilder<Request extends InstanceShardOperationRequest<Request>, Response extends ActionResponse, RequestBuilder extends InstanceShardOperationRequestBuilder<Request, Response, RequestBuilder>>
+public abstract class InstanceShardOperationRequestBuilder<Request extends InstanceShardOperationRequest<Request>,
+        Response extends ActionResponse, RequestBuilder extends InstanceShardOperationRequestBuilder<Request, Response, RequestBuilder>>
         extends ActionRequestBuilder<Request, Response> {
 
     protected InstanceShardOperationRequestBuilder(FesenClient client, ActionType<Response> action, Request request) {

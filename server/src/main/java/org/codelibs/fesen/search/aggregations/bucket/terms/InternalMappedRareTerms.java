@@ -18,15 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.CollectionUtil;
@@ -40,8 +31,17 @@ import org.codelibs.fesen.search.aggregations.AggregationExecutionException;
 import org.codelibs.fesen.search.aggregations.BucketOrder;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public abstract class InternalMappedRareTerms<A extends InternalRareTerms<A, B>, B extends InternalRareTerms.Bucket<B>>
-        extends InternalRareTerms<A, B> {
+    extends InternalRareTerms<A, B> {
 
     protected DocValueFormat format;
     protected List<B> buckets;
@@ -51,8 +51,8 @@ public abstract class InternalMappedRareTerms<A extends InternalRareTerms<A, B>,
 
     protected final Logger logger = LogManager.getLogger(getClass());
 
-    InternalMappedRareTerms(String name, BucketOrder order, Map<String, Object> metadata, DocValueFormat format, List<B> buckets,
-            long maxDocCount, SetBackedScalingCuckooFilter filter) {
+    InternalMappedRareTerms(String name, BucketOrder order, Map<String, Object> metadata, DocValueFormat format,
+                            List<B> buckets, long maxDocCount, SetBackedScalingCuckooFilter filter) {
         super(name, order, maxDocCount, metadata);
         this.format = format;
         this.buckets = buckets;
@@ -102,20 +102,21 @@ public abstract class InternalMappedRareTerms<A extends InternalRareTerms<A, B>,
             if (referenceTerms == null && aggregation.getClass().equals(UnmappedRareTerms.class) == false) {
                 referenceTerms = terms;
             }
-            if (referenceTerms != null && referenceTerms.getClass().equals(terms.getClass()) == false
-                    && terms.getClass().equals(UnmappedRareTerms.class) == false) {
+            if (referenceTerms != null &&
+                referenceTerms.getClass().equals(terms.getClass()) == false &&
+                terms.getClass().equals(UnmappedRareTerms.class) == false) {
                 // control gets into this loop when the same field name against which the query is executed
                 // is of different types in different indices.
                 throw new AggregationExecutionException("Merging/Reducing the aggregations failed when computing the aggregation ["
-                        + referenceTerms.getName() + "] because the field you gave in the aggregation query existed as two different "
-                        + "types in two different indices");
+                    + referenceTerms.getName() + "] because the field you gave in the aggregation query existed as two different "
+                    + "types in two different indices");
             }
             for (B bucket : terms.getBuckets()) {
                 List<B> bucketList = buckets.computeIfAbsent(bucket.getKey(), k -> new ArrayList<>());
                 bucketList.add(bucket);
             }
 
-            SetBackedScalingCuckooFilter otherFilter = ((InternalMappedRareTerms) aggregation).getFilter();
+            SetBackedScalingCuckooFilter otherFilter = ((InternalMappedRareTerms)aggregation).getFilter();
             if (filter == null) {
                 filter = new SetBackedScalingCuckooFilter(otherFilter);
             } else {
@@ -158,14 +159,13 @@ public abstract class InternalMappedRareTerms<A extends InternalRareTerms<A, B>,
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
-        InternalMappedRareTerms<?, ?> that = (InternalMappedRareTerms<?, ?>) obj;
-        return Objects.equals(buckets, that.buckets) && Objects.equals(format, that.format) && Objects.equals(filter, that.filter);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
+        InternalMappedRareTerms<?,?> that = (InternalMappedRareTerms<?,?>) obj;
+        return Objects.equals(buckets, that.buckets)
+            && Objects.equals(format, that.format)
+            && Objects.equals(filter, that.filter);
     }
 
     @Override

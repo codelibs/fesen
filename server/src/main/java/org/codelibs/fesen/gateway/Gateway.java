@@ -19,9 +19,8 @@
 
 package org.codelibs.fesen.gateway;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
+import com.carrotsearch.hppc.ObjectFloatHashMap;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.action.FailedNodeException;
@@ -33,8 +32,8 @@ import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.discovery.zen.ElectMasterService;
 import org.codelibs.fesen.index.Index;
 
-import com.carrotsearch.hppc.ObjectFloatHashMap;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
+import java.util.Arrays;
+import java.util.function.Function;
 
 public class Gateway {
 
@@ -47,7 +46,7 @@ public class Gateway {
     private final int minimumMasterNodes;
 
     public Gateway(final Settings settings, final ClusterService clusterService,
-            final TransportNodesListGatewayMetaState listGatewayMetaState) {
+                   final TransportNodesListGatewayMetaState listGatewayMetaState) {
         this.clusterService = clusterService;
         this.listGatewayMetaState = listGatewayMetaState;
         this.minimumMasterNodes = ElectMasterService.DISCOVERY_ZEN_MINIMUM_MASTER_NODES_SETTING.get(settings);
@@ -121,10 +120,9 @@ public class Gateway {
                 }
             }
         }
-        ClusterState recoveredState = Function.<ClusterState> identity()
-                .andThen(
-                        state -> ClusterStateUpdaters.upgradeAndArchiveUnknownOrInvalidSettings(state, clusterService.getClusterSettings()))
-                .apply(ClusterState.builder(clusterService.getClusterName()).metadata(metadataBuilder).build());
+        ClusterState recoveredState = Function.<ClusterState>identity()
+            .andThen(state -> ClusterStateUpdaters.upgradeAndArchiveUnknownOrInvalidSettings(state, clusterService.getClusterSettings()))
+            .apply(ClusterState.builder(clusterService.getClusterName()).metadata(metadataBuilder).build());
 
         listener.onSuccess(recoveredState);
     }

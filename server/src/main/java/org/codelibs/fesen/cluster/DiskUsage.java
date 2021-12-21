@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.cluster;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,6 +26,9 @@ import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Encapsulation class used to represent the amount of disk used on a node.
@@ -108,7 +108,7 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         if (totalBytes == 0) {
             return 100.0;
         }
-        return 100.0 * ((double) freeBytes / totalBytes);
+        return 100.0 * ((double)freeBytes / totalBytes);
     }
 
     public double getUsedDiskAsPercentage() {
@@ -129,14 +129,14 @@ public class DiskUsage implements ToXContentFragment, Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiskUsage other = (DiskUsage) o;
-        return Objects.equals(nodeId, other.nodeId) && Objects.equals(nodeName, other.nodeName)
-                && Objects.equals(totalBytes, other.totalBytes) && Objects.equals(freeBytes, other.freeBytes);
+        return Objects.equals(nodeId, other.nodeId) &&
+                Objects.equals(nodeName, other.nodeName) &&
+                Objects.equals(totalBytes, other.totalBytes) &&
+                Objects.equals(freeBytes, other.freeBytes);
 
     }
 
@@ -147,7 +147,7 @@ public class DiskUsage implements ToXContentFragment, Writeable {
 
     @Override
     public String toString() {
-        return "[" + nodeId + "][" + nodeName + "][" + path + "] free: " + new ByteSizeValue(getFreeBytes()) + "["
-                + Strings.format1Decimals(getFreeDiskAsPercentage(), "%") + "]";
+        return "[" + nodeId + "][" + nodeName + "][" + path + "] free: " + new ByteSizeValue(getFreeBytes()) +
+                "[" + Strings.format1Decimals(getFreeDiskAsPercentage(), "%") + "]";
     }
 }

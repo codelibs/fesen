@@ -115,52 +115,52 @@ public interface XContentGenerator extends Closeable, Flushable {
 
     default void copyCurrentEvent(XContentParser parser) throws IOException {
         switch (parser.currentToken()) {
-        case START_OBJECT:
-            writeStartObject();
-            break;
-        case END_OBJECT:
-            writeEndObject();
-            break;
-        case START_ARRAY:
-            writeStartArray();
-            break;
-        case END_ARRAY:
-            writeEndArray();
-            break;
-        case FIELD_NAME:
-            writeFieldName(parser.currentName());
-            break;
-        case VALUE_STRING:
-            if (parser.hasTextCharacters()) {
-                writeString(parser.textCharacters(), parser.textOffset(), parser.textLength());
-            } else {
-                writeString(parser.text());
-            }
-            break;
-        case VALUE_NUMBER:
-            switch (parser.numberType()) {
-            case INT:
-                writeNumber(parser.intValue());
+            case START_OBJECT:
+                writeStartObject();
                 break;
-            case LONG:
-                writeNumber(parser.longValue());
+            case END_OBJECT:
+                writeEndObject();
                 break;
-            case FLOAT:
-                writeNumber(parser.floatValue());
+            case START_ARRAY:
+                writeStartArray();
                 break;
-            case DOUBLE:
-                writeNumber(parser.doubleValue());
+            case END_ARRAY:
+                writeEndArray();
                 break;
-            }
-            break;
-        case VALUE_BOOLEAN:
-            writeBoolean(parser.booleanValue());
-            break;
-        case VALUE_NULL:
-            writeNull();
-            break;
-        case VALUE_EMBEDDED_OBJECT:
-            writeBinary(parser.binaryValue());
+            case FIELD_NAME:
+                writeFieldName(parser.currentName());
+                break;
+            case VALUE_STRING:
+                if (parser.hasTextCharacters()) {
+                    writeString(parser.textCharacters(), parser.textOffset(), parser.textLength());
+                } else {
+                    writeString(parser.text());
+                }
+                break;
+            case VALUE_NUMBER:
+                switch (parser.numberType()) {
+                    case INT:
+                        writeNumber(parser.intValue());
+                        break;
+                    case LONG:
+                        writeNumber(parser.longValue());
+                        break;
+                    case FLOAT:
+                        writeNumber(parser.floatValue());
+                        break;
+                    case DOUBLE:
+                        writeNumber(parser.doubleValue());
+                        break;
+                }
+                break;
+            case VALUE_BOOLEAN:
+                writeBoolean(parser.booleanValue());
+                break;
+            case VALUE_NULL:
+                writeNull();
+                break;
+            case VALUE_EMBEDDED_OBJECT:
+                writeBinary(parser.binaryValue());
         }
     }
 

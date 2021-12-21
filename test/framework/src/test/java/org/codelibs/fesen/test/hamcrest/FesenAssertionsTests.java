@@ -19,18 +19,6 @@
 
 package org.codelibs.fesen.test.hamcrest;
 
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertBlocked;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
-import static org.hamcrest.Matchers.containsString;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.action.support.broadcast.BroadcastResponse;
 import org.codelibs.fesen.cluster.block.ClusterBlock;
@@ -42,6 +30,18 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.test.ESTestCase;
 import org.codelibs.fesen.test.RandomObjects;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertBlocked;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+import static org.hamcrest.Matchers.containsString;
 
 public class FesenAssertionsTests extends ESTestCase {
 
@@ -71,7 +71,7 @@ public class FesenAssertionsTests extends ESTestCase {
                     XContentParser parser = createParser(original.contentType().xContent(), BytesReference.bytes(original))) {
                 parser.nextToken();
                 copy.generator().copyCurrentStructure(parser);
-                try (XContentBuilder copyShuffled = shuffleXContent(copy)) {
+                try (XContentBuilder copyShuffled = shuffleXContent(copy) ) {
                     assertToXContentEquivalent(BytesReference.bytes(original), BytesReference.bytes(copyShuffled), original.contentType());
                 }
             }
@@ -102,8 +102,9 @@ public class FesenAssertionsTests extends ESTestCase {
                 otherBuilder.endObject();
             }
             otherBuilder.endObject();
-            AssertionError error = expectThrows(AssertionError.class, () -> assertToXContentEquivalent(BytesReference.bytes(builder),
-                    BytesReference.bytes(otherBuilder), builder.contentType()));
+            AssertionError error = expectThrows(AssertionError.class,
+                    () -> assertToXContentEquivalent(BytesReference.bytes(builder), BytesReference.bytes(otherBuilder),
+                            builder.contentType()));
             assertThat(error.getMessage(), containsString("f2: expected [value2] but not found"));
         }
         {
@@ -130,8 +131,9 @@ public class FesenAssertionsTests extends ESTestCase {
                 otherBuilder.endObject();
             }
             otherBuilder.endObject();
-            AssertionError error = expectThrows(AssertionError.class, () -> assertToXContentEquivalent(BytesReference.bytes(builder),
-                    BytesReference.bytes(otherBuilder), builder.contentType()));
+            AssertionError error = expectThrows(AssertionError.class,
+                    () -> assertToXContentEquivalent(BytesReference.bytes(builder), BytesReference.bytes(otherBuilder),
+                            builder.contentType()));
             assertThat(error.getMessage(), containsString("f2: expected String [value2] but was String [differentValue2]"));
         }
         {
@@ -162,8 +164,9 @@ public class FesenAssertionsTests extends ESTestCase {
             }
             otherBuilder.field("f1", "value");
             otherBuilder.endObject();
-            AssertionError error = expectThrows(AssertionError.class, () -> assertToXContentEquivalent(BytesReference.bytes(builder),
-                    BytesReference.bytes(otherBuilder), builder.contentType()));
+            AssertionError error = expectThrows(AssertionError.class,
+                    () -> assertToXContentEquivalent(BytesReference.bytes(builder), BytesReference.bytes(otherBuilder),
+                            builder.contentType()));
             assertThat(error.getMessage(), containsString("2: expected String [three] but was String [four]"));
         }
         {
@@ -191,8 +194,9 @@ public class FesenAssertionsTests extends ESTestCase {
                 otherBuilder.endArray();
             }
             otherBuilder.endObject();
-            AssertionError error = expectThrows(AssertionError.class, () -> assertToXContentEquivalent(BytesReference.bytes(builder),
-                    BytesReference.bytes(otherBuilder), builder.contentType()));
+            AssertionError error = expectThrows(AssertionError.class,
+                    () -> assertToXContentEquivalent(BytesReference.bytes(builder), BytesReference.bytes(otherBuilder),
+                            builder.contentType()));
             assertThat(error.getMessage(), containsString("expected [1] more entries"));
         }
     }
@@ -201,20 +205,20 @@ public class FesenAssertionsTests extends ESTestCase {
         Map<String, Set<ClusterBlock>> indexLevelBlocks = new HashMap<>();
 
         indexLevelBlocks.put("test", Collections.singleton(IndexMetadata.INDEX_READ_ONLY_BLOCK));
-        assertBlocked(new BroadcastResponse(1, 0, 1, Collections
-                .singletonList(new DefaultShardOperationFailedException("test", 0, new ClusterBlockException(indexLevelBlocks)))));
+        assertBlocked(new BroadcastResponse(1, 0, 1, Collections.singletonList(new DefaultShardOperationFailedException("test", 0,
+            new ClusterBlockException(indexLevelBlocks)))));
 
         indexLevelBlocks.put("test", Collections.singleton(IndexMetadata.INDEX_READ_ONLY_ALLOW_DELETE_BLOCK));
-        assertBlocked(new BroadcastResponse(1, 0, 1, Collections
-                .singletonList(new DefaultShardOperationFailedException("test", 0, new ClusterBlockException(indexLevelBlocks)))));
+        assertBlocked(new BroadcastResponse(1, 0, 1, Collections.singletonList(new DefaultShardOperationFailedException("test", 0,
+            new ClusterBlockException(indexLevelBlocks)))));
 
         indexLevelBlocks.put("test", new HashSet<>(Arrays.asList(IndexMetadata.INDEX_READ_BLOCK, IndexMetadata.INDEX_METADATA_BLOCK)));
-        assertBlocked(new BroadcastResponse(1, 0, 1, Collections
-                .singletonList(new DefaultShardOperationFailedException("test", 0, new ClusterBlockException(indexLevelBlocks)))));
+        assertBlocked(new BroadcastResponse(1, 0, 1, Collections.singletonList(new DefaultShardOperationFailedException("test", 0,
+            new ClusterBlockException(indexLevelBlocks)))));
 
         indexLevelBlocks.put("test",
-                new HashSet<>(Arrays.asList(IndexMetadata.INDEX_READ_ONLY_BLOCK, IndexMetadata.INDEX_READ_ONLY_ALLOW_DELETE_BLOCK)));
-        assertBlocked(new BroadcastResponse(1, 0, 1, Collections
-                .singletonList(new DefaultShardOperationFailedException("test", 0, new ClusterBlockException(indexLevelBlocks)))));
+            new HashSet<>(Arrays.asList(IndexMetadata.INDEX_READ_ONLY_BLOCK, IndexMetadata.INDEX_READ_ONLY_ALLOW_DELETE_BLOCK)));
+        assertBlocked(new BroadcastResponse(1, 0, 1, Collections.singletonList(new DefaultShardOperationFailedException("test", 0,
+            new ClusterBlockException(indexLevelBlocks)))));
     }
 }

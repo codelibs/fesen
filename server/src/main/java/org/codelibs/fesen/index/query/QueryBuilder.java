@@ -19,11 +19,11 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
+
+import java.io.IOException;
 
 public interface QueryBuilder extends NamedWriteable, ToXContentObject, Rewriteable<QueryBuilder> {
 

@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.common.network;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.support.replication.ReplicationTask;
 import org.codelibs.fesen.cluster.routing.allocation.command.AllocateEmptyPrimaryAllocationCommand;
 import org.codelibs.fesen.cluster.routing.allocation.command.AllocateReplicaAllocationCommand;
@@ -40,8 +31,8 @@ import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.util.PageCacheRecycler;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
@@ -59,6 +50,15 @@ import org.codelibs.fesen.transport.TransportInterceptor;
 import org.codelibs.fesen.transport.TransportRequest;
 import org.codelibs.fesen.transport.TransportRequestHandler;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 /**
  * A module to handle registering and binding all network related classes.
  */
@@ -69,8 +69,8 @@ public final class NetworkModule {
     public static final String HTTP_TYPE_DEFAULT_KEY = "http.type.default";
     public static final String TRANSPORT_TYPE_DEFAULT_KEY = "transport.type.default";
 
-    public static final Setting<String> TRANSPORT_DEFAULT_TYPE_SETTING =
-            Setting.simpleString(TRANSPORT_TYPE_DEFAULT_KEY, Property.NodeScope);
+    public static final Setting<String> TRANSPORT_DEFAULT_TYPE_SETTING = Setting.simpleString(TRANSPORT_TYPE_DEFAULT_KEY,
+            Property.NodeScope);
     public static final Setting<String> HTTP_DEFAULT_TYPE_SETTING = Setting.simpleString(HTTP_TYPE_DEFAULT_KEY, Property.NodeScope);
     public static final Setting<String> HTTP_TYPE_SETTING = Setting.simpleString(HTTP_TYPE_KEY, Property.NodeScope);
     public static final Setting<String> TRANSPORT_TYPE_SETTING = Setting.simpleString(TRANSPORT_TYPE_KEY, Property.NodeScope);
@@ -83,18 +83,21 @@ public final class NetworkModule {
 
     static {
         registerAllocationCommand(CancelAllocationCommand::new, CancelAllocationCommand::fromXContent,
-                CancelAllocationCommand.COMMAND_NAME_FIELD);
+            CancelAllocationCommand.COMMAND_NAME_FIELD);
         registerAllocationCommand(MoveAllocationCommand::new, MoveAllocationCommand::fromXContent,
-                MoveAllocationCommand.COMMAND_NAME_FIELD);
+            MoveAllocationCommand.COMMAND_NAME_FIELD);
         registerAllocationCommand(AllocateReplicaAllocationCommand::new, AllocateReplicaAllocationCommand::fromXContent,
-                AllocateReplicaAllocationCommand.COMMAND_NAME_FIELD);
+            AllocateReplicaAllocationCommand.COMMAND_NAME_FIELD);
         registerAllocationCommand(AllocateEmptyPrimaryAllocationCommand::new, AllocateEmptyPrimaryAllocationCommand::fromXContent,
-                AllocateEmptyPrimaryAllocationCommand.COMMAND_NAME_FIELD);
+            AllocateEmptyPrimaryAllocationCommand.COMMAND_NAME_FIELD);
         registerAllocationCommand(AllocateStalePrimaryAllocationCommand::new, AllocateStalePrimaryAllocationCommand::fromXContent,
-                AllocateStalePrimaryAllocationCommand.COMMAND_NAME_FIELD);
-        namedWriteables.add(new NamedWriteableRegistry.Entry(Task.Status.class, ReplicationTask.Status.NAME, ReplicationTask.Status::new));
-        namedWriteables.add(new NamedWriteableRegistry.Entry(Task.Status.class, RawTaskStatus.NAME, RawTaskStatus::new));
-        namedWriteables.add(new NamedWriteableRegistry.Entry(Task.Status.class, ResyncTask.Status.NAME, ResyncTask.Status::new));
+            AllocateStalePrimaryAllocationCommand.COMMAND_NAME_FIELD);
+        namedWriteables.add(
+            new NamedWriteableRegistry.Entry(Task.Status.class, ReplicationTask.Status.NAME, ReplicationTask.Status::new));
+        namedWriteables.add(
+            new NamedWriteableRegistry.Entry(Task.Status.class, RawTaskStatus.NAME, RawTaskStatus::new));
+        namedWriteables.add(
+            new NamedWriteableRegistry.Entry(Task.Status.class, ResyncTask.Status.NAME, ResyncTask.Status::new));
     }
 
     private final Map<String, Supplier<Transport>> transportFactories = new HashMap<>();
@@ -107,26 +110,30 @@ public final class NetworkModule {
      * @param transportClient True if only transport classes should be allowed to be registered, false otherwise.
      */
     public NetworkModule(Settings settings, boolean transportClient, List<NetworkPlugin> plugins, ThreadPool threadPool,
-            BigArrays bigArrays, PageCacheRecycler pageCacheRecycler, CircuitBreakerService circuitBreakerService,
-            NamedWriteableRegistry namedWriteableRegistry, NamedXContentRegistry xContentRegistry, NetworkService networkService,
-            HttpServerTransport.Dispatcher dispatcher, ClusterSettings clusterSettings) {
+                         BigArrays bigArrays,
+                         PageCacheRecycler pageCacheRecycler,
+                         CircuitBreakerService circuitBreakerService,
+                         NamedWriteableRegistry namedWriteableRegistry,
+                         NamedXContentRegistry xContentRegistry,
+                         NetworkService networkService, HttpServerTransport.Dispatcher dispatcher,
+                         ClusterSettings clusterSettings) {
         this.settings = settings;
         this.transportClient = transportClient;
         for (NetworkPlugin plugin : plugins) {
             Map<String, Supplier<HttpServerTransport>> httpTransportFactory = plugin.getHttpTransports(settings, threadPool, bigArrays,
-                    pageCacheRecycler, circuitBreakerService, xContentRegistry, networkService, dispatcher, clusterSettings);
+                pageCacheRecycler, circuitBreakerService, xContentRegistry, networkService, dispatcher, clusterSettings);
             if (transportClient == false) {
                 for (Map.Entry<String, Supplier<HttpServerTransport>> entry : httpTransportFactory.entrySet()) {
                     registerHttpTransport(entry.getKey(), entry.getValue());
                 }
             }
             Map<String, Supplier<Transport>> transportFactory = plugin.getTransports(settings, threadPool, pageCacheRecycler,
-                    circuitBreakerService, namedWriteableRegistry, networkService);
+                circuitBreakerService, namedWriteableRegistry, networkService);
             for (Map.Entry<String, Supplier<Transport>> entry : transportFactory.entrySet()) {
                 registerTransport(entry.getKey(), entry.getValue());
             }
-            List<TransportInterceptor> transportInterceptors =
-                    plugin.getTransportInterceptors(namedWriteableRegistry, threadPool.getThreadContext());
+            List<TransportInterceptor> transportInterceptors = plugin.getTransportInterceptors(namedWriteableRegistry,
+                threadPool.getThreadContext());
             for (TransportInterceptor interceptor : transportInterceptors) {
                 registerTransportInterceptor(interceptor);
             }
@@ -231,7 +238,8 @@ public final class NetworkModule {
 
         @Override
         public <T extends TransportRequest> TransportRequestHandler<T> interceptHandler(String action, String executor,
-                boolean forceExecution, TransportRequestHandler<T> actualHandler) {
+                                                                                        boolean forceExecution,
+                                                                                        TransportRequestHandler<T> actualHandler) {
             for (TransportInterceptor interceptor : this.transportInterceptors) {
                 actualHandler = interceptor.interceptHandler(action, executor, forceExecution, actualHandler);
             }

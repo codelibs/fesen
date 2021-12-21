@@ -18,14 +18,8 @@
  */
 package org.codelibs.fesen.common.xcontent;
 
-import static java.util.Objects.requireNonNull;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.START_ARRAY;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.START_OBJECT;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_BOOLEAN;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_EMBEDDED_OBJECT;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_NULL;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_NUMBER;
-import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_STRING;
+import org.codelibs.fesen.common.ParseField;
+import org.codelibs.fesen.core.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -44,8 +38,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.core.Nullable;
+import static java.util.Objects.requireNonNull;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.START_ARRAY;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.START_OBJECT;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_BOOLEAN;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_EMBEDDED_OBJECT;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_NULL;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_NUMBER;
+import static org.codelibs.fesen.common.xcontent.XContentParser.Token.VALUE_STRING;
 
 /**
  * A declarative, stateless parser that turns XContent into setter calls. A single parser should be defined for each object being parsed,
@@ -71,7 +71,7 @@ import org.codelibs.fesen.core.Nullable;
  * {@link #declareField} which can be used to implement exceptional parsing operations not covered by the high level methods.
  */
 public final class ObjectParser<Value, Context> extends AbstractObjectParser<Value, Context>
-        implements BiFunction<XContentParser, Context, Value>, ContextParser<Context, Value> {
+    implements BiFunction<XContentParser, Context, Value>, ContextParser<Context, Value>{
 
     private final List<String[]> requiredFieldSets = new ArrayList<>();
     private final List<String[]> exclusiveFieldSets = new ArrayList<>();
@@ -94,7 +94,7 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
     }
 
     private static <Value, Context> UnknownFieldParser<Value, Context> ignoreUnknown() {
-        return (op, f, l, p, v, c) -> p.skipChildren();
+      return (op, f, l, p, v, c) -> p.skipChildren();
     }
 
     private static <Value, Context> UnknownFieldParser<Value, Context> errorOnUnknown() {
@@ -114,33 +114,35 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         return (objectParser, field, location, parser, value, context) -> {
             XContentParser.Token t = parser.currentToken();
             switch (t) {
-            case VALUE_STRING:
-                consumer.accept(value, field, parser.text());
-                break;
-            case VALUE_NUMBER:
-                consumer.accept(value, field, parser.numberValue());
-                break;
-            case VALUE_BOOLEAN:
-                consumer.accept(value, field, parser.booleanValue());
-                break;
-            case VALUE_NULL:
-                consumer.accept(value, field, null);
-                break;
-            case START_OBJECT:
-                consumer.accept(value, field, parser.map());
-                break;
-            case START_ARRAY:
-                consumer.accept(value, field, parser.list());
-                break;
-            default:
-                throw new XContentParseException(parser.getTokenLocation(),
+                case VALUE_STRING:
+                    consumer.accept(value, field, parser.text());
+                    break;
+                case VALUE_NUMBER:
+                    consumer.accept(value, field, parser.numberValue());
+                    break;
+                case VALUE_BOOLEAN:
+                    consumer.accept(value, field, parser.booleanValue());
+                    break;
+                case VALUE_NULL:
+                    consumer.accept(value, field, null);
+                    break;
+                case START_OBJECT:
+                    consumer.accept(value, field, parser.map());
+                    break;
+                case START_ARRAY:
+                    consumer.accept(value, field, parser.list());
+                    break;
+                default:
+                    throw new XContentParseException(parser.getTokenLocation(),
                         "[" + objectParser.name + "] cannot parse field [" + field + "] with value type [" + t + "]");
             }
         };
     }
 
-    private static <Value, Category, Context> UnknownFieldParser<Value, Context> unknownIsNamedXContent(Class<Category> categoryClass,
-            BiConsumer<Value, ? super Category> consumer) {
+    private static <Value, Category, Context> UnknownFieldParser<Value, Context> unknownIsNamedXContent(
+        Class<Category> categoryClass,
+        BiConsumer<Value, ? super Category> consumer
+    ) {
         return (objectParser, field, location, parser, value, context) -> {
             Category o;
             try {
@@ -217,8 +219,12 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
      * @param unknownFieldConsumer how to consume parsed unknown fields
      * @param valueSupplier a supplier that creates a new Value instance used when the parser is used as an inner object parser.
      */
-    public <C> ObjectParser(String name, Class<C> categoryClass, BiConsumer<Value, C> unknownFieldConsumer,
-            @Nullable Supplier<Value> valueSupplier) {
+    public <C> ObjectParser(
+        String name,
+        Class<C> categoryClass,
+        BiConsumer<Value, C> unknownFieldConsumer,
+        @Nullable Supplier<Value> valueSupplier
+    ) {
         this(name, unknownIsNamedXContent(categoryClass, unknownFieldConsumer), c -> valueSupplier.get());
     }
 
@@ -229,7 +235,7 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
      * @param valueBuilder builds the value from the context. Used when the ObjectParser is not passed a value.
      */
     private ObjectParser(String name, UnknownFieldParser<Value, Context> unknownFieldParser,
-            @Nullable Function<Context, Value> valueBuilder) {
+                @Nullable Function<Context, Value> valueBuilder) {
         this.name = name;
         this.unknownFieldParser = unknownFieldParser;
         this.valueBuilder = valueBuilder;
@@ -265,7 +271,7 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         } else {
             token = parser.nextToken();
             if (token != XContentParser.Token.START_OBJECT) {
-                throw new XContentParseException(parser.getTokenLocation(), "[" + name + "] Expected START_OBJECT but was: " + token);
+                throw new XContentParseException(parser.getTokenLocation(), "[" + name  + "] Expected START_OBJECT but was: " + token);
             }
         }
 
@@ -285,7 +291,7 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
                 fieldParser = fieldParserMap.get(currentFieldName);
             } else {
                 if (currentFieldName == null) {
-                    throw new XContentParseException(parser.getTokenLocation(), "[" + name + "] no field found");
+                    throw new XContentParseException(parser.getTokenLocation(), "[" + name  + "] no field found");
                 }
                 if (fieldParser == null) {
                     unknownFieldParser.acceptUnknownField(this, currentFieldName, currentPosition, parser, value, context);
@@ -348,14 +354,13 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         try {
             return parse(parser, context);
         } catch (IOException e) {
-            throw new XContentParseException(parser.getTokenLocation(), "[" + name + "] failed to parse object", e);
+            throw new XContentParseException(parser.getTokenLocation(), "[" + name  + "] failed to parse object", e);
         }
     }
 
     public interface Parser<Value, Context> {
         void parse(XContentParser parser, Value value, Context context) throws IOException;
     }
-
     public void declareField(Parser<Value, Context> p, ParseField parseField, ValueType type) {
         if (parseField == null) {
             throw new IllegalArgumentException("[parseField] is required");
@@ -370,7 +375,8 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
     }
 
     @Override
-    public <T> void declareField(BiConsumer<Value, T> consumer, ContextParser<Context, T> parser, ParseField parseField, ValueType type) {
+    public <T> void declareField(BiConsumer<Value, T> consumer, ContextParser<Context, T> parser, ParseField parseField,
+            ValueType type) {
         if (consumer == null) {
             throw new IllegalArgumentException("[consumer] is required");
         }
@@ -394,7 +400,8 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
     }
 
     @Override
-    public <T> void declareNamedObject(BiConsumer<Value, T> consumer, NamedObjectParser<T, Context> namedObjectParser, ParseField field) {
+    public <T> void declareNamedObject(BiConsumer<Value, T> consumer, NamedObjectParser<T, Context> namedObjectParser,
+                                       ParseField field) {
 
         BiFunction<XContentParser, Context, T> objectParser = (XContentParser p, Context c) -> {
             try {
@@ -521,8 +528,8 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         try {
             fieldParser.parser.parse(parser, value, context);
         } catch (Exception ex) {
-            throw new XContentParseException(parser.getTokenLocation(), "[" + name + "] failed to parse field [" + currentFieldName + "]",
-                    ex);
+            throw new XContentParseException(parser.getTokenLocation(),
+                "[" + name  + "] failed to parse field [" + currentFieldName + "]", ex);
         }
     }
 
@@ -530,44 +537,44 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
             throws IOException {
         final XContentParser.Token token = parser.currentToken();
         switch (token) {
-        case START_OBJECT:
-            parseValue(parser, fieldParser, currentFieldName, value, context);
-            /*
-             * Well behaving parsers should consume the entire object but
-             * asserting that they do that is not something we can do
-             * efficiently here. Instead we can check that they end on an
-             * END_OBJECT. They could end on the *wrong* end object and
-             * this test won't catch them, but that is the price that we pay
-             * for having a cheap test.
-             */
-            if (parser.currentToken() != XContentParser.Token.END_OBJECT) {
-                throw new IllegalStateException("parser for [" + currentFieldName + "] did not end on END_OBJECT");
-            }
-            break;
-        case START_ARRAY:
-            parseArray(parser, fieldParser, currentFieldName, value, context);
-            /*
-             * Well behaving parsers should consume the entire array but
-             * asserting that they do that is not something we can do
-             * efficiently here. Instead we can check that they end on an
-             * END_ARRAY. They could end on the *wrong* end array and
-             * this test won't catch them, but that is the price that we pay
-             * for having a cheap test.
-             */
-            if (parser.currentToken() != XContentParser.Token.END_ARRAY) {
-                throw new IllegalStateException("parser for [" + currentFieldName + "] did not end on END_ARRAY");
-            }
-            break;
-        case END_OBJECT:
-        case END_ARRAY:
-        case FIELD_NAME:
-            throw new XContentParseException(parser.getTokenLocation(), "[" + name + "]" + token + " is unexpected");
-        case VALUE_STRING:
-        case VALUE_NUMBER:
-        case VALUE_BOOLEAN:
-        case VALUE_EMBEDDED_OBJECT:
-        case VALUE_NULL:
-            parseValue(parser, fieldParser, currentFieldName, value, context);
+            case START_OBJECT:
+                parseValue(parser, fieldParser, currentFieldName, value, context);
+                /*
+                 * Well behaving parsers should consume the entire object but
+                 * asserting that they do that is not something we can do
+                 * efficiently here. Instead we can check that they end on an
+                 * END_OBJECT. They could end on the *wrong* end object and
+                 * this test won't catch them, but that is the price that we pay
+                 * for having a cheap test.
+                 */
+                if (parser.currentToken() != XContentParser.Token.END_OBJECT) {
+                    throw new IllegalStateException("parser for [" + currentFieldName + "] did not end on END_OBJECT");
+                }
+                break;
+            case START_ARRAY:
+                parseArray(parser, fieldParser, currentFieldName, value, context);
+                /*
+                 * Well behaving parsers should consume the entire array but
+                 * asserting that they do that is not something we can do
+                 * efficiently here. Instead we can check that they end on an
+                 * END_ARRAY. They could end on the *wrong* end array and
+                 * this test won't catch them, but that is the price that we pay
+                 * for having a cheap test.
+                 */
+                if (parser.currentToken() != XContentParser.Token.END_ARRAY) {
+                    throw new IllegalStateException("parser for [" + currentFieldName + "] did not end on END_ARRAY");
+                }
+                break;
+            case END_OBJECT:
+            case END_ARRAY:
+            case FIELD_NAME:
+                throw new XContentParseException(parser.getTokenLocation(), "[" + name + "]" + token + " is unexpected");
+            case VALUE_STRING:
+            case VALUE_NUMBER:
+            case VALUE_BOOLEAN:
+            case VALUE_EMBEDDED_OBJECT:
+            case VALUE_NULL:
+                parseValue(parser, fieldParser, currentFieldName, value, context);
         }
     }
 
@@ -587,7 +594,7 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         void assertSupports(String parserName, XContentParser parser, String currentFieldName) {
             if (parseField.match(parserName, parser::getTokenLocation, currentFieldName, parser.getDeprecationHandler()) == false) {
                 throw new XContentParseException(parser.getTokenLocation(),
-                        "[" + parserName + "] parsefield doesn't accept: " + currentFieldName);
+                        "[" + parserName  + "] parsefield doesn't accept: " + currentFieldName);
             }
             if (supportedTokens.contains(parser.currentToken()) == false) {
                 throw new XContentParseException(parser.getTokenLocation(),
@@ -601,56 +608,49 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
             String allReplacedWith = parseField.getAllReplacedWith();
             String deprecated = "";
             if (deprecatedNames != null && deprecatedNames.length > 0) {
-                deprecated = ", deprecated_names=" + Arrays.toString(deprecatedNames);
+                deprecated = ", deprecated_names="  + Arrays.toString(deprecatedNames);
             }
-            return "FieldParser{" + "preferred_name=" + parseField.getPreferredName() + ", supportedTokens=" + supportedTokens + deprecated
-                    + (allReplacedWith == null ? "" : ", replaced_with=" + allReplacedWith) + ", type=" + type.name() + '}';
+            return "FieldParser{" +
+                    "preferred_name=" + parseField.getPreferredName() +
+                    ", supportedTokens=" + supportedTokens +
+                    deprecated +
+                    (allReplacedWith == null ? "" : ", replaced_with=" + allReplacedWith) +
+                    ", type=" + type.name() +
+                    '}';
         }
     }
 
     public enum ValueType {
-        STRING(VALUE_STRING), STRING_OR_NULL(VALUE_STRING, VALUE_NULL), FLOAT(VALUE_NUMBER, VALUE_STRING), FLOAT_OR_NULL(VALUE_NUMBER,
-                VALUE_STRING,
-                VALUE_NULL), DOUBLE(VALUE_NUMBER, VALUE_STRING), DOUBLE_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL), LONG(VALUE_NUMBER,
-                        VALUE_STRING), LONG_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL), INT(VALUE_NUMBER, VALUE_STRING), INT_OR_NULL(
-                                VALUE_NUMBER, VALUE_STRING,
-                                VALUE_NULL), BOOLEAN(VALUE_BOOLEAN, VALUE_STRING), STRING_ARRAY(START_ARRAY, VALUE_STRING), FLOAT_ARRAY(
-                                        START_ARRAY, VALUE_NUMBER,
-                                        VALUE_STRING), DOUBLE_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING), LONG_ARRAY(START_ARRAY,
-                                                VALUE_NUMBER,
-                                                VALUE_STRING), INT_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING), BOOLEAN_ARRAY(
-                                                        START_ARRAY, VALUE_BOOLEAN), OBJECT(START_OBJECT), OBJECT_OR_NULL(START_OBJECT,
-                                                                VALUE_NULL), OBJECT_ARRAY(START_OBJECT, START_ARRAY), OBJECT_ARRAY_OR_NULL(
-                                                                        START_OBJECT, START_ARRAY, VALUE_NULL), OBJECT_OR_BOOLEAN(
-                                                                                START_OBJECT, VALUE_BOOLEAN), OBJECT_OR_STRING(START_OBJECT,
-                                                                                        VALUE_STRING), OBJECT_OR_LONG(START_OBJECT,
-                                                                                                VALUE_NUMBER), OBJECT_ARRAY_BOOLEAN_OR_STRING(
-                                                                                                        START_OBJECT, START_ARRAY,
-                                                                                                        VALUE_BOOLEAN,
-                                                                                                        VALUE_STRING), OBJECT_ARRAY_OR_STRING(
-                                                                                                                START_OBJECT, START_ARRAY,
-                                                                                                                VALUE_STRING), OBJECT_ARRAY_STRING_OR_NUMBER(
-                                                                                                                        START_OBJECT,
-                                                                                                                        START_ARRAY,
-                                                                                                                        VALUE_STRING,
-                                                                                                                        VALUE_NUMBER), VALUE(
-                                                                                                                                VALUE_BOOLEAN,
-                                                                                                                                VALUE_NULL,
-                                                                                                                                VALUE_EMBEDDED_OBJECT,
-                                                                                                                                VALUE_NUMBER,
-                                                                                                                                VALUE_STRING), VALUE_OBJECT_ARRAY(
-                                                                                                                                        VALUE_BOOLEAN,
-                                                                                                                                        VALUE_NULL,
-                                                                                                                                        VALUE_EMBEDDED_OBJECT,
-                                                                                                                                        VALUE_NUMBER,
-                                                                                                                                        VALUE_STRING,
-                                                                                                                                        START_OBJECT,
-                                                                                                                                        START_ARRAY), VALUE_ARRAY(
-                                                                                                                                                VALUE_BOOLEAN,
-                                                                                                                                                VALUE_NULL,
-                                                                                                                                                VALUE_NUMBER,
-                                                                                                                                                VALUE_STRING,
-                                                                                                                                                START_ARRAY);
+        STRING(VALUE_STRING),
+        STRING_OR_NULL(VALUE_STRING, VALUE_NULL),
+        FLOAT(VALUE_NUMBER, VALUE_STRING),
+        FLOAT_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        DOUBLE(VALUE_NUMBER, VALUE_STRING),
+        DOUBLE_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        LONG(VALUE_NUMBER, VALUE_STRING),
+        LONG_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        INT(VALUE_NUMBER, VALUE_STRING),
+        INT_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        BOOLEAN(VALUE_BOOLEAN, VALUE_STRING),
+        STRING_ARRAY(START_ARRAY, VALUE_STRING),
+        FLOAT_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        DOUBLE_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        LONG_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        INT_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        BOOLEAN_ARRAY(START_ARRAY, VALUE_BOOLEAN),
+        OBJECT(START_OBJECT),
+        OBJECT_OR_NULL(START_OBJECT, VALUE_NULL),
+        OBJECT_ARRAY(START_OBJECT, START_ARRAY),
+        OBJECT_ARRAY_OR_NULL(START_OBJECT, START_ARRAY, VALUE_NULL),
+        OBJECT_OR_BOOLEAN(START_OBJECT, VALUE_BOOLEAN),
+        OBJECT_OR_STRING(START_OBJECT, VALUE_STRING),
+        OBJECT_OR_LONG(START_OBJECT, VALUE_NUMBER),
+        OBJECT_ARRAY_BOOLEAN_OR_STRING(START_OBJECT, START_ARRAY, VALUE_BOOLEAN, VALUE_STRING),
+        OBJECT_ARRAY_OR_STRING(START_OBJECT, START_ARRAY, VALUE_STRING),
+        OBJECT_ARRAY_STRING_OR_NUMBER(START_OBJECT, START_ARRAY, VALUE_STRING, VALUE_NUMBER),
+        VALUE(VALUE_BOOLEAN, VALUE_NULL, VALUE_EMBEDDED_OBJECT, VALUE_NUMBER, VALUE_STRING),
+        VALUE_OBJECT_ARRAY(VALUE_BOOLEAN, VALUE_NULL, VALUE_EMBEDDED_OBJECT, VALUE_NUMBER, VALUE_STRING, START_OBJECT, START_ARRAY),
+        VALUE_ARRAY(VALUE_BOOLEAN, VALUE_NULL, VALUE_NUMBER, VALUE_STRING, START_ARRAY);
 
         private final EnumSet<XContentParser.Token> tokens;
 
@@ -665,6 +665,9 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
 
     @Override
     public String toString() {
-        return "ObjectParser{" + "name='" + name + '\'' + ", fields=" + fieldParserMap.values() + '}';
+        return "ObjectParser{" +
+                "name='" + name + '\'' +
+                ", fields=" + fieldParserMap.values() +
+                '}';
     }
 }

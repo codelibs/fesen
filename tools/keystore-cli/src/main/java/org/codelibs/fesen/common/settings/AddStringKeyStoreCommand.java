@@ -19,6 +19,17 @@
 
 package org.codelibs.fesen.common.settings;
 
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+
+import org.codelibs.fesen.cli.ExitCodes;
+import org.codelibs.fesen.cli.Terminal;
+import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
+import org.codelibs.fesen.core.CheckedFunction;
+import org.codelibs.fesen.env.Environment;
+
 import java.io.BufferedReader;
 import java.io.CharArrayWriter;
 import java.io.Closeable;
@@ -28,15 +39,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-
-import org.codelibs.fesen.cli.ExitCodes;
-import org.codelibs.fesen.cli.Terminal;
-import org.codelibs.fesen.cli.UserException;
-import org.codelibs.fesen.core.CheckedFunction;
-import org.codelibs.fesen.env.Environment;
-
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 
 /**
  * A subcommand for the keystore cli which adds a string setting.
@@ -49,8 +51,10 @@ class AddStringKeyStoreCommand extends BaseKeyStoreCommand {
     AddStringKeyStoreCommand() {
         super("Add a string settings to the keystore", false);
         this.stdinOption = parser.acceptsAll(Arrays.asList("x", "stdin"), "Read setting values from stdin");
-        this.forceOption = parser.acceptsAll(Arrays.asList("f", "force"),
-                "Overwrite existing setting without prompting, creating keystore if necessary");
+        this.forceOption = parser.acceptsAll(
+            Arrays.asList("f", "force"),
+            "Overwrite existing setting without prompting, creating keystore if necessary"
+        );
         this.arguments = parser.nonOptions("setting names");
     }
 

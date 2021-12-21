@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.geo;
 
-import static org.codelibs.fesen.test.ESTestCase.randomValueOtherThanMany;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-
 import org.apache.lucene.geo.GeoTestUtil;
 import org.codelibs.fesen.geometry.Circle;
 import org.codelibs.fesen.geometry.Geometry;
@@ -41,6 +33,14 @@ import org.codelibs.fesen.geometry.Point;
 import org.codelibs.fesen.geometry.Polygon;
 import org.codelibs.fesen.geometry.Rectangle;
 import org.codelibs.fesen.test.ESTestCase;
+
+import static org.codelibs.fesen.test.ESTestCase.randomValueOtherThanMany;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 
 public class GeometryTestUtils {
 
@@ -58,7 +58,8 @@ public class GeometryTestUtils {
 
     public static Circle randomCircle(boolean hasAlt) {
         if (hasAlt) {
-            return new Circle(randomLon(), randomLat(), ESTestCase.randomDouble(), ESTestCase.randomDoubleBetween(0, 100, false));
+            return new Circle(randomLon(), randomLat(), ESTestCase.randomDouble(),
+                ESTestCase.randomDoubleBetween(0, 100, false));
         } else {
             return new Circle(randomLon(), randomLat(), ESTestCase.randomDoubleBetween(0, 100, false));
         }
@@ -115,11 +116,12 @@ public class GeometryTestUtils {
         final int numPts = lucenePolygon.numPoints() - 1;
         for (int i = 0; i < numPts; i++) {
             // compute signed area
-            windingSum += lucenePolygon.getPolyLon(i) * lucenePolygon.getPolyLat(i + 1)
-                    - lucenePolygon.getPolyLat(i) * lucenePolygon.getPolyLon(i + 1);
+            windingSum += lucenePolygon.getPolyLon(i) * lucenePolygon.getPolyLat(i + 1) -
+                lucenePolygon.getPolyLat(i) * lucenePolygon.getPolyLon(i + 1);
         }
-        return Math.abs(windingSum / 2);
+       return Math.abs(windingSum / 2);
     }
+
 
     private static double[] randomAltRing(int size) {
         double[] alts = new double[size];
@@ -130,7 +132,7 @@ public class GeometryTestUtils {
         return alts;
     }
 
-    public static LinearRing linearRing(double[] lons, double[] lats, boolean generateAlts) {
+    public static LinearRing linearRing(double[] lons, double[] lats,boolean generateAlts) {
         if (generateAlts) {
             return new LinearRing(lons, lats, randomAltRing(lats.length));
         }
@@ -187,13 +189,17 @@ public class GeometryTestUtils {
     }
 
     protected static Geometry randomGeometry(int level, boolean hasAlt) {
-        @SuppressWarnings("unchecked")
-        Function<Boolean, Geometry> geometry =
-                ESTestCase.randomFrom(GeometryTestUtils::randomCircle, GeometryTestUtils::randomLine, GeometryTestUtils::randomPoint,
-                        GeometryTestUtils::randomPolygon, GeometryTestUtils::randomMultiLine, GeometryTestUtils::randomMultiPoint,
-                        GeometryTestUtils::randomMultiPolygon, hasAlt ? GeometryTestUtils::randomPoint : (b) -> randomRectangle(),
-                        level < 3 ? (b) -> randomGeometryCollection(level + 1, b) : GeometryTestUtils::randomPoint // don't build too deep
-                );
+        @SuppressWarnings("unchecked") Function<Boolean, Geometry> geometry = ESTestCase.randomFrom(
+            GeometryTestUtils::randomCircle,
+            GeometryTestUtils::randomLine,
+            GeometryTestUtils::randomPoint,
+            GeometryTestUtils::randomPolygon,
+            GeometryTestUtils::randomMultiLine,
+            GeometryTestUtils::randomMultiPoint,
+            GeometryTestUtils::randomMultiPolygon,
+            hasAlt ? GeometryTestUtils::randomPoint : (b) -> randomRectangle(),
+            level < 3 ? (b) -> randomGeometryCollection(level + 1, b) : GeometryTestUtils::randomPoint // don't build too deep
+        );
         return geometry.apply(hasAlt);
     }
 
@@ -261,7 +267,7 @@ public class GeometryTestUtils {
             @Override
             public MultiPoint visit(Rectangle rectangle) throws RuntimeException {
                 return new MultiPoint(Arrays.asList(new Point(rectangle.getMinX(), rectangle.getMinY(), rectangle.getMinZ()),
-                        new Point(rectangle.getMaxX(), rectangle.getMaxY(), rectangle.getMaxZ())));
+                    new Point(rectangle.getMaxX(), rectangle.getMaxY(), rectangle.getMaxZ())));
             }
         });
     }

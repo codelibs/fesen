@@ -44,7 +44,8 @@ public class ResourceWatcherServiceTests extends ESTestCase {
         assertThat(service.lowMonitor.interval, is(ResourceWatcherService.Frequency.LOW.interval));
 
         // checking bwc
-        settings = Settings.builder().put("resource.reload.interval", "40s") // only applies to medium
+        settings = Settings.builder()
+                .put("resource.reload.interval", "40s") // only applies to medium
                 .build();
         service = new ResourceWatcherService(settings, threadPool);
         assertThat(service.highMonitor.interval.millis(), is(timeValueSeconds(5).millis()));
@@ -52,8 +53,11 @@ public class ResourceWatcherServiceTests extends ESTestCase {
         assertThat(service.lowMonitor.interval.millis(), is(timeValueSeconds(60).millis()));
 
         // checking custom
-        settings = Settings.builder().put("resource.reload.interval.high", "10s").put("resource.reload.interval.medium", "20s")
-                .put("resource.reload.interval.low", "30s").build();
+        settings = Settings.builder()
+                .put("resource.reload.interval.high", "10s")
+                .put("resource.reload.interval.medium", "20s")
+                .put("resource.reload.interval.low", "30s")
+                .build();
         service = new ResourceWatcherService(settings, threadPool);
         assertThat(service.highMonitor.interval.millis(), is(timeValueSeconds(10).millis()));
         assertThat(service.mediumMonitor.interval.millis(), is(timeValueSeconds(20).millis()));

@@ -19,10 +19,19 @@
 
 package org.codelibs.fesen.search.aggregations;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
-import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
-import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
+import org.codelibs.fesen.common.bytes.BytesReference;
+import org.codelibs.fesen.common.xcontent.ToXContent;
+import org.codelibs.fesen.common.xcontent.XContentType;
+import org.codelibs.fesen.rest.action.search.RestSearchAction;
+import org.codelibs.fesen.search.aggregations.Aggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.search.aggregations.InternalAggregations;
+import org.codelibs.fesen.search.aggregations.ParsedAggregation;
+import org.codelibs.fesen.search.aggregations.bucket.InternalSingleBucketAggregation;
+import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
+import org.codelibs.fesen.search.aggregations.metrics.InternalMax;
+import org.codelibs.fesen.search.aggregations.metrics.InternalMin;
+import org.codelibs.fesen.test.InternalAggregationTestCase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,15 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.rest.action.search.RestSearchAction;
-import org.codelibs.fesen.search.aggregations.bucket.InternalSingleBucketAggregation;
-import org.codelibs.fesen.search.aggregations.bucket.ParsedSingleBucketAggregation;
-import org.codelibs.fesen.search.aggregations.metrics.InternalMax;
-import org.codelibs.fesen.search.aggregations.metrics.InternalMin;
-import org.codelibs.fesen.test.InternalAggregationTestCase;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static org.codelibs.fesen.common.xcontent.XContentHelper.toXContent;
+import static org.codelibs.fesen.test.hamcrest.FesenAssertions.assertToXContentEquivalent;
 
 public abstract class InternalSingleBucketAggregationTestCase<T extends InternalSingleBucketAggregation>
         extends InternalAggregationTestCase<T> {
@@ -67,7 +71,6 @@ public abstract class InternalSingleBucketAggregationTestCase<T extends Internal
     }
 
     protected abstract T createTestInstance(String name, long docCount, InternalAggregations aggregations, Map<String, Object> metadata);
-
     protected abstract void extraAssertReduced(T reduced, List<T> inputs);
 
     @Override
@@ -114,17 +117,17 @@ public abstract class InternalSingleBucketAggregationTestCase<T extends Internal
         assertEquals(inputs.stream().mapToLong(InternalSingleBucketAggregation::getDocCount).sum(), reduced.getDocCount());
         if (hasInternalMax) {
             double expected = inputs.stream().mapToDouble(i -> {
-                InternalMax max = i.getAggregations().get("max");
-                return max.getValue();
-            }).max().getAsDouble();
+                        InternalMax max = i.getAggregations().get("max");
+                        return max.getValue();
+                    }).max().getAsDouble();
             InternalMax reducedMax = reduced.getAggregations().get("max");
             assertEquals(expected, reducedMax.getValue(), 0);
         }
         if (hasInternalMin) {
             double expected = inputs.stream().mapToDouble(i -> {
-                InternalMin min = i.getAggregations().get("min");
-                return min.getValue();
-            }).min().getAsDouble();
+                        InternalMin min = i.getAggregations().get("min");
+                        return min.getValue();
+                    }).min().getAsDouble();
             InternalMin reducedMin = reduced.getAggregations().get("min");
             assertEquals(expected, reducedMin.getValue(), 0);
         }

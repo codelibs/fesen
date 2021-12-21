@@ -35,12 +35,8 @@ public class GetScriptLanguageRequest extends ActionRequest {
     }
 
     @Override
-    public ActionRequestValidationException validate() {
-        return null;
-    }
+    public ActionRequestValidationException validate() { return null; }
 
     @Override
-    public String toString() {
-        return "get script languages";
-    }
+    public String toString() { return "get script languages"; }
 }

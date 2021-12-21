@@ -39,10 +39,12 @@ public abstract class SecureSetting<T> extends Setting<T> {
 
     private static final Set<Property> ALLOWED_PROPERTIES = EnumSet.of(Property.Deprecated, Property.Consistent);
 
-    private static final Property[] FIXED_PROPERTIES = { Property.NodeScope };
+    private static final Property[] FIXED_PROPERTIES = {
+        Property.NodeScope
+    };
 
     private SecureSetting(String key, Property... properties) {
-        super(key, (String) null, null, ArrayUtils.concat(properties, FIXED_PROPERTIES, Property.class));
+        super(key, (String)null, null, ArrayUtils.concat(properties, FIXED_PROPERTIES, Property.class));
         assert assertAllowedProperties(properties);
         KeyStoreWrapper.validateSettingName(key);
     }
@@ -83,8 +85,8 @@ public abstract class SecureSetting<T> extends Setting<T> {
         final SecureSettings secureSettings = settings.getSecureSettings();
         if (secureSettings == null || secureSettings.getSettingNames().contains(getKey()) == false) {
             if (super.exists(settings)) {
-                throw new IllegalArgumentException("Setting [" + getKey() + "] is a secure setting"
-                        + " and must be stored inside the Fesen keystore, but was found inside fesen.yml");
+                throw new IllegalArgumentException("Setting [" + getKey() + "] is a secure setting" +
+                    " and must be stored inside the Fesen keystore, but was found inside fesen.yml");
             }
             return getFallback(settings);
         }
@@ -132,7 +134,8 @@ public abstract class SecureSetting<T> extends Setting<T> {
      *
      * This may be any sensitive string, e.g. a username, a password, an auth token, etc.
      */
-    public static Setting<SecureString> secureString(String name, Setting<SecureString> fallback, Property... properties) {
+    public static Setting<SecureString> secureString(String name, Setting<SecureString> fallback,
+                                                     Property... properties) {
         return new SecureStringSetting(name, fallback, properties);
     }
 
@@ -149,7 +152,8 @@ public abstract class SecureSetting<T> extends Setting<T> {
      *
      * This may be any sensitive file, e.g. a set of credentials normally in plaintext.
      */
-    public static Setting<InputStream> secureFile(String name, Setting<InputStream> fallback, Property... properties) {
+    public static Setting<InputStream> secureFile(String name, Setting<InputStream> fallback,
+                                                  Property... properties) {
         return new SecureFileSetting(name, fallback, properties);
     }
 
@@ -186,8 +190,8 @@ public abstract class SecureSetting<T> extends Setting<T> {
         @Override
         public SecureString get(Settings settings) {
             if (ALLOW_INSECURE_SETTINGS == false && exists(settings)) {
-                throw new IllegalArgumentException(
-                        "Setting [" + name + "] is insecure, " + "but property [allow_insecure_settings] is not set");
+                throw new IllegalArgumentException("Setting [" + name + "] is insecure, " +
+                    "but property [allow_insecure_settings] is not set");
             }
             return super.get(settings);
         }

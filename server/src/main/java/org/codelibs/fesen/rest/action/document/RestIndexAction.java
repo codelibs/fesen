@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.rest.action.document;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -43,16 +38,24 @@ import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestActions;
 import org.codelibs.fesen.rest.action.RestStatusToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
 public class RestIndexAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestDeleteAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Specifying types in document "
-            + "index requests is deprecated, use the typeless endpoints instead (/{index}/_doc/{id}, /{index}/_doc, "
-            + "or /{index}/_create/{id}).";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Specifying types in document " +
+        "index requests is deprecated, use the typeless endpoints instead (/{index}/_doc/{id}, /{index}/_doc, " +
+        "or /{index}/_create/{id}).";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/{index}/_doc/{id}"), new Route(PUT, "/{index}/_doc/{id}"),
-                new Route(POST, "/{index}/{type}/{id}"), new Route(PUT, "/{index}/{type}/{id}")));
+        return unmodifiableList(asList(
+            new Route(POST, "/{index}/_doc/{id}"),
+            new Route(PUT, "/{index}/_doc/{id}"),
+            new Route(POST, "/{index}/{type}/{id}"),
+            new Route(PUT, "/{index}/{type}/{id}")));
     }
 
     @Override
@@ -69,8 +72,11 @@ public class RestIndexAction extends BaseRestHandler {
 
         @Override
         public List<Route> routes() {
-            return unmodifiableList(asList(new Route(POST, "/{index}/_create/{id}"), new Route(PUT, "/{index}/_create/{id}"),
-                    new Route(POST, "/{index}/{type}/{id}/_create"), new Route(PUT, "/{index}/{type}/{id}/_create")));
+            return unmodifiableList(asList(
+                new Route(POST, "/{index}/_create/{id}"),
+                new Route(PUT, "/{index}/_create/{id}"),
+                new Route(POST, "/{index}/{type}/{id}/_create"),
+                new Route(PUT, "/{index}/{type}/{id}/_create")));
         }
 
         @Override
@@ -102,7 +108,9 @@ public class RestIndexAction extends BaseRestHandler {
 
         @Override
         public List<Route> routes() {
-            return unmodifiableList(asList(new Route(POST, "/{index}/_doc"), new Route(POST, "/{index}/{type}")));
+            return unmodifiableList(asList(
+                new Route(POST, "/{index}/_doc"),
+                new Route(POST, "/{index}/{type}")));
         }
 
         @Override
@@ -146,8 +154,8 @@ public class RestIndexAction extends BaseRestHandler {
             indexRequest.opType(sOpType);
         }
 
-        return channel -> client.index(indexRequest,
-                new RestStatusToXContentListener<>(channel, r -> r.getLocation(indexRequest.routing())));
+        return channel ->
+                client.index(indexRequest, new RestStatusToXContentListener<>(channel, r -> r.getLocation(indexRequest.routing())));
     }
 
 }

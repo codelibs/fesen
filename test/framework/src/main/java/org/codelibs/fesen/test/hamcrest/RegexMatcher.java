@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.test.hamcrest;
 
-import java.util.regex.Pattern;
-
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.util.regex.Pattern;
 
 /**
  * Matcher that supports regular expression and allows to provide optional flags

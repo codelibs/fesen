@@ -18,17 +18,17 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.test.VersionUtils;
 import org.codelibs.fesen.test.rest.yaml.Features;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents a skip section that tells whether a specific test section or suite needs to be skipped
@@ -54,8 +54,8 @@ public class SkipSection {
 
     public static SkipSection parse(XContentParser parser) throws IOException {
         if (parser.nextToken() != XContentParser.Token.START_OBJECT) {
-            throw new IllegalArgumentException("Expected [" + XContentParser.Token.START_OBJECT + ", found [" + parser.currentToken()
-                    + "], the skip section is not properly indented");
+            throw new IllegalArgumentException("Expected [" + XContentParser.Token.START_OBJECT +
+                    ", found [" + parser.currentToken() + "], the skip section is not properly indented");
         }
         String currentFieldName = null;
         XContentParser.Token token;
@@ -72,13 +72,14 @@ public class SkipSection {
                     reason = parser.text();
                 } else if ("features".equals(currentFieldName)) {
                     features.add(parser.text());
-                } else {
+                }
+                else {
                     throw new ParsingException(parser.getTokenLocation(),
                             "field " + currentFieldName + " not supported within skip section");
                 }
             } else if (token == XContentParser.Token.START_ARRAY) {
                 if ("features".equals(currentFieldName)) {
-                    while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
+                    while(parser.nextToken() != XContentParser.Token.END_ARRAY) {
                         features.add(parser.text());
                     }
                 }
@@ -165,8 +166,10 @@ public class SkipSection {
 
             String lower = skipVersions[0].trim();
             String upper = skipVersions[1].trim();
-            VersionRange versionRange = new VersionRange(lower.isEmpty() ? VersionUtils.getFirstVersion() : Version.fromString(lower),
-                    upper.isEmpty() ? Version.CURRENT : Version.fromString(upper));
+            VersionRange versionRange = new VersionRange(
+                lower.isEmpty() ? VersionUtils.getFirstVersion() : Version.fromString(lower),
+                upper.isEmpty() ? Version.CURRENT : Version.fromString(upper)
+            );
             versionRanges.add(versionRange);
         }
         return versionRanges;
@@ -176,7 +179,7 @@ public class SkipSection {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("[").append(description).append("] skipped,");
         if (reason != null) {
-            messageBuilder.append(" reason: [").append(getReason()).append("]");
+             messageBuilder.append(" reason: [").append(getReason()).append("]");
         }
         if (features.isEmpty() == false) {
             messageBuilder.append(" unsupported features ").append(getFeatures());

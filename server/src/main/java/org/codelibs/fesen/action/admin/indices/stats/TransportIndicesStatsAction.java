@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.stats;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.lucene.store.AlreadyClosedException;
 import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.DefaultShardOperationFailedException;
@@ -45,13 +42,16 @@ import org.codelibs.fesen.indices.IndicesService;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
 
+import java.io.IOException;
+import java.util.List;
+
 public class TransportIndicesStatsAction extends TransportBroadcastByNodeAction<IndicesStatsRequest, IndicesStatsResponse, ShardStats> {
 
     private final IndicesService indicesService;
 
     @Inject
     public TransportIndicesStatsAction(ClusterService clusterService, TransportService transportService, IndicesService indicesService,
-            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+                                       ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
         super(IndicesStatsAction.NAME, clusterService, transportService, actionFilters, indexNameExpressionResolver,
                 IndicesStatsRequest::new, ThreadPool.Names.MANAGEMENT);
         this.indicesService = indicesService;
@@ -82,9 +82,10 @@ public class TransportIndicesStatsAction extends TransportBroadcastByNodeAction<
 
     @Override
     protected IndicesStatsResponse newResponse(IndicesStatsRequest request, int totalShards, int successfulShards, int failedShards,
-            List<ShardStats> responses, List<DefaultShardOperationFailedException> shardFailures, ClusterState clusterState) {
+                                               List<ShardStats> responses, List<DefaultShardOperationFailedException> shardFailures,
+                                               ClusterState clusterState) {
         return new IndicesStatsResponse(responses.toArray(new ShardStats[responses.size()]), totalShards, successfulShards, failedShards,
-                shardFailures);
+            shardFailures);
     }
 
     @Override
@@ -115,6 +116,12 @@ public class TransportIndicesStatsAction extends TransportBroadcastByNodeAction<
             seqNoStats = null;
             retentionLeaseStats = null;
         }
-        return new ShardStats(indexShard.routingEntry(), indexShard.shardPath(), commonStats, commitStats, seqNoStats, retentionLeaseStats);
+        return new ShardStats(
+                indexShard.routingEntry(),
+                indexShard.shardPath(),
+                commonStats,
+                commitStats,
+                seqNoStats,
+                retentionLeaseStats);
     }
 }

@@ -19,8 +19,8 @@
 
 package org.codelibs.fesen.action.admin.cluster.stats;
 
-import java.io.IOException;
-import java.util.List;
+import com.carrotsearch.hppc.ObjectObjectHashMap;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.action.admin.indices.stats.CommonStats;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
@@ -32,8 +32,8 @@ import org.codelibs.fesen.index.shard.DocsStats;
 import org.codelibs.fesen.index.store.StoreStats;
 import org.codelibs.fesen.search.suggest.completion.CompletionStats;
 
-import com.carrotsearch.hppc.ObjectObjectHashMap;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.List;
 
 public class ClusterStatsIndices implements ToXContentFragment {
 
@@ -48,7 +48,9 @@ public class ClusterStatsIndices implements ToXContentFragment {
     private AnalysisStats analysis;
     private MappingStats mappings;
 
-    public ClusterStatsIndices(List<ClusterStatsNodeResponse> nodeResponses, MappingStats mappingStats, AnalysisStats analysisStats) {
+    public ClusterStatsIndices(List<ClusterStatsNodeResponse> nodeResponses,
+            MappingStats mappingStats,
+            AnalysisStats analysisStats) {
         ObjectObjectHashMap<String, ShardStats> countsPerIndex = new ObjectObjectHashMap<>();
 
         this.docs = new DocsStats();

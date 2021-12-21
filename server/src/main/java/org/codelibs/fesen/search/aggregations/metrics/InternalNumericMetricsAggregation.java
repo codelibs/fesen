@@ -66,8 +66,9 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
         @Override
         public final double sortValue(String key) {
             if (key != null && false == key.equals("value")) {
-                throw new IllegalArgumentException("Unknown value key [" + key + "] for single-value metric aggregation [" + getName()
-                        + "]. Either use [value] as key or drop the key all together");
+                throw new IllegalArgumentException(
+                        "Unknown value key [" + key + "] for single-value metric aggregation [" + getName() +
+                        "]. Either use [value] as key or drop the key all together");
             }
             return value();
         }
@@ -139,12 +140,9 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalNumericMetricsAggregation other = (InternalNumericMetricsAggregation) obj;
         return Objects.equals(format, other.format);

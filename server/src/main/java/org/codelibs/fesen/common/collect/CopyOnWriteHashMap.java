@@ -19,6 +19,8 @@
 
 package org.codelibs.fesen.common.collect;
 
+import org.apache.lucene.util.mutable.MutableValueInt;
+
 import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -31,8 +33,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import org.apache.lucene.util.mutable.MutableValueInt;
 
 /**
  * An immutable map whose writes result in a new copy of the map to be created.
@@ -226,6 +226,7 @@ public final class CopyOnWriteHashMap<K, V> extends AbstractMap<K, V> {
         return result;
     }
 
+
     /**
      * An inner node in this trie. Inner nodes store up to 64 key-value pairs
      * and use a bitmap in order to associate hashes to them. For example, if
@@ -387,7 +388,7 @@ public final class CopyOnWriteHashMap<K, V> extends AbstractMap<K, V> {
         }
 
         private InnerNode<K, V> removeSlot(int hash6, int slot) {
-            final long mask2 = mask & ~(1L << hash6);
+            final long mask2 = mask  & ~(1L << hash6);
             final K[] keys2 = removeArrayElement(keys, slot);
             final Object[] subNodes2 = removeArrayElement(subNodes, slot);
             return new InnerNode<>(mask2, keys2, subNodes2);

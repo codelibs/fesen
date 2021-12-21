@@ -19,16 +19,19 @@
 
 package org.codelibs.fesen.geometry;
 
+import org.codelibs.fesen.geometry.LinearRing;
+import org.codelibs.fesen.geometry.MultiPolygon;
+import org.codelibs.fesen.geometry.Polygon;
+import org.codelibs.fesen.geometry.utils.GeographyValidator;
+import org.codelibs.fesen.geometry.utils.StandardValidator;
+import org.codelibs.fesen.geometry.utils.WellKnownText;
+import org.codelibs.fesen.geo.GeometryTestUtils;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.codelibs.fesen.geo.GeometryTestUtils;
-import org.codelibs.fesen.geometry.utils.GeographyValidator;
-import org.codelibs.fesen.geometry.utils.StandardValidator;
-import org.codelibs.fesen.geometry.utils.WellKnownText;
 
 public class MultiPolygonTests extends BaseGeometryTestCase<MultiPolygon> {
 
@@ -44,24 +47,26 @@ public class MultiPolygonTests extends BaseGeometryTestCase<MultiPolygon> {
 
     public void testBasicSerialization() throws IOException, ParseException {
         WellKnownText wkt = new WellKnownText(true, new GeographyValidator(true));
-        assertEquals("MULTIPOLYGON (((3.0 1.0, 4.0 2.0, 5.0 3.0, 3.0 1.0)))", wkt.toWKT(new MultiPolygon(
-                Collections.singletonList(new Polygon(new LinearRing(new double[] { 3, 4, 5, 3 }, new double[] { 1, 2, 3, 1 }))))));
-        assertEquals(
-                new MultiPolygon(
-                        Collections.singletonList(new Polygon(new LinearRing(new double[] { 3, 4, 5, 3 }, new double[] { 1, 2, 3, 1 })))),
-                wkt.fromWKT("MULTIPOLYGON (((3.0 1.0, 4.0 2.0, 5.0 3.0, 3.0 1.0)))"));
+        assertEquals("MULTIPOLYGON (((3.0 1.0, 4.0 2.0, 5.0 3.0, 3.0 1.0)))",
+            wkt.toWKT(new MultiPolygon(Collections.singletonList(
+                new Polygon(new LinearRing(new double[]{3, 4, 5, 3}, new double[]{1, 2, 3, 1}))))));
+        assertEquals(new MultiPolygon(Collections.singletonList(
+            new Polygon(new LinearRing(new double[]{3, 4, 5, 3}, new double[]{1, 2, 3, 1})))),
+            wkt.fromWKT("MULTIPOLYGON (((3.0 1.0, 4.0 2.0, 5.0 3.0, 3.0 1.0)))"));
 
         assertEquals("MULTIPOLYGON EMPTY", wkt.toWKT(MultiPolygon.EMPTY));
         assertEquals(MultiPolygon.EMPTY, wkt.fromWKT("MULTIPOLYGON EMPTY)"));
     }
 
     public void testValidation() {
-        IllegalArgumentException ex = expectThrows(IllegalArgumentException.class,
-                () -> new StandardValidator(false).validate(new MultiPolygon(Collections.singletonList(new Polygon(
-                        new LinearRing(new double[] { 3, 4, 5, 3 }, new double[] { 1, 2, 3, 1 }, new double[] { 1, 2, 3, 1 }))))));
+        IllegalArgumentException ex = expectThrows(IllegalArgumentException.class, () -> new StandardValidator(false).validate(
+            new MultiPolygon(Collections.singletonList(
+                new Polygon(new LinearRing(new double[]{3, 4, 5, 3}, new double[]{1, 2, 3, 1}, new double[]{1, 2, 3, 1}))
+            ))));
         assertEquals("found Z value [1.0] but [ignore_z_value] parameter is [false]", ex.getMessage());
 
-        new StandardValidator(true).validate(new MultiPolygon(Collections.singletonList(
-                new Polygon(new LinearRing(new double[] { 3, 4, 5, 3 }, new double[] { 1, 2, 3, 1 }, new double[] { 1, 2, 3, 1 })))));
+        new StandardValidator(true).validate(
+            new MultiPolygon(Collections.singletonList(
+                new Polygon(new LinearRing(new double[]{3, 4, 5, 3}, new double[]{1, 2, 3, 1}, new double[]{1, 2, 3, 1})))));
     }
 }

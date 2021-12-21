@@ -18,14 +18,6 @@
  */
 package org.codelibs.fesen.search.aggregations.bucket.terms;
 
-import static java.util.Collections.emptyIterator;
-import static java.util.Collections.emptyList;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -34,6 +26,14 @@ import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyIterator;
+import static java.util.Collections.emptyList;
 
 /**
  * Result of the running the significant terms aggregation on an unmapped field.
@@ -48,7 +48,7 @@ public class UnmappedSignificantTerms extends InternalSignificantTerms<UnmappedS
      */
     protected abstract static class Bucket extends InternalSignificantTerms.Bucket<Bucket> {
         private Bucket(BytesRef term, long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
-                DocValueFormat format) {
+                       DocValueFormat format) {
             super(subsetDf, subsetSize, supersetDf, supersetSize, aggregations, format);
         }
     }
@@ -95,8 +95,8 @@ public class UnmappedSignificantTerms extends InternalSignificantTerms<UnmappedS
     }
 
     @Override
-    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize, InternalAggregations aggregations,
-            Bucket prototype) {
+    Bucket createBucket(long subsetDf, long subsetSize, long supersetDf, long supersetSize,
+                        InternalAggregations aggregations, Bucket prototype) {
         throw new UnsupportedOperationException("not supported for UnmappedSignificantTerms");
     }
 

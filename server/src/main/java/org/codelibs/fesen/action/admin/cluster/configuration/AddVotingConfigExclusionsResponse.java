@@ -18,13 +18,13 @@
  */
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 /**
  * A response to {@link AddVotingConfigExclusionsRequest} indicating that voting config exclusions have been added for the requested nodes
@@ -40,8 +40,7 @@ public class AddVotingConfigExclusionsResponse extends ActionResponse implements
     }
 
     @Override
-    public void writeTo(StreamOutput out) throws IOException {
-    }
+    public void writeTo(StreamOutput out) throws IOException {}
 
     @Override
     public XContentBuilder toXContent(final XContentBuilder builder, final Params params) throws IOException {

@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.common.collect;
 
-import static java.util.Collections.unmodifiableMap;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 public class MapBuilder<K, V> {
 

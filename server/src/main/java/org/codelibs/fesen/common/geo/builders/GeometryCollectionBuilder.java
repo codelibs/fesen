@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.common.geo.builders;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.common.geo.GeoShapeType;
 import org.codelibs.fesen.common.geo.XShapeCollection;
@@ -36,7 +31,13 @@ import org.codelibs.fesen.geometry.Geometry;
 import org.codelibs.fesen.geometry.GeometryCollection;
 import org.locationtech.spatial4j.shape.Shape;
 
-public class GeometryCollectionBuilder extends ShapeBuilder<Shape, GeometryCollection<Geometry>, GeometryCollectionBuilder> {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class GeometryCollectionBuilder extends ShapeBuilder<Shape,
+    GeometryCollection<Geometry>, GeometryCollectionBuilder> {
 
     public static final GeoShapeType TYPE = GeoShapeType.GEOMETRYCOLLECTION;
 
@@ -116,7 +117,8 @@ public class GeometryCollectionBuilder extends ShapeBuilder<Shape, GeometryColle
 
     public ShapeBuilder getShapeAt(int i) {
         if (i >= this.shapes.size() || i < 0) {
-            throw new FesenException("GeometryCollection contains " + this.shapes.size() + " shapes. + " + "No shape found at index " + i);
+            throw new FesenException("GeometryCollection contains " + this.shapes.size() + " shapes. + " +
+                    "No shape found at index " + i);
         }
         return this.shapes.get(i);
     }
@@ -162,7 +164,8 @@ public class GeometryCollectionBuilder extends ShapeBuilder<Shape, GeometryColle
     @Override
     public int numDimensions() {
         if (shapes == null || shapes.isEmpty()) {
-            throw new IllegalStateException("unable to get number of dimensions, " + "GeometryCollection has not yet been initialized");
+            throw new IllegalStateException("unable to get number of dimensions, " +
+                "GeometryCollection has not yet been initialized");
         }
         return shapes.get(0).numDimensions();
     }

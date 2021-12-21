@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import org.codelibs.fesen.FesenException;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.ingest.TestTemplateService;
+import org.codelibs.fesen.ingest.common.FailProcessor;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.ingest.TestTemplateService;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class FailProcessorFactoryTests extends ESTestCase {
 
@@ -54,7 +55,7 @@ public class FailProcessorFactoryTests extends ESTestCase {
         try {
             factory.create(null, null, null, config);
             fail("factory create should have failed");
-        } catch (FesenParseException e) {
+        } catch(FesenParseException e) {
             assertThat(e.getMessage(), equalTo("[message] required property is missing"));
         }
     }
@@ -64,7 +65,8 @@ public class FailProcessorFactoryTests extends ESTestCase {
         Map<String, Object> config = new HashMap<>();
         config.put("message", "{{error}}");
         String processorTag = randomAlphaOfLength(10);
-        FesenException exception = expectThrows(FesenException.class, () -> factory.create(null, processorTag, null, config));
+        FesenException exception = expectThrows(FesenException.class, () -> factory.create(null, processorTag,
+            null, config));
         assertThat(exception.getMessage(), equalTo("java.lang.RuntimeException: could not compile script"));
         assertThat(exception.getMetadata("es.processor_tag").get(0), equalTo(processorTag));
     }

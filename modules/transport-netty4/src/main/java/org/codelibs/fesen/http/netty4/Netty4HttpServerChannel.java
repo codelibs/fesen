@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.http.netty4;
 
-import java.net.InetSocketAddress;
+import io.netty.channel.Channel;
 
 import org.codelibs.fesen.action.ActionListener;
 import org.codelibs.fesen.core.CompletableContext;
 import org.codelibs.fesen.http.HttpServerChannel;
 import org.codelibs.fesen.transport.netty4.Netty4TcpChannel;
 
-import io.netty.channel.Channel;
+import java.net.InetSocketAddress;
 
 public class Netty4HttpServerChannel implements HttpServerChannel {
 

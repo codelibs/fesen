@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.pipeline;
 
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.BUCKETS_PATH;
-import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.ParsingException;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -36,6 +27,15 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.pipeline.BucketHelpers.GapPolicy;
+
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.BUCKETS_PATH;
+import static org.codelibs.fesen.search.aggregations.pipeline.PipelineAggregator.Parser.FORMAT;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<SerialDiffPipelineAggregationBuilder> {
     public static final String NAME = "serial_diff";
@@ -177,10 +177,11 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
                     lag = parser.intValue(true);
                     if (lag <= 0) {
                         throw new ParsingException(parser.getTokenLocation(),
-                                "Lag must be a positive, non-zero integer.  Value supplied was" + lag + " in [" + reducerName + "]: ["
+                                "Lag must be a positive, non-zero integer.  Value supplied was" +
+                                lag + " in [" + reducerName + "]: ["
                                         + currentFieldName + "].");
                     }
-                } else {
+                }  else {
                     throw new ParsingException(parser.getTokenLocation(),
                             "Unknown key for a " + token + " in [" + reducerName + "]: [" + currentFieldName + "].");
                 }
@@ -207,7 +208,8 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
                     "Missing required field [" + BUCKETS_PATH.getPreferredName() + "] for derivative aggregation [" + reducerName + "]");
         }
 
-        SerialDiffPipelineAggregationBuilder factory = new SerialDiffPipelineAggregationBuilder(reducerName, bucketsPaths[0]);
+        SerialDiffPipelineAggregationBuilder factory =
+                new SerialDiffPipelineAggregationBuilder(reducerName, bucketsPaths[0]);
         if (lag != null) {
             factory.lag(lag);
         }
@@ -227,14 +229,13 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         SerialDiffPipelineAggregationBuilder other = (SerialDiffPipelineAggregationBuilder) obj;
-        return Objects.equals(format, other.format) && Objects.equals(gapPolicy, other.gapPolicy) && Objects.equals(lag, other.lag);
+        return Objects.equals(format, other.format)
+                && Objects.equals(gapPolicy, other.gapPolicy)
+                && Objects.equals(lag, other.lag);
     }
 
     @Override

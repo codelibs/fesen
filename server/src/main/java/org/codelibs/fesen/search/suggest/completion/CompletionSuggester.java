@@ -18,12 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest.completion;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.BulkScorer;
 import org.apache.lucene.search.CollectionTerminatedException;
@@ -38,12 +32,17 @@ import org.codelibs.fesen.index.mapper.CompletionFieldMapper;
 import org.codelibs.fesen.search.suggest.Suggest;
 import org.codelibs.fesen.search.suggest.Suggester;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class CompletionSuggester extends Suggester<CompletionSuggestionContext> {
 
     public static final CompletionSuggester INSTANCE = new CompletionSuggester();
 
-    private CompletionSuggester() {
-    }
+    private CompletionSuggester() {}
 
     @Override
     protected Suggest.Suggestion<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>> innerExecute(String name,
@@ -66,7 +65,7 @@ public class CompletionSuggester extends Suggester<CompletionSuggestionContext> 
                 }
                 if (numResult++ < suggestionContext.getSize()) {
                     CompletionSuggestion.Entry.Option option = new CompletionSuggestion.Entry.Option(suggestDoc.doc,
-                            new Text(suggestDoc.key.toString()), suggestDoc.score, contexts);
+                        new Text(suggestDoc.key.toString()), suggestDoc.score, contexts);
                     completionSuggestion.getEntries().get(0).addOption(option);
                 } else {
                     break;

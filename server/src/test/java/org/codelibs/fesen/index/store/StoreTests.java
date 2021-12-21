@@ -109,9 +109,9 @@ import static org.hamcrest.Matchers.notNullValue;
 public class StoreTests extends ESTestCase {
 
     private static final IndexSettings INDEX_SETTINGS = IndexSettingsModule.newIndexSettings("index",
-            Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, org.codelibs.fesen.Version.CURRENT).build());
-    private static final Version MIN_SUPPORTED_LUCENE_VERSION =
-            org.codelibs.fesen.Version.CURRENT.minimumIndexCompatibilityVersion().luceneVersion;
+        Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, org.codelibs.fesen.Version.CURRENT).build());
+    private static final Version MIN_SUPPORTED_LUCENE_VERSION = org.codelibs.fesen.Version.CURRENT
+        .minimumIndexCompatibilityVersion().luceneVersion;
 
     public void testRefCount() {
         final ShardId shardId = new ShardId("index", "_na_", 1);
@@ -170,9 +170,8 @@ public class StoreTests extends ESTestCase {
         indexInput.seek(0);
         BytesRef ref = new BytesRef(scaledRandomIntBetween(1, 1024));
         long length = indexInput.length();
-        IndexOutput verifyingOutput =
-                new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, checksum, MIN_SUPPORTED_LUCENE_VERSION),
-                        dir.createOutput("foo1.bar", IOContext.DEFAULT));
+        IndexOutput verifyingOutput = new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, checksum,
+            MIN_SUPPORTED_LUCENE_VERSION), dir.createOutput("foo1.bar", IOContext.DEFAULT));
         while (length > 0) {
             if (random().nextInt(10) == 0) {
                 verifyingOutput.writeByte(indexInput.readByte());
@@ -203,8 +202,9 @@ public class StoreTests extends ESTestCase {
 
     public void testVerifyingIndexOutputOnEmptyFile() throws IOException {
         Directory dir = newDirectory();
-        IndexOutput verifyingOutput = new Store.LuceneVerifyingIndexOutput(
-                new StoreFileMetadata("foo.bar", 0, Store.digestToString(0), MIN_SUPPORTED_LUCENE_VERSION),
+        IndexOutput verifyingOutput =
+            new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo.bar", 0, Store.digestToString(0),
+                MIN_SUPPORTED_LUCENE_VERSION),
                 dir.createOutput("foo1.bar", IOContext.DEFAULT));
         try {
             Store.verify(verifyingOutput);
@@ -233,9 +233,8 @@ public class StoreTests extends ESTestCase {
         indexInput.seek(0);
         BytesRef ref = new BytesRef(scaledRandomIntBetween(1, 1024));
         long length = indexInput.length();
-        IndexOutput verifyingOutput =
-                new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, checksum, MIN_SUPPORTED_LUCENE_VERSION),
-                        dir.createOutput("foo1.bar", IOContext.DEFAULT));
+        IndexOutput verifyingOutput = new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, checksum,
+            MIN_SUPPORTED_LUCENE_VERSION), dir.createOutput("foo1.bar", IOContext.DEFAULT));
         length -= 8; // we write the checksum in the try / catch block below
         while (length > 0) {
             if (random().nextInt(10) == 0) {
@@ -276,7 +275,7 @@ public class StoreTests extends ESTestCase {
                 output.writeByte(randomByte());
                 numBytes--;
             } else {
-                for (int i = 0; i < ref.length; i++) {
+                for (int i = 0; i<ref.length; i++) {
                     ref.bytes[i] = randomByte();
                 }
                 final int min = Math.min(numBytes, ref.bytes.length);
@@ -289,9 +288,8 @@ public class StoreTests extends ESTestCase {
     public void testVerifyingIndexOutputWithBogusInput() throws IOException {
         Directory dir = newDirectory();
         int length = scaledRandomIntBetween(10, 1024);
-        IndexOutput verifyingOutput =
-                new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, "", MIN_SUPPORTED_LUCENE_VERSION),
-                        dir.createOutput("foo1.bar", IOContext.DEFAULT));
+        IndexOutput verifyingOutput = new Store.LuceneVerifyingIndexOutput(new StoreFileMetadata("foo1.bar", length, "",
+            MIN_SUPPORTED_LUCENE_VERSION), dir.createOutput("foo1.bar", IOContext.DEFAULT));
         try {
             while (length > 0) {
                 verifyingOutput.writeByte((byte) random().nextInt());
@@ -308,15 +306,15 @@ public class StoreTests extends ESTestCase {
         final ShardId shardId = new ShardId("index", "_na_", 1);
         Store store = new Store(shardId, INDEX_SETTINGS, StoreTests.newDirectory(random()), new DummyShardLock(shardId));
         // set default codec - all segments need checksums
-        IndexWriter writer = new IndexWriter(store.directory(),
-                newIndexWriterConfig(random(), new MockAnalyzer(random())).setCodec(TestUtil.getDefaultCodec()));
+        IndexWriter writer = new IndexWriter(store.directory(), newIndexWriterConfig(random(),
+            new MockAnalyzer(random())).setCodec(TestUtil.getDefaultCodec()));
         int docs = 1 + random().nextInt(100);
 
         for (int i = 0; i < docs; i++) {
             Document doc = new Document();
             doc.add(new TextField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-            doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                    random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+            doc.add(new TextField("body",
+                TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
             doc.add(new SortedDocValuesField("dv", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
             writer.addDocument(doc);
         }
@@ -325,8 +323,8 @@ public class StoreTests extends ESTestCase {
                 if (random().nextBoolean()) {
                     Document doc = new Document();
                     doc.add(new TextField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-                    doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                            random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+                    doc.add(new TextField("body",
+                        TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
                     writer.updateDocument(new Term("id", "" + i), doc);
                 }
             }
@@ -448,7 +446,7 @@ public class StoreTests extends ESTestCase {
         IndexOutput output = dir.createOutput(fileOut, IOContext.DEFAULT);
         long len = input.length();
         byte[] b = new byte[1024];
-        long broken = randomInt((int) len - 1);
+        long broken = randomInt((int) len-1);
         long pos = 0;
         while (pos < len) {
             int min = (int) Math.min(input.length() - pos, b.length);
@@ -474,13 +472,13 @@ public class StoreTests extends ESTestCase {
 
     public static void assertConsistent(Store store, Store.MetadataSnapshot metadata) throws IOException {
         for (String file : store.directory().listAll()) {
-            if (!IndexWriter.WRITE_LOCK_NAME.equals(file) && !IndexFileNames.OLD_SEGMENTS_GEN.equals(file)
-                    && file.startsWith("extra") == false) {
-                assertTrue(file + " is not in the map: " + metadata.asMap().size() + " vs. " + store.directory().listAll().length,
-                        metadata.asMap().containsKey(file));
+            if (!IndexWriter.WRITE_LOCK_NAME.equals(file) &&
+                    !IndexFileNames.OLD_SEGMENTS_GEN.equals(file) && file.startsWith("extra") == false) {
+                assertTrue(file + " is not in the map: " + metadata.asMap().size() + " vs. " +
+                    store.directory().listAll().length, metadata.asMap().containsKey(file));
             } else {
-                assertFalse(file + " is not in the map: " + metadata.asMap().size() + " vs. " + store.directory().listAll().length,
-                        metadata.asMap().containsKey(file));
+                assertFalse(file + " is not in the map: " + metadata.asMap().size() + " vs. " +
+                    store.directory().listAll().length, metadata.asMap().containsKey(file));
             }
         }
     }
@@ -491,8 +489,8 @@ public class StoreTests extends ESTestCase {
         for (int i = 0; i < numDocs; i++) {
             Document doc = new Document();
             doc.add(new StringField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-            doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                    random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+            doc.add(new TextField("body",
+                TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
             doc.add(new SortedDocValuesField("dv", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
             docs.add(doc);
         }
@@ -565,6 +563,7 @@ public class StoreTests extends ESTestCase {
         assertThat(selfDiff.different, empty());
         assertThat(selfDiff.missing, empty());
 
+
         // lets add some deletes
         Random random = new Random(seed);
         IndexWriterConfig iwc = new IndexWriterConfig(new MockAnalyzer(random)).setCodec(TestUtil.getDefaultCodec());
@@ -613,14 +612,17 @@ public class StoreTests extends ESTestCase {
         Store.MetadataSnapshot newCommitMetadata = store.getMetadata(null);
         Store.RecoveryDiff newCommitDiff = newCommitMetadata.recoveryDiff(metadata);
         if (delFile != null) {
-            assertThat(newCommitDiff.identical.size(), equalTo(newCommitMetadata.size() - 5)); // segments_N, del file, cfs, cfe, si for the new segment
+            assertThat(newCommitDiff.identical.size(),
+                equalTo(newCommitMetadata.size() - 5)); // segments_N, del file, cfs, cfe, si for the new segment
             assertThat(newCommitDiff.different.size(), equalTo(1)); // the del file must be different
             assertThat(newCommitDiff.different.get(0).name(), endsWith(".liv"));
             assertThat(newCommitDiff.missing.size(), equalTo(4)); // segments_N,cfs, cfe, si for the new segment
         } else {
-            assertThat(newCommitDiff.identical.size(), equalTo(newCommitMetadata.size() - 4)); // segments_N, cfs, cfe, si for the new segment
+            assertThat(newCommitDiff.identical.size(),
+                equalTo(newCommitMetadata.size() - 4)); // segments_N, cfs, cfe, si for the new segment
             assertThat(newCommitDiff.different.size(), equalTo(0));
-            assertThat(newCommitDiff.missing.size(), equalTo(4)); // an entire segment must be missing (single doc segment got dropped)  plus the commit is different
+            assertThat(newCommitDiff.missing.size(),
+                equalTo(4)); // an entire segment must be missing (single doc segment got dropped)  plus the commit is different
         }
 
         deleteContent(store.directory());
@@ -632,7 +634,7 @@ public class StoreTests extends ESTestCase {
         Store store = new Store(shardId, INDEX_SETTINGS, StoreTests.newDirectory(random()), new DummyShardLock(shardId));
         // this time random codec....
         IndexWriterConfig indexWriterConfig =
-                newIndexWriterConfig(random(), new MockAnalyzer(random())).setCodec(TestUtil.getDefaultCodec());
+            newIndexWriterConfig(random(), new MockAnalyzer(random())).setCodec(TestUtil.getDefaultCodec());
         // we keep all commits and that allows us clean based on multiple snapshots
         indexWriterConfig.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
         IndexWriter writer = new IndexWriter(store.directory(), indexWriterConfig);
@@ -645,8 +647,8 @@ public class StoreTests extends ESTestCase {
             }
             Document doc = new Document();
             doc.add(new TextField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-            doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                    random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+            doc.add(new TextField("body",
+                TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
             doc.add(new SortedDocValuesField("dv", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
             writer.addDocument(doc);
 
@@ -655,8 +657,8 @@ public class StoreTests extends ESTestCase {
             writer.commit();
             Document doc = new Document();
             doc.add(new TextField("id", "" + docs++, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-            doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                    random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+            doc.add(new TextField("body",
+                TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
             doc.add(new SortedDocValuesField("dv", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
             writer.addDocument(doc);
         }
@@ -668,8 +670,8 @@ public class StoreTests extends ESTestCase {
                 if (random().nextBoolean()) {
                     Document doc = new Document();
                     doc.add(new TextField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-                    doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                            random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+                    doc.add(new TextField("body",
+                        TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
                     writer.updateDocument(new Term("id", "" + i), doc);
                 }
             }
@@ -678,6 +680,7 @@ public class StoreTests extends ESTestCase {
         writer.close();
 
         Store.MetadataSnapshot secondMeta = store.getMetadata(null);
+
 
         if (randomBoolean()) {
             store.cleanupAndVerify("test", firstMeta);
@@ -717,7 +720,7 @@ public class StoreTests extends ESTestCase {
 
     public void testOnCloseCallback() throws IOException {
         final ShardId shardId =
-                new ShardId(new Index(randomRealisticUnicodeOfCodepointLengthBetween(1, 10), "_na_"), randomIntBetween(0, 100));
+            new ShardId(new Index(randomRealisticUnicodeOfCodepointLengthBetween(1, 10), "_na_"), randomIntBetween(0, 100));
         final AtomicInteger count = new AtomicInteger(0);
         final ShardLock lock = new DummyShardLock(shardId);
 
@@ -738,16 +741,17 @@ public class StoreTests extends ESTestCase {
 
     public void testStoreStats() throws IOException {
         final ShardId shardId = new ShardId("index", "_na_", 1);
-        Settings settings = Settings.builder().put(IndexMetadata.SETTING_VERSION_CREATED, org.codelibs.fesen.Version.CURRENT)
+        Settings settings = Settings.builder()
+                .put(IndexMetadata.SETTING_VERSION_CREATED, org.codelibs.fesen.Version.CURRENT)
                 .put(Store.INDEX_STORE_STATS_REFRESH_INTERVAL_SETTING.getKey(), TimeValue.timeValueMinutes(0)).build();
         Store store = new Store(shardId, IndexSettingsModule.newIndexSettings("index", settings), StoreTests.newDirectory(random()),
-                new DummyShardLock(shardId));
+            new DummyShardLock(shardId));
         long initialStoreSize = 0;
         for (String extraFiles : store.directory().listAll()) {
             assertTrue("expected extraFS file but got: " + extraFiles, extraFiles.startsWith("extra"));
             initialStoreSize += store.directory().fileLength(extraFiles);
         }
-        final long reservedBytes = randomBoolean() ? StoreStats.UNKNOWN_RESERVED_BYTES : randomLongBetween(0L, Integer.MAX_VALUE);
+        final long reservedBytes =  randomBoolean() ? StoreStats.UNKNOWN_RESERVED_BYTES :randomLongBetween(0L, Integer.MAX_VALUE);
         StoreStats stats = store.stats(reservedBytes);
         assertEquals(initialStoreSize, stats.getSize().getBytes());
         assertEquals(reservedBytes, stats.getReservedSize().getBytes());
@@ -757,7 +761,7 @@ public class StoreTests extends ESTestCase {
         assertEquals(reservedBytes, stats.getReservedSize().getBytes());
 
         final long otherStatsBytes = randomLongBetween(0L, Integer.MAX_VALUE);
-        final long otherStatsReservedBytes = randomBoolean() ? StoreStats.UNKNOWN_RESERVED_BYTES : randomLongBetween(0L, Integer.MAX_VALUE);
+        final long otherStatsReservedBytes = randomBoolean() ? StoreStats.UNKNOWN_RESERVED_BYTES :randomLongBetween(0L, Integer.MAX_VALUE);
         stats.add(new StoreStats(otherStatsBytes, otherStatsReservedBytes));
         assertEquals(initialStoreSize + otherStatsBytes, stats.getSize().getBytes());
         assertEquals(Math.max(reservedBytes, 0L) + Math.max(otherStatsReservedBytes, 0L), stats.getReservedSize().getBytes());
@@ -780,6 +784,7 @@ public class StoreTests extends ESTestCase {
         deleteContent(store.directory());
         IOUtils.close(store);
     }
+
 
     public static void deleteContent(Directory directory) throws IOException {
         final String[] files = directory.listAll();
@@ -829,8 +834,10 @@ public class StoreTests extends ESTestCase {
     }
 
     protected Store.MetadataSnapshot createMetadataSnapshot() {
-        StoreFileMetadata storeFileMetadata1 = new StoreFileMetadata("segments", 1, "666", MIN_SUPPORTED_LUCENE_VERSION);
-        StoreFileMetadata storeFileMetadata2 = new StoreFileMetadata("no_segments", 1, "666", MIN_SUPPORTED_LUCENE_VERSION);
+        StoreFileMetadata storeFileMetadata1 =
+            new StoreFileMetadata("segments", 1, "666", MIN_SUPPORTED_LUCENE_VERSION);
+        StoreFileMetadata storeFileMetadata2 =
+            new StoreFileMetadata("no_segments", 1, "666", MIN_SUPPORTED_LUCENE_VERSION);
         Map<String, StoreFileMetadata> storeFileMetadataMap = new HashMap<>();
         storeFileMetadataMap.put(storeFileMetadata1.name(), storeFileMetadata1);
         storeFileMetadataMap.put(storeFileMetadata2.name(), storeFileMetadata2);
@@ -872,11 +879,11 @@ public class StoreTests extends ESTestCase {
         List<RetentionLease> peerRecoveryRetentionLeases = new ArrayList<>();
         for (int i = 0; i < numOfLeases; i++) {
             peerRecoveryRetentionLeases.add(new RetentionLease(ReplicationTracker.getPeerRecoveryRetentionLeaseId(UUIDs.randomBase64UUID()),
-                    randomNonNegativeLong(), randomNonNegativeLong(), ReplicationTracker.PEER_RECOVERY_RETENTION_LEASE_SOURCE));
+                randomNonNegativeLong(), randomNonNegativeLong(), ReplicationTracker.PEER_RECOVERY_RETENTION_LEASE_SOURCE));
         }
         TransportNodesListShardStoreMetadata.StoreFilesMetadata outStoreFileMetadata =
-                new TransportNodesListShardStoreMetadata.StoreFilesMetadata(new ShardId("test", "_na_", 0), metadataSnapshot,
-                        peerRecoveryRetentionLeases);
+            new TransportNodesListShardStoreMetadata.StoreFilesMetadata(new ShardId("test", "_na_", 0),
+                metadataSnapshot, peerRecoveryRetentionLeases);
         ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
         OutputStreamStreamOutput out = new OutputStreamStreamOutput(outBuffer);
         org.codelibs.fesen.Version targetNodeVersion = randomVersion(random());
@@ -886,7 +893,7 @@ public class StoreTests extends ESTestCase {
         InputStreamStreamInput in = new InputStreamStreamInput(inBuffer);
         in.setVersion(targetNodeVersion);
         TransportNodesListShardStoreMetadata.StoreFilesMetadata inStoreFileMetadata =
-                new TransportNodesListShardStoreMetadata.StoreFilesMetadata(in);
+            new TransportNodesListShardStoreMetadata.StoreFilesMetadata(in);
         Iterator<StoreFileMetadata> outFiles = outStoreFileMetadata.iterator();
         for (StoreFileMetadata inFile : inStoreFileMetadata) {
             assertThat(inFile.name(), equalTo(outFiles.next().name()));
@@ -906,8 +913,8 @@ public class StoreTests extends ESTestCase {
         for (int i = 0; i < numDocs; i++) {
             Document doc = new Document();
             doc.add(new StringField("id", "" + i, random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
-            doc.add(new TextField("body", TestUtil.randomRealisticUnicodeString(random()),
-                    random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
+            doc.add(new TextField("body",
+                TestUtil.randomRealisticUnicodeString(random()), random().nextBoolean() ? Field.Store.YES : Field.Store.NO));
             doc.add(new SortedDocValuesField("dv", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
             docs.add(doc);
         }
@@ -1009,11 +1016,13 @@ public class StoreTests extends ESTestCase {
             store.createEmpty(Version.LATEST);
 
             // remove the history uuid
-            IndexWriterConfig iwc = new IndexWriterConfig(null).setCommitOnClose(false)
-                    // we don't want merges to happen here - we call maybe merge on the engine
-                    // later once we stared it up otherwise we would need to wait for it here
-                    // we also don't specify a codec here and merges should use the engines for this index
-                    .setMergePolicy(NoMergePolicy.INSTANCE).setOpenMode(IndexWriterConfig.OpenMode.APPEND);
+            IndexWriterConfig iwc = new IndexWriterConfig(null)
+                .setCommitOnClose(false)
+                // we don't want merges to happen here - we call maybe merge on the engine
+                // later once we stared it up otherwise we would need to wait for it here
+                // we also don't specify a codec here and merges should use the engines for this index
+                .setMergePolicy(NoMergePolicy.INSTANCE)
+                .setOpenMode(IndexWriterConfig.OpenMode.APPEND);
             try (IndexWriter writer = new IndexWriter(store.directory(), iwc)) {
                 Map<String, String> newCommitData = new HashMap<>();
                 for (Map.Entry<String, String> entry : writer.getLiveCommitData()) {

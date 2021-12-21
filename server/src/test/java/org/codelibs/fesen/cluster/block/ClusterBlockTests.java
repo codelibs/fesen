@@ -66,6 +66,45 @@ public class ClusterBlockTests extends ESTestCase {
         }
     }
 
+    public void testBwcSerialization() throws Exception {
+        for (int runs = 0; runs < randomIntBetween(5, 20); runs++) {
+            // Generate a random cluster block in version < 7.0.0
+            final Version version = randomVersionBetween(random(), Version.V_6_0_0, getPreviousVersion(Version.V_6_7_0));
+            final ClusterBlock expected = randomClusterBlock(version);
+            assertNull(expected.uuid());
+
+            // Serialize to node in current version
+            final BytesStreamOutput out = new BytesStreamOutput();
+            expected.writeTo(out);
+
+            // Deserialize and check the cluster block
+            final ClusterBlock actual = new ClusterBlock(out.bytes().streamInput());
+            assertClusterBlockEquals(expected, actual);
+        }
+
+        for (int runs = 0; runs < randomIntBetween(5, 20); runs++) {
+            // Generate a random cluster block in current version
+            final ClusterBlock expected = randomClusterBlock(Version.CURRENT);
+
+            // Serialize to node in version < 7.0.0
+            final BytesStreamOutput out = new BytesStreamOutput();
+            out.setVersion(randomVersionBetween(random(), Version.V_6_0_0, getPreviousVersion(Version.V_6_7_0)));
+            expected.writeTo(out);
+
+            // Deserialize and check the cluster block
+            final StreamInput in = out.bytes().streamInput();
+            in.setVersion(out.getVersion());
+            final ClusterBlock actual = new ClusterBlock(in);
+
+            assertThat(actual.id(), equalTo(expected.id()));
+            assertThat(actual.status(), equalTo(expected.status()));
+            assertThat(actual.description(), equalTo(expected.description()));
+            assertThat(actual.retryable(), equalTo(expected.retryable()));
+            assertThat(actual.disableStatePersistence(), equalTo(expected.disableStatePersistence()));
+            assertArrayEquals(actual.levels().toArray(), expected.levels().toArray());
+        }
+    }
+
     public void testToStringDanglingComma() {
         final ClusterBlock clusterBlock = randomClusterBlock();
         assertThat(clusterBlock.toString(), not(endsWith(",")));
@@ -81,13 +120,17 @@ public class ClusterBlockTests extends ESTestCase {
 
     public void testRemoveIndexBlockWithId() {
         final ClusterBlocks.Builder builder = ClusterBlocks.builder();
-        builder.addIndexBlock("index-1", new ClusterBlock(1, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
-        builder.addIndexBlock("index-1", new ClusterBlock(2, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
-        builder.addIndexBlock("index-1", new ClusterBlock(3, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
         builder.addIndexBlock("index-1",
-                new ClusterBlock(3, "other uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
+            new ClusterBlock(1, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
+        builder.addIndexBlock("index-1",
+            new ClusterBlock(2, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
+        builder.addIndexBlock("index-1",
+            new ClusterBlock(3, "uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
+        builder.addIndexBlock("index-1",
+            new ClusterBlock(3, "other uuid", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
 
-        builder.addIndexBlock("index-2", new ClusterBlock(3, "uuid3", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
+        builder.addIndexBlock("index-2",
+            new ClusterBlock(3, "uuid3", "", true, true, true, RestStatus.OK, copyOf(ClusterBlockLevel.ALL)));
 
         ClusterBlocks clusterBlocks = builder.build();
         assertThat(clusterBlocks.indices().get("index-1").size(), equalTo(4));
@@ -132,10 +175,10 @@ public class ClusterBlockTests extends ESTestCase {
     }
 
     private ClusterBlock randomClusterBlock(final Version version) {
-        final String uuid = (randomBoolean()) ? UUIDs.randomBase64UUID() : null;
+        final String uuid = (version.onOrAfter(Version.V_6_7_0) && randomBoolean()) ? UUIDs.randomBase64UUID() : null;
         final List<ClusterBlockLevel> levels = Arrays.asList(ClusterBlockLevel.values());
         return new ClusterBlock(randomInt(), uuid, "cluster block #" + randomInt(), randomBoolean(), randomBoolean(), randomBoolean(),
-                randomFrom(RestStatus.values()), copyOf(randomSubsetOf(randomIntBetween(1, levels.size()), levels)));
+            randomFrom(RestStatus.values()), copyOf(randomSubsetOf(randomIntBetween(1, levels.size()), levels)));
     }
 
     private void assertClusterBlockEquals(final ClusterBlock expected, final ClusterBlock actual) {

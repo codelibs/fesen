@@ -37,9 +37,9 @@ public class DateHistogramTests extends BaseAggregationTestCase<DateHistogramAgg
             factory.fixedInterval(new DateHistogramInterval(randomIntBetween(1, 100000) + "ms"));
         } else {
             if (randomBoolean()) {
-                factory.calendarInterval(randomFrom(DateHistogramInterval.YEAR, DateHistogramInterval.QUARTER, DateHistogramInterval.MONTH,
-                        DateHistogramInterval.WEEK, DateHistogramInterval.DAY, DateHistogramInterval.HOUR, DateHistogramInterval.MINUTE,
-                        DateHistogramInterval.SECOND));
+                factory.calendarInterval(randomFrom(DateHistogramInterval.YEAR, DateHistogramInterval.QUARTER,
+                        DateHistogramInterval.MONTH, DateHistogramInterval.WEEK, DateHistogramInterval.DAY, DateHistogramInterval.HOUR,
+                        DateHistogramInterval.MINUTE, DateHistogramInterval.SECOND));
             } else {
                 int branch = randomInt(3);
                 switch (branch) {
@@ -80,7 +80,7 @@ public class DateHistogramTests extends BaseAggregationTestCase<DateHistogramAgg
         }
         if (randomBoolean()) {
             List<BucketOrder> order = randomOrder();
-            if (order.size() == 1 && randomBoolean()) {
+            if(order.size() == 1 && randomBoolean()) {
                 factory.order(order.get(0));
             } else {
                 factory.order(order);
@@ -92,26 +92,26 @@ public class DateHistogramTests extends BaseAggregationTestCase<DateHistogramAgg
     private List<BucketOrder> randomOrder() {
         List<BucketOrder> orders = new ArrayList<>();
         switch (randomInt(4)) {
-        case 0:
-            orders.add(BucketOrder.key(randomBoolean()));
-            break;
-        case 1:
-            orders.add(BucketOrder.count(randomBoolean()));
-            break;
-        case 2:
-            orders.add(BucketOrder.aggregation(randomAlphaOfLengthBetween(3, 20), randomBoolean()));
-            break;
-        case 3:
-            orders.add(BucketOrder.aggregation(randomAlphaOfLengthBetween(3, 20), randomAlphaOfLengthBetween(3, 20), randomBoolean()));
-            break;
-        case 4:
-            int numOrders = randomIntBetween(1, 3);
-            for (int i = 0; i < numOrders; i++) {
-                orders.addAll(randomOrder());
-            }
-            break;
-        default:
-            fail();
+            case 0:
+                orders.add(BucketOrder.key(randomBoolean()));
+                break;
+            case 1:
+                orders.add(BucketOrder.count(randomBoolean()));
+                break;
+            case 2:
+                orders.add(BucketOrder.aggregation(randomAlphaOfLengthBetween(3, 20), randomBoolean()));
+                break;
+            case 3:
+                orders.add(BucketOrder.aggregation(randomAlphaOfLengthBetween(3, 20), randomAlphaOfLengthBetween(3, 20), randomBoolean()));
+                break;
+            case 4:
+                int numOrders = randomIntBetween(1, 3);
+                for (int i = 0; i < numOrders; i++) {
+                    orders.addAll(randomOrder());
+                }
+                break;
+            default:
+                fail();
         }
         return orders;
     }

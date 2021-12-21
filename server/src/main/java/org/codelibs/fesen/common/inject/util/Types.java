@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package org.codelibs.fesen.common.inject.util;
 
 import java.lang.reflect.GenericArrayType;
@@ -56,7 +57,8 @@ public final class Types {
      *
      * @return a parameterized type.
      */
-    public static ParameterizedType newParameterizedTypeWithOwner(Type ownerType, Type rawType, Type... typeArguments) {
+    public static ParameterizedType newParameterizedTypeWithOwner(
+            Type ownerType, Type rawType, Type... typeArguments) {
         return new ParameterizedTypeImpl(ownerType, rawType, typeArguments);
     }
 
@@ -77,7 +79,7 @@ public final class Types {
      * this returns {@code ?}, which is shorthand for {@code ? extends Object}.
      */
     public static WildcardType subtypeOf(Type bound) {
-        return new WildcardTypeImpl(new Type[] { bound }, MoreTypes.EMPTY_TYPE_ARRAY);
+        return new WildcardTypeImpl(new Type[]{bound}, MoreTypes.EMPTY_TYPE_ARRAY);
     }
 
     /**
@@ -86,7 +88,7 @@ public final class Types {
      * super String}.
      */
     public static WildcardType supertypeOf(Type bound) {
-        return new WildcardTypeImpl(new Type[] { Object.class }, new Type[] { bound });
+        return new WildcardTypeImpl(new Type[]{Object.class}, new Type[]{bound});
     }
 
     /**

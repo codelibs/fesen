@@ -18,6 +18,15 @@
  */
 package org.codelibs.fesen.search.lookup;
 
+import org.apache.lucene.index.LeafReaderContext;
+import org.codelibs.fesen.ExceptionsHelper;
+import org.codelibs.fesen.common.logging.DeprecationLogger;
+import org.codelibs.fesen.core.Nullable;
+import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.fielddata.ScriptDocValues;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -28,20 +37,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.ExceptionsHelper;
-import org.codelibs.fesen.common.logging.DeprecationLogger;
-import org.codelibs.fesen.core.Nullable;
-import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.index.fielddata.ScriptDocValues;
-import org.codelibs.fesen.index.mapper.MappedFieldType;
-import org.codelibs.fesen.index.mapper.MapperService;
-
 public class LeafDocLookup implements Map<String, ScriptDocValues<?>> {
 
-    private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(LeafDocLookup.class);
+    private static final DeprecationLogger DEPRECATION_LOGGER =  DeprecationLogger.getLogger(LeafDocLookup.class);
     static final String TYPES_DEPRECATION_KEY = "type-field-doc-lookup";
-    static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Looking up doc types [_type] in scripts is deprecated.";
+    static final String TYPES_DEPRECATION_MESSAGE =
+            "[types removal] Looking up doc types [_type] in scripts is deprecated.";
 
     private final Map<String, ScriptDocValues<?>> localCacheFieldData = new HashMap<>(4);
 
@@ -56,7 +57,7 @@ public class LeafDocLookup implements Map<String, ScriptDocValues<?>> {
     private int docId = -1;
 
     LeafDocLookup(MapperService mapperService, Function<MappedFieldType, IndexFieldData<?>> fieldDataLookup, @Nullable String[] types,
-            LeafReaderContext reader) {
+                  LeafReaderContext reader) {
         this.mapperService = mapperService;
         this.fieldDataLookup = fieldDataLookup;
         this.types = types;
@@ -83,8 +84,8 @@ public class LeafDocLookup implements Map<String, ScriptDocValues<?>> {
         if (scriptValues == null) {
             final MappedFieldType fieldType = mapperService.fieldType(fieldName);
             if (fieldType == null) {
-                throw new IllegalArgumentException(
-                        "No field found for [" + fieldName + "] in mapping with types " + Arrays.toString(types));
+                throw new IllegalArgumentException("No field found for [" + fieldName + "] in mapping with types " +
+                        Arrays.toString(types));
             }
             // load fielddata on behalf of the script: otherwise it would need additional permissions
             // to deal with pagedbytes/ramusagestimator/etc

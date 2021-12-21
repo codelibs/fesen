@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.suggest;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.ParseField;
@@ -37,6 +34,9 @@ import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.index.mapper.MapperService;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Base class for the different suggestion implementations.
@@ -111,6 +111,7 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
+
     /**
      * Same as in {@link SuggestBuilder#setGlobalText(String)}, but in the suggestion scope.
      */
@@ -167,7 +168,7 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
     @SuppressWarnings("unchecked")
     public T analyzer(String analyzer) {
         this.analyzer = analyzer;
-        return (T) this;
+        return (T)this;
     }
 
     /**
@@ -186,7 +187,7 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
             throw new IllegalArgumentException("size must be positive");
         }
         this.size = size;
-        return (T) this;
+        return (T)this;
     }
 
     /**
@@ -211,7 +212,7 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
     @SuppressWarnings("unchecked")
     public T shardSize(Integer shardSize) {
         this.shardSize = shardSize;
-        return (T) this;
+        return (T)this;
     }
 
     /**
@@ -365,9 +366,14 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
         }
         @SuppressWarnings("unchecked")
         T other = (T) obj;
-        return Objects.equals(text, other.text()) && Objects.equals(prefix, other.prefix()) && Objects.equals(regex, other.regex())
-                && Objects.equals(field, other.field()) && Objects.equals(analyzer, other.analyzer()) && Objects.equals(size, other.size())
-                && Objects.equals(shardSize, other.shardSize()) && doEquals(other);
+        return Objects.equals(text, other.text()) &&
+               Objects.equals(prefix, other.prefix()) &&
+               Objects.equals(regex, other.regex()) &&
+               Objects.equals(field, other.field()) &&
+               Objects.equals(analyzer, other.analyzer()) &&
+               Objects.equals(size, other.size()) &&
+               Objects.equals(shardSize, other.shardSize()) &&
+               doEquals(other);
     }
 
     /**

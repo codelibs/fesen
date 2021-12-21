@@ -18,18 +18,18 @@
  */
 package org.codelibs.fesen.search.suggest.phrase;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.search.suggest.phrase.DirectCandidateGenerator.Candidate;
 
+import java.io.IOException;
+
 final class LaplaceScorer extends WordScorer {
     private double alpha;
 
-    LaplaceScorer(IndexReader reader, Terms terms, String field, double realWordLikelihood, BytesRef separator, double alpha)
-            throws IOException {
+    LaplaceScorer(IndexReader reader, Terms terms, String field,
+            double realWordLikelihood, BytesRef separator, double alpha) throws IOException {
         super(reader, terms, field, realWordLikelihood, separator);
         this.alpha = alpha;
     }
@@ -56,5 +56,6 @@ final class LaplaceScorer extends WordScorer {
         join(separator, spare, w_1.term, word.term);
         return (alpha + trigramCount) / (frequency(spare.get()) + alpha * numTerms);
     }
+
 
 }

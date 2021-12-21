@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.test;
 
-import static java.util.Collections.singletonMap;
-
-import java.util.Map;
-
 import org.apache.lucene.analysis.MockTokenizer;
 import org.codelibs.fesen.index.analysis.TokenizerFactory;
 import org.codelibs.fesen.indices.analysis.AnalysisModule;
 import org.codelibs.fesen.plugins.AnalysisPlugin;
 import org.codelibs.fesen.plugins.Plugin;
+
+import java.util.Map;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * Some tests rely on the keyword tokenizer, but this tokenizer isn't part of lucene-core and therefor not available
@@ -39,7 +39,7 @@ public class MockKeywordPlugin extends Plugin implements AnalysisPlugin {
 
     @Override
     public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
-        return singletonMap("keyword", (indexSettings, environment, name, settings) -> TokenizerFactory.newFactory(name,
-                () -> new MockTokenizer(MockTokenizer.KEYWORD, false)));
+        return singletonMap("keyword", (indexSettings, environment, name, settings) ->
+            TokenizerFactory.newFactory(name, () -> new MockTokenizer(MockTokenizer.KEYWORD, false)));
     }
 }

@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.packed.PackedInts;
 import org.codelibs.fesen.common.lease.Releasable;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.util.BitArray;
 import org.codelibs.fesen.common.util.ByteArray;
 import org.codelibs.fesen.common.util.ByteUtils;
 import org.codelibs.fesen.common.util.IntArray;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Hyperloglog++ counter, implemented based on pseudo code from
@@ -216,9 +216,10 @@ public final class HyperLogLogPlusPlus extends AbstractHyperLogLogPlusPlus {
         // array for holding the runlens.
         private ByteArray runLens;
 
+
         HyperLogLog(BigArrays bigArrays, long initialBucketCount, int precision) {
             super(precision);
-            this.runLens = bigArrays.newByteArray(initialBucketCount << precision);
+            this.runLens =  bigArrays.newByteArray(initialBucketCount << precision);
             this.bigArrays = bigArrays;
             this.iterator = new HyperLogLogIterator(this, precision, m);
         }

@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.merge;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.core.TimeValue;
+
+import java.io.IOException;
 
 public class MergeStats implements Writeable, ToXContentFragment {
 
@@ -65,8 +65,9 @@ public class MergeStats implements Writeable, ToXContentFragment {
         totalBytesPerSecAutoThrottle = in.readVLong();
     }
 
-    public void add(long totalMerges, long totalMergeTime, long totalNumDocs, long totalSizeInBytes, long currentMerges,
-            long currentNumDocs, long currentSizeInBytes, long stoppedTimeMillis, long throttledTimeMillis, double mbPerSecAutoThrottle) {
+    public void add(long totalMerges, long totalMergeTime, long totalNumDocs, long totalSizeInBytes,
+                        long currentMerges, long currentNumDocs, long currentSizeInBytes,
+                        long stoppedTimeMillis, long throttledTimeMillis, double mbPerSecAutoThrottle) {
         this.total += totalMerges;
         this.totalTimeInMillis += totalMergeTime;
         this.totalNumDocs += totalNumDocs;

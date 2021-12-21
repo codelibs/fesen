@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import static java.util.Collections.emptyList;
+import org.apache.lucene.index.LeafReaderContext;
+import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.search.DocValueFormat;
+import org.codelibs.fesen.search.lookup.SourceLookup;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.codelibs.fesen.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.search.DocValueFormat;
-import org.codelibs.fesen.search.lookup.SourceLookup;
+import static java.util.Collections.emptyList;
 
 /**
  * Value fetcher that loads from doc values.

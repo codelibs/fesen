@@ -18,14 +18,7 @@
  */
 package org.codelibs.fesen.test.rest.yaml;
 
-import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.carrotsearch.randomizedtesting.RandomizedTest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
@@ -40,7 +33,14 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
-import com.carrotsearch.randomizedtesting.RandomizedTest;
+import static org.codelibs.fesen.rest.BaseRestHandler.INCLUDE_TYPE_NAME_PARAMETER;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Execution context passed across the REST tests.
@@ -52,7 +52,7 @@ public class ClientYamlTestExecutionContext {
 
     private static final Logger logger = LogManager.getLogger(ClientYamlTestExecutionContext.class);
 
-    private static final XContentType[] STREAMING_CONTENT_TYPES = new XContentType[] { XContentType.JSON, XContentType.SMILE };
+    private static final XContentType[] STREAMING_CONTENT_TYPES = new XContentType[]{XContentType.JSON, XContentType.SMILE};
 
     private final Stash stash = new Stash();
     private final ClientYamlTestClient clientYamlTestClient;
@@ -71,7 +71,7 @@ public class ClientYamlTestExecutionContext {
      * Saves the obtained response in the execution context.
      */
     public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, List<Map<String, Object>> bodies,
-            Map<String, String> headers) throws IOException {
+                                    Map<String, String> headers) throws IOException {
         return callApi(apiName, params, bodies, headers, NodeSelector.ANY);
     }
 
@@ -80,7 +80,7 @@ public class ClientYamlTestExecutionContext {
      * Saves the obtained response in the execution context.
      */
     public ClientYamlTestResponse callApi(String apiName, Map<String, String> params, List<Map<String, Object>> bodies,
-            Map<String, String> headers, NodeSelector nodeSelector) throws IOException {
+                                    Map<String, String> headers, NodeSelector nodeSelector) throws IOException {
         //makes a copy of the parameters before modifying them for this specific request
         Map<String, String> requestParams = new HashMap<>(params);
         requestParams.putIfAbsent("error_trace", "true"); // By default ask for error traces, this my be overridden by params
@@ -106,7 +106,7 @@ public class ClientYamlTestExecutionContext {
         try {
             response = callApiInternal(apiName, requestParams, entity, requestHeaders, nodeSelector);
             return response;
-        } catch (ClientYamlTestResponseException e) {
+        } catch(ClientYamlTestResponseException e) {
             response = e.getRestTestResponse();
             throw e;
         } finally {
@@ -125,7 +125,9 @@ public class ClientYamlTestExecutionContext {
      * This functionality is supported in 7.x, but is not supported in 6.x (or is not the default
      * behavior). Here we modify the request so that it will work against a 6.x node.
      */
-    private void adaptRequestForOlderVersion(String apiName, List<Map<String, Object>> bodies, Map<String, String> requestParams) {
+    private void adaptRequestForOlderVersion(String apiName,
+                                             List<Map<String, Object>> bodies,
+                                             Map<String, String> requestParams) {
         // For index creations, we specify 'include_type_name=false' if it is not explicitly set. This
         // allows us to omit the parameter in the test description, while still being able to communicate
         // with 6.x nodes where include_type_name defaults to 'true'.
@@ -226,8 +228,8 @@ public class ClientYamlTestExecutionContext {
     }
 
     // pkg-private for testing
-    ClientYamlTestResponse callApiInternal(String apiName, Map<String, String> params, HttpEntity entity, Map<String, String> headers,
-            NodeSelector nodeSelector) throws IOException {
+    ClientYamlTestResponse callApiInternal(String apiName, Map<String, String> params, HttpEntity entity,
+            Map<String, String> headers, NodeSelector nodeSelector) throws IOException  {
         return clientYamlTestClient.callApi(apiName, params, entity, headers, nodeSelector);
     }
 

@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.index;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -31,6 +28,9 @@ import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.ToXContentObject;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A value class representing the basic required properties of an Fesen index.

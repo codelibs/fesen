@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Objects;
-import java.util.function.LongConsumer;
-
 import org.apache.lucene.index.IndexReader;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.ParseField;
@@ -52,21 +46,36 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceRegistry;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.search.sort.SortOrder;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Objects;
+import java.util.function.LongConsumer;
+
 /**
  * A {@link CompositeValuesSourceBuilder} that builds a {@link RoundingValuesSource} from a {@link Script} or
  * a field name using the provided interval.
  */
-public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<DateHistogramValuesSourceBuilder>
-        implements DateIntervalConsumer {
+public class DateHistogramValuesSourceBuilder
+    extends CompositeValuesSourceBuilder<DateHistogramValuesSourceBuilder> implements DateIntervalConsumer {
     @FunctionalInterface
     public interface DateHistogramCompositeSupplier {
-        CompositeValuesSourceConfig apply(ValuesSourceConfig config, Rounding rounding, String name, boolean hasScript, // probably redundant with the config, but currently we check this two different ways...
-                String format, boolean missingBucket, SortOrder order);
+        CompositeValuesSourceConfig apply(
+            ValuesSourceConfig config,
+            Rounding rounding,
+            String name,
+            boolean hasScript, // probably redundant with the config, but currently we check this two different ways...
+            String format,
+            boolean missingBucket,
+            SortOrder order
+        );
     }
 
     static final String TYPE = "date_histogram";
-    static final ValuesSourceRegistry.RegistryKey<DateHistogramCompositeSupplier> REGISTRY_KEY =
-            new ValuesSourceRegistry.RegistryKey<>(TYPE, DateHistogramCompositeSupplier.class);
+    static final ValuesSourceRegistry.RegistryKey<DateHistogramCompositeSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
+        TYPE,
+        DateHistogramCompositeSupplier.class
+    );
 
     static final ObjectParser<DateHistogramValuesSourceBuilder, String> PARSER =
             ObjectParser.fromBuilder(TYPE, DateHistogramValuesSourceBuilder::new);
@@ -131,14 +140,12 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         DateHistogramValuesSourceBuilder other = (DateHistogramValuesSourceBuilder) obj;
-        return Objects.equals(dateHistogramInterval, other.dateHistogramInterval) && Objects.equals(timeZone, other.timeZone);
+        return Objects.equals(dateHistogramInterval, other.dateHistogramInterval)
+            && Objects.equals(timeZone, other.timeZone);
     }
 
     @Override
@@ -263,26 +270,47 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
     }
 
     public static void register(ValuesSourceRegistry.Builder builder) {
-        builder.register(REGISTRY_KEY, org.codelibs.fesen.core.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC),
-                (valuesSourceConfig, rounding, name, hasScript, format, missingBucket, order) -> {
-                    ValuesSource.Numeric numeric = (ValuesSource.Numeric) valuesSourceConfig.getValuesSource();
-                    // TODO once composite is plugged in to the values source registry or at least understands Date values source types use it
-                    // here
-                    Rounding.Prepared preparedRounding = rounding.prepareForUnknown();
-                    RoundingValuesSource vs = new RoundingValuesSource(numeric, preparedRounding);
-                    // is specified in the builder.
-                    final DocValueFormat docValueFormat = format == null ? DocValueFormat.RAW : valuesSourceConfig.format();
-                    final MappedFieldType fieldType = valuesSourceConfig.fieldType();
-                    return new CompositeValuesSourceConfig(name, fieldType, vs, docValueFormat, order, missingBucket, hasScript,
-                            (BigArrays bigArrays, IndexReader reader, int size, LongConsumer addRequestCircuitBreakerBytes,
-                                    CompositeValuesSourceConfig compositeValuesSourceConfig) -> {
-                                final RoundingValuesSource roundingValuesSource =
-                                        (RoundingValuesSource) compositeValuesSourceConfig.valuesSource();
-                                return new LongValuesSource(bigArrays, compositeValuesSourceConfig.fieldType(),
-                                        roundingValuesSource::longValues, roundingValuesSource::round, compositeValuesSourceConfig.format(),
-                                        compositeValuesSourceConfig.missingBucket(), size, compositeValuesSourceConfig.reverseMul());
-                            });
-                }, false);
+        builder.register(
+            REGISTRY_KEY,
+            org.codelibs.fesen.core.List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC),
+            (valuesSourceConfig, rounding, name, hasScript, format, missingBucket, order) -> {
+                ValuesSource.Numeric numeric = (ValuesSource.Numeric) valuesSourceConfig.getValuesSource();
+                // TODO once composite is plugged in to the values source registry or at least understands Date values source types use it
+                // here
+                Rounding.Prepared preparedRounding = rounding.prepareForUnknown();
+                RoundingValuesSource vs = new RoundingValuesSource(numeric, preparedRounding);
+                // is specified in the builder.
+                final DocValueFormat docValueFormat = format == null ? DocValueFormat.RAW : valuesSourceConfig.format();
+                final MappedFieldType fieldType = valuesSourceConfig.fieldType();
+                return new CompositeValuesSourceConfig(
+                    name,
+                    fieldType,
+                    vs,
+                    docValueFormat,
+                    order,
+                    missingBucket,
+                    hasScript,
+                    (
+                        BigArrays bigArrays,
+                        IndexReader reader,
+                        int size,
+                        LongConsumer addRequestCircuitBreakerBytes,
+                        CompositeValuesSourceConfig compositeValuesSourceConfig) -> {
+                        final RoundingValuesSource roundingValuesSource = (RoundingValuesSource) compositeValuesSourceConfig.valuesSource();
+                        return new LongValuesSource(
+                            bigArrays,
+                            compositeValuesSourceConfig.fieldType(),
+                            roundingValuesSource::longValues,
+                            roundingValuesSource::round,
+                            compositeValuesSourceConfig.format(),
+                            compositeValuesSourceConfig.missingBucket(),
+                            size,
+                            compositeValuesSourceConfig.reverseMul()
+                        );
+                    }
+                );
+            },
+            false);
     }
 
     @Override
@@ -293,7 +321,8 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
     @Override
     protected CompositeValuesSourceConfig innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config) throws IOException {
         Rounding rounding = dateHistogramInterval.createRounding(timeZone(), offset);
-        return queryShardContext.getValuesSourceRegistry().getAggregator(REGISTRY_KEY, config).apply(config, rounding, name,
-                config.script() != null, format(), missingBucket(), order());
+        return queryShardContext.getValuesSourceRegistry()
+            .getAggregator(REGISTRY_KEY, config)
+            .apply(config, rounding, name, config.script() != null, format(), missingBucket(), order());
     }
 }

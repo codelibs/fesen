@@ -19,10 +19,10 @@
 
 package org.codelibs.fesen.search.fetch;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase.HitContext;
+
+import java.io.IOException;
 
 /**
  * Executes the logic for a {@link FetchSubPhase} against a particular leaf reader and hit

@@ -19,14 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.util.PriorityQueue;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -40,11 +32,20 @@ import org.codelibs.fesen.search.aggregations.KeyComparable;
 import org.codelibs.fesen.search.aggregations.bucket.IteratorAndCurrent;
 import org.codelibs.fesen.search.aggregations.bucket.MultiBucketsAggregation;
 
-public class InternalVariableWidthHistogram
-        extends InternalMultiBucketAggregation<InternalVariableWidthHistogram, InternalVariableWidthHistogram.Bucket>
-        implements Histogram, HistogramFactory {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-    public static class Bucket extends InternalMultiBucketAggregation.InternalBucket implements Histogram.Bucket, KeyComparable<Bucket> {
+public class InternalVariableWidthHistogram
+    extends InternalMultiBucketAggregation<InternalVariableWidthHistogram, InternalVariableWidthHistogram.Bucket>
+    implements Histogram, HistogramFactory{
+
+    public static class Bucket extends InternalMultiBucketAggregation.InternalBucket
+        implements Histogram.Bucket, KeyComparable<Bucket> {
 
         public static class BucketBounds {
             public double min;
@@ -65,11 +66,9 @@ public class InternalVariableWidthHistogram
                 out.writeDouble(max);
             }
 
-            public boolean equals(Object obj) {
-                if (this == obj)
-                    return true;
-                if (obj == null || getClass() != obj.getClass())
-                    return false;
+            public boolean equals(Object obj){
+                if (this == obj) return true;
+                if (obj == null || getClass() != obj.getClass()) return false;
                 BucketBounds that = (BucketBounds) obj;
                 return min == that.min && max == that.max;
             }
@@ -86,7 +85,11 @@ public class InternalVariableWidthHistogram
         protected final transient DocValueFormat format;
         private double centroid;
 
-        public Bucket(double centroid, BucketBounds bounds, long docCount, DocValueFormat format, InternalAggregations aggregations) {
+        public Bucket(double centroid,
+                      BucketBounds bounds,
+                      long docCount,
+                      DocValueFormat format,
+                      InternalAggregations aggregations) {
             this.format = format;
             this.centroid = centroid;
             this.bounds = bounds;
@@ -119,8 +122,10 @@ public class InternalVariableWidthHistogram
                 return false;
             }
             InternalVariableWidthHistogram.Bucket that = (InternalVariableWidthHistogram.Bucket) obj;
-            return centroid == that.centroid && bounds.equals(that.bounds) && docCount == that.docCount
-                    && Objects.equals(aggregations, that.aggregations);
+            return centroid == that.centroid
+                && bounds.equals(that.bounds)
+                && docCount == that.docCount
+                && Objects.equals(aggregations, that.aggregations);
         }
 
         @Override
@@ -139,21 +144,13 @@ public class InternalVariableWidthHistogram
          * are buckets, which is incorrect.
          */
         @Override
-        public Object getKey() {
-            return centroid;
-        }
+        public Object getKey() { return centroid; }
 
-        public double min() {
-            return bounds.min;
-        }
+        public double min() { return bounds.min; }
 
-        public double max() {
-            return bounds.max;
-        }
+        public double max() { return bounds.max; }
 
-        public double centroid() {
-            return centroid;
-        }
+        public double centroid() { return centroid; }
 
         @Override
         public long getDocCount() {
@@ -238,7 +235,7 @@ public class InternalVariableWidthHistogram
     final EmptyBucketInfo emptyBucketInfo;
 
     InternalVariableWidthHistogram(String name, List<Bucket> buckets, EmptyBucketInfo emptyBucketInfo, int targetNumBuckets,
-            DocValueFormat formatter, Map<String, Object> metaData) {
+                                   DocValueFormat formatter, Map<String, Object> metaData){
         super(name, metaData);
         this.buckets = buckets;
         this.emptyBucketInfo = emptyBucketInfo;
@@ -249,7 +246,7 @@ public class InternalVariableWidthHistogram
     /**
      * Stream from a stream.
      */
-    public InternalVariableWidthHistogram(StreamInput in) throws IOException {
+    public InternalVariableWidthHistogram(StreamInput in) throws IOException{
         super(in);
         emptyBucketInfo = new EmptyBucketInfo(in);
         format = in.readNamedWriteable(DocValueFormat.class);
@@ -289,7 +286,8 @@ public class InternalVariableWidthHistogram
 
     @Override
     public InternalVariableWidthHistogram create(List<Bucket> buckets) {
-        return new InternalVariableWidthHistogram(name, buckets, emptyBucketInfo, targetNumBuckets, format, metadata);
+        return new InternalVariableWidthHistogram(name, buckets, emptyBucketInfo, targetNumBuckets,
+            format,  metadata);
     }
 
     @Override
@@ -299,7 +297,8 @@ public class InternalVariableWidthHistogram
 
     @Override
     public Bucket createBucket(Number key, long docCount, InternalAggregations aggregations) {
-        return new Bucket(key.doubleValue(), new Bucket.BucketBounds(key.doubleValue(), key.doubleValue()), docCount, format, aggregations);
+        return new Bucket(key.doubleValue(), new Bucket.BucketBounds(key.doubleValue(), key.doubleValue()),
+            docCount, format, aggregations);
     }
 
     @Override
@@ -315,10 +314,8 @@ public class InternalVariableWidthHistogram
     /**
      * This method should not be called for this specific subclass of InternalHistogram, since there should not be
      * empty buckets when clustering.
-    =    */
-    private double nextKey(double key) {
-        return key + 1;
-    }
+=    */
+    private double nextKey(double key){ return key + 1; }
 
     @Override
     protected Bucket reduceBucket(List<Bucket> buckets, ReduceContext context) {
@@ -355,7 +352,7 @@ public class InternalVariableWidthHistogram
         }
 
         List<Bucket> reducedBuckets = new ArrayList<>();
-        if (pq.size() > 0) {
+        if(pq.size() > 0) {
             double key = pq.top().current().centroid();
             // list of buckets coming from different shards that have the same key
             List<Bucket> currentBuckets = new ArrayList<>();
@@ -381,7 +378,7 @@ public class InternalVariableWidthHistogram
                 } else {
                     pq.pop();
                 }
-            } while (pq.size() > 0);
+            } while(pq.size() > 0);
 
             if (currentBuckets.isEmpty() == false) {
                 final Bucket reduced = reduceBucket(currentBuckets, reduceContext);
@@ -394,7 +391,8 @@ public class InternalVariableWidthHistogram
         return reducedBuckets;
     }
 
-    class BucketRange {
+
+    class BucketRange{
         int startIdx;
         int endIdx;
 
@@ -407,11 +405,11 @@ public class InternalVariableWidthHistogram
         double centroid;
         long docCount;
 
-        public void mergeWith(BucketRange other) {
+        public void mergeWith(BucketRange other){
             startIdx = Math.min(startIdx, other.startIdx);
             endIdx = Math.max(endIdx, other.endIdx);
 
-            if (docCount + other.docCount > 0) {
+            if(docCount + other.docCount > 0) {
                 // Avoids div by 0 error. This condition could be false if the optional docCount field was not set
                 centroid = ((centroid * docCount) + (other.centroid * other.docCount)) / (docCount + other.docCount);
                 docCount += other.docCount;
@@ -425,23 +423,22 @@ public class InternalVariableWidthHistogram
      * For each range {startIdx, endIdx} in <code>ranges</code>, all the buckets in that index range
      * from <code>buckets</code> are merged, and this merged bucket replaces the entire range.
      */
-    private void mergeBucketsWithPlan(List<Bucket> buckets, List<BucketRange> plan, ReduceContext reduceContext) {
-        for (int i = plan.size() - 1; i >= 0; i--) {
+    private void mergeBucketsWithPlan(List<Bucket> buckets, List<BucketRange> plan, ReduceContext reduceContext){
+        for(int i = plan.size() - 1; i >= 0; i--) {
             BucketRange range = plan.get(i);
             int endIdx = range.endIdx;
             int startIdx = range.startIdx;
 
-            if (startIdx == endIdx)
-                continue;
+            if(startIdx == endIdx) continue;
 
             List<Bucket> toMerge = new ArrayList<>();
-            for (int idx = endIdx; idx > startIdx; idx--) {
+            for(int idx = endIdx; idx > startIdx; idx--){
                 toMerge.add(buckets.get(idx));
                 buckets.remove(idx);
             }
             toMerge.add(buckets.get(startIdx)); // Don't remove the startIdx bucket because it will be replaced by the merged bucket
 
-            int toRemove = toMerge.stream().mapToInt(b -> countInnerBucket(b) + 1).sum();
+            int toRemove = toMerge.stream().mapToInt(b -> countInnerBucket(b)+1).sum();
             reduceContext.consumeBucketsAndMaybeBreak(-toRemove + 1);
             Bucket merged_bucket = reduceBucket(toMerge, reduceContext);
 
@@ -495,7 +492,7 @@ public class InternalVariableWidthHistogram
         mergeBucketsWithPlan(buckets, ranges, reduceContext);
     }
 
-    private void mergeBucketsWithSameMin(List<Bucket> buckets, ReduceContext reduceContext) {
+    private void mergeBucketsWithSameMin(List<Bucket> buckets, ReduceContext reduceContext){
         // Create a merge plan
         List<BucketRange> ranges = new ArrayList<>();
 
@@ -510,14 +507,14 @@ public class InternalVariableWidthHistogram
 
         // Merge ranges with same min value
         int i = 0;
-        while (i < ranges.size() - 1) {
+        while(i < ranges.size() - 1){
             BucketRange range = ranges.get(i);
-            BucketRange nextRange = ranges.get(i + 1);
+            BucketRange nextRange = ranges.get(i+1);
 
-            if (range.min == nextRange.min) {
+            if(range.min == nextRange.min){
                 range.mergeWith(nextRange);
-                ranges.remove(i + 1);
-            } else {
+                ranges.remove(i+1);
+            } else{
                 i++;
             }
         }
@@ -532,11 +529,11 @@ public class InternalVariableWidthHistogram
      *
      * After this adjustment, A will contain more values than indicated and B will have less.
      */
-    private void adjustBoundsForOverlappingBuckets(List<Bucket> buckets, ReduceContext reduceContext) {
-        for (int i = 1; i < buckets.size(); i++) {
+    private void adjustBoundsForOverlappingBuckets(List<Bucket> buckets, ReduceContext reduceContext){
+        for(int i = 1; i < buckets.size(); i++){
             Bucket curBucket = buckets.get(i);
-            Bucket prevBucket = buckets.get(i - 1);
-            if (curBucket.bounds.min < prevBucket.bounds.max) {
+            Bucket prevBucket = buckets.get(i-1);
+            if(curBucket.bounds.min < prevBucket.bounds.max){
                 // We don't want overlapping buckets --> Adjust their bounds
                 // TODO: Think of a fairer way to do this. Should prev.max = cur.min?
                 curBucket.bounds.min = (prevBucket.bounds.max + curBucket.bounds.min) / 2;
@@ -549,12 +546,13 @@ public class InternalVariableWidthHistogram
     public InternalAggregation reduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
         List<Bucket> reducedBuckets = reduceBuckets(aggregations, reduceContext);
 
-        if (reduceContext.isFinalReduce()) {
+        if(reduceContext.isFinalReduce()) {
             buckets.sort(Comparator.comparing(Bucket::min));
             mergeBucketsWithSameMin(reducedBuckets, reduceContext);
             adjustBoundsForOverlappingBuckets(reducedBuckets, reduceContext);
         }
-        return new InternalVariableWidthHistogram(getName(), reducedBuckets, emptyBucketInfo, targetNumBuckets, format, metadata);
+        return new InternalVariableWidthHistogram(getName(), reducedBuckets, emptyBucketInfo, targetNumBuckets,
+            format, metadata);
     }
 
     @Override
@@ -575,20 +573,19 @@ public class InternalVariableWidthHistogram
             buckets2.add((Bucket) b);
         }
         buckets2 = Collections.unmodifiableList(buckets2);
-        return new InternalVariableWidthHistogram(name, buckets2, emptyBucketInfo, targetNumBuckets, format, getMetadata());
+        return new InternalVariableWidthHistogram(name, buckets2, emptyBucketInfo, targetNumBuckets,
+            format, getMetadata());
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalVariableWidthHistogram that = (InternalVariableWidthHistogram) obj;
-        return Objects.equals(buckets, that.buckets) && Objects.equals(format, that.format)
+        return Objects.equals(buckets, that.buckets)
+                && Objects.equals(format, that.format)
                 && Objects.equals(emptyBucketInfo, that.emptyBucketInfo);
     }
 

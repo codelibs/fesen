@@ -38,7 +38,7 @@ public class IndexShardSnapshotException extends FesenException {
         setShard(shardId);
     }
 
-    public IndexShardSnapshotException(StreamInput in) throws IOException {
+    public IndexShardSnapshotException(StreamInput in) throws IOException{
         super(in);
     }
 }

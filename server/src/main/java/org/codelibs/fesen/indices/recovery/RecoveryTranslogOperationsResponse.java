@@ -21,8 +21,10 @@ package org.codelibs.fesen.indices.recovery;
 
 import java.io.IOException;
 
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.transport.TransportResponse;
 
 final class RecoveryTranslogOperationsResponse extends TransportResponse {
@@ -34,11 +36,20 @@ final class RecoveryTranslogOperationsResponse extends TransportResponse {
 
     RecoveryTranslogOperationsResponse(final StreamInput in) throws IOException {
         super(in);
-        localCheckpoint = in.readZLong();
+        // before 6.0.0 we received an empty response so we have to maintain that
+        if (in.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            localCheckpoint = in.readZLong();
+        }
+        else {
+            localCheckpoint = SequenceNumbers.UNASSIGNED_SEQ_NO;
+        }
     }
 
     @Override
     public void writeTo(final StreamOutput out) throws IOException {
-        out.writeZLong(localCheckpoint);
+        // before 6.0.0 we responded with an empty response so we have to maintain that
+        if (out.getVersion().onOrAfter(Version.V_6_0_0_alpha1)) {
+            out.writeZLong(localCheckpoint);
+        }
     }
 }

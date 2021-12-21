@@ -72,6 +72,7 @@ public enum AllocationDecision implements Writeable {
      */
     NO_ATTEMPT((byte) 7);
 
+
     private final byte id;
 
     AllocationDecision(byte id) {
@@ -86,24 +87,24 @@ public enum AllocationDecision implements Writeable {
     public static AllocationDecision readFrom(StreamInput in) throws IOException {
         byte id = in.readByte();
         switch (id) {
-        case 0:
-            return YES;
-        case 1:
-            return THROTTLED;
-        case 2:
-            return NO;
-        case 3:
-            return WORSE_BALANCE;
-        case 4:
-            return AWAITING_INFO;
-        case 5:
-            return ALLOCATION_DELAYED;
-        case 6:
-            return NO_VALID_SHARD_COPY;
-        case 7:
-            return NO_ATTEMPT;
-        default:
-            throw new IllegalArgumentException("Unknown value [" + id + "]");
+            case 0:
+                return YES;
+            case 1:
+                return THROTTLED;
+            case 2:
+                return NO;
+            case 3:
+                return WORSE_BALANCE;
+            case 4:
+                return AWAITING_INFO;
+            case 5:
+                return ALLOCATION_DELAYED;
+            case 6:
+                return NO_VALID_SHARD_COPY;
+            case 7:
+                return NO_ATTEMPT;
+            default:
+                throw new IllegalArgumentException("Unknown value [" + id + "]");
         }
     }
 
@@ -115,19 +116,19 @@ public enum AllocationDecision implements Writeable {
             return YES;
         } else {
             switch (allocationStatus) {
-            case DECIDERS_THROTTLED:
-                return THROTTLED;
-            case FETCHING_SHARD_DATA:
-                return AWAITING_INFO;
-            case DELAYED_ALLOCATION:
-                return ALLOCATION_DELAYED;
-            case NO_VALID_SHARD_COPY:
-                return NO_VALID_SHARD_COPY;
-            case NO_ATTEMPT:
-                return NO_ATTEMPT;
-            default:
-                assert allocationStatus == AllocationStatus.DECIDERS_NO : "unhandled AllocationStatus type [" + allocationStatus + "]";
-                return NO;
+                case DECIDERS_THROTTLED:
+                    return THROTTLED;
+                case FETCHING_SHARD_DATA:
+                    return AWAITING_INFO;
+                case DELAYED_ALLOCATION:
+                    return ALLOCATION_DELAYED;
+                case NO_VALID_SHARD_COPY:
+                    return NO_VALID_SHARD_COPY;
+                case NO_ATTEMPT:
+                    return NO_ATTEMPT;
+                default:
+                    assert allocationStatus == AllocationStatus.DECIDERS_NO : "unhandled AllocationStatus type [" + allocationStatus + "]";
+                    return NO;
             }
         }
     }
@@ -137,13 +138,13 @@ public enum AllocationDecision implements Writeable {
      */
     public static AllocationDecision fromDecisionType(Decision.Type type) {
         switch (type) {
-        case YES:
-            return YES;
-        case THROTTLE:
-            return THROTTLED;
-        default:
-            assert type == Decision.Type.NO;
-            return NO;
+            case YES:
+                return YES;
+            case THROTTLE:
+                return THROTTLED;
+            default:
+                assert type == Decision.Type.NO;
+                return NO;
         }
     }
 

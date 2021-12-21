@@ -19,15 +19,16 @@
 
 package org.codelibs.fesen.action.admin.cluster.node.tasks.list;
 
+import org.codelibs.fesen.common.xcontent.ToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.ToXContent.Params;
+import org.codelibs.fesen.tasks.TaskInfo;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.codelibs.fesen.common.xcontent.ToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.tasks.TaskInfo;
 
 /**
  * Information about a currently running task and all its subtasks.
@@ -37,6 +38,7 @@ public class TaskGroup implements ToXContentObject {
     private final TaskInfo task;
 
     private final List<TaskGroup> childTasks;
+
 
     public TaskGroup(TaskInfo task, List<TaskGroup> childTasks) {
         this.task = task;

@@ -64,17 +64,17 @@ public class GeoTileUtilsTests extends ESTestCase {
         assertEquals(0x0C00000060000000L, longEncode(-20, 100, 3));
         assertEquals(0x71127D27C8ACA67AL, longEncode(13, -15, 28));
         assertEquals(0x4C0077776003A9ACL, longEncode(-12, 15, 19));
-        assertEquals(0x140000024000000EL, longEncode(-328.231870, 16.064082, 5));
-        assertEquals(0x6436F96B60000000L, longEncode(-590.769588, 89.549167, 25));
-        assertEquals(0x6411BD6BA0A98359L, longEncode(999.787079, 51.830093, 25));
-        assertEquals(0x751BD6BBCA983596L, longEncode(999.787079, 51.830093, 29));
-        assertEquals(0x77CF880A20000000L, longEncode(-557.039740, -632.103969, 29));
-        assertEquals(0x7624FA4FA0000000L, longEncode(13, 88, 29));
-        assertEquals(0x7624FA4FBFFFFFFFL, longEncode(13, -88, 29));
-        assertEquals(0x0400000020000000L, longEncode(13, 89, 1));
-        assertEquals(0x0400000020000001L, longEncode(13, -89, 1));
-        assertEquals(0x0400000020000000L, longEncode(13, 95, 1));
-        assertEquals(0x0400000020000001L, longEncode(13, -95, 1));
+        assertEquals(0x140000024000000EL, longEncode(-328.231870,16.064082, 5));
+        assertEquals(0x6436F96B60000000L, longEncode(-590.769588,89.549167, 25));
+        assertEquals(0x6411BD6BA0A98359L, longEncode(999.787079,51.830093, 25));
+        assertEquals(0x751BD6BBCA983596L, longEncode(999.787079,51.830093, 29));
+        assertEquals(0x77CF880A20000000L, longEncode(-557.039740,-632.103969, 29));
+        assertEquals(0x7624FA4FA0000000L, longEncode(13,88, 29));
+        assertEquals(0x7624FA4FBFFFFFFFL, longEncode(13,-88, 29));
+        assertEquals(0x0400000020000000L, longEncode(13,89, 1));
+        assertEquals(0x0400000020000001L, longEncode(13,-89, 1));
+        assertEquals(0x0400000020000000L, longEncode(13,95, 1));
+        assertEquals(0x0400000020000001L, longEncode(13,-95, 1));
 
         expectThrows(IllegalArgumentException.class, () -> longEncode(0, 0, -1));
         expectThrows(IllegalArgumentException.class, () -> longEncode(-1, 0, MAX_ZOOM + 1));
@@ -89,17 +89,17 @@ public class GeoTileUtilsTests extends ESTestCase {
         assertEquals(0x0C00000060000000L, longEncode(stringEncode(longEncode(-20, 100, 3))));
         assertEquals(0x71127D27C8ACA67AL, longEncode(stringEncode(longEncode(13, -15, 28))));
         assertEquals(0x4C0077776003A9ACL, longEncode(stringEncode(longEncode(-12, 15, 19))));
-        assertEquals(0x140000024000000EL, longEncode(stringEncode(longEncode(-328.231870, 16.064082, 5))));
-        assertEquals(0x6436F96B60000000L, longEncode(stringEncode(longEncode(-590.769588, 89.549167, 25))));
-        assertEquals(0x6411BD6BA0A98359L, longEncode(stringEncode(longEncode(999.787079, 51.830093, 25))));
-        assertEquals(0x751BD6BBCA983596L, longEncode(stringEncode(longEncode(999.787079, 51.830093, 29))));
-        assertEquals(0x77CF880A20000000L, longEncode(stringEncode(longEncode(-557.039740, -632.103969, 29))));
-        assertEquals(0x7624FA4FA0000000L, longEncode(stringEncode(longEncode(13, 88, 29))));
-        assertEquals(0x7624FA4FBFFFFFFFL, longEncode(stringEncode(longEncode(13, -88, 29))));
-        assertEquals(0x0400000020000000L, longEncode(stringEncode(longEncode(13, 89, 1))));
-        assertEquals(0x0400000020000001L, longEncode(stringEncode(longEncode(13, -89, 1))));
-        assertEquals(0x0400000020000000L, longEncode(stringEncode(longEncode(13, 95, 1))));
-        assertEquals(0x0400000020000001L, longEncode(stringEncode(longEncode(13, -95, 1))));
+        assertEquals(0x140000024000000EL, longEncode(stringEncode(longEncode(-328.231870,16.064082, 5))));
+        assertEquals(0x6436F96B60000000L, longEncode(stringEncode(longEncode(-590.769588,89.549167, 25))));
+        assertEquals(0x6411BD6BA0A98359L, longEncode(stringEncode(longEncode(999.787079,51.830093, 25))));
+        assertEquals(0x751BD6BBCA983596L, longEncode(stringEncode(longEncode(999.787079,51.830093, 29))));
+        assertEquals(0x77CF880A20000000L, longEncode(stringEncode(longEncode(-557.039740,-632.103969, 29))));
+        assertEquals(0x7624FA4FA0000000L, longEncode(stringEncode(longEncode(13,88, 29))));
+        assertEquals(0x7624FA4FBFFFFFFFL, longEncode(stringEncode(longEncode(13,-88, 29))));
+        assertEquals(0x0400000020000000L, longEncode(stringEncode(longEncode(13,89, 1))));
+        assertEquals(0x0400000020000001L, longEncode(stringEncode(longEncode(13,-89, 1))));
+        assertEquals(0x0400000020000000L, longEncode(stringEncode(longEncode(13,95, 1))));
+        assertEquals(0x0400000020000001L, longEncode(stringEncode(longEncode(13,-95, 1))));
 
         expectThrows(IllegalArgumentException.class, () -> longEncode("12/asdf/1"));
         expectThrows(IllegalArgumentException.class, () -> longEncode("foo"));
@@ -226,7 +226,9 @@ public class GeoTileUtilsTests extends ESTestCase {
         double minLat = -GeoTileUtils.LATITUDE_MASK;
         double maxLat = GeoTileUtils.LATITUDE_MASK;
         double lon = randomIntBetween(-180, 180);
-        double lat = randomBoolean() ? randomDoubleBetween(-90, minLat, true) : randomDoubleBetween(maxLat, 90, true);
+        double lat = randomBoolean()
+            ? randomDoubleBetween(-90, minLat, true)
+            : randomDoubleBetween(maxLat, 90, true);
         double clippedLat = Math.min(Math.max(lat, minLat), maxLat);
         int zoom = randomIntBetween(0, MAX_ZOOM);
         String tileIndex = stringEncode(longEncode(lon, lat, zoom));

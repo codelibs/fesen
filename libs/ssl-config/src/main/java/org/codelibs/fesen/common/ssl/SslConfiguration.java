@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.common.ssl;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509ExtendedKeyManager;
+import javax.net.ssl.X509ExtendedTrustManager;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -31,10 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509ExtendedKeyManager;
-import javax.net.ssl.X509ExtendedTrustManager;
 
 /**
  * A object encapsulating all necessary configuration for an SSL context (client or server).
@@ -76,7 +75,7 @@ public class SslConfiguration {
     private final List<String> supportedProtocols;
 
     public SslConfiguration(SslTrustConfig trustConfig, SslKeyConfig keyConfig, SslVerificationMode verificationMode,
-            SslClientAuthenticationMode clientAuth, List<String> ciphers, List<String> supportedProtocols) {
+                            SslClientAuthenticationMode clientAuth, List<String> ciphers, List<String> supportedProtocols) {
         if (ciphers == null || ciphers.isEmpty()) {
             throw new SslConfigException("cannot configure SSL/TLS without any supported cipher suites");
         }
@@ -157,27 +156,33 @@ public class SslConfiguration {
                 return entry.getValue();
             }
         }
-        throw new SslConfigException(
-                "no supported SSL/TLS protocol was found in the configured supported protocols: " + supportedProtocols);
+        throw new SslConfigException("no supported SSL/TLS protocol was found in the configured supported protocols: "
+            + supportedProtocols);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + '{' + "trustConfig=" + trustConfig + ", keyConfig=" + keyConfig + ", verificationMode="
-                + verificationMode + ", clientAuth=" + clientAuth + ", ciphers=" + ciphers + ", supportedProtocols=" + supportedProtocols
-                + '}';
+        return getClass().getSimpleName() + '{' +
+            "trustConfig=" + trustConfig +
+            ", keyConfig=" + keyConfig +
+            ", verificationMode=" + verificationMode +
+            ", clientAuth=" + clientAuth +
+            ", ciphers=" + ciphers +
+            ", supportedProtocols=" + supportedProtocols +
+            '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         final SslConfiguration that = (SslConfiguration) o;
-        return Objects.equals(this.trustConfig, that.trustConfig) && Objects.equals(this.keyConfig, that.keyConfig)
-                && this.verificationMode == that.verificationMode && this.clientAuth == that.clientAuth
-                && Objects.equals(this.ciphers, that.ciphers) && Objects.equals(this.supportedProtocols, that.supportedProtocols);
+        return Objects.equals(this.trustConfig, that.trustConfig) &&
+            Objects.equals(this.keyConfig, that.keyConfig) &&
+            this.verificationMode == that.verificationMode &&
+            this.clientAuth == that.clientAuth &&
+            Objects.equals(this.ciphers, that.ciphers) &&
+            Objects.equals(this.supportedProtocols, that.supportedProtocols);
     }
 
     @Override

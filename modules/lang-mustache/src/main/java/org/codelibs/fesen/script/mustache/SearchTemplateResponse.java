@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.script.mustache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.common.ParseField;
@@ -35,6 +31,10 @@ import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 public class SearchTemplateResponse extends ActionResponse implements StatusToXContentObject {
     public static ParseField TEMPLATE_OUTPUT_FIELD = new ParseField("template_output");
@@ -72,7 +72,7 @@ public class SearchTemplateResponse extends ActionResponse implements StatusToXC
 
     public boolean hasResponse() {
         return response != null;
-    }
+    }        
 
     @Override
     public String toString() {
@@ -91,13 +91,17 @@ public class SearchTemplateResponse extends ActionResponse implements StatusToXC
 
         if (contentAsMap.containsKey(TEMPLATE_OUTPUT_FIELD.getPreferredName())) {
             Object source = contentAsMap.get(TEMPLATE_OUTPUT_FIELD.getPreferredName());
-            XContentBuilder builder = XContentFactory.contentBuilder(XContentType.JSON).value(source);
+            XContentBuilder builder = XContentFactory.contentBuilder(XContentType.JSON)
+                .value(source);
             searchTemplateResponse.setSource(BytesReference.bytes(builder));
         } else {
             XContentType contentType = parser.contentType();
-            XContentBuilder builder = XContentFactory.contentBuilder(contentType).map(contentAsMap);
-            XContentParser searchResponseParser = contentType.xContent().createParser(parser.getXContentRegistry(),
-                    parser.getDeprecationHandler(), BytesReference.bytes(builder).streamInput());
+            XContentBuilder builder = XContentFactory.contentBuilder(contentType)
+                .map(contentAsMap);
+            XContentParser searchResponseParser = contentType.xContent().createParser(
+                parser.getXContentRegistry(),
+                parser.getDeprecationHandler(),
+                BytesReference.bytes(builder).streamInput());
 
             SearchResponse searchResponse = SearchResponse.fromXContent(searchResponseParser);
             searchTemplateResponse.setResponse(searchResponse);

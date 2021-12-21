@@ -19,7 +19,14 @@
 
 package org.codelibs.fesen.index.shard;
 
-import static java.util.Objects.requireNonNull;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.search.ReferenceManager;
+import org.codelibs.fesen.common.lease.Releasable;
+import org.codelibs.fesen.common.metrics.MeanMetric;
+import org.codelibs.fesen.common.util.concurrent.RunOnce;
+import org.codelibs.fesen.common.util.concurrent.ThreadContext;
+import org.codelibs.fesen.core.Tuple;
+import org.codelibs.fesen.index.translog.Translog;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,14 +36,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.search.ReferenceManager;
-import org.codelibs.fesen.common.lease.Releasable;
-import org.codelibs.fesen.common.metrics.MeanMetric;
-import org.codelibs.fesen.common.util.concurrent.RunOnce;
-import org.codelibs.fesen.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.core.Tuple;
-import org.codelibs.fesen.index.translog.Translog;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Allows for the registration of listeners that are called when a change becomes visible for search. This functionality is exposed from
@@ -80,8 +80,13 @@ public final class RefreshListeners implements ReferenceManager.RefreshListener,
      */
     private volatile Translog.Location lastRefreshedLocation;
 
-    public RefreshListeners(final IntSupplier getMaxRefreshListeners, final Runnable forceRefresh, final Logger logger,
-            final ThreadContext threadContext, final MeanMetric refreshMetric) {
+    public RefreshListeners(
+        final IntSupplier getMaxRefreshListeners,
+        final Runnable forceRefresh,
+        final Logger logger,
+        final ThreadContext threadContext,
+        final MeanMetric refreshMetric
+    ) {
         this.getMaxRefreshListeners = getMaxRefreshListeners;
         this.forceRefresh = forceRefresh;
         this.logger = logger;

@@ -33,7 +33,7 @@ import org.codelibs.fesen.common.Strings;
  * It will only populate these if the event have message of type <code>ESLogMessage</code>.
  */
 @Plugin(category = PatternConverter.CATEGORY, name = "ESMessageField")
-@ConverterKeys({ "ESMessageField" })
+@ConverterKeys({"ESMessageField"})
 public final class ESMessageFieldConverter extends LogEventPatternConverter {
 
     private String key;

@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.search.suggest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.lucene.util.CharsRefBuilder;
 import org.codelibs.fesen.FesenException;
 import org.codelibs.fesen.search.internal.SearchContext;
@@ -30,6 +25,11 @@ import org.codelibs.fesen.search.suggest.Suggest.Suggestion;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion.Entry;
 import org.codelibs.fesen.search.suggest.Suggest.Suggestion.Entry.Option;
 import org.codelibs.fesen.search.suggest.SuggestionSearchContext.SuggestionContext;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Suggest phase of a search request, used to collect suggestions
@@ -49,7 +49,7 @@ public class SuggestPhase {
                 SuggestionSearchContext.SuggestionContext suggestion = entry.getValue();
                 Suggester<SuggestionContext> suggester = suggestion.getSuggester();
                 Suggestion<? extends Entry<? extends Option>> result =
-                        suggester.execute(entry.getKey(), suggestion, context.searcher(), spare);
+                    suggester.execute(entry.getKey(), suggestion, context.searcher(), spare);
                 if (result != null) {
                     assert entry.getKey().equals(result.name);
                     suggestions.add(result);
@@ -62,3 +62,4 @@ public class SuggestPhase {
     }
 
 }
+

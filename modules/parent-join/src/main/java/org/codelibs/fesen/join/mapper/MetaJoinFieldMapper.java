@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.join.mapper;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.search.Query;
@@ -39,6 +34,11 @@ import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Simple field mapper hack to ensure that there is a one and only {@link ParentJoinFieldMapper} per mapping.

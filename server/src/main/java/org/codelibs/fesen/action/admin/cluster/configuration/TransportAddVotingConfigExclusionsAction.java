@@ -18,11 +18,6 @@
  */
 package org.codelibs.fesen.action.admin.cluster.configuration;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.FesenException;
@@ -32,8 +27,8 @@ import org.codelibs.fesen.action.support.ActionFilters;
 import org.codelibs.fesen.action.support.master.TransportMasterNodeAction;
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.ClusterStateObserver;
-import org.codelibs.fesen.cluster.ClusterStateObserver.Listener;
 import org.codelibs.fesen.cluster.ClusterStateUpdateTask;
+import org.codelibs.fesen.cluster.ClusterStateObserver.Listener;
 import org.codelibs.fesen.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.cluster.coordination.CoordinationMetadata;
@@ -46,29 +41,34 @@ import org.codelibs.fesen.common.inject.Inject;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.settings.ClusterSettings;
 import org.codelibs.fesen.common.settings.Setting;
-import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.common.settings.Settings;
+import org.codelibs.fesen.common.settings.Setting.Property;
 import org.codelibs.fesen.core.TimeValue;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.threadpool.ThreadPool.Names;
 import org.codelibs.fesen.transport.TransportService;
 
-public class TransportAddVotingConfigExclusionsAction
-        extends TransportMasterNodeAction<AddVotingConfigExclusionsRequest, AddVotingConfigExclusionsResponse> {
+import java.io.IOException;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class TransportAddVotingConfigExclusionsAction extends TransportMasterNodeAction<AddVotingConfigExclusionsRequest,
+    AddVotingConfigExclusionsResponse> {
 
     private static final Logger logger = LogManager.getLogger(TransportAddVotingConfigExclusionsAction.class);
 
-    public static final Setting<Integer> MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING =
-            Setting.intSetting("cluster.max_voting_config_exclusions", 10, 1, Property.Dynamic, Property.NodeScope);
+    public static final Setting<Integer> MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING
+        = Setting.intSetting("cluster.max_voting_config_exclusions", 10, 1, Property.Dynamic, Property.NodeScope);
 
     private volatile int maxVotingConfigExclusions;
 
     @Inject
     public TransportAddVotingConfigExclusionsAction(Settings settings, ClusterSettings clusterSettings, TransportService transportService,
-            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                                    ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+                                                    IndexNameExpressionResolver indexNameExpressionResolver) {
         super(AddVotingConfigExclusionsAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                AddVotingConfigExclusionsRequest::new, indexNameExpressionResolver);
+            AddVotingConfigExclusionsRequest::new, indexNameExpressionResolver);
 
         maxVotingConfigExclusions = MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING.get(settings);
         clusterSettings.addSettingsUpdateConsumer(MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING, this::setMaxVotingConfigExclusions);
@@ -90,7 +90,7 @@ public class TransportAddVotingConfigExclusionsAction
 
     @Override
     protected void masterOperation(AddVotingConfigExclusionsRequest request, ClusterState state,
-            ActionListener<AddVotingConfigExclusionsResponse> listener) throws Exception {
+                                   ActionListener<AddVotingConfigExclusionsResponse> listener) throws Exception {
 
         resolveVotingConfigExclusionsAndCheckMaximum(request, state, maxVotingConfigExclusions);
         // throws IAE if no nodes matched or maximum exceeded
@@ -121,11 +121,11 @@ public class TransportAddVotingConfigExclusionsAction
             @Override
             public void clusterStateProcessed(String source, ClusterState oldState, ClusterState newState) {
 
-                final ClusterStateObserver observer =
-                        new ClusterStateObserver(clusterService, request.getTimeout(), logger, threadPool.getThreadContext());
+                final ClusterStateObserver observer
+                    = new ClusterStateObserver(clusterService, request.getTimeout(), logger, threadPool.getThreadContext());
 
-                final Set<String> excludedNodeIds =
-                        resolvedExclusions.stream().map(VotingConfigExclusion::getNodeId).collect(Collectors.toSet());
+                final Set<String> excludedNodeIds = resolvedExclusions.stream().map(VotingConfigExclusion::getNodeId)
+                    .collect(Collectors.toSet());
 
                 final Predicate<ClusterState> allNodesRemoved = clusterState -> {
                     final Set<String> votingConfigNodeIds = clusterState.getLastCommittedConfiguration().getNodeIds();
@@ -140,14 +140,14 @@ public class TransportAddVotingConfigExclusionsAction
 
                     @Override
                     public void onClusterServiceClose() {
-                        listener.onFailure(new FesenException("cluster service closed while waiting for voting config exclusions "
-                                + resolvedExclusions + " to take effect"));
+                        listener.onFailure(new FesenException("cluster service closed while waiting for voting config exclusions " +
+                            resolvedExclusions + " to take effect"));
                     }
 
                     @Override
                     public void onTimeout(TimeValue timeout) {
-                        listener.onFailure(new FesenTimeoutException(
-                                "timed out waiting for voting config exclusions " + resolvedExclusions + " to take effect"));
+                        listener.onFailure(new FesenTimeoutException("timed out waiting for voting config exclusions "
+                            + resolvedExclusions + " to take effect"));
                     }
                 };
 
@@ -161,9 +161,10 @@ public class TransportAddVotingConfigExclusionsAction
     }
 
     private static Set<VotingConfigExclusion> resolveVotingConfigExclusionsAndCheckMaximum(AddVotingConfigExclusionsRequest request,
-            ClusterState state, int maxVotingConfigExclusions) {
+                                                                                           ClusterState state,
+                                                                                           int maxVotingConfigExclusions) {
         return request.resolveVotingConfigExclusionsAndCheckMaximum(state, maxVotingConfigExclusions,
-                MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING.getKey());
+            MAXIMUM_VOTING_CONFIG_EXCLUSIONS_SETTING.getKey());
     }
 
     @Override

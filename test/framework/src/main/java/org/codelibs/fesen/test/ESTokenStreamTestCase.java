@@ -19,6 +19,9 @@
 
 package org.codelibs.fesen.test;
 
+import com.carrotsearch.randomizedtesting.annotations.Listeners;
+import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
+
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.util.LuceneTestCase;
 import org.apache.lucene.util.TimeUnits;
@@ -28,10 +31,9 @@ import org.codelibs.fesen.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.test.junit.listeners.ReproduceInfoPrinter;
 
-import com.carrotsearch.randomizedtesting.annotations.Listeners;
-import com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
-
-@Listeners({ ReproduceInfoPrinter.class })
+@Listeners({
+        ReproduceInfoPrinter.class
+})
 @TimeoutSuite(millis = TimeUnits.HOUR)
 @LuceneTestCase.SuppressReproduceLine
 @LuceneTestCase.SuppressSysoutChecks(bugUrl = "we log a lot on purpose")

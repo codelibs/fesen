@@ -220,7 +220,6 @@ public class AbstractAsyncTaskTests extends ESTestCase {
                 protected boolean mustReschedule() {
                     return counter.get() <= 1000;
                 }
-
                 @Override
                 protected void runInternal() {
                     counter.incrementAndGet();

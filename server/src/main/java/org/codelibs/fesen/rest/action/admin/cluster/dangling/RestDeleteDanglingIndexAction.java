@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.cluster.dangling;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
-import static org.codelibs.fesen.rest.RestStatus.ACCEPTED;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -33,6 +29,10 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestStatus;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.DELETE;
+import static org.codelibs.fesen.rest.RestStatus.ACCEPTED;
 
 public class RestDeleteDanglingIndexAction extends BaseRestHandler {
 
@@ -48,18 +48,21 @@ public class RestDeleteDanglingIndexAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, NodeClient client) throws IOException {
-        final DeleteDanglingIndexRequest deleteRequest =
-                new DeleteDanglingIndexRequest(request.param("index_uuid"), request.paramAsBoolean("accept_data_loss", false));
+        final DeleteDanglingIndexRequest deleteRequest = new DeleteDanglingIndexRequest(
+            request.param("index_uuid"),
+            request.paramAsBoolean("accept_data_loss", false)
+        );
 
         deleteRequest.timeout(request.paramAsTime("timeout", deleteRequest.timeout()));
         deleteRequest.masterNodeTimeout(request.paramAsTime("master_timeout", deleteRequest.masterNodeTimeout()));
 
-        return channel -> client.admin().cluster().deleteDanglingIndex(deleteRequest,
-                new RestToXContentListener<AcknowledgedResponse>(channel) {
-                    @Override
-                    protected RestStatus getStatus(AcknowledgedResponse acknowledgedResponse) {
-                        return ACCEPTED;
-                    }
-                });
+        return channel -> client.admin()
+            .cluster()
+            .deleteDanglingIndex(deleteRequest, new RestToXContentListener<AcknowledgedResponse>(channel) {
+                @Override
+                protected RestStatus getStatus(AcknowledgedResponse acknowledgedResponse) {
+                    return ACCEPTED;
+                }
+            });
     }
 }

@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.FeatureField;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
@@ -34,8 +28,22 @@ import org.apache.lucene.search.TermQuery;
 import org.codelibs.fesen.common.lucene.Lucene;
 import org.codelibs.fesen.common.xcontent.XContentParser.Token;
 import org.codelibs.fesen.index.fielddata.IndexFieldData;
+import org.codelibs.fesen.index.mapper.FieldMapper;
+import org.codelibs.fesen.index.mapper.MappedFieldType;
+import org.codelibs.fesen.index.mapper.MapperService;
+import org.codelibs.fesen.index.mapper.ParametrizedFieldMapper;
+import org.codelibs.fesen.index.mapper.ParseContext;
+import org.codelibs.fesen.index.mapper.SourceValueFetcher;
+import org.codelibs.fesen.index.mapper.TextSearchInfo;
+import org.codelibs.fesen.index.mapper.ValueFetcher;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link FieldMapper} that exposes Lucene's {@link FeatureField}.
@@ -56,13 +64,13 @@ public class RankFeatureFieldMapper extends ParametrizedFieldMapper {
     }
 
     private static RankFeatureFieldType ft(FieldMapper in) {
-        return ((RankFeatureFieldMapper) in).fieldType();
+        return ((RankFeatureFieldMapper)in).fieldType();
     }
 
     public static class Builder extends ParametrizedFieldMapper.Builder {
 
-        private final Parameter<Boolean> positiveScoreImpact =
-                Parameter.boolParam("positive_score_impact", false, m -> ft(m).positiveScoreImpact, true);
+        private final Parameter<Boolean> positiveScoreImpact
+            = Parameter.boolParam("positive_score_impact", false, m -> ft(m).positiveScoreImpact, true);
         private final Parameter<Map<String, String>> meta = Parameter.metaParam();
 
         public Builder(String name) {
@@ -77,8 +85,8 @@ public class RankFeatureFieldMapper extends ParametrizedFieldMapper {
         @Override
         public RankFeatureFieldMapper build(BuilderContext context) {
             return new RankFeatureFieldMapper(name,
-                    new RankFeatureFieldType(buildFullName(context), meta.getValue(), positiveScoreImpact.getValue()),
-                    multiFieldsBuilder.build(this, context), copyTo.build(), positiveScoreImpact.getValue());
+                new RankFeatureFieldType(buildFullName(context), meta.getValue(), positiveScoreImpact.getValue()),
+                multiFieldsBuilder.build(this, context), copyTo.build(), positiveScoreImpact.getValue());
         }
     }
 
@@ -134,8 +142,8 @@ public class RankFeatureFieldMapper extends ParametrizedFieldMapper {
 
     private final boolean positiveScoreImpact;
 
-    private RankFeatureFieldMapper(String simpleName, MappedFieldType mappedFieldType, MultiFields multiFields, CopyTo copyTo,
-            boolean positiveScoreImpact) {
+    private RankFeatureFieldMapper(String simpleName, MappedFieldType mappedFieldType,
+                                   MultiFields multiFields, CopyTo copyTo, boolean positiveScoreImpact) {
         super(simpleName, mappedFieldType, multiFields, copyTo);
         this.positiveScoreImpact = positiveScoreImpact;
     }
@@ -164,8 +172,8 @@ public class RankFeatureFieldMapper extends ParametrizedFieldMapper {
         }
 
         if (context.doc().getByKey(name()) != null) {
-            throw new IllegalArgumentException("[rank_feature] fields do not support indexing multiple values for the same field [" + name()
-                    + "] in the same document");
+            throw new IllegalArgumentException("[rank_feature] fields do not support indexing multiple values for the same field [" +
+                name() + "] in the same document");
         }
 
         if (positiveScoreImpact == false) {

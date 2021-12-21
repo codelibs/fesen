@@ -19,17 +19,17 @@
 
 package org.codelibs.fesen.script;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.codelibs.fesen.common.logging.DeprecationLogger;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.search.lookup.LeafSearchLookup;
 import org.codelibs.fesen.search.lookup.SearchLookup;
 import org.codelibs.fesen.search.lookup.SourceLookup;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A script to produce dynamic values for return fields.
@@ -39,15 +39,21 @@ public abstract class FieldScript {
     public static final String[] PARAMETERS = {};
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DynamicMap.class);
-    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of("doc", value -> {
-        deprecationLogger.deprecate("field-script_doc", "Accessing variable [doc] via [params.doc] from within an field-script "
-                + "is deprecated in favor of directly accessing [doc].");
-        return value;
-    }, "_doc", value -> {
-        deprecationLogger.deprecate("field-script__doc", "Accessing variable [doc] via [params._doc] from within an field-script "
-                + "is deprecated in favor of directly accessing [doc].");
-        return value;
-    }, "_source", value -> ((SourceLookup) value).loadSourceIfNeeded());
+    private static final Map<String, Function<Object, Object>> PARAMS_FUNCTIONS = org.codelibs.fesen.core.Map.of(
+            "doc", value -> {
+                deprecationLogger.deprecate("field-script_doc",
+                        "Accessing variable [doc] via [params.doc] from within an field-script "
+                                + "is deprecated in favor of directly accessing [doc].");
+                return value;
+            },
+            "_doc", value -> {
+                deprecationLogger.deprecate("field-script__doc",
+                        "Accessing variable [doc] via [params._doc] from within an field-script "
+                                + "is deprecated in favor of directly accessing [doc].");
+                return value;
+            },
+            "_source", value -> ((SourceLookup)value).loadSourceIfNeeded()
+    );
 
     /** The generic runtime parameters for the script. */
     private final Map<String, Object> params;

@@ -19,16 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.adjacency;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -42,9 +32,19 @@ import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.query.Rewriteable;
 import org.codelibs.fesen.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.AggregatorFactory;
+import org.codelibs.fesen.search.aggregations.AggregatorFactories.Builder;
 import org.codelibs.fesen.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregator.KeyedFilter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilder<AdjacencyMatrixAggregationBuilder> {
     public static final String NAME = "adjacency_matrix";
@@ -77,6 +77,7 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         super(name);
     }
 
+
     /**
      * @param name
      *            the name of this aggregation
@@ -87,8 +88,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         this(name, DEFAULT_SEPARATOR, filters);
     }
 
-    protected AdjacencyMatrixAggregationBuilder(AdjacencyMatrixAggregationBuilder clone, Builder factoriesBuilder,
-            Map<String, Object> metadata) {
+    protected AdjacencyMatrixAggregationBuilder(AdjacencyMatrixAggregationBuilder clone,
+                                                Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.filters = new ArrayList<>(clone.filters);
         this.separator = clone.separator;
@@ -139,7 +140,7 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
 
     private void checkConsistency() {
         if ((filters == null) || (filters.size() == 0)) {
-            throw new IllegalStateException("[" + name + "] is missing : " + FILTERS_FIELD.getPreferredName() + " parameter");
+            throw new IllegalStateException("[" + name  + "] is missing : " + FILTERS_FIELD.getPreferredName() + " parameter");
         }
     }
 
@@ -161,6 +162,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         Collections.sort(this.filters, Comparator.comparing(KeyedFilter::key));
         return this;
     }
+
+
 
     /**
      * Set the separator used to join pairs of bucket keys
@@ -184,7 +187,7 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
      * Get the filters. This will be an unmodifiable map
      */
     public Map<String, QueryBuilder> filters() {
-        Map<String, QueryBuilder> result = new HashMap<>(this.filters.size());
+        Map<String, QueryBuilder>result = new HashMap<>(this.filters.size());
         for (KeyedFilter keyedFilter : this.filters) {
             result.put(keyedFilter.key(), keyedFilter.filter());
         }
@@ -210,12 +213,15 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
             throws IOException {
         int maxFilters = queryShardContext.getIndexSettings().getMaxAdjacencyMatrixFilters();
-        if (filters.size() > maxFilters) {
-            throw new IllegalArgumentException("Number of filters is too large, must be less than or equal to: [" + maxFilters
-                    + "] but was [" + filters.size() + "]." + "This limit can be set by changing the ["
-                    + IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey() + "] index level setting.");
+        if (filters.size() > maxFilters){
+            throw new IllegalArgumentException(
+                    "Number of filters is too large, must be less than or equal to: [" + maxFilters + "] but was ["
+                            + filters.size() + "]."
+                            + "This limit can be set by changing the [" + IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey()
+                            + "] index level setting.");
         }
-        return new AdjacencyMatrixAggregatorFactory(name, filters, separator, queryShardContext, parent, subFactoriesBuilder, metadata);
+        return new AdjacencyMatrixAggregatorFactory(name, filters, separator, queryShardContext, parent,
+                subFactoriesBuilder, metadata);
     }
 
     @Override
@@ -243,12 +249,9 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         AdjacencyMatrixAggregationBuilder other = (AdjacencyMatrixAggregationBuilder) obj;
         return Objects.equals(filters, other.filters) && Objects.equals(separator, other.separator);
     }

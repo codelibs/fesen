@@ -19,7 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import static java.util.Collections.singletonList;
+import org.codelibs.fesen.Version;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.util.CollectionUtils;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.script.Script;
+import org.codelibs.fesen.script.ScriptedMetricAggContexts;
+import org.codelibs.fesen.search.aggregations.InternalAggregation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,14 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.util.CollectionUtils;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.script.Script;
-import org.codelibs.fesen.script.ScriptedMetricAggContexts;
-import org.codelibs.fesen.search.aggregations.InternalAggregation;
+import static java.util.Collections.singletonList;
 
 public class InternalScriptedMetric extends InternalAggregation implements ScriptedMetric {
     final Script reduceScript;
@@ -112,15 +112,15 @@ public class InternalScriptedMetric extends InternalAggregation implements Scrip
                 params.putAll(firstAggregation.reduceScript.getParams());
             }
 
-            ScriptedMetricAggContexts.ReduceScript.Factory factory =
-                    reduceContext.scriptService().compile(firstAggregation.reduceScript, ScriptedMetricAggContexts.ReduceScript.CONTEXT);
+            ScriptedMetricAggContexts.ReduceScript.Factory factory = reduceContext.scriptService().compile(
+                firstAggregation.reduceScript, ScriptedMetricAggContexts.ReduceScript.CONTEXT);
             ScriptedMetricAggContexts.ReduceScript script = factory.newInstance(params, aggregationObjects);
 
             Object scriptResult = script.execute();
             CollectionUtils.ensureNoSelfReferences(scriptResult, "reduce script");
 
             aggregation = Collections.singletonList(scriptResult);
-        } else if (reduceContext.isFinalReduce()) {
+        } else if (reduceContext.isFinalReduce())  {
             aggregation = Collections.singletonList(aggregationObjects);
         } else {
             // if we are not an final reduce we have to maintain all the aggs from all the incoming one
@@ -153,15 +153,13 @@ public class InternalScriptedMetric extends InternalAggregation implements Scrip
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
 
         InternalScriptedMetric other = (InternalScriptedMetric) obj;
-        return Objects.equals(reduceScript, other.reduceScript) && Objects.equals(aggregations, other.aggregations);
+        return Objects.equals(reduceScript, other.reduceScript) &&
+                Objects.equals(aggregations, other.aggregations);
     }
 
     @Override

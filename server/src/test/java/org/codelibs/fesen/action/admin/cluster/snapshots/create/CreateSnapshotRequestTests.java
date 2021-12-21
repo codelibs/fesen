@@ -95,7 +95,8 @@ public class CreateSnapshotRequestTests extends ESTestCase {
             Collection<WildcardStates> wildcardStates = randomSubsetOf(Arrays.asList(WildcardStates.values()));
             Collection<Option> options = randomSubsetOf(Arrays.asList(Option.ALLOW_NO_INDICES, Option.IGNORE_UNAVAILABLE));
 
-            original.indicesOptions(new IndicesOptions(options.isEmpty() ? Option.NONE : EnumSet.copyOf(options),
+            original.indicesOptions(new IndicesOptions(
+                    options.isEmpty() ? Option.NONE : EnumSet.copyOf(options),
                     wildcardStates.isEmpty() ? WildcardStates.NONE : EnumSet.copyOf(wildcardStates)));
         }
 
@@ -108,10 +109,10 @@ public class CreateSnapshotRequestTests extends ESTestCase {
         }
 
         XContentBuilder builder = original.toXContent(XContentFactory.jsonBuilder(), new MapParams(Collections.emptyMap()));
-        XContentParser parser =
-                XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY, null, BytesReference.bytes(builder).streamInput());
+        XContentParser parser = XContentType.JSON.xContent().createParser(
+                NamedXContentRegistry.EMPTY, null, BytesReference.bytes(builder).streamInput());
         Map<String, Object> map = parser.mapOrdered();
-        CreateSnapshotRequest processed = new CreateSnapshotRequest((String) map.get("repository"), (String) map.get("snapshot"));
+        CreateSnapshotRequest processed = new CreateSnapshotRequest((String)map.get("repository"), (String)map.get("snapshot"));
         processed.waitForCompletion(original.waitForCompletion());
         processed.masterNodeTimeout(original.masterNodeTimeout());
         processed.source(map);
@@ -157,8 +158,8 @@ public class CreateSnapshotRequestTests extends ESTestCase {
             tooBigOnlyIfNestedFieldsAreIncluded.put(randomAlphaOfLength(10), randomAlphaOfLength(10));
             tooBigOnlyIfNestedFieldsAreIncluded.put(randomAlphaOfLength(11), nested);
 
-            ActionRequestValidationException validationException =
-                    createSnapshotRequestWithMetadata(tooBigOnlyIfNestedFieldsAreIncluded).validate();
+            ActionRequestValidationException validationException = createSnapshotRequestWithMetadata(tooBigOnlyIfNestedFieldsAreIncluded)
+                .validate();
             assertNotNull(validationException);
             assertThat(validationException.validationErrors(), hasSize(1));
             assertThat(validationException.validationErrors().get(0), equalTo("metadata must be smaller than 1024 bytes, but was [1049]"));
@@ -166,7 +167,9 @@ public class CreateSnapshotRequestTests extends ESTestCase {
     }
 
     private CreateSnapshotRequest createSnapshotRequestWithMetadata(Map<String, Object> metadata) {
-        return new CreateSnapshotRequest(randomAlphaOfLength(5), randomAlphaOfLength(5)).indices(randomAlphaOfLength(5))
-                .settings(Settings.EMPTY).userMetadata(metadata);
+        return new CreateSnapshotRequest(randomAlphaOfLength(5), randomAlphaOfLength(5))
+            .indices(randomAlphaOfLength(5))
+            .settings(Settings.EMPTY)
+            .userMetadata(metadata);
     }
 }

@@ -19,25 +19,6 @@
 
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.HttpHost;
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.client.Node;
@@ -49,7 +30,28 @@ import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
 import org.codelibs.fesen.test.rest.yaml.ClientYamlTestExecutionContext;
 import org.codelibs.fesen.test.rest.yaml.ClientYamlTestResponse;
+import org.codelibs.fesen.test.rest.yaml.section.ApiCallSection;
+import org.codelibs.fesen.test.rest.yaml.section.DoSection;
 import org.hamcrest.MatcherAssert;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase {
 
@@ -69,13 +71,17 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         {
             final DoSection section = new DoSection(new XContentLocation(1, 1));
 
-            final AssertionError one =
-                    expectThrows(AssertionError.class, () -> section.checkWarningHeaders(singletonList(testHeader), Version.CURRENT));
+            final AssertionError one = expectThrows(AssertionError.class, () ->
+                    section.checkWarningHeaders(singletonList(testHeader), Version.CURRENT));
             assertEquals("got unexpected warning header [\n\t" + testHeader + "\n]\n", one.getMessage());
 
-            final AssertionError multiple = expectThrows(AssertionError.class,
-                    () -> section.checkWarningHeaders(Arrays.asList(testHeader, anotherHeader, someMoreHeader), Version.CURRENT));
-            assertEquals("got unexpected warning headers [\n\t" + testHeader + "\n\t" + anotherHeader + "\n\t" + someMoreHeader + "\n]\n",
+            final AssertionError multiple = expectThrows(AssertionError.class, () ->
+                    section.checkWarningHeaders(Arrays.asList(testHeader, anotherHeader, someMoreHeader), Version.CURRENT));
+            assertEquals(
+                    "got unexpected warning headers [\n\t" +
+                            testHeader + "\n\t" +
+                            anotherHeader + "\n\t" +
+                            someMoreHeader + "\n]\n",
                     multiple.getMessage());
         }
 
@@ -102,12 +108,12 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
             final DoSection section = new DoSection(new XContentLocation(1, 1));
             section.setExpectedWarningHeaders(Arrays.asList("test", "another", "some more"));
 
-            final AssertionError multiple =
-                    expectThrows(AssertionError.class, () -> section.checkWarningHeaders(emptyList(), Version.CURRENT));
+            final AssertionError multiple = expectThrows(AssertionError.class, () ->
+                    section.checkWarningHeaders(emptyList(), Version.CURRENT));
             assertEquals("did not get expected warning headers [\n\ttest\n\tanother\n\tsome more\n]\n", multiple.getMessage());
 
-            final AssertionError one = expectThrows(AssertionError.class,
-                    () -> section.checkWarningHeaders(Arrays.asList(testHeader, someMoreHeader), Version.CURRENT));
+            final AssertionError one = expectThrows(AssertionError.class, () ->
+                    section.checkWarningHeaders(Arrays.asList(testHeader, someMoreHeader), Version.CURRENT));
             assertEquals("did not get expected warning header [\n\tanother\n]\n", one.getMessage());
         }
 
@@ -115,10 +121,12 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         {
             final DoSection section = new DoSection(new XContentLocation(1, 1));
             section.setExpectedWarningHeaders(Arrays.asList("test", "another", "some more"));
-            final AssertionError e = expectThrows(AssertionError.class,
-                    () -> section.checkWarningHeaders(Arrays.asList(testHeader, catHeader), Version.CURRENT));
-            assertEquals("got unexpected warning header [\n\t" + catHeader + "\n]\n"
-                    + "did not get expected warning headers [\n\tanother\n\tsome more\n]\n", e.getMessage());
+            final AssertionError e = expectThrows(AssertionError.class, () ->
+                    section.checkWarningHeaders(Arrays.asList(testHeader, catHeader), Version.CURRENT));
+            assertEquals("got unexpected warning header [\n\t" +
+                            catHeader + "\n]\n" +
+                            "did not get expected warning headers [\n\tanother\n\tsome more\n]\n",
+                    e.getMessage());
         }
 
         // "allowed" warnings are fine
@@ -133,8 +141,8 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testIgnoreTypesWarnings() {
         String legitimateWarning = HeaderWarning.formatWarning("warning");
-        String typesWarning = HeaderWarning
-                .formatWarning("[types removal] " + "The endpoint /{index}/{type}/_count is deprecated, use /{index}/_count instead.");
+        String typesWarning = HeaderWarning.formatWarning("[types removal] " +
+            "The endpoint /{index}/{type}/_count is deprecated, use /{index}/_count instead.");
 
         DoSection section = new DoSection(new XContentLocation(1, 1));
         section.setExpectedWarningHeaders(singletonList("warning"));
@@ -143,7 +151,11 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionNoBody() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "get:\n" + "    index:    test_index\n" + "    type:    test_type\n" + "    id:        1");
+                "get:\n" +
+                "    index:    test_index\n" +
+                "    type:    test_type\n" +
+                "    id:        1"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -158,7 +170,9 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionNoParamsNoBody() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "cluster.node_info: {}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "cluster.node_info: {}"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -172,7 +186,12 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     public void testParseDoSectionWithJsonBody() throws Exception {
         String body = "{ \"include\": { \"field1\": \"v1\", \"field2\": \"v2\" }, \"count\": 1 }";
         parser = createParser(YamlXContent.yamlXContent,
-                "index:\n" + "    index:  test_1\n" + "    type:   test\n" + "    id:     1\n" + "    body:   " + body);
+                "index:\n" +
+                "    index:  test_1\n" +
+                "    type:   test\n" +
+                "    id:     1\n" +
+                "    body:   " + body
+        );
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -189,12 +208,21 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionWithJsonMultipleBodiesAsLongString() throws Exception {
-        String bodies[] = new String[] { "{ \"index\": { \"_index\":\"test_index\", \"_type\":\"test_type\", \"_id\":\"test_id\" } }\n",
+        String bodies[] = new String[]{
+                "{ \"index\": { \"_index\":\"test_index\", \"_type\":\"test_type\", \"_id\":\"test_id\" } }\n",
                 "{ \"f1\":\"v1\", \"f2\":42 }\n",
                 "{ \"index\": { \"_index\":\"test_index2\", \"_type\":\"test_type2\", \"_id\":\"test_id2\" } }\n",
-                "{ \"f1\":\"v2\", \"f2\":47 }\n" };
-        parser = createParser(YamlXContent.yamlXContent, "bulk:\n" + "    refresh: true\n" + "    body: |\n" + "        " + bodies[0]
-                + "        " + bodies[1] + "        " + bodies[2] + "        " + bodies[3]);
+                "{ \"f1\":\"v2\", \"f2\":47 }\n"
+        };
+        parser = createParser(YamlXContent.yamlXContent,
+                "bulk:\n" +
+                "    refresh: true\n" +
+                "    body: |\n" +
+                "        " + bodies[0] +
+                "        " + bodies[1] +
+                "        " + bodies[2] +
+                "        " + bodies[3]
+        );
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -208,8 +236,12 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionWithYamlBody() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "search:\n" + "    body:\n"
-                + "        \"_source\": [ include.field1, include.field2 ]\n" + "        \"query\": { \"match_all\": {} }");
+        parser = createParser(YamlXContent.yamlXContent,
+                "search:\n" +
+                "    body:\n" +
+                "        \"_source\": [ include.field1, include.field2 ]\n" +
+                "        \"query\": { \"match_all\": {} }"
+        );
         String body = "{ \"_source\": [ \"include.field1\", \"include.field2\" ], \"query\": { \"match_all\": {} }}";
 
         DoSection doSection = DoSection.parse(parser);
@@ -225,10 +257,22 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionWithYamlMultipleBodies() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "bulk:\n" + "    refresh: true\n" + "    body:\n" + "        - index:\n" + "            _index: test_index\n"
-                        + "            _type:  test_type\n" + "            _id:    test_id\n" + "        - f1: v1\n" + "          f2: 42\n"
-                        + "        - index:\n" + "            _index: test_index2\n" + "            _type:  test_type2\n"
-                        + "            _id:    test_id2\n" + "        - f1: v2\n" + "          f2: 47");
+                "bulk:\n" +
+                "    refresh: true\n" +
+                "    body:\n" +
+                "        - index:\n" +
+                "            _index: test_index\n" +
+                "            _type:  test_type\n" +
+                "            _id:    test_id\n" +
+                "        - f1: v1\n" +
+                "          f2: 42\n" +
+                "        - index:\n" +
+                "            _index: test_index2\n" +
+                "            _type:  test_type2\n" +
+                "            _id:    test_id2\n" +
+                "        - f1: v2\n" +
+                "          f2: 47"
+        );
         String[] bodies = new String[4];
         bodies[0] = "{\"index\": {\"_index\": \"test_index\", \"_type\":  \"test_type\", \"_id\": \"test_id\"}}";
         bodies[1] = "{ \"f1\":\"v1\", \"f2\": 42 }";
@@ -251,10 +295,17 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionWithYamlBodyMultiGet() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "mget:\n" + "    body:\n" + "        docs:\n"
-                + "            - { _index: test_2, _type: test, _id: 1}\n" + "            - { _index: test_1, _type: none, _id: 1}");
-        String body = "{ \"docs\": [ " + "{\"_index\": \"test_2\", \"_type\":\"test\", \"_id\":1}, "
-                + "{\"_index\": \"test_1\", \"_type\":\"none\", \"_id\":1} " + "]}";
+        parser = createParser(YamlXContent.yamlXContent,
+                "mget:\n" +
+                "    body:\n" +
+                "        docs:\n" +
+                "            - { _index: test_2, _type: test, _id: 1}\n" +
+                "            - { _index: test_1, _type: none, _id: 1}"
+        );
+        String body = "{ \"docs\": [ " +
+                "{\"_index\": \"test_2\", \"_type\":\"test\", \"_id\":1}, " +
+                "{\"_index\": \"test_1\", \"_type\":\"none\", \"_id\":1} " +
+                "]}";
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -268,8 +319,13 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionWithBodyStringified() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "index:\n" + "    index:  test_1\n" + "    type:   test\n" + "    id:     1\n"
-                + "    body:   \"{ \\\"_source\\\": true, \\\"query\\\": { \\\"match_all\\\": {} } }\"");
+        parser = createParser(YamlXContent.yamlXContent,
+                "index:\n" +
+                "    index:  test_1\n" +
+                "    type:   test\n" +
+                "    id:     1\n" +
+                "    body:   \"{ \\\"_source\\\": true, \\\"query\\\": { \\\"match_all\\\": {} } }\""
+        );
 
         DoSection doSection = DoSection.parse(parser);
         ApiCallSection apiCallSection = doSection.getApiCallSection();
@@ -288,8 +344,11 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionWithBodiesStringifiedAndNot() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "index:\n" + "    body:\n" + "        - \"{ \\\"_source\\\": true, \\\"query\\\": { \\\"match_all\\\": {} } }\"\n"
-                        + "        - { size: 100, query: { match_all: {} } }");
+                "index:\n" +
+                "    body:\n" +
+                "        - \"{ \\\"_source\\\": true, \\\"query\\\": { \\\"match_all\\\": {} } }\"\n" +
+                "        - { size: 100, query: { match_all: {} } }"
+        );
 
         String body = "{ \"size\": 100, \"query\": { \"match_all\": {} } }";
 
@@ -307,7 +366,11 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionWithCatch() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "catch: missing\n" + "indices.get_warmer:\n" + "    index: test_index\n" + "    name: test_warmer");
+                "catch: missing\n" +
+                "indices.get_warmer:\n" +
+                "    index: test_index\n" +
+                "    name: test_warmer"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), equalTo("missing"));
@@ -318,7 +381,9 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testUnsupportedTopLevelField() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "max_concurrent_shard_requests: 1");
+        parser = createParser(YamlXContent.yamlXContent,
+            "max_concurrent_shard_requests: 1"
+        );
 
         ParsingException e = expectThrows(ParsingException.class, () -> DoSection.parse(parser));
         assertThat(e.getMessage(), is("unsupported field [max_concurrent_shard_requests]"));
@@ -328,8 +393,13 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionWithHeaders() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "headers:\n" + "    Authorization: \"thing one\"\n" + "    Content-Type: \"application/json\"\n" + "indices.get_warmer:\n"
-                        + "    index: test_index\n" + "    name: test_warmer");
+                "headers:\n" +
+                "    Authorization: \"thing one\"\n" +
+                "    Content-Type: \"application/json\"\n" +
+                "indices.get_warmer:\n" +
+                "    index: test_index\n" +
+                "    name: test_warmer"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertThat(doSection.getApiCallSection(), notNullValue());
@@ -343,15 +413,21 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseDoSectionWithoutClientCallSection() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "catch: missing\n");
+        parser = createParser(YamlXContent.yamlXContent,
+                "catch: missing\n"
+        );
 
         Exception e = expectThrows(IllegalArgumentException.class, () -> DoSection.parse(parser));
         assertThat(e.getMessage(), is("client call section is mandatory within a do section"));
     }
 
     public void testParseDoSectionMultivaluedField() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "indices.get_field_mapping:\n" + "        index: test_index\n"
-                + "        type: test_type\n" + "        field: [ text , text1 ]");
+        parser = createParser(YamlXContent.yamlXContent,
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "        type: test_type\n" +
+                "        field: [ text , text1 ]"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), nullValue());
@@ -367,9 +443,13 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testParseDoSectionExpectedWarnings() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "indices.get_field_mapping:\n" + "        index: test_index\n" + "        type: test_type\n" + "warnings:\n"
-                        + "    - some test warning they are typically pretty long\n"
-                        + "    - some other test warning sometimes they have [in] them");
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "        type: test_type\n" +
+                "warnings:\n" +
+                "    - some test warning they are typically pretty long\n" +
+                "    - some other test warning sometimes they have [in] them"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), nullValue());
@@ -380,23 +460,33 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         assertThat(doSection.getApiCallSection().getParams().get("type"), equalTo("test_type"));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(false));
         assertThat(doSection.getApiCallSection().getBodies().size(), equalTo(0));
-        assertThat(doSection.getExpectedWarningHeaders(), equalTo(Arrays.asList("some test warning they are typically pretty long",
+        assertThat(doSection.getExpectedWarningHeaders(), equalTo(Arrays.asList(
+                "some test warning they are typically pretty long",
                 "some other test warning sometimes they have [in] them")));
 
         parser = createParser(YamlXContent.yamlXContent,
-                "indices.get_field_mapping:\n" + "        index: test_index\n" + "warnings:\n" + "    - just one entry this time");
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "warnings:\n" +
+                "    - just one entry this time"
+        );
 
         doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection(), notNullValue());
-        assertThat(doSection.getExpectedWarningHeaders(), equalTo(singletonList("just one entry this time")));
+        assertThat(doSection.getExpectedWarningHeaders(), equalTo(singletonList(
+                "just one entry this time")));
     }
 
     public void testParseDoSectionAllowedWarnings() throws Exception {
         parser = createParser(YamlXContent.yamlXContent,
-                "indices.get_field_mapping:\n" + "        index: test_index\n" + "        type: test_type\n" + "allowed_warnings:\n"
-                        + "    - some test warning they are typically pretty long\n"
-                        + "    - some other test warning sometimes they have [in] them");
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "        type: test_type\n" +
+                "allowed_warnings:\n" +
+                "    - some test warning they are typically pretty long\n" +
+                "    - some other test warning sometimes they have [in] them"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), nullValue());
@@ -407,26 +497,42 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         assertThat(doSection.getApiCallSection().getParams().get("type"), equalTo("test_type"));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(false));
         assertThat(doSection.getApiCallSection().getBodies().size(), equalTo(0));
-        assertThat(doSection.getAllowedWarningHeaders(), equalTo(Arrays.asList("some test warning they are typically pretty long",
+        assertThat(doSection.getAllowedWarningHeaders(), equalTo(Arrays.asList(
+                "some test warning they are typically pretty long",
                 "some other test warning sometimes they have [in] them")));
 
         parser = createParser(YamlXContent.yamlXContent,
-                "indices.get_field_mapping:\n" + "        index: test_index\n" + "allowed_warnings:\n" + "    - just one entry this time");
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "allowed_warnings:\n" +
+                "    - just one entry this time"
+        );
 
         doSection = DoSection.parse(parser);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection(), notNullValue());
-        assertThat(doSection.getAllowedWarningHeaders(), equalTo(singletonList("just one entry this time")));
+        assertThat(doSection.getAllowedWarningHeaders(), equalTo(singletonList(
+                "just one entry this time")));
 
-        parser = createParser(YamlXContent.yamlXContent, "indices.get_field_mapping:\n" + "        index: test_index\n" + "warnings:\n"
-                + "    - foo\n" + "allowed_warnings:\n" + "    - foo");
+        parser = createParser(YamlXContent.yamlXContent,
+                "indices.get_field_mapping:\n" +
+                "        index: test_index\n" +
+                "warnings:\n" +
+                "    - foo\n" +
+                "allowed_warnings:\n" +
+                "    - foo"
+        );
         Exception e = expectThrows(IllegalArgumentException.class, () -> DoSection.parse(parser));
         assertThat(e.getMessage(), equalTo("the warning [foo] was both allowed and expected"));
     }
 
     public void testNodeSelectorByVersion() throws IOException {
         parser = createParser(YamlXContent.yamlXContent,
-                "node_selector:\n" + "    version: 5.2.0-6.0.0\n" + "indices.get_field_mapping:\n" + "    index: test_index");
+                "node_selector:\n" +
+                "    version: 5.2.0-6.0.0\n" +
+                "indices.get_field_mapping:\n" +
+                "    index: test_index"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertNotSame(NodeSelector.ANY, doSection.getApiCallSection().getNodeSelector());
@@ -443,17 +549,19 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         assertEquals(Arrays.asList(v521, v550), nodes);
         ClientYamlTestExecutionContext context = mock(ClientYamlTestExecutionContext.class);
         ClientYamlTestResponse mockResponse = mock(ClientYamlTestResponse.class);
-        when(context.callApi("indices.get_field_mapping", singletonMap("index", "test_index"), emptyList(), emptyMap(),
-                doSection.getApiCallSection().getNodeSelector())).thenReturn(mockResponse);
+        when(context.callApi("indices.get_field_mapping", singletonMap("index", "test_index"),
+                emptyList(), emptyMap(), doSection.getApiCallSection().getNodeSelector())).thenReturn(mockResponse);
         doSection.execute(context);
-        verify(context).callApi("indices.get_field_mapping", singletonMap("index", "test_index"), emptyList(), emptyMap(),
-                doSection.getApiCallSection().getNodeSelector());
+        verify(context).callApi("indices.get_field_mapping", singletonMap("index", "test_index"),
+                emptyList(), emptyMap(), doSection.getApiCallSection().getNodeSelector());
 
         {
             List<Node> badNodes = new ArrayList<>();
             badNodes.add(new Node(new HttpHost("dummy")));
-            Exception e = expectThrows(IllegalStateException.class, () -> doSection.getApiCallSection().getNodeSelector().select(badNodes));
-            assertEquals("expected [version] metadata to be set but got [host=http://dummy]", e.getMessage());
+            Exception e = expectThrows(IllegalStateException.class, () ->
+                    doSection.getApiCallSection().getNodeSelector().select(badNodes));
+            assertEquals("expected [version] metadata to be set but got [host=http://dummy]",
+                    e.getMessage());
         }
     }
 
@@ -463,7 +571,12 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     public void testNodeSelectorByAttribute() throws IOException {
         parser = createParser(YamlXContent.yamlXContent,
-                "node_selector:\n" + "    attribute:\n" + "        attr: val\n" + "indices.get_field_mapping:\n" + "    index: test_index");
+                "node_selector:\n" +
+                "    attribute:\n" +
+                "        attr: val\n" +
+                "indices.get_field_mapping:\n" +
+                "    index: test_index"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertNotSame(NodeSelector.ANY, doSection.getApiCallSection().getNodeSelector());
@@ -481,12 +594,20 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
         {
             List<Node> badNodes = new ArrayList<>();
             badNodes.add(new Node(new HttpHost("dummy")));
-            Exception e = expectThrows(IllegalStateException.class, () -> doSection.getApiCallSection().getNodeSelector().select(badNodes));
-            assertEquals("expected [attributes] metadata to be set but got [host=http://dummy]", e.getMessage());
+            Exception e = expectThrows(IllegalStateException.class, () ->
+                    doSection.getApiCallSection().getNodeSelector().select(badNodes));
+            assertEquals("expected [attributes] metadata to be set but got [host=http://dummy]",
+                    e.getMessage());
         }
 
-        parser = createParser(YamlXContent.yamlXContent, "node_selector:\n" + "    attribute:\n" + "        attr: val\n"
-                + "        attr2: val2\n" + "indices.get_field_mapping:\n" + "    index: test_index");
+        parser = createParser(YamlXContent.yamlXContent,
+                "node_selector:\n" +
+                "    attribute:\n" +
+                "        attr: val\n" +
+                "        attr2: val2\n" +
+                "indices.get_field_mapping:\n" +
+                "    index: test_index"
+        );
 
         DoSection doSectionWithTwoAttributes = DoSection.parse(parser);
         assertNotSame(NodeSelector.ANY, doSection.getApiCallSection().getNodeSelector());
@@ -512,8 +633,14 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testNodeSelectorByTwoThings() throws IOException {
-        parser = createParser(YamlXContent.yamlXContent, "node_selector:\n" + "    version: 5.2.0-6.0.0\n" + "    attribute:\n"
-                + "        attr: val\n" + "indices.get_field_mapping:\n" + "    index: test_index");
+        parser = createParser(YamlXContent.yamlXContent,
+                "node_selector:\n" +
+                "    version: 5.2.0-6.0.0\n" +
+                "    attribute:\n" +
+                "        attr: val\n" +
+                "indices.get_field_mapping:\n" +
+                "    index: test_index"
+        );
 
         DoSection doSection = DoSection.parse(parser);
         assertNotSame(NodeSelector.ANY, doSection.getApiCallSection().getNodeSelector());
@@ -533,7 +660,7 @@ public class DoSectionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     private void assertJsonEquals(Map<String, Object> actual, String expected) throws IOException {
-        Map<String, Object> expectedMap;
+        Map<String,Object> expectedMap;
         try (XContentParser parser = createParser(YamlXContent.yamlXContent, expected)) {
             expectedMap = parser.mapOrdered();
         }

@@ -51,7 +51,7 @@ final class PersistentCredentialsAuthenticationStrategy extends TargetAuthentica
     public void authFailed(HttpHost host, AuthScheme authScheme, HttpContext context) {
         if (logger.isDebugEnabled()) {
             logger.debug("Authentication to " + host + " failed (scheme: " + authScheme.getSchemeName()
-                    + "). Preserving credentials for next request");
+                + "). Preserving credentials for next request");
         }
         // Do nothing.
         // The superclass implementation of method will clear the credentials from the cache, but we don't

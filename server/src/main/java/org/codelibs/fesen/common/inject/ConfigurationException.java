@@ -16,15 +16,15 @@
 
 package org.codelibs.fesen.common.inject;
 
-import static java.util.Collections.unmodifiableSet;
-import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
-
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 
 import org.codelibs.fesen.common.inject.internal.Errors;
 import org.codelibs.fesen.common.inject.spi.Message;
+
+import static java.util.Collections.unmodifiableSet;
+import static org.codelibs.fesen.common.util.set.Sets.newHashSet;
 
 /**
  * Thrown when a programming error such as a misplaced annotation, illegal binding, or unsupported

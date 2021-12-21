@@ -19,15 +19,17 @@
 
 package org.codelibs.fesen.common.settings;
 
-import java.util.List;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 import org.codelibs.fesen.cli.ExitCodes;
 import org.codelibs.fesen.cli.Terminal;
 import org.codelibs.fesen.cli.UserException;
+import org.codelibs.fesen.common.settings.BaseKeyStoreCommand;
+import org.codelibs.fesen.common.settings.KeyStoreWrapper;
 import org.codelibs.fesen.env.Environment;
 
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
+import java.util.List;
 
 /**
  * A subcommand for the keystore cli to remove a setting.

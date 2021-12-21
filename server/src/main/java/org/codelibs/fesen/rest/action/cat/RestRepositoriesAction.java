@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.List;
 
 import org.codelibs.fesen.action.admin.cluster.repositories.get.GetRepositoriesRequest;
@@ -32,6 +29,9 @@ import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 /**
  * Cat API class to display information about snapshot repositories
@@ -49,13 +49,15 @@ public class RestRepositoriesAction extends AbstractCatAction {
         getRepositoriesRequest.local(request.paramAsBoolean("local", getRepositoriesRequest.local()));
         getRepositoriesRequest.masterNodeTimeout(request.paramAsTime("master_timeout", getRepositoriesRequest.masterNodeTimeout()));
 
-        return channel -> client.admin().cluster().getRepositories(getRepositoriesRequest,
-                new RestResponseListener<GetRepositoriesResponse>(channel) {
-                    @Override
-                    public RestResponse buildResponse(GetRepositoriesResponse getRepositoriesResponse) throws Exception {
-                        return RestTable.buildResponse(buildTable(request, getRepositoriesResponse), channel);
-                    }
-                });
+        return channel ->
+                client.admin()
+                        .cluster()
+                        .getRepositories(getRepositoriesRequest, new RestResponseListener<GetRepositoriesResponse>(channel) {
+                            @Override
+                            public RestResponse buildResponse(GetRepositoriesResponse getRepositoriesResponse) throws Exception {
+                                return RestTable.buildResponse(buildTable(request, getRepositoriesResponse), channel);
+                            }
+                        });
     }
 
     @Override
@@ -70,8 +72,11 @@ public class RestRepositoriesAction extends AbstractCatAction {
 
     @Override
     protected Table getTableWithHeader(RestRequest request) {
-        return new Table().startHeaders().addCell("id", "alias:id,repoId;desc:unique repository id")
-                .addCell("type", "alias:t,type;text-align:right;desc:repository type").endHeaders();
+        return new Table()
+                .startHeaders()
+                .addCell("id", "alias:id,repoId;desc:unique repository id")
+                .addCell("type", "alias:t,type;text-align:right;desc:repository type")
+                .endHeaders();
     }
 
     private Table buildTable(RestRequest req, GetRepositoriesResponse getRepositoriesResponse) {

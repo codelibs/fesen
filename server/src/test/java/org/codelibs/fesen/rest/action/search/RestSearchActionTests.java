@@ -36,8 +36,10 @@ public class RestSearchActionTests extends RestActionTestCase {
     }
 
     public void testTypeInPath() {
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
-                .withPath("/some_index/some_type/_search").build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+            .withMethod(RestRequest.Method.GET)
+            .withPath("/some_index/some_type/_search")
+            .build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteLocallyVerifier((arg1, arg2) -> null);
@@ -50,8 +52,11 @@ public class RestSearchActionTests extends RestActionTestCase {
         Map<String, String> params = new HashMap<>();
         params.put("type", "some_type");
 
-        RestRequest request = new FakeRestRequest.Builder(xContentRegistry()).withMethod(RestRequest.Method.GET)
-                .withPath("/some_index/_search").withParams(params).build();
+        RestRequest request = new FakeRestRequest.Builder(xContentRegistry())
+            .withMethod(RestRequest.Method.GET)
+            .withPath("/some_index/_search")
+            .withParams(params)
+            .build();
 
         // We're not actually testing anything to do with the client, but need to set this so it doesn't fail the test for being unset.
         verifyingClient.setExecuteLocallyVerifier((arg1, arg2) -> null);

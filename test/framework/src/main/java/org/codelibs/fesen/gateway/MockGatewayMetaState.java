@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.gateway;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.cluster.ClusterState;
 import org.codelibs.fesen.cluster.metadata.Manifest;
 import org.codelibs.fesen.cluster.metadata.Metadata;
@@ -36,9 +31,18 @@ import org.codelibs.fesen.common.util.BigArrays;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.core.Tuple;
 import org.codelibs.fesen.env.NodeEnvironment;
+import org.codelibs.fesen.gateway.ClusterStateUpdaters;
+import org.codelibs.fesen.gateway.GatewayMetaState;
+import org.codelibs.fesen.gateway.MetaStateService;
+import org.codelibs.fesen.gateway.PersistedClusterStateService;
 import org.codelibs.fesen.plugins.MetadataUpgrader;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.transport.TransportService;
+
+import java.io.IOException;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link GatewayMetaState} constructor accepts a lot of arguments.
@@ -57,7 +61,7 @@ public class MockGatewayMetaState extends GatewayMetaState {
 
     @Override
     Metadata upgradeMetadataForNode(Metadata metadata, MetadataIndexUpgradeService metadataIndexUpgradeService,
-            MetadataUpgrader metadataUpgrader) {
+                                    MetadataUpgrader metadataUpgrader) {
         // Metadata upgrade is tested in GatewayMetaStateTests, we override this method to NOP to make mocking easier
         return metadata;
     }
@@ -73,14 +77,15 @@ public class MockGatewayMetaState extends GatewayMetaState {
         when(transportService.getThreadPool()).thenReturn(mock(ThreadPool.class));
         final ClusterService clusterService = mock(ClusterService.class);
         when(clusterService.getClusterSettings())
-                .thenReturn(new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
+            .thenReturn(new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
         final MetaStateService metaStateService = mock(MetaStateService.class);
         try {
             when(metaStateService.loadFullState()).thenReturn(new Tuple<>(Manifest.empty(), Metadata.builder().build()));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        start(settings, transportService, clusterService, metaStateService, null, null, new PersistedClusterStateService(nodeEnvironment,
-                xContentRegistry, bigArrays, new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), () -> 0L));
+        start(settings, transportService, clusterService, metaStateService,
+            null, null, new PersistedClusterStateService(nodeEnvironment, xContentRegistry, bigArrays,
+                new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS), () -> 0L));
     }
 }

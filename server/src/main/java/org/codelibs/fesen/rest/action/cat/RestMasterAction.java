@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.rest.action.cat;
 
-import static java.util.Collections.singletonList;
-import static org.codelibs.fesen.rest.RestRequest.Method.GET;
-
 import java.util.List;
 
 import org.codelibs.fesen.action.admin.cluster.state.ClusterStateRequest;
@@ -33,6 +30,9 @@ import org.codelibs.fesen.common.Table;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.RestResponse;
 import org.codelibs.fesen.rest.action.RestResponseListener;
+
+import static java.util.Collections.singletonList;
+import static org.codelibs.fesen.rest.RestRequest.Method.GET;
 
 public class RestMasterAction extends AbstractCatAction {
 
@@ -69,8 +69,12 @@ public class RestMasterAction extends AbstractCatAction {
     @Override
     protected Table getTableWithHeader(final RestRequest request) {
         Table table = new Table();
-        table.startHeaders().addCell("id", "desc:node id").addCell("host", "alias:h;desc:host name").addCell("ip", "desc:ip address ")
-                .addCell("node", "alias:n;desc:node name").endHeaders();
+        table.startHeaders()
+                .addCell("id", "desc:node id")
+                .addCell("host", "alias:h;desc:host name")
+                .addCell("ip", "desc:ip address ")
+                .addCell("node", "alias:n;desc:node name")
+                .endHeaders();
         return table;
     }
 

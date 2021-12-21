@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index.reindex;
 
-import static java.util.Collections.singletonList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.action.ActionRequest;
 import org.codelibs.fesen.action.ActionResponse;
 import org.codelibs.fesen.client.Client;
@@ -43,6 +34,10 @@ import org.codelibs.fesen.common.settings.SettingsFilter;
 import org.codelibs.fesen.common.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.env.Environment;
 import org.codelibs.fesen.env.NodeEnvironment;
+import org.codelibs.fesen.index.reindex.BulkByScrollTask;
+import org.codelibs.fesen.index.reindex.DeleteByQueryAction;
+import org.codelibs.fesen.index.reindex.ReindexAction;
+import org.codelibs.fesen.index.reindex.UpdateByQueryAction;
 import org.codelibs.fesen.plugins.ActionPlugin;
 import org.codelibs.fesen.plugins.Plugin;
 import org.codelibs.fesen.repositories.RepositoriesService;
@@ -52,6 +47,15 @@ import org.codelibs.fesen.script.ScriptService;
 import org.codelibs.fesen.tasks.Task;
 import org.codelibs.fesen.threadpool.ThreadPool;
 import org.codelibs.fesen.watcher.ResourceWatcherService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
+
+import static java.util.Collections.singletonList;
 
 public class ReindexPlugin extends Plugin implements ActionPlugin {
     public static final String NAME = "reindex";
@@ -74,15 +78,20 @@ public class ReindexPlugin extends Plugin implements ActionPlugin {
     public List<RestHandler> getRestHandlers(Settings settings, RestController restController, ClusterSettings clusterSettings,
             IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver,
             Supplier<DiscoveryNodes> nodesInCluster) {
-        return Arrays.asList(new RestReindexAction(), new RestUpdateByQueryAction(), new RestDeleteByQueryAction(),
+        return Arrays.asList(
+                new RestReindexAction(),
+                new RestUpdateByQueryAction(),
+                new RestDeleteByQueryAction(),
                 new RestRethrottleAction(nodesInCluster));
     }
 
     @Override
     public Collection<Object> createComponents(Client client, ClusterService clusterService, ThreadPool threadPool,
-            ResourceWatcherService resourceWatcherService, ScriptService scriptService, NamedXContentRegistry xContentRegistry,
-            Environment environment, NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
-            IndexNameExpressionResolver expressionResolver, Supplier<RepositoriesService> repositoriesServiceSupplier) {
+                                               ResourceWatcherService resourceWatcherService, ScriptService scriptService,
+                                               NamedXContentRegistry xContentRegistry, Environment environment,
+                                               NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry,
+                                               IndexNameExpressionResolver expressionResolver,
+                                               Supplier<RepositoriesService> repositoriesServiceSupplier) {
         return Collections.singletonList(new ReindexSslConfig(environment.settings(), environment, resourceWatcherService));
     }
 

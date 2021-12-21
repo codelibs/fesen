@@ -116,8 +116,10 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
         pipelineConfig.put(Pipeline.ON_FAILURE_KEY, Collections.emptyList());
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
-        Exception e =
-                expectThrows(FesenParseException.class, () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService));
+        Exception e = expectThrows(
+            FesenParseException.class,
+            () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
+        );
         assertThat(e.getMessage(), equalTo("pipeline [_id] cannot have an empty on_failure option defined"));
     }
 
@@ -129,8 +131,10 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.VERSION_KEY, versionString);
         pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
-        Exception e =
-                expectThrows(FesenParseException.class, () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService));
+        Exception e = expectThrows(
+            FesenParseException.class,
+            () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
+        );
         assertThat(e.getMessage(), equalTo("[on_failure] processors list cannot be empty"));
     }
 
@@ -142,7 +146,8 @@ public class PipelineFactoryTests extends ESTestCase {
         Map<String, Object> pipelineConfig = new HashMap<>();
         pipelineConfig.put(Pipeline.DESCRIPTION_KEY, "_description");
         pipelineConfig.put(Pipeline.VERSION_KEY, versionString);
-        pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
+        pipelineConfig.put(Pipeline.PROCESSORS_KEY,
+                Collections.singletonList(Collections.singletonMap("test", processorConfig)));
 
         Pipeline pipeline = Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService);
         assertThat(pipeline.getId(), equalTo("_id"));
@@ -164,8 +169,10 @@ public class PipelineFactoryTests extends ESTestCase {
         pipelineConfig.put(Pipeline.VERSION_KEY, versionString);
         pipelineConfig.put(Pipeline.PROCESSORS_KEY, Collections.singletonList(Collections.singletonMap("test", processorConfig)));
         Map<String, Processor.Factory> processorRegistry = Collections.singletonMap("test", new TestProcessor.Factory());
-        Exception e =
-                expectThrows(FesenParseException.class, () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService));
+        Exception e = expectThrows(
+            FesenParseException.class,
+            () -> Pipeline.create("_id", pipelineConfig, processorRegistry, scriptService)
+        );
         assertThat(e.getMessage(), equalTo("processor [test] doesn't support one or more provided configuration parameters [unused]"));
     }
 

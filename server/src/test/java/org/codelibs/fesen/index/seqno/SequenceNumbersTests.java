@@ -33,7 +33,8 @@ public class SequenceNumbersTests extends ESTestCase {
     public void testMin() {
         final long seqNo = randomNonNegativeLong();
         assertThat(SequenceNumbers.min(SequenceNumbers.NO_OPS_PERFORMED, seqNo), equalTo(seqNo));
-        assertThat(SequenceNumbers.min(SequenceNumbers.NO_OPS_PERFORMED, SequenceNumbers.UNASSIGNED_SEQ_NO),
+        assertThat(
+                SequenceNumbers.min(SequenceNumbers.NO_OPS_PERFORMED, SequenceNumbers.UNASSIGNED_SEQ_NO),
                 equalTo(SequenceNumbers.UNASSIGNED_SEQ_NO));
         assertThat(SequenceNumbers.min(SequenceNumbers.UNASSIGNED_SEQ_NO, seqNo), equalTo(seqNo));
         final long minSeqNo = randomNonNegativeLong();
@@ -47,7 +48,8 @@ public class SequenceNumbersTests extends ESTestCase {
     public void testMax() {
         final long seqNo = randomNonNegativeLong();
         assertThat(SequenceNumbers.max(SequenceNumbers.NO_OPS_PERFORMED, seqNo), equalTo(seqNo));
-        assertThat(SequenceNumbers.max(SequenceNumbers.NO_OPS_PERFORMED, SequenceNumbers.UNASSIGNED_SEQ_NO),
+        assertThat(
+                SequenceNumbers.max(SequenceNumbers.NO_OPS_PERFORMED, SequenceNumbers.UNASSIGNED_SEQ_NO),
                 equalTo(SequenceNumbers.UNASSIGNED_SEQ_NO));
         assertThat(SequenceNumbers.max(SequenceNumbers.UNASSIGNED_SEQ_NO, seqNo), equalTo(seqNo));
         final long maxSeqNo = randomNonNegativeLong();
@@ -63,6 +65,6 @@ public class SequenceNumbersTests extends ESTestCase {
         final long localCheckpoint = randomLongBetween(SequenceNumbers.UNASSIGNED_SEQ_NO, maxSeqNo);
         final long globalCheckpoint = randomLongBetween(SequenceNumbers.UNASSIGNED_SEQ_NO, localCheckpoint);
         EqualsHashCodeTestUtils.checkEqualsAndHashCode(new SeqNoStats(maxSeqNo, localCheckpoint, globalCheckpoint),
-                stats -> new SeqNoStats(stats.getMaxSeqNo(), stats.getLocalCheckpoint(), stats.getGlobalCheckpoint()));
+            stats -> new SeqNoStats(stats.getMaxSeqNo(), stats.getLocalCheckpoint(), stats.getGlobalCheckpoint()));
     }
 }

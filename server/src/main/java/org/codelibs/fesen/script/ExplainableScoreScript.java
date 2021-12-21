@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.script;
 
-import java.io.IOException;
-
 /*
  * Licensed to Elasticsearch under one or more contributor
  * license agreements. See the NOTICE file distributed with
@@ -41,6 +39,8 @@ import java.io.IOException;
  */
 
 import org.apache.lucene.search.Explanation;
+
+import java.io.IOException;
 
 /**
  * To be implemented by {@link ScoreScript} which can provided an {@link Explanation} of the score

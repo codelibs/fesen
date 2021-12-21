@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.codelibs.fesen.common.Rounding;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
 import org.codelibs.fesen.search.aggregations.support.ValuesSource;
+
+import java.io.IOException;
 
 /**
  * A wrapper for {@link ValuesSource.Numeric} that uses {@link Rounding} to transform the long values

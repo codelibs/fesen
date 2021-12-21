@@ -40,8 +40,7 @@ public class CancelTasksRequest extends BaseTasksRequest<CancelTasksRequest> {
     private String reason = DEFAULT_REASON;
     private boolean waitForCompletion = DEFAULT_WAIT_FOR_COMPLETION;
 
-    public CancelTasksRequest() {
-    }
+    public CancelTasksRequest() {}
 
     public CancelTasksRequest(StreamInput in) throws IOException {
         super(in);
@@ -94,7 +93,11 @@ public class CancelTasksRequest extends BaseTasksRequest<CancelTasksRequest> {
 
     @Override
     public String getDescription() {
-        return "reason[" + reason + "], waitForCompletion[" + waitForCompletion + "], taskId[" + getTaskId() + "], parentTaskId["
-                + getParentTaskId() + "], nodes" + Arrays.toString(getNodes()) + ", actions" + Arrays.toString(getActions());
+        return "reason[" + reason +
+            "], waitForCompletion[" + waitForCompletion +
+            "], taskId[" + getTaskId() +
+            "], parentTaskId[" + getParentTaskId() +
+            "], nodes" + Arrays.toString(getNodes()) +
+            ", actions" + Arrays.toString(getActions());
     }
 }

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.range;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.codelibs.fesen.common.xcontent.ObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
@@ -34,6 +27,13 @@ import org.codelibs.fesen.core.CheckedFunction;
 import org.codelibs.fesen.search.aggregations.Aggregation;
 import org.codelibs.fesen.search.aggregations.Aggregations;
 import org.codelibs.fesen.search.aggregations.ParsedMultiBucketAggregation;
+
+import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.ParsedBucket> implements Range {
 
@@ -48,15 +48,16 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
     }
 
     protected static void declareParsedRangeFields(final ObjectParser<? extends ParsedRange, Void> objectParser,
-            final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
-            final CheckedFunction<XContentParser, ParsedBucket, IOException> keyedBucketParser) {
+                                         final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
+                                         final CheckedFunction<XContentParser, ParsedBucket, IOException> keyedBucketParser) {
         declareMultiBucketAggregationFields(objectParser, bucketParser::apply, keyedBucketParser::apply);
     }
 
     private static final ObjectParser<ParsedRange, Void> PARSER =
             new ObjectParser<>(ParsedRange.class.getSimpleName(), true, ParsedRange::new);
     static {
-        declareParsedRangeFields(PARSER, parser -> ParsedBucket.fromXContent(parser, false),
+        declareParsedRangeFields(PARSER,
+                parser -> ParsedBucket.fromXContent(parser, false),
                 parser -> ParsedBucket.fromXContent(parser, true));
     }
 
@@ -144,8 +145,9 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
             return Double.isInfinite(d) ? null : Double.toString(d);
         }
 
-        protected static <B extends ParsedBucket> B parseRangeBucketXContent(final XContentParser parser, final Supplier<B> bucketSupplier,
-                final boolean keyed) throws IOException {
+        protected static <B extends ParsedBucket> B parseRangeBucketXContent(final XContentParser parser,
+                                                                             final Supplier<B> bucketSupplier,
+                                                                             final boolean keyed) throws IOException {
             final B bucket = bucketSupplier.get();
             bucket.setKeyed(keyed);
             XContentParser.Token token = parser.currentToken();

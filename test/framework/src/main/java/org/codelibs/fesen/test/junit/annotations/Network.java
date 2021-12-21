@@ -18,11 +18,11 @@
  */
 package org.codelibs.fesen.test.junit.annotations;
 
+import com.carrotsearch.randomizedtesting.annotations.TestGroup;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import com.carrotsearch.randomizedtesting.annotations.TestGroup;
 
 /**
  * Annotation used to set if internet network connectivity is required to run the test.

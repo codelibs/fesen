@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.index.mapper;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.NumericDocValuesField;
@@ -40,6 +34,12 @@ import org.codelibs.fesen.index.mapper.ParseContext.Document;
 import org.codelibs.fesen.index.query.QueryShardContext;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.search.lookup.SearchLookup;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Mapper for the {@code _seq_no} field.
@@ -80,8 +80,8 @@ public class SeqNoFieldMapper extends MetadataFieldMapper {
 
         public static SequenceIDFields emptySeqID() {
             return new SequenceIDFields(new LongPoint(NAME, SequenceNumbers.UNASSIGNED_SEQ_NO),
-                    new NumericDocValuesField(NAME, SequenceNumbers.UNASSIGNED_SEQ_NO), new NumericDocValuesField(PRIMARY_TERM_NAME, 0),
-                    new NumericDocValuesField(TOMBSTONE_NAME, 0));
+                    new NumericDocValuesField(NAME, SequenceNumbers.UNASSIGNED_SEQ_NO),
+                    new NumericDocValuesField(PRIMARY_TERM_NAME, 0), new NumericDocValuesField(TOMBSTONE_NAME, 0));
         }
     }
 
@@ -143,7 +143,8 @@ public class SeqNoFieldMapper extends MetadataFieldMapper {
         }
 
         @Override
-        public Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower, boolean includeUpper, QueryShardContext context) {
+        public Query rangeQuery(Object lowerTerm, Object upperTerm, boolean includeLower,
+                                boolean includeUpper, QueryShardContext context) {
             long l = Long.MIN_VALUE;
             long u = Long.MAX_VALUE;
             if (lowerTerm != null) {
@@ -199,9 +200,14 @@ public class SeqNoFieldMapper extends MetadataFieldMapper {
         SequenceIDFields seqID = context.seqID();
         assert seqID != null;
         final Version versionCreated = context.mapperService().getIndexSettings().getIndexVersionCreated();
+        final boolean includePrimaryTerm = versionCreated.before(Version.V_6_1_0);
         for (Document doc : context.nonRootDocuments()) {
             doc.add(seqID.seqNo);
             doc.add(seqID.seqNoDocValue);
+            if (includePrimaryTerm) {
+                // primary terms are used to distinguish between parent and nested docs since 6.1.0
+                doc.add(seqID.primaryTerm);
+            }
         }
     }
 

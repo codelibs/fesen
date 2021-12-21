@@ -19,18 +19,26 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.search.aggregations.Aggregator;
 import org.codelibs.fesen.search.aggregations.AggregatorFactories;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 @FunctionalInterface
 public interface VariableWidthHistogramAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, int numBuckets, int shardSize, int initialBuffer,
-            @Nullable ValuesSourceConfig valuesSourceConfig, SearchContext aggregationContext, Aggregator parent,
-            Map<String, Object> metadata) throws IOException;
+    Aggregator build(
+        String name,
+        AggregatorFactories factories,
+        int numBuckets,
+        int shardSize,
+        int initialBuffer,
+        @Nullable ValuesSourceConfig valuesSourceConfig,
+        SearchContext aggregationContext,
+        Aggregator parent,
+        Map<String, Object> metadata
+    ) throws IOException;
 }

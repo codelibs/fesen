@@ -30,11 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class InternalHDRPercentilesRanksTests extends InternalPercentilesRanksTestCase<InternalHDRPercentileRanks> {
 
     @Override
-    protected InternalHDRPercentileRanks createTestInstance(String name, Map<String, Object> metadata, boolean keyed, DocValueFormat format,
-            double[] percents, double[] values) {
+    protected InternalHDRPercentileRanks createTestInstance(String name, Map<String, Object> metadata,
+                                                            boolean keyed, DocValueFormat format, double[] percents, double[] values) {
 
         final DoubleHistogram state = new DoubleHistogram(3);
         Arrays.stream(values).forEach(state::recordValue);

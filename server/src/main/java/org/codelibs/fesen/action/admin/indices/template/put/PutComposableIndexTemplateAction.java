@@ -19,11 +19,6 @@
 
 package org.codelibs.fesen.action.admin.indices.template.put;
 
-import static org.codelibs.fesen.action.ValidateActions.addValidationError;
-
-import java.io.IOException;
-import java.util.Objects;
-
 import org.codelibs.fesen.action.ActionRequestValidationException;
 import org.codelibs.fesen.action.ActionType;
 import org.codelibs.fesen.action.IndicesRequest;
@@ -37,6 +32,11 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.regex.Regex;
 import org.codelibs.fesen.core.Nullable;
+
+import static org.codelibs.fesen.action.ValidateActions.addValidationError;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class PutComposableIndexTemplateAction extends ActionType<AcknowledgedResponse> {
 
@@ -97,9 +97,10 @@ public class PutComposableIndexTemplateAction extends ActionType<AcknowledgedRes
             } else {
                 if (indexTemplate.indexPatterns().stream().anyMatch(Regex::isMatchAllPattern)) {
                     if (IndexMetadata.INDEX_HIDDEN_SETTING.exists(indexTemplate.template().settings())) {
-                        validationException = addValidationError(
-                                "global composable templates may not specify the setting " + IndexMetadata.INDEX_HIDDEN_SETTING.getKey(),
-                                validationException);
+                        validationException = addValidationError("global composable templates may not specify the setting "
+                                + IndexMetadata.INDEX_HIDDEN_SETTING.getKey(),
+                            validationException
+                        );
                     }
                 }
                 if (indexTemplate.priority() != null && indexTemplate.priority() < 0) {
@@ -189,8 +190,10 @@ public class PutComposableIndexTemplateAction extends ActionType<AcknowledgedRes
                 return false;
             }
             Request other = (Request) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.cause, other.cause)
-                    && Objects.equals(this.indexTemplate, other.indexTemplate) && this.create == other.create;
+            return Objects.equals(this.name, other.name) &&
+                Objects.equals(this.cause, other.cause) &&
+                Objects.equals(this.indexTemplate, other.indexTemplate) &&
+                this.create == other.create;
         }
     }
 

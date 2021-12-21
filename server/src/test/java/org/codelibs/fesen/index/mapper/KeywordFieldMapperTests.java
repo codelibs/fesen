@@ -81,8 +81,13 @@ public class KeywordFieldMapperTests extends MapperTestCase {
 
         @Override
         public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
-            return singletonMap("keyword", (indexSettings, environment, name, settings) -> TokenizerFactory.newFactory(name,
-                    () -> new MockTokenizer(MockTokenizer.KEYWORD, false)));
+            return singletonMap(
+                "keyword",
+                (indexSettings, environment, name, settings) -> TokenizerFactory.newFactory(
+                    name,
+                    () -> new MockTokenizer(MockTokenizer.KEYWORD, false)
+                )
+            );
         }
 
     }
@@ -121,24 +126,36 @@ public class KeywordFieldMapperTests extends MapperTestCase {
 
     @Override
     protected IndexAnalyzers createIndexAnalyzers(IndexSettings indexSettings) {
-        return new IndexAnalyzers(singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
-                org.codelibs.fesen.core.Map.of("lowercase", new NamedAnalyzer("lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer()),
-                        "other_lowercase", new NamedAnalyzer("other_lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer())),
-                singletonMap("lowercase",
-                        new NamedAnalyzer("lowercase", AnalyzerScope.INDEX,
-                                new CustomAnalyzer(TokenizerFactory.newFactory("lowercase", WhitespaceTokenizer::new),
-                                        new CharFilterFactory[0], new TokenFilterFactory[] { new TokenFilterFactory() {
+        return new IndexAnalyzers(
+            singletonMap("default", new NamedAnalyzer("default", AnalyzerScope.INDEX, new StandardAnalyzer())),
+            org.codelibs.fesen.core.Map.of(
+                "lowercase", new NamedAnalyzer("lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer()),
+                "other_lowercase", new NamedAnalyzer("other_lowercase", AnalyzerScope.INDEX, new LowercaseNormalizer())
+            ),
+            singletonMap(
+                "lowercase",
+                new NamedAnalyzer(
+                    "lowercase",
+                    AnalyzerScope.INDEX,
+                    new CustomAnalyzer(
+                        TokenizerFactory.newFactory("lowercase", WhitespaceTokenizer::new),
+                        new CharFilterFactory[0],
+                        new TokenFilterFactory[] { new TokenFilterFactory() {
 
-                                            @Override
-                                            public String name() {
-                                                return "lowercase";
-                                            }
+                            @Override
+                            public String name() {
+                                return "lowercase";
+                            }
 
-                                            @Override
-                                            public TokenStream create(TokenStream tokenStream) {
-                                                return new LowerCaseFilter(tokenStream);
-                                            }
-                                        } }))));
+                            @Override
+                            public TokenStream create(TokenStream tokenStream) {
+                                return new LowerCaseFilter(tokenStream);
+                            }
+                        } }
+                    )
+                )
+            )
+        );
     }
 
     @Override
@@ -160,20 +177,26 @@ public class KeywordFieldMapperTests extends MapperTestCase {
         checker.registerConflictCheck("similarity", b -> b.field("similarity", "boolean"));
         checker.registerConflictCheck("normalizer", b -> b.field("normalizer", "lowercase"));
 
-        checker.registerUpdateCheck(b -> b.field("eager_global_ordinals", true), m -> assertTrue(m.fieldType().eagerGlobalOrdinals()));
-        checker.registerUpdateCheck(b -> b.field("ignore_above", 256), m -> assertEquals(256, ((KeywordFieldMapper) m).ignoreAbove()));
+        checker.registerUpdateCheck(b -> b.field("eager_global_ordinals", true),
+            m -> assertTrue(m.fieldType().eagerGlobalOrdinals()));
+        checker.registerUpdateCheck(b -> b.field("ignore_above", 256),
+            m -> assertEquals(256, ((KeywordFieldMapper)m).ignoreAbove()));
         checker.registerUpdateCheck(b -> b.field("split_queries_on_whitespace", true),
-                m -> assertEquals("_whitespace", m.fieldType().getTextSearchInfo().getSearchAnalyzer().name()));
+            m -> assertEquals("_whitespace", m.fieldType().getTextSearchInfo().getSearchAnalyzer().name()));
 
         // norms can be set from true to false, but not vice versa
         checker.registerConflictCheck("norms", b -> b.field("norms", true));
-        checker.registerUpdateCheck(b -> {
-            b.field("type", "keyword");
-            b.field("norms", true);
-        }, b -> {
-            b.field("type", "keyword");
-            b.field("norms", false);
-        }, m -> assertFalse(m.fieldType().getTextSearchInfo().hasNorms()));
+        checker.registerUpdateCheck(
+            b -> {
+                b.field("type", "keyword");
+                b.field("norms", true);
+            },
+            b -> {
+                b.field("type", "keyword");
+                b.field("norms", false);
+            },
+            m -> assertFalse(m.fieldType().getTextSearchInfo().hasNorms())
+        );
 
         checker.registerUpdateCheck(b -> b.field("boost", 2.0), m -> assertEquals(m.fieldType().boost(), 2.0, 0));
     }
@@ -268,10 +291,14 @@ public class KeywordFieldMapperTests extends MapperTestCase {
         assertEquals(IndexOptions.DOCS_AND_FREQS, fields[0].fieldType().indexOptions());
 
         for (String indexOptions : Arrays.asList("positions", "offsets")) {
-            MapperParsingException e = expectThrows(MapperParsingException.class,
-                    () -> createMapperService(fieldMapping(b -> b.field("type", "keyword").field("index_options", indexOptions))));
-            assertThat(e.getMessage(),
-                    containsString("Unknown value [" + indexOptions + "] for field [index_options] - accepted values are [docs, freqs]"));
+            MapperParsingException e = expectThrows(
+                MapperParsingException.class,
+                () -> createMapperService(fieldMapping(b -> b.field("type", "keyword").field("index_options", indexOptions)))
+            );
+            assertThat(
+                e.getMessage(),
+                containsString("Unknown value [" + indexOptions + "] for field [index_options] - accepted values are [docs, freqs]")
+            );
         }
     }
 
@@ -282,8 +309,9 @@ public class KeywordFieldMapperTests extends MapperTestCase {
     }
 
     public void testEnableNorms() throws IOException {
-        DocumentMapper mapper =
-                createDocumentMapper(fieldMapping(b -> b.field("type", "keyword").field("doc_values", false).field("norms", true)));
+        DocumentMapper mapper = createDocumentMapper(
+            fieldMapping(b -> b.field("type", "keyword").field("doc_values", false).field("norms", true))
+        );
         ParsedDocument doc = mapper.parse(source(b -> b.field("field", "1234")));
         IndexableField[] fields = doc.rootDoc().getFields("field");
         assertEquals(1, fields.length);
@@ -294,12 +322,14 @@ public class KeywordFieldMapperTests extends MapperTestCase {
     }
 
     public void testConfigureSimilarity() throws IOException {
-        MapperService mapperService = createMapperService(fieldMapping(b -> b.field("type", "keyword").field("similarity", "boolean")));
+        MapperService mapperService = createMapperService(
+            fieldMapping(b -> b.field("type", "keyword").field("similarity", "boolean"))
+        );
         MappedFieldType ft = mapperService.documentMapper().fieldTypes().get("field");
         assertEquals("boolean", ft.getTextSearchInfo().getSimilarity().name());
 
         IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> merge(mapperService, fieldMapping(b -> b.field("type", "keyword").field("similarity", "BM25"))));
+            () -> merge(mapperService, fieldMapping(b -> b.field("type", "keyword").field("similarity", "BM25"))));
         assertThat(e.getMessage(), containsString("Cannot update parameter [similarity] from [boolean] to [BM25]"));
     }
 
@@ -331,10 +361,14 @@ public class KeywordFieldMapperTests extends MapperTestCase {
     public void testParsesKeywordNestedEmptyObjectStrict() throws IOException {
         DocumentMapper defaultMapper = createDocumentMapper(fieldMapping(this::minimalMapping));
 
-        MapperParsingException ex =
-                expectThrows(MapperParsingException.class, () -> defaultMapper.parse(source(b -> b.startObject("field").endObject())));
-        assertEquals("failed to parse field [field] of type [keyword] in document with id '1'. " + "Preview of field's value: '{}'",
-                ex.getMessage());
+        MapperParsingException ex = expectThrows(
+            MapperParsingException.class,
+            () -> defaultMapper.parse(source(b -> b.startObject("field").endObject()))
+        );
+        assertEquals(
+            "failed to parse field [field] of type [keyword] in document with id '1'. " + "Preview of field's value: '{}'",
+            ex.getMessage()
+        );
     }
 
     public void testParsesKeywordNestedListStrict() throws IOException {
@@ -350,24 +384,36 @@ public class KeywordFieldMapperTests extends MapperTestCase {
             }
             b.endArray();
         })));
-        assertEquals("failed to parse field [field] of type [keyword] in document with id '1'. "
-                + "Preview of field's value: '{array_name=[inner_field_first, inner_field_second]}'", ex.getMessage());
+        assertEquals(
+            "failed to parse field [field] of type [keyword] in document with id '1'. "
+                + "Preview of field's value: '{array_name=[inner_field_first, inner_field_second]}'",
+            ex.getMessage()
+        );
     }
 
     public void testParsesKeywordNullStrict() throws IOException {
         DocumentMapper defaultMapper = createDocumentMapper(fieldMapping(this::minimalMapping));
-        Exception e = expectThrows(MapperParsingException.class,
-                () -> defaultMapper.parse(source(b -> b.startObject("field").nullField("field_name").endObject())));
-        assertEquals("failed to parse field [field] of type [keyword] in document with id '1'. "
-                + "Preview of field's value: '{field_name=null}'", e.getMessage());
+        Exception e = expectThrows(
+            MapperParsingException.class,
+            () -> defaultMapper.parse(source(b -> b.startObject("field").nullField("field_name").endObject()))
+        );
+        assertEquals(
+            "failed to parse field [field] of type [keyword] in document with id '1'. " + "Preview of field's value: '{field_name=null}'",
+            e.getMessage()
+        );
     }
 
     public void testUpdateNormalizer() throws IOException {
         MapperService mapperService = createMapperService(fieldMapping(b -> b.field("type", "keyword").field("normalizer", "lowercase")));
-        IllegalArgumentException e = expectThrows(IllegalArgumentException.class,
-                () -> merge(mapperService, fieldMapping(b -> b.field("type", "keyword").field("normalizer", "other_lowercase"))));
-        assertEquals("Mapper for [field] conflicts with existing mapper:\n"
-                + "\tCannot update parameter [normalizer] from [lowercase] to [other_lowercase]", e.getMessage());
+        IllegalArgumentException e = expectThrows(
+            IllegalArgumentException.class,
+            () -> merge(mapperService, fieldMapping(b -> b.field("type", "keyword").field("normalizer", "other_lowercase")))
+        );
+        assertEquals(
+            "Mapper for [field] conflicts with existing mapper:\n"
+                + "\tCannot update parameter [normalizer] from [lowercase] to [other_lowercase]",
+            e.getMessage()
+        );
     }
 
     public void testSplitQueriesOnWhitespace() throws IOException {
@@ -392,8 +438,10 @@ public class KeywordFieldMapperTests extends MapperTestCase {
         assertThat(fieldType, instanceOf(KeywordFieldMapper.KeywordFieldType.class));
         ft = (KeywordFieldMapper.KeywordFieldType) fieldType;
         assertThat(ft.getTextSearchInfo().getSearchAnalyzer().name(), equalTo("lowercase"));
-        assertTokenStreamContents(ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
-                new String[] { "hello", "world" });
+        assertTokenStreamContents(
+            ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
+            new String[] { "hello", "world" }
+        );
 
         mapperService = createMapperService(mapping(b -> {
             b.startObject("field").field("type", "keyword").field("split_queries_on_whitespace", true).endObject();
@@ -409,14 +457,18 @@ public class KeywordFieldMapperTests extends MapperTestCase {
         fieldType = mapperService.fieldType("field");
         assertThat(fieldType, instanceOf(KeywordFieldMapper.KeywordFieldType.class));
         ft = (KeywordFieldMapper.KeywordFieldType) fieldType;
-        assertTokenStreamContents(ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
-                new String[] { "Hello", "World" });
+        assertTokenStreamContents(
+            ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
+            new String[] { "Hello", "World" }
+        );
 
         fieldType = mapperService.fieldType("field_with_normalizer");
         assertThat(fieldType, instanceOf(KeywordFieldMapper.KeywordFieldType.class));
         ft = (KeywordFieldMapper.KeywordFieldType) fieldType;
         assertThat(ft.getTextSearchInfo().getSearchAnalyzer().name(), equalTo("lowercase"));
-        assertTokenStreamContents(ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
-                new String[] { "hello world" });
+        assertTokenStreamContents(
+            ft.getTextSearchInfo().getSearchAnalyzer().analyzer().tokenStream("", "Hello World"),
+            new String[] { "hello world" }
+        );
     }
 }

@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.search.sort;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import org.codelibs.fesen.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A {@link Comparable}, {@link DocValueFormat} aware wrapper around a sort value.
@@ -52,7 +52,8 @@ public abstract class SortValue implements NamedWriteable, Comparable<SortValue>
      * Get the list of {@linkplain NamedWriteable}s that this class needs.
      */
     public static List<NamedWriteableRegistry.Entry> namedWriteables() {
-        return Arrays.asList(new NamedWriteableRegistry.Entry(SortValue.class, DoubleSortValue.NAME, DoubleSortValue::new),
+        return Arrays.asList(
+                new NamedWriteableRegistry.Entry(SortValue.class, DoubleSortValue.NAME, DoubleSortValue::new),
                 new NamedWriteableRegistry.Entry(SortValue.class, LongSortValue.NAME, LongSortValue::new));
     }
 

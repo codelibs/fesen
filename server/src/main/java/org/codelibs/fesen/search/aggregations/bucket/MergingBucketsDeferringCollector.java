@@ -19,13 +19,13 @@
 
 package org.codelibs.fesen.search.aggregations.bucket;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.LongUnaryOperator;
-
 import org.apache.lucene.util.packed.PackedInts;
 import org.apache.lucene.util.packed.PackedLongValues;
 import org.codelibs.fesen.search.internal.SearchContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.LongUnaryOperator;
 
 /**
  * A specialization of {@link BestBucketsDeferringCollector} that collects all
@@ -69,7 +69,7 @@ public class MergingBucketsDeferringCollector extends BestBucketsDeferringCollec
      * This process rebuilds the ordinals and docDeltas according to the mergeMap, so it should
      * not be called unless there are actually changes to be made, to avoid unnecessary work.
      */
-    public void mergeBuckets(LongUnaryOperator mergeMap) {
+    public void mergeBuckets(LongUnaryOperator mergeMap){
         List<Entry> newEntries = new ArrayList<>(entries.size());
         for (Entry sourceEntry : entries) {
             PackedLongValues.Builder newBuckets = PackedLongValues.packedBuilder(PackedInts.DEFAULT);

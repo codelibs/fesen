@@ -50,7 +50,6 @@ public abstract class TransportResponse extends TransportMessage {
         }
 
         @Override
-        public void writeTo(StreamOutput out) throws IOException {
-        }
+        public void writeTo(StreamOutput out) throws IOException {}
     }
 }

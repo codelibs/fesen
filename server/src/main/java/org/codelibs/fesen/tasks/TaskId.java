@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.tasks;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.common.Strings;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -28,6 +26,8 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.io.stream.Writeable;
 import org.codelibs.fesen.common.xcontent.ContextParser;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
 
 /**
  * Task id that consists of node id and id of the task on the node
@@ -131,15 +131,12 @@ public final class TaskId implements Writeable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TaskId taskId = (TaskId) o;
 
-        if (id != taskId.id)
-            return false;
+        if (id != taskId.id) return false;
         return nodeId.equals(taskId.nodeId);
 
     }

@@ -19,14 +19,26 @@
 
 package org.codelibs.fesen.client;
 
-import static org.codelibs.fesen.client.RestClientTestUtil.getAllStatusCodes;
-import static org.codelibs.fesen.client.RestClientTestUtil.randomErrorNoRetryStatusCode;
-import static org.codelibs.fesen.client.RestClientTestUtil.randomOkStatusCode;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import org.apache.http.HttpHost;
+import org.codelibs.fesen.client.Cancellable;
+import org.codelibs.fesen.client.Node;
+import org.codelibs.fesen.client.NodeSelector;
+import org.codelibs.fesen.client.Request;
+import org.codelibs.fesen.client.Response;
+import org.codelibs.fesen.client.ResponseException;
+import org.codelibs.fesen.client.ResponseListener;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientBuilder;
+import org.codelibs.fesen.client.RestClientTestCase;
+import org.codelibs.fesen.client.RestClientTestUtil;
+import org.elasticsearch.mocksocket.MockHttpServer;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -40,16 +52,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpHost;
-import org.elasticsearch.mocksocket.MockHttpServer;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+import static org.codelibs.fesen.client.RestClientTestUtil.getAllStatusCodes;
+import static org.codelibs.fesen.client.RestClientTestUtil.randomErrorNoRetryStatusCode;
+import static org.codelibs.fesen.client.RestClientTestUtil.randomOkStatusCode;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test to check interaction between {@link RestClient} and {@link org.apache.http.client.HttpClient}.
@@ -127,7 +137,8 @@ public class RestClientMultipleHostsIntegTests extends RestClientTestCase {
             requestCameInLatch.countDown();
             try {
                 cancelHandlerLatch.await();
-            } catch (InterruptedException ignore) {} finally {
+            } catch (InterruptedException ignore) {
+            } finally {
                 exchange.sendResponseHeaders(200, 0);
                 exchange.close();
             }
@@ -189,7 +200,7 @@ public class RestClientMultipleHostsIntegTests extends RestClientTestCase {
             Response response;
             try {
                 response = restClient.performRequest(new Request(method, "/" + statusCode));
-            } catch (ResponseException responseException) {
+            } catch(ResponseException responseException) {
                 response = responseException.getResponse();
             }
             assertEquals(method, response.getRequestLine().getMethod());
@@ -227,7 +238,8 @@ public class RestClientMultipleHostsIntegTests extends RestClientTestCase {
             Response response = testResponse.getResponse();
             assertEquals(testResponse.method, response.getRequestLine().getMethod());
             assertEquals(testResponse.statusCode, response.getStatusLine().getStatusCode());
-            assertEquals((pathPrefix.length() > 0 ? pathPrefix : "") + "/" + testResponse.statusCode, response.getRequestLine().getUri());
+            assertEquals((pathPrefix.length() > 0 ? pathPrefix : "") + "/" + testResponse.statusCode,
+                    response.getRequestLine().getUri());
         }
     }
 

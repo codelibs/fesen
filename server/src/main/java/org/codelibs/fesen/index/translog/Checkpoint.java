@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.translog;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-
 import org.apache.lucene.codecs.CodecUtil;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexFormatTooNewException;
@@ -39,6 +32,13 @@ import org.apache.lucene.store.OutputStreamIndexOutput;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.codelibs.fesen.common.io.Channels;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
 
 final class Checkpoint {
 
@@ -58,25 +58,27 @@ final class Checkpoint {
 
     // size of 6.4.0 checkpoint
 
-    static final int V3_FILE_SIZE = CodecUtil.headerLength(CHECKPOINT_CODEC) + Integer.BYTES // ops
-            + Long.BYTES // offset
-            + Long.BYTES // generation
-            + Long.BYTES // minimum sequence number
-            + Long.BYTES // maximum sequence number
-            + Long.BYTES // global checkpoint
-            + Long.BYTES // minimum translog generation in the translog
-            + Long.BYTES // maximum reachable (trimmed) sequence number, introduced in 6.4.0
-            + CodecUtil.footerLength();
+    static final int V3_FILE_SIZE = CodecUtil.headerLength(CHECKPOINT_CODEC)
+        + Integer.BYTES  // ops
+        + Long.BYTES // offset
+        + Long.BYTES // generation
+        + Long.BYTES // minimum sequence number
+        + Long.BYTES // maximum sequence number
+        + Long.BYTES // global checkpoint
+        + Long.BYTES // minimum translog generation in the translog
+        + Long.BYTES // maximum reachable (trimmed) sequence number, introduced in 6.4.0
+        + CodecUtil.footerLength();
 
     // size of 6.0.0 checkpoint
-    static final int V2_FILE_SIZE = CodecUtil.headerLength(CHECKPOINT_CODEC) + Integer.BYTES // ops
-            + Long.BYTES // offset
-            + Long.BYTES // generation
-            + Long.BYTES // minimum sequence number
-            + Long.BYTES // maximum sequence number
-            + Long.BYTES // global checkpoint
-            + Long.BYTES // minimum translog generation in the translog
-            + CodecUtil.footerLength();
+    static final int V2_FILE_SIZE = CodecUtil.headerLength(CHECKPOINT_CODEC)
+        + Integer.BYTES  // ops
+        + Long.BYTES // offset
+        + Long.BYTES // generation
+        + Long.BYTES // minimum sequence number
+        + Long.BYTES // maximum sequence number
+        + Long.BYTES // global checkpoint
+        + Long.BYTES // minimum translog generation in the translog
+        + CodecUtil.footerLength();
 
     /**
      * Create a new translog checkpoint.
@@ -91,12 +93,12 @@ final class Checkpoint {
      * @param trimmedAboveSeqNo     all operations with seq# above trimmedAboveSeqNo should be ignored and not read from the
      *                              corresponding translog file. {@link SequenceNumbers#UNASSIGNED_SEQ_NO} is used to disable trimming.
      */
-    Checkpoint(long offset, int numOps, long generation, long minSeqNo, long maxSeqNo, long globalCheckpoint, long minTranslogGeneration,
-            long trimmedAboveSeqNo) {
+    Checkpoint(long offset, int numOps, long generation, long minSeqNo, long maxSeqNo, long globalCheckpoint,
+               long minTranslogGeneration, long trimmedAboveSeqNo) {
         assert minSeqNo <= maxSeqNo : "minSeqNo [" + minSeqNo + "] is higher than maxSeqNo [" + maxSeqNo + "]";
         assert trimmedAboveSeqNo <= maxSeqNo : "trimmedAboveSeqNo [" + trimmedAboveSeqNo + "] is higher than maxSeqNo [" + maxSeqNo + "]";
-        assert minTranslogGeneration <= generation : "minTranslogGen [" + minTranslogGeneration + "] is higher than generation ["
-                + generation + "]";
+        assert minTranslogGeneration <= generation :
+            "minTranslogGen [" + minTranslogGeneration + "] is higher than generation [" + generation + "]";
         this.offset = offset;
         this.numOps = numOps;
         this.generation = generation;
@@ -130,7 +132,7 @@ final class Checkpoint {
     }
 
     static Checkpoint emptyTranslogCheckpoint(final long offset, final long generation, final long globalCheckpoint,
-            long minTranslogGeneration) {
+                                              long minTranslogGeneration) {
         final long minSeqNo = SequenceNumbers.NO_OPS_PERFORMED;
         final long maxSeqNo = SequenceNumbers.NO_OPS_PERFORMED;
         final long trimmedAboveSeqNo = SequenceNumbers.UNASSIGNED_SEQ_NO;
@@ -163,9 +165,16 @@ final class Checkpoint {
 
     @Override
     public String toString() {
-        return "Checkpoint{" + "offset=" + offset + ", numOps=" + numOps + ", generation=" + generation + ", minSeqNo=" + minSeqNo
-                + ", maxSeqNo=" + maxSeqNo + ", globalCheckpoint=" + globalCheckpoint + ", minTranslogGeneration=" + minTranslogGeneration
-                + ", trimmedAboveSeqNo=" + trimmedAboveSeqNo + '}';
+        return "Checkpoint{" +
+            "offset=" + offset +
+            ", numOps=" + numOps +
+            ", generation=" + generation +
+            ", minSeqNo=" + minSeqNo +
+            ", maxSeqNo=" + maxSeqNo +
+            ", globalCheckpoint=" + globalCheckpoint +
+            ", minTranslogGeneration=" + minTranslogGeneration +
+            ", trimmedAboveSeqNo=" + trimmedAboveSeqNo +
+            '}';
     }
 
     public static Checkpoint read(Path path) throws IOException {
@@ -218,40 +227,32 @@ final class Checkpoint {
         };
         final String resourceDesc = "checkpoint(path=\"" + checkpointFile + "\", gen=" + checkpoint + ")";
         try (OutputStreamIndexOutput indexOutput =
-                new OutputStreamIndexOutput(resourceDesc, checkpointFile.toString(), byteOutputStream, V3_FILE_SIZE)) {
+                 new OutputStreamIndexOutput(resourceDesc, checkpointFile.toString(), byteOutputStream, V3_FILE_SIZE)) {
             CodecUtil.writeHeader(indexOutput, CHECKPOINT_CODEC, CURRENT_VERSION);
             checkpoint.write(indexOutput);
             CodecUtil.writeFooter(indexOutput);
 
-            assert indexOutput.getFilePointer() == V3_FILE_SIZE : "get you numbers straight; bytes written: " + indexOutput.getFilePointer()
-                    + ", buffer size: " + V3_FILE_SIZE;
-            assert indexOutput.getFilePointer() < 512 : "checkpoint files have to be smaller than 512 bytes for atomic writes; size: "
-                    + indexOutput.getFilePointer();
+            assert indexOutput.getFilePointer() == V3_FILE_SIZE :
+                "get you numbers straight; bytes written: " + indexOutput.getFilePointer() + ", buffer size: " + V3_FILE_SIZE;
+            assert indexOutput.getFilePointer() < 512 :
+                "checkpoint files have to be smaller than 512 bytes for atomic writes; size: " + indexOutput.getFilePointer();
         }
         return byteOutputStream.toByteArray();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Checkpoint that = (Checkpoint) o;
 
-        if (offset != that.offset)
-            return false;
-        if (numOps != that.numOps)
-            return false;
-        if (generation != that.generation)
-            return false;
-        if (minSeqNo != that.minSeqNo)
-            return false;
-        if (maxSeqNo != that.maxSeqNo)
-            return false;
-        if (globalCheckpoint != that.globalCheckpoint)
-            return false;
+        if (offset != that.offset) return false;
+        if (numOps != that.numOps) return false;
+        if (generation != that.generation) return false;
+        if (minSeqNo != that.minSeqNo) return false;
+        if (maxSeqNo != that.maxSeqNo) return false;
+        if (globalCheckpoint != that.globalCheckpoint) return false;
         return trimmedAboveSeqNo == that.trimmedAboveSeqNo;
     }
 

@@ -37,8 +37,7 @@ public abstract class BytesKeyedBucketOrds implements Releasable {
         return cardinality.map(estimate -> estimate < 2 ? new FromSingle(bigArrays) : new FromMany(bigArrays));
     }
 
-    private BytesKeyedBucketOrds() {
-    }
+    private BytesKeyedBucketOrds() {}
 
     /**
      * Add the {@code owningBucketOrd, value} pair. Return the ord for
@@ -102,8 +101,7 @@ public abstract class BytesKeyedBucketOrds implements Releasable {
             }
 
             @Override
-            public void readValue(BytesRef dest) {
-            }
+            public void readValue(BytesRef dest) {}
         };
     }
 

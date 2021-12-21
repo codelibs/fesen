@@ -64,7 +64,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
     @Before
     public void init() throws Exception {
-        counter = new AtomicInteger();
+         counter = new AtomicInteger();
         threadPool = new ThreadPool(Settings.builder().put(Node.NODE_NAME_SETTING.getKey(), "TransportActionFilterChainTests").build());
     }
 
@@ -87,8 +87,9 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
         String actionName = randomAlphaOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
-        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(actionName,
-                actionFilters, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet())) {
+        TransportAction<TestRequest, TestResponse> transportAction =
+            new TransportAction<TestRequest, TestResponse>(actionName, actionFilters,
+                new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet())) {
             @Override
             protected void doExecute(Task task, TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());
@@ -106,7 +107,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
             if (testFilter.callback == RequestOperation.LISTENER_FAILURE) {
                 errorExpected = true;
             }
-            if (!(testFilter.callback == RequestOperation.CONTINUE_PROCESSING)) {
+            if (!(testFilter.callback == RequestOperation.CONTINUE_PROCESSING) ) {
                 break;
             }
         }
@@ -132,7 +133,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
         for (ActionFilter filter : testFiltersByLastExecution) {
             RequestTestFilter testFilter = (RequestTestFilter) filter;
             finalTestFilters.add(testFilter);
-            if (!(testFilter.callback == RequestOperation.CONTINUE_PROCESSING)) {
+            if (!(testFilter.callback == RequestOperation.CONTINUE_PROCESSING) ) {
                 break;
             }
         }
@@ -165,7 +166,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
         String actionName = randomAlphaOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
         TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(actionName,
-                actionFilters, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet())) {
+            actionFilters, new TaskManager(Settings.EMPTY, threadPool, Collections.emptySet())) {
             @Override
             protected void doExecute(Task task, TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());
@@ -239,7 +240,7 @@ public class TransportActionFilterChainTests extends ESTestCase {
         },
         LISTENER_RESPONSE {
             @Override
-            @SuppressWarnings("unchecked") // Safe because its all we test with
+            @SuppressWarnings("unchecked")  // Safe because its all we test with
             public <Request extends ActionRequest, Response extends ActionResponse> void execute(Task task, String action, Request request,
                     ActionListener<Response> listener, ActionFilterChain<Request, Response> actionFilterChain) {
                 ((ActionListener<TestResponse>) listener).onResponse(new TestResponse());
@@ -268,7 +269,6 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
     private static class TestResponse extends ActionResponse {
         @Override
-        public void writeTo(StreamOutput out) throws IOException {
-        }
+        public void writeTo(StreamOutput out) throws IOException {}
     }
 }

@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.client.Requests.putMappingRequest;
-import static org.codelibs.fesen.index.mapper.MapperService.isMappingSourceTyped;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -41,20 +34,37 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.client.Requests.putMappingRequest;
+import static org.codelibs.fesen.index.mapper.MapperService.isMappingSourceTyped;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+import static org.codelibs.fesen.rest.RestRequest.Method.PUT;
+
 public class RestPutMappingAction extends BaseRestHandler {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestPutMappingAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in put "
-            + "mapping requests is deprecated. The parameter will be removed in the next major version.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in put " +
+        "mapping requests is deprecated. The parameter will be removed in the next major version.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/{index}/_mapping/"), new Route(PUT, "/{index}/_mapping/"),
-                new Route(POST, "/{index}/{type}/_mapping"), new Route(PUT, "/{index}/{type}/_mapping"),
-                new Route(POST, "/{index}/_mapping/{type}"), new Route(PUT, "/{index}/_mapping/{type}"),
-                new Route(POST, "/_mapping/{type}"), new Route(PUT, "/_mapping/{type}"), new Route(POST, "/{index}/_mappings/"),
-                new Route(PUT, "/{index}/_mappings/"), new Route(POST, "/{index}/{type}/_mappings"),
-                new Route(PUT, "/{index}/{type}/_mappings"), new Route(POST, "/{index}/_mappings/{type}"),
-                new Route(PUT, "/{index}/_mappings/{type}"), new Route(POST, "/_mappings/{type}"), new Route(PUT, "/_mappings/{type}")));
+        return unmodifiableList(asList(
+            new Route(POST, "/{index}/_mapping/"),
+            new Route(PUT, "/{index}/_mapping/"),
+            new Route(POST, "/{index}/{type}/_mapping"),
+            new Route(PUT, "/{index}/{type}/_mapping"),
+            new Route(POST, "/{index}/_mapping/{type}"),
+            new Route(PUT, "/{index}/_mapping/{type}"),
+            new Route(POST, "/_mapping/{type}"),
+            new Route(PUT, "/_mapping/{type}"),
+            new Route(POST, "/{index}/_mappings/"),
+            new Route(PUT, "/{index}/_mappings/"),
+            new Route(POST, "/{index}/{type}/_mappings"),
+            new Route(PUT, "/{index}/{type}/_mappings"),
+            new Route(POST, "/{index}/_mappings/{type}"),
+            new Route(PUT, "/{index}/_mappings/{type}"),
+            new Route(POST, "/_mappings/{type}"),
+            new Route(PUT, "/_mappings/{type}")));
     }
 
     @Override
@@ -64,7 +74,8 @@ public class RestPutMappingAction extends BaseRestHandler {
 
     @Override
     public RestChannelConsumer prepareRequest(final RestRequest request, final NodeClient client) throws IOException {
-        final boolean includeTypeName = request.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER, DEFAULT_INCLUDE_TYPE_NAME_POLICY);
+        final boolean includeTypeName = request.paramAsBoolean(INCLUDE_TYPE_NAME_PARAMETER,
+            DEFAULT_INCLUDE_TYPE_NAME_POLICY);
         if (request.hasParam(INCLUDE_TYPE_NAME_PARAMETER)) {
             deprecationLogger.deprecate("put_mapping_with_types", TYPES_DEPRECATION_MESSAGE);
         }
@@ -74,10 +85,12 @@ public class RestPutMappingAction extends BaseRestHandler {
         final String type = request.param("type");
         putMappingRequest.type(includeTypeName ? type : MapperService.SINGLE_MAPPING_NAME);
 
-        Map<String, Object> sourceAsMap = XContentHelper.convertToMap(request.requiredContent(), false, request.getXContentType()).v2();
-        if (includeTypeName == false && (type != null || isMappingSourceTyped(MapperService.SINGLE_MAPPING_NAME, sourceAsMap))) {
-            throw new IllegalArgumentException(
-                    "Types cannot be provided in put mapping requests, unless " + "the include_type_name parameter is set to true.");
+        Map<String, Object> sourceAsMap = XContentHelper.convertToMap(request.requiredContent(), false,
+            request.getXContentType()).v2();
+        if (includeTypeName == false &&
+                (type != null || isMappingSourceTyped(MapperService.SINGLE_MAPPING_NAME, sourceAsMap))) {
+            throw new IllegalArgumentException("Types cannot be provided in put mapping requests, unless " +
+                "the include_type_name parameter is set to true.");
         }
 
         putMappingRequest.source(sourceAsMap);

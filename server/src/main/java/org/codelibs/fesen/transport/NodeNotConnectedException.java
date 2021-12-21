@@ -32,7 +32,7 @@ import org.codelibs.fesen.common.io.stream.StreamInput;
 public class NodeNotConnectedException extends ConnectTransportException {
 
     public NodeNotConnectedException(DiscoveryNode node, String msg) {
-        super(node, msg, (String) null);
+        super(node, msg, (String)null);
     }
 
     public NodeNotConnectedException(StreamInput in) throws IOException {

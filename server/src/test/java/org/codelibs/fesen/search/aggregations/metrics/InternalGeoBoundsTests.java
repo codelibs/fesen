@@ -37,8 +37,9 @@ public class InternalGeoBoundsTests extends InternalAggregationTestCase<Internal
     protected InternalGeoBounds createTestInstance(String name, Map<String, Object> metadata) {
         // we occasionally want to test top = Double.NEGATIVE_INFINITY since this triggers empty xContent object
         double top = frequently() ? randomDouble() : Double.NEGATIVE_INFINITY;
-        InternalGeoBounds geo = new InternalGeoBounds(name, top, randomDouble(), randomDouble(), randomDouble(), randomDouble(),
-                randomDouble(), randomBoolean(), metadata);
+        InternalGeoBounds geo = new InternalGeoBounds(name,
+            top, randomDouble(), randomDouble(), randomDouble(),
+            randomDouble(), randomDouble(), randomBoolean(), metadata);
         return geo;
     }
 

@@ -80,8 +80,8 @@ public final class RemoveProcessor extends AbstractProcessor {
         }
 
         @Override
-        public RemoveProcessor create(Map<String, Processor.Factory> registry, String processorTag, String description,
-                Map<String, Object> config) throws Exception {
+        public RemoveProcessor create(Map<String, Processor.Factory> registry, String processorTag,
+                                      String description, Map<String, Object> config) throws Exception {
             final List<String> fields = new ArrayList<>();
             final Object field = ConfigurationUtils.readObject(TYPE, processorTag, config, "field");
             if (field instanceof List) {
@@ -92,11 +92,12 @@ public final class RemoveProcessor extends AbstractProcessor {
                 fields.add((String) field);
             }
 
-            final List<TemplateScript.Factory> compiledTemplates =
-                    fields.stream().map(f -> ConfigurationUtils.compileTemplate(TYPE, processorTag, "field", f, scriptService))
-                            .collect(Collectors.toList());
+            final List<TemplateScript.Factory> compiledTemplates = fields.stream()
+                .map(f -> ConfigurationUtils.compileTemplate(TYPE, processorTag, "field", f, scriptService))
+                .collect(Collectors.toList());
             boolean ignoreMissing = ConfigurationUtils.readBooleanProperty(TYPE, processorTag, config, "ignore_missing", false);
             return new RemoveProcessor(processorTag, description, compiledTemplates, ignoreMissing);
         }
     }
 }
+

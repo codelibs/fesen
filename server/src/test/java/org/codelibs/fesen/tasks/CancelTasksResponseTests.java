@@ -97,8 +97,8 @@ public class CancelTasksResponseTests extends AbstractXContentTestCase<CancelTas
         //exceptions are not of the same type whenever parsed back
         boolean assertToXContentEquivalence = false;
         AbstractXContentTestCase.testFromXContent(NUMBER_OF_TEST_RUNS, instanceSupplier, supportsUnknownFields, Strings.EMPTY_ARRAY,
-                getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance, this::assertEqualInstances,
-                assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
+            getRandomFieldsExcludeFilter(), this::createParser, this::doParseInstance,
+            this::assertEqualInstances, assertToXContentEquivalence, ToXContent.EMPTY_PARAMS);
     }
 
     private static CancelTasksResponse createTestInstanceWithFailures() {

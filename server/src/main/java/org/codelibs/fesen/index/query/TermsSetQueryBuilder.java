@@ -18,13 +18,6 @@
  */
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.index.Term;
@@ -48,6 +41,13 @@ import org.codelibs.fesen.index.fielddata.IndexNumericFieldData;
 import org.codelibs.fesen.index.mapper.MappedFieldType;
 import org.codelibs.fesen.script.Script;
 import org.codelibs.fesen.script.TermsSetQueryScript;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQueryBuilder> {
 
@@ -119,9 +119,10 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
 
     @Override
     protected boolean doEquals(TermsSetQueryBuilder other) {
-        return Objects.equals(fieldName, other.fieldName) && Objects.equals(values, other.values)
-                && Objects.equals(minimumShouldMatchField, other.minimumShouldMatchField)
-                && Objects.equals(minimumShouldMatchScript, other.minimumShouldMatchScript);
+        return Objects.equals(fieldName, other.fieldName)
+            && Objects.equals(values, other.values)
+            && Objects.equals(minimumShouldMatchField, other.minimumShouldMatchField)
+            && Objects.equals(minimumShouldMatchScript, other.minimumShouldMatchScript);
     }
 
     @Override
@@ -176,15 +177,15 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
                 if (TERMS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     values = TermsQueryBuilder.parseValues(parser);
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(),
-                            "[" + NAME + "] query does not support [" + currentFieldName + "]");
+                    throw new ParsingException(parser.getTokenLocation(), "[" + NAME + "] query does not support ["
+                            + currentFieldName + "]");
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if (MINIMUM_SHOULD_MATCH_SCRIPT.match(currentFieldName, parser.getDeprecationHandler())) {
                     minimumShouldMatchScript = Script.parse(parser);
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(),
-                            "[" + NAME + "] query does not support [" + currentFieldName + "]");
+                    throw new ParsingException(parser.getTokenLocation(), "[" + NAME + "] query does not support ["
+                            + currentFieldName + "]");
                 }
             } else if (token.isValue()) {
                 if (MINIMUM_SHOULD_MATCH_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
@@ -194,12 +195,12 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
                 } else if (AbstractQueryBuilder.NAME_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     queryName = parser.text();
                 } else {
-                    throw new ParsingException(parser.getTokenLocation(),
-                            "[" + NAME + "] query does not support [" + currentFieldName + "]");
+                    throw new ParsingException(parser.getTokenLocation(), "[" + NAME + "] query does not support ["
+                            + currentFieldName + "]");
                 }
             } else {
-                throw new ParsingException(parser.getTokenLocation(),
-                        "[" + NAME + "] unknown token [" + token + "] after [" + currentFieldName + "]");
+                throw new ParsingException(parser.getTokenLocation(), "[" + NAME + "] unknown token [" + token +
+                        "] after [" + currentFieldName + "]");
             }
         }
 
@@ -208,7 +209,8 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
             throw new ParsingException(parser.getTokenLocation(), "[" + NAME + "] unknown token [" + token + "]");
         }
 
-        TermsSetQueryBuilder queryBuilder = new TermsSetQueryBuilder(fieldName, values).queryName(queryName).boost(boost);
+        TermsSetQueryBuilder queryBuilder = new TermsSetQueryBuilder(fieldName, values)
+                .queryName(queryName).boost(boost);
         if (minimumShouldMatchField != null) {
             queryBuilder.setMinimumShouldMatchField(minimumShouldMatchField);
         }
@@ -260,7 +262,8 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
             IndexNumericFieldData fieldData = context.getForField(msmFieldType);
             longValuesSource = new FieldValuesSource(fieldData);
         } else if (minimumShouldMatchScript != null) {
-            TermsSetQueryScript.Factory factory = context.compile(minimumShouldMatchScript, TermsSetQueryScript.CONTEXT);
+            TermsSetQueryScript.Factory factory = context.compile(minimumShouldMatchScript,
+                TermsSetQueryScript.CONTEXT);
             Map<String, Object> params = new HashMap<>();
             params.putAll(minimumShouldMatchScript.getParams());
             params.put("num_terms", values.size());
@@ -353,10 +356,8 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             FieldValuesSource that = (FieldValuesSource) o;
             return Objects.equals(fieldName, that.fieldName);
         }

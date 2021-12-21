@@ -19,16 +19,9 @@
 
 package org.codelibs.fesen.cluster.routing;
 
-import static org.codelibs.fesen.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import com.carrotsearch.hppc.IntSet;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.cluster.Diff;
 import org.codelibs.fesen.cluster.Diffable;
@@ -46,9 +39,16 @@ import org.codelibs.fesen.index.IndexNotFoundException;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.index.shard.ShardNotFoundException;
 
-import com.carrotsearch.hppc.IntSet;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import static org.codelibs.fesen.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Represents a global cluster-wide routing table for all indices including the
@@ -206,7 +206,7 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
      * @return All the shards matching the specific index
      * @throws IndexNotFoundException If the index passed does not exists
      */
-    public List<ShardRouting> allShards(String index) {
+    public List<ShardRouting> allShards(String index)  {
         List<ShardRouting> shards = new ArrayList<>();
         IndexRoutingTable indexRoutingTable = index(index);
         if (indexRoutingTable == null) {
@@ -242,7 +242,7 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
     private static Predicate<ShardRouting> ASSIGNED_PREDICATE = ShardRouting::assignedToNode;
 
     private GroupShardsIterator<ShardIterator> allSatisfyingPredicateShardsGrouped(String[] indices, boolean includeEmpty,
-            Predicate<ShardRouting> predicate) {
+                                                                                   Predicate<ShardRouting> predicate) {
         // use list here since we need to maintain identity across shards
         ArrayList<ShardIterator> set = new ArrayList<>();
         for (String index : indices) {
@@ -273,7 +273,7 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
     }
 
     private ShardsIterator allShardsSatisfyingPredicate(String[] indices, Predicate<ShardRouting> predicate,
-            boolean includeRelocationTargets) {
+                                                        boolean includeRelocationTargets) {
         // use list here since we need to maintain identity across shards
         List<ShardRouting> shards = new ArrayList<>();
         for (String index : indices) {
@@ -491,8 +491,8 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         public Builder addAsNew(IndexMetadata indexMetadata) {
             if (indexMetadata.getState() == IndexMetadata.State.OPEN) {
-                IndexRoutingTable.Builder indexRoutingBuilder =
-                        new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsNew(indexMetadata);
+                IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                        .initializeAsNew(indexMetadata);
                 add(indexRoutingBuilder);
             }
             return this;
@@ -500,8 +500,8 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         public Builder addAsRecovery(IndexMetadata indexMetadata) {
             if (indexMetadata.getState() == IndexMetadata.State.OPEN || isIndexVerifiedBeforeClosed(indexMetadata)) {
-                IndexRoutingTable.Builder indexRoutingBuilder =
-                        new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsRecovery(indexMetadata);
+                IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                    .initializeAsRecovery(indexMetadata);
                 add(indexRoutingBuilder);
             }
             return this;
@@ -509,8 +509,8 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         public Builder addAsFromDangling(IndexMetadata indexMetadata) {
             if (indexMetadata.getState() == IndexMetadata.State.OPEN || isIndexVerifiedBeforeClosed(indexMetadata)) {
-                IndexRoutingTable.Builder indexRoutingBuilder =
-                        new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsFromDangling(indexMetadata);
+                IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                        .initializeAsFromDangling(indexMetadata);
                 add(indexRoutingBuilder);
             }
             return this;
@@ -518,8 +518,8 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         public Builder addAsFromCloseToOpen(IndexMetadata indexMetadata) {
             if (indexMetadata.getState() == IndexMetadata.State.OPEN) {
-                IndexRoutingTable.Builder indexRoutingBuilder =
-                        new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsFromCloseToOpen(indexMetadata);
+                IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                        .initializeAsFromCloseToOpen(indexMetadata);
                 add(indexRoutingBuilder);
             }
             return this;
@@ -527,14 +527,14 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         public Builder addAsFromOpenToClose(IndexMetadata indexMetadata) {
             assert isIndexVerifiedBeforeClosed(indexMetadata);
-            IndexRoutingTable.Builder indexRoutingBuilder =
-                    new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsFromOpenToClose(indexMetadata);
+            IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                .initializeAsFromOpenToClose(indexMetadata);
             return add(indexRoutingBuilder);
         }
 
         public Builder addAsRestore(IndexMetadata indexMetadata, SnapshotRecoverySource recoverySource) {
-            IndexRoutingTable.Builder indexRoutingBuilder =
-                    new IndexRoutingTable.Builder(indexMetadata.getIndex()).initializeAsRestore(indexMetadata, recoverySource);
+            IndexRoutingTable.Builder indexRoutingBuilder = new IndexRoutingTable.Builder(indexMetadata.getIndex())
+                    .initializeAsRestore(indexMetadata, recoverySource);
             add(indexRoutingBuilder);
             return this;
         }

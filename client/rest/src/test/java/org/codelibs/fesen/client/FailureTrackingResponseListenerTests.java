@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -34,6 +27,17 @@ import org.apache.http.StatusLine;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicRequestLine;
 import org.apache.http.message.BasicStatusLine;
+import org.codelibs.fesen.client.Response;
+import org.codelibs.fesen.client.ResponseListener;
+import org.codelibs.fesen.client.RestClient;
+import org.codelibs.fesen.client.RestClientTestCase;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class FailureTrackingResponseListenerTests extends RestClientTestCase {
 
@@ -78,7 +82,7 @@ public class FailureTrackingResponseListenerTests extends RestClientTestCase {
                 assertEquals(1, exception.getSuppressed().length);
                 assertSame(expectedExceptions[i--], exception.getSuppressed()[0]);
                 exception = exception.getSuppressed()[0];
-            } while (i >= 0);
+            } while(i >= 0);
         }
     }
 

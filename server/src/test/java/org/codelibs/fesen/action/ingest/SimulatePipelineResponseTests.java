@@ -107,9 +107,13 @@ public class SimulatePipelineResponseTests extends AbstractXContentTestCase<Simu
         List<SimulateDocumentResult> results = new ArrayList<>(numResults);
         for (int i = 0; i < numResults; i++) {
             if (isVerbose) {
-                results.add(SimulateDocumentVerboseResultTests.createTestInstance(withFailure));
+                results.add(
+                    SimulateDocumentVerboseResultTests.createTestInstance(withFailure)
+                );
             } else {
-                results.add(SimulateDocumentBaseResultTests.createTestInstance(withFailure && randomBoolean()));
+                results.add(
+                    SimulateDocumentBaseResultTests.createTestInstance(withFailure && randomBoolean())
+                );
             }
         }
         return new SimulatePipelineResponse(pipelineId, isVerbose, results);
@@ -139,22 +143,23 @@ public class SimulatePipelineResponseTests extends AbstractXContentTestCase<Simu
     }
 
     @Override
-    protected void assertEqualInstances(SimulatePipelineResponse response, SimulatePipelineResponse parsedResponse) {
+    protected void assertEqualInstances(SimulatePipelineResponse response,
+                                        SimulatePipelineResponse parsedResponse) {
         assertEquals(response.getPipelineId(), parsedResponse.getPipelineId());
         assertEquals(response.isVerbose(), parsedResponse.isVerbose());
         assertEquals(response.getResults().size(), parsedResponse.getResults().size());
-        for (int i = 0; i < response.getResults().size(); i++) {
+        for (int i=0; i < response.getResults().size(); i++) {
             if (response.isVerbose()) {
                 assertThat(response.getResults().get(i), instanceOf(SimulateDocumentVerboseResult.class));
                 assertThat(parsedResponse.getResults().get(i), instanceOf(SimulateDocumentVerboseResult.class));
-                SimulateDocumentVerboseResult responseResult = (SimulateDocumentVerboseResult) response.getResults().get(i);
-                SimulateDocumentVerboseResult parsedResult = (SimulateDocumentVerboseResult) parsedResponse.getResults().get(i);
+                SimulateDocumentVerboseResult responseResult = (SimulateDocumentVerboseResult)response.getResults().get(i);
+                SimulateDocumentVerboseResult parsedResult = (SimulateDocumentVerboseResult)parsedResponse.getResults().get(i);
                 SimulateDocumentVerboseResultTests.assertEqualDocs(responseResult, parsedResult);
             } else {
                 assertThat(response.getResults().get(i), instanceOf(SimulateDocumentBaseResult.class));
                 assertThat(parsedResponse.getResults().get(i), instanceOf(SimulateDocumentBaseResult.class));
-                SimulateDocumentBaseResult responseResult = (SimulateDocumentBaseResult) response.getResults().get(i);
-                SimulateDocumentBaseResult parsedResult = (SimulateDocumentBaseResult) parsedResponse.getResults().get(i);
+                SimulateDocumentBaseResult responseResult = (SimulateDocumentBaseResult)response.getResults().get(i);
+                SimulateDocumentBaseResult parsedResult = (SimulateDocumentBaseResult)parsedResponse.getResults().get(i);
                 SimulateDocumentBaseResultTests.assertEqualDocs(responseResult, parsedResult);
             }
         }
@@ -163,10 +168,17 @@ public class SimulatePipelineResponseTests extends AbstractXContentTestCase<Simu
     @Override
     protected Predicate<String> getRandomFieldsExcludeFilter() {
         // We cannot have random fields in the _source field and _ingest field
-        return field -> field
-                .contains(new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.SOURCE_FIELD).toString())
-                || field.contains(
-                        new StringJoiner(".").add(WriteableIngestDocument.DOC_FIELD).add(WriteableIngestDocument.INGEST_FIELD).toString());
+        return field ->
+            field.contains(
+                new StringJoiner(".")
+                    .add(WriteableIngestDocument.DOC_FIELD)
+                    .add(WriteableIngestDocument.SOURCE_FIELD).toString()
+            ) ||
+                field.contains(
+                    new StringJoiner(".")
+                        .add(WriteableIngestDocument.DOC_FIELD)
+                        .add(WriteableIngestDocument.INGEST_FIELD).toString()
+                );
     }
 
     /**

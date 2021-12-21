@@ -20,6 +20,10 @@
 package org.codelibs.fesen.index.reindex;
 
 import org.codelibs.fesen.action.index.IndexRequest;
+import org.codelibs.fesen.index.reindex.AbstractAsyncBulkByScrollAction;
+import org.codelibs.fesen.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.index.reindex.ReindexRequest;
+import org.codelibs.fesen.index.reindex.Reindexer;
 import org.codelibs.fesen.index.reindex.ScrollableHitSource.Hit;
 
 /**
@@ -76,8 +80,8 @@ public class ReindexMetadataTests extends AbstractAsyncBulkByScrollActionMetadat
 
     private class TestAction extends Reindexer.AsyncIndexBySearchAction {
         TestAction() {
-            super(ReindexMetadataTests.this.task, ReindexMetadataTests.this.logger, null, ReindexMetadataTests.this.threadPool, null, null,
-                    request(), listener());
+            super(ReindexMetadataTests.this.task, ReindexMetadataTests.this.logger, null, ReindexMetadataTests.this.threadPool,
+                null, null, request(), listener());
         }
 
         public ReindexRequest mainRequest() {

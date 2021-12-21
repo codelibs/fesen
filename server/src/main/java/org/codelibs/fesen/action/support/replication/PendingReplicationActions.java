@@ -51,11 +51,11 @@ public class PendingReplicationActions implements Consumer<ReplicationGroup>, Re
             ongoingActionsOnNode.add(replicationAction);
             if (onGoingReplicationActions.containsKey(allocationId) == false) {
                 replicationAction.cancel(new IndexShardClosedException(shardId,
-                        "Replica unavailable - replica could have left ReplicationGroup or IndexShard might have closed"));
+                    "Replica unavailable - replica could have left ReplicationGroup or IndexShard might have closed"));
             }
         } else {
             replicationAction.cancel(new IndexShardClosedException(shardId,
-                    "Replica unavailable - replica could have left ReplicationGroup or IndexShard might have closed"));
+                "Replica unavailable - replica could have left ReplicationGroup or IndexShard might have closed"));
         }
     }
 
@@ -107,7 +107,8 @@ public class PendingReplicationActions implements Consumer<ReplicationGroup>, Re
     }
 
     private void cancelActions(ArrayList<Set<RetryableAction<?>>> toCancel, String message) {
-        threadPool.executor(ThreadPool.Names.GENERIC).execute(() -> toCancel.stream().flatMap(Collection::stream)
-                .forEach(action -> action.cancel(new IndexShardClosedException(shardId, message))));
+        threadPool.executor(ThreadPool.Names.GENERIC).execute(() -> toCancel.stream()
+            .flatMap(Collection::stream)
+            .forEach(action -> action.cancel(new IndexShardClosedException(shardId, message))));
     }
 }

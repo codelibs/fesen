@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.snapshots;
 
+
 /**
  * Represents the state that a snapshot can be in
  */
@@ -74,6 +75,7 @@ public enum SnapshotState {
         return completed;
     }
 
+
     /**
      * Returns true if snapshot can be restored (at least partially)
      *
@@ -91,18 +93,19 @@ public enum SnapshotState {
      */
     public static SnapshotState fromValue(byte value) {
         switch (value) {
-        case 0:
-            return IN_PROGRESS;
-        case 1:
-            return SUCCESS;
-        case 2:
-            return FAILED;
-        case 3:
-            return PARTIAL;
-        case 4:
-            return INCOMPATIBLE;
-        default:
-            throw new IllegalArgumentException("No snapshot state for value [" + value + "]");
+            case 0:
+                return IN_PROGRESS;
+            case 1:
+                return SUCCESS;
+            case 2:
+                return FAILED;
+            case 3:
+                return PARTIAL;
+            case 4:
+                return INCOMPATIBLE;
+            default:
+                throw new IllegalArgumentException("No snapshot state for value [" + value + "]");
         }
     }
 }
+

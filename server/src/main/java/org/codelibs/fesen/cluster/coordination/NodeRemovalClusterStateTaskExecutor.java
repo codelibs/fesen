@@ -18,8 +18,6 @@
  */
 package org.codelibs.fesen.cluster.coordination;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.cluster.ClusterState;
@@ -30,8 +28,10 @@ import org.codelibs.fesen.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.persistent.PersistentTasksCustomMetadata;
 
-public class NodeRemovalClusterStateTaskExecutor
-        implements ClusterStateTaskExecutor<NodeRemovalClusterStateTaskExecutor.Task>, ClusterStateTaskListener {
+import java.util.List;
+
+public class NodeRemovalClusterStateTaskExecutor implements ClusterStateTaskExecutor<NodeRemovalClusterStateTaskExecutor.Task>,
+    ClusterStateTaskListener {
 
     private final AllocationService allocationService;
     private final Logger logger;
@@ -60,7 +60,9 @@ public class NodeRemovalClusterStateTaskExecutor
         }
     }
 
-    public NodeRemovalClusterStateTaskExecutor(final AllocationService allocationService, final Logger logger) {
+    public NodeRemovalClusterStateTaskExecutor(
+            final AllocationService allocationService,
+            final Logger logger) {
         this.allocationService = allocationService;
         this.logger = logger;
     }
@@ -80,7 +82,7 @@ public class NodeRemovalClusterStateTaskExecutor
 
         if (!removed) {
             // no nodes to remove, keep the current cluster state
-            return ClusterTasksResult.<Task> builder().successes(tasks).build(currentState);
+            return ClusterTasksResult.<Task>builder().successes(tasks).build(currentState);
         }
 
         final ClusterState remainingNodesClusterState = remainingNodesClusterState(currentState, remainingNodesBuilder);
@@ -89,9 +91,9 @@ public class NodeRemovalClusterStateTaskExecutor
     }
 
     protected ClusterTasksResult<Task> getTaskClusterTasksResult(ClusterState currentState, List<Task> tasks,
-            ClusterState remainingNodesClusterState) {
+                                                                 ClusterState remainingNodesClusterState) {
         ClusterState ptasksDisassociatedState = PersistentTasksCustomMetadata.disassociateDeadNodes(remainingNodesClusterState);
-        final ClusterTasksResult.Builder<Task> resultBuilder = ClusterTasksResult.<Task> builder().successes(tasks);
+        final ClusterTasksResult.Builder<Task> resultBuilder = ClusterTasksResult.<Task>builder().successes(tasks);
         return resultBuilder.build(allocationService.disassociateDeadNodes(ptasksDisassociatedState, true, describeTasks(tasks)));
     }
 

@@ -19,18 +19,22 @@
 
 package org.codelibs.fesen.nio;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
+import org.codelibs.fesen.core.CheckedRunnable;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.nio.ChannelContext;
+import org.codelibs.fesen.nio.EventHandler;
+import org.codelibs.fesen.nio.FlushReadyWrite;
+import org.codelibs.fesen.nio.NioChannel;
+import org.codelibs.fesen.nio.NioSelector;
+import org.codelibs.fesen.nio.NioServerSocketChannel;
+import org.codelibs.fesen.nio.NioSocketChannel;
+import org.codelibs.fesen.nio.ServerChannelContext;
+import org.codelibs.fesen.nio.SocketChannelContext;
+import org.codelibs.fesen.nio.WriteOperation;
+import org.codelibs.fesen.test.ESTestCase;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -44,12 +48,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
-import org.codelibs.fesen.common.util.concurrent.AbstractRunnable;
-import org.codelibs.fesen.core.CheckedRunnable;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.test.ESTestCase;
-import org.junit.Before;
-import org.mockito.ArgumentCaptor;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NioSelectorTests extends ESTestCase {
 
@@ -61,7 +69,7 @@ public class NioSelectorTests extends ESTestCase {
     private SocketChannelContext channelContext;
     private ServerChannelContext serverChannelContext;
     private BiConsumer<Void, Exception> listener;
-    private ByteBuffer[] buffers = { ByteBuffer.allocate(1) };
+    private ByteBuffer[] buffers = {ByteBuffer.allocate(1)};
     private Selector rawSelector;
 
     @Before
@@ -96,7 +104,7 @@ public class NioSelectorTests extends ESTestCase {
         }).when(eventHandler).handleTask(any());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void testQueueChannelForClosed() throws IOException {
         NioChannel channel = mock(NioChannel.class);
         ChannelContext context = mock(ChannelContext.class);
@@ -110,7 +118,7 @@ public class NioSelectorTests extends ESTestCase {
         verify(eventHandler).handleClose(context);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void testCloseException() throws IOException, InterruptedException {
         IOException ioException = new IOException();
         NioChannel channel = mock(NioChannel.class);
@@ -157,7 +165,8 @@ public class NioSelectorTests extends ESTestCase {
 
     public void testDefaultSelectorTimeoutIsUsedIfNoTaskSooner() throws IOException {
         long delay = new TimeValue(15, TimeUnit.MINUTES).nanos();
-        selector.getTaskScheduler().scheduleAtRelativeTime(() -> {}, System.nanoTime() + delay);
+        selector.getTaskScheduler().scheduleAtRelativeTime(() -> {
+        }, System.nanoTime() + delay);
 
         selector.singleLoop();
         verify(rawSelector).select(300);
@@ -169,7 +178,8 @@ public class NioSelectorTests extends ESTestCase {
         assertBusy(() -> {
             ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
             long delay = new TimeValue(50, TimeUnit.MILLISECONDS).nanos();
-            selector.getTaskScheduler().scheduleAtRelativeTime(() -> {}, System.nanoTime() + delay);
+            selector.getTaskScheduler().scheduleAtRelativeTime(() -> {
+            }, System.nanoTime() + delay);
             selector.singleLoop();
             verify(rawSelector).select(captor.capture());
             assertTrue(captor.getValue() > 0);

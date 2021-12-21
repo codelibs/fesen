@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.composite;
 
-import java.io.IOException;
-import java.util.function.LongUnaryOperator;
-import java.util.function.ToLongFunction;
-
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.index.IndexReader;
@@ -46,6 +42,10 @@ import org.codelibs.fesen.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.LeafBucketCollector;
 
+import java.io.IOException;
+import java.util.function.LongUnaryOperator;
+import java.util.function.ToLongFunction;
+
 /**
  * A {@link SingleDimensionValuesSource} for longs.
  */
@@ -59,9 +59,9 @@ class LongValuesSource extends SingleDimensionValuesSource<Long> {
     private long currentValue;
     private boolean missingCurrentValue;
 
-    LongValuesSource(BigArrays bigArrays, MappedFieldType fieldType,
-            CheckedFunction<LeafReaderContext, SortedNumericDocValues, IOException> docValuesFunc, LongUnaryOperator rounding,
-            DocValueFormat format, boolean missingBucket, int size, int reverseMul) {
+    LongValuesSource(BigArrays bigArrays,
+                     MappedFieldType fieldType, CheckedFunction<LeafReaderContext, SortedNumericDocValues, IOException> docValuesFunc,
+                     LongUnaryOperator rounding, DocValueFormat format, boolean missingBucket, int size, int reverseMul) {
         super(bigArrays, format, fieldType, missingBucket, size, reverseMul);
         this.bigArrays = bigArrays;
         this.docValuesFunc = docValuesFunc;
@@ -72,7 +72,7 @@ class LongValuesSource extends SingleDimensionValuesSource<Long> {
 
     @Override
     void copyCurrent(int slot) {
-        values = bigArrays.grow(values, slot + 1);
+        values = bigArrays.grow(values, slot+1);
         if (missingBucket && missingCurrentValue) {
             bits.clear(slot);
         } else {
@@ -202,7 +202,7 @@ class LongValuesSource extends SingleDimensionValuesSource<Long> {
             return extractQuery(((BoostQuery) query).getQuery());
         } else if (query instanceof IndexOrDocValuesQuery) {
             return extractQuery(((IndexOrDocValuesQuery) query).getIndexQuery());
-        } else if (query instanceof ConstantScoreQuery) {
+        } else if (query instanceof ConstantScoreQuery){
             return extractQuery(((ConstantScoreQuery) query).getQuery());
         } else {
             return query;
@@ -231,7 +231,8 @@ class LongValuesSource extends SingleDimensionValuesSource<Long> {
     @Override
     SortedDocsProducer createSortedDocsProducerOrNull(IndexReader reader, Query query) {
         query = extractQuery(query);
-        if (checkIfSortedDocsIsApplicable(reader, fieldType) == false || checkMatchAllOrRangeQuery(query, fieldType.name()) == false) {
+        if (checkIfSortedDocsIsApplicable(reader, fieldType) == false ||
+                checkMatchAllOrRangeQuery(query, fieldType.name()) == false) {
             return null;
         }
         final byte[] lowerPoint;
@@ -250,18 +251,18 @@ class LongValuesSource extends SingleDimensionValuesSource<Long> {
             final ToLongFunction<byte[]> toBucketFunction;
 
             switch (ft.typeName()) {
-            case "long":
-                toBucketFunction = (value) -> rounding.applyAsLong(LongPoint.decodeDimension(value, 0));
-                break;
+                case "long":
+                    toBucketFunction = (value) -> rounding.applyAsLong(LongPoint.decodeDimension(value, 0));
+                    break;
 
-            case "int":
-            case "short":
-            case "byte":
-                toBucketFunction = (value) -> rounding.applyAsLong(IntPoint.decodeDimension(value, 0));
-                break;
+                case "int":
+                case "short":
+                case "byte":
+                    toBucketFunction = (value) -> rounding.applyAsLong(IntPoint.decodeDimension(value, 0));
+                    break;
 
-            default:
-                return null;
+                default:
+                    return null;
             }
             return new PointsSortedDocsProducer(fieldType.name(), toBucketFunction, lowerPoint, upperPoint);
         } else if (fieldType instanceof DateFieldMapper.DateFieldType) {

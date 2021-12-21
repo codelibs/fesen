@@ -18,18 +18,27 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
+import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
+import org.codelibs.fesen.test.rest.yaml.section.ContainsAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.GreaterThanAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.IsFalseAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.IsTrueAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.LengthAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.LessThanAssertion;
+import org.codelibs.fesen.test.rest.yaml.section.MatchAssertion;
 
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.fesen.common.xcontent.yaml.YamlXContent;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase {
     public void testParseIsTrue() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "get.fields._timestamp");
+        parser = createParser(YamlXContent.yamlXContent,
+                "get.fields._timestamp"
+        );
 
         IsTrueAssertion trueAssertion = IsTrueAssertion.parse(parser);
 
@@ -38,7 +47,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseIsFalse() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "docs.1._source");
+        parser = createParser(YamlXContent.yamlXContent,
+                "docs.1._source"
+        );
 
         IsFalseAssertion falseAssertion = IsFalseAssertion.parse(parser);
 
@@ -47,7 +58,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseGreaterThan() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ field: 3}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ field: 3}"
+        );
 
         GreaterThanAssertion greaterThanAssertion = GreaterThanAssertion.parse(parser);
         assertThat(greaterThanAssertion, notNullValue());
@@ -57,7 +70,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseLessThan() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ field: 3}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ field: 3}"
+        );
 
         LessThanAssertion lessThanAssertion = LessThanAssertion.parse(parser);
         assertThat(lessThanAssertion, notNullValue());
@@ -67,7 +82,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseLength() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ _id: 22}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ _id: 22}"
+        );
 
         LengthAssertion lengthAssertion = LengthAssertion.parse(parser);
         assertThat(lengthAssertion, notNullValue());
@@ -77,7 +94,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseMatchSimpleIntegerValue() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ field: 10 }");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ field: 10 }"
+        );
 
         MatchAssertion matchAssertion = MatchAssertion.parse(parser);
 
@@ -88,7 +107,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseMatchSimpleStringValue() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ foo: bar }");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ foo: bar }"
+        );
 
         MatchAssertion matchAssertion = MatchAssertion.parse(parser);
 
@@ -99,7 +120,9 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
     }
 
     public void testParseMatchArray() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{'matches': ['test_percolator_1', 'test_percolator_2']}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{'matches': ['test_percolator_1', 'test_percolator_2']}"
+        );
 
         MatchAssertion matchAssertion = MatchAssertion.parse(parser);
 
@@ -114,18 +137,25 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
 
     @SuppressWarnings("unchecked")
     public void testParseContains() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{testKey: { someKey: someValue } }");
+        parser = createParser(YamlXContent.yamlXContent,
+            "{testKey: { someKey: someValue } }"
+        );
 
         ContainsAssertion containsAssertion = ContainsAssertion.parse(parser);
         assertThat(containsAssertion, notNullValue());
         assertThat(containsAssertion.getField(), equalTo("testKey"));
         assertThat(containsAssertion.getExpectedValue(), instanceOf(Map.class));
-        assertThat(((Map<String, String>) containsAssertion.getExpectedValue()).get("someKey"), equalTo("someValue"));
+        assertThat(
+            ((Map<String, String>) containsAssertion.getExpectedValue()).get("someKey"),
+            equalTo("someValue")
+        );
     }
 
     @SuppressWarnings("unchecked")
     public void testParseMatchSourceValues() throws Exception {
-        parser = createParser(YamlXContent.yamlXContent, "{ _source: { responses.0.hits.total: 3, foo: bar  }}");
+        parser = createParser(YamlXContent.yamlXContent,
+                "{ _source: { responses.0.hits.total: 3, foo: bar  }}"
+        );
 
         MatchAssertion matchAssertion = MatchAssertion.parse(parser);
 
@@ -136,7 +166,7 @@ public class AssertionTests extends AbstractClientYamlTestFragmentParserTestCase
         assertThat(expectedValue.size(), equalTo(2));
         Object o = expectedValue.get("responses.0.hits.total");
         assertThat(o, instanceOf(Integer.class));
-        assertThat((Integer) o, equalTo(3));
+        assertThat((Integer)o, equalTo(3));
         o = expectedValue.get("foo");
         assertThat(o, instanceOf(String.class));
         assertThat(o.toString(), equalTo("bar"));

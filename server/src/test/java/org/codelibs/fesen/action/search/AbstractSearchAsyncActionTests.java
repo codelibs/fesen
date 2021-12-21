@@ -72,8 +72,10 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
     private final Set<ShardSearchContextId> releasedContexts = new CopyOnWriteArraySet<>();
 
     private AbstractSearchAsyncAction<SearchPhaseResult> createAction(SearchRequest request,
-            ArraySearchPhaseResults<SearchPhaseResult> results, ActionListener<SearchResponse> listener, final boolean controlled,
-            final AtomicLong expected) {
+                                                                      ArraySearchPhaseResults<SearchPhaseResult> results,
+                                                                      ActionListener<SearchResponse> listener,
+                                                                      final boolean controlled,
+                                                                      final AtomicLong expected) {
         final Runnable runnable;
         final TransportSearchAction.SearchTimeProvider timeProvider;
         if (controlled) {
@@ -84,7 +86,10 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
                 long elapsed = spinForAtLeastNMilliseconds(randomIntBetween(1, 10));
                 expected.set(elapsed);
             };
-            timeProvider = new TransportSearchAction.SearchTimeProvider(0, System.nanoTime(), System::nanoTime);
+            timeProvider = new TransportSearchAction.SearchTimeProvider(
+                    0,
+                    System.nanoTime(),
+                    System::nanoTime);
         }
 
         BiFunction<String, String, Transport.Connection> nodeIdToConnection = (cluster, node) -> {
@@ -95,8 +100,12 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
         return new AbstractSearchAsyncAction<SearchPhaseResult>("test", logger, null, nodeIdToConnection,
                 Collections.singletonMap("foo", new AliasFilter(new MatchAllQueryBuilder())), Collections.singletonMap("foo", 2.0f),
                 Collections.singletonMap("name", Sets.newHashSet("bar", "baz")), null, request, listener,
-                new GroupShardsIterator<>(Collections.singletonList(new SearchShardIterator(null, null, Collections.emptyList(), null))),
-                timeProvider, ClusterState.EMPTY_STATE, null, results, request.getMaxConcurrentShardRequests(),
+                new GroupShardsIterator<>(
+                    Collections.singletonList(
+                        new SearchShardIterator(null, null, Collections.emptyList(), null)
+                    )
+                ), timeProvider, ClusterState.EMPTY_STATE, null,
+                results, request.getMaxConcurrentShardRequests(),
                 SearchResponse.Clusters.EMPTY) {
             @Override
             protected SearchPhase getNextPhase(final SearchPhaseResults<SearchPhaseResult> results, SearchPhaseContext context) {
@@ -105,7 +114,7 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
 
             @Override
             protected void executePhaseOnShard(final SearchShardIterator shardIt, final SearchShardTarget shard,
-                    final SearchActionListener<SearchPhaseResult> listener) {
+                                               final SearchActionListener<SearchPhaseResult> listener) {
             }
 
             @Override
@@ -116,7 +125,7 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
 
             @Override
             public void sendReleaseSearchContext(ShardSearchContextId contextId, Transport.Connection connection,
-                    OriginalIndices originalIndices) {
+                                                 OriginalIndices originalIndices) {
                 releasedContexts.add(contextId);
             }
         };
@@ -132,8 +141,8 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
 
     private void runTestTook(final boolean controlled) {
         final AtomicLong expected = new AtomicLong();
-        AbstractSearchAsyncAction<SearchPhaseResult> action =
-                createAction(new SearchRequest(), new ArraySearchPhaseResults<>(10), null, controlled, expected);
+        AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(new SearchRequest(),
+            new ArraySearchPhaseResults<>(10), null, controlled, expected);
         final long actual = action.buildTookInMillis();
         if (controlled) {
             // with a controlled clock, we can assert the exact took time
@@ -147,18 +156,18 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
     public void testBuildShardSearchTransportRequest() {
         SearchRequest searchRequest = new SearchRequest().allowPartialSearchResults(randomBoolean()).preference("_shards:1,3");
         final AtomicLong expected = new AtomicLong();
-        AbstractSearchAsyncAction<SearchPhaseResult> action =
-                createAction(searchRequest, new ArraySearchPhaseResults<>(10), null, false, expected);
+        AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(searchRequest,
+            new ArraySearchPhaseResults<>(10), null, false, expected);
         String clusterAlias = randomBoolean() ? null : randomAlphaOfLengthBetween(5, 10);
         SearchShardIterator iterator = new SearchShardIterator(clusterAlias, new ShardId(new Index("name", "foo"), 1),
-                Collections.emptyList(), new OriginalIndices(new String[] { "name", "name1" }, IndicesOptions.strictExpand()));
+            Collections.emptyList(), new OriginalIndices(new String[] {"name", "name1"}, IndicesOptions.strictExpand()));
         ShardSearchRequest shardSearchTransportRequest = action.buildShardSearchRequest(iterator);
         assertEquals(IndicesOptions.strictExpand(), shardSearchTransportRequest.indicesOptions());
-        assertArrayEquals(new String[] { "name", "name1" }, shardSearchTransportRequest.indices());
+        assertArrayEquals(new String[] {"name", "name1"}, shardSearchTransportRequest.indices());
         assertEquals(new MatchAllQueryBuilder(), shardSearchTransportRequest.getAliasFilter().getQueryBuilder());
         assertEquals(2.0f, shardSearchTransportRequest.indexBoost(), 0.0f);
-        assertArrayEquals(new String[] { "name", "name1" }, shardSearchTransportRequest.indices());
-        assertArrayEquals(new String[] { "bar", "baz" }, shardSearchTransportRequest.indexRoutings());
+        assertArrayEquals(new String[] {"name", "name1"}, shardSearchTransportRequest.indices());
+        assertArrayEquals(new String[] {"bar", "baz"}, shardSearchTransportRequest.indexRoutings());
         assertEquals("_shards:1,3", shardSearchTransportRequest.preference());
         assertEquals(clusterAlias, shardSearchTransportRequest.getClusterAlias());
     }
@@ -166,7 +175,8 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
     public void testBuildSearchResponse() {
         SearchRequest searchRequest = new SearchRequest().allowPartialSearchResults(randomBoolean());
         ArraySearchPhaseResults<SearchPhaseResult> phaseResults = new ArraySearchPhaseResults<>(10);
-        AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(searchRequest, phaseResults, null, false, new AtomicLong());
+        AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(searchRequest,
+            phaseResults, null, false, new AtomicLong());
         InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
         SearchResponse searchResponse = action.buildSearchResponse(internalSearchResponse, action.buildShardFailures(), null, null);
         assertSame(searchResponse.getAggregations(), internalSearchResponse.aggregations());
@@ -180,7 +190,7 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
         final ArraySearchPhaseResults<SearchPhaseResult> queryResult = new ArraySearchPhaseResults<>(10);
         AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(searchRequest, queryResult, null, false, new AtomicLong());
         action.onShardFailure(0, new SearchShardTarget("node", new ShardId("index", "index-uuid", 0), null, OriginalIndices.NONE),
-                new IllegalArgumentException());
+            new IllegalArgumentException());
         InternalSearchResponse internalSearchResponse = InternalSearchResponse.empty();
         SearchResponse searchResponse = action.buildSearchResponse(internalSearchResponse, action.buildShardFailures(), null, null);
         assertSame(searchResponse.getAggregations(), internalSearchResponse.aggregations());
@@ -203,11 +213,11 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
             String failureClusterAlias = randomBoolean() ? null : randomAlphaOfLengthBetween(5, 10);
             String failureNodeId = randomAlphaOfLengthBetween(5, 10);
             action.onShardFailure(i, new SearchShardTarget(failureNodeId, failureShardId, failureClusterAlias, OriginalIndices.NONE),
-                    new IllegalArgumentException());
+                new IllegalArgumentException());
         }
         action.sendSearchResponse(InternalSearchResponse.empty(), phaseResults.results);
         assertThat(exception.get(), instanceOf(SearchPhaseExecutionException.class));
-        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException) exception.get();
+        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException)exception.get();
         assertEquals(0, searchPhaseExecutionException.getSuppressed().length);
         assertEquals(numFailures, searchPhaseExecutionException.shardFailures().length);
         for (ShardSearchFailure shardSearchFailure : searchPhaseExecutionException.shardFailures()) {
@@ -232,7 +242,7 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
             }
         }, "message", null);
         assertThat(exception.get(), instanceOf(SearchPhaseExecutionException.class));
-        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException) exception.get();
+        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException)exception.get();
         assertEquals("message", searchPhaseExecutionException.getMessage());
         assertEquals("test", searchPhaseExecutionException.getPhaseName());
         assertEquals(0, searchPhaseExecutionException.shardFailures().length);
@@ -246,7 +256,8 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
         AtomicReference<Exception> exception = new AtomicReference<>();
         ActionListener<SearchResponse> listener = ActionListener.wrap(response -> fail("onResponse should not be called"), exception::set);
         int numShards = randomIntBetween(2, 10);
-        ArraySearchPhaseResults<SearchPhaseResult> phaseResults = new ArraySearchPhaseResults<>(numShards);
+        ArraySearchPhaseResults<SearchPhaseResult> phaseResults =
+            new ArraySearchPhaseResults<>(numShards);
         AbstractSearchAsyncAction<SearchPhaseResult> action = createAction(searchRequest, phaseResults, listener, false, new AtomicLong());
         // skip one to avoid the "all shards failed" failure.
         SearchShardIterator skipIterator = new SearchShardIterator(null, null, Collections.emptyList(), null);
@@ -255,15 +266,17 @@ public class AbstractSearchAsyncActionTests extends ESTestCase {
         // expect at least 2 shards, so onPhaseDone should report failure.
         action.onPhaseDone();
         assertThat(exception.get(), instanceOf(SearchPhaseExecutionException.class));
-        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException) exception.get();
-        assertEquals("Partial shards failure (" + (numShards - 1) + " shards unavailable)", searchPhaseExecutionException.getMessage());
+        SearchPhaseExecutionException searchPhaseExecutionException = (SearchPhaseExecutionException)exception.get();
+        assertEquals("Partial shards failure (" + (numShards - 1) + " shards unavailable)",
+            searchPhaseExecutionException.getMessage());
         assertEquals("test", searchPhaseExecutionException.getPhaseName());
         assertEquals(0, searchPhaseExecutionException.shardFailures().length);
         assertEquals(0, searchPhaseExecutionException.getSuppressed().length);
     }
 
     private static ArraySearchPhaseResults<SearchPhaseResult> phaseResults(Set<ShardSearchContextId> contextIds,
-            List<Tuple<String, String>> nodeLookups, int numFailures) {
+                                                                           List<Tuple<String, String>> nodeLookups,
+                                                                           int numFailures) {
         int numResults = randomIntBetween(1, 10);
         ArraySearchPhaseResults<SearchPhaseResult> phaseResults = new ArraySearchPhaseResults<>(numResults + numFailures);
 

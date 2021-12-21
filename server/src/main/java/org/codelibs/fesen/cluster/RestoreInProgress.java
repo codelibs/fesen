@@ -19,12 +19,8 @@
 
 package org.codelibs.fesen.cluster;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 import org.codelibs.fesen.Version;
 import org.codelibs.fesen.cluster.ClusterState.Custom;
@@ -37,8 +33,12 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.index.shard.ShardId;
 import org.codelibs.fesen.snapshots.Snapshot;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Meta data about restore processes that are currently executing
@@ -67,10 +67,8 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         return entries.equals(((RestoreInProgress) o).entries);
     }
 
@@ -141,7 +139,7 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
          * @param shards     map of shards being restored to their current restore status
          */
         public Entry(String uuid, Snapshot snapshot, State state, List<String> indices,
-                ImmutableOpenMap<ShardId, ShardRestoreStatus> shards) {
+            ImmutableOpenMap<ShardId, ShardRestoreStatus> shards) {
             this.snapshot = Objects.requireNonNull(snapshot);
             this.state = Objects.requireNonNull(state);
             this.indices = Objects.requireNonNull(indices);
@@ -206,8 +204,11 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
                 return false;
             }
             Entry entry = (Entry) o;
-            return uuid.equals(entry.uuid) && snapshot.equals(entry.snapshot) && state == entry.state && indices.equals(entry.indices)
-                    && shards.equals(entry.shards);
+            return uuid.equals(entry.uuid) &&
+                       snapshot.equals(entry.snapshot) &&
+                       state == entry.state &&
+                       indices.equals(entry.indices) &&
+                       shards.equals(entry.shards);
         }
 
         @Override
@@ -331,7 +332,9 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
             }
 
             ShardRestoreStatus status = (ShardRestoreStatus) o;
-            return state == status.state && Objects.equals(nodeId, status.nodeId) && Objects.equals(reason, status.reason);
+            return state == status.state &&
+                       Objects.equals(nodeId, status.nodeId) &&
+                       Objects.equals(reason, status.reason);
         }
 
         @Override
@@ -398,16 +401,16 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
          */
         public static State fromValue(byte value) {
             switch (value) {
-            case 0:
-                return INIT;
-            case 1:
-                return STARTED;
-            case 2:
-                return SUCCESS;
-            case 3:
-                return FAILURE;
-            default:
-                throw new IllegalArgumentException("No snapshot state for value [" + value + "]");
+                case 0:
+                    return INIT;
+                case 1:
+                    return STARTED;
+                case 2:
+                    return SUCCESS;
+                case 3:
+                    return FAILURE;
+                default:
+                    throw new IllegalArgumentException("No snapshot state for value [" + value + "]");
             }
         }
     }
@@ -433,7 +436,12 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
         int count = in.readVInt();
         final ImmutableOpenMap.Builder<String, Entry> entriesBuilder = ImmutableOpenMap.builder(count);
         for (int i = 0; i < count; i++) {
-            final String uuid = in.readString();
+            final String uuid;
+            if (in.getVersion().onOrAfter(Version.V_6_6_0)) {
+                uuid = in.readString();
+            } else {
+                uuid = BWC_UUID;
+            }
             Snapshot snapshot = new Snapshot(in);
             State state = State.fromValue(in.readByte());
             List<String> indexBuilder = in.readStringList();
@@ -448,7 +456,9 @@ public class RestoreInProgress extends AbstractNamedDiffable<Custom> implements 
         out.writeVInt(entries.size());
         for (ObjectCursor<Entry> v : entries.values()) {
             Entry entry = v.value;
-            out.writeString(entry.uuid);
+            if (out.getVersion().onOrAfter(Version.V_6_6_0)) {
+                out.writeString(entry.uuid);
+            }
             entry.snapshot().writeTo(out);
             out.writeByte(entry.state().value());
             out.writeStringCollection(entry.indices);

@@ -19,6 +19,15 @@
 
 package org.codelibs.fesen.action.bulk;
 
+import org.codelibs.fesen.action.ActionResponse;
+import org.codelibs.fesen.common.io.stream.StreamInput;
+import org.codelibs.fesen.common.io.stream.StreamOutput;
+import org.codelibs.fesen.common.xcontent.StatusToXContentObject;
+import org.codelibs.fesen.common.xcontent.XContentBuilder;
+import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.codelibs.fesen.core.TimeValue;
+import org.codelibs.fesen.rest.RestStatus;
+
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.throwUnknownField;
 import static org.codelibs.fesen.common.xcontent.XContentParserUtils.throwUnknownToken;
@@ -28,15 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.codelibs.fesen.action.ActionResponse;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.io.stream.StreamOutput;
-import org.codelibs.fesen.common.xcontent.StatusToXContentObject;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.core.TimeValue;
-import org.codelibs.fesen.rest.RestStatus;
 
 /**
  * A response of a bulk execution. Holding a response for each item responding (in order) of the
@@ -112,8 +112,10 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
         for (int i = 0; i < responses.length; i++) {
             BulkItemResponse response = responses[i];
             if (response.isFailed()) {
-                sb.append("\n[").append(i).append("]: index [").append(response.getIndex()).append("], type [").append(response.getType())
-                        .append("], id [").append(response.getId()).append("], message [").append(response.getFailureMessage()).append("]");
+                sb.append("\n[").append(i)
+                        .append("]: index [").append(response.getIndex()).append("], type [")
+                        .append(response.getType()).append("], id [").append(response.getId())
+                        .append("], message [").append(response.getFailureMessage()).append("]");
             }
         }
         return sb.toString();

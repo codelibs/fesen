@@ -19,15 +19,6 @@
 
 package org.codelibs.fesen.index;
 
-import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_REPLICAS;
-import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_SHARDS;
-import static org.codelibs.fesen.test.ESTestCase.randomAlphaOfLength;
-import static org.codelibs.fesen.test.ESTestCase.randomBoolean;
-import static org.codelibs.fesen.test.ESTestCase.randomFrom;
-import static org.codelibs.fesen.test.ESTestCase.randomIntBetween;
-
-import java.io.IOException;
-
 import org.codelibs.fesen.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.action.admin.indices.create.CreateIndexRequest;
 import org.codelibs.fesen.common.settings.Settings;
@@ -35,10 +26,18 @@ import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentFactory;
 import org.codelibs.fesen.common.xcontent.XContentType;
 
+import java.io.IOException;
+
+import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_REPLICAS;
+import static org.codelibs.fesen.cluster.metadata.IndexMetadata.SETTING_NUMBER_OF_SHARDS;
+import static org.codelibs.fesen.test.ESTestCase.randomAlphaOfLength;
+import static org.codelibs.fesen.test.ESTestCase.randomBoolean;
+import static org.codelibs.fesen.test.ESTestCase.randomFrom;
+import static org.codelibs.fesen.test.ESTestCase.randomIntBetween;
+
 public final class RandomCreateIndexGenerator {
 
-    private RandomCreateIndexGenerator() {
-    }
+    private RandomCreateIndexGenerator() {}
 
     /**
      * Returns a random {@link CreateIndexRequest}.

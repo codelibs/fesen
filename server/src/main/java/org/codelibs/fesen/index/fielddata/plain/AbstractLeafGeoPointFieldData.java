@@ -18,15 +18,15 @@
  */
 package org.codelibs.fesen.index.fielddata.plain;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.lucene.util.Accountable;
 import org.codelibs.fesen.index.fielddata.FieldData;
 import org.codelibs.fesen.index.fielddata.LeafGeoPointFieldData;
 import org.codelibs.fesen.index.fielddata.MultiGeoPointValues;
 import org.codelibs.fesen.index.fielddata.ScriptDocValues;
 import org.codelibs.fesen.index.fielddata.SortedBinaryDocValues;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public abstract class AbstractLeafGeoPointFieldData implements LeafGeoPointFieldData {
 

@@ -18,19 +18,19 @@
  */
 package org.codelibs.fesen.test.rest.yaml.section;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 import org.codelibs.fesen.core.Tuple;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
 
 /**
  * Represents a length assert section:
@@ -40,7 +40,7 @@ import org.codelibs.fesen.core.Tuple;
 public class LengthAssertion extends Assertion {
     public static LengthAssertion parse(XContentParser parser) throws IOException {
         XContentLocation location = parser.getTokenLocation();
-        Tuple<String, Object> stringObjectTuple = ParserUtils.parseTuple(parser);
+        Tuple<String,Object> stringObjectTuple = ParserUtils.parseTuple(parser);
         assert stringObjectTuple.v2() != null;
         int value;
         if (stringObjectTuple.v2() instanceof Number) {
@@ -48,7 +48,7 @@ public class LengthAssertion extends Assertion {
         } else {
             try {
                 value = Integer.valueOf(stringObjectTuple.v2().toString());
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 throw new IllegalArgumentException("length is not a valid number", e);
             }
         }
@@ -64,8 +64,8 @@ public class LengthAssertion extends Assertion {
     @Override
     protected void doAssert(Object actualValue, Object expectedValue) {
         logger.trace("assert that [{}] has length [{}] (field: [{}])", actualValue, expectedValue, getField());
-        assertThat("expected value of [" + getField() + "] is not numeric (got [" + expectedValue.getClass() + "]", expectedValue,
-                instanceOf(Number.class));
+        assertThat("expected value of [" + getField() + "] is not numeric (got [" + expectedValue.getClass() + "]",
+                expectedValue, instanceOf(Number.class));
         int length = ((Number) expectedValue).intValue();
         if (actualValue instanceof String) {
             assertThat(errorMessage(), ((String) actualValue).length(), equalTo(length));

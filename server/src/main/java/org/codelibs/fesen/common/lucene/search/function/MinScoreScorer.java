@@ -19,12 +19,12 @@
 
 package org.codelibs.fesen.common.lucene.search.function;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
+
+import java.io.IOException;
 
 /** A {@link Scorer} that filters out documents that have a score that is
  *  lower than a configured constant. */

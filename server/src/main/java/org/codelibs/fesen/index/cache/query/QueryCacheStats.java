@@ -19,8 +19,6 @@
 
 package org.codelibs.fesen.index.cache.query;
 
-import java.io.IOException;
-
 import org.apache.lucene.search.DocIdSet;
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
@@ -29,6 +27,8 @@ import org.codelibs.fesen.common.unit.ByteSizeValue;
 import org.codelibs.fesen.common.xcontent.ToXContent;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
+
+import java.io.IOException;
 
 public class QueryCacheStats implements Writeable, ToXContentFragment {
 

@@ -175,11 +175,13 @@ public class InternalClusterInfoServiceSchedulingTests extends ESTestCase {
 
         @Override
         protected <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action,
-                Request request, ActionListener<Response> listener) {
+                                                                                                  Request request,
+                                                                                                  ActionListener<Response> listener) {
             if (request instanceof NodesStatsRequest || request instanceof IndicesStatsRequest) {
                 requestCount++;
                 // ClusterInfoService handles ClusterBlockExceptions quietly, so we invent such an exception to avoid excess logging
-                listener.onFailure(new ClusterBlockException(org.codelibs.fesen.core.Set.of(NoMasterBlockService.NO_MASTER_BLOCK_ALL)));
+                listener.onFailure(new ClusterBlockException(
+                        org.codelibs.fesen.core.Set.of(NoMasterBlockService.NO_MASTER_BLOCK_ALL)));
             } else {
                 fail("unexpected action: " + action.name());
             }

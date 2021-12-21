@@ -19,16 +19,16 @@
 
 package org.codelibs.fesen.search.aggregations.metrics;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.search.DocValueFormat;
 import org.codelibs.fesen.search.aggregations.InternalAggregation;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class InternalMedianAbsoluteDeviation extends InternalNumericMetricsAggregation.SingleValue implements MedianAbsoluteDeviation {
 
@@ -87,7 +87,9 @@ public class InternalMedianAbsoluteDeviation extends InternalNumericMetricsAggre
     @Override
     public XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         final boolean anyResults = valuesSketch.size() > 0;
-        final Double mad = anyResults ? getMedianAbsoluteDeviation() : null;
+        final Double mad = anyResults
+            ? getMedianAbsoluteDeviation()
+            : null;
 
         builder.field(CommonFields.VALUE.getPreferredName(), mad);
         if (format != DocValueFormat.RAW && anyResults) {
@@ -104,12 +106,9 @@ public class InternalMedianAbsoluteDeviation extends InternalNumericMetricsAggre
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (super.equals(obj) == false)
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (super.equals(obj) == false) return false;
         InternalMedianAbsoluteDeviation other = (InternalMedianAbsoluteDeviation) obj;
         return Objects.equals(valuesSketch, other.valuesSketch);
     }

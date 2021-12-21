@@ -20,6 +20,9 @@ package org.codelibs.fesen.search.aggregations.matrix.stats;
 
 import java.util.List;
 
+import org.codelibs.fesen.search.aggregations.matrix.stats.MatrixStatsResults;
+import org.codelibs.fesen.search.aggregations.matrix.stats.RunningStats;
+
 public class RunningStatsTests extends BaseMatrixStatsTestCase {
 
     /** test running stats */
@@ -36,9 +39,9 @@ public class RunningStatsTests extends BaseMatrixStatsTestCase {
         int start = 0;
         RunningStats stats = null;
         List<Double> fieldAShard, fieldBShard;
-        for (int s = 0; s < numShards - 1; start = ++s * (int) obsPerShard) {
-            fieldAShard = fieldA.subList(start, start + (int) obsPerShard);
-            fieldBShard = fieldB.subList(start, start + (int) obsPerShard);
+        for (int s = 0; s < numShards-1; start = ++s * (int)obsPerShard) {
+            fieldAShard = fieldA.subList(start, start + (int)obsPerShard);
+            fieldBShard = fieldB.subList(start, start + (int)obsPerShard);
             if (stats == null) {
                 stats = createRunningStats(fieldAShard, fieldBShard);
             } else {

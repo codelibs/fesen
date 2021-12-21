@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.search.aggregations.bucket.histogram;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.ScoreMode;
 import org.codelibs.fesen.index.fielddata.SortedNumericDoubleValues;
@@ -35,6 +32,9 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * An aggregator for numeric values. For a given {@code interval},
  * {@code offset} and {@code value}, it returns the highest number that can be
@@ -44,12 +44,38 @@ import org.codelibs.fesen.search.internal.SearchContext;
 public class NumericHistogramAggregator extends AbstractHistogramAggregator {
     private final ValuesSource.Numeric valuesSource;
 
-    public NumericHistogramAggregator(String name, AggregatorFactories factories, double interval, double offset, BucketOrder order,
-            boolean keyed, long minDocCount, DoubleBounds extendedBounds, DoubleBounds hardBounds, ValuesSourceConfig valuesSourceConfig,
-            SearchContext context, Aggregator parent, CardinalityUpperBound cardinalityUpperBound, Map<String, Object> metadata)
-            throws IOException {
-        super(name, factories, interval, offset, order, keyed, minDocCount, extendedBounds, hardBounds, valuesSourceConfig.format(),
-                context, parent, cardinalityUpperBound, metadata);
+    public NumericHistogramAggregator(
+        String name,
+        AggregatorFactories factories,
+        double interval,
+        double offset,
+        BucketOrder order,
+        boolean keyed,
+        long minDocCount,
+        DoubleBounds extendedBounds,
+        DoubleBounds hardBounds,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext context,
+        Aggregator parent,
+        CardinalityUpperBound cardinalityUpperBound,
+        Map<String, Object> metadata
+    ) throws IOException {
+        super(
+            name,
+            factories,
+            interval,
+            offset,
+            order,
+            keyed,
+            minDocCount,
+            extendedBounds,
+            hardBounds,
+            valuesSourceConfig.format(),
+            context,
+            parent,
+            cardinalityUpperBound,
+            metadata
+        );
         // TODO: Stop using null here
         this.valuesSource = valuesSourceConfig.hasValues() ? (ValuesSource.Numeric) valuesSourceConfig.getValuesSource() : null;
     }
@@ -63,7 +89,8 @@ public class NumericHistogramAggregator extends AbstractHistogramAggregator {
     }
 
     @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
+    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx,
+            final LeafBucketCollector sub) throws IOException {
         if (valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }

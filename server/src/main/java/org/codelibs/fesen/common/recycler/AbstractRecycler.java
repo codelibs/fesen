@@ -19,6 +19,7 @@
 
 package org.codelibs.fesen.common.recycler;
 
+
 abstract class AbstractRecycler<T> implements Recycler<T> {
 
     protected final Recycler.C<T> c;

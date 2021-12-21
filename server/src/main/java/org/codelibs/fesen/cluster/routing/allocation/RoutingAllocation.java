@@ -19,9 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation;
 
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableSet;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,8 +37,11 @@ import org.codelibs.fesen.cluster.routing.allocation.decider.AllocationDeciders;
 import org.codelibs.fesen.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.common.collect.ImmutableOpenMap;
 import org.codelibs.fesen.index.shard.ShardId;
-import org.codelibs.fesen.snapshots.RestoreService.RestoreInProgressUpdater;
 import org.codelibs.fesen.snapshots.SnapshotShardSizeInfo;
+import org.codelibs.fesen.snapshots.RestoreService.RestoreInProgressUpdater;
+
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * The {@link RoutingAllocation} keep the state of the current allocation
@@ -80,7 +80,9 @@ public class RoutingAllocation {
     private final RoutingNodesChangedObserver nodesChangedObserver = new RoutingNodesChangedObserver();
     private final RestoreInProgressUpdater restoreInProgressUpdater = new RestoreInProgressUpdater();
     private final RoutingChangesObserver routingChangesObserver = new RoutingChangesObserver.DelegatingRoutingChangesObserver(
-            nodesChangedObserver, indexMetadataUpdater, restoreInProgressUpdater);
+        nodesChangedObserver, indexMetadataUpdater, restoreInProgressUpdater
+    );
+
 
     /**
      * Creates a new {@link RoutingAllocation}
@@ -90,7 +92,7 @@ public class RoutingAllocation {
      * @param currentNanoTime the nano time to use for all delay allocation calculation (typically {@link System#nanoTime()})
      */
     public RoutingAllocation(AllocationDeciders deciders, RoutingNodes routingNodes, ClusterState clusterState, ClusterInfo clusterInfo,
-            SnapshotShardSizeInfo shardSizeInfo, long currentNanoTime) {
+                             SnapshotShardSizeInfo shardSizeInfo, long currentNanoTime) {
         this.deciders = deciders;
         this.routingNodes = routingNodes;
         this.metadata = clusterState.metadata();
@@ -156,7 +158,7 @@ public class RoutingAllocation {
     }
 
     public <T extends ClusterState.Custom> T custom(String key) {
-        return (T) customs.get(key);
+        return (T)customs.get(key);
     }
 
     public ImmutableOpenMap<String, ClusterState.Custom> getCustoms() {

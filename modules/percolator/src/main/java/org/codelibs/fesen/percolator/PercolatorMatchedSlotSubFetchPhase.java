@@ -18,16 +18,6 @@
  */
 package org.codelibs.fesen.percolator;
 
-import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
-import static org.codelibs.fesen.percolator.PercolatorHighlightSubFetchPhase.locatePercolatorQuery;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -47,6 +37,16 @@ import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.search.fetch.FetchContext;
 import org.codelibs.fesen.search.fetch.FetchSubPhase;
 import org.codelibs.fesen.search.fetch.FetchSubPhaseProcessor;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
+import static org.codelibs.fesen.percolator.PercolatorHighlightSubFetchPhase.locatePercolatorQuery;
 
 /**
  * Adds a special field to a percolator query hit to indicate which documents matched with the percolator query.
@@ -134,15 +134,18 @@ final class PercolatorMatchedSlotSubFetchPhase implements FetchSubPhase {
         Query filterNestedDocs(Query in) {
             if (rootDocsBySlot != null) {
                 // Ensures that we filter out nested documents
-                return new BooleanQuery.Builder().add(in, BooleanClause.Occur.MUST)
-                        .add(Queries.newNonNestedFilter(Version.CURRENT), BooleanClause.Occur.FILTER).build();
+                return new BooleanQuery.Builder()
+                    .add(in, BooleanClause.Occur.MUST)
+                    .add(Queries.newNonNestedFilter(Version.CURRENT), BooleanClause.Occur.FILTER)
+                    .build();
             }
             return in;
         }
     }
 
     static IntStream convertTopDocsToSlots(TopDocs topDocs, int[] rootDocsBySlot) {
-        IntStream stream = Arrays.stream(topDocs.scoreDocs).mapToInt(scoreDoc -> scoreDoc.doc);
+        IntStream stream = Arrays.stream(topDocs.scoreDocs)
+            .mapToInt(scoreDoc -> scoreDoc.doc);
         if (rootDocsBySlot != null) {
             stream = stream.map(docId -> Arrays.binarySearch(rootDocsBySlot, docId));
         }

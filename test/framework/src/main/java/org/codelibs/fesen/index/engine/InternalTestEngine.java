@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.codelibs.fesen.common.util.concurrent.ConcurrentCollections;
+import org.codelibs.fesen.index.engine.EngineConfig;
+import org.codelibs.fesen.index.engine.InternalEngine;
 import org.codelibs.fesen.index.seqno.LocalCheckpointTracker;
 import org.codelibs.fesen.index.seqno.SequenceNumbers;
 
@@ -38,7 +40,7 @@ class InternalTestEngine extends InternalEngine {
     }
 
     InternalTestEngine(EngineConfig engineConfig, int maxDocs,
-            BiFunction<Long, Long, LocalCheckpointTracker> localCheckpointTrackerSupplier) {
+                       BiFunction<Long, Long, LocalCheckpointTracker> localCheckpointTrackerSupplier) {
         super(engineConfig, maxDocs, localCheckpointTrackerSupplier);
     }
 

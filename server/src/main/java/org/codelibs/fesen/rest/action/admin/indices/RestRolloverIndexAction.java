@@ -19,10 +19,6 @@
 
 package org.codelibs.fesen.rest.action.admin.indices;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static org.codelibs.fesen.rest.RestRequest.Method.POST;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -34,15 +30,21 @@ import org.codelibs.fesen.rest.BaseRestHandler;
 import org.codelibs.fesen.rest.RestRequest;
 import org.codelibs.fesen.rest.action.RestToXContentListener;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static org.codelibs.fesen.rest.RestRequest.Method.POST;
+
 public class RestRolloverIndexAction extends BaseRestHandler {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RestRolloverIndexAction.class);
-    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in rollover "
-            + "index requests is deprecated. The parameter will be removed in the next major version.";
+    public static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Using include_type_name in rollover " +
+        "index requests is deprecated. The parameter will be removed in the next major version.";
 
     @Override
     public List<Route> routes() {
-        return unmodifiableList(asList(new Route(POST, "/{index}/_rollover"), new Route(POST, "/{index}/_rollover/{new_index}")));
+        return unmodifiableList(asList(
+            new Route(POST, "/{index}/_rollover"),
+            new Route(POST, "/{index}/_rollover/{new_index}")));
     }
 
     @Override
@@ -61,8 +63,8 @@ public class RestRolloverIndexAction extends BaseRestHandler {
         rolloverIndexRequest.dryRun(request.paramAsBoolean("dry_run", false));
         rolloverIndexRequest.timeout(request.paramAsTime("timeout", rolloverIndexRequest.timeout()));
         rolloverIndexRequest.masterNodeTimeout(request.paramAsTime("master_timeout", rolloverIndexRequest.masterNodeTimeout()));
-        rolloverIndexRequest.getCreateIndexRequest()
-                .waitForActiveShards(ActiveShardCount.parseString(request.param("wait_for_active_shards")));
+        rolloverIndexRequest.getCreateIndexRequest().waitForActiveShards(
+                ActiveShardCount.parseString(request.param("wait_for_active_shards")));
         return channel -> client.admin().indices().rolloverIndex(rolloverIndexRequest, new RestToXContentListener<>(channel));
     }
 }

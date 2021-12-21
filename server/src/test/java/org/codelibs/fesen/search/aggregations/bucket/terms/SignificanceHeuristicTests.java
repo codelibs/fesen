@@ -162,7 +162,8 @@ public class SignificanceHeuristicTests extends ESTestCase {
     private abstract class TestAggFactory<A extends InternalSignificantTerms<A, B>, B extends InternalSignificantTerms.Bucket<B>> {
         final A createAggregation(SignificanceHeuristic significanceHeuristic, long subsetSize, long supersetSize, int bucketCount,
                 BiFunction<TestAggFactory<?, B>, Integer, B> bucketFactory) {
-            List<B> buckets = IntStream.range(0, bucketCount).mapToObj(i -> bucketFactory.apply(this, i)).collect(Collectors.toList());
+            List<B> buckets = IntStream.range(0, bucketCount).mapToObj(i -> bucketFactory.apply(this, i))
+                    .collect(Collectors.toList());
             return createAggregation(significanceHeuristic, subsetSize, supersetSize, buckets);
         }
 
@@ -170,13 +171,12 @@ public class SignificanceHeuristicTests extends ESTestCase {
 
         abstract B createBucket(long subsetDF, long subsetSize, long supersetDF, long supersetSize, long label);
     }
-
     private class StringTestAggFactory extends TestAggFactory<SignificantStringTerms, SignificantStringTerms.Bucket> {
         @Override
         SignificantStringTerms createAggregation(SignificanceHeuristic significanceHeuristic, long subsetSize, long supersetSize,
                 List<SignificantStringTerms.Bucket> buckets) {
-            return new SignificantStringTerms("sig_terms", 2, -1, emptyMap(), DocValueFormat.RAW, subsetSize, supersetSize,
-                    significanceHeuristic, buckets);
+            return new SignificantStringTerms("sig_terms", 2, -1,
+                    emptyMap(), DocValueFormat.RAW, subsetSize, supersetSize, significanceHeuristic, buckets);
         }
 
         @Override
@@ -185,13 +185,12 @@ public class SignificanceHeuristicTests extends ESTestCase {
                     subsetSize, supersetDF, supersetSize, InternalAggregations.EMPTY, DocValueFormat.RAW, 0);
         }
     }
-
     private class LongTestAggFactory extends TestAggFactory<SignificantLongTerms, SignificantLongTerms.Bucket> {
         @Override
         SignificantLongTerms createAggregation(SignificanceHeuristic significanceHeuristic, long subsetSize, long supersetSize,
                 List<SignificantLongTerms.Bucket> buckets) {
-            return new SignificantLongTerms("sig_terms", 2, -1, emptyMap(), DocValueFormat.RAW, subsetSize, supersetSize,
-                    significanceHeuristic, buckets);
+            return new SignificantLongTerms("sig_terms", 2, -1, emptyMap(), DocValueFormat.RAW,
+                    subsetSize, supersetSize, significanceHeuristic, buckets);
         }
 
         @Override
@@ -214,10 +213,12 @@ public class SignificanceHeuristicTests extends ESTestCase {
         boolean backgroundIsSuperset = randomBoolean();
         String mutual = "\"mutual_information\":{\"include_negatives\": " + includeNegatives + ", \"background_is_superset\":"
                 + backgroundIsSuperset + "}";
-        assertEquals(new MutualInformation(includeNegatives, backgroundIsSuperset), parseFromString(mutual));
-        String chiSquare =
-                "\"chi_square\":{\"include_negatives\": " + includeNegatives + ", \"background_is_superset\":" + backgroundIsSuperset + "}";
-        assertEquals(new ChiSquare(includeNegatives, backgroundIsSuperset), parseFromString(chiSquare));
+        assertEquals(new MutualInformation(includeNegatives, backgroundIsSuperset),
+                parseFromString(mutual));
+        String chiSquare = "\"chi_square\":{\"include_negatives\": " + includeNegatives + ", \"background_is_superset\":"
+                + backgroundIsSuperset + "}";
+        assertEquals(new ChiSquare(includeNegatives, backgroundIsSuperset),
+                parseFromString(chiSquare));
 
         // test with builders
         assertThat(parseFromBuilder(new JLHScore()), instanceOf(JLHScore.class));
@@ -237,8 +238,8 @@ public class SignificanceHeuristicTests extends ESTestCase {
 
     protected void checkParseException(String faultyHeuristicDefinition, String expectedError) throws IOException {
 
-        try (XContentParser stParser =
-                createParser(JsonXContent.jsonXContent, "{\"field\":\"text\", " + faultyHeuristicDefinition + ",\"min_doc_count\":200}")) {
+        try (XContentParser stParser = createParser(JsonXContent.jsonXContent,
+                    "{\"field\":\"text\", " + faultyHeuristicDefinition + ",\"min_doc_count\":200}")) {
             stParser.nextToken();
             SignificantTermsAggregationBuilder.parse("testagg", stParser);
             fail();
@@ -267,8 +268,8 @@ public class SignificanceHeuristicTests extends ESTestCase {
     }
 
     protected SignificanceHeuristic parseFromString(String heuristicString) throws IOException {
-        try (XContentParser stParser =
-                createParser(JsonXContent.jsonXContent, "{\"field\":\"text\", " + heuristicString + ", \"min_doc_count\":200}")) {
+        try (XContentParser stParser = createParser(JsonXContent.jsonXContent,
+                "{\"field\":\"text\", " + heuristicString + ", \"min_doc_count\":200}")) {
             return parseSignificanceHeuristic(stParser);
         }
     }
@@ -311,7 +312,7 @@ public class SignificanceHeuristicTests extends ESTestCase {
         }
         try {
             int idx = randomInt(3);
-            long[] values = { 1, 2, 3, 4 };
+            long[] values = {1, 2, 3, 4};
             values[idx] *= -1;
             heuristicIsSuperset.getScore(values[0], values[1], values[2], values[3]);
             fail();
@@ -335,7 +336,7 @@ public class SignificanceHeuristicTests extends ESTestCase {
         }
         try {
             int idx = randomInt(3);
-            long[] values = { 1, 2, 3, 4 };
+            long[] values = {1, 2, 3, 4};
             values[idx] *= -1;
             heuristicNotSuperset.getScore(values[0], values[1], values[2], values[3]);
             fail();
@@ -348,7 +349,7 @@ public class SignificanceHeuristicTests extends ESTestCase {
     void testAssertions(SignificanceHeuristic heuristic) {
         try {
             int idx = randomInt(3);
-            long[] values = { 1, 2, 3, 4 };
+            long[] values = {1, 2, 3, 4};
             values[idx] *= -1;
             heuristic.getScore(values[0], values[1], values[2], values[3]);
             fail();
@@ -403,7 +404,8 @@ public class SignificanceHeuristicTests extends ESTestCase {
             long c = randomLong();
             long d = randomLong();
             score = heuristic.getScore(a, b, c, d);
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
         assertThat(score, greaterThanOrEqualTo(0.0));
     }
 
@@ -424,7 +426,8 @@ public class SignificanceHeuristicTests extends ESTestCase {
             long c = randomLong();
             long d = randomLong();
             score = heuristic.getScore(a, b, c, d);
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
         assertThat(score, lessThanOrEqualTo(1.0));
         assertThat(score, greaterThanOrEqualTo(0.0));
         heuristic = new MutualInformation(false, true);
@@ -447,11 +450,11 @@ public class SignificanceHeuristicTests extends ESTestCase {
         //term is only in the subset, not at all in the other set but that is because the other set is empty.
         // this should actually not happen because only terms that are in the subset are considered now,
         // however, in this case the score should be 0 because a term that does not exist cannot be relevant...
-        assertThat(gnd.getScore(0, randomIntBetween(1, 2), 0, randomIntBetween(2, 3)), equalTo(0.0));
+        assertThat(gnd.getScore(0, randomIntBetween(1, 2), 0, randomIntBetween(2,3)), equalTo(0.0));
         // the terms do not co-occur at all - should be 0
-        assertThat(gnd.getScore(0, randomIntBetween(1, 2), randomIntBetween(2, 3), randomIntBetween(5, 6)), equalTo(0.0));
+        assertThat(gnd.getScore(0, randomIntBetween(1, 2), randomIntBetween(2, 3), randomIntBetween(5,6)), equalTo(0.0));
         // comparison between two terms that do not exist - probably not relevant
-        assertThat(gnd.getScore(0, 0, 0, randomIntBetween(1, 2)), equalTo(0.0));
+        assertThat(gnd.getScore(0, 0, 0, randomIntBetween(1,2)), equalTo(0.0));
         // terms co-occur perfectly - should be 1
         assertThat(gnd.getScore(1, 1, 1, 1), equalTo(1.0));
         gnd = new GND(false);

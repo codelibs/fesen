@@ -29,7 +29,20 @@ import org.codelibs.fesen.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.search.internal.SearchContext;
 
 public interface HistogramAggregatorSupplier {
-    Aggregator build(String name, AggregatorFactories factories, double interval, double offset, BucketOrder order, boolean keyed,
-            long minDocCount, DoubleBounds extendedBounds, DoubleBounds hardBounds, ValuesSourceConfig valuesSourceConfig,
-            SearchContext context, Aggregator parent, CardinalityUpperBound cardinality, Map<String, Object> metadata) throws IOException;
+    Aggregator build(
+        String name,
+        AggregatorFactories factories,
+        double interval,
+        double offset,
+        BucketOrder order,
+        boolean keyed,
+        long minDocCount,
+        DoubleBounds extendedBounds,
+        DoubleBounds hardBounds,
+        ValuesSourceConfig valuesSourceConfig,
+        SearchContext context,
+        Aggregator parent,
+        CardinalityUpperBound cardinality,
+        Map<String, Object> metadata
+    ) throws IOException;
 }

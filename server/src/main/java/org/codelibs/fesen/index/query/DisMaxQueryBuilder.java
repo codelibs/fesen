@@ -19,13 +19,6 @@
 
 package org.codelibs.fesen.index.query;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.common.ParseField;
@@ -35,6 +28,13 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.lucene.search.Queries;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * A query that generates the union of documents produced by its sub-queries, and that scores each document
@@ -218,7 +218,8 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
 
     @Override
     protected boolean doEquals(DisMaxQueryBuilder other) {
-        return Objects.equals(queries, other.queries) && Objects.equals(tieBreaker, other.tieBreaker);
+        return Objects.equals(queries, other.queries) &&
+               Objects.equals(tieBreaker, other.tieBreaker);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class ProfileScorerTests extends ESTestCase {
         public int docID() {
             throw new UnsupportedOperationException();
         }
-
+        
         @Override
         public void setMinCompetitiveScore(float minScore) {
             this.minCompetitiveScore = minScore;

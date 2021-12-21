@@ -144,7 +144,7 @@ public class BulkItemResponseTests extends ESTestCase {
 
             IndexResponseTests.assertDocWriteResponse(expectedDocResponse, actualDocResponse);
             if (expected.getOpType() == DocWriteRequest.OpType.UPDATE) {
-                assertEquals(((UpdateResponse) expectedDocResponse).getGetResult(), ((UpdateResponse) actualDocResponse).getGetResult());
+                assertEquals(((UpdateResponse) expectedDocResponse).getGetResult(), ((UpdateResponse)actualDocResponse).getGetResult());
             }
         }
     }

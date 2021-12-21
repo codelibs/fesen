@@ -19,17 +19,18 @@
 
 package org.codelibs.fesen.ingest.common;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import org.codelibs.fesen.FesenParseException;
+import org.codelibs.fesen.grok.MatcherWatchdog;
+import org.codelibs.fesen.ingest.common.GrokProcessor;
+import org.codelibs.fesen.test.ESTestCase;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codelibs.fesen.FesenParseException;
-import org.codelibs.fesen.grok.MatcherWatchdog;
-import org.codelibs.fesen.test.ESTestCase;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class GrokProcessorFactoryTests extends ESTestCase {
 
@@ -117,6 +118,6 @@ public class GrokProcessorFactoryTests extends ESTestCase {
         config.put("pattern_definitions", Collections.singletonMap("MY_PATTERN", "["));
         FesenParseException e = expectThrows(FesenParseException.class, () -> factory.create(null, null, null, config));
         assertThat(e.getMessage(),
-                equalTo("[patterns] Invalid regex pattern found in: [%{MY_PATTERN:name}!]. premature end of char-class"));
+            equalTo("[patterns] Invalid regex pattern found in: [%{MY_PATTERN:name}!]. premature end of char-class"));
     }
 }

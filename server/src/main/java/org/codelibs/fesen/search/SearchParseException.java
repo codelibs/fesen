@@ -19,14 +19,14 @@
 
 package org.codelibs.fesen.search;
 
-import java.io.IOException;
-
 import org.codelibs.fesen.common.io.stream.StreamInput;
 import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentLocation;
 import org.codelibs.fesen.core.Nullable;
 import org.codelibs.fesen.rest.RestStatus;
+
+import java.io.IOException;
 
 public class SearchParseException extends SearchException {
 

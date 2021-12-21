@@ -19,11 +19,7 @@
 
 package org.codelibs.fesen.action.admin.cluster.settings;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-
-import java.io.IOException;
-import java.util.Objects;
-
+import org.codelibs.fesen.Version;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.common.ParseField;
 import org.codelibs.fesen.common.io.stream.StreamInput;
@@ -33,6 +29,11 @@ import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
 
+import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
+
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A response for a cluster update settings action.
  */
@@ -41,8 +42,8 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
     private static final ParseField PERSISTENT = new ParseField("persistent");
     private static final ParseField TRANSIENT = new ParseField("transient");
 
-    private static final ConstructingObjectParser<ClusterUpdateSettingsResponse, Void> PARSER =
-            new ConstructingObjectParser<>("cluster_update_settings_response", true, args -> {
+    private static final ConstructingObjectParser<ClusterUpdateSettingsResponse, Void> PARSER = new ConstructingObjectParser<>(
+            "cluster_update_settings_response", true, args -> {
                 return new ClusterUpdateSettingsResponse((boolean) args[0], (Settings) args[1], (Settings) args[2]);
             });
     static {
@@ -55,9 +56,15 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
     final Settings persistentSettings;
 
     ClusterUpdateSettingsResponse(StreamInput in) throws IOException {
-        super(in, true);
-        transientSettings = Settings.readSettingsFromStream(in);
-        persistentSettings = Settings.readSettingsFromStream(in);
+        super(in, in.getVersion().onOrAfter(Version.V_6_4_0));
+        if (in.getVersion().onOrAfter(Version.V_6_4_0)) {
+            transientSettings = Settings.readSettingsFromStream(in);
+            persistentSettings = Settings.readSettingsFromStream(in);
+        } else {
+            transientSettings = Settings.readSettingsFromStream(in);
+            persistentSettings = Settings.readSettingsFromStream(in);
+            acknowledged = in.readBoolean();
+        }
     }
 
     ClusterUpdateSettingsResponse(boolean acknowledged, Settings transientSettings, Settings persistentSettings) {
@@ -76,9 +83,15 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        super.writeTo(out);
-        Settings.writeSettingsToStream(transientSettings, out);
-        Settings.writeSettingsToStream(persistentSettings, out);
+        if (out.getVersion().onOrAfter(Version.V_6_4_0)) {
+            super.writeTo(out);
+            Settings.writeSettingsToStream(transientSettings, out);
+            Settings.writeSettingsToStream(persistentSettings, out);
+        } else {
+            Settings.writeSettingsToStream(transientSettings, out);
+            Settings.writeSettingsToStream(persistentSettings, out);
+            out.writeBoolean(acknowledged);
+        }
     }
 
     @Override
@@ -99,7 +112,8 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
     public boolean equals(Object o) {
         if (super.equals(o)) {
             ClusterUpdateSettingsResponse that = (ClusterUpdateSettingsResponse) o;
-            return Objects.equals(transientSettings, that.transientSettings) && Objects.equals(persistentSettings, that.persistentSettings);
+            return Objects.equals(transientSettings, that.transientSettings) &&
+                    Objects.equals(persistentSettings, that.persistentSettings);
         }
         return false;
     }

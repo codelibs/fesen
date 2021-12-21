@@ -19,12 +19,6 @@
 
 package org.codelibs.fesen.cluster.routing.allocation.command;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 import org.codelibs.fesen.FesenParseException;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.cluster.routing.allocation.RoutingExplanations;
@@ -34,6 +28,12 @@ import org.codelibs.fesen.common.io.stream.StreamOutput;
 import org.codelibs.fesen.common.xcontent.ToXContentFragment;
 import org.codelibs.fesen.common.xcontent.XContentBuilder;
 import org.codelibs.fesen.common.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link AllocationCommand} composite managing several
@@ -158,9 +158,8 @@ public class AllocationCommands implements ToXContentFragment {
                 commands.add(parser.namedObject(AllocationCommand.class, commandName, null));
                 // move to the end object one
                 if (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                    throw new FesenParseException(
-                            "allocation command is malformed, done parsing a command," + " but didn't get END_OBJECT, got [{}] instead",
-                            token);
+                    throw new FesenParseException("allocation command is malformed, done parsing a command," +
+                        " but didn't get END_OBJECT, got [{}] instead", token);
                 }
             } else {
                 throw new FesenParseException("allocation command is malformed, got [{}] instead", token);
